@@ -1,0 +1,16 @@
+{
+  "verbose": true,
+  "paths": [
+    "jst",
+    "models",
+    "views"
+  ],
+  "options": {
+    "processors.tmpl.options.variable": "o",
+    "processors.styl.options.nib": true
+  },
+  "targets": {
+    "orgsync-widgets.js": "dist",
+    "css/orgsync-widgets.styl": "dist"
+  }
+}

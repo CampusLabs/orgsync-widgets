@@ -1,0 +1,22 @@
+{
+  "name": "orgsync-widgets",
+  "version": "0.0.0",
+  "dependencies": {
+    "async": "x",
+    "backbone": "x",
+    "backbone-relations": "x",
+    "olay": "x",
+    "jquery": "x",
+    "select2": "x",
+    "underscore": "x",
+    "underscore.string": "x"
+  },
+  "ignore": [
+    "css",
+    "examples",
+    "jst",
+    "models",
+    "node_modules",
+    "views"
+  ]
+}

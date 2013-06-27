@@ -1,0 +1,19 @@
+{
+  "boss": true,
+  "browser": true,
+  "es5": true,
+  "expr": true,
+  "eqnull": true,
+  "indent": 2,
+  "latedef": true,
+  "maxlen": 80,
+  "newcap": false,
+  "node": true,
+  "strict": false,
+  "sub": true,
+  "trailing": true,
+  "unused": true,
+  "undef": true,
+  "white": true,
+  "-W018": true
+}

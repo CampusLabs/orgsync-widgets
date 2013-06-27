@@ -1,0 +1,16 @@
+{
+  "name": "orgsync-widgets",
+  "private": true,
+  "version": "0.0.0",
+  "author": "Casey Foster <c@sey.me>",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/orgsync/widgets"
+  },
+  "devDependencies": {
+    "cogs": "x",
+    "nib": "x",
+    "stylus": "x",
+    "underscore"
+  }
+}

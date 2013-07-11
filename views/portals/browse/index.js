@@ -186,7 +186,7 @@
       var first = maps[0];
       var rest = maps.slice(1);
       return _.filter(first, function (__, key) {
-        return _.all(rest, function (other) { return other[key]; });
+        return _.all(rest, function (other) { return _.has(other, key); });
       });
     },
 

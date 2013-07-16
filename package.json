@@ -10,7 +10,6 @@
   "devDependencies": {
     "cogs": "x",
     "nib": "x",
-    "stylus": "x",
-    "underscore"
+    "stylus": "x"
   }
 }

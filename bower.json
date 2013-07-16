@@ -13,7 +13,6 @@
   },
   "ignore": [
     "css",
-    "examples",
     "jst",
     "models",
     "node_modules",

@@ -24,7 +24,7 @@
       'change .js-umbrella-selector': 'updateUmbrellaFilter',
       'change .js-category-selector': 'updateCategoryFilter',
       'keydown .js-search-input': 'searchKeydown',
-      'change .js-search-input': 'updateSearchFilter'
+      'change .js-search-input': 'updateQueryFilter'
     },
 
     listeners: {
@@ -49,7 +49,6 @@
         if (er) return self.$el.text('Load failed...');
         self.community.set('umbrellas', self.portals.pluck('umbrella'));
         self.community.set('categories', self.portals.pluck('category'));
-        self.portals.each(self.cacheSearchableWords);
         self.render();
       });
     },
@@ -84,12 +83,6 @@
       return this;
     },
 
-    cacheSearchableWords: function (portal) {
-      portal.searchableWords = _.str.words(_.values(
-        portal.pick('name', 'short_name', 'keywords')
-      ).join(' ').toLowerCase());
-    },
-
     renderSelectors: function () {
       this.renderSelector('umbrella', 'umbrellas');
       this.renderSelector('category', 'categories');
@@ -122,26 +115,15 @@
     },
 
     searchKeydown: function () {
-      _.defer(_.bind(this.updateSearchFilter, this));
+      _.defer(_.bind(this.updateQueryFilter, this));
     },
 
-    updateSearchFilter: function () {
-      var words = _.str.words(this.$('.js-search-input').val().toLowerCase());
+    updateQueryFilter: function () {
+      var q = this.$('.js-search-input').val();
+      var words = _.str.words(q.toLowerCase());
       if (_.isEqual(words, this.lastWords)) return;
       this.lastWords = words;
-      if (words.length) {
-        this.filters.search = this.portals.reduce(function (map, portal) {
-          var match = _.every(words, function (wordA) {
-            return _.any(portal.searchableWords, function (wordB) {
-              return _.str.startsWith(wordB, wordA);
-            });
-          });
-          if (match) map[portal.id] = portal;
-          return map;
-        }, {});
-      } else {
-        delete this.filters.search;
-      }
+      this.filters.query = words.length ? q : null;
       this.updateFiltered();
     },
 
@@ -153,24 +135,22 @@
       this.updateSelectorFilter('category');
     },
 
-    updateSelectorFilter: function (singular) {
-      var id = this.$('.js-' + singular + '-selector').select2('val');
-      if (id) {
-        this.filters[singular] = this.portals.reduce(function (map, portal) {
-          if (portal.get(singular + '_id') === id) map[portal.id] = portal;
-          return map;
-        }, {});
-      } else {
-        delete this.filters[singular];
-      }
+    updateSelectorFilter: function (key) {
+      var id = this.$('.js-' + key + '-selector').select2('val');
+      this.filters[key + 'Id'] = id;
       this.updateFiltered();
     },
 
     updateFiltered: function () {
+      var query = this.filters.query;
+      var umbrellaId = this.filters.umbrellaId;
+      var categoryId = this.filters.categoryId;
       this.filtered.set(
-        _.size(this.filters) ?
-        this.intersection(_.values(this.filters)) :
-        this.portals.models
+        this.portals.filter(function (portal) {
+          return portal.matchesQuery(query) &&
+            (!umbrellaId || portal.get('umbrella_id') === umbrellaId) &&
+            (!categoryId || portal.get('category_id') === categoryId);
+        })
       );
       this.page = 1;
       this.displayed.set(this.filtered.first(this.pageSize));
@@ -183,6 +163,7 @@
     },
 
     intersection: function (maps) {
+      maps = _.sortBy(maps, 'length');
       var first = maps[0];
       var rest = maps.slice(1);
       return _.filter(first, function (__, key) {

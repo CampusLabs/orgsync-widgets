@@ -27,7 +27,25 @@
 
     apiWrapper: 'portal',
 
-    urlRoot: '/portals'
+    urlRoot: '/portals',
+
+    searchableWords: function () {
+      if (this._searchableWords) return this._searchableWords;
+      this._searchableWords = _.str.words(_.values(
+        this.pick('name', 'short_name', 'keywords')
+      ).join(' ').toLowerCase());
+    },
+
+    matchesQuery: function (query) {
+      if (!query) return true;
+      var words = _.str.words(query.toLowerCase());
+      var searchableWords = this.searchableWords();
+      return _.every(words, function (wordA) {
+        return _.any(searchableWords, function (wordB) {
+          return _.str.startsWith(wordB, wordA);
+        });
+      });
+    }
   });
 
   Portal.Collection = Model.Collection.extend({

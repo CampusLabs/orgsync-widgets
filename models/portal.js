@@ -29,7 +29,7 @@
 
     searchableWords: function () {
       if (this._searchableWords) return this._searchableWords;
-      this._searchableWords = _.str.words(_.values(
+      return this._searchableWords = _.str.words(_.values(
         this.pick('name', 'short_name', 'keywords')
       ).join(' ').toLowerCase());
     },

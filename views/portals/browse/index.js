@@ -121,6 +121,7 @@
     updateQueryFilter: function () {
       var q = this.$('.js-search-input').val();
       var words = _.str.words(q.toLowerCase());
+      console.log(words);
       if (_.isEqual(words, this.lastWords)) return;
       this.lastWords = words;
       this.filters.query = words.length ? q : null;
@@ -160,15 +161,6 @@
       if (this.displayed.length >= this.filtered.length) return false;
       this.displayed.set(this.filtered.first(++this.page * this.pageSize));
       return true;
-    },
-
-    intersection: function (maps) {
-      maps = _.sortBy(maps, 'length');
-      var first = maps[0];
-      var rest = maps.slice(1);
-      return _.filter(first, function (__, key) {
-        return _.all(rest, function (other) { return _.has(other, key); });
-      });
     },
 
     listScroll: function (ev) {

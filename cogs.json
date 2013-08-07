@@ -11,6 +11,8 @@
   },
   "targets": {
     "orgsync-widgets.js": "dist",
-    "css/orgsync-widgets.styl": "dist"
+    "css/orgsync-widgets.styl": "dist",
+    "themes/*.js": "dist/themes",
+    "themes/*.styl": "dist/themes"
   }
 }

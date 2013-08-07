@@ -10,6 +10,7 @@
   "devDependencies": {
     "cogs": "x",
     "nib": "x",
-    "stylus": "x"
+    "stylus": "x",
+    "orgsync-javascript-api": "git+ssh://git@github.com:orgsync/orgsync-api-javascript"
   }
 }

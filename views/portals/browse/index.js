@@ -40,7 +40,7 @@
       ));
       this.community = new app.Community({id: this.communityId});
       this.portals = this.community.get('portals');
-      this.portals.url = this.community.url() + '/orgs';
+      this.portals.url = this.community.url() + '/portals';
       this.filtered = new app.Portal.Collection();
       this.displayed = new app.Portal.Collection();
       this.filters = {};
@@ -94,7 +94,7 @@
       if (models.length <= 1) return $el.hide();
       $el.select2({
         data: models.map(function (model) {
-          return {id: model.id, text: model.get('name')};
+          return {id: model.id, text: model.get('name') || 'Umbrellas'};
         }),
         placeholder: 'Filter by ' + _.str.capitalize(singular),
         minimumResultsForSearch: 5,

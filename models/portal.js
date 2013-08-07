@@ -25,8 +25,6 @@
 
     defaultPicture: 'https://orgsync.com/assets/no_org_profile_150.png',
 
-    apiWrapper: 'portal',
-
     urlRoot: '/portals',
 
     searchableWords: function () {
@@ -49,8 +47,6 @@
   });
 
   Portal.Collection = Model.Collection.extend({
-    apiWrapper: 'portals',
-
     model: Portal,
 
     url: '/portals',
@@ -58,22 +54,20 @@
     comparator: 'name',
 
     // HACKY HACKY til the API is updated
-    parse: function (data) {
-      if (!data || !data[0] || !data[0].portal) return data;
-      return _.map(data, function (data) {
-        var portal = data.portal;
-        delete data.portal;
-        var umbrella = data.umbrella;
-        data.umbrella = {
+    parse: function (portals) {
+      if (!_.isArray(portals)) return portals;
+      return _.map(portals, function (portal) {
+        var umbrella = portal.umbrella;
+        portal.umbrella = {
           id: umbrellas[umbrella] || (umbrellas[umbrella] = _.uniqueId()),
           name: umbrella
         };
-        var category = data.category;
-        data.category = {
+        var category = portal.category;
+        portal.category = {
           id: categories[category] || (categories[category] = _.uniqueId()),
           name: category
         };
-        return _.extend(data, portal);
+        return portal;
       });
     }
   });

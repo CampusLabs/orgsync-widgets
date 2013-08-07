@@ -16,8 +16,8 @@
       var url = _.result(model, 'url');
       var data = options.data;
       return app.api.get(url, data, function (er, res) {
-        if (er) return options.error(er);
-        options.success(res[model.apiWrapper]);
+        if (er || res.error) return options.error(er || res.error);
+        options.success(res.data);
       });
     }
   }, {

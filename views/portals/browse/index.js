@@ -121,7 +121,6 @@
     updateQueryFilter: function () {
       var q = this.$('.js-search-input').val();
       var words = _.str.words(q.toLowerCase());
-      console.log(words);
       if (_.isEqual(words, this.lastWords)) return;
       this.lastWords = words;
       this.filters.query = words.length ? q : null;

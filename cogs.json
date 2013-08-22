@@ -2,6 +2,8 @@
   "verbose": true,
   "paths": [
     "jst",
+    "bower_components",
+    "node_modules",
     "models",
     "views"
   ],
@@ -13,6 +15,8 @@
     "orgsync-widgets.js": "dist",
     "css/orgsync-widgets.styl": "dist",
     "themes/*.js": "dist/themes",
-    "themes/*.styl": "dist/themes"
+    "themes/*.styl": "dist/themes",
+    "bower_components/select2/*.gif": "dist",
+    "bower_components/select2/*.png": "dist"
   }
 }

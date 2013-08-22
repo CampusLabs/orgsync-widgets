@@ -17,12 +17,6 @@
       category: {hasOne: 'Category', fk: 'category_id'}
     },
 
-    initialize: function () {
-      if (!this.get('picture_url')) {
-        this.set('picture_url', this.defaultPicture);
-      }
-    },
-
     defaultPicture: 'https://orgsync.com/assets/no_org_profile_150.png',
 
     urlRoot: '/portals',
@@ -43,6 +37,10 @@
           return _.str.startsWith(wordB, wordA);
         });
       });
+    },
+
+    picture: function () {
+      return this.get('picture_url') || this.defaultPicture;
     }
   });
 

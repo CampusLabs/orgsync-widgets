@@ -24,7 +24,8 @@
       'change .js-umbrella-selector': 'updateUmbrellaFilter',
       'change .js-category-selector': 'updateCategoryFilter',
       'keydown .js-search-input': 'searchKeydown',
-      'change .js-search-input': 'updateQueryFilter'
+      'change .js-search-input': 'updateQueryFilter',
+      'click .js-matcher': 'matcherClick',
     },
 
     listeners: {
@@ -141,15 +142,32 @@
       this.updateFiltered();
     },
 
+    matcherClick: function (ev) {
+      var str = $(ev.currentTarget)
+        .addClass('js-selected')
+        .siblings()
+        .removeClass('js-selected')
+        .end()
+        .data('re');
+      this.setMatcher(str ? new RegExp('^' + str, 'i') : null);
+    },
+
+    setMatcher: function (re) {
+      this.filters.matcher = re;
+      this.updateFiltered();
+    },
+
     updateFiltered: function () {
       var query = this.filters.query;
       var umbrellaId = this.filters.umbrellaId;
       var categoryId = this.filters.categoryId;
+      var matcher = this.filters.matcher;
       this.filtered.set(
         this.portals.filter(function (portal) {
           return portal.matchesQuery(query) &&
             (!umbrellaId || portal.get('umbrella_id') === umbrellaId) &&
-            (!categoryId || portal.get('category_id') === categoryId);
+            (!categoryId || portal.get('category_id') === categoryId) &&
+            (!matcher || matcher.test(portal.get('name') || ''));
         })
       );
       this.page = 1;

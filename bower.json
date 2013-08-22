@@ -5,6 +5,7 @@
     "async": "x",
     "backbone": "x",
     "backbone-relations": "x",
+    "dpr": "x",
     "olay": "x",
     "jquery": "x",
     "select2": "x",

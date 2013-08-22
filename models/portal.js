@@ -51,7 +51,9 @@
 
     url: '/portals',
 
-    comparator: 'name',
+    comparator: function (portal) {
+      return (portal.get('name') || '').toLowerCase();
+    },
 
     // HACKY HACKY til the API is updated
     parse: function (portals) {

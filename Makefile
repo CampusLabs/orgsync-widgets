@@ -7,6 +7,9 @@ dev:
 cogs:
 	$(COGS) -w .
 
+compress:
+	$(COGS) -c
+
 server:
 	open http://localhost:8000/
 	python -mSimpleHTTPServer &> /dev/null

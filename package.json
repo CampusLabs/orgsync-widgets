@@ -9,8 +9,10 @@
   },
   "devDependencies": {
     "cogs": "x",
+    "csso": "x",
     "nib": "x",
+    "orgsync-javascript-api": "git+ssh://git@github.com:orgsync/orgsync-api-javascript",
     "stylus": "x",
-    "orgsync-javascript-api": "git+ssh://git@github.com:orgsync/orgsync-api-javascript"
+    "uglify-js": "x"
   }
 }

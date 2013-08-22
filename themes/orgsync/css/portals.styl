@@ -2,12 +2,32 @@
 
 .osw-portals-browse
   .search-input
-    box-sizing border-box
+  .selector
+  .matchers
+    margin-bottom 10px
   .search-input
   .selector
-    margin-bottom 10px
-    width 100%
-    max-width 100%
+    margin-right 1%
+    width 30%
+    vertical-align middle
+  .select2-choice
+    height 40px
+    line-height 40px
+    .select2-arrow b
+      position relative
+      top 7px
+    .select2-search-choice-close
+      top 14px
+  .select2-offscreen
+    display none
+  .select2-chosen
+    font-weight bold
+    font-size 14px
+    color #333
+  .search-input
+    padding 10px
+    height 40px
+    box-sizing border-box
   .list
     overflow auto
     -webkit-overflow-scrolling touch
@@ -38,6 +58,24 @@
       .name
         font-weight bold
         font-size 14px
-
-
-
+  .matchers
+    input[type=button]
+      margin 0
+      border 1px solid #ddd
+      padding 5px
+      color #333
+      background linear-gradient(#fafafa, #e8e8e8)
+      cursor pointer
+      &:hover
+        background linear-gradient(#e8e8e8, #fafafa)
+      &:not(:last-child)
+        border-right none
+      &:first-child
+        border-radius left 3px
+      &:last-child
+        border-radius right 3px
+      &.js-selected
+        border-color #00578F
+        color white
+        background #3872a7
+        box-shadow 0 1px 3px rgba(0, 0, 0, .75) inset

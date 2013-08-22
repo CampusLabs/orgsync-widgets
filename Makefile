@@ -2,6 +2,9 @@ BIN=node_modules/.bin/
 COGS=$(BIN)cogs
 
 dev:
+	$(MAKE) -j cogs server
+
+cogs:
 	$(COGS) -w .
 
 server:

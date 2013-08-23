@@ -8,9 +8,6 @@
   var _ = window._;
   var Model = app.Model;
 
-  var umbrellas = {};
-  var categories = {};
-
   var Portal = app.Portal = Model.extend({
     relations: {
       umbrella: {hasOne: 'Portal', fk: 'umbrella_id'},
@@ -51,24 +48,6 @@
 
     comparator: function (portal) {
       return (portal.get('name') || '').toLowerCase();
-    },
-
-    // HACKY HACKY til the API is updated
-    parse: function (portals) {
-      if (!_.isArray(portals)) return portals;
-      return _.map(portals, function (portal) {
-        var umbrella = portal.umbrella;
-        portal.umbrella = {
-          id: umbrellas[umbrella] || (umbrellas[umbrella] = _.uniqueId()),
-          name: umbrella
-        };
-        var category = portal.category;
-        portal.category = {
-          id: categories[category] || (categories[category] = _.uniqueId()),
-          name: category
-        };
-        return portal;
-      });
     }
   });
 })();

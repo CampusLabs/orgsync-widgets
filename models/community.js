@@ -9,9 +9,9 @@
 
   var Community = app.Community = Model.extend({
     relations: {
-      portals: {hasMany: 'Portal', fk: 'school_id'},
-      umbrellas: {hasMany: 'Portal', fk: 'school_id'},
-      categories: {hasMany: 'Category', fk: 'school_id'},
+      portals: {hasMany: 'Portal', fk: 'community_id'},
+      umbrellas: {hasMany: 'Portal', fk: 'community_id'},
+      categories: {hasMany: 'Category', fk: 'community_id'},
     },
     urlRoot: '/communities'
   });

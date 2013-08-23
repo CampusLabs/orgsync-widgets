@@ -48,6 +48,10 @@
       var self = this;
       this.fetch(function (er) {
         if (er) return self.$el.text('Load failed...');
+        self.portals.each(function (portal) {
+          if (portal.get('umbrella').id) return;
+          portal.set('umbrella', {id: -1, name: 'Umbrellas'});
+        });
         self.community.set('umbrellas', self.portals.pluck('umbrella'));
         self.community.set('categories', self.portals.pluck('category'));
         self.render();
@@ -95,7 +99,7 @@
       if (models.length <= 1) return $el.hide();
       $el.select2({
         data: models.map(function (model) {
-          return {id: model.id, text: model.get('name') || 'Umbrellas'};
+          return {id: model.id, text: model.get('name')};
         }),
         placeholder: 'Filter by ' + _.str.capitalize(singular),
         minimumResultsForSearch: 5,
@@ -165,8 +169,8 @@
       this.filtered.set(
         this.portals.filter(function (portal) {
           return portal.matchesQuery(query) &&
-            (!umbrellaId || portal.get('umbrella_id') === umbrellaId) &&
-            (!categoryId || portal.get('category_id') === categoryId) &&
+            (!umbrellaId || portal.get('umbrella_id') == umbrellaId) &&
+            (!categoryId || portal.get('category_id') == categoryId) &&
             (!matcher || matcher.test(portal.get('name') || ''));
         })
       );

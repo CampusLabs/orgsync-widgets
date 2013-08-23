@@ -112,8 +112,15 @@
     },
 
     renderPortalList: function () {
+      var $list = this.$('.js-list');
+      var $parents = [$list].concat($list.parents().toArray());
+      var $parentScroll = _.find($parents, function (parent) {
+        var overflowY = $(parent).css('overflow-y');
+        return overflowY === 'auto' || overflowY === 'scroll';
+      }) || window;
+      $($parentScroll).scroll(_.bind(this.listScroll, this));
       this.views.portalList = new app.ListView({
-        el: this.$('.js-list').scroll(_.bind(this.listScroll, this)),
+        el: $list,
         collection: this.displayed,
         modelView: app.PortalsBrowseListItemView
       });
@@ -185,10 +192,16 @@
     },
 
     listScroll: function (ev) {
-      var $el = $(ev.currentTarget);
-      var maxScroll = $el.prop('scrollHeight') - $el.height();
-      var tolerance = $el.children().first().height() * 2;
-      if ($el.scrollTop() >= maxScroll - tolerance) this.nextPage();
+      var isWindow = ev.currentTarget === window;
+      var $el = $(isWindow ? 'body' : ev.currentTarget);
+      var aY = isWindow ? 0 : $el.offset().top;
+      var aH = (isWindow ? $(window) : $el).height();
+      var scroll = $el.scrollTop();
+      var $list = this.$('.js-list');
+      var bY = $list.offset().top;
+      var bH = $list.prop('scrollHeight');
+      var tolerance = $list.children().first().height() * 2;
+      if (aY + aH + scroll > bY + bH - tolerance) this.nextPage();
     }
   });
 })();

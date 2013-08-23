@@ -4,6 +4,8 @@
   <div class='umbrella'><%- o.model.get('umbrella').get('name') %></div>
   <div class='category'><%- o.model.get('category').get('name') %></div>
   <div class='description'><%- o.model.get('description') %></div>
+  <% if (o.model.get('website_url')) { %>
   <a href="<%- o.model.get('website_url') %>">Website</a> |
+  <% } %>
   <a href="https://orgsync.com/<%- o.model.id %>/chapter">On OrgSync.com</a>
 </div>

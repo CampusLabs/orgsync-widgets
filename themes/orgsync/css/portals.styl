@@ -59,17 +59,21 @@
     input[type=button]
       margin 0
       border 1px solid #ddd
-      padding 5px
+      padding 5px 0
       color #333
       background linear-gradient(#fafafa, #e8e8e8)
       cursor pointer
+      width 3.25%
+      box-sizing border-box
       &:hover
         background linear-gradient(#e8e8e8, #fafafa)
       &:not(:last-child)
         border-right none
       &:first-child
+        width 5.5%
         border-radius left 3px
       &:last-child
+        width 10%
         border-radius right 3px
       &.js-selected
         border-color #00578F

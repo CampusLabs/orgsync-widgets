@@ -40,16 +40,8 @@
     },
 
     authorize: function () {
-      var username = window.prompt('Enter your mobile-staging email');
-      var password = window.prompt('Enter your mobile-staging password');
-      app.api.login(username, password, function (er) {
-        if (er) {
-          window.alert('Unable to sign in, please try again.');
-        } else {
-          localStorage.apiKey = app.api.key;
-        }
-        app.ready();
-      });
+      localStorage.apiKey = window.prompt('Enter your user API key email');
+      app.ready();
     }
   };
 

@@ -1,6 +1,8 @@
 <img src="<%- o.model.picture() %>">
 <div class='info'>
-  <div class='name'><%- o.model.get('name') %></div>
+  <% var name = o.model.get('name'); %>
+  <% if (name.length > 80) name = o.model.get('short_name'); %>
+  <div class='name'><%- name %></div>
   <div class='umbrella'><%- o.model.get('umbrella').get('name') %></div>
   <div class='category'><%- o.model.get('category').get('name') %></div>
 </div>

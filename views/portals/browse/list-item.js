@@ -9,6 +9,8 @@
   var View = app.View;
 
   app.PortalsBrowseListItemView = View.extend({
+    tagName: 'li',
+
     className: 'js-list-item list-item',
 
     template: window.jst['portals/browse/list-item'],

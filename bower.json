@@ -1,7 +1,7 @@
 {
   "name": "orgsync-widgets",
   "version": "0.0.0",
-  "dependencies": {
+  "devDependencies": {
     "async": "x",
     "backbone": "x",
     "backbone-relations": "x",
@@ -17,6 +17,7 @@
     "jst",
     "models",
     "node_modules",
+    "themes",
     "views"
   ]
 }

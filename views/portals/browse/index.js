@@ -37,10 +37,11 @@
       _.extend(this, _.pick(_.extend({}, this.$el.data(), options),
         'communityId',
         'umbrellaId',
-        'categoryId'
+        'categoryId',
+        'portals'
       ));
       this.community = new app.Community({id: this.communityId});
-      this.portals = this.community.get('portals');
+      this.portals = this.community.get('portals').set(this.portals);
       this.portals.url = this.community.url() + '/portals';
       this.filtered = new app.Portal.Collection();
       this.displayed = new app.Portal.Collection();
@@ -59,6 +60,7 @@
     },
 
     fetch: function (cb) {
+      if (this.portals.length) return cb();
       var page = 0;
       var done = false;
       var portals = this.portals;

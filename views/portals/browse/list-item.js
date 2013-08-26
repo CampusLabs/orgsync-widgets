@@ -5,6 +5,7 @@
 
   var app = window.OrgSyncWidgets;
 
+  var _ = window._;
   var Olay = window.Olay;
   var View = app.View;
 
@@ -23,7 +24,14 @@
       model: {remove: 'checkRemove'}
     },
 
-    open: function () {
+    initialize: function (options) {
+      View.prototype.initialize.apply(this, arguments);
+      _.extend(this, _.pick(options, 'action'));
+    },
+
+    open: function (ev) {
+      if (this.action === 'redirect') return;
+      ev.preventDefault();
       if (!this.olay) {
         this.views.show = new app.PortalsShowView({model: this.model});
         this.olay = new Olay(this.views.show.render().$el);

@@ -38,6 +38,10 @@
 
     picture: function () {
       return this.get('picture_url') || this.defaultPicture;
+    },
+
+    orgsyncUrl: function () {
+      return 'https://orgsync.com/' + this.id + '/chapter';
     }
   });
 

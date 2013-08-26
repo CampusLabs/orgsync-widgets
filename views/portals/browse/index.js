@@ -38,7 +38,8 @@
         'communityId',
         'umbrellaId',
         'categoryId',
-        'portals'
+        'portals',
+        'action'
       ));
       this.community = new app.Community({id: this.communityId});
       this.portals = this.community.get('portals').set(this.portals);
@@ -126,7 +127,8 @@
       this.views.portalList = new app.ListView({
         el: $list,
         collection: this.displayed,
-        modelView: app.PortalsBrowseListItemView
+        modelView: app.PortalsBrowseListItemView,
+        modelViewOptions: {action: this.action}
       });
     },
 

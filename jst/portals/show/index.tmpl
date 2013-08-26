@@ -7,5 +7,5 @@
   <% if (o.model.get('website_url')) { %>
   <a href="<%- o.model.get('website_url') %>">Website</a> |
   <% } %>
-  <a href="https://orgsync.com/<%- o.model.id %>/chapter">On OrgSync.com</a>
+  <a href="<%- o.model.orgsyncUrl() %>">On OrgSync.com</a>
 </div>

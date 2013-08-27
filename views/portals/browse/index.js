@@ -36,8 +36,8 @@
       this.$el.addClass('orgsync-widget osw-portals-browse');
       _.extend(this, _.pick(_.extend({}, this.$el.data(), options),
         'communityId',
-        'umbrellaId',
-        'categoryId',
+        'umbrellaName',
+        'categoryName',
         'portals',
         'action'
       ));
@@ -154,8 +154,8 @@
     },
 
     updateSelectorFilter: function (key) {
-      var id = this.$('.js-' + key + '-selector').select2('val');
-      this.filters[key + 'Id'] = id;
+      this.filters[key + 'Name'] =
+        this.$('.js-' + key + '-selector').select2('val');
       this.updateFiltered();
     },
 
@@ -176,14 +176,16 @@
 
     updateFiltered: function () {
       var query = this.filters.query;
-      var umbrellaId = this.filters.umbrellaId;
-      var categoryId = this.filters.categoryId;
+      var umbrellaName = this.filters.umbrellaName;
+      var categoryName = this.filters.categoryName;
       var matcher = this.filters.matcher;
       this.filtered.set(
         this.portals.filter(function (portal) {
           return portal.matchesQuery(query) &&
-            (!umbrellaId || portal.get('umbrella').get('name') == umbrellaId) &&
-            (!categoryId || portal.get('category').get('name') == categoryId) &&
+            (!umbrellaName ||
+              portal.get('umbrella').get('name') === umbrellaName) &&
+            (!categoryName ||
+              portal.get('category').get('name') === categoryName) &&
             (!matcher || matcher.test(portal.get('name') || ''));
         })
       );

@@ -188,6 +188,7 @@
         })
       );
       this.page = 0;
+      this.displayed.set();
       while (this.nextPage() && this.needsPage()) true;
     },
 

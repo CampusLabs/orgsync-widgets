@@ -5,22 +5,8 @@
   // since they use `_.escape`.
   var _ = window._;
 
-  // List out all polutants that need to be deleted or restored.
-  var polutants = [
-    '$',
-    'jQuery',
-    '_',
-    'Backbone',
-    'Select2',
-    'Olay',
-    'async',
-    'OrgSyncApi',
-    'dpr',
-    'jst'
-  ];
-
-  _.each(polutants, function (polutant) {
-    if (polutant in globals) return window[polutant] = globals[polutant];
-    delete window[polutant];
+  _.each(polutants, function (val, key) {
+    if (val) return window[key] = val;
+    delete window[key];
   });
 })();

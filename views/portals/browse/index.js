@@ -119,11 +119,11 @@
     renderPortalList: function () {
       var $list = this.$('.js-list');
       var $parents = [$list].concat($list.parents().toArray());
-      var $parentScroll = _.find($parents, function (parent) {
+      this.$scrollParent = $(_.find($parents, function (parent) {
         var overflowY = $(parent).css('overflow-y');
         return overflowY === 'auto' || overflowY === 'scroll';
-      }) || window;
-      $($parentScroll).scroll(_.bind(this.listScroll, this));
+      }) || window);
+      this.$scrollParent.scroll(_.bind(this.listScroll, this));
       this.views.portalList = new app.ListView({
         el: $list,
         collection: this.displayed,
@@ -187,8 +187,8 @@
             (!matcher || matcher.test(portal.get('name') || ''));
         })
       );
-      this.page = 1;
-      this.displayed.set(this.filtered.first(this.pageSize));
+      this.page = 0;
+      while (this.nextPage() && this.needsPage()) true;
     },
 
     nextPage: function () {
@@ -197,17 +197,19 @@
       return true;
     },
 
-    listScroll: function (ev) {
-      var isWindow = ev.currentTarget === window;
-      var $el = $(isWindow ? 'body' : ev.currentTarget);
+    needsPage: function () {
+      var isWindow = this.$scrollParent[0] === window;
+      var $el = isWindow ? $('body') : this.$scrollParent;
       var aY = isWindow ? 0 : $el.offset().top;
-      var aH = (isWindow ? $(window) : $el).height();
+      var aH = this.$scrollParent.height();
       var scroll = $el.scrollTop();
       var $list = this.$('.js-list');
       var bY = $list.offset().top;
       var bH = $list.prop('scrollHeight');
-      var tolerance = $list.children().first().height() * 2;
-      if (aY + aH + scroll > bY + bH - tolerance) this.nextPage();
-    }
+      var tolerance = $list.children().first().height() * 1;
+      return aY + aH + scroll > bY + bH - tolerance;
+    },
+
+    listScroll: function () { if (this.needsPage()) this.nextPage(); }
   });
 })();

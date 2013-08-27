@@ -1,3 +1,4 @@
+//= require ./setup
 //= require jquery/jquery
 //= require underscore/underscore
 //= require underscore.string/lib/underscore.string
@@ -13,6 +14,7 @@
 //= requireTree models
 //= requireTree jst
 //= requireTree views
+//= require ./teardown
 
 (function () {
   'use strict';
@@ -33,15 +35,9 @@
     // views accordingly.
     ready: function () {
       $('html').addClass('dpr-' + dpr());
-      if (!app.api.key) return app.authorize();
       _.each(app.selectorViewMap, function (view, selector) {
         $(selector).each(function () { new view({el: this}); });
       });
-    },
-
-    authorize: function () {
-      localStorage.apiKey = window.prompt('Enter your user API key email');
-      app.ready();
     }
   };
 

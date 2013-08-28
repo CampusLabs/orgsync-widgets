@@ -1,15 +1,21 @@
 @import 'config'
 
 .osw-portals-browse
-  .search-input
-  .selector
-  .matchers
+  .filters
     margin-bottom 10px
   .search-input
   .selector
-    margin-right 1%
+    margin 0 1% 10px 0
     width 32.25%
     vertical-align middle
+  .search-input
+    padding 10px
+    height 40px
+    font-size 14px
+    box-sizing border-box
+    border-radius 3px
+    border 1px solid #ddd
+    box-shadow 0 1px 3px rgba(0, 0, 0, .1) inset;
   .select2-choice
     height 40px
     line-height 40px
@@ -24,29 +30,38 @@
     font-weight bold
     font-size 14px
     color #333
-  .search-input
-    padding 10px
-    height 40px
-    font-size 14px
-    box-sizing border-box
-    border-radius 3px
-    border 1px solid #ddd
-    box-shadow 0 1px 3px rgba(0, 0, 0, .1) inset;
+  .matchers
+    input[type=button]
+      margin 0
+      border 1px solid #ddd
+      padding 5px 0
+      color #333
+      background linear-gradient(#fafafa, #e8e8e8)
+      cursor pointer
+      width 3.25%
+      box-sizing border-box
+      &:hover
+        background linear-gradient(#e8e8e8, #fafafa)
+      &:not(:last-child)
+        border-right none
+      &:first-child
+        width 5.5%
+        border-radius left 3px
+      &:last-child
+        width 9.5%
+        border-radius right 3px
+      &.js-selected
+        border-color #00578F
+        color white
+        background #3872a7
+        box-shadow 0 1px 3px rgba(0, 0, 0, .75) inset
   .list-item
     position relative
-    display inline-block
     vertical-align top
-    width 49%
     cursor pointer
     margin 0 1% 1% 0
     box-shadow 0 1px 5px rgba(0, 0, 0, .25)
     border-radius 3px
-    @media (min-width: 400px)
-      width 32.3%
-    @media (min-width: 600px)
-      width 24%
-    @media (min-width: 800px)
-      width 19%
     &:hover
       box-shadow 0 1px 3px #0076a3
       .name
@@ -80,28 +95,10 @@
         bottom 0
         padding-bottom 10px
         border-radius bottom 3px
-  .matchers
-    input[type=button]
-      margin 0
-      border 1px solid #ddd
-      padding 5px 0
-      color #333
-      background linear-gradient(#fafafa, #e8e8e8)
-      cursor pointer
-      width 3.25%
-      box-sizing border-box
-      &:hover
-        background linear-gradient(#e8e8e8, #fafafa)
-      &:not(:last-child)
-        border-right none
-      &:first-child
-        width 5.5%
-        border-radius left 3px
-      &:last-child
-        width 9.5%
-        border-radius right 3px
-      &.js-selected
-        border-color #00578F
-        color white
-        background #3872a7
-        box-shadow 0 1px 3px rgba(0, 0, 0, .75) inset
+.osw-portals-browse[min-width~='400px'] .list-item
+    width 32.3%
+    display inline-block
+.osw-portals-browse[min-width~='600px'] .list-item
+    width 24%
+.osw-portals-browse[min-width~='800px'] .list-item
+    width 19%

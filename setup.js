@@ -4,14 +4,15 @@
 (function () {
   var polutants = {
     '$': null,
-    'jQuery': null,
     '_': null,
-    'Backbone': null,
-    'Select2': null,
-    'Olay': null,
     'async': null,
-    'OrgSyncApi': null,
+    'Backbone': null,
     'dpr': null,
+    'elementQuery': null,
+    'Olay': null,
+    'OrgSyncApi': null,
+    'Select2': null,
+    'jQuery': null,
     'jst': null
   };
 

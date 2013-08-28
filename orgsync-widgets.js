@@ -10,6 +10,7 @@
 //= require async/lib/async
 //= require orgsync-javascript-api/orgsync-javascript-api
 //= require dpr/dpr.js
+//= require elementQuery/elementQuery
 //= requireSelf
 //= requireTree models
 //= requireTree jst
@@ -40,6 +41,11 @@
       });
     }
   };
+
+  // Tell elementQuery to keep track of sizes for `.orgsync-widget`s
+  window.elementQuery({
+    '.orgsync-widget': {'min-width': ['400px', '600px', '800px']}
+  });
 
   // Run the app's ready function when the DOM is parsed.
   $(app.ready);

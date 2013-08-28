@@ -2,5 +2,14 @@
 //= require select2/select2.css
 //= requireTree .
 
-.osw-portals-browse .js-none
-  display none
+@import 'config'
+
+.orgsync-widget
+  global-reset()
+
+  // HACK: This can be removed once it doesn't have to override the website
+  // builder style that sets all inputs to `float: left`
+  input
+    float none
+  .js-none
+    display none

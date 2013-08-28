@@ -1,21 +1,23 @@
 @import 'config'
 
 .osw-portals-browse
-  .filters
-    margin-bottom 10px
   .search-input
-  .selector
-    margin 0 1% 10px 0
-    width 32.25%
-    vertical-align middle
+  .umbrella-selector
+  .category-selector
+  .matchers
+    margin 0 0 10px
   .search-input
     padding 10px
+    width 100%
     height 40px
     font-size 14px
     box-sizing border-box
     border-radius 3px
     border 1px solid #ddd
     box-shadow 0 1px 3px rgba(0, 0, 0, .1) inset;
+  .umbrella-selector
+  .category-selector
+    width 100%
   .select2-choice
     height 40px
     line-height 40px
@@ -31,7 +33,11 @@
     font-size 14px
     color #333
   .matchers
-    input[type=button]
+    display none
+    .matcher
+      // this is rule is stupid, but necessary to override the website builder
+      // defaults
+      float none
       margin 0
       border 1px solid #ddd
       padding 5px 0
@@ -45,7 +51,7 @@
       &:not(:last-child)
         border-right none
       &:first-child
-        width 5.5%
+        width 6%
         border-radius left 3px
       &:last-child
         width 9.5%
@@ -56,49 +62,64 @@
         background #3872a7
         box-shadow 0 1px 3px rgba(0, 0, 0, .75) inset
   .list-item
-    position relative
     vertical-align top
-    cursor pointer
-    margin 0 1% 1% 0
-    box-shadow 0 1px 5px rgba(0, 0, 0, .25)
-    border-radius 3px
-    &:hover
-      box-shadow 0 1px 3px #0076a3
-      .name
+    border-top 1px solid #ccc
+    a
+      display block
+      text-decoration none
+      &:hover .name
         color #0076a3
     img
+      float left
+      margin-right 10px
+      width 75px
+    .info
+      padding 10px
+      min-height 55px
+    .name
+      color #2b2b2b
+      font-size 16px
+    .umbrella
+      display none
+    .category
+      box-sizing border-box
+      color #999
+      overflow-x hidden
+      text-overflow ellipsis
+      white-space nowrap
+.osw-portals-browse[min-width~='480px']
+  .list-item
+    display inline-block
+    box-sizing border-box
+    margin 5px
+    border 0
+    width 150px
+    vertical-align top
+    box-shadow 0 1px 3px rgba(0, 0, 0, .25)
+    img
+      float none
       display block
       width 100%
-    .info
-      overflow hidden
-      padding 10px
-      height 120px
-      .name
-        font-size 16px
-      .umbrella
-      .category
-        box-sizing border-box
-        position absolute
-        left 0
-        padding 0 10px
-        color #999
-        overflow hidden
-        text-overflow ellipsis
-        white-space nowrap
-        width 100%
-        background #eee
-      .umbrella
-        bottom 24px
-        font-weight bold
-        padding-top 10px
-      .category
-        bottom 0
-        padding-bottom 10px
-        border-radius bottom 3px
-.osw-portals-browse[min-width~='400px'] .list-item
-    width 32.3%
-    display inline-block
-.osw-portals-browse[min-width~='600px'] .list-item
-    width 24%
-.osw-portals-browse[min-width~='800px'] .list-item
-    width 19%
+    .name
+      color #2b2b2b
+      font-size 16px
+      min-height 80px
+    .umbrella
+      display none
+    .category
+      box-sizing border-box
+      color #999
+      overflow-x hidden
+      text-overflow ellipsis
+      white-space nowrap
+.osw-portals-browse[min-width~='640px']
+  .search-input
+  .umbrella-selector
+  .category-selector
+    width 32.6%
+    vertical-align middle
+  .search-input
+  .umbrella-selector
+    margin-right 1%
+  .matchers
+    display block

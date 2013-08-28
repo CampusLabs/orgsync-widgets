@@ -1,16 +1,25 @@
 <div class='filters'>
   <input class='js-search-input search-input' placeholder='Search Portals'
-  ><div class='js-umbrella-selector selector'></div
-  ><div class='js-category-selector selector'></div
+  ><div class='js-umbrella-selector umbrella-selector'></div
+  ><div class='js-category-selector category-selector'></div
   ><div class='matchers'>
-    <input type='button' class='js-matcher js-selected' value='All'
+    <input type='button' class='js-matcher matcher js-selected' value='All'
     <%
     _.times(26, function (n) {
       var c = String.fromCharCode(65 + n);
     %>
-    ><input type='button' class='js-matcher' value='<%= c %>' data-re='<%= c %>'
+    ><input
+      type='button'
+      class='js-matcher matcher'
+      value='<%= c %>'
+      data-re='<%= c %>'
     <% }); %>
-    ><input type='button' class='js-matcher' value='Other' data-re='[^a-z]'>
+    ><input
+      type='button'
+      class='js-matcher matcher'
+      value='Other'
+      data-re='[^a-z]'
+    >
   </div>
 </div>
 <ol class='js-list list' aria-live='assertive'></ol>

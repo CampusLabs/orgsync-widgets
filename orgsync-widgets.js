@@ -44,7 +44,7 @@
 
   // Tell elementQuery to keep track of sizes for `.orgsync-widget`s
   window.elementQuery({
-    '.orgsync-widget': {'min-width': ['400px', '600px', '800px']}
+    '.orgsync-widget': {'min-width': ['480px', '640px']}
   });
 
   // Run the app's ready function when the DOM is parsed.

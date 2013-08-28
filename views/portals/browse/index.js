@@ -202,7 +202,8 @@
     },
 
     checkResults: function () {
-      if (!this.page) this.$('.js-list').html(this.noResultsTemplate(this));
+      if (this.page) return this.$('.js-no-results').remove();
+      this.$('.js-list').html(this.noResultsTemplate(this));
     },
 
     clearAllFilters: function () {

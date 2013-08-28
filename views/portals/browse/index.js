@@ -8,11 +8,14 @@
   var $ = window.jQuery;
   var _ = window._;
   var async = window.async;
+  var jst = window.jst;
   var View = app.View;
 
   app.selectorViewMap['.js-osw-portals-browse'] =
   app.PortalsBrowseView = View.extend({
-    template: window.jst['portals/browse/index'],
+    template: jst['portals/browse/index'],
+
+    noResultsTemplate: jst['portals/browse/no-results'],
 
     page: 0,
 
@@ -26,6 +29,7 @@
       'keydown .js-search-input': 'searchKeydown',
       'change .js-search-input': 'updateQueryFilter',
       'click .js-matcher': 'matcherClick',
+      'click .js-clear-all-filters': 'clearAllFilters'
     },
 
     listeners: {
@@ -194,6 +198,18 @@
       this.page = 0;
       this.displayed.set();
       this.nextPage();
+      this.checkResults();
+    },
+
+    checkResults: function () {
+      if (!this.page) this.$('.js-list').html(this.noResultsTemplate(this));
+    },
+
+    clearAllFilters: function () {
+      this.$('.js-search-input').val('').change();
+      this.$('.js-umbrella-selector').select2('val', null, true);
+      this.$('.js-category-selector').select2('val', null, true);
+      this.$('.js-matcher').first().click();
     },
 
     nextPage: function () {

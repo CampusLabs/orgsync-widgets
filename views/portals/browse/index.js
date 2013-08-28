@@ -14,7 +14,7 @@
   app.PortalsBrowseView = View.extend({
     template: window.jst['portals/browse/index'],
 
-    page: 1,
+    page: 0,
 
     pageSize: 20,
 
@@ -47,6 +47,8 @@
       this.filtered = new app.Portal.Collection();
       this.displayed = new app.Portal.Collection();
       this.filters = {};
+      _.bindAll(this, 'updateFiltered', 'checkNext');
+      this.updateFiltered = _.debounce(this.updateFiltered);
       var self = this;
       this.fetch(function (er) {
         if (er) return self.$el.text('Load failed...');
@@ -191,14 +193,16 @@
       );
       this.page = 0;
       this.displayed.set();
-      while (this.nextPage() && this.needsPage()) true;
+      this.nextPage();
     },
 
     nextPage: function () {
-      if (this.displayed.length >= this.filtered.length) return false;
+      if (this.displayed.length >= this.filtered.length) return;
       this.displayed.set(this.filtered.first(++this.page * this.pageSize));
-      return true;
+      _.defer(this.checkNext);
     },
+
+    checkNext: function () { if (this.needsPage()) this.nextPage(); },
 
     needsPage: function () {
       var isWindow = this.$scrollParent[0] === window;

@@ -23,6 +23,7 @@
   var $ = window.jQuery;
   var _ = window._;
   var dpr = window.dpr;
+  var Olay = window.Olay;
 
   // Define our global namespace.
   var app = window.OrgSyncWidgets = {
@@ -42,9 +43,16 @@
     }
   };
 
+  window.Olay = _.inherit(window.Olay, {
+    constructor: function () {
+      Olay.apply(this, arguments);
+      this.$content.addClass('orgsync-widget');
+    }
+  });
+
   // Tell elementQuery to keep track of sizes for `.orgsync-widget`s
   window.elementQuery({
-    '.orgsync-widget': {'min-width': ['480px', '640px']}
+    '.orgsync-widget': {'min-width': ['480px', '640px', '800px', '960px']}
   });
 
   // Run the app's ready function when the DOM is parsed.

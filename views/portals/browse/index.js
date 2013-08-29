@@ -51,7 +51,7 @@
       _.bindAll(this, 'updateFiltered', 'checkNext');
       this.updateFiltered = _.debounce(this.updateFiltered);
       var self = this;
-      this.$el.text('Loading portals...');
+      this.$el.append($('<div>').addClass('js-loading'));
       this.portals.fetch({
         success: function () {
           self.portals.each(function (portal) {

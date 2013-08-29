@@ -6,7 +6,7 @@
     "backbone": "x",
     "backbone-relations": "x",
     "dpr": "x",
-    "elementQuery": "git://github.com/tysonmatanich/elementQuery#prod",
+    "elementQuery": "tysonmatanich/elementQuery#prod",
     "olay": "x",
     "jquery": "x",
     "select2": "x",

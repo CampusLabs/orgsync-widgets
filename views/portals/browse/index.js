@@ -200,10 +200,9 @@
 
     needsPage: function () {
       var isWindow = this.$scrollParent[0] === window;
-      var $el = isWindow ? $('body') : this.$scrollParent;
-      var aY = isWindow ? 0 : $el.offset().top;
+      var aY = isWindow ? 0 : this.$scrollParent.offset().top;
       var aH = this.$scrollParent.height();
-      var scroll = $el.scrollTop();
+      var scroll = (isWindow ? $(document) : this.$scrollParent).scrollTop();
       var $list = this.$('.js-list');
       var bY = $list.offset().top;
       var bH = $list.prop('scrollHeight');

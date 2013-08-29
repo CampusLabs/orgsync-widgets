@@ -179,8 +179,7 @@
     },
 
     checkResults: function () {
-      if (this.page) return this.$('.js-no-results').remove();
-      this.$('.js-list').html(this.noResultsTemplate(this));
+      if (!this.page) this.$('.js-list').html(this.noResultsTemplate(this));
     },
 
     clearAllFilters: function () {
@@ -192,6 +191,7 @@
 
     nextPage: function () {
       if (this.displayed.length >= this.filtered.length) return;
+      if (!this.page) this.views.portalList.$el.empty();
       this.displayed.set(this.filtered.first(++this.page * this.pageSize));
       _.defer(this.checkNext);
     },

@@ -7,7 +7,6 @@
 
   var $ = window.jQuery;
   var _ = window._;
-  var async = window.async;
   var jst = window.jst;
   var View = app.View;
 
@@ -20,8 +19,6 @@
     page: 0,
 
     pageSize: 20,
-
-    perPage: 100,
 
     events: {
       'change .js-umbrella-selector': 'updateUmbrellaFilter',
@@ -54,39 +51,19 @@
       _.bindAll(this, 'updateFiltered', 'checkNext');
       this.updateFiltered = _.debounce(this.updateFiltered);
       var self = this;
-      this.fetch(function (er) {
-        if (er) return self.$el.text('Load failed...');
-        self.portals.each(function (portal) {
-          if (portal.get('umbrella').id) return;
-          portal.set('umbrella', {id: -1, name: 'Umbrellas'});
-        });
-        self.community.set('umbrellas', self.portals.pluck('umbrella'));
-        self.community.set('categories', self.portals.pluck('category'));
-        self.render();
-      });
-    },
-
-    fetch: function (cb) {
-      if (this.portals.length) return cb();
-      var page = 0;
-      var done = false;
-      var portals = this.portals;
-      var perPage = this.perPage;
-      async.doUntil(
-        function (cb) {
-          portals.fetch({
-            remove: false,
-            success: function (__, data) {
-              if (data.length < perPage) done = true;
-              cb();
-            },
-            error: function (__, er) { cb(er); },
-            data: {per_page: perPage, page: ++page}
+      this.$el.text('Loading portals...');
+      this.portals.fetch({
+        success: function () {
+          self.portals.each(function (portal) {
+            if (portal.get('umbrella').id) return;
+            portal.set('umbrella', {id: -1, name: 'Umbrellas'});
           });
+          self.community.set('umbrellas', self.portals.pluck('umbrella'));
+          self.community.set('categories', self.portals.pluck('category'));
+          self.render();
         },
-        function () { return done; },
-        cb
-      );
+        error: function () { return self.$el.text('Load failed...'); }
+      });
     },
 
     render: function () {

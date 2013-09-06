@@ -44,28 +44,29 @@
       ));
       this.community = new app.Community({id: this.communityId});
       var bootstrapped = this.portals;
-      this.portals = this.community.get('portals').set(this.portals);
+      this.portals = this.community.get('portals').set(bootstrapped);
       this.portals.url = this.community.url() + '/portals';
       this.filtered = new app.Portal.Collection();
       this.displayed = new app.Portal.Collection();
       this.filters = {};
       _.bindAll(this, 'updateFiltered', 'checkNext');
       this.updateFiltered = _.debounce(this.updateFiltered);
-      if (bootstrapped) return;
-      var self = this;
+      if (bootstrapped) return this.fetchSuccess();
       this.$el.append($('<div>').addClass('js-loading'));
       this.portals.fetch({
-        success: function () {
-          self.portals.each(function (portal) {
-            if (portal.get('umbrella').id) return;
-            portal.set('umbrella', {id: -1, name: 'Umbrellas'});
-          });
-          self.community.set('umbrellas', self.portals.pluck('umbrella'));
-          self.community.set('categories', self.portals.pluck('category'));
-          self.render();
-        },
-        error: function () { return self.$el.text('Load failed...'); }
+        success: _.bind(this.fetchSuccess, this),
+        error: _.bind(this.$el.text, this.$el, 'Load failed...')
       });
+    },
+
+    fetchSuccess: function () {
+      this.portals.each(function (portal) {
+        if (portal.get('umbrella').id) return;
+        portal.set('umbrella', {id: -1, name: 'Umbrellas'});
+      });
+      this.community.set('umbrellas', this.portals.pluck('umbrella'));
+      this.community.set('categories', this.portals.pluck('category'));
+      this.render();
     },
 
     render: function () {

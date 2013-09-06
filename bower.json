@@ -8,7 +8,7 @@
     "dpr": "x",
     "elementQuery": "tysonmatanich/elementQuery#prod",
     "olay": "x",
-    "jquery": "x",
+    "jquery": "1.10.x",
     "select2": "x",
     "underscore": "x",
     "underscore.string": "x"

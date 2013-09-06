@@ -43,6 +43,7 @@
         'action'
       ));
       this.community = new app.Community({id: this.communityId});
+      var bootstrapped = this.portals;
       this.portals = this.community.get('portals').set(this.portals);
       this.portals.url = this.community.url() + '/portals';
       this.filtered = new app.Portal.Collection();
@@ -50,6 +51,7 @@
       this.filters = {};
       _.bindAll(this, 'updateFiltered', 'checkNext');
       this.updateFiltered = _.debounce(this.updateFiltered);
+      if (bootstrapped) return;
       var self = this;
       this.$el.append($('<div>').addClass('js-loading'));
       this.portals.fetch({

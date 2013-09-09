@@ -109,7 +109,8 @@
         var overflowY = $(parent).css('overflow-y');
         return overflowY === 'auto' || overflowY === 'scroll';
       }) || window);
-      this.$scrollParent.scroll(_.bind(this.listScroll, this));
+      this.$scrollParent.on('scroll', this.checkNext);
+      $(window).on('resize', this.checkNext);
       this.views.portalList = new app.ListView({
         el: $list,
         collection: this.displayed,
@@ -213,6 +214,10 @@
       return aY + aH + scroll > bY + bH - tolerance;
     },
 
-    listScroll: function () { if (this.needsPage()) this.nextPage(); }
+    remove: function () {
+      if (this.$scrollParent) this.$scrollParent.off('scroll', this.checkNext);
+      $(window).off('resize', this.checkNext);
+      return View.prototype.remove.apply(this, arguments);
+    }
   });
 })();

@@ -61,8 +61,7 @@
 
     fetchSuccess: function () {
       this.portals.each(function (portal) {
-        if (portal.get('umbrella').id) return;
-        portal.set('umbrella', {id: -1, name: 'Umbrellas'});
+        if (!portal.get('umbrella').id) portal.set('umbrella', portal);
       });
       this.community.set('umbrellas', this.portals.pluck('umbrella'));
       this.community.set('categories', this.portals.pluck('category'));
@@ -82,19 +81,38 @@
       this.renderSelector('category', 'categories');
     },
 
+    select2Option: function (singular, plural, name) {
+      if (!name || name === 'null') name = null;
+      var filters = _.clone(this.filters);
+      filters[singular] = name;
+      var count = this.filterPortals(filters).length;
+      var id = name;
+      if (!name) name = 'All ' + _.str.capitalize(plural);
+      return {id: id, text: name + ' (' + count + ')', count: count};
+    },
+
     renderSelector: function (singular, plural) {
       var models = this.community.get(plural);
       var $el = this.$('.js-' + singular + '-selector');
       if (models.length <= 1) return $el.hide();
+      var self = this;
       $el.select2({
-        data: _.map(models.reduce(function (data, model) {
-          var name = model.get('name');
-          if (!data[name]) data[name] = {id: name, text: name};
-          return data;
-        }, {}), _.identity),
-        placeholder: 'Filter by ' + _.str.capitalize(singular),
-        minimumResultsForSearch: 5,
-        allowClear: true
+        data: function () {
+          var filters = _.clone(self.filters);
+          filters[singular] = null;
+          return {results: _.map(models.reduce(function (data, model) {
+            var name = model.get('name');
+            if (data[name]) return data;
+            var option = self.select2Option(singular, plural, name);
+            if (!option.count) return data;
+            data[name] = option;
+            return data;
+          }, {null: self.select2Option(singular, plural)}), _.identity)};
+        },
+        minimumResultsForSearch: -1,
+        initSelection: function ($el, cb) {
+          cb(self.select2Option(singular, plural, $el.select2('val')));
+        }
       });
       var id = this[singular + 'Id'];
       if (!id) return;
@@ -160,23 +178,34 @@
       this.updateFiltered();
     },
 
+    filterPortals: function (filters) {
+      if (!filters) filters = this.filters;
+      var query = filters.query;
+      var umbrella = filters.umbrella;
+      var category = filters.category;
+      var matcher = filters.matcher;
+      return this.portals.filter(function (portal) {
+        return portal.matchesQuery(query) &&
+          (!umbrella || portal.get('umbrella').get('name') === umbrella) &&
+          (!category || portal.get('category').get('name') === category) &&
+          (!matcher || matcher.test(portal.get('name') || ''));
+      });
+    },
+
     updateFiltered: function () {
-      var query = this.filters.query;
-      var umbrella = this.filters.umbrella;
-      var category = this.filters.category;
-      var matcher = this.filters.matcher;
-      this.filtered.set(
-        this.portals.filter(function (portal) {
-          return portal.matchesQuery(query) &&
-            (!umbrella || portal.get('umbrella').get('name') === umbrella) &&
-            (!category || portal.get('category').get('name') === category) &&
-            (!matcher || matcher.test(portal.get('name') || ''));
-        })
-      );
+      this.filtered.set(this.filterPortals());
+      this.updateCounts();
       this.page = 0;
       this.displayed.set();
       this.nextPage();
       this.checkResults();
+    },
+
+    updateCounts: function () {
+      this.$('.js-umbrella-selector, .js-category-selector').each(function () {
+        var $self = $(this);
+        $self.select2('val', $self.select2('val') || 'null');
+      });
     },
 
     checkResults: function () {
@@ -190,7 +219,7 @@
         break;
       case 'umbrella':
       case 'category':
-        this.$('.js-' + filter + '-selector').select2('val', null, true);
+        this.$('.js-' + filter + '-selector').select2('val', 'null', true);
         break;
       case 'matcher':
         this.$('.js-matcher').first().click();

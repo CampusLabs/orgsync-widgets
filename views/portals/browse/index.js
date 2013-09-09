@@ -16,6 +16,8 @@
 
     noResultsTemplate: jst['portals/browse/no-results'],
 
+    resultsSummaryTemplate: jst['portals/browse/results-summary'],
+
     page: 0,
 
     pageSize: 20,
@@ -25,8 +27,9 @@
       'change .js-category-selector': 'updateCategoryFilter',
       'keydown .js-search-input': 'searchKeydown',
       'change .js-search-input': 'updateQueryFilter',
-      'click .js-matcher': 'matcherClick',
-      'click .js-clear-all-filters': 'clearAllFilters'
+      'click .js-letter': 'letterClick',
+      'click .js-clear-all-filters': 'clearAllFilters',
+      'click .js-clear-filter': 'clickClearFilter'
     },
 
     listeners: {
@@ -48,7 +51,12 @@
       this.portals.url = this.community.url() + '/portals';
       this.filtered = new app.Portal.Collection();
       this.displayed = new app.Portal.Collection();
-      this.filters = {};
+      this.filters = {
+        query: null,
+        umbrella: null,
+        category: null,
+        letter: null
+      };
       _.bindAll(this, 'updateFiltered', 'checkNext');
       this.updateFiltered = _.debounce(this.updateFiltered);
       if (bootstrapped) return this.fetchSuccess();
@@ -163,18 +171,18 @@
       this.updateFiltered();
     },
 
-    matcherClick: function (ev) {
+    letterClick: function (ev) {
       var str = $(ev.currentTarget)
         .addClass('js-selected')
         .siblings()
         .removeClass('js-selected')
         .end()
         .data('re');
-      this.setMatcher(str ? new RegExp('^' + str, 'i') : null);
+      this.setletter(str ? new RegExp('^' + str, 'i') : null);
     },
 
-    setMatcher: function (re) {
-      this.filters.matcher = re;
+    setletter: function (re) {
+      this.filters.letter = re;
       this.updateFiltered();
     },
 
@@ -183,18 +191,19 @@
       var query = filters.query;
       var umbrella = filters.umbrella;
       var category = filters.category;
-      var matcher = filters.matcher;
+      var letter = filters.letter;
       return this.portals.filter(function (portal) {
         return portal.matchesQuery(query) &&
           (!umbrella || portal.get('umbrella').get('name') === umbrella) &&
           (!category || portal.get('category').get('name') === category) &&
-          (!matcher || matcher.test(portal.get('name') || ''));
+          (!letter || letter.test(portal.get('name') || ''));
       });
     },
 
     updateFiltered: function () {
       this.filtered.set(this.filterPortals());
       this.updateCounts();
+      this.updateResultsSummary();
       this.page = 0;
       this.displayed.set();
       this.nextPage();
@@ -208,8 +217,23 @@
       });
     },
 
+    updateResultsSummary: function () {
+      var filters = _.reduce(this.filters, function (filters, val, filter) {
+        if (val) filters[filter] = val;
+        return filters;
+      }, {});
+      this.$('.js-results-summary').html(this.resultsSummaryTemplate({
+        filters: filters,
+        count: this.filtered.length
+      }));
+    },
+
     checkResults: function () {
       if (!this.page) this.$('.js-list').html(this.noResultsTemplate(this));
+    },
+
+    clickClearFilter: function (ev) {
+      this.clearFilter($(ev.currentTarget).data('filter'));
     },
 
     clearFilter: function (filter) {
@@ -221,8 +245,8 @@
       case 'category':
         this.$('.js-' + filter + '-selector').select2('val', 'null', true);
         break;
-      case 'matcher':
-        this.$('.js-matcher').first().click();
+      case 'letter':
+        this.$('.js-letter').first().click();
       }
     },
 

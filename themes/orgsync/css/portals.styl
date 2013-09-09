@@ -6,7 +6,7 @@
   .search-input
   .umbrella-selector
   .category-selector
-  .matchers
+  .letters
     margin 5px 0
   .search-input
     outline 0
@@ -42,8 +42,39 @@
     font-weight bold
     font-size 14px
     color #333
-  .matchers
+  .letters
     display none
+  .results-summary
+    margin 15px 0 5px
+    .active-filter
+      display inline-block
+      background #3872a7
+      vertical-align middle
+      border-radius 3px
+      border 1px solid #00578F
+    .filter-name
+    .filter-value
+      display inline-block
+      padding 5px
+      color #fff
+      text-shadow 0 1px 1px rgba(0, 0, 0, .75);
+      word-break break-all
+    .filter-name
+      border-radius left 3px
+      font-weight bold
+      background #00578F
+    .clear-filter
+      background none
+      border none
+      padding-left 0
+      color #00578F
+      font-weight bold
+      border-radius right 3px
+      &:hover
+      &:active
+        background none
+        box-shadow none
+        color #fff
   .list
     margin-top 5px
   .list-item
@@ -128,9 +159,9 @@
   .search-input
   .umbrella-selector:not(.select2-dropdown-open) .select2-choice
     border-right-width 0
-  .matchers
+  .letters
     display block
-    .matcher
+    .letter
       padding 5px 0
       width 3.25%
       box-sizing border-box

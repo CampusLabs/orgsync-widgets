@@ -37,8 +37,8 @@
       this.$el.addClass('orgsync-widget osw-portals-browse');
       _.extend(this, _.pick(_.extend({}, this.$el.data(), options),
         'communityId',
-        'umbrellaName',
-        'categoryName',
+        'umbrella',
+        'category',
         'portals',
         'action'
       ));
@@ -141,8 +141,7 @@
     },
 
     updateSelectorFilter: function (key) {
-      this.filters[key + 'Name'] =
-        this.$('.js-' + key + '-selector').select2('val');
+      this.filters[key] = this.$('.js-' + key + '-selector').select2('val');
       this.updateFiltered();
     },
 
@@ -163,16 +162,14 @@
 
     updateFiltered: function () {
       var query = this.filters.query;
-      var umbrellaName = this.filters.umbrellaName;
-      var categoryName = this.filters.categoryName;
+      var umbrella = this.filters.umbrella;
+      var category = this.filters.category;
       var matcher = this.filters.matcher;
       this.filtered.set(
         this.portals.filter(function (portal) {
           return portal.matchesQuery(query) &&
-            (!umbrellaName ||
-              portal.get('umbrella').get('name') === umbrellaName) &&
-            (!categoryName ||
-              portal.get('category').get('name') === categoryName) &&
+            (!umbrella || portal.get('umbrella').get('name') === umbrella) &&
+            (!category || portal.get('category').get('name') === category) &&
             (!matcher || matcher.test(portal.get('name') || ''));
         })
       );
@@ -186,11 +183,22 @@
       if (!this.page) this.$('.js-list').html(this.noResultsTemplate(this));
     },
 
+    clearFilter: function (filter) {
+      switch (filter) {
+      case 'query':
+        this.$('.js-search-input').val('').change();
+        break;
+      case 'umbrella':
+      case 'category':
+        this.$('.js-' + filter + '-selector').select2('val', null, true);
+        break;
+      case 'matcher':
+        this.$('.js-matcher').first().click();
+      }
+    },
+
     clearAllFilters: function () {
-      this.$('.js-search-input').val('').change();
-      this.$('.js-umbrella-selector').select2('val', null, true);
-      this.$('.js-category-selector').select2('val', null, true);
-      this.$('.js-matcher').first().click();
+      _.each(_.keys(this.filters), this.clearFilter, this);
     },
 
     nextPage: function () {

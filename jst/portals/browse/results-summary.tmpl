@@ -1,22 +1,18 @@
-<% if (_.size(o.filters)) { %>
-  Showing <%= o.count %> portals matching
-  <% _.each(o.filters, function (val, name) { %>
-    <% if (name === 'letter') { %>
-      <% val = val.toString()[2]; %>
-      <% if (val === '[') val = 'Other'; %>
-    <% } %>
-  <span class='active-filter'>
-    <span class='filter-name'><%= _.str.capitalize(name) %></span
-    ><span class='filter-value'><%- val %></span
-    ><input
-      type='button'
-      class='js-clear-filter clear-filter'
-      data-filter='<%= name %>'
-      value='X'
-    >
-  </span>
-  <% }); %>
-  <input type='button' class='js-clear-all-filters' value='Clear All Filters'>
-<% } else { %>
-  Showing all <%= o.count %> portals.
-<% } %>
+Showing <%= o.count %> portals matching
+<% _.each(o.filters, function (val, name) { %>
+  <% if (name === 'letter') { %>
+    <% val = val.toString()[2]; %>
+    <% if (val === '[') val = 'Other'; %>
+  <% } %>
+<span class='active-filter'>
+  <span class='filter-name'><%= _.str.capitalize(name) %></span
+  ><span class='filter-value'><%- val %></span
+  ><input
+    type='button'
+    class='js-clear-filter clear-filter'
+    data-filter='<%= name %>'
+    value='X'
+  >
+</span>
+<% }); %>
+<input type='button' class='js-clear-all-filters' value='Clear All Filters'>

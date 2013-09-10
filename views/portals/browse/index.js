@@ -222,10 +222,12 @@
         if (val) filters[filter] = val;
         return filters;
       }, {});
-      this.$('.js-results-summary').html(this.resultsSummaryTemplate({
-        filters: filters,
-        count: this.filtered.length
-      }));
+      this.$('.js-results-summary')
+        .toggleClass('js-hidden', !_.size(filters))
+        .html(this.resultsSummaryTemplate({
+          filters: filters,
+          count: this.filtered.length
+        }));
     },
 
     checkResults: function () {

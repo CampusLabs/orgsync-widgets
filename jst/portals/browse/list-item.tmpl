@@ -1,10 +1,14 @@
-<% var name = o.model.get('name'); %>
-<% var fittedName = name.length > 80 ? o.model.get('short_name') : name; %>
+<%
+var name = o.model.get('name');
+var fittedName = name.length > 80 ? o.model.get('short_name') : name;
+var umbrella =
+  o.model.isUmbrella() ? 'Umbrella' : o.model.get('umbrella').get('name');
+%>
 <a href='<%- o.model.orgsyncUrl() %>' tabindex='1'>
   <img src='<%- o.model.picture() %>' alt='<%- name %>'>
   <div class='info'>
     <div class='name'><%- fittedName %></div>
-    <div class='umbrella'><%- o.model.get('umbrella').get('name') %></div>
+    <div class='umbrella'><%- umbrella %></div>
     <div class='category'><%- o.model.get('category').get('name') %></div>
   </div>
 </a>

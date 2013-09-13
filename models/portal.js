@@ -55,8 +55,13 @@
 
     url: '/portals',
 
-    comparator: function (portal) {
-      return (portal.get('name') || '').toLowerCase();
+    comparator: function (a, b) {
+      var aName = (a.get('name') || '').toLowerCase();
+      var bName = (b.get('name') || '').toLowerCase();
+      var aIsUmbrella = a.isUmbrella();
+      var bIsUmbrella = b.isUmbrella();
+      if (aIsUmbrella === bIsUmbrella) return aName < bName ? -1 : 1;
+      return aIsUmbrella ? -1 : 1;
     }
   });
 })();

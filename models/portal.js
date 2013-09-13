@@ -42,6 +42,11 @@
 
     orgsyncUrl: function () {
       return 'https://orgsync.com/' + this.id + '/chapter';
+    },
+
+    isUmbrella: function () {
+      var id = this.get('umbrella').id;
+      return !id || id === this.id;
     }
   });
 

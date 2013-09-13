@@ -69,7 +69,7 @@
 
     fetchSuccess: function () {
       this.portals.each(function (portal) {
-        if (!portal.get('umbrella').id) portal.set('umbrella', portal);
+        if (portal.isUmbrella()) portal.set('umbrella', portal);
       });
       this.community.set('umbrellas', this.portals.pluck('umbrella'));
       this.community.set('categories', this.portals.pluck('category'));

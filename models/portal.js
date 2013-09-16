@@ -47,6 +47,10 @@
     isUmbrella: function () {
       var id = this.get('umbrella').id;
       return !id || id === this.id;
+    },
+
+    umbrellaName: function () {
+      return this.isUmbrella() ? 'Umbrella' : this.get('umbrella').get('name');
     }
   });
 

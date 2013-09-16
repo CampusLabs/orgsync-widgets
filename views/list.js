@@ -3,20 +3,41 @@
 (function () {
   'use strict';
 
-  var $ = window.jQuery;
-  var _ = window._;
   var app = window.OrgSyncWidgets;
 
-  app.ListView = app.View.extend({
+  var $ = window.jQuery;
+  var _ = window._;
+  var View = app.View;
+
+  app.ListView = View.extend({
+    page: 0,
+
+    pageSize: 20,
+
     initialize: function (options) {
-      app.View.prototype.initialize.apply(this, arguments);
+      View.prototype.initialize.apply(this, arguments);
+      _.extend(this, _.pick(
+        options,
+        'modelView',
+        'modelViewOptions',
+        'infiniteScroll',
+        'tolerance',
+        'pageSize'
+      ));
+      if (this.infiniteScroll) {
+        _.bindAll(this, 'nextPage');
+        this.$scrollParent().on('scroll', this.nextPage);
+        $(window).on('resize', this.nextPage);
+        this.available = this.collection;
+        this.collection = new this.available.constructor();
+      }
       this.listenTo(this.collection, {
         add: this.addModel,
         sort: this.sortModels,
         remove: this.removeModel
       });
-      _.extend(this, _.pick(options, 'modelView', 'modelViewOptions'));
       this.collection.each(this.addModel, this);
+      if (this.infiniteScroll) this.refresh();
     },
 
     addModel: function (model) {
@@ -44,6 +65,54 @@
 
     removeModel: function (model) {
       delete this.views[model.cid];
+    },
+
+    $scrollParent: function () {
+      if (this._$scrollParent) return this._$scrollParent;
+      var parents = [this.el].concat(this.$el.parents().toArray());
+      return this._$scrollParent = $(_.find(parents, function (parent) {
+        var overflowY = $(parent).css('overflow-y');
+        return overflowY === 'auto' || overflowY === 'scroll';
+      }) || window);
+    },
+
+    nextPage: function () {
+      if (this.needsPage() && this.collection.length < this.available.length) {
+        if (!this.page) this.$el.empty();
+        this.collection.add(
+          this.available.models.slice(
+            this.page * this.pageSize,
+            ++this.page * this.pageSize
+          )
+        );
+        _.defer(this.nextPage);
+      }
+    },
+
+    needsPage: function () {
+      var $scrollParent = this.$scrollParent();
+      var isWindow = $scrollParent[0] === window;
+      var aY = isWindow ? 0 : $scrollParent.offset().top;
+      var aH = $scrollParent.height();
+      var scroll = (isWindow ? $(document) : $scrollParent).scrollTop();
+      var bY = this.$el.offset().top;
+      var bH = this.$el.prop('scrollHeight');
+      var tolerance = this.tolerance || this.$el.children().first().height();
+      return aY + aH + scroll > bY + bH - tolerance;
+    },
+
+    refresh: function () {
+      this.page = 0;
+      this.collection.set();
+      this.nextPage();
+    },
+
+    remove: function () {
+      if (this.infiniteScroll) {
+        this.$scrollParent().off('scroll', this.nextPage);
+        $(window).off('resize', this.nextPage);
+      }
+      return View.prototype.remove.apply(this, arguments);
     }
   });
 })();

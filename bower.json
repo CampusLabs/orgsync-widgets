@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "devDependencies": {
     "async": "x",
-    "backbone": "x",
+    "backbone": "jashkenas/backbone#master",
     "backbone-relations": "x",
     "dpr": "x",
     "elementQuery": "tysonmatanich/elementQuery#prod",
@@ -20,5 +20,8 @@
     "node_modules",
     "themes",
     "views"
-  ]
+  ],
+  "resolutions": {
+    "backbone": "master"
+  }
 }

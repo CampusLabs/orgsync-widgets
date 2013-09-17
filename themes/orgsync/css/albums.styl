@@ -3,27 +3,23 @@
 .osw-albums-browse
   .album-list-item
     position relative
-    display inline-block
     box-sizing border-box
-    padding 20px
+    padding 20px 20px 0
     cursor pointer
-    perspective 500px
-    width 25%
     vertical-align top
     .js-stack-container
       position relative
     &:hover
+      color #0076a3
       img
-        box-shadow 0 3px 10px #48c
-        &:last-child
-          transform translate3d(0, 0, 20px)
+        box-shadow 0 3px 10px #0076a3
         &:not(:last-child)
           &:nth-child(1)
-            transform translate3d(0, 0, 10px) rotate(3deg)
+            transform translate(6px, -4px) rotate(3deg)
           &:nth-child(2)
-            transform translate3d(0, 0, 10px) rotate(-4deg)
+            transform translate(3px, 5px) rotate(-4deg)
           &:nth-child(3)
-            transform translate3d(0, 0, 10px) rotate(5deg)
+            transform translate(-4px, -5px) rotate(5deg)
     img
       width 100%
       position relative
@@ -48,3 +44,16 @@
       text-align center
       &:after
         content ' Photos'
+.osw-albums-browse[min-width~='480px']
+  .album-list-item
+    display inline-block
+    width 50%
+.osw-albums-browse[min-width~='640px']
+  .album-list-item
+    width 33.3%
+.osw-albums-browse[min-width~='800px']
+  .album-list-item
+    width 25%
+.osw-albums-browse[min-width~='960px']
+  .album-list-item
+    width 20%

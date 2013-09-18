@@ -1,14 +1,12 @@
 @import 'config'
 
 .osw-albums-browse
-  .album-list-item
+  .list-item
     position relative
     box-sizing border-box
-    padding 20px 20px 0
+    padding 20px
     cursor pointer
     vertical-align top
-    .js-stack-container
-      position relative
     &:hover
       color #0076a3
       img
@@ -20,13 +18,15 @@
             transform translate(3px, 5px) rotate(-4deg)
           &:nth-child(3)
             transform translate(-4px, -5px) rotate(5deg)
+    .js-stack-container
+      position relative
     img
       width 100%
       position relative
       border 5px solid #fff
       box-shadow 0 1px 3px rgba(0, 0, 0, .5)
       vertical-align bottom
-      transition .1s all ease-in-out
+      transition all .1s ease-in-out
       &:not(:last-child)
         position absolute
         &:nth-child(1)
@@ -45,15 +45,15 @@
       &:after
         content ' Photos'
 .osw-albums-browse[min-width~='480px']
-  .album-list-item
+  .list-item
     display inline-block
     width 50%
 .osw-albums-browse[min-width~='640px']
-  .album-list-item
+  .list-item
     width 33.3%
 .osw-albums-browse[min-width~='800px']
-  .album-list-item
+  .list-item
     width 25%
 .osw-albums-browse[min-width~='960px']
-  .album-list-item
+  .list-item
     width 20%

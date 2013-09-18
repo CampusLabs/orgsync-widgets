@@ -1,0 +1,3 @@
+<img src='<%- o.model.get('thumbnail_url') %>'>
+<% var count = o.model.get('comments_count') %>
+<div class='comment-count<%- count ? '' : ' no-comments' %>'><%- count %></div>

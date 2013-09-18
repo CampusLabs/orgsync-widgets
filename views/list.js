@@ -12,7 +12,9 @@
   app.ListView = View.extend({
     page: 0,
 
-    pageSize: 20,
+    pageSize: 10,
+
+    tolerance: 250,
 
     initialize: function (options) {
       View.prototype.initialize.apply(this, arguments);
@@ -92,13 +94,12 @@
     needsPage: function () {
       var $scrollParent = this.$scrollParent();
       var isWindow = $scrollParent[0] === window;
-      var aY = isWindow ? 0 : $scrollParent.offset().top;
       var aH = $scrollParent.height();
       var scroll = (isWindow ? $(document) : $scrollParent).scrollTop();
-      var bY = this.$el.offset().top;
+      var bY = this.$el[isWindow ? 'offset' : 'position']().top;
       var bH = this.$el.prop('scrollHeight');
-      var tolerance = this.tolerance || this.$el.children().first().height();
-      return aY + aH + scroll > bY + bH - tolerance;
+      var tolerance = this.tolerance;
+      return aH + scroll > bY + bH - tolerance;
     },
 
     refresh: function () {

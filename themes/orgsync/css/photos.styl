@@ -1,0 +1,55 @@
+@import 'config'
+
+.osw-photos-browse
+  text-align left
+  .list-item
+    position relative
+    padding 10px
+    cursor pointer
+    box-sizing border-box
+    img
+      display block
+      position relative
+      width 100%
+      box-shadow 0 1px 10px rgba(0, 0, 0, .75)
+      &:hover
+        box-shadow 0 1px 10px #0076a3
+    .no-comments
+      display none
+    .comment-count
+      position absolute
+      right 10px
+      bottom 10px
+      color #fff
+      text-shadow 0 1px 2px rgba(0, 0, 0, .75)
+      padding 5px 10px
+      background rgba(0, 118, 163, .75)
+.osw-photos-browse[min-width~='480px']
+  .list-item
+    display inline-block
+    width 50%
+.osw-photos-browse[min-width~='640px']
+  .list-item
+    width 33.3%
+.osw-photos-browse[min-width~='800px']
+  .list-item
+    width 25%
+.osw-photos-browse[min-width~='960px']
+  .list-item
+    width 20%
+.osw-photos-browse-olay
+  .js-olay-content
+    display block
+    background none
+    box-shadow none
+    border-radius 0
+    max-width none
+.osw-photos-show
+  img
+    display block
+    max-width 100%
+.osw-photos-show-olay
+  .js-olay-content
+    background none
+    max-width none
+    border-radius 0

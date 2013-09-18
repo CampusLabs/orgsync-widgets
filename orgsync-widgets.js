@@ -27,7 +27,7 @@
 
   // Define our global namespace.
   var app = window.OrgSyncWidgets = {
-    api: new window.OrgSyncApi({cors: false, key: localStorage.apiKey}),
+    api: new window.OrgSyncApi({cors: false}),
 
     // Views will add themselves to this map with their corresponding selectors.
     // i.e. {'.js-osw-browse-portals': app.BrowsePortalsView}

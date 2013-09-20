@@ -10,14 +10,14 @@
   var jst = window.jst;
   var View = app.View;
 
-  app.selectorViewMap['.js-osw-albums-browse'] =
-  app.AlbumsBrowseView = View.extend({
-    template: jst['albums/browse/index'],
+  app.selectorViewMap['.js-osw-albums-index'] =
+  app.AlbumsIndexView = View.extend({
+    template: jst['albums/index/index'],
 
-    noResultsTemplate: jst['albums/browse/no-results'],
+    noResultsTemplate: jst['albums/index/no-results'],
 
     initialize: function (options) {
-      this.$el.addClass('orgsync-widget osw-albums-browse');
+      this.$el.addClass('orgsync-widget osw-albums-index');
       _.extend(this, _.pick(_.extend({}, this.$el.data(), options),
         'portalId'
       ));
@@ -39,7 +39,7 @@
     renderAlbumList: function () {
       this.views.albumList = new app.ListView({
         el: this.$('.js-list'),
-        modelView: app.AlbumsBrowseListItemView,
+        modelView: app.AlbumsIndexListItemView,
         collection: this.albums,
         infiniteScroll: true
       });

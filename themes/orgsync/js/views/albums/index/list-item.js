@@ -6,10 +6,10 @@
   var $ = app.jQuery;
   var _ = app._;
 
-  var AlbumsBrowseListItemView = app.AlbumsBrowseListItemView;
-  var render = AlbumsBrowseListItemView.prototype.render;
+  var AlbumsIndexListItemView = app.AlbumsIndexListItemView;
+  var render = AlbumsIndexListItemView.prototype.render;
 
-  AlbumsBrowseListItemView.prototype.render = function () {
+  AlbumsIndexListItemView.prototype.render = function () {
     render.apply(this, arguments);
     var $img = this.$('img').wrap($('<div>').addClass('js-stack-container'));
     $img.before(_.times(3, _.bind($img.clone, $img)));

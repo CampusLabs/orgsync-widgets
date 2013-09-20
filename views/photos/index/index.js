@@ -10,14 +10,14 @@
   var jst = window.jst;
   var View = app.View;
 
-  app.selectorViewMap['.js-osw-photos-browse'] =
-  app.PhotosBrowseView = View.extend({
-    template: jst['photos/browse/index'],
+  app.selectorViewMap['.js-osw-photos-index'] =
+  app.PhotosIndexView = View.extend({
+    template: jst['photos/index/index'],
 
-    noResultsTemplate: jst['photos/browse/no-results'],
+    noResultsTemplate: jst['photos/index/no-results'],
 
     initialize: function (options) {
-      this.$el.addClass('orgsync-widget osw-photos-browse');
+      this.$el.addClass('orgsync-widget osw-photos-index');
       _.extend(this, _.pick(_.extend({}, this.$el.data(), options),
         'album',
         'albumId'
@@ -40,7 +40,7 @@
     renderPhotoList: function () {
       this.views.photoList = new app.ListView({
         el: this.$('.js-list'),
-        modelView: app.PhotosBrowseListItemView,
+        modelView: app.PhotosIndexListItemView,
         collection: this.photos,
         infiniteScroll: true
       });

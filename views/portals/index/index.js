@@ -10,13 +10,13 @@
   var jst = window.jst;
   var View = app.View;
 
-  app.selectorViewMap['.js-osw-portals-browse'] =
-  app.PortalsBrowseView = View.extend({
-    template: jst['portals/browse/index'],
+  app.selectorViewMap['.js-osw-portals-index'] =
+  app.PortalsIndexView = View.extend({
+    template: jst['portals/index/index'],
 
-    noResultsTemplate: jst['portals/browse/no-results'],
+    noResultsTemplate: jst['portals/index/no-results'],
 
-    resultsSummaryTemplate: jst['portals/browse/results-summary'],
+    resultsSummaryTemplate: jst['portals/index/results-summary'],
 
     events: {
       'change .js-umbrella-selector': 'updateUmbrellaFilter',
@@ -29,7 +29,7 @@
     },
 
     initialize: function (options) {
-      this.$el.addClass('orgsync-widget osw-portals-browse');
+      this.$el.addClass('orgsync-widget osw-portals-index');
       _.extend(this, _.pick(_.extend({}, this.$el.data(), options),
         'communityId',
         'umbrella',
@@ -123,7 +123,7 @@
       this.views.portalList = new app.ListView({
         el: this.$('.js-list'),
         collection: this.filtered,
-        modelView: app.PortalsBrowseListItemView,
+        modelView: app.PortalsIndexListItemView,
         modelViewOptions: {action: this.action},
         infiniteScroll: true,
         pageSize: 20

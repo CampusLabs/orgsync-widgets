@@ -30,7 +30,7 @@
     api: new window.OrgSyncApi({cors: false}),
 
     // Views will add themselves to this map with their corresponding selectors.
-    // i.e. {'.js-osw-browse-portals': app.BrowsePortalsView}
+    // i.e. {'.js-osw-index-portals': app.IndexPortalsView}
     selectorViewMap: {},
 
     // In the ready function, run through the selectorViewMap and initialize

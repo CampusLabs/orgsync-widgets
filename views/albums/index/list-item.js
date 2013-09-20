@@ -11,12 +11,12 @@
   var Olay = window.Olay;
   var View = app.View;
 
-  app.AlbumsBrowseListItemView = View.extend({
+  app.AlbumsIndexListItemView = View.extend({
     tagName: 'li',
 
     className: 'js-list-item list-item',
 
-    template: window.jst['albums/browse/list-item'],
+    template: window.jst['albums/index/list-item'],
 
     events: {
       'click': 'open'
@@ -29,13 +29,13 @@
     open: function () {
       if (this.olay) return this.olay.show();
       (this.olay = new Olay(
-        (this.views.photosBrowse = new app.PhotosBrowseView({
+        (this.views.photosIndex = new app.PhotosIndexView({
           album: this.model
         })).$el.on('olay:show', function () {
           $(this).closest('.js-olay-container').scrollTop(0);
           _.defer(elementQuery);
         }), {preserve: true}
-      )).show().$container.addClass('osw-photos-browse-olay');
+      )).show().$container.addClass('osw-photos-index-olay');
     }
   });
 })();

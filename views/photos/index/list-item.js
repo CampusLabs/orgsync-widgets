@@ -8,12 +8,12 @@
   var Olay = window.Olay;
   var View = app.View;
 
-  app.PhotosBrowseListItemView = View.extend({
+  app.PhotosIndexListItemView = View.extend({
     tagName: 'li',
 
     className: 'js-list-item list-item',
 
-    template: window.jst['photos/browse/list-item'],
+    template: window.jst['photos/index/list-item'],
 
     events: {
       'click': 'open'

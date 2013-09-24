@@ -6,6 +6,7 @@
 //= require backbone/backbone
 //= require backbone-relations/backbone-relations
 //= require select2/select2.js
+//= require moment/moment.js
 //= require olay/olay.js
 //= require async/lib/async
 //= require orgsync-javascript-api/orgsync-javascript-api

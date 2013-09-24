@@ -24,6 +24,13 @@
       'pageSize'
     ],
 
+    listeners: {
+      available: {
+        add: 'nextPage',
+        sort: 'refresh'
+      }
+    },
+
     initialize: function () {
       View.prototype.initialize.apply(this, arguments);
       if (this.infiniteScroll) {

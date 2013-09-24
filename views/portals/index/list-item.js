@@ -5,7 +5,6 @@
 
   var app = window.OrgSyncWidgets;
 
-  var _ = window._;
   var Olay = window.Olay;
   var View = app.View;
 
@@ -24,10 +23,7 @@
       model: {remove: 'checkRemove'}
     },
 
-    initialize: function (options) {
-      View.prototype.initialize.apply(this, arguments);
-      _.extend(this, _.pick(options, 'action'));
-    },
+    options: ['action'],
 
     open: function (ev) {
       if (this.action === 'redirect') return;

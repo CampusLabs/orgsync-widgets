@@ -11,7 +11,8 @@
 
   AlbumsIndexListItemView.prototype.render = function () {
     render.apply(this, arguments);
-    var $img = this.$('img').wrap($('<div>').addClass('js-stack-container'));
+    var $img = this.$('.image-container')
+      .wrap($('<div>').addClass('js-stack-container'));
     $img.before(_.times(3, _.bind($img.clone, $img)));
     return this;
   };

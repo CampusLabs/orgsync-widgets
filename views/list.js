@@ -16,16 +16,16 @@
 
     tolerance: 250,
 
-    initialize: function (options) {
+    options: [
+      'modelView',
+      'modelViewOptions',
+      'infiniteScroll',
+      'tolerance',
+      'pageSize'
+    ],
+
+    initialize: function () {
       View.prototype.initialize.apply(this, arguments);
-      _.extend(this, _.pick(
-        options,
-        'modelView',
-        'modelViewOptions',
-        'infiniteScroll',
-        'tolerance',
-        'pageSize'
-      ));
       if (this.infiniteScroll) {
         _.bindAll(this, 'nextPage');
         this.$scrollParent().on('scroll', this.nextPage);
@@ -78,8 +78,9 @@
       }) || window);
     },
 
-    nextPage: function () {
-      if (this.needsPage() && this.collection.length < this.available.length) {
+    nextPage: function (force) {
+      var needsPage = force === true || this.needsPage();
+      if (needsPage && this.collection.length < this.available.length) {
         if (!this.page) this.$el.empty();
         this.collection.add(
           this.available.models.slice(

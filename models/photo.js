@@ -11,6 +11,10 @@
     relations: {
       album: {hasOne: 'Album', fk: 'album_id'},
       comments: {hasMany: 'Comment', fk: 'photo_id'}
+    },
+
+    orgsyncUrl: function () {
+      return this.get('album').orgsyncUrl() + '/photo/' + this.id;
     }
   });
 

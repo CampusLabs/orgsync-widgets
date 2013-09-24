@@ -19,23 +19,45 @@
     template: window.jst['albums/index/list-item'],
 
     events: {
-      'click': 'open'
+      click: 'select'
     },
 
-    fetched: function () {
-      return this.model.get('photo_count') !== this.model.get('photos').length;
+    listeners: {
+      model: {'change:selected': 'toggleOlay'}
     },
 
-    open: function () {
-      if (this.olay) return this.olay.show();
-      (this.olay = new Olay(
-        (this.views.photosIndex = new app.PhotosIndexView({
-          album: this.model
-        })).$el.on('olay:show', function () {
-          $(this).closest('.js-olay-container').scrollTop(0);
-          _.defer(elementQuery);
-        }), {preserve: true}
-      )).show().$container.addClass('osw-photos-index-olay');
+    options: ['portalId', 'action'],
+
+    select: function () {
+      if (this.action === 'redirect') return;
+      this.collection.each(function (album) {
+        album.set('selected', album === this.model);
+      }, this);
+      return false;
+    },
+
+    toggleOlay: function () {
+      var album = this.model;
+      var selected = album.get('selected');
+      if (selected || this.olay) {
+        if (!this.olay) {
+          (this.views.photosIndex = new app.PhotosIndexView({album: album})).$el
+            .addClass('js-olay-hide')
+            .on('olay:show', function () {
+              $(this).closest('.js-olay-container').scrollTop(0);
+              _.defer(elementQuery);
+            })
+            .on('olay:hide', function () { album.set('selected', false); });
+          (this.olay = new Olay(this.views.photosIndex.$el, {preserve: true}))
+            .$container.addClass('osw-photos-index-olay');
+        }
+        this.olay[selected ? 'show' : 'hide']();
+      }
+    },
+
+    remove: function () {
+      if (this.olay) this.olay.destroy();
+      return View.prototype.remove.apply(this, arguments);
     }
   });
 })();

@@ -1,3 +1,7 @@
-<img src='<%- o.model.get('cover_photo') %>'>
-<div class='name'><%- o.model.get('name') %></div>
-<div class='count'><%- o.model.get('photo_count') %></div>
+<a href='<%- o.model.orgsyncUrl() %>' tabindex='1'>
+  <div class='image-container'>
+    <img src='<%- o.model.get('cover_photo') %>'>
+  </div>
+  <div class='name'><%- o.model.get('name') %></div>
+  <div class='count'><%- o.model.get('photo_count') %></div>
+</a>

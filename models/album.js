@@ -11,6 +11,11 @@
     relations: {
       portal: {hasOne: 'Portal', fk: 'portal_id'},
       photos: {hasMany: 'Photo', fk: 'album_id'}
+    },
+
+    orgsyncUrl: function () {
+      return 'https://orgsync.com/' + this.get('portal').id +
+        '/photos/albums/' + this.id;
     }
   });
 

@@ -28,15 +28,17 @@
       'click .js-clear-filter': 'clickClearFilter'
     },
 
-    initialize: function (options) {
+    options: [
+      'communityId',
+      'umbrella',
+      'category',
+      'portals',
+      'action'
+    ],
+
+    initialize: function () {
+      View.prototype.initialize.apply(this, arguments);
       this.$el.addClass('orgsync-widget osw-portals-index');
-      _.extend(this, _.pick(_.extend({}, this.$el.data(), options),
-        'communityId',
-        'umbrella',
-        'category',
-        'portals',
-        'action'
-      ));
       this.community = new app.Community({id: this.communityId});
       var bootstrapped = this.portals;
       this.portals = this.community.get('portals').set(bootstrapped);

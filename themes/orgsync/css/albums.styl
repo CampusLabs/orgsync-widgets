@@ -1,32 +1,48 @@
 @import 'config'
 
-.osw-albums-index
+.orgsync-widget.osw-albums-index
+  max-width 1250px
+  margin 0 auto
+  text-align center
   .list-item
     position relative
-    box-sizing border-box
-    padding 20px
-    cursor pointer
     vertical-align top
-    &:hover
-      color #0076a3
-      img
-        box-shadow 0 3px 10px #0076a3
-        &:not(:last-child)
-          &:nth-child(1)
-            transform translate(6px, -4px) rotate(3deg)
-          &:nth-child(2)
-            transform translate(3px, 5px) rotate(-4deg)
-          &:nth-child(3)
-            transform translate(-4px, -5px) rotate(5deg)
+    a
+      display block
+      padding 20px
+      color #333
+      text-decoration none
+      &:hover
+      &:focus
+        color #0076a3
+        .image-container
+          box-shadow 0 3px 10px #0076a3
+          &:not(:last-child)
+            &:nth-child(1)
+              transform translate(2px, -3px) rotate(3deg)
+            &:nth-child(2)
+              transform translate(3px, 4px) rotate(-4deg)
+            &:nth-child(3)
+              transform translate(-3px, -3px) rotate(5deg)
     .js-stack-container
       position relative
-    img
-      width 100%
+    .image-container
       position relative
       border 5px solid #fff
+      width 100%
       box-shadow 0 1px 3px rgba(0, 0, 0, .5)
-      vertical-align bottom
       transition all .1s ease-in-out
+      background #fff
+      img
+        display
+        position absolute
+        width 100%
+        top 0
+        left 0
+      &:before
+        content ''
+        display block
+        padding-top 66.66%
       &:not(:last-child)
         position absolute
         &:nth-child(1)
@@ -44,16 +60,16 @@
       text-align center
       &:after
         content ' Photos'
-.osw-albums-index[min-width~='480px']
+.osw-albums-index[min-width~='251px']
   .list-item
     display inline-block
     width 50%
-.osw-albums-index[min-width~='640px']
+.osw-albums-index[min-width~='501px']
   .list-item
     width 33.3%
-.osw-albums-index[min-width~='800px']
+.osw-albums-index[min-width~='751px']
   .list-item
     width 25%
-.osw-albums-index[min-width~='960px']
+.osw-albums-index[min-width~='1001px']
   .list-item
     width 20%

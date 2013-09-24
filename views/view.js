@@ -13,6 +13,14 @@
       this.delegateListeners();
     },
 
+    initialize: function (options) {
+      if (this.options) {
+        _.extend(this, _.pick.apply(_,
+          [_.extend({}, this.$el.data(), options)].concat(this.options)
+        ));
+      }
+    },
+
     render: function () {
       View.prototype.render.apply(this, arguments);
       if (this.template) this.$el.html(this.template(this));

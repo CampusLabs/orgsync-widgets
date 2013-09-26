@@ -9,6 +9,7 @@
     'Backbone': null,
     'dpr': null,
     'elementQuery': null,
+    'herit': null,
     'moment': null,
     'Olay': null,
     'OrgSyncApi': null,

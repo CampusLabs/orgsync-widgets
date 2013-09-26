@@ -24,6 +24,7 @@
   var $ = window.jQuery;
   var _ = window._;
   var dpr = window.dpr;
+  var herit = window.herit;
   var Olay = window.Olay;
 
   // Define our global namespace.
@@ -44,7 +45,7 @@
     }
   };
 
-  window.Olay = _.inherit(window.Olay, {
+  window.Olay = herit(window.Olay, {
     constructor: function () {
       Olay.apply(this, arguments);
       this.$content.addClass('orgsync-widget');

@@ -2,7 +2,7 @@
 //= require jquery/jquery
 //= require underscore/underscore
 //= require underscore.string/lib/underscore.string
-//= require underscore-inherit/underscore-inherit
+//= require herit/herit
 //= require backbone/backbone
 //= require backbone-relations/backbone-relations
 //= require select2/select2.js

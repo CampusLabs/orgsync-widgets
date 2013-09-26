@@ -1,0 +1,12 @@
+<%
+var count = o.model.get('comments_count');
+var classes = '';
+if (count !== 1) classes += ' plural';
+if (!count) classes += ' none';
+var thumbnailUrl = o.model.get('thumbnail_url');
+%>
+<div class='title'><%- o.model.get('title') %></div>
+<div class='creator'><%- o.model.get('creator').get('display_name') %></div>
+<div class='time'><%- o.time() %></div>
+<div class='body'><%- o.model.get('body') %></div>
+<div class='comment-count<%= classes %>'><%= count %></div>

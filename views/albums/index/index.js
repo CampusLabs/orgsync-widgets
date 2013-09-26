@@ -16,8 +16,6 @@
   app.AlbumsIndexView = View.extend({
     template: jst['albums/index/index'],
 
-    noResultsTemplate: jst['albums/index/no-results'],
-
     options: ['portalId', 'action'],
 
     initialize: function () {

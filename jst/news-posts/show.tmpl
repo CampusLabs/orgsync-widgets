@@ -1,0 +1,9 @@
+<% var description = o.model.get('description') %>
+<img src='<%- o.model.get('full_url') %>'>
+<div class='description<%= description ? '' : ' js-none'%>'>
+  <%- description %>
+</div>
+<ol class='js-comments comments'></ol>
+<a href='<%- o.model.orgsyncUrl() %>' class='comment-on-orgsync'>
+  Comment on OrgSync
+</a>

@@ -1,0 +1,25 @@
+@import 'config'
+
+.orgsync-widget.osw-news-posts-index
+  .list-item
+    padding 10px
+    .title
+      color #0076a3
+      font-weight bold
+      font-size 16px
+    .creator
+      display inline
+      font-weight bold
+      &:before
+        font-weight normal
+        content 'Posted by '
+    .time
+      color #999
+      display inline
+    .body
+      margin 10px 0
+    .comment-count
+      &:after
+        content ' Comment'
+      &.plural:after
+        content ' Comments'

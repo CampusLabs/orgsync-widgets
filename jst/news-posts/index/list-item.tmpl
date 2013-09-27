@@ -5,8 +5,15 @@ if (count !== 1) classes += ' plural';
 if (!count) classes += ' none';
 var thumbnailUrl = o.model.get('thumbnail_url');
 %>
-<div class='title'><%- o.model.get('title') %></div>
+<% if (thumbnailUrl) { %>
+<img src='<%- thumbnailUrl %>' class='thumbnail'>
+<% } %>
+<a href='<%- o.model.orgsyncUrl() %>' class='title'>
+  <%- o.model.get('title') %>
+</a>
 <div class='creator'><%- o.model.get('creator').get('display_name') %></div>
 <div class='time'><%- o.time() %></div>
+<a href='<%- o.model.orgsyncUrl() %>' class='comment-count<%= classes %>'>
+  <%= count %>
+</a>
 <div class='body'><%- o.model.get('body') %></div>
-<div class='comment-count<%= classes %>'><%= count %></div>

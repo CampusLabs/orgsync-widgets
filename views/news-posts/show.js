@@ -5,19 +5,14 @@
 
   var app = window.OrgSyncWidgets;
 
+  var moment = window.moment;
   var View = app.View;
   var jst = window.jst;
 
-  app.PhotosShowView = View.extend({
-    className: 'js-osw-photos-show osw-photos-show',
+  app.NewsPostsShowView = View.extend({
+    className: 'js-osw-news-posts-show osw-news-posts-show orgsync-widget',
 
-    template: jst['photos/show'],
-
-    events: {
-      'click img': 'next',
-    },
-
-    options: ['action'],
+    template: jst['news-posts/show'],
 
     initialize: function () {
       View.prototype.initialize.apply(this, arguments);
@@ -38,13 +33,8 @@
       return this;
     },
 
-    next: function () {
-      if (this.action === 'redirect') return;
-      this.model.set('selected', false);
-      var photos = this.model.collection;
-      if (!photos) return;
-      var i = (photos.indexOf(this.model) + 1) % photos.length;
-      photos.at(i).set('selected', true);
+    time: function () {
+      return moment(this.model.get('created_at')).fromNow();
     }
   });
 })();

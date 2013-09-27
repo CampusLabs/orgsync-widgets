@@ -15,7 +15,7 @@
   app.NewsPostsIndexView = View.extend({
     template: jst['news-posts/index/index'],
 
-    options: ['portalId', 'action'],
+    options: ['portalId', 'action', 'limit'],
 
     initialize: function () {
       View.prototype.initialize.apply(this, arguments);

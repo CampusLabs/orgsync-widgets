@@ -17,7 +17,7 @@
     template: window.jst['news-posts/index/list-item'],
 
     events: {
-      click: 'show'
+      'click a': 'show'
     },
 
     options: ['action'],
@@ -31,7 +31,7 @@
           model: newsPost,
           action: this.action
         })).render();
-        (this.olay = new Olay(this.views.photosShow.$el, {preserve: true}))
+        (this.olay = new Olay(this.views.newsPostsShow.$el, {preserve: true}))
           .$container.addClass('osw-news-post-show-olay');
       }
       this.olay.show();

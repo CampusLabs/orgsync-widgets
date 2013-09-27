@@ -3,6 +3,7 @@
 .orgsync-widget.osw-news-posts-index
 .orgsync-widget.osw-news-posts-show
   .list-item
+    clearfix()
     margin 0 auto
     padding 10px
     max-width 580px
@@ -12,6 +13,7 @@
     &:hover
       text-decoration underline
   .thumbnail
+    display block
     float right
     margin 0 0 10px 10px
   .title
@@ -21,12 +23,10 @@
   .creator
     display inline
     font-weight bold
-    &:before
-      font-weight normal
-      content 'Posted by '
   .time
     display inline
     white-space nowrap
+    color #666
   .comment-count
     display inline
     white-space nowrap
@@ -39,7 +39,16 @@
     &.plural:after
       content ' Comments'
   .body
-    margin 10px 0
+    display block
+    margin-top 10px
+.orgsync-widget.osw-news-posts-index
+  .thumbnail
+  .body
+    display none
+.osw-news-posts-index[min-width~='501px']
+  .thumbnail
+  .body
+    display block
 .orgsync-widget.osw-news-posts-show
   text-align left
   padding 10px

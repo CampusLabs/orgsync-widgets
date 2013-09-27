@@ -20,7 +20,9 @@
       'click a': 'show'
     },
 
-    options: ['action'],
+    options: ['action', 'truncate'],
+
+    truncate: 250,
 
     show: function (ev) {
       if (this.action === 'redirect') return;
@@ -39,6 +41,15 @@
 
     time: function () {
       return moment(this.model.get('created_at')).fromNow();
+    },
+
+    truncatedBody: function () {
+      var body = this.model.get('body');
+      var truncate = this.truncate;
+      var ellipsis = '...';
+      var max = truncate - ellipsis.length;
+      if (!truncate || body.length <= max) return body;
+      return body.substring(0, max).replace(/[\s,.;]+\S*$/, '') + ellipsis;
     },
 
     remove: function () {

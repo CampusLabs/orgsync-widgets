@@ -15,7 +15,7 @@
   app.NewsPostsIndexView = View.extend({
     template: jst['news-posts/index/index'],
 
-    options: ['portalId', 'action', 'limit'],
+    options: ['portalId', 'action', 'limit', 'truncate'],
 
     initialize: function () {
       View.prototype.initialize.apply(this, arguments);
@@ -37,10 +37,13 @@
     },
 
     renderNewsPostsList: function () {
+      var options = {};
+      if (this.action) options.action = this.action;
+      if (this.truncate) options.truncate = this.truncate;
       this.views.newsPostsList = new app.ListView({
         el: this.$('.js-list'),
         modelView: app.NewsPostsIndexListItemView,
-        modelViewOptions: {action: this.action},
+        modelViewOptions: options,
         collection: this.newsPosts,
         infiniteScroll: true
       });

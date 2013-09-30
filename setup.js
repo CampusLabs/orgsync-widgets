@@ -3,22 +3,24 @@
 // and restore after the script has executed.
 (function () {
   var polutants = {
-    '$': null,
-    '_': null,
-    'async': null,
-    'Backbone': null,
-    'dpr': null,
-    'elementQuery': null,
-    'herit': null,
-    'moment': null,
-    'Olay': null,
-    'OrgSyncApi': null,
-    'Select2': null,
-    'jQuery': null,
-    'jst': null
+    $: null,
+    _: null,
+    async: null,
+    Backbone: null,
+    dpr: null,
+    elementQuery: null,
+    herit: null,
+    moment: null,
+    Olay: null,
+    OrgSyncApi: null,
+    Select2: null,
+    jQuery: null,
+    jst: null
   };
 
   for (var key in polutants) {
     polutants[key] = window[key];
-    delete window[key];
+
+    // `delete window[anything]` throws in IE8, so hack it.
+    try { delete window[key]; } catch (er) { window[key] = undefined; }
   }

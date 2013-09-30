@@ -10,6 +10,8 @@
   _.each(polutants, function (val, key) {
     app[key] = window[key];
     if (val) return window[key] = val;
-    delete window[key];
+
+    // `delete window[anything]` throws in IE8, so hack it.
+    try { delete window[key]; } catch (er) { window[key] = undefined; }
   });
 })();

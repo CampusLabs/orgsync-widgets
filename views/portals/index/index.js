@@ -108,7 +108,7 @@
             if (!option.count) return data;
             data[name] = option;
             return data;
-          }, {null: self.select2Option(singular, plural)}), _.identity)};
+          }, {'null': self.select2Option(singular, plural)}), _.identity)};
         },
         minimumResultsForSearch: -1,
         initSelection: function ($el, cb) {

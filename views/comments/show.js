@@ -10,7 +10,7 @@
   var moment = window.moment;
 
   app.CommentsShowView = View.extend({
-    className: 'js-osw-comments-show osw-comments-show',
+    className: 'js-osw-comments-show osw-comments-show orgsync-widget',
 
     template: jst['comments/show'],
 

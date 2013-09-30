@@ -1,15 +1,23 @@
 @import 'config'
 
-.osw-comments-show
+.orgsync-widget.osw-comments-show
   text-align left
+  border 1px solid #ddd
+  padding 5px
+  background #f9f9f9
   clearfix()
+  &:not(:first-child)
+    border-top 0
   .info
     overflow auto
-    padding 5px
+    padding-left 5px
   .picture
     float left
-    width 64px
-    height 64px
+    border 1px solid #ddd
+    padding 5px
+    width 40px
+    height 40px
+    background #fff
   .name
     display inline
     font-weight bold

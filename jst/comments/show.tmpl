@@ -5,6 +5,6 @@ var src = creator.get('picture_url');
 <div class='picture'><% if (src) { %><img src='<%- src %>'><% } %></div>
 <div class='info'>
   <div class='name'><%- creator.get('display_name') %></div>
-  <div class='time'><%- o.time() %></div>
+  <div class='time'><%- o.model.time() %></div>
   <div class='content'><%- o.model.get('content') %></div>
 </div>

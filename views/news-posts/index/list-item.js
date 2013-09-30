@@ -5,7 +5,6 @@
 
   var app = window.OrgSyncWidgets;
 
-  var moment = window.moment;
   var Olay = window.Olay;
   var View = app.View;
 
@@ -37,19 +36,6 @@
           .$container.addClass('osw-news-post-show-olay');
       }
       this.olay.show();
-    },
-
-    time: function () {
-      return moment(this.model.get('created_at')).fromNow();
-    },
-
-    truncatedBody: function () {
-      var body = this.model.get('body');
-      var truncate = this.truncate;
-      var ellipsis = '...';
-      var max = truncate - ellipsis.length;
-      if (!truncate || body.length <= max) return body;
-      return body.substring(0, max).replace(/[\s,.;]+\S*$/, '') + ellipsis;
     },
 
     remove: function () {

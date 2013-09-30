@@ -12,8 +12,8 @@ var thumbnailUrl = o.model.get('thumbnail_url');
   <%- o.model.get('title') %>
 </a>
 <div class='creator'><%- o.model.get('creator').get('display_name') %></div>
-<div class='time'><%- o.time() %></div>
+<div class='time'><%- o.model.time() %></div>
 <a href='<%- o.model.orgsyncUrl() %>' class='comment-count<%= classes %>'>
   <%= count %>
 </a>
-<div class='js-body body'><%- o.truncatedBody() %></div>
+<div class='js-body body'><%- o.model.truncatedBody(o.truncate) %></div>

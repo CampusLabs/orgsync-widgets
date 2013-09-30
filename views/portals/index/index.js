@@ -54,7 +54,7 @@
       this.updateFiltered = _.debounce(this.updateFiltered);
       if (bootstrapped) return this.fetchSuccess();
       this.$el.append($('<div>').addClass('js-loading'));
-      this.portals.fetch({
+      this.portals.pagedFetch({
         success: _.bind(this.fetchSuccess, this),
         error: _.bind(this.$el.text, this.$el, 'Load failed...')
       });

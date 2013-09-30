@@ -5,7 +5,6 @@
 
   var app = window.OrgSyncWidgets;
 
-  var moment = window.moment;
   var View = app.View;
   var jst = window.jst;
 
@@ -31,10 +30,6 @@
         infiniteScroll: true
       });
       return this;
-    },
-
-    time: function () {
-      return moment(this.model.get('created_at')).fromNow();
     }
   });
 })();

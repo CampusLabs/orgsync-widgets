@@ -26,7 +26,8 @@
       this.newsPosts = this.portal.get('newsPosts');
       this.$el.append($('<div>').addClass('js-loading'));
       this.newsPosts.fetch({
-        data: {per_page: this.limit},
+        limit: this.limit,
+        data: {strip_html: false},
         success: _.bind(this.render, this),
         error: _.bind(this.$el.text, this.$el, 'Load failed...')
       });

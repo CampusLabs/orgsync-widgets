@@ -5,7 +5,7 @@
   .list-item
     clearfix()
     margin 0 auto
-    padding 10px
+    padding 5px
     max-width 580px
   a
     color #0076a3
@@ -23,6 +23,9 @@
   .creator
     display inline
     font-weight bold
+    &:before
+      content 'Posted by '
+      font-weight normal
   .time
     display inline
     white-space nowrap
@@ -52,4 +55,20 @@
 .orgsync-widget.osw-news-posts-show
   text-align left
   padding 10px
-  max-width 580px
+  max-width 480px
+  img
+    max-width 100%
+  p
+    margin-bottom 20px
+  strong
+    font-weight bold
+  em
+    font-style italic
+  .comments
+    margin-bottom 10px
+    &:before
+      content 'Comments'
+      display block
+      margin-bottom 5px
+      font-weight bold
+      font-size 16px

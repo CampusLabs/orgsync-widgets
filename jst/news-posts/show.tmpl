@@ -5,7 +5,7 @@
 <div class='title'><%- o.model.get('title') %></div>
 <div class='creator'><%- o.model.get('creator').get('display_name') %></div>
 <div class='time'><%- o.time() %></div>
-<div class='body'><%- o.model.get('body') %></div>
+<div class='body'><%= o.model.get('raw_body') %></div>
 <ol class='js-comments comments'></ol>
 <a href='<%- o.model.orgsyncUrl() %>' class='comment-on-orgsync'>
   Comment on OrgSync

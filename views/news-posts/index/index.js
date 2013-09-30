@@ -17,6 +17,8 @@
 
     options: ['portalId', 'action', 'limit', 'truncate'],
 
+    limit: 100,
+
     initialize: function () {
       View.prototype.initialize.apply(this, arguments);
       this.$el.addClass('orgsync-widget osw-news-posts-index');
@@ -24,7 +26,7 @@
       this.newsPosts = this.portal.get('newsPosts');
       this.$el.append($('<div>').addClass('js-loading'));
       this.newsPosts.fetch({
-        data: {per_page: 100},
+        data: {per_page: this.limit},
         success: _.bind(this.render, this),
         error: _.bind(this.$el.text, this.$el, 'Load failed...')
       });

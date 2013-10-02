@@ -24,8 +24,7 @@
       this.portal = new app.Portal({id: this.portalId});
       this.albums = this.portal.get('albums');
       this.$el.append($('<div>').addClass('js-loading'));
-      this.albums.fetch({
-        data: {per_page: 100},
+      this.albums.pagedFetch({
         success: _.bind(this.render, this),
         error: _.bind(this.$el.text, this.$el, 'Load failed...')
       });

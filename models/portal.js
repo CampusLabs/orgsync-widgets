@@ -13,7 +13,8 @@
       umbrella: {hasOne: 'Portal', fk: 'umbrella_id'},
       category: {hasOne: 'Category', fk: 'category_id'},
       albums: {hasMany: 'Album', fk: 'portal_id'},
-      newsPosts: {hasMany: 'NewsPost', fk: 'portal_id', urlRoot: '/news'}
+      newsPosts: {hasMany: 'NewsPost', fk: 'portal_id', urlRoot: '/news'},
+      events: {hasMany: 'Event', fk: 'portal_id'}
     },
 
     defaultPicture: 'https://orgsync.com/assets/no_org_profile_150.png',

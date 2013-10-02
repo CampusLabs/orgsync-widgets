@@ -19,6 +19,7 @@
           [_.extend({}, this.$el.data(), options)].concat(this.options)
         ));
       }
+      if (this.classes) this.$el.addClass(this.classes.join(' '));
     },
 
     render: function () {

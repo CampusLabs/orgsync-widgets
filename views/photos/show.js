@@ -9,8 +9,6 @@
   var jst = window.jst;
 
   app.PhotosShowView = View.extend({
-    className: 'js-osw-photos-show osw-photos-show',
-
     template: jst['photos/show'],
 
     events: {
@@ -18,6 +16,12 @@
     },
 
     options: ['action'],
+
+    classes: [
+      'orgsync-widget',
+      'js-osw-photos-show',
+      'osw-photos-show'
+    ],
 
     initialize: function () {
       View.prototype.initialize.apply(this, arguments);

@@ -22,6 +22,12 @@
       'click .js-try-again': 'fetch'
     },
 
+    classes: [
+      'orgsync-widget',
+      'js-osw-portals-show',
+      'osw-portals-show'
+    ],
+
     render: function () {
       if (this.model.get('description') !== void 0) {
         return View.prototype.render.apply(this, arguments);

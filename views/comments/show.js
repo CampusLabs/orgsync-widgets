@@ -9,8 +9,12 @@
   var jst = window.jst;
 
   app.CommentsShowView = View.extend({
-    className: 'js-osw-comments-show osw-comments-show orgsync-widget',
+    template: jst['comments/show'],
 
-    template: jst['comments/show']
+    classes: [
+      'orgsync-widget',
+      'js-osw-comments-show',
+      'osw-comments-show'
+    ]
   });
 })();

@@ -36,9 +36,14 @@
       'action'
     ],
 
+    classes: [
+      'orgsync-widget',
+      'js-osw-portals-index',
+      'osw-portals-index'
+    ],
+
     initialize: function () {
       View.prototype.initialize.apply(this, arguments);
-      this.$el.addClass('orgsync-widget osw-portals-index');
       this.community = new app.Community({id: this.communityId});
       var bootstrapped = this.portals;
       this.portals = this.community.get('portals').set(bootstrapped);

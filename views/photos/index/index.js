@@ -18,9 +18,14 @@
 
     options: ['album', 'albumId', 'action'],
 
+    classes: [
+      'orgsync-widget',
+      'js-osw-photos-index',
+      'osw-photos-index'
+    ],
+
     initialize: function () {
       View.prototype.initialize.apply(this, arguments);
-      this.$el.addClass('orgsync-widget osw-photos-index');
       if (!this.album) this.album = new app.Album({id: this.albumId});
       this.photos = this.album.get('photos');
       this.$el.append($('<div>').addClass('js-loading'));

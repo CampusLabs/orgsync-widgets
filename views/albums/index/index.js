@@ -18,9 +18,14 @@
 
     options: ['portalId', 'action'],
 
+    classes: [
+      'orgsync-widget',
+      'js-osw-albums-index',
+      'osw-albums-index'
+    ],
+
     initialize: function () {
       View.prototype.initialize.apply(this, arguments);
-      this.$el.addClass('orgsync-widget osw-albums-index');
       this.portal = new app.Portal({id: this.portalId});
       this.albums = this.portal.get('albums');
       this.$el.append($('<div>').addClass('js-loading'));

@@ -9,9 +9,13 @@
   var jst = window.jst;
 
   app.NewsPostsShowView = View.extend({
-    className: 'js-osw-news-posts-show osw-news-posts-show orgsync-widget',
-
     template: jst['news-posts/show'],
+
+    classes: [
+      'orgsync-widget',
+      'js-osw-news-posts-show',
+      'osw-news-posts-show'
+    ],
 
     initialize: function () {
       View.prototype.initialize.apply(this, arguments);

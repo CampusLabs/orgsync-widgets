@@ -17,11 +17,16 @@
 
     options: ['portalId', 'action', 'limit', 'truncate'],
 
+    classes: [
+      'orgsync-widget',
+      'js-osw-news-posts-index',
+      'osw-news-posts-index'
+    ],
+
     limit: 100,
 
     initialize: function () {
       View.prototype.initialize.apply(this, arguments);
-      this.$el.addClass('orgsync-widget osw-news-posts-index');
       this.portal = new app.Portal({id: this.portalId});
       this.newsPosts = this.portal.get('newsPosts');
       this.$el.append($('<div>').addClass('js-loading'));

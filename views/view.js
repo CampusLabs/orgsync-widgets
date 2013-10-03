@@ -42,6 +42,7 @@
 
     delegateListeners: function () {
       _.each(_.result(this, 'listeners'), function (events, key) {
+        if (!this[key]) return;
         this.listenTo(this[key], _.reduce(events, function (events, key, ev) {
           events[ev] = this[key];
           return events;

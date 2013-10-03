@@ -6,14 +6,46 @@
   var app = window.OrgSyncWidgets;
 
   var Model = app.Model;
+  var moment = window.moment;
 
   var Day = app.Day = Model.extend({
     relations: {
-      events: {hasMany: 'Event', fk: 'day_id'}
-    }
+      eventDates: {hasMany: 'EventDate', fk: 'day_id'}
+    },
+
+    defaults: {
+      zone: moment().zone()
+    },
+
+    date: function () { return moment(this.id).zone(this.get('zone')); }
   });
 
   Day.Collection = Model.Collection.extend({
-    model: Day
+    model: Day,
+
+    comparator: 'id',
+
+    addEvents: function (events) { events.each(this.addEvent, this); },
+
+    addEvent: function (event) {
+      this.addEventDates(event.get('dates'), this);
+    },
+
+    addEventDates: function (eventDates) {
+      eventDates.each(this.addEventDate, this);
+    },
+
+    addEventDate: function (eventDate) {
+      var start = eventDate.startMidnight(this.zone);
+      var end = moment(eventDate.get('ends_at')).zone(this.zone);
+      do {
+        var id = +start;
+        var day = this.get(id);
+        if (!day) this.add(day = new Day({id: id}));
+        if (this.zone != null) day.set('zone', this.zone);
+        day.get('eventDates').add(eventDate);
+        start.add('days', 1);
+      } while (start.isBefore(end));
+    }
   });
 })();

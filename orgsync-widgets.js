@@ -25,6 +25,7 @@
   var _ = window._;
   var dpr = window.dpr;
   var herit = window.herit;
+  var moment = window.moment;
   var Olay = window.Olay;
 
   // Define our global namespace.
@@ -72,6 +73,19 @@
       ]
     }
   });
+
+  // Add a midnight function to moment as a shortcut for stripping all time.
+  moment.fn.midnight = function () {
+    return this.hours(0).minutes(0).seconds(0).milliseconds(0);
+  };
+
+  // Helpful for full day events.
+  moment.fn.isMidnight = function () {
+    return this.hours() === 0 &&
+      this.minutes() === 0 &&
+      this.seconds() === 0 &&
+      this.milliseconds() === 0;
+  };
 
   // Run the app's ready function when the DOM is parsed.
   $(app.ready);

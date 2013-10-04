@@ -1,2 +1,12 @@
-<h1><%- o.model.get('event').get('title') %></h1>
-<h2><%- o.start() %> - <%- o.end() %> - <%- o.model.get('event').get('location') %></h2>
+<%
+var event = o.model.get('event');
+var thumbnailUrl = event.get('thumbnail_url');
+%>
+<div class='picture-container'>
+  <% if (thumbnailUrl) { %><img src='<%- thumbnailUrl %>'><% } %>
+</div>
+<div class='info'>
+  <div class='title'><%- event.get('title') %></div>
+  <div class='time'><%- o.time() %></div>
+  <div class='location'><%- event.get('location') %></div>
+</div>

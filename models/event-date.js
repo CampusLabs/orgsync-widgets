@@ -13,14 +13,24 @@
       event: {hasOne: 'Event', fk: 'event_id'}
     },
 
-    startMidnight: function (zone) {
-      return EventDate.midnight(this.get('starts_at'), zone);
-    }
-  }, {
-    midnight: function (date, zone) {
-      date = moment(date);
-      if (zone != null) date.zone(zone);
-      return date.hours(0).minutes(0).seconds(0).milliseconds(0);
+    defaults: {
+      zone: moment().zone()
+    },
+
+    start: function () {
+      return moment(this.get('starts_at')).zone(this.get('zone'));
+    },
+
+    end: function () {
+      return moment(this.get('ends_at')).zone(this.get('zone'));
+    },
+
+    isMultiDay: function () {
+      return this.start().midnight().add('days', 1).isBefore(this.end());
+    },
+
+    isAllDay: function () {
+      return this.start().isMidnight && this.end().isMidnight();
     }
   });
 

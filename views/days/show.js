@@ -5,6 +5,7 @@
 
   var app = window.OrgSyncWidgets;
 
+  var moment = window.moment;
   var jst = window.jst;
   var View = app.View;
 
@@ -29,6 +30,16 @@
         collection: this.model.get('eventDates'),
         modelView: app.EventDatesShowView
       });
+    },
+
+    date: function () {
+      var date = this.model.date();
+      var prefix = '';
+      var today = moment().zone(this.model.get('zone')).midnight();
+      if (date.isSame(today.subtract('days', 1))) prefix = 'Yesterday, ';
+      if (date.isSame(today.add('days', 1))) prefix = 'Today, ';
+      if (date.isSame(today.add('days', 1))) prefix = 'Tomorrow, ';
+      return this.model.date().format('[' + prefix + ']dddd, MMMM D, YYYY');
     }
   });
 })();

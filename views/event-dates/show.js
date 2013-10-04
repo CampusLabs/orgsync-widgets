@@ -6,7 +6,6 @@
   var app = window.OrgSyncWidgets;
 
   var jst = window.jst;
-  var moment = window.moment;
   var View = app.View;
 
   app.EventDatesShowView = View.extend({
@@ -18,12 +17,15 @@
       'osw-event-dates-show'
     ],
 
-    start: function () {
-      return moment(this.model.get('starts_at')).format('h:mm a');
-    },
-
-    end: function () {
-      return moment(this.model.get('ends_at')).format('h:mm a');
+    time: function () {
+      var start = this.model.start();
+      var end = this.model.end();
+      var allDay = this.model.isAllDay();
+      var multiDay = this.model.isMultiDay();
+      if (!multiDay && allDay) return 'All Day';
+      var format = allDay ? '[All Day]' : 'LT';
+      if (multiDay) format += ', MMM D';
+      return start.format(format) + ' to ' + end.format(format);
     }
   });
 })();

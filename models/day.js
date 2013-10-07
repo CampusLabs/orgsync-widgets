@@ -39,7 +39,7 @@
 
     addEventDate: function (eventDate) {
       if (this.zone != null) eventDate.set('zone', this.zone);
-      var start = eventDate.start().midnight();
+      var start = eventDate.start().startOf('day');
       var end = eventDate.end();
       do {
         var id = +start;

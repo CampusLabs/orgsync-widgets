@@ -39,11 +39,11 @@
         .year(date.year())
         .month(date.month())
         .date(date.date())
-        .midnight();
+        .startOf('day');
     },
 
     isMultiDay: function () {
-      return this.start().midnight().add('days', 1).isBefore(this.end());
+      return this.start().startOf('day').add('days', 1).isBefore(this.end());
     }
   });
 

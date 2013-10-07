@@ -74,11 +74,6 @@
     }
   });
 
-  // Add a midnight function to moment as a shortcut for stripping all time.
-  moment.fn.midnight = function () {
-    return this.hours(0).minutes(0).seconds(0).milliseconds(0);
-  };
-
   // Run the app's ready function when the DOM is parsed.
   $(app.ready);
 })();

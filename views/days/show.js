@@ -35,7 +35,7 @@
     date: function () {
       var date = this.model.date();
       var prefix = '';
-      var today = moment().zone(this.model.get('zone')).midnight();
+      var today = moment().zone(this.model.get('zone')).startOf('day');
       if (date.isSame(today.subtract('days', 1))) prefix = 'Yesterday, ';
       if (date.isSame(today.add('days', 1))) prefix = 'Today, ';
       if (date.isSame(today.add('days', 1))) prefix = 'Tomorrow, ';

@@ -35,6 +35,7 @@
       View.prototype.initialize.apply(this, arguments);
       if (this.infiniteScroll) {
         _.bindAll(this, 'nextPage');
+        this.refresh = _.debounce(_.bind(this.refresh, this));
         this.$scrollParent().on('scroll', this.nextPage);
         $(window).on('resize', this.nextPage);
         this.available = this.collection;

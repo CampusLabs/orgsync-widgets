@@ -36,9 +36,9 @@
       var date = this.model.date();
       var prefix = '';
       var today = moment().zone(this.model.get('zone')).startOf('day');
-      if (date.isSame(today.subtract('days', 1))) prefix = 'Yesterday, ';
-      if (date.isSame(today.add('days', 1))) prefix = 'Today, ';
-      if (date.isSame(today.add('days', 1))) prefix = 'Tomorrow, ';
+      if (date.isSame(today.subtract('day', 1))) prefix = 'Yesterday, ';
+      if (date.isSame(today.add('day', 1))) prefix = 'Today, ';
+      if (date.isSame(today.add('day', 1))) prefix = 'Tomorrow, ';
       return this.model.date().format('[' + prefix + ']dddd, MMMM D, YYYY');
     }
   });

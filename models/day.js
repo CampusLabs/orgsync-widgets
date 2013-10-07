@@ -5,7 +5,6 @@
 
   var app = window.OrgSyncWidgets;
 
-  var _ = window._;
   var Model = app.Model;
   var moment = window.moment;
 
@@ -27,10 +26,7 @@
     comparator: 'id',
 
     addEvents: function (events) {
-      this.toAdd = {};
       events.each(this.addEvent, this);
-      this.add(_.values(this.toAdd));
-      delete this.toAdd;
     },
 
     addEvent: function (event) {
@@ -47,8 +43,8 @@
       var end = eventDate.end();
       do {
         var id = +start;
-        var day = this.get(id) || this.toAdd[id];
-        if (!day) day = this.toAdd[id] = new Day({id: id});
+        var day = this.get(id);
+        if (!day) this.add(day = new Day({id: id}));
         if (this.zone != null) day.set('zone', this.zone);
         day.get('eventDates').add(eventDate);
         start.add('days', 1);

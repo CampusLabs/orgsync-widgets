@@ -1,10 +1,6 @@
 @import 'config'
 
 .orgsync-widget.osw-event-dates-show
-  border 1px solid #ccc
-  border-bottom none
-  padding 10px
-  clearfix()
   &:first-child
     border-top none
   .picture-container
@@ -22,5 +18,17 @@
   .location
     display inline
     color #666
-  .time:after
-    content ' •'
+.osw-events-index.js-list-view
+.osw-events-index.js-month-view:not([min-width~='501px'])
+  .osw-event-dates-show
+    border 1px solid #ccc
+    border-bottom none
+    padding 10px
+    clearfix()
+    .time:after
+      content ' •'
+.osw-events-index.js-month-view[min-width~='501px']
+  .osw-event-dates-show
+    .location
+    .picture-container
+      display none

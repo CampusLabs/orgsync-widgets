@@ -17,7 +17,11 @@
   app.EventsIndexView = View.extend({
     template: jst['events/index/index'],
 
-    options: ['communityId', 'portalId', 'events', 'date', 'zone'],
+    events: {
+      'click .js-change-view': 'clickChangeView'
+    },
+
+    options: ['communityId', 'portalId', 'events', 'date', 'zone', 'view'],
 
     classes: [
       'orgsync-widget',
@@ -32,6 +36,7 @@
       this.days.zone = this.zone;
       this.community = new Community({id: this.communityId});
       this.portal = new Portal({id: this.portalId});
+      if (!this.view) this.view = 'list';
       var events = this.community.get('events');
       events.fetch({
         data: {per_page: 100},
@@ -43,6 +48,7 @@
     render: function () {
       View.prototype.render.apply(this, arguments);
       this.renderDaysList();
+      this.setView(this.view);
       return this;
     },
 
@@ -53,6 +59,15 @@
         modelView: app.DaysShowView,
         infiniteScroll: true
       });
+    },
+
+    clickChangeView: function (ev) { this.setView($(ev.target).data('view')); },
+
+    setView: function (view) {
+      this.$el
+        .removeClass('js-list-view js-month-view')
+        .addClass('js-' + view + '-view');
+      this.views.daysList.refresh();
     }
   });
 })();

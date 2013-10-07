@@ -20,7 +20,7 @@
     time: function () {
       var start = this.model.start();
       var end = this.model.end();
-      var allDay = this.model.isAllDay();
+      var allDay = this.model.get('event').get('is_all_day');
       var multiDay = this.model.isMultiDay();
       if (!multiDay && allDay) return 'All Day';
       var format = allDay ? '[All Day]' : 'LT';

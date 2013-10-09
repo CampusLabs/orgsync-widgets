@@ -31,6 +31,7 @@
   var dpr = window.dpr;
   var herit = window.herit;
   var jstz = window.jstz;
+  var moment = window.moment;
   var Olay = window.Olay;
 
   // Define our global namespace.
@@ -81,6 +82,14 @@
       ]
     }
   });
+
+  // Extending the updateOffset method fixes some wonky DST issues.
+  var updateOffset = moment.updateOffset;
+  moment.updateOffset = function (date) {
+    var delta = date.zone();
+    updateOffset.apply(this, arguments);
+    if (Math.abs(delta -= date.zone()) === 60) date.subtract('minutes', delta);
+  };
 
   // Run the app's ready function when the DOM is parsed.
   $(app.ready);

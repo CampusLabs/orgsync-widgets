@@ -21,7 +21,7 @@
       'click .js-change-view': 'clickChangeView'
     },
 
-    options: ['communityId', 'portalId', 'events', 'date', 'zone', 'view'],
+    options: ['communityId', 'portalId', 'events', 'date', 'tz', 'view'],
 
     classes: [
       'orgsync-widget',
@@ -33,7 +33,7 @@
       View.prototype.initialize.apply(this, arguments);
       this.$el.append($('<div>').addClass('js-loading'));
       this.days = new Day.Collection();
-      this.days.zone = this.zone;
+      this.days.tz = this.tz;
       this.community = new Community({id: this.communityId});
       this.portal = new Portal({id: this.portalId});
       if (!this.view) this.view = 'month';

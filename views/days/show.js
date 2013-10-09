@@ -26,7 +26,7 @@
       View.prototype.initialize.apply(this, arguments);
       this.eventDates = this.model.get('eventDates');
       var date = this.model.date();
-      var today = moment().zone(date.zone()).startOf('day');
+      var today = moment().tz(date.tz()).startOf('day');
       if (date.isSame(today)) this.$el.addClass('js-today');
       if (date.startOf('week').isSame(today.startOf('week'))) {
         this.$el.addClass('js-this-week');
@@ -56,7 +56,7 @@
     longDate: function () {
       var date = this.model.date();
       var prefix = '';
-      var today = moment().zone(this.model.get('zone')).startOf('day');
+      var today = moment.tz(date.tz()).startOf('day');
       if (date.isSame(today.subtract('day', 1))) prefix = 'Yesterday, ';
       if (date.isSame(today.add('day', 1))) prefix = 'Today, ';
       if (date.isSame(today.add('day', 1))) prefix = 'Tomorrow, ';

@@ -5,7 +5,7 @@ dev:
 	$(MAKE) -j cogs server
 
 cogs:
-	$(COGS) -w css,jst,models,themes,views
+	$(COGS) -w orgsync-widgets.js,css,jst,models,themes,views
 
 compress:
 	$(COGS) -c

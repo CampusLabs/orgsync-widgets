@@ -7,6 +7,10 @@
 //= require backbone-relations/backbone-relations
 //= require select2/select2.js
 //= require moment/moment.js
+//= require moment-timezone/moment-timezone.js
+//= require ./timezones/setup
+//= require moment-timezone/moment-timezone.json
+//= require ./timezones/teardown
 //= require olay/olay.js
 //= require async/lib/async
 //= require orgsync-javascript-api/orgsync-javascript-api
@@ -25,7 +29,6 @@
   var _ = window._;
   var dpr = window.dpr;
   var herit = window.herit;
-  var moment = window.moment;
   var Olay = window.Olay;
 
   // Define our global namespace.

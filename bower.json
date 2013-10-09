@@ -8,6 +8,7 @@
     "dpr": "x",
     "elementQuery": "tysonmatanich/elementQuery#prod",
     "moment": "x",
+    "moment-timezone": "x",
     "olay": "x",
     "jquery": "1.10.x",
     "select2": "x",

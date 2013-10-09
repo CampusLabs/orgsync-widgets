@@ -47,7 +47,7 @@
       if (this.continued) {
         if (this.continues) return 'All Day';
         date = this.model.end();
-        format = '[ends at ]' + format;
+        format = '[ends ]' + format;
       }
       return date.format(format);
     },

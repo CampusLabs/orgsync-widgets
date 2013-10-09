@@ -11,6 +11,7 @@
 //= require ./timezones/setup
 //= require moment-timezone/moment-timezone.json
 //= require ./timezones/teardown
+//= require jstz/jstz
 //= require olay/olay.js
 //= require async/lib/async
 //= require orgsync-javascript-api/orgsync-javascript-api
@@ -29,6 +30,7 @@
   var _ = window._;
   var dpr = window.dpr;
   var herit = window.herit;
+  var jstz = window.jstz;
   var Olay = window.Olay;
 
   // Define our global namespace.
@@ -46,7 +48,10 @@
       _.each(app.selectorViewMap, function (view, selector) {
         $(selector).each(function () { new view({el: this}); });
       });
-    }
+    },
+
+    // Only calculate the current timezone name once.
+    tz: jstz.determine().name()
   };
 
   window.Olay = herit(window.Olay, {

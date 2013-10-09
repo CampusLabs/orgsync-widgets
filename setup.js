@@ -15,7 +15,8 @@
     OrgSyncApi: null,
     Select2: null,
     jQuery: null,
-    jst: null
+    jst: null,
+    jstz: null
   };
 
   for (var key in polutants) {

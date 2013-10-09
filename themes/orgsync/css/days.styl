@@ -1,11 +1,32 @@
 @import 'config'
 
-.orgsync-widget.osw-days-show
-  .date
-    padding 10px
-    background #ccc
-.osw-events-index.js-month-view[min-width~='501px']
+.osw-events-index.js-list-view
+.osw-events-index.js-month-view:not([min-width~='751px'])
+  .osw-days-show
+    &.js-empty
+      display none
+    .short-date
+      display none
+    .long-date
+      padding 10px
+      background #ccc
+.osw-events-index.js-month-view[min-width~='751px']
   .osw-days-show
     display inline-block
+    box-sizing border-box
+    border 5px solid #fff
+    border-top none
+    border-bottom none
     width 14.2%
     vertical-align top
+    height 200px
+    &.js-today
+      background #fee
+      .short-date
+        border-color #f66
+    .long-date
+      display none
+    .short-date
+      border-top 1px solid #ccc
+      padding 5px 5px 0 0
+      text-align right

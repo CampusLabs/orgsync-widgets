@@ -50,6 +50,6 @@
   EventDate.Collection = Model.Collection.extend({
     model: EventDate,
 
-    comparator: 'starts_at'
+    comparator: function (eventDate) { return eventDate.start(); }
   });
 })();

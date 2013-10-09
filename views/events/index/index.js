@@ -36,7 +36,7 @@
       this.days.zone = this.zone;
       this.community = new Community({id: this.communityId});
       this.portal = new Portal({id: this.portalId});
-      if (!this.view) this.view = 'list';
+      if (!this.view) this.view = 'month';
       var events = this.community.get('events');
       events.fetch({
         data: {per_page: 100},

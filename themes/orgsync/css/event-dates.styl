@@ -31,36 +31,38 @@
 .osw-events-index.js-month-view[min-width~='751px']
   .osw-event-dates-show
     position relative
-    margin-top 5px
+    margin-top 3px
+    border-left 3px solid #f66
+    padding 2px 0 2px 3px
     font-size 11px
+    // font-weight bold
     &.js-continued:before
     &.js-continues:after
-        top 50%
-        margin-right -5px
-        margin-top -5px
         position absolute
+        top 50%
+        margin-top -5px
+        margin-left -5px
         width 0
         height 0
         content ''
         border 5px solid transparent
     &.js-continued:before
-        left -2px
+        left -6px
         border-left-width 0
-        border-right-color #f66
+        border-right-color #666
     &.js-continues:after
-        right 2px
+        right -8px
         border-right-width 0
-        border-left-color #f66
+        border-left-color #666
     .location
     .picture-container
     .long-time
       display none
     .short-time
       float right
-      padding 0 5px
+      padding-left 5px
       color #999
     .title
-      padding-left 5px
       overflow hidden
       text-overflow ellipsis
       white-space nowrap

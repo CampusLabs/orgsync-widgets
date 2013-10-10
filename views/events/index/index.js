@@ -57,6 +57,7 @@
         el: this.$('.js-list'),
         collection: this.days,
         modelView: app.DaysShowView,
+        pageSize: 7,
         infiniteScroll: true
       });
     },

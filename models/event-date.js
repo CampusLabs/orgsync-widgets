@@ -22,6 +22,8 @@
     end: function () { return this.normalize('ends_at'); },
 
     normalize: function (which) {
+      var key = '_' + which;
+      if (this[key]) return this[key];
       var date = moment(this.get(which));
       var tz = this.get('tz');
       if (!this.get('event').get('is_all_day')) return date.tz(tz);
@@ -34,7 +36,7 @@
       // All day events should always be midnight to midnight in the timezone
       // they are being viewed in, regardless of the time zone they were created
       // in.
-      return moment.tz(app.Day.id(date), tz);
+      return this[key] = moment.tz(app.Day.id(date), tz);
     },
 
     isMultiDay: function () {
@@ -45,6 +47,6 @@
   EventDate.Collection = Model.Collection.extend({
     model: EventDate,
 
-    comparator: function (eventDate) { return eventDate.start(); }
+    comparator: 'starts_at'
   });
 })();

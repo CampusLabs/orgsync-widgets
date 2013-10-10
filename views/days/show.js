@@ -25,10 +25,10 @@
     initialize: function () {
       View.prototype.initialize.apply(this, arguments);
       this.eventDates = this.model.get('eventDates');
-      var date = this.model.date();
+      var date = this.model.date().clone();
       var today = moment().tz(date.tz()).startOf('day');
-      if (date.isSame(today)) this.$el.addClass('js-today');
-      if (date.startOf('week').isSame(today.startOf('week'))) {
+      if (+date === +today) this.$el.addClass('js-today');
+      if (+date.startOf('week') === +today.startOf('week')) {
         this.$el.addClass('js-this-week');
       }
       this.checkEmpty();
@@ -55,12 +55,19 @@
 
     longDate: function () {
       var date = this.model.date();
-      var prefix = '';
-      var today = moment.tz(date.tz()).startOf('day');
-      if (date.isSame(today.subtract('day', 1))) prefix = 'Yesterday, ';
-      if (date.isSame(today.add('day', 1))) prefix = 'Today, ';
-      if (date.isSame(today.add('day', 1))) prefix = 'Tomorrow, ';
-      return this.model.date().format('[' + prefix + ']dddd, MMMM D, YYYY');
+      var today = moment().tz(date.tz()).startOf('day');
+      var prefix = (function () {
+        switch (+date) {
+        case +today.subtract('day', 1):
+          return 'Yesterday, ';
+        case +today.add('day', 1):
+          return 'Today, ';
+        case +today.add('day', 1):
+          return 'Tomorrow, ';
+        }
+        return '';
+      })();
+      return date.format('[' + prefix + ']dddd, MMMM D, YYYY');
     },
 
     shortDate: function () {

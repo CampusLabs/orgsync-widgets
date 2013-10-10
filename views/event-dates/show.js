@@ -30,11 +30,13 @@
       if (this.event.get('is_all_day')) this.$el.addClass('js-all-day');
       if (this.day) {
         var day = this.day.date();
+        var startDay = this.model.start().clone().startOf('day');
+        var end = this.model.end();
         if (this.firstDow = !day.weekday()) this.$el.addClass('js-first-dow');
-        if (this.continued = day.isAfter(this.model.start().startOf('day'))) {
+        if (this.continued = +day > +startDay) {
           this.$el.addClass('js-continued');
         }
-        if (this.continues = day.add('day', 1).isBefore(this.model.end())) {
+        if (this.continues = +day.clone().add('day', 1) < +end) {
           this.$el.addClass('js-continues');
         }
       }
@@ -42,14 +44,9 @@
 
     shortTime: function () {
       if (this.event.get('is_all_day')) return 'All Day';
-      var date = this.model.start();
-      var format = 'h A';
-      if (this.continued) {
-        if (this.continues) return 'All Day';
-        date = this.model.end();
-        format = '[ends ]' + format;
-      }
-      return date.format(format);
+      if (!this.continued) return this.model.start().format('h A');
+      if (this.continues) return 'All Day';
+      return this.model.end().format('[ends ]h A');
     },
 
     longTime: function () {

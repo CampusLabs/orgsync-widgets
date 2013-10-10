@@ -68,7 +68,6 @@
       this.$el
         .removeClass('js-list-view js-month-view')
         .addClass('js-' + view + '-view');
-      this.views.daysList.refresh();
     }
   });
 })();

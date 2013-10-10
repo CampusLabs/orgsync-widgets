@@ -83,12 +83,14 @@
     }
   });
 
-  // Extending the updateOffset method fixes some wonky DST issues.
-  var updateOffset = moment.updateOffset;
+  // Fixing the updateOffset method for some wonky DST issues.
   moment.updateOffset = function (date) {
+    if (!date._z) return;
     var delta = date.zone();
-    updateOffset.apply(this, arguments);
-    if (Math.abs(delta -= date.zone()) === 60) date.subtract('minutes', delta);
+    var offset = date._z.offset(date);
+    if (!(delta -= offset)) return;
+    date.zone(offset);
+    if (Math.abs(delta) <= 60) date.subtract('minutes', delta);
   };
 
   // Run the app's ready function when the DOM is parsed.

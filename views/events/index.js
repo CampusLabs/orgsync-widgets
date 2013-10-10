@@ -1,4 +1,4 @@
-//= require ../../view
+//= require ../view
 
 (function () {
   'use strict';
@@ -10,6 +10,7 @@
   var Community = app.Community;
   var Day = app.Day;
   var jst = window.jst;
+  var moment = window.moment;
   var Portal = app.Portal;
   var View = app.View;
 
@@ -33,7 +34,7 @@
       View.prototype.initialize.apply(this, arguments);
       this.$el.append($('<div>').addClass('js-loading'));
       this.days = new Day.Collection();
-      this.days.tz = this.tz;
+      this.days.tz = this.tz || app.tz;
       this.community = new Community({id: this.communityId});
       this.portal = new Portal({id: this.portalId});
       if (!this.view) this.view = 'month';
@@ -47,9 +48,19 @@
 
     render: function () {
       View.prototype.render.apply(this, arguments);
+      this.renderDaysOfWeek();
       this.renderDaysList();
       this.setView(this.view);
       return this;
+    },
+
+    renderDaysOfWeek: function () {
+      var day = moment().tz(this.tz || app.tz).startOf('week');
+      var $days = [];
+      do {
+        $days.push($('<div>').addClass('js-day').text(day.format('ddd')));
+      } while (day.add('day', 1).weekday());
+      this.$('.js-days-of-week').append($days);
     },
 
     renderDaysList: function () {

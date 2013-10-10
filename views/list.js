@@ -14,13 +14,13 @@
 
     pageSize: 10,
 
-    tolerance: 250,
+    threshold: 500,
 
     options: [
       'modelView',
       'modelViewOptions',
       'infiniteScroll',
-      'tolerance',
+      'threshold',
       'pageSize'
     ],
 
@@ -105,8 +105,8 @@
       var scroll = (isWindow ? $(document) : $scrollParent).scrollTop();
       var bY = this.$el[isWindow ? 'offset' : 'position']().top;
       var bH = this.$el.prop('scrollHeight');
-      var tolerance = this.tolerance;
-      return aH + scroll > bY + bH - tolerance;
+      var threshold = this.threshold;
+      return aH + scroll > bY + bH - threshold;
     },
 
     refresh: function () {

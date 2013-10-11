@@ -72,7 +72,7 @@
 
     shortDate: function () {
       var date = this.model.date();
-      return (date.date() === 1 ? date.format('MMMM') + ' ' : '') + date.date();
+      return (date.date() === 1 ? date.format('MMM') + ' ' : '') + date.date();
     }
   });
 })();

@@ -8,6 +8,9 @@
     .short-date
       display none
     .long-date
+      position -webkit-sticky
+      position sticky
+      top 0
       padding 10px
       background #ccc
 .osw-events-index.js-month-view[min-width~='751px']
@@ -20,18 +23,27 @@
     width 14.28%
     vertical-align top
     height 200px
-    &.js-this-week
-      .short-date
-        border-width 3px
-        border-color #f99
+    &:before
+      display block
+      content ''
+      border-top 1px solid #ccc
+    &.js-this-week:before
+      border-width 3px
+      border-color #f99
     &.js-today
       background #fee
-      .short-date
-        border-color #f66
+      &:before
+        border-top-color #f66
+    .list
+      margin-top -5px
     .long-date
       display none
     .short-date
-      border-top 1px solid #ccc
-      padding 5px 5px 0 0
+      position -webkit-sticky
+      position sticky
+      top 0
+      z-index 2
+      padding 0 5px
       text-align right
       font-size 14px
+      line-height 26px

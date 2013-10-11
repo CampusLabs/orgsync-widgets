@@ -41,7 +41,7 @@
       }
       this.listenTo(this.collection, {
         add: this.addModel,
-        sort: _.debounce(_.bind(this.sortModels, this)),
+        sort: this.sortModels,
         remove: this.removeModel
       });
       this.collection.each(this.addModel, this);

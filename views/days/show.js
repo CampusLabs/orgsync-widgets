@@ -24,12 +24,15 @@
 
     initialize: function () {
       View.prototype.initialize.apply(this, arguments);
-      this.eventDates = this.model.get('eventDates');
       var date = this.model.date().clone();
+      this.$el.addClass(
+        'js-day-' + this.model.id + ' js-month-' + date.format('YYYY-MM')
+      );
+      this.eventDates = this.model.get('eventDates');
       var today = moment().tz(date.tz()).startOf('day');
       if (+date === +today) this.$el.addClass('js-today');
       if (+date.startOf('week') === +today.startOf('week')) {
-        this.$el.addClass('js-this-week');
+        this.$el.addClass('js-current-week');
       }
       this.checkEmpty();
     },

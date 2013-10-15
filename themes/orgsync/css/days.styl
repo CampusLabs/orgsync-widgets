@@ -23,11 +23,15 @@
     width 14.28%
     vertical-align top
     height 200px
+    opacity .25
+    transition opacity .25s ease-in-out
+    &.js-active-month
+      opacity 1
     &:before
       display block
       content ''
       border-top 1px solid #ccc
-    &.js-this-week:before
+    &.js-current-week:before
       border-width 3px
       border-color #f99
     &.js-today

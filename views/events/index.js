@@ -120,9 +120,9 @@
       return day;
     },
 
-    clickToday: function () { this.jumpTo(moment().tz(this.tz)); },
+    clickToday: function () { this.jumpTo(moment().tz(this.tz), 500); },
 
-    jumpTo: function (day) {
+    jumpTo: function (day, duration) {
       var $el = this.$('.js-day-' + Day.id(day));
 
       // Handle uncreated days here
@@ -133,7 +133,8 @@
         $el = $next[0] ? $next : $last[0] ? $last : $el;
       }
       var $list = this.$('> .js-list');
-      $list.scrollTop($el.position().top + $list.scrollTop());
+      var target = $el.position().top + $list.scrollTop();
+      $list.animate({scrollTop: target}, duration || 0);
     },
 
     renderMonth: function () {

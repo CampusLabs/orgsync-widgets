@@ -33,6 +33,9 @@
     addEvents: function (events) {
       this.toAdd = {};
       events.each(this.addEvent, this);
+      var tz = this.tz || app.tz;
+      var id = Day.id(moment().tz(tz));
+      if (!this.toAdd[id]) this.toAdd[id] = new Day({id: id, tz: tz});
       this.fill();
       this.add(_.values(this.toAdd));
     },

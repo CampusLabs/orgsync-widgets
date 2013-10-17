@@ -31,13 +31,18 @@
       'osw-events-index'
     ],
 
+    tz: app.tz,
+
+    lastScrollTop: -Infinity,
+
+    view: 'month',
+
     initialize: function () {
       View.prototype.initialize.apply(this, arguments);
       this.days = new Day.Collection();
-      this.days.tz = this.tz || app.tz;
+      this.days.tz = this.tz;
       this.community = new Community({id: this.communityId});
       this.portal = new Portal({id: this.portalId});
-      if (!this.view) this.view = 'month';
       var events = this.community.get('events');
       var self = this;
       events.fetch({
@@ -80,9 +85,17 @@
     clickChangeView: function (ev) { this.setView($(ev.target).data('view')); },
 
     setView: function (view) {
+      this.view = view;
+      var day = this.day();
       this.$el
         .removeClass('js-list-view js-month-view')
         .addClass('js-' + view + '-view');
+      this.views.daysList.nextPage();
+      if (!day) return;
+      delete this._day;
+      this.lastScrollTop = -Infinity;
+      this.jumpTo(view === 'list' ? day.weekday(0) : day);
+      this.renderMonth();
     },
 
     day: function () {
@@ -91,43 +104,51 @@
       var day = this._day;
       var scrollTop = this.$('> .js-list').scrollTop();
       var lastScrollTop = this.lastScrollTop;
-      if (lastScrollTop === scrollTop) return day;
-      this.lastScrollTop = scrollTop;
-      var dir = scrollTop < lastScrollTop ? -1 : 1;
-      var dirName = dir === 1 ? 'next' : 'prev';
-      var $el = this.$('.js-day-' + Day.id(day));
-      var $gap;
-      while (
-        ($gap = $el[dirName + 'Until'](':visible')) &&
-        ($el = ($gap.length ? $gap.last() : $el)[dirName]()) &&
-        $el[0] &&
-        dir * $el.position().top <= (dir === 1 ? 0 : $el.height())
-      ) { day.add('day', dir * (1 + $gap.length)); }
+      if (lastScrollTop !== scrollTop) {
+        this.lastScrollTop = scrollTop;
+        var dir = scrollTop < lastScrollTop ? -1 : 1;
+        var dirName = dir === 1 ? 'next' : 'prev';
+        var $el = this.$('.js-day-' + Day.id(day));
+        var $gap;
+        while (
+          ($gap = $el[dirName + 'Until'](':visible')) &&
+          ($el = ($gap.length ? $gap.last() : $el)[dirName]()) &&
+          $el[0] &&
+          dir * $el.position().top < (dir === 1 ? 1 : $el.height())
+        ) { day.add('day', dir * (1 + $gap.length)); }
+      }
       return day;
     },
 
-    clickToday: function () { this.jumpTo(moment()); },
+    clickToday: function () { this.jumpTo(moment().tz(this.tz)); },
 
     jumpTo: function (day) {
       var $el = this.$('.js-day-' + Day.id(day));
 
       // Handle uncreated days here
       if (!$el[0]) return;
+      if (!$el.is(':visible')) {
+        var $next = $el.nextUntil(':visible').last().next();
+        var $last = $el.prevUntil(':visible').last().prev();
+        $el = $next[0] ? $next : $last[0] ? $last : $el;
+      }
       var $list = this.$('> .js-list');
       $list.scrollTop($el.position().top + $list.scrollTop());
     },
 
     renderMonth: function () {
       var day = this.day();
+      var monthView = this.view === 'month';
+      if (monthView) day = day.clone().add('w', 1).weekday(6);
+      this.$('.js-month').text(day.format('MMMM'));
+      this.$('.js-year').text(day.format('YYYY'));
+      if (!monthView) return;
       var lastMonth = this.lastMonth;
       var month = day.format('YYYY-MM');
-      if (month !== lastMonth) {
-        this.$('.js-month').text(day.format('MMMM'));
-        this.$('.js-year').text(day.format('YYYY'));
-        this.$('.js-active-month').removeClass('js-active-month');
-        this.$('.js-month-' + month).addClass('js-active-month');
-        this.lastMonth = month;
-      }
+      if (month === lastMonth) return;
+      this.lastMonth = month;
+      this.$('.js-active-month').removeClass('js-active-month');
+      this.$('.js-month-' + month).addClass('js-active-month');
     }
   });
 })();

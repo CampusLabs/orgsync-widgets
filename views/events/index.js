@@ -114,7 +114,7 @@
           ($gap = $el[dirName + 'Until'](':visible')) &&
           ($el = ($gap.length ? $gap.last() : $el)[dirName]()) &&
           $el[0] &&
-          dir * $el.position().top < (dir === 1 ? 1 : $el.height())
+          dir * $el.position().top <= (dir === 1 ? 0 : $el.height())
         ) { day.add('day', dir * (1 + $gap.length)); }
       }
       return day;

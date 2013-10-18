@@ -20,7 +20,11 @@
 
     events: {
       'click .js-change-view': 'clickChangeView',
-      'click .js-jump-to-today': 'clickToday'
+      'click .js-today': 'clickToday',
+      'click .js-prev-month': function () { this.incr('month', -1); },
+      'click .js-next-month': function () { this.incr('month', 1); },
+      'click .js-prev-week': function () { this.incr('week', -1); },
+      'click .js-next-week': function () { this.incr('week', 1); }
     },
 
     options: ['communityId', 'portalId', 'events', 'date', 'tz', 'view'],
@@ -121,6 +125,12 @@
     },
 
     clickToday: function () { this.jumpTo(moment().tz(this.tz), 500); },
+
+    incr: function (unit, n) {
+      var day = this.day().clone();
+      if (this.view === 'month') day.weekday(6);
+      this.jumpTo(day.add(unit, n).startOf(unit), 500);
+    },
 
     jumpTo: function (day, duration) {
       var $el = this.$('.js-day-' + Day.id(day));

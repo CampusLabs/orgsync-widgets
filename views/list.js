@@ -95,6 +95,8 @@
           )
         );
         _.defer(this.nextPage);
+      } else {
+        this.trigger('done-paging');
       }
     },
 

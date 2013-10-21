@@ -84,6 +84,7 @@
         pageSize: 7,
         infiniteScroll: true
       });
+      this.views.daysList.once('done-paging', this.clickToday, this);
     },
 
     clickChangeView: function (ev) { this.setView($(ev.target).data('view')); },
@@ -94,7 +95,7 @@
       this.$el
         .removeClass('js-list-view js-month-view')
         .addClass('js-' + view + '-view');
-      this.views.daysList.nextPage();
+      if (this.days.length) this.views.daysList.nextPage();
       if (!day) return;
       delete this._day;
       this.lastScrollTop = -Infinity;
@@ -113,15 +114,25 @@
         var dir = scrollTop < lastScrollTop ? -1 : 1;
         var dirName = dir === 1 ? 'next' : 'prev';
         var $el = this.$('.js-day-' + Day.id(day));
-        var $gap;
+        var $prev, $gap;
         while (
+          ($prev = $el) &&
           ($gap = $el[dirName + 'Until'](':visible')) &&
           ($el = ($gap.length ? $gap.last() : $el)[dirName]()) &&
-          $el[0] &&
-          dir * $el.position().top <= (dir === 1 ? 0 : $el.height())
+          this.incrOver($el, $prev, dir)
         ) { day.add('day', dir * (1 + $gap.length)); }
       }
       return day;
+    },
+
+    incrOver: function ($el, $prev, dir) {
+      if (!$el[0]) return false;
+
+      // Math.round necessary for FF as it doesn't return integers.
+      var top = Math.round($el.position().top);
+      var list = this.view === 'list';
+      if (dir === 1) return top < (list ? 1 : $prev.height());
+      return top > -(list ? $el.height() : 1);
     },
 
     clickToday: function () { this.jumpTo(moment().tz(this.tz), 500); },
@@ -137,20 +148,36 @@
 
       // Handle uncreated days here
       if (!$el[0]) return;
+
       if (!$el.is(':visible')) {
-        var $next = $el.nextUntil(':visible').last().next();
-        var $last = $el.prevUntil(':visible').last().prev();
-        $el = $next[0] ? $next : $last[0] ? $last : $el;
+
+        // The specified day isn't visible so it can't be jumped to. The best
+        // that can be done here is find the next visible day in the future.
+        var $next = $el.nextUntil(':visible').last();
+        $next = ($next[0] ? $next : $el).next();
+
+        // If, however, the next visible day in the future is the day that is
+        // being started at, flip the direction and search in the past.
+        if ($next[0] === $el[0]) {
+          $next = $el.prevUntil(':visible').last();
+          $next = ($next[0] ? $next : $el).prev();
+        }
+
+        // Finally, if this is an edge with no next or prev elements, noop by
+        // scrolling to the current day element.
+        if ($next[0]) $el = $next;
       }
       var $list = this.$('> .js-list');
-      var target = $el.position().top + $list.scrollTop();
+
+      // Math.round necessary for FF as it doesn't return integers.
+      var target = Math.round($el.position().top) + $list.scrollTop();
       $list.animate({scrollTop: target}, duration || 0);
     },
 
     renderMonth: function () {
       var day = this.day();
       var monthView = this.view === 'month';
-      if (monthView) day = day.clone().add('w', 1).weekday(6);
+      if (monthView) day = day.clone().weekday(6);
       this.$('.js-month').text(day.format('MMMM'));
       this.$('.js-year').text(day.format('YYYY'));
       if (!monthView) return;

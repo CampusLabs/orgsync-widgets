@@ -34,7 +34,7 @@
       this.toAdd = {};
       events.each(this.addEvent, this);
       var tz = this.tz || app.tz;
-      var id = Day.id(moment().tz(tz));
+      var id = Day.id(moment().tz(tz).startOf('month'));
       if (!this.toAdd[id]) this.toAdd[id] = new Day({id: id, tz: tz});
       this.fill();
       this.add(_.values(this.toAdd));

@@ -46,7 +46,8 @@
       View.prototype.initialize.apply(this, arguments);
       this.community = new app.Community({id: this.communityId});
       var bootstrapped = this.portals;
-      this.portals = this.community.get('portals').set(bootstrapped);
+      this.portals = this.community.get('portals');
+      this.portals.set(bootstrapped);
       this.portals.url = this.community.url() + '/portals';
       this.filtered = new app.Portal.Collection();
       this.filters = {

@@ -5,7 +5,6 @@
 
   var app = window.OrgSyncWidgets;
 
-  var _ = window._;
   var Model = app.Model;
   var moment = window.moment;
 
@@ -30,14 +29,11 @@
 
     comparator: 'id',
 
+    tz: app.tz,
+
     addEvents: function (events) {
-      this.toAdd = {};
       events.each(this.addEvent, this);
-      var tz = this.tz || app.tz;
-      var id = Day.id(moment().tz(tz).startOf('month'));
-      if (!this.toAdd[id]) this.toAdd[id] = new Day({id: id, tz: tz});
       this.fill();
-      this.add(_.values(this.toAdd));
     },
 
     addEvent: function (event) {
@@ -49,43 +45,47 @@
     },
 
     addEventDate: function (eventDate) {
-      var tz = this.tz || app.tz;
+      var tz = this.tz;
       eventDate.set('tz', tz);
       var start = eventDate.start().clone().startOf('day');
       var end = eventDate.end();
       do {
         var id = Day.id(start);
-        var day = this.toAdd[id];
-        if (!day) this.toAdd[id] = day = new Day({id: id}).set('tz', tz);
+        var day = this.get(id);
+        if (!day) this.add((day = new Day({id: id})).set('tz', tz));
         day.get('eventDates').add(eventDate);
       } while (start.add('days', 1) < end);
     },
 
     fill: function () {
-      var toAdd = this.toAdd;
-      var days = _.sortBy(toAdd, 'id');
 
       // Nothing to do with an empty collection.
-      if (!days.length) return;
+      if (!this.length) return;
 
       // First, make sure the first day is weekday 0 and the last day is weekday
       // 6. This allows moment to be locale aware and start the week on Monday
       // if desired.
-      var first = days[0];
-      var last = days[days.length - 1];
+      var first = this.first();
+      var last = this.last();
       var id0 = Day.id(first.date().clone().startOf('week'));
       var id6 = Day.id(last.date().clone().endOf('week').startOf('day'));
       var tz = this.tz;
-      if (first.id !== id0) first = toAdd[id0] = new Day({id: id0, tz: tz});
-      if (last.id !== id6) last = toAdd[id6] = new Day({id: id6, tz: tz});
+      if (first.id !== id0) this.add({id: id0, tz: tz});
+      if (last.id !== id6) this.add({id: id6, tz: tz});
 
       // Finally, fill in all gaps between the first and last days.
-      first = first.date().clone();
-      last = last.date();
-      while (first.add('day', 1) < last) {
+      first = this.first().date().clone();
+      last = this.last().date();
+      while (first.add('day', 1).isBefore(last)) {
         var id = Day.id(first);
-        if (!toAdd[id]) toAdd[id] = new Day({id: id, tz: tz});
+        if (!this.get(id)) this.add({id: id, tz: tz});
       }
+    },
+
+    fillN: function (n) {
+      var edge = n < 0 ? this.first() : this.last();
+      this.add({id: Day.id(edge.date().clone().add('days', n)), tz: this.tz});
+      this.fill();
     }
   });
 })();

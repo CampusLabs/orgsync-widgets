@@ -37,8 +37,6 @@
 
     tz: app.tz,
 
-    lastScrollTop: -Infinity,
-
     view: 'month',
 
     initialize: function () {
@@ -47,16 +45,30 @@
       this.days.tz = this.tz;
       this.community = new Community({id: this.communityId});
       this.portal = new Portal({id: this.portalId});
-      var events = this.community.get('events');
+      this.render();
       var self = this;
-      events.fetch({
+      this.community.get('events').fetch({
         data: {per_page: 100},
         success: function (events) {
           self.days.addEvents(events);
-          self.renderMonth();
+          self.updateMonth();
         }
       });
-      this.render();
+    },
+
+    setView: function (view) {
+      var daysList = this.views.daysList;
+      var day = daysList.day();
+      this.view = view;
+      this.$el
+        .removeClass('js-list-view js-month-view')
+        .addClass('js-' + view + '-view');
+      daysList.tryPaging();
+      if (!day) return;
+      delete daysList._day;
+      daysList.lastScrollTop = -Infinity;
+      daysList.jumpTo(view === 'list' ? day.weekday(0) : day);
+      this.updateMonth();
     },
 
     render: function () {
@@ -64,12 +76,11 @@
       this.renderDaysOfWeek();
       this.renderDaysList();
       this.setView(this.view);
-      this.$('> .js-list').scroll(_.bind(this.renderMonth, this));
       return this;
     },
 
     renderDaysOfWeek: function () {
-      var day = moment().tz(this.tz || app.tz).startOf('week');
+      var day = moment().tz(this.tz).startOf('week');
       var $days = [];
       do { $days.push($('<div>').addClass('js-day').text(day.format('ddd'))); }
       while (day.add('day', 1).weekday());
@@ -77,108 +88,34 @@
     },
 
     renderDaysList: function () {
-      this.views.daysList = new app.ListView({
+      this.days.add({id: Day.id(moment().tz(this.tz)), tz: this.tz});
+      this.views.daysList = new app.DaysListView({
         el: this.$('.js-list'),
         collection: this.days,
-        modelView: app.DaysShowView,
-        pageSize: 7,
-        infiniteScroll: true
+        view: this.view
       });
-      this.views.daysList.once('done-paging', this.clickToday, this);
+      this.$('> .js-list').scroll(_.bind(this.updateMonth, this));
     },
 
-    clickChangeView: function (ev) { this.setView($(ev.target).data('view')); },
-
-    setView: function (view) {
-      this.view = view;
-      var day = this.day();
-      this.$el
-        .removeClass('js-list-view js-month-view')
-        .addClass('js-' + view + '-view');
-      if (this.days.length) this.views.daysList.nextPage();
-      if (!day) return;
-      delete this._day;
-      this.lastScrollTop = -Infinity;
-      this.jumpTo(view === 'list' ? day.weekday(0) : day);
-      this.renderMonth();
+    clickChangeView: function (ev) {
+      this.setView($(ev.target).data('view'));
     },
 
-    day: function () {
-      if (!this.days.length) return;
-      if (!this._day) this._day = this.days.first().date().clone();
-      var day = this._day;
-      var scrollTop = this.$('> .js-list').scrollTop();
-      var lastScrollTop = this.lastScrollTop;
-      if (lastScrollTop !== scrollTop) {
-        this.lastScrollTop = scrollTop;
-        var dir = scrollTop < lastScrollTop ? -1 : 1;
-        var dirName = dir === 1 ? 'next' : 'prev';
-        var $el = this.$('.js-day-' + Day.id(day));
-        var $prev, $gap;
-        while (
-          ($prev = $el) &&
-          ($gap = $el[dirName + 'Until'](':visible')) &&
-          ($el = ($gap.length ? $gap.last() : $el)[dirName]()) &&
-          this.incrOver($el, $prev, dir)
-        ) { day.add('day', dir * (1 + $gap.length)); }
-      }
-      return day;
+    clickToday: function () {
+      this.views.daysList.jumpTo(moment().tz(this.tz), 500);
     },
-
-    incrOver: function ($el, $prev, dir) {
-      if (!$el[0]) return false;
-
-      // Math.round necessary for FF as it doesn't return integers.
-      var top = Math.round($el.position().top);
-      var list = this.view === 'list';
-      if (dir === 1) return top < (list ? 1 : $prev.height());
-      return top > -(list ? $el.height() : 1);
-    },
-
-    clickToday: function () { this.jumpTo(moment().tz(this.tz), 500); },
 
     incr: function (unit, n) {
-      var day = this.day().clone();
+      var day = this.views.daysList.day().clone();
       if (this.view === 'month') day.weekday(6);
-      this.jumpTo(day.add(unit, n).startOf(unit), 500);
+      this.views.daysList.jumpTo(day.add(unit, n).startOf(unit), 500);
     },
 
-    jumpTo: function (day, duration) {
-      var $el = this.$('.js-day-' + Day.id(day));
-
-      // Handle uncreated days here
-      if (!$el[0]) return;
-
-      if (!$el.is(':visible')) {
-
-        // The specified day isn't visible so it can't be jumped to. The best
-        // that can be done here is find the next visible day in the future.
-        var $next = $el.nextUntil(':visible').last();
-        $next = ($next[0] ? $next : $el).next();
-
-        // If, however, the next visible day in the future is the day that is
-        // being started at, flip the direction and search in the past.
-        if ($next[0] === $el[0]) {
-          $next = $el.prevUntil(':visible').last();
-          $next = ($next[0] ? $next : $el).prev();
-        }
-
-        // Finally, if this is an edge with no next or prev elements, noop by
-        // scrolling to the current day element.
-        if ($next[0]) $el = $next;
-      }
-      var $list = this.$('> .js-list');
-
-      // Math.round necessary for FF as it doesn't return integers.
-      var target = Math.round($el.position().top) + $list.scrollTop();
-      $list.animate({scrollTop: target}, duration || 0);
-    },
-
-    renderMonth: function () {
-      var day = this.day();
+    updateMonth: function () {
+      var day = this.views.daysList.day();
       var monthView = this.view === 'month';
       if (monthView) day = day.clone().weekday(6);
-      this.$('.js-month').text(day.format('MMMM'));
+      this.$('.js-month').text(day.format('LL'));
       this.$('.js-year').text(day.format('YYYY'));
       if (!monthView) return;
       var lastMonth = this.lastMonth;

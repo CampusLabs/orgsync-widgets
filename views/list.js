@@ -100,15 +100,17 @@
       }
     },
 
-    needsPage: function () {
+    needsPage: function (scrollTop) {
       var $scrollParent = this.$scrollParent();
       var isWindow = $scrollParent[0] === window;
       var aH = $scrollParent.height();
-      var scroll = (isWindow ? $(document) : $scrollParent).scrollTop();
+      if (scrollTop == null) {
+        scrollTop = (isWindow ? $(document) : $scrollParent).scrollTop();
+      }
       var bY = this.$el[isWindow ? 'offset' : 'position']().top;
       var bH = this.$el.prop('scrollHeight');
       var threshold = this.threshold;
-      return aH + scroll > bY + bH - threshold;
+      return aH + scrollTop > bY + bH - threshold;
     },
 
     refresh: function () {

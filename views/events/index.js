@@ -118,12 +118,8 @@
       this.$('.js-month').text(day.format('LL'));
       this.$('.js-year').text(day.format('YYYY'));
       if (!monthView) return;
-      var lastMonth = this.lastMonth;
-      var month = day.format('YYYY-MM');
-      if (month === lastMonth) return;
-      this.lastMonth = month;
       this.$('.js-active-month').removeClass('js-active-month');
-      this.$('.js-month-' + month).addClass('js-active-month');
+      this.$('.js-month-' + day.format('YYYY-MM')).addClass('js-active-month');
     }
   });
 })();

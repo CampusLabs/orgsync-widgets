@@ -37,7 +37,9 @@
     listeners: {},
 
     initialize: function () {
-      this.debouncedTryPaging = _.debounce(_.bind(this.tryPaging, this, null));
+      this.debouncedTryPaging = _.debounce(
+        _.bind(this.tryPaging, this, null, null)
+      );
       $(window).on('resize', this.debouncedTryPaging);
       this.available = this.collection;
       this.available.fill();
@@ -45,17 +47,16 @@
       this.collection = new this.available.constructor(
         this.available.first(this.pageSize)
       );
-      this.on('all', console.log.bind(console));
       return ListView.prototype.initialize.apply(this, arguments);
     },
 
-    tryPaging: function (day) {
-      if (this.needsPageBelow(day)) this.renderPageBelow(day);
-      else if (this.needsPageAbove(day)) this.renderPageAbove(day);
+    tryPaging: function (scrollTop, day) {
+      if (this.needsBelow(scrollTop, day)) this.renderBelow();
+      else if (this.needsAbove(scrollTop, day)) this.renderAbove();
       else return this.trigger('paged');
     },
 
-    renderPageAbove: function () {
+    renderAbove: function () {
       var collection = this.collection;
       var available = this.available;
       var pageSize = this.pageSize;
@@ -65,12 +66,12 @@
       var scrollHeight = this.$el.prop('scrollHeight');
       var i = available.indexOf(available.get(targetId));
       collection.add(available.models.slice(i, i + pageSize));
-      this.$el.scrollTop(
-        this.$el.scrollTop() + (this.$el.prop('scrollHeight') - scrollHeight)
-      );
+      var delta = this.$el.prop('scrollHeight') - scrollHeight;
+      this.lastScrollTop += delta;
+      this.$el.scrollTop(this.$el.scrollTop() + delta);
     },
 
-    renderPageBelow: function () {
+    renderBelow: function () {
       var collection = this.collection;
       var available = this.available;
       var pageSize = this.pageSize;
@@ -81,24 +82,25 @@
       collection.add(available.models.slice(i - pageSize + 1, i + 1));
     },
 
-    needsPageAbove: function (day) {
+    needsAbove: function (scrollTop, day) {
       if (!this.collection.length) return true;
       var oldestDate = this.collection.first().date();
       var force = day && oldestDate.isAfter(day);
       var sixMonthsAgo = this.day().clone().subtract('months', 6);
+      if (scrollTop == null) scrollTop = this.$el.scrollTop();
       return force || (
-        this.$el.scrollTop() < this.threshold &&
+        scrollTop < this.threshold &&
         oldestDate.isAfter(sixMonthsAgo)
       );
     },
 
-    needsPageBelow: function (day) {
+    needsBelow: function (scrollTop, day) {
       if (!this.collection.length) return true;
       var youngestDate = this.collection.last().date();
       var force = day && youngestDate.isBefore(day);
       var sixMonthsFromNow = this.day().clone().add('months', 6);
       return force || (
-        this.needsPage() &&
+        this.needsPage(scrollTop) &&
         youngestDate.isBefore(sixMonthsFromNow)
       );
     },
@@ -158,27 +160,23 @@
         }
 
         // Math.round necessary for FF as it doesn't return integers.
-        var target = function () {
-          return Math.round($el.position().top) + self.$el.scrollTop();
-        };
-        self.$el.animate({scrollTop: target()}, {
-          duration: duration || 0,
-          step: function (now, tween) {
-            var correct = target();
-            if (tween.end === correct) return;
-            tween.end = correct;
-            tween.now = tween.start + ((tween.end - tween.start) * tween.pos);
-          }
-        });
+        var target = Math.round($el.position().top) + self.$el.scrollTop();
+        self.$el.animate({scrollTop: target}, duration || 0);
       });
     },
 
     $elFor: function (day, cb) {
       var id = Day.id(day);
       var $el = this.$('.js-day-' + id);
-      if ($el[0]) return cb($el);
+      var scrollTop = null;
+      if ($el[0]) {
+        scrollTop = $el.position().top + this.$el.scrollTop();
+        if (!this.needsBelow(scrollTop) && !this.needsAbove(scrollTop)) {
+          return cb($el);
+        }
+      }
       this.once('paged', _.bind(this.$elFor, this, day, cb));
-      this.tryPaging(day);
+      this.tryPaging(scrollTop, day);
     },
 
     incrOver: function ($el, $prev, dir) {

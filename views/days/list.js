@@ -10,7 +10,6 @@
   var _ = window._;
   var Day = app.Day;
   var ListView = app.ListView;
-  var moment = window.moment;
 
   app.DaysListView = ListView.extend({
     pageSize: 14,
@@ -34,7 +33,10 @@
       scroll: 'debouncedTryPaging'
     },
 
-    listeners: {},
+    listeners: {
+      available: {add: 'debouncedTryPaging'},
+      collection: {add: 'debouncedTryPaging'}
+    },
 
     initialize: function () {
       this.debouncedTryPaging = _.debounce(
@@ -43,7 +45,6 @@
       $(window).on('resize', this.debouncedTryPaging);
       this.available = this.collection;
       this.available.fill();
-      this.available.on('add', this.debouncedTryPaging);
       this.collection = new this.available.constructor(
         this.available.first(this.pageSize)
       );
@@ -170,7 +171,7 @@
       var $el = this.$('.js-day-' + id);
       var scrollTop = null;
       if ($el[0]) {
-        scrollTop = $el.position().top + this.$el.scrollTop();
+        scrollTop = Math.round($el.position().top) + this.$el.scrollTop();
         if (!this.needsBelow(scrollTop) && !this.needsAbove(scrollTop)) {
           return cb($el);
         }

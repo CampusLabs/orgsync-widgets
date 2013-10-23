@@ -115,7 +115,7 @@
       var day = this.views.daysList.day();
       var monthView = this.view === 'month';
       if (monthView) day = day.clone().weekday(6);
-      this.$('.js-month').text(day.format('LL'));
+      this.$('.js-month').text(day.format('MMMM'));
       this.$('.js-year').text(day.format('YYYY'));
       if (!monthView) return;
       this.$('.js-active-month').removeClass('js-active-month');

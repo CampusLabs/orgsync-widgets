@@ -24,6 +24,10 @@
       'osw-event-dates-show'
     ],
 
+    listeners: {
+      event: {'change:matchesFilters': 'correctDisplay'}
+    },
+
     initialize: function () {
       View.prototype.initialize.apply(this, arguments);
       this.event = this.model.get('event');
@@ -64,6 +68,12 @@
       if (this.olay) return this.olay.show();
       (this.views.event = new app.EventsShowView({model: this.event})).render();
       (this.olay = new Olay(this.views.event.el)).show();
+    },
+
+    correctDisplay: function () {
+      var val = this.event.get('matchesFilters');
+      this.$el.toggleClass('js-none', !val);
+      this.model.trigger('change:matchesFilters', val);
     }
   });
 })();

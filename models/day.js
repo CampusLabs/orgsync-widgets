@@ -10,7 +10,8 @@
 
   var Day = app.Day = Model.extend({
     relations: {
-      eventDates: {hasMany: 'EventDate', fk: 'day_id'}
+      eventDates: {hasMany: 'EventDate', fk: 'day_id'},
+      events: {hasMany: 'Event', via: 'eventDates#event', fk: 'event_id'}
     },
 
     defaults: {

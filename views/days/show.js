@@ -13,7 +13,7 @@
     template: jst['days/show'],
 
     listeners: {
-      eventDates: {'add remove': 'checkEmpty'}
+      eventDates: {'add remove change:matchesFilters': 'checkEmpty'}
     },
 
     classes: [
@@ -53,7 +53,12 @@
     },
 
     checkEmpty: function () {
-      this.$el.toggleClass('js-empty', !this.eventDates.length);
+      this.$el.toggleClass('js-empty',
+        !this.eventDates.length ||
+        !this.model.resolve('events').any(function (event) {
+          return event.get('matchesFilters');
+        })
+      );
     },
 
     longDate: function () {

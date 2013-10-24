@@ -24,7 +24,8 @@
       'click .js-prev-month': function () { this.incr('month', -1); },
       'click .js-next-month': function () { this.incr('month', 1); },
       'click .js-prev-week': function () { this.incr('week', -1); },
-      'click .js-next-week': function () { this.incr('week', 1); }
+      'click .js-next-week': function () { this.incr('week', 1); },
+      'keydown .js-search-input': 'searchKeydown',
     },
 
     options: ['communityId', 'portalId', 'events', 'date', 'tz', 'view'],
@@ -39,6 +40,10 @@
 
     view: 'month',
 
+    filters: {
+      query: null
+    },
+
     initialize: function () {
       View.prototype.initialize.apply(this, arguments);
       this.days = new Day.Collection();
@@ -47,6 +52,8 @@
       this.portal = new Portal({id: this.portalId});
       this.render();
       var self = this;
+      this.filters = _.clone(this.filters);
+      this.updateFiltered = _.debounce(_.bind(this.updateFiltered, this));
       this.community.get('events').fetch({
         data: {per_page: 100},
         success: function (events) {
@@ -120,6 +127,27 @@
       if (!monthView) return;
       this.$('.js-active-month').removeClass('js-active-month');
       this.$('.js-month-' + day.format('YYYY-MM')).addClass('js-active-month');
+    },
+
+    searchKeydown: function () {
+      _.defer(_.bind(this.updateQueryFilter, this));
+    },
+
+    updateQueryFilter: function () {
+      var q = this.$('.js-search-input').val();
+      var words = _.str.words(q.toLowerCase());
+      if (_.isEqual(words, this.lastWords)) return;
+      this.lastWords = words;
+      this.filters.query = words.length ? q : null;
+      this.updateFiltered();
+    },
+
+    updateFiltered: function () {
+      var query = this.filters.query;
+      this.community.get('events').each(function (event) {
+        event.set('matchesFilters', event.matchesQuery(query));
+      });
+      if (this.view === 'list') this.views.daysList.jumpTo(moment().tz(this.tz).add('months', 3));
     }
   });
 })();

@@ -12,9 +12,9 @@
   var ListView = app.ListView;
 
   app.DaysListView = ListView.extend({
-    pageSize: 14,
+    pageSize: 28,
 
-    threshold: 500,
+    threshold: 800,
 
     lastScrollTop: -Infinity,
 

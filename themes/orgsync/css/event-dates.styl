@@ -1,7 +1,6 @@
 @import 'config'
 
 .osw-events-index.js-list-view
-.osw-events-index.js-month-view:not([min-width~='751px'])
   .osw-event-dates-show
     border 1px solid #ccc
     border-bottom none
@@ -28,7 +27,7 @@
     .info
       padding 5px 0 5px 10px
       overflow auto
-.osw-events-index.js-month-view[min-width~='751px']
+.osw-events-index.js-month-view
   .osw-event-dates-show
     position relative
     margin-top 5px
@@ -60,7 +59,9 @@
     .short-time
       float right
       padding-left 5px
+      max-width 100%
       color #999
+    .short-time
     .title
       overflow hidden
       text-overflow ellipsis

@@ -1,7 +1,6 @@
 @import 'config'
 
 .osw-events-index.js-list-view
-.osw-events-index.js-month-view:not([min-width~='751px'])
   .osw-days-show
     &.js-empty
       display none
@@ -13,7 +12,7 @@
       top 0
       padding 10px
       background #ccc
-.osw-events-index.js-month-view[min-width~='751px']
+.osw-events-index.js-month-view
   .osw-days-show
     display inline-block
     box-sizing border-box
@@ -48,3 +47,6 @@
       padding 5px
       text-align right
       font-size 14px
+      overflow hidden
+      text-overflow ellipsis
+      white-space nowrap

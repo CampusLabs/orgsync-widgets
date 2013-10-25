@@ -1,19 +1,29 @@
 @import 'config'
 
 .osw-events-index
+  position relative
   > .list
     height 750px
   .month-year
     padding 5px
     position absolute
-    top 5px
-    right 5px
+    top 0
+    right 0
     .month
     .year
       display inline-block
       font-size 24px
-    .year
-      font-weight 100
+      background none
+      border none
+      outline none
+      cursor pointer
+      appearance none
+      text-indent 0.01px
+      text-overflow ''
+    .month
+      margin-right 5px
+      font-weight bold
+      direction rtl
 .osw-events-index.js-list-view
   .days-of-week
     display none

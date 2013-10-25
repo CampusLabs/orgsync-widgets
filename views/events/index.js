@@ -26,6 +26,8 @@
       'click .js-prev-week': function () { this.incr('week', -1); },
       'click .js-next-week': function () { this.incr('week', 1); },
       'keydown .js-search-input': 'searchKeydown',
+      'change .js-month, .js-year': 'jumpToSelected',
+      'click .js-fullscreen': 'toggleFullscreen'
     },
 
     options: ['communityId', 'portalId', 'events', 'date', 'tz', 'view'],
@@ -59,7 +61,6 @@
         data: {per_page: 100},
         success: function (events) {
           self.days.addEvents(events);
-          self.updateMonth();
         }
       });
     },
@@ -92,13 +93,14 @@
     },
 
     renderDaysList: function () {
+      var $list = this.$('> .js-list');
       this.views.daysList = new app.DaysListView({
-        el: this.$('.js-list'),
+        el: $list,
         collection: this.days,
         view: this.view,
         initialDate: moment().tz(this.tz)
       });
-      this.$('> .js-list').scroll(_.bind(this.updateMonth, this));
+      $list.scroll(_.bind(this.updateMonth, this));
     },
 
     clickChangeView: function (ev) {
@@ -116,14 +118,37 @@
     },
 
     updateMonth: function () {
-      var day = this.views.daysList.date();
+      var date = this.views.daysList.date();
       var monthView = this.view === 'month';
-      if (monthView) day = day.clone().weekday(6);
-      this.$('.js-month').text(day.format('MMMM'));
-      this.$('.js-year').text(day.format('YYYY'));
+      if (monthView) date = date.clone().weekday(6);
+      this.$('.js-month').val(date.month());
+      this.$('.js-year').val(date.year());
       if (!monthView) return;
       this.$('.js-active-month').removeClass('js-active-month');
-      this.$('.js-month-' + day.format('YYYY-MM')).addClass('js-active-month');
+      this.$('.js-month-' + date.format('YYYY-MM')).addClass('js-active-month');
+    },
+
+    monthOptions: function () {
+      var now = moment().tz(this.tz);
+      var thisMonth = now.month();
+      var range = _.range(0, 12);
+      return $('<div>').html(_.map(range, function (month) {
+        return $('<option>')
+          .attr('value', month)
+          .text(now.month(month).format('MMMM'))
+          .prop('selected', month === thisMonth);
+      })).html();
+    },
+
+    yearOptions: function () {
+      var thisYear = moment().tz(this.tz).year();
+      var range = _.range(thisYear - 3, thisYear + 4);
+      return $('<div>').html(_.map(range, function (year) {
+        return $('<option>')
+          .attr('value', year)
+          .text(year)
+          .prop('selected', year === thisYear);
+      })).html();
     },
 
     searchKeydown: function () {
@@ -145,6 +170,35 @@
         event.set('matchesFilters', event.matchesQuery(query));
       });
       if (this.view === 'list') this.views.daysList.date(moment().tz(this.tz));
+    },
+
+    jumpToSelected: function () {
+      var month = +this.$('.js-month').val() + 1;
+      if (month < 10) month = '0' + month;
+      var year = this.$('.js-year').val();
+      var date = moment.tz(year + '-' + month + '-01', this.tz);
+      this.views.daysList.date(date);
+    },
+
+    toggleFullscreen: function () {
+      var el = this.$el[0];
+      var d = document;
+      if (!d.fullscreenElement &&
+          !d.mozFullScreenElement &&
+          !d.webkitFullscreenElement) {
+        var $list = this.$('> .js-list');
+        $list.height(screen.height - this.$el.height() + $list.height());
+        if (el.requestFullscreen) el.requestFullscreen();
+        else if (el.mozRequestFullScreen) el.mozRequestFullScreen();
+        else if (el.webkitRequestFullscreen) {
+          el.webkitRequestFullscreen(Element.ALLOW_KEYBOARD_INPUT);
+        }
+      } else {
+        if (d.cancelFullscreen) d.cancelFullscreen();
+        else if (d.mozCancelFullScreen) d.mozCancelFullScreen();
+        else if (d.webkitCancelFullScreen) d.webkitCancelFullScreen();
+        $('> .js-list').removeAttr('style');
+      }
     }
   });
 })();

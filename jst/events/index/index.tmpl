@@ -6,9 +6,10 @@
 <input type='button' class='js-today' value='Today'>
 <input type='button' class='js-next-week' value='&gt;'>
 <input type='button' class='js-next-month' value='&gt;&gt;'>
+<input type='button' class='js-fullscreen' value='Fullscreen'>
 <div class='month-year'>
-  <div class='js-month month'></div>
-  <div class='js-year year'></div>
+  <select class='js-month month'><%= o.monthOptions() %></select>
+  <select class='js-year year'><%= o.yearOptions() %></select>
 </div>
 <div class='js-days-of-week days-of-week'></div>
 <ol class='js-list list'></ol>

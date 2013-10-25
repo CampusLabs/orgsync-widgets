@@ -33,7 +33,8 @@
     classes: [
       'orgsync-widget',
       'js-osw-events-index',
-      'osw-events-index'
+      'osw-events-index',
+      'js-month-view'
     ],
 
     tz: app.tz,
@@ -65,16 +66,12 @@
 
     setView: function (view) {
       var daysList = this.views.daysList;
-      var day = daysList.day();
+      var date = daysList.date();
       this.view = view;
       this.$el
         .removeClass('js-list-view js-month-view')
         .addClass('js-' + view + '-view');
-      daysList.tryPaging();
-      if (!day) return;
-      delete daysList._day;
-      daysList.lastScrollTop = -Infinity;
-      daysList.jumpTo(view === 'list' ? day.weekday(0) : day);
+      daysList.setView(view, view === 'list' ? date.clone().weekday(0) : date);
       this.updateMonth();
     },
 
@@ -95,11 +92,11 @@
     },
 
     renderDaysList: function () {
-      this.days.add({id: Day.id(moment().tz(this.tz)), tz: this.tz});
       this.views.daysList = new app.DaysListView({
         el: this.$('.js-list'),
         collection: this.days,
-        view: this.view
+        view: this.view,
+        initialDate: moment().tz(this.tz)
       });
       this.$('> .js-list').scroll(_.bind(this.updateMonth, this));
     },
@@ -109,17 +106,17 @@
     },
 
     clickToday: function () {
-      this.views.daysList.jumpTo(moment().tz(this.tz), 500);
+      this.views.daysList.date(moment().tz(this.tz), 500);
     },
 
     incr: function (unit, n) {
-      var day = this.views.daysList.day().clone();
+      var day = this.views.daysList.date().clone();
       if (this.view === 'month') day.weekday(6);
-      this.views.daysList.jumpTo(day.add(unit, n).startOf(unit), 500);
+      this.views.daysList.date(day.add(unit, n).startOf(unit), 500);
     },
 
     updateMonth: function () {
-      var day = this.views.daysList.day();
+      var day = this.views.daysList.date();
       var monthView = this.view === 'month';
       if (monthView) day = day.clone().weekday(6);
       this.$('.js-month').text(day.format('MMMM'));
@@ -147,7 +144,7 @@
       this.community.get('events').each(function (event) {
         event.set('matchesFilters', event.matchesQuery(query));
       });
-      if (this.view === 'list') this.views.daysList.jumpTo(moment().tz(this.tz).add('months', 3));
+      if (this.view === 'list') this.views.daysList.date(moment().tz(this.tz));
     }
   });
 })();

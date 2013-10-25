@@ -45,33 +45,32 @@
         remove: this.removeModel
       });
       this.collection.each(this.addModel, this);
+      this.sortModels();
       if (this.infiniteScroll) this.refresh();
     },
 
     addModel: function (model) {
       if (this.views[model.cid]) return;
-      this.$el.append((this.views[model.cid] = new this.modelView(_.extend({
+      (this.views[model.cid] = new this.modelView(_.extend({
         collection: this.collection,
         model: model
-      }, this.modelViewOptions))).render().el);
+      }, this.modelViewOptions))).render();
     },
 
     sortModels: function () {
       var views = this.views;
       var $el = this.$el;
-      var $models = $el.children();
+      var models = $el.children().detach().toArray();
       this.collection.each(function (model, i) {
         var el = views[model.cid].el;
-        if (!$models[i]) {
-          $el.append(el);
-        } else if ($models[i] !== el) {
-          $models.eq(i).before(el);
-          $models = $($models.get().splice(i, 0, el));
-        }
+        if (!models[i]) models.push(el);
+        else if (models[i] !== el) models.splice(i, 0, el);
       });
+      $el.append(models);
     },
 
     removeModel: function (model) {
+      this.views[model.cid].remove();
       delete this.views[model.cid];
     },
 

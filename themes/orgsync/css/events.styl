@@ -4,14 +4,14 @@
   position relative
   > .list
     height 750px
+  .top
+    clearfix()
   .month-year
+    float right
     padding 5px
-    position absolute
-    top 0
-    right 0
+    text-align right
     .month
     .year
-      display inline-block
       font-size 24px
       background none
       border none
@@ -24,6 +24,9 @@
       margin-right 5px
       font-weight bold
       direction rtl
+    .tz
+      font-size 11px
+      color #666
 .osw-events-index.js-list-view
   .days-of-week
     display none

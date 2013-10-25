@@ -26,8 +26,7 @@
       'click .js-prev-week': function () { this.incr('week', -1); },
       'click .js-next-week': function () { this.incr('week', 1); },
       'keydown .js-search-input': 'searchKeydown',
-      'change .js-month, .js-year': 'jumpToSelected',
-      'click .js-fullscreen': 'toggleFullscreen'
+      'change .js-month, .js-year': 'jumpToSelected'
     },
 
     options: ['communityId', 'portalId', 'events', 'date', 'tz', 'view'],
@@ -180,25 +179,10 @@
       this.views.daysList.date(date);
     },
 
-    toggleFullscreen: function () {
-      var el = this.$el[0];
-      var d = document;
-      if (!d.fullscreenElement &&
-          !d.mozFullScreenElement &&
-          !d.webkitFullscreenElement) {
-        var $list = this.$('> .js-list');
-        $list.height(screen.height - this.$el.height() + $list.height());
-        if (el.requestFullscreen) el.requestFullscreen();
-        else if (el.mozRequestFullScreen) el.mozRequestFullScreen();
-        else if (el.webkitRequestFullscreen) {
-          el.webkitRequestFullscreen(Element.ALLOW_KEYBOARD_INPUT);
-        }
-      } else {
-        if (d.cancelFullscreen) d.cancelFullscreen();
-        else if (d.mozCancelFullScreen) d.mozCancelFullScreen();
-        else if (d.webkitCancelFullScreen) d.webkitCancelFullScreen();
-        $('> .js-list').removeAttr('style');
-      }
+    tzDisplay: function () {
+      var full = this.tz.replace(/^.*?\//, '').replace(/_/g, ' ');
+      var abbr = moment().tz(this.tz).zoneAbbr();
+      return full + ' Time (' + abbr + ')';
     }
   });
 })();

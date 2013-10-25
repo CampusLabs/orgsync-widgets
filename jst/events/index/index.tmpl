@@ -1,15 +1,17 @@
-<input class='js-search-input'>
-<input type='button' class='js-change-view' data-view='list' value='List'>
-<input type='button' class='js-change-view' data-view='month' value='Month'>
-<input type='button' class='js-prev-month' value='&lt;&lt;'>
-<input type='button' class='js-prev-week' value='&lt;'>
-<input type='button' class='js-today' value='Today'>
-<input type='button' class='js-next-week' value='&gt;'>
-<input type='button' class='js-next-month' value='&gt;&gt;'>
-<input type='button' class='js-fullscreen' value='Fullscreen'>
-<div class='month-year'>
-  <select class='js-month month'><%= o.monthOptions() %></select>
-  <select class='js-year year'><%= o.yearOptions() %></select>
+<div class='top'>
+  <div class='month-year'>
+    <div class='js-tz tz'><%- o.tzDisplay() %></div>
+    <select class='js-month month'><%= o.monthOptions() %></select>
+    <select class='js-year year'><%= o.yearOptions() %></select>
+  </div>
+  <input class='js-search-input'>
+  <input type='button' class='js-change-view' data-view='list' value='List'>
+  <input type='button' class='js-change-view' data-view='month' value='Month'>
+  <input type='button' class='js-prev-month' value='&lt;&lt;'>
+  <input type='button' class='js-prev-week' value='&lt;'>
+  <input type='button' class='js-today' value='Today'>
+  <input type='button' class='js-next-week' value='&gt;'>
+  <input type='button' class='js-next-month' value='&gt;&gt;'>
 </div>
 <div class='js-days-of-week days-of-week'></div>
 <ol class='js-list list'></ol>

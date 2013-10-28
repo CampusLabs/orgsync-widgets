@@ -123,8 +123,9 @@
       this.$('.js-month').val(date.month());
       this.$('.js-year').val(date.year());
       if (!monthView) return;
-      this.$('.js-active-month').removeClass('js-active-month');
-      this.$('.js-month-' + date.format('YYYY-MM')).addClass('js-active-month');
+      var id = date.format('YYYY-MM');
+      this.$('.js-current-month').removeClass('js-current-month');
+      this.$('.js-month-' + id).addClass('js-current-month');
     },
 
     monthOptions: function () {

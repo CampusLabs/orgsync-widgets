@@ -15,11 +15,29 @@
     },
 
     defaults: {
-      tz: app.tz
+      tz: app.tz,
+      visible: true
+    },
+
+    initialize: function () {
+      this.listenTo(this.get('eventDates'), 'add', function (eventDate) {
+        this.setVisible();
+        this.listenTo(
+          eventDate.get('event'),
+          'change:visible',
+          this.setVisible
+        );
+      });
     },
 
     date: function () {
       return this._date || (this._date = moment.tz(this.id, this.get('tz')));
+    },
+
+    setVisible: function () {
+      this.set('visible', this.get('eventDates').any(function (eventDate) {
+        return eventDate.get('event').get('visible');
+      }));
     }
   }, {
     id: function (date) { return date.format('YYYY-MM-DD'); }

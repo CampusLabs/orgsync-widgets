@@ -25,12 +25,13 @@
     ],
 
     listeners: {
-      event: {'change:matchesFilters': 'correctDisplay'}
+      event: {'change:visible': 'correctDisplay'}
     },
 
     initialize: function () {
       View.prototype.initialize.apply(this, arguments);
       this.event = this.model.get('event');
+      this.correctDisplay();
       if (this.event.get('is_all_day')) this.$el.addClass('js-all-day');
       if (this.day) {
         var day = this.day.date();
@@ -71,9 +72,7 @@
     },
 
     correctDisplay: function () {
-      var val = this.event.get('matchesFilters');
-      this.$el.toggleClass('js-none', !val);
-      this.model.trigger('change:matchesFilters', val);
+      this.$el.toggleClass('js-none', !this.event.get('visible'));
     }
   });
 })();

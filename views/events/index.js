@@ -43,7 +43,7 @@
     view: 'month',
 
     filters: {
-      query: null
+      query: ''
     },
 
     initialize: function () {
@@ -60,6 +60,11 @@
         data: {per_page: 100},
         success: function (events) {
           self.days.addEvents(events);
+          if (self.view === 'list') {
+            self.views.daysList.date(self.views.daysList.date());
+            self.updateMonth();
+          }
+          self.updateFiltered();
         }
       });
     },
@@ -166,10 +171,11 @@
 
     updateFiltered: function () {
       var query = this.filters.query;
+      var date = this.views.daysList.date();
       this.community.get('events').each(function (event) {
-        event.set('matchesFilters', event.matchesQuery(query));
+        event.set('visible', event.matchesQuery(query));
       });
-      if (this.view === 'list') this.views.daysList.date(moment().tz(this.tz));
+      if (this.view === 'list') this.views.daysList.date(date);
     },
 
     jumpToSelected: function () {
@@ -178,6 +184,7 @@
       var year = this.$('.js-year').val();
       var date = moment.tz(year + '-' + month + '-01', this.tz);
       this.views.daysList.date(date);
+      this.updateMonth();
     },
 
     tzDisplay: function () {

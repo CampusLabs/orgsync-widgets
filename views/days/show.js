@@ -12,10 +12,6 @@
   app.DaysShowView = View.extend({
     template: jst['days/show'],
 
-    listeners: {
-      eventDates: {'add remove change:matchesFilters': 'checkEmpty'}
-    },
-
     classes: [
       'orgsync-widget',
       'js-osw-days-show',
@@ -34,7 +30,6 @@
       if (+date.startOf('week') === +today.startOf('week')) {
         this.$el.addClass('js-current-week');
       }
-      this.checkEmpty();
     },
 
     render: function () {
@@ -50,15 +45,6 @@
         modelView: app.EventDatesShowView,
         modelViewOptions: {day: this.model}
       });
-    },
-
-    checkEmpty: function () {
-      this.$el.toggleClass('js-empty',
-        !this.eventDates.length ||
-        !this.model.resolve('events').any(function (event) {
-          return event.get('matchesFilters');
-        })
-      );
     },
 
     longDate: function () {
@@ -80,7 +66,7 @@
 
     shortDate: function () {
       var date = this.model.date();
-      return (date.date() === 1 ? date.format('MMM') + ' ' : '') + date.date();
+      return (date.date() === 1 ? date.format('MMMM') + ' ' : '') + date.date();
     }
   });
 })();

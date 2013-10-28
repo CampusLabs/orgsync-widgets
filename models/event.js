@@ -16,6 +16,10 @@
       comments: {hasMany: 'Comment', fk: 'event_id'}
     },
 
+    defaults: {
+      visible: true,
+    },
+
     searchableWords: function () {
       if (this._searchableWords) return this._searchableWords;
       return this._searchableWords = _.str.words(_.values(

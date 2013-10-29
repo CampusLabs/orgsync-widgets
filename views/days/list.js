@@ -40,7 +40,6 @@
       this.available = this.collection;
       this.collection = new Day.Collection();
       this.collection.tz = this.available.tz;
-      this.redrawList = _.debounce(this.redrawList);
       ListView.prototype.initialize.apply(this, arguments);
       this.setView(this.view, this.initialDate);
     },

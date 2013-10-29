@@ -33,6 +33,7 @@
       this.event = this.model.get('event');
       this.correctDisplay();
       if (this.event.get('is_all_day')) this.$el.addClass('js-all-day');
+      if (this.model.get('filler')) this.$el.addClass('js-filler');
       if (this.day) {
         var day = this.day.date();
         var startDay = this.model.start().clone().startOf('day');
@@ -49,9 +50,13 @@
 
     shortTime: function () {
       if (this.event.get('is_all_day')) return 'All Day';
-      if (!this.continued) return this.model.start().format('h A');
+      if (!this.continued) return this.shortTimeFormat(this.model.start());
       if (this.continues) return 'All Day';
-      return this.model.end().format('[ends ]h A');
+      return 'ends ' + this.shortTimeFormat(this.model.end());
+    },
+
+    shortTimeFormat: function (date) {
+      return date.format('h:mm A').replace(':00', '');
     },
 
     longTime: function () {

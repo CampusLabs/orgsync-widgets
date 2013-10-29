@@ -9,6 +9,7 @@
   var $ = window.jQuery;
   var _ = window._;
   var Day = app.Day;
+  var EventDate = app.EventDate;
   var ListView = app.ListView;
   var moment = window.moment;
 
@@ -162,13 +163,20 @@
       if (this.mousedown) return this.padAndTrimCalled = true;
       this.padAndTrimCalled = false;
 
+      var addedBelow;
+      var addedAbove;
+
       // Add or remove elements below if necessary.
-      if (this.needsBelow()) do this.renderBelow(); while (this.needsBelow());
-      else while (this.extraBelow()) this.removeBelow();
+      if (addedBelow = this.needsBelow()) {
+        do this.renderBelow(); while (this.needsBelow());
+      } else while (this.extraBelow()) this.removeBelow();
 
       // Add or remove elements above if necessary.
-      if (this.needsAbove()) do this.renderAbove(); while (this.needsAbove());
-      else while (this.extraAbove()) this.removeAbove();
+      if (addedAbove = this.needsAbove()) {
+        do this.renderAbove(); while (this.needsAbove());
+      } else while (this.extraAbove()) this.removeAbove();
+
+      if (addedBelow || addedAbove) this.correctDisplay();
     },
 
     date: function (date) {
@@ -226,6 +234,35 @@
     onMouseup: function () {
       this.mousedown = false;
       if (this.padAndTrimCalled) this.padAndTrim();
+    },
+
+    correctDisplay: function () {
+      var prev;
+      this.collection.each(function (day) {
+        var date = day.date();
+        var eventDates = day.get('eventDates');
+        eventDates.remove(eventDates.where({filler: true}));
+        eventDates.sort();
+        if (this.view === 'month' && date.weekday()) {
+          var visible = eventDates.visible();
+          var continued = _.reject(visible, function (eventDate) {
+            return eventDate.start().clone().startOf('day').isSame(date);
+          });
+          var other = _.difference(visible, continued);
+          var sorted = [];
+          _.each(continued, function (eventDate) {
+            sorted[prev.indexOf(eventDate)] = eventDate;
+          });
+          var l = Math.max(sorted.length, visible.length);
+          for (var i = 0; i < l; ++i) {
+            if (sorted[i]) continue;
+            sorted[i] = other.shift() || new EventDate({filler: true});
+          }
+          sorted = sorted.concat(eventDates.difference(sorted));
+          eventDates.set(sorted, {sort: false});
+        }
+        prev = eventDates;
+      }, this);
     }
   });
 })();

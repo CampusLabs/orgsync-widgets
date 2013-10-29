@@ -125,7 +125,7 @@
       var monthView = this.view === 'month';
       if (monthView) date = date.clone().weekday(6);
       this.$('.js-month').val(date.month());
-      this.$('.js-year').html(this.yearOptions());
+      this.$('.js-year').html(this.yearOptions()).val(date.year());
       if (!monthView) return;
       var id = date.format('YYYY-MM');
       this.$('.js-current-month').removeClass('js-current-month');
@@ -180,6 +180,7 @@
         event.set('visible', event.matchesQuery(query));
       });
       if (this.view === 'list') this.date(date);
+      this.views.daysList.correctDisplay();
     },
 
     jumpToSelected: function () {

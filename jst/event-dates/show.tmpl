@@ -1,13 +1,14 @@
 <%
 var event = o.model.get('event');
 var thumbnailUrl = event.get('thumbnail_url');
+var title = o.model.get('filler') ? '&nbsp;' : _.escape(event.get('title'));
 %>
 <div class='picture-container'>
   <% if (thumbnailUrl) { %><img src='<%- thumbnailUrl %>'><% } %>
 </div>
 <div class='info'>
   <div class='short-time'><%- o.shortTime() %></div>
-  <div class='title'><%- event.get('title') %></div>
+  <div class='title'><%= title %></div>
   <div class='long-time'><%- o.longTime() %></div>
   <div class='location'><%- event.get('location') %></div>
 </div>

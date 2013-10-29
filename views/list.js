@@ -58,15 +58,9 @@
     },
 
     sortModels: function () {
-      var views = this.views;
-      var $el = this.$el;
-      var models = $el.children().detach().toArray();
-      this.collection.each(function (model, i) {
-        var el = views[model.cid].el;
-        if (!models[i]) models.push(el);
-        else if (models[i] !== el) models.splice(i, 0, el);
-      });
-      $el.append(models);
+      this.$el.html(this.collection.map(function (model) {
+        return this.views[model.cid].$el.detach();
+      }, this));
     },
 
     removeModel: function (model) {

@@ -48,6 +48,12 @@
   EventDate.Collection = Model.Collection.extend({
     model: EventDate,
 
-    comparator: 'starts_at'
+    comparator: 'starts_at',
+
+    visible: function () {
+      return this.filter(function (eventDate) {
+        return eventDate.get('event').get('visible');
+      });
+    }
   });
 })();

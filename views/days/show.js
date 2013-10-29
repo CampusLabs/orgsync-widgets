@@ -26,8 +26,8 @@
       );
       this.eventDates = this.model.get('eventDates');
       var today = moment().tz(date.tz()).startOf('day');
-      if (+date === +today) this.$el.addClass('js-today');
-      if (+date.startOf('week') === +today.startOf('week')) {
+      if (date.isSame(today)) this.$el.addClass('js-today');
+      if (date.startOf('week').isSame(today.startOf('week'))) {
         this.$el.addClass('js-current-week');
       }
     },

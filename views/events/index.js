@@ -61,7 +61,7 @@
         success: function (events) {
           self.days.addEvents(events);
           if (self.view === 'list') {
-            self.views.daysList.date(self.views.daysList.date());
+            self.date(self.date());
             self.updateMonth();
           }
           self.updateFiltered();
@@ -70,13 +70,12 @@
     },
 
     setView: function (view) {
-      var daysList = this.views.daysList;
-      var date = daysList.date();
+      var date = view === 'list' ? this.date().clone().weekday(0) : this.date();
       this.view = view;
       this.$el
         .removeClass('js-list-view js-month-view')
         .addClass('js-' + view + '-view');
-      daysList.setView(view, view === 'list' ? date.clone().weekday(0) : date);
+      this.views.daysList.setView(view, date);
       this.updateMonth();
     },
 
@@ -89,7 +88,7 @@
     },
 
     renderDaysOfWeek: function () {
-      var day = moment().tz(this.tz).startOf('week');
+      var day = this.date().startOf('week');
       var $days = [];
       do { $days.push($('<div>').addClass('js-day').text(day.format('ddd'))); }
       while (day.add('day', 1).weekday());
@@ -102,7 +101,7 @@
         el: $list,
         collection: this.days,
         view: this.view,
-        initialDate: moment().tz(this.tz)
+        initialDate: this.date()
       });
       $list.scroll(_.bind(this.updateMonth, this));
     },
@@ -112,21 +111,21 @@
     },
 
     clickToday: function () {
-      this.views.daysList.date(moment().tz(this.tz), 500);
+      this.date(moment().tz(this.tz), 500);
     },
 
     incr: function (unit, n) {
-      var day = this.views.daysList.date().clone();
+      var day = this.date().clone();
       if (this.view === 'month') day.weekday(6);
-      this.views.daysList.date(day.add(unit, n).startOf(unit), 500);
+      this.date(day.add(unit, n).startOf(unit), 500);
     },
 
     updateMonth: function () {
-      var date = this.views.daysList.date();
+      var date = this.date();
       var monthView = this.view === 'month';
       if (monthView) date = date.clone().weekday(6);
       this.$('.js-month').val(date.month());
-      this.$('.js-year').val(date.year());
+      this.$('.js-year').html(this.yearOptions());
       if (!monthView) return;
       var id = date.format('YYYY-MM');
       this.$('.js-current-month').removeClass('js-current-month');
@@ -134,25 +133,30 @@
     },
 
     monthOptions: function () {
-      var now = moment().tz(this.tz);
-      var thisMonth = now.month();
+      var date = this.date();
+      var thisMonth = date.month();
       var range = _.range(0, 12);
       return $('<div>').html(_.map(range, function (month) {
         return $('<option>')
           .attr('value', month)
-          .text(now.month(month).format('MMMM'))
-          .prop('selected', month === thisMonth);
+          .text(date.month(month).format('MMMM'))
+          .attr('selected', month === thisMonth);
       })).html();
     },
 
+    date: function (date) {
+      if (!this.views.daysList) return moment().tz(this.tz);
+      return this.views.daysList.date(date);
+    },
+
     yearOptions: function () {
-      var thisYear = moment().tz(this.tz).year();
-      var range = _.range(thisYear - 3, thisYear + 4);
+      var anchorYear = this.date().year();
+      var range = _.range(anchorYear - 3, anchorYear + 4);
       return $('<div>').html(_.map(range, function (year) {
         return $('<option>')
           .attr('value', year)
           .text(year)
-          .prop('selected', year === thisYear);
+          .attr('selected', year === anchorYear);
       })).html();
     },
 
@@ -171,11 +175,11 @@
 
     updateFiltered: function () {
       var query = this.filters.query;
-      var date = this.views.daysList.date();
+      var date = this.date();
       this.community.get('events').each(function (event) {
         event.set('visible', event.matchesQuery(query));
       });
-      if (this.view === 'list') this.views.daysList.date(date);
+      if (this.view === 'list') this.date(date);
     },
 
     jumpToSelected: function () {
@@ -183,13 +187,13 @@
       if (month < 10) month = '0' + month;
       var year = this.$('.js-year').val();
       var date = moment.tz(year + '-' + month + '-01', this.tz);
-      this.views.daysList.date(date);
+      this.date(date);
       this.updateMonth();
     },
 
     tzDisplay: function () {
       var full = this.tz.replace(/^.*?\//, '').replace(/_/g, ' ');
-      var abbr = moment().tz(this.tz).zoneAbbr();
+      var abbr = this.date().zoneAbbr();
       return full + ' Time (' + abbr + ')';
     }
   });

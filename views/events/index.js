@@ -29,7 +29,7 @@
       'change .js-month, .js-year': 'jumpToSelected'
     },
 
-    options: ['communityId', 'portalId', 'events', 'date', 'tz', 'view'],
+    options: ['communityId', 'portalId', 'date', 'tz', 'view'],
 
     classes: [
       'orgsync-widget',

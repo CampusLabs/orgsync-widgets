@@ -31,27 +31,30 @@
   .osw-event-dates-show
     position relative
     margin-top 5px
-    border-left 5px solid #f66
+    border 0 solid #f66
+    border-left-width 5px
     padding 2px 5px
     font-size 11px
-    &.js-continued:before
-    &.js-continues:after
-        position absolute
-        top 50%
-        margin-top -5px
-        margin-left -5px
-        width 0
-        height 0
-        content ''
-        border 5px solid transparent
-    &.js-continued:before
-        left -5px
-        border-left-width 0
-        border-right-color #666
-    &.js-continues:after
-        right -5px
-        border-right-width 0
-        border-left-color #666
+    box-sizing border-box
+    &.js-continues
+    &.js-continued
+    &.js-all-day
+      background #f9f9f9
+    &.js-continues
+      padding-right 10px
+      margin-right -5px
+      &:not(.js-continued)
+        border-radius left 5px
+    &.js-continued
+      margin-left -5px
+      padding-left 10px
+      border-left-width 0
+      &:not(.js-continues)
+        border-radius right 5px
+    &.js-continued:not(.js-first-dow) .title
+      visibility hidden
+    &.js-all-day .short-time
+      display none
     .location
     .picture-container
     .long-time

@@ -38,10 +38,10 @@
         var startDay = this.model.start().clone().startOf('day');
         var end = this.model.end();
         if (this.firstDow = !day.weekday()) this.$el.addClass('js-first-dow');
-        if (this.continued = +day > +startDay) {
+        if (this.continued = day.isAfter(startDay)) {
           this.$el.addClass('js-continued');
         }
-        if (this.continues = +day.clone().add('day', 1) < +end) {
+        if (this.continues = day.clone().add('day', 1).isBefore(end)) {
           this.$el.addClass('js-continues');
         }
       }

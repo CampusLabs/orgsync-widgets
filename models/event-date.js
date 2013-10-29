@@ -40,7 +40,8 @@
     },
 
     isMultiDay: function () {
-      return this.start().startOf('day').add('days', 1).isBefore(this.end());
+      var startDay = this.start().clone().startOf('day');
+      return startDay.add('days', 1).isBefore(this.end());
     }
   });
 

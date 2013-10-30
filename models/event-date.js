@@ -5,7 +5,6 @@
 
   var app = window.OrgSyncWidgets;
 
-  var _ = window._;
   var Model = app.Model;
   var moment = window.moment;
 
@@ -43,25 +42,6 @@
     isMultiDay: function () {
       var startDay = this.start().clone().startOf('day');
       return startDay.add('days', 1).isBefore(this.end());
-    },
-
-    hex: function (scale) {
-      var n = parseInt(this.get('event').get('color'), '16');
-      if (isNaN(n)) {
-        this.get('event').set('color', (n = _.random(0xFFFFFF)).toString(16));
-      }
-      if (scale) {
-        var r = (n >> 16) % 256;
-        r += Math.floor((scale > 0 ? (255 - r) : r) * scale);
-        var g = (n >> 8) % 256;
-        g += Math.floor((scale > 0 ? (255 - g) : g) * scale);
-        var b = n % 256;
-        b += Math.floor((scale > 0 ? (255 - b) : b) * scale);
-        n = ((r << 16) + (g << 8) + b);
-      }
-      n = n.toString(16);
-      while (n.length < 6) n = '0' + n;
-      return '#' + n;
     }
   });
 

@@ -237,31 +237,34 @@
     },
 
     correctDisplay: function () {
-      var prev;
-      this.collection.each(function (day) {
+      var collection = this.collection;
+      var monthView = this.view === 'month';
+      collection.each(function (day, i) {
         var date = day.date();
         var eventDates = day.get('eventDates');
         eventDates.remove(eventDates.where({filler: true}));
-        eventDates.sort();
-        if (this.view === 'month' && date.weekday()) {
-          var visible = eventDates.visible();
-          var continued = _.reject(visible, function (eventDate) {
-            return eventDate.start().clone().startOf('day').isSame(date);
-          });
-          var other = _.difference(visible, continued);
+        eventDates.sort({silent: monthView});
+        if (monthView && date.weekday()) {
+          var hidden = [];
+          var starters = [];
           var sorted = [];
-          _.each(continued, function (eventDate) {
-            sorted[prev.indexOf(eventDate)] = eventDate;
+          var prev = collection.at(i - 1).get('eventDates');
+          eventDates.each(function (eventDate) {
+            if (!eventDate.get('event').get('visible')) {
+              hidden.push(eventDate);
+            } else if (eventDate.start().clone().startOf('day').isSame(date)) {
+              starters.push(eventDate);
+            } else {
+              sorted[prev.indexOf(eventDate)] = eventDate;
+            }
           });
-          var l = Math.max(sorted.length, visible.length);
-          for (var i = 0; i < l; ++i) {
+          var l = Math.max(sorted.length, eventDates.length - hidden.length);
+          for (i = 0; i < l; ++i) {
             if (sorted[i]) continue;
-            sorted[i] = other.shift() || new EventDate({filler: true});
+            sorted[i] = starters.shift() || new EventDate({filler: true});
           }
-          sorted = sorted.concat(eventDates.difference(sorted));
-          eventDates.set(sorted, {sort: false});
+          eventDates.set(sorted.concat(hidden), {sort: false});
         }
-        prev = eventDates;
       }, this);
     }
   });

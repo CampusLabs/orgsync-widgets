@@ -56,7 +56,7 @@
         var prev = this.listStep(edge.date().clone().subtract('day', 1)).prev;
         if (prev === edge) return false;
       }
-      return this.$el.scrollTop() <= this.threshold;
+      return this.$el.scrollTop() < this.threshold;
     },
 
     renderAbove: function () {
@@ -111,7 +111,7 @@
       var scrollHeight = $el.prop('scrollHeight');
       var scrollTop = $el.scrollTop();
       var height = $el.outerHeight();
-      return scrollHeight <= this.threshold + scrollTop + height;
+      return scrollHeight < scrollTop + height + this.threshold;
     },
 
     renderBelow: function () {
@@ -144,7 +144,7 @@
       var scrollTop = $el.scrollTop();
       var height = this.$el.outerHeight();
       var lastHeight = this.$el.children().last().outerHeight();
-      return scrollHeight > this.threshold + scrollTop + height + lastHeight;
+      return scrollHeight > scrollTop + height + this.threshold + lastHeight;
     },
 
     removeBelow: function () {

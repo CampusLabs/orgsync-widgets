@@ -41,8 +41,8 @@
       this.available = this.collection;
       this.collection = new Day.Collection();
       this.collection.tz = this.available.tz;
-      ListView.prototype.initialize.apply(this, arguments);
       this.setView(this.view, this.initialDate);
+      ListView.prototype.initialize.apply(this, arguments);
     },
 
     pageSize: function () {

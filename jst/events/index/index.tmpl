@@ -1,8 +1,19 @@
 <div class='top'>
   <div class='month-year'>
     <div class='js-tz tz'><%- o.tzDisplay() %></div>
-    <select class='js-month month'><%= o.monthOptions() %></select>
-    <select class='js-year year'><%= o.yearOptions() %></select>
+    <% var date = o.date(); %>
+    <select class='js-month month'>
+      <% _.each(_.range(0, 12), function (month) { %>
+      <option value='<%= month %>'>
+        <%= date.month(month).format('MMMM') %>
+      </option>
+      <% }); %>
+    </select>
+    <select class='js-year year'>
+      <% _.each(_.range(date.year() - 3, date.year() + 4), function (year) { %>
+      <option value='<%= year %>'><%= year %></option>
+      <% }); %>
+    </select>
   </div>
   <input class='js-search-input'>
   <input type='button' class='js-change-view' data-view='list' value='List'>

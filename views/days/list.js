@@ -214,12 +214,9 @@
 
     calculateDate: function () {
       var date = this.collection.find(function (day) {
-        var view = this.views[day.cid];
-        if ($.contains(this.el, view.el)) {
-          var top = view.$el.position().top;
-          if (this.view === 'month') return top >= 0;
-          if (this.view === 'list') return top + view.$el.outerHeight() > 0;
-        }
+        var $el = this.views[day.cid].$el;
+        var top = $el.position().top;
+        return this.view === 'month' ? top >= 0 : top + $el.outerHeight() > 0;
       }, this);
       return date ? date.date() : moment().tz(this.available.tz);
     },

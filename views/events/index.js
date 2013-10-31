@@ -53,9 +53,9 @@
       this.community = new Community({id: this.communityId});
       this.portal = new Portal({id: this.portalId});
       this.render();
-      var self = this;
       this.filters = _.clone(this.filters);
       this.updateFiltered = _.debounce(_.bind(this.updateFiltered, this));
+      var self = this;
       this.community.get('events').fetch({
         data: {per_page: 100},
         success: function (events) {
@@ -103,7 +103,7 @@
         view: this.view,
         initialDate: this.date()
       });
-      $list.scroll(_.bind(this.updateMonth, this));
+      $list.scroll(_.throttle(_.bind(this.updateMonth, this), 100));
     },
 
     clickChangeView: function (ev) {
@@ -124,40 +124,35 @@
       var date = this.date();
       var monthView = this.view === 'month';
       if (monthView) date = date.clone().weekday(6);
-      this.$('.js-month').val(date.month());
-      this.$('.js-year').html(this.yearOptions()).val(date.year());
+      var month = date.month();
+      if (month !== this.lastMonth) {
+        this.$('.js-month').val(date.month());
+        this.lastMonth = month;
+      }
+      var year = date.year();
+      if (year !== this.lastYear) {
+        this.updateYearOptions(year);
+        this.$('.js-year').val(year);
+        this.lastYear = year;
+      }
       if (!monthView) return;
-      var id = date.format('YYYY-MM');
+      var yearMonth = date.format('YYYY-MM');
+      if (yearMonth === this.lastYearMonth) return;
       this.$('.js-current-month').removeClass('js-current-month');
-      this.$('.js-month-' + id).addClass('js-current-month');
+      this.$('.js-month-' + yearMonth).addClass('js-current-month');
+      this.lastYearMonth = yearMonth;
     },
 
-    monthOptions: function () {
-      var date = this.date();
-      var thisMonth = date.month();
-      var range = _.range(0, 12);
-      return $('<div>').html(_.map(range, function (month) {
-        return $('<option>')
-          .attr('value', month)
-          .text(date.month(month).format('MMMM'))
-          .attr('selected', month === thisMonth);
-      })).html();
+    updateYearOptions: function (year) {
+      year -= 4;
+      this.$('.js-year').children().each(function () {
+        $(this).attr('value', ++year).text(year);
+      });
     },
 
     date: function (date) {
       if (!this.views.daysList) return moment().tz(this.tz);
       return this.views.daysList.date(date);
-    },
-
-    yearOptions: function () {
-      var anchorYear = this.date().year();
-      var range = _.range(anchorYear - 3, anchorYear + 4);
-      return $('<div>').html(_.map(range, function (year) {
-        return $('<option>')
-          .attr('value', year)
-          .text(year)
-          .attr('selected', year === anchorYear);
-      })).html();
     },
 
     searchKeydown: function () {

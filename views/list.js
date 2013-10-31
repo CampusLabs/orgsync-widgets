@@ -58,9 +58,13 @@
     },
 
     sortModels: function () {
-      this.$el.html(this.collection.map(function (model) {
-        return this.views[model.cid].$el.detach();
-      }, this));
+      var $children = this.$el.children();
+      var expected = this.collection.map(function (model) {
+        return this.views[model.cid].el;
+      }, this);
+      if (_.isEqual($children.toArray(), expected)) return;
+      $children.detach();
+      this.$el.html(expected);
     },
 
     removeModel: function (model) {

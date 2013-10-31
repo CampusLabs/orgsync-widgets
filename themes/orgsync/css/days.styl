@@ -14,6 +14,7 @@
       border-bottom 1px solid #ccc
       background #fff
 .osw-events-index.js-month-view
+.osw-events-index.js-week-view
   .osw-days-show
     display inline-block
     box-sizing border-box
@@ -22,7 +23,7 @@
     border-bottom none
     width 14.28%
     vertical-align top
-    height 16.67%
+    height 16.66%
     &.js-current-month .short-date
       opacity 1
     &:before
@@ -50,3 +51,5 @@
       text-overflow ellipsis
       white-space nowrap
       opacity .25
+.osw-events-index.js-week-view .osw-days-show
+  height 100%

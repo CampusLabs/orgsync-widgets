@@ -73,8 +73,9 @@
       var date = view === 'list' ? this.date().clone().weekday(0) : this.date();
       this.view = view;
       this.$el
-        .removeClass('js-list-view js-month-view')
+        .removeClass('js-list-view js-month-view js-week-view')
         .addClass('js-' + view + '-view');
+      this.lastYearMonth = null;
       this.views.daysList.setView(view, date);
       this.updateMonth();
     },
@@ -116,14 +117,14 @@
 
     incr: function (unit, n) {
       var day = this.date().clone();
-      if (this.view === 'month') day.weekday(6);
+      if (this.view !== 'list') day.weekday(6);
       this.date(day.add(unit, n).startOf(unit), 500);
     },
 
     updateMonth: function () {
       var date = this.date();
-      var monthView = this.view === 'month';
-      if (monthView) date = date.clone().weekday(6);
+      var listView = this.view === 'list';
+      if (!listView) date = date.clone().weekday(6);
       var month = date.month();
       if (month !== this.lastMonth) {
         this.$('.js-month').val(date.month());
@@ -135,7 +136,7 @@
         this.$('.js-year').val(year);
         this.lastYear = year;
       }
-      if (!monthView) return;
+      if (listView) return;
       var yearMonth = date.format('YYYY-MM');
       if (yearMonth === this.lastYearMonth) return;
       this.$('.js-current-month').removeClass('js-current-month');
@@ -152,6 +153,7 @@
 
     date: function (date) {
       if (!this.views.daysList) return moment().tz(this.tz);
+      if (date) this.lastYearMonth = null;
       return this.views.daysList.date(date);
     },
 

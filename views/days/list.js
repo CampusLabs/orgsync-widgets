@@ -45,7 +45,7 @@
     },
 
     pageSize: function () {
-      return this.view === 'month' ? 7 : 1;
+      return this.view === 'list' ? 1 : 7;
     },
 
     needsAbove: function () {
@@ -67,6 +67,7 @@
       var scrollHeight = this.$el.prop('scrollHeight');
       switch (this.view) {
       case 'month':
+      case 'week':
         var targetId = Day.id(target);
         available.fill(target, edge.date());
         var i = available.indexOf(available.get(targetId));
@@ -121,6 +122,7 @@
       var target = edge.date().clone().add('days', pageSize);
       switch (this.view) {
       case 'month':
+      case 'week':
         var targetId = Day.id(target);
         available.fill(edge.date(), target);
         var i = available.indexOf(available.get(targetId));
@@ -163,12 +165,13 @@
       this.padAndTrimCalled = false;
 
       // Add or remove elements below if necessary.
-      if (this.needsBelow()) do this.renderBelow(); while (this.needsBelow());
-      else while (this.extraBelow()) this.removeBelow();
+      if (this.needsBelow()) this.renderBelow();
+      else if (this.needsAbove()) this.renderAbove();
+      else if (this.extraBelow()) this.removeBelow();
+      else if (this.extraAbove()) this.removeAbove();
+      else return;
 
-      // Add or remove elements above if necessary.
-      if (this.needsAbove()) do this.renderAbove(); while (this.needsAbove());
-      else while (this.extraAbove()) this.removeAbove();
+      _.defer(this.padAndTrim);
     },
 
     date: function (date) {
@@ -180,6 +183,7 @@
       var available = this.available;
       switch (this.view) {
       case 'month':
+      case 'week':
         date = date.clone().startOf('week');
         available.fill(date, date.clone().add('days', pageSize));
         var i = available.indexOf(available.get(Day.id(date)));
@@ -208,7 +212,7 @@
       var date = this.collection.find(function (day) {
         var $el = this.views[day.cid].$el;
         var top = $el.position().top;
-        return this.view === 'month' ? top >= 0 : top + $el.outerHeight() > 0;
+        return this.view === 'list' ? top + $el.outerHeight() > 0 : top >= 0;
       }, this);
       return date ? date.date() : moment().tz(this.available.tz);
     },

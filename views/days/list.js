@@ -9,7 +9,6 @@
   var $ = window.jQuery;
   var _ = window._;
   var Day = app.Day;
-  var EventDate = app.EventDate;
   var ListView = app.ListView;
   var moment = window.moment;
 

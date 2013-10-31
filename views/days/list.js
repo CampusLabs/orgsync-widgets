@@ -163,20 +163,13 @@
       if (this.mousedown) return this.padAndTrimCalled = true;
       this.padAndTrimCalled = false;
 
-      var addedBelow;
-      var addedAbove;
-
       // Add or remove elements below if necessary.
-      if (addedBelow = this.needsBelow()) {
-        do this.renderBelow(); while (this.needsBelow());
-      } else while (this.extraBelow()) this.removeBelow();
+      if (this.needsBelow()) do this.renderBelow(); while (this.needsBelow());
+      else while (this.extraBelow()) this.removeBelow();
 
       // Add or remove elements above if necessary.
-      if (addedAbove = this.needsAbove()) {
-        do this.renderAbove(); while (this.needsAbove());
-      } else while (this.extraAbove()) this.removeAbove();
-
-      if (addedBelow || addedAbove) this.correctDisplay();
+      if (this.needsAbove()) do this.renderAbove(); while (this.needsAbove());
+      else while (this.extraAbove()) this.removeAbove();
     },
 
     date: function (date) {
@@ -223,6 +216,8 @@
 
     setView: function (view, date) {
       this.view = view;
+      this.modelViewOptions = {view: view};
+      this.collection.set();
       this.date(date);
     },
 
@@ -234,34 +229,9 @@
     },
 
     correctDisplay: function () {
-      var collection = this.collection;
-      var monthView = this.view === 'month';
-      collection.each(function (day, i) {
-        var date = day.date();
-        var eventDates = day.get('eventDates');
-        eventDates.remove(eventDates.where({filler: true}));
-        eventDates.sort({silent: monthView});
-        if (monthView && date.weekday()) {
-          var hidden = [];
-          var starters = [];
-          var sorted = [];
-          var prev = collection.at(i - 1).get('eventDates');
-          eventDates.each(function (eventDate) {
-            if (!eventDate.get('event').get('visible')) {
-              hidden.push(eventDate);
-            } else if (eventDate.start().clone().startOf('day').isSame(date)) {
-              starters.push(eventDate);
-            } else {
-              sorted[prev.indexOf(eventDate)] = eventDate;
-            }
-          });
-          var l = Math.max(sorted.length, eventDates.length - hidden.length);
-          for (i = 0; i < l; ++i) {
-            if (sorted[i]) continue;
-            sorted[i] = starters.shift() || new EventDate({filler: true});
-          }
-          eventDates.set(sorted.concat(hidden), {sort: false});
-        }
+      if (this.view === 'list') return;
+      this.collection.each(function (day) {
+        this.views[day.cid].correctDisplay();
       }, this);
     }
   });

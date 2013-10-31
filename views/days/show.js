@@ -5,6 +5,7 @@
 
   var app = window.OrgSyncWidgets;
 
+  var EventDate = app.EventDate;
   var moment = window.moment;
   var jst = window.jst;
   var View = app.View;
@@ -17,6 +18,10 @@
       'js-osw-days-show',
       'osw-days-show'
     ],
+
+    view: 'month',
+
+    options: ['view'],
 
     initialize: function () {
       View.prototype.initialize.apply(this, arguments);
@@ -45,6 +50,7 @@
         modelView: app.EventDatesShowView,
         modelViewOptions: {day: this.model}
       });
+      this.correctDisplay();
     },
 
     longDate: function () {
@@ -67,6 +73,37 @@
     shortDate: function () {
       var date = this.model.date();
       return (date.date() === 1 ? date.format('MMMM') + ' ' : '') + date.date();
+    },
+
+    correctDisplay: function () {
+      if (this.view === 'list') return;
+      var day = this.model;
+      var date = day.date();
+      if (!date.weekday()) return;
+      var eventDates = day.get('eventDates');
+      eventDates.sort({silent: true});
+      var hidden = [];
+      var starters = [];
+      var sorted = [];
+      var prev =
+        this.collection.at(this.collection.indexOf(day) - 1).get('eventDates');
+      eventDates.each(function (eventDate) {
+        if (eventDate.filler) return;
+        if (!eventDate.get('event').get('visible')) {
+          hidden.push(eventDate);
+        } else if (eventDate.start().clone().startOf('day').isSame(date)) {
+          starters.push(eventDate);
+        } else {
+          sorted[prev.indexOf(eventDate)] = eventDate;
+        }
+      });
+      var l = Math.max(sorted.length, eventDates.length - hidden.length);
+      for (var i = 0; i < l; ++i) {
+        if (!sorted[i]) {
+          sorted[i] = starters.shift() || new EventDate({filler: true});
+        }
+      }
+      eventDates.set(sorted.concat(hidden), {sort: false});
     }
   });
 })();

@@ -35,7 +35,7 @@
     listeners: {},
 
     initialize: function () {
-      this.padAndTrim = _.bind(this.padAndTrim, this);
+      _.bindAll(this, 'padAndTrim');
       $(window).on('resize', this.padAndTrim);
       this.available = this.collection;
       this.collection = new Day.Collection();

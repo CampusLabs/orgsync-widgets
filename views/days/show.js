@@ -30,6 +30,7 @@
         'js-day-' + this.model.id + ' js-month-' + date.format('YYYY-MM')
       );
       this.eventDates = this.model.get('eventDates');
+      this.eventDates.remove(this.eventDates.where({filler: true}));
       var today = moment().tz(date.tz()).startOf('day');
       if (date.isSame(today)) this.$el.addClass('js-today');
       if (date.startOf('week').isSame(today.startOf('week'))) {

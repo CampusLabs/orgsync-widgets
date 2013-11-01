@@ -1,3 +1,7 @@
 <div class='js-long-date long-date'><%- o.longDate() %></div>
-<div class='js-short-date short-date'><%- o.shortDate() %></div>
+<div
+  class='js-short-date short-date js-jump-to'
+  data-date='<%= o.model.date().format('YYYY-MM-DD') %>'>
+  <%- o.shortDate() %>
+</div>
 <ol class='js-list list'></ol>

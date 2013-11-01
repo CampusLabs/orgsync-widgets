@@ -26,7 +26,8 @@
       'click .js-prev-week': function () { this.incr('week', -1); },
       'click .js-next-week': function () { this.incr('week', 1); },
       'keydown .js-search-input': 'searchKeydown',
-      'change .js-month, .js-year': 'jumpToSelected'
+      'change .js-month, .js-year': 'jumpToSelected',
+      'click .js-jump-to': 'jumpToClicked'
     },
 
     options: ['communityId', 'portalId', 'date', 'tz', 'view'],
@@ -54,7 +55,6 @@
       this.portal = new Portal({id: this.portalId});
       this.render();
       this.filters = _.clone(this.filters);
-      this.updateFiltered = _.debounce(_.bind(this.updateFiltered, this));
       var self = this;
       this.community.get('events').fetch({
         data: {per_page: 100},
@@ -69,8 +69,10 @@
       });
     },
 
-    setView: function (view) {
-      var date = view === 'list' ? this.date().clone().weekday(0) : this.date();
+    setView: function (view, date) {
+      if (!date) {
+        date = view === 'list' ? this.date().clone().weekday(0) : this.date();
+      }
       this.view = view;
       this.$el
         .removeClass('js-list-view js-month-view js-week-view')
@@ -193,6 +195,10 @@
       var full = this.tz.replace(/^.*?\//, '').replace(/_/g, ' ');
       var abbr = this.date().zoneAbbr();
       return full + ' Time (' + abbr + ')';
+    },
+
+    jumpToClicked: function (ev) {
+      this.setView('list', moment.tz($(ev.target).data('date'), this.tz));
     }
   });
 })();

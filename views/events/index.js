@@ -124,7 +124,7 @@
 
     updateMonth: function () {
       var date = this.date();
-      if (this.view === 'list') date = date.clone().weekday(6);
+      if (this.view !== 'list') date = date.clone().weekday(6);
       var month = date.month();
       if (month !== this.lastMonth) {
         this.$('.js-month').val(date.month());

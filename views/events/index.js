@@ -147,9 +147,9 @@
     },
 
     updateYearOptions: function (year) {
-      year -= 4;
-      this.$('.js-year').children().each(function () {
-        $(this).attr('value', ++year).text(year);
+      var $options = this.$('.js-year > option');
+      _.each(_.range(year - 3, year + 4), function (n, i) {
+        $options.eq(i).attr('value', n).text(n);
       });
     },
 

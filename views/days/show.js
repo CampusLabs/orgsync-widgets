@@ -89,7 +89,7 @@
       var prev =
         this.collection.at(this.collection.indexOf(day) - 1).get('eventDates');
       eventDates.each(function (eventDate) {
-        if (eventDate.filler) return;
+        if (eventDate.get('filler')) return;
         if (!eventDate.get('event').get('visible')) {
           hidden.push(eventDate);
         } else if (eventDate.start().clone().startOf('day').isSame(date)) {

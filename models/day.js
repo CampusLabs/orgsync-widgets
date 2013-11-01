@@ -46,7 +46,8 @@
 
     setVisible: function () {
       this.set('visible', this.get('eventDates').any(function (eventDate) {
-        return eventDate.get('event').get('visible');
+        return !eventDate.get('filler') &&
+          eventDate.get('event').get('visible');
       }));
     }
   }, {

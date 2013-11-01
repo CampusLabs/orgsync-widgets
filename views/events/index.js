@@ -77,7 +77,6 @@
       this.$el
         .removeClass('js-list-view js-month-view js-week-view')
         .addClass('js-' + view + '-view');
-      this.lastYearMonth = null;
       this.views.daysList.setView(view, date);
       this.updateMonth();
     },
@@ -125,8 +124,7 @@
 
     updateMonth: function () {
       var date = this.date();
-      var listView = this.view === 'list';
-      if (!listView) date = date.clone().weekday(6);
+      if (this.view === 'list') date = date.clone().weekday(6);
       var month = date.month();
       if (month !== this.lastMonth) {
         this.$('.js-month').val(date.month());
@@ -138,12 +136,6 @@
         this.$('.js-year').val(year);
         this.lastYear = year;
       }
-      if (listView) return;
-      var yearMonth = date.format('YYYY-MM');
-      if (yearMonth === this.lastYearMonth) return;
-      this.$('.js-current-month').removeClass('js-current-month');
-      this.$('.js-month-' + yearMonth).addClass('js-current-month');
-      this.lastYearMonth = yearMonth;
     },
 
     updateYearOptions: function (year) {
@@ -154,9 +146,9 @@
     },
 
     date: function (date) {
-      if (!this.views.daysList) return moment().tz(this.tz);
-      if (date) this.lastYearMonth = null;
-      return this.views.daysList.date(date);
+      return this.views.daysList ?
+        this.views.daysList.date(date) :
+        moment().tz(this.tz);
     },
 
     searchKeydown: function () {

@@ -98,7 +98,7 @@
     },
 
     renderDaysList: function () {
-      var $list = this.$('> .js-list');
+      var $list = this.$('.js-events-list');
       this.views.daysList = new app.DaysListView({
         el: $list,
         collection: this.days,

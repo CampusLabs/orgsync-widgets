@@ -1,29 +1,36 @@
-<div class='top'>
-  <div class='month-year'>
-    <div class='js-tz tz'><%- o.tzDisplay() %></div>
-    <% var date = o.date(); %>
-    <select class='js-month month'>
-      <% _.each(_.range(0, 12), function (month) { %>
-      <option value='<%= month %>'>
-        <%= date.month(month).format('MMMM') %>
-      </option>
-      <% }); %>
-    </select>
-    <select class='js-year year'>
-      <% _.each(_.range(date.year() - 3, date.year() + 4), function (year) { %>
-      <option value='<%= year %>'><%= year %></option>
-      <% }); %>
-    </select>
-  </div>
+<div class='filters'>
   <input class='js-search-input'>
-  <input type='button' class='js-change-view' data-view='list' value='List'>
-  <input type='button' class='js-change-view' data-view='month' value='Month'>
-  <input type='button' class='js-change-view' data-view='week' value='Week'>
-  <input type='button' class='js-prev-month' value='&lt;&lt;'>
-  <input type='button' class='js-prev-week' value='&lt;'>
-  <input type='button' class='js-today' value='Today'>
-  <input type='button' class='js-next-week' value='&gt;'>
-  <input type='button' class='js-next-month' value='&gt;&gt;'>
+  <ol class='js-filters-list filters-list'></ol>
 </div>
-<div class='js-days-of-week days-of-week'></div>
-<ol class='js-list list'></ol>
+<div class='main'>
+  <div class='top'>
+    <div class='month-year'>
+      <div class='js-tz tz'><%- o.tzDisplay() %></div>
+      <% var date = o.date(); %>
+      <select class='js-month month'>
+        <% _.each(_.range(0, 12), function (month) { %>
+        <option value='<%= month %>'>
+          <%= date.month(month).format('MMMM') %>
+        </option>
+        <% }); %>
+      </select>
+      <select class='js-year year'>
+        <% _.each(_.range(date.year() - 3, date.year() + 4), function (year) { %>
+        <option value='<%= year %>'><%= year %></option>
+        <% }); %>
+      </select>
+    </div>
+    <input type='button' class='js-change-view' data-view='list' value='List'>
+    <input type='button' class='js-change-view' data-view='month' value='Month'>
+    <input type='button' class='js-change-view' data-view='week' value='Week'>
+    <input type='button' class='js-prev-month' value='&lt;&lt;'>
+    <input type='button' class='js-prev-week' value='&lt;'>
+    <input type='button' class='js-today' value='Today'>
+    <input type='button' class='js-next-week' value='&gt;'>
+    <input type='button' class='js-next-month' value='&gt;&gt;'>
+  </div>
+  <div class='events'>
+    <div class='js-days-of-week days-of-week'></div>
+    <ol class='js-events-list events-list'></ol>
+  </div>
+</div>

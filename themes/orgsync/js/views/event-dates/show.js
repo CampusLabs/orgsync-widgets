@@ -10,7 +10,7 @@
     initialize.apply(this, arguments);
     this.$el.css({borderLeftColor: this.model.get('event').hex()});
     if (this.continues || this.continued || this.event.get('is_all_day')) {
-      this.$el.css({background: this.model.get('event').hex(0.95)});
+      this.$el.css({background: this.model.get('event').hex(0.8)});
     }
   };
 })();

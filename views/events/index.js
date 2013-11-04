@@ -105,7 +105,7 @@
         view: this.view,
         initialDate: this.date()
       });
-      $list.scroll(_.throttle(_.bind(this.updateMonth, this), 100));
+      $list.scroll(_.throttle(_.bind(this.updateMonth, this, false), 100));
     },
 
     clickChangeView: function (ev) {
@@ -122,16 +122,16 @@
       this.date(day.add(unit, n).startOf(unit), 500);
     },
 
-    updateMonth: function () {
+    updateMonth: function (force) {
       var date = this.date();
       if (this.view !== 'list') date = date.clone().weekday(6);
       var month = date.month();
-      if (month !== this.lastMonth) {
+      if (force || month !== this.lastMonth) {
         this.$('.js-month').val(date.month());
         this.lastMonth = month;
       }
       var year = date.year();
-      if (year !== this.lastYear) {
+      if (force || year !== this.lastYear) {
         this.updateYearOptions(year);
         this.$('.js-year').val(year);
         this.lastYear = year;
@@ -180,7 +180,7 @@
       var year = this.$('.js-year').val();
       var date = moment.tz(year + '-' + month + '-01', this.tz);
       this.date(date);
-      this.updateMonth();
+      this.updateMonth(true);
     },
 
     tzDisplay: function () {

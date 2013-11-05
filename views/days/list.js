@@ -9,6 +9,7 @@
   var $ = window.jQuery;
   var _ = window._;
   var Day = app.Day;
+  var EventDate = app.EventDate;
   var ListView = app.ListView;
   var moment = window.moment;
 
@@ -23,7 +24,8 @@
       'threshold',
       'pageSize',
       'view',
-      'initialDate'
+      'initialDate',
+      'fetchedEvents'
     ],
 
     events: {
@@ -32,11 +34,14 @@
       mouseup: 'onMouseup'
     },
 
-    listeners: {},
+    listeners: {
+      collection: {add: 'debouncedFetch'}
+    },
 
     initialize: function () {
       _.bindAll(this, 'padAndTrim');
       $(window).on('resize', this.padAndTrim);
+      this.debouncedFetch = _.debounce(this.fetch, 100);
       this.available = this.collection;
       this.collection = new Day.Collection();
       this.collection.tz = this.available.tz;
@@ -236,6 +241,41 @@
       this.collection.each(function (day) {
         this.views[day.cid].correctDisplay();
       }, this);
+    },
+
+    fetch: function () {
+      var day = this.fetchDay = this.collection.find(function (day) {
+        return day.get('fetched') < Infinity;
+      });
+      if (!day) return;
+      var page = day.get('fetched') + 1;
+      var self = this;
+      this.fetchedEvents.fetch({
+        remove: false,
+        data: {
+          page: page,
+          per_page: 100,
+          date: day.date().toISOString()
+        },
+        success: function (events, data) {
+          day.set('fetched', page);
+          var newEventDates = new EventDate.Collection(
+            _.flatten(_.map(data, function (event) {
+              var eventDates = events.get(event.id).get('dates');
+              return _.map(event.dates, function (date) {
+                return eventDates.get(date.id);
+              });
+            }))
+          );
+          self.available.addEventDates(newEventDates);
+          self.available.fill(
+            day.date(),
+            newEventDates.last().start().clone().startOf('day'),
+            true
+          );
+          if (self.fetchDay === day) self.fetch();
+        }
+      });
     }
   });
 })();

@@ -17,8 +17,12 @@
       var url = _.result(model, 'url');
       var data = options.data;
       return app.api.get(url, data, function (er, res) {
-        if (er || res.error) return options.error(er || res.error);
+        if (er || res.error) {
+          options.error(er || res.error);
+          return model.trigger('error');
+        }
         options.success(res.data);
+        model.trigger('sync');
       });
     }
   }, {

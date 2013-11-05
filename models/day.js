@@ -16,7 +16,8 @@
 
     defaults: {
       tz: app.tz,
-      visible: true
+      visible: true,
+      fetched: 0
     },
 
     initialize: function () {
@@ -83,24 +84,31 @@
         var day = this.get(id);
         if (!day) this.add((day = new Day({id: id})).set('tz', tz));
         day.get('eventDates').add(eventDate);
-      } while (start.add('days', 1) < end);
+      } while (start.add('days', 1).isBefore(end));
     },
 
-    fill: function (from, to) {
+    fill: function (from, to, fetched) {
+
+      // Hold days to be added in an array before actually adding them. This
+      // saves the extra computation that is needed in Backbone's
+      // Collection#set.
+      var days = [];
       var tz = this.tz;
 
-      // Add the from and to days.
-      from = new Day({id: Day.id(from), tz: tz});
-      to = new Day({id: Day.id(to), tz: tz});
-      this.add([from, to]);
-
       // Fill in all gaps between the from and to days.
-      from = from.date().clone();
-      to = to.date();
-      while (from.add('day', 1).isBefore(to)) {
+      from = from.clone();
+      do {
         var id = Day.id(from);
-        if (!this.get(id)) this.add({id: id, tz: tz});
-      }
+        var day = this.get(id);
+        if (day) {
+          if (fetched && from.isBefore(to)) day.set('fetched', Infinity);
+          continue;
+        }
+        days.push({id: id, tz: tz, fetched: fetched ? Infinity : 0});
+      } while (!from.add('day', 1).isAfter(to));
+
+      // Finally, add the new days.
+      this.add(days);
     }
   });
 })();

@@ -37,6 +37,7 @@
       'date',
       'tz',
       'view',
+      'fetchedEvents',
       'eventFilters',
       'legendMode'
     ],
@@ -53,7 +54,8 @@
     view: 'month',
 
     listeners: {
-      eventFilters: {'change:enabled': 'updateFiltered'}
+      eventFilters: {'change:enabled': 'updateFiltered'},
+      fetchedEvents: {sync: 'onFetchedEvents'}
     },
 
     initialize: function () {
@@ -63,19 +65,8 @@
       this.community = new Community({id: this.communityId});
       this.portal = new Portal({id: this.portalId});
       this.eventFilters = new EventFilter.Collection(this.eventFilters);
+      this.fetchedEvents = this.community.get('events');
       this.render();
-      var self = this;
-      this.community.get('events').pagedFetch({
-        limit: 1000,
-        success: function (events) {
-          self.days.addEvents(events);
-          if (self.view === 'list') {
-            self.date(self.date());
-            self.updateMonth();
-          }
-          self.updateFiltered();
-        }
-      });
     },
 
     setView: function (view, date) {
@@ -122,7 +113,8 @@
         el: $list,
         collection: this.days,
         view: this.view,
-        initialDate: this.date()
+        initialDate: this.date(),
+        fetchedEvents: this.fetchedEvents
       });
       $list.scroll(_.throttle(_.bind(this.updateMonth, this, false), 100));
     },
@@ -187,7 +179,7 @@
       var eventFilters = this.eventFilters;
       var query = this.query;
       var date = this.date();
-      this.community.get('events').each(function (event) {
+      this.fetchedEvents.each(function (event) {
         event.set(
           'visible',
           event.matchesQuery(query) && event.matchesEventFilters(eventFilters)
@@ -214,6 +206,14 @@
 
     jumpToClicked: function (ev) {
       this.setView('list', moment.tz($(ev.target).data('date'), this.tz));
+    },
+
+    onFetchedEvents: function () {
+      if (this.view === 'list') {
+        this.date(this.date());
+        this.updateMonth();
+      }
+      this.updateFiltered();
     }
   });
 })();

@@ -66,6 +66,11 @@
 
     hex: function (scale) {
       return this.get('tags').first().hex(scale);
+    },
+
+    parse: function (data) {
+      data.dates = this.get('dates').models.concat(data.dates);
+      return data;
     }
   });
 

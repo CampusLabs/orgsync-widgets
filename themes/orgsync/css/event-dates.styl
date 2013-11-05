@@ -40,6 +40,10 @@
     &:first-child
       margin-top 0
     &.js-continues
+    &.js-continued
+      &.js-all-day .short-time
+        display none
+    &.js-continues
       padding-right 10px
       margin-right -5px
     &.js-continued
@@ -50,8 +54,6 @@
         border-radius right 5px
     &.js-continued:not(.js-first-dow) .title
       visibility hidden
-    &.js-all-day .short-time
-      display none
     .location
     .picture-container
     .long-time

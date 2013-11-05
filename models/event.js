@@ -8,16 +8,34 @@
   var _ = window._;
   var Model = app.Model;
 
+  // NOTE: Temp data while endpoint is created.
+  var tags = [{
+    id: "umbrella-1",
+    name: "Student Life",
+    color: "FF0000"
+  }, {
+    id: "umbrella-2",
+    name: "Rec Sports",
+    color: "00FF00"
+  }, {
+    id: "umbrella-3",
+    name: "Frat Life",
+    color: "0000FF"
+  }];
+
+
   var Event = app.Event = Model.extend({
     relations: {
       portal: {hasOne: 'Portal', fk: 'portal_id'},
       creator: {hasOne: 'Account', fk: 'creator_id'},
       dates: {hasMany: 'EventDate', fk: 'event_id'},
-      comments: {hasMany: 'Comment', fk: 'event_id'}
+      comments: {hasMany: 'Comment', fk: 'event_id'},
+      tags: {hasMany: 'EventFilter'}
     },
 
-    defaults: {
-      visible: true,
+    // NOTE: Temp defaults until response returns `tags`.
+    defaults: function () {
+      return {visible: true, tags: _.sample(tags)};
     },
 
     searchableWords: function () {
@@ -38,21 +56,16 @@
       });
     },
 
+    matchesEventFilters: function (eventFilters) {
+      if (!eventFilters.length) return true;
+      var tags = this.get('tags');
+      return eventFilters.any(function (eventFilter) {
+        return eventFilter.get('enabled') && tags.get(eventFilter);
+      }, this);
+    },
+
     hex: function (scale) {
-      var n = parseInt(this.get('color'), '16');
-      if (isNaN(n)) this.set('color', (n = _.random(0xFFFFFF)).toString(16));
-      if (scale) {
-        var r = (n >> 16) % 256;
-        r += Math.floor((scale > 0 ? (255 - r) : r) * scale);
-        var g = (n >> 8) % 256;
-        g += Math.floor((scale > 0 ? (255 - g) : g) * scale);
-        var b = n % 256;
-        b += Math.floor((scale > 0 ? (255 - b) : b) * scale);
-        n = ((r << 16) + (g << 8) + b);
-      }
-      n = n.toString(16);
-      while (n.length < 6) n = '0' + n;
-      return '#' + n;
+      return this.get('tags').first().hex(scale);
     }
   });
 

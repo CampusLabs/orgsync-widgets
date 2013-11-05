@@ -9,6 +9,7 @@
   var _ = window._;
   var Community = app.Community;
   var Day = app.Day;
+  var EventFilter = app.EventFilter;
   var jst = window.jst;
   var moment = window.moment;
   var Portal = app.Portal;
@@ -30,7 +31,15 @@
       'click .js-jump-to': 'jumpToClicked'
     },
 
-    options: ['communityId', 'portalId', 'date', 'tz', 'view'],
+    options: [
+      'communityId',
+      'portalId',
+      'date',
+      'tz',
+      'view',
+      'eventFilters',
+      'legendMode'
+    ],
 
     classes: [
       'orgsync-widget',
@@ -43,8 +52,8 @@
 
     view: 'month',
 
-    filters: {
-      query: ''
+    listeners: {
+      eventFilters: {'change:enabled': 'updateFiltered'}
     },
 
     initialize: function () {
@@ -53,11 +62,11 @@
       this.days.tz = this.tz;
       this.community = new Community({id: this.communityId});
       this.portal = new Portal({id: this.portalId});
+      this.eventFilters = new EventFilter.Collection(this.eventFilters);
       this.render();
-      this.filters = _.clone(this.filters);
       var self = this;
-      this.community.get('events').fetch({
-        data: {per_page: 100},
+      this.community.get('events').pagedFetch({
+        limit: 1000,
         success: function (events) {
           self.days.addEvents(events);
           if (self.view === 'list') {
@@ -83,6 +92,7 @@
 
     render: function () {
       View.prototype.render.apply(this, arguments);
+      this.renderEventFiltersList();
       this.renderDaysOfWeek();
       this.renderDaysList();
       this.setView(this.view);
@@ -92,9 +102,18 @@
     renderDaysOfWeek: function () {
       var day = this.date().startOf('week');
       var $days = [];
-      do { $days.push($('<div>').addClass('js-day').text(day.format('ddd'))); }
+      do $days.push($('<div>').addClass('js-day').text(day.format('ddd')));
       while (day.add('day', 1).weekday());
       this.$('.js-days-of-week').append($days);
+    },
+
+    renderEventFiltersList: function () {
+      this.views.eventFiltersList = new app.ListView({
+        el: this.$('.js-event-filters-list'),
+        collection: this.eventFilters,
+        modelView: app.EventFiltersShowView,
+        modelViewOptions: {legendMode: this.legendMode}
+      });
     },
 
     renderDaysList: function () {
@@ -160,15 +179,19 @@
       var words = _.str.words(q.toLowerCase());
       if (_.isEqual(words, this.lastWords)) return;
       this.lastWords = words;
-      this.filters.query = words.length ? q : null;
+      this.query = words.length ? q : null;
       this.updateFiltered();
     },
 
     updateFiltered: function () {
-      var query = this.filters.query;
+      var eventFilters = this.eventFilters;
+      var query = this.query;
       var date = this.date();
       this.community.get('events').each(function (event) {
-        event.set('visible', event.matchesQuery(query));
+        event.set(
+          'visible',
+          event.matchesQuery(query) && event.matchesEventFilters(eventFilters)
+        );
       });
       if (this.view === 'list') this.date(date);
       this.views.daysList.correctDisplay();

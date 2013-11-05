@@ -45,6 +45,7 @@
     },
 
     renderEventDatesList: function () {
+      this.eventDates.sort();
       this.views.eventDatesList = new app.ListView({
         el: this.$('.js-event-dates-list'),
         collection: this.eventDates,

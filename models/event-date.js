@@ -17,6 +17,16 @@
       tz: app.tz
     },
 
+    initialize: function () {
+
+      // When the timezone changes, we need to destroy the cached starts and
+      // ends moment instances so they can be regenerated with their new time.
+      this.on('change:tz', function () {
+        delete this._starts_at;
+        delete this._ends_at;
+      });
+    },
+
     start: function () { return this.normalize('starts_at'); },
 
     end: function () { return this.normalize('ends_at'); },

@@ -35,13 +35,13 @@
     },
 
     listeners: {
-      collection: {add: 'debouncedFetch'}
+      collection: {add: 'debouncedCheckFetch'}
     },
 
     initialize: function () {
       _.bindAll(this, 'padAndTrim');
       $(window).on('resize', this.padAndTrim);
-      this.debouncedFetch = _.debounce(this.fetch, 100);
+      this.debouncedCheckFetch = _.debounce(this.checkFetch, 100);
       this.available = this.collection;
       this.collection = new Day.Collection();
       this.collection.tz = this.available.tz;
@@ -54,12 +54,7 @@
     },
 
     needsAbove: function () {
-      if (this.view === 'list') {
-        var edge = this.collection.first();
-        if (!edge) return false;
-        var prev = this.listStep(edge.date().clone().subtract('day', 1)).prev;
-        if (prev === edge) return false;
-      }
+      if (this.topEdge()) return false;
       return this.$el.scrollTop() < this.threshold;
     },
 
@@ -86,12 +81,7 @@
     },
 
     extraAbove: function () {
-      if (this.view === 'list') {
-        var edge = this.collection.last();
-        if (!edge) return false;
-        var next = this.listStep(edge.date().clone().add('day', 1)).next;
-        if (next === edge) return false;
-      }
+      if (this.bottomEdge()) return false;
       var $el = this.$el;
       var scrollTop = $el.scrollTop();
       var firstHeight = $el.children().first().outerHeight();
@@ -106,12 +96,7 @@
     },
 
     needsBelow: function () {
-      if (this.view === 'list') {
-        var edge = this.collection.last();
-        if (!edge) return false;
-        var next = this.listStep(edge.date().clone().add('day', 1)).next;
-        if (next === edge) return false;
-      }
+      if (this.bottomEdge()) return false;
       var $el = this.$el;
       var scrollHeight = $el.prop('scrollHeight');
       var scrollTop = $el.scrollTop();
@@ -139,12 +124,7 @@
     },
 
     extraBelow: function () {
-      if (this.view === 'list') {
-        var edge = this.collection.first();
-        if (!edge) return false;
-        var prev = this.listStep(edge.date().clone().subtract('day', 1)).prev;
-        if (prev === edge) return false;
-      }
+      if (this.topEdge()) return false;
       var $el = this.$el;
       var scrollHeight = $el.prop('scrollHeight');
       var scrollTop = $el.scrollTop();
@@ -160,6 +140,22 @@
     remove: function () {
       $(window).off('resize', this.padAndTrim);
       return ListView.prototype.remove.apply(this, arguments);
+    },
+
+    topEdge: function () {
+      if (this.view !== 'list') return false;
+      var edge = this.collection.first();
+      if (!edge) return true;
+      var prev = this.listStep(edge.date().clone().subtract('day', 1)).prev;
+      return prev === edge;
+    },
+
+    bottomEdge: function () {
+      if (this.view !== 'list') return false;
+      var edge = this.collection.last();
+      if (!edge) return true;
+      var next = this.listStep(edge.date().clone().add('day', 1)).next;
+      return next === edge;
     },
 
     padAndTrim: function () {
@@ -243,21 +239,54 @@
       }, this);
     },
 
-    fetch: function () {
-      var day = this.fetchDay = this.collection.find(function (day) {
-        return day.get('fetched') < Infinity;
-      });
-      if (!day) return;
+    checkFetch: function () {
+      switch (this.view) {
+      case 'list':
+        if (this.futureLimitReached && this.pastLimitReached) return;
+        var id = Day.id(this.date());
+        var prev;
+        var next;
+        this.available.find(function (day) {
+          if (day.get('eventDates').length && day.get('visible')) {
+            if (!prev) prev = day;
+            next = day;
+          }
+          if (day.get('fetched') === Infinity) return;
+          if (day.id <= id) prev = day;
+          if (day.id >= id) return next = day;
+        });
+        if (!this.pastLimitReached && this.collection.get(prev)) {
+          this.fetch(prev, 'past');
+        }
+        if (!this.futureLimitReached && this.collection.get(next)) {
+          this.fetch(next, 'future');
+        }
+        break;
+      case 'month':
+      case 'week':
+        if (this.futureLimitReached) return;
+        var firstUnfetched = this.collection.find(function (day) {
+          return day.get('fetched') < Infinity;
+        });
+        if (firstUnfetched) this.fetch(firstUnfetched, 'future');
+      }
+    },
+
+    fetch: function (day, dir) {
       var page = day.get('fetched') + 1;
       var self = this;
+      var fetchKey = dir + 'FetchDay';
+      this[fetchKey] = day;
       this.fetchedEvents.fetch({
         remove: false,
         data: {
-          page: page,
+          page: page === Infinity ? 1 : page,
           per_page: 100,
-          date: day.date().toISOString()
+          date: day.date().toISOString(),
+          dir: dir
         },
         success: function (events, data) {
+          if (!data.length) self[dir + 'LimitReached'] = true;
           day.set('fetched', page);
           var newEventDates = new EventDate.Collection(
             _.flatten(_.map(data, function (event) {
@@ -273,7 +302,7 @@
             newEventDates.last().start().clone().startOf('day'),
             true
           );
-          if (self.fetchDay === day) self.fetch();
+          if (self[fetchKey] === day) self.checkFetch();
         }
       });
     }

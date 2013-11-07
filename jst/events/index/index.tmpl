@@ -1,33 +1,36 @@
-<div class='event-filters'>
-  <input class='js-search-input'>
+<div class='js-event-filters event-filters'>
+  <input class='js-search-input search-input' placeholder='Search Events'>
   <ol class='js-event-filters-list event-filters-list'></ol>
-</div>
-<div class='main'>
+</div
+><div class='main'>
   <div class='top'>
+    <div class='js-tz tz'><%- o.tzDisplay() %></div>
     <div class='month-year'>
-      <div class='js-tz tz'><%- o.tzDisplay() %></div>
+      <input type='button' class='js-today today' value='Today'
+      ><input type='button' class='js-change-view change-view' data-view='list' value='List'
+      ><input type='button' class='js-change-view change-view' data-view='month' value='Month'
+      ><input
+        type='button'
+        class='js-toggle-filters toggle-filters'
+        value='Filters'
+      >
+      <input type='button' class='js-prev-month prev-month' value='&lt;'
       <% var date = o.date(); %>
-      <select class='js-month month'>
+      ><select class='js-month month'>
         <% _.each(_.range(0, 12), function (month) { %>
         <option value='<%= month %>'>
           <%= date.month(month).format('MMMM') %>
         </option>
         <% }); %>
-      </select>
-      <select class='js-year year'>
-        <% _.each(_.range(date.year() - 3, date.year() + 4), function (year) { %>
+      </select
+      <% var year = date.year(); %>
+      ><select class='js-year year'>
+        <% _.each(_.range(year - 3, year + 4), function (year) { %>
         <option value='<%= year %>'><%= year %></option>
         <% }); %>
-      </select>
+      </select
+      ><input type='button' class='js-next-month next-month' value='&gt;'>
     </div>
-    <input type='button' class='js-change-view' data-view='list' value='List'
-    ><input type='button' class='js-change-view' data-view='month' value='Month'
-    ><input type='button' class='js-change-view' data-view='week' value='Week'
-    ><input type='button' class='js-prev-month' value='&lt;&lt;'
-    ><input type='button' class='js-prev-week' value='&lt;'
-    ><input type='button' class='js-today' value='Today'
-    ><input type='button' class='js-next-week' value='&gt;'
-    ><input type='button' class='js-next-month' value='&gt;&gt;'>
   </div>
   <div class='events'>
     <div class='js-days-of-week days-of-week'></div>

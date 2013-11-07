@@ -242,7 +242,6 @@
     checkFetch: function () {
       switch (this.view) {
       case 'list':
-        if (this.futureLimitReached && this.pastLimitReached) return;
         var id = Day.id(this.date());
         var prev;
         var next;
@@ -255,20 +254,15 @@
           if (day.id <= id) prev = day;
           if (day.id >= id) return next = day;
         });
-        if (!this.pastLimitReached && this.collection.get(prev)) {
-          this.fetch(prev, 'past');
-        }
-        if (!this.futureLimitReached && this.collection.get(next)) {
-          this.fetch(next, 'future');
-        }
+        if (this.collection.get(prev)) this.fetch(prev, 'before');
+        if (this.collection.get(next)) this.fetch(next, 'after');
         break;
       case 'month':
       case 'week':
-        if (this.futureLimitReached) return;
         var firstUnfetched = this.collection.find(function (day) {
           return day.get('fetched') < Infinity;
         });
-        if (firstUnfetched) this.fetch(firstUnfetched, 'future');
+        if (firstUnfetched) this.fetch(firstUnfetched, 'after');
       }
     },
 
@@ -277,16 +271,20 @@
       var self = this;
       var fetchKey = dir + 'FetchDay';
       this[fetchKey] = day;
+      var limitKey = dir + 'Limit';
+      var date = day.date();
+      var limit = this[limitKey];
+      if (limit) {
+        if (dir === 'before' && date.isBefore(limit)) return;
+        if (dir === 'after' && date.isAfter(limit)) return;
+      }
+      var data = {page: page === Infinity ? 1 : page, per_page: 100};
+      data[dir] = date.toISOString();
       this.fetchedEvents.fetch({
         remove: false,
-        data: {
-          page: page === Infinity ? 1 : page,
-          per_page: 100,
-          date: day.date().toISOString(),
-          dir: dir
-        },
+        data: data,
         success: function (events, data) {
-          if (!data.length) self[dir + 'LimitReached'] = true;
+          if (!data.length) self[limitKey] = date;
           day.set('fetched', page);
           var newEventDates = new EventDate.Collection(
             _.flatten(_.map(data, function (event) {

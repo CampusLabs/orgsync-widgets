@@ -56,7 +56,7 @@
     },
 
     shortTimeFormat: function (date) {
-      return date.format('h:mm A').replace(':00', '');
+      return date.format('h:mmA').replace(':00', '').replace('M', '');
     },
 
     longTime: function () {

@@ -3,20 +3,36 @@
 .osw-events-index
   position relative
   .event-filters
-    padding-right 5px
-    float left
+    display inline-block
+    width 15%
+    vertical-align top
+    position absolute
+    .search-input
+      box-sizing border-box
+      width 100%
+      margin-bottom 5px
+      height 30px
+      padding 0 5px
+      border-radius 3px
+      border 1px solid #ccc
   .main
-    overflow auto
+    display inline-block
+    width 85%
+    position absolute
+    right 0
+    transition width .5s ease-in-out
+    vertical-align top
+    background #fff
   .events-list
     height 600px
   .top
+    padding 0 5px
+    text-align center
     clearfix()
   .month-year
-    float right
-    padding 5px
-    text-align right
     .month
     .year
+      vertical-align middle
       font-size 24px
       background none
       border none
@@ -25,13 +41,30 @@
       appearance none
       text-indent 0.01px
       text-overflow ''
+      border-radius 0
     .month
       margin-right 5px
       font-weight bold
       direction rtl
-    .tz
-      font-size 11px
-      color #666
+    .prev-month
+    .next-month
+      font-weight bold
+      font-size 20px
+      vertical-align middle
+      cursor pointer
+    .prev-month
+      margin-right 20px
+    .next-month
+      margin-left 20px
+  .tz
+    text-align right
+    font-size 11px
+    color #666
+  .toggle-filters
+    float left
+  .today
+  .change-view
+    float right
 .osw-events-index.js-list-view
   .days-of-week
     display none
@@ -48,3 +81,5 @@
     font-weight bold
     font-size 14px
     line-height 26px
+.osw-events-index.js-full-width .main
+  width 100%

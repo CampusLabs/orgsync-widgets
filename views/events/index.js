@@ -24,8 +24,7 @@
       'click .js-today': 'clickToday',
       'click .js-prev-month': function () { this.incr('month', -1); },
       'click .js-next-month': function () { this.incr('month', 1); },
-      'click .js-prev-week': function () { this.incr('week', -1); },
-      'click .js-next-week': function () { this.incr('week', 1); },
+      'click .js-toggle-filters': 'toggleFilters',
       'keydown .js-search-input': 'searchKeydown',
       'change .js-month, .js-year': 'jumpToSelected',
       'click .js-jump-to': 'jumpToClicked'
@@ -214,6 +213,10 @@
         this.updateMonth();
       }
       this.updateFiltered();
+    },
+
+    toggleFilters: function () {
+      this.$el.toggleClass('js-full-width');
     }
   });
 })();

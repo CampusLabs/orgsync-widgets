@@ -50,7 +50,7 @@
         el: this.$('.js-event-dates-list'),
         collection: this.eventDates,
         modelView: app.EventDatesShowView,
-        modelViewOptions: {day: this.model}
+        modelViewOptions: {day: this.model, view: this.view}
       });
       this.correctDisplay();
     },

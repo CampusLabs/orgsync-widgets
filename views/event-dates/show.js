@@ -16,7 +16,9 @@
       click: 'open'
     },
 
-    options: ['day'],
+    view: 'month',
+
+    options: ['day', 'view'],
 
     classes: [
       'orgsync-widget',

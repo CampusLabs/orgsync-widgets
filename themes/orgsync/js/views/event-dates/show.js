@@ -10,7 +10,9 @@
     initialize.apply(this, arguments);
     var event = this.model.get('event');
     this.$el.css({borderLeftColor: '#' + event.hex()});
-    if (this.continues || this.continued || event.get('is_all_day')) {
+    if (this.view !== 'list' &&
+        (this.continues || this.continued || event.get('is_all_day'))
+      ) {
       this.$el.css({background: '#' + event.hex(0.9)});
     }
   };

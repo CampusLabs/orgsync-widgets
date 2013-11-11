@@ -8,9 +8,10 @@
 
   EventDatesShowView.prototype.initialize = function () {
     initialize.apply(this, arguments);
-    this.$el.css({borderLeftColor: '#' + this.model.get('event').hex()});
-    if (this.continues || this.continued) {
-      this.$el.css({background: '#' + this.model.get('event').hex(0.9)});
+    var event = this.model.get('event');
+    this.$el.css({borderLeftColor: '#' + event.hex()});
+    if (this.continues || this.continued || event.get('is_all_day')) {
+      this.$el.css({background: '#' + event.hex(0.9)});
     }
   };
 })();

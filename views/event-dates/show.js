@@ -49,14 +49,14 @@
     },
 
     shortTime: function () {
-      if (this.event.get('is_all_day')) return 'All Day';
+      if (this.event.get('is_all_day')) return 'all day';
       if (!this.continued) return this.shortTimeFormat(this.model.start());
-      if (this.continues) return 'All Day';
+      if (this.continues) return 'all day';
       return 'ends ' + this.shortTimeFormat(this.model.end());
     },
 
     shortTimeFormat: function (date) {
-      return date.format('h:mmA').replace(':00', '').replace('M', '');
+      return date.format('h:mma').replace(':00', '').replace('m', '');
     },
 
     longTime: function () {

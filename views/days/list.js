@@ -42,6 +42,7 @@
       _.bindAll(this, 'padAndTrim');
       $(window).on('resize', this.padAndTrim);
       this.debouncedCheckFetch = _.debounce(this.checkFetch, 100);
+      this.debouncedOnMouseup = _.debounce(this.onMouseup, 1000);
       this.available = this.collection;
       this.collection = new Day.Collection();
       this.collection.tz = this.available.tz;
@@ -162,7 +163,11 @@
 
       // Don't try to pad/trim while the user could be scrolling with the scroll
       // bar. It causes massive jankness.
-      if (this.mousedown) return this.padAndTrimCalled = true;
+      if (this.mousedown) {
+        this.debouncedOnMouseup();
+        this.padAndTrimCalled = true;
+        return;
+      }
       this.padAndTrimCalled = false;
 
       // Add or remove elements below if necessary.
@@ -225,7 +230,10 @@
       this.date(date);
     },
 
-    onMousedown: function () { this.mousedown = true; },
+    onMousedown: function () {
+      this.mousedown = true;
+      this.debouncedOnMouseup();
+    },
 
     onMouseup: function () {
       this.mousedown = false;

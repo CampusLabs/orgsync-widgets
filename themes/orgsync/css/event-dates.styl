@@ -4,20 +4,25 @@
   .osw-event-dates-show
     border 1px solid #ccc
     border-left-width 5px
-    border-top none
+    border-bottom none
+    padding 5px
     cursor pointer
     clearfix()
+    &:first-child
+      border-top none
     .picture-container
       float left
       width 45px
       height 45px
+      margin 0 5px 0 30px
       img
         width 100%
     .location
     .short-time
       display none
     .title
-      font-size 12px
+      font-size 14px
+      color #333
     .long-time
       display inline
       font-size 11px

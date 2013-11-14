@@ -6,15 +6,18 @@
   <div class='top'>
     <div class='js-tz tz'><%- o.tzDisplay() %></div>
     <div class='month-year'>
-      <input type='button' class='js-today today' value='Today'
-      ><input type='button' class='js-change-view change-view' data-view='list' value='List'
-      ><input type='button' class='js-change-view change-view' data-view='month' value='Month'
-      ><input
-        type='button'
-        class='js-toggle-filters toggle-filters'
-        value='Filters'
-      >
-      <input type='button' class='js-prev-month prev-month' value='&lt;'
+      <div class='left-buttons'>
+        <span class='js-toggle-filters toggle-filters'></span>
+      </div>
+      <div class='right-buttons'>
+        <span class='js-today today'>Today</span
+        >
+        View as:
+        <span class='js-change-view change-view' data-view='list'>List</span>
+        |
+        <span class='js-change-view change-view' data-view='month'>Month</span>
+      </div>
+      <span class='js-prev-month prev-month'>&lt;</span
       <% var date = o.date(); %>
       ><select class='js-month month'>
         <% _.each(_.range(0, 12), function (month) { %>
@@ -29,7 +32,7 @@
         <option value='<%= year %>'><%= year %></option>
         <% }); %>
       </select
-      ><input type='button' class='js-next-month next-month' value='&gt;'>
+      ><span class='js-next-month next-month'>&gt;</span>
     </div>
   </div>
   <div class='events'>

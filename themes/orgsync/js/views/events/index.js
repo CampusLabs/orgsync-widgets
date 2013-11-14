@@ -12,6 +12,10 @@
     render.apply(this, arguments);
     this.$('.js-days-of-week .js-day')
       .wrap($('<div>').addClass('js-day-container'));
+    this.$('.js-toggle-filters').addClass('icon-office-shortcuts');
+    this.$('.js-today').addClass('icon-calendar');
+    this.$('.js-prev-month').addClass('icon-pointer-right').text('');
+    this.$('.js-next-month').addClass('icon-pointer-left').text('');
     return this;
   };
 })();

@@ -78,6 +78,7 @@
         .addClass('js-' + view + '-view');
       this.views.daysList.setView(view, date);
       this.updateMonth();
+      this.updateFilterText();
     },
 
     render: function () {
@@ -215,8 +216,16 @@
       this.updateFiltered();
     },
 
+    updateFilterText: function () {
+      this.$('.js-toggle-filters').text(
+        (this.$el.hasClass('js-full-width') ? 'Show ' : 'Hide ') +
+        (this.legendMode ? 'Legend' : 'Filters')
+      );
+    },
+
     toggleFilters: function () {
       this.$el.toggleClass('js-full-width');
+      this.updateFilterText();
     }
   });
 })();

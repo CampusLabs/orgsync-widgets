@@ -26,10 +26,12 @@
   .events-list
     height 600px
   .top
+    position relative
     padding 0 5px
     text-align center
     clearfix()
   .month-year
+    padding-bottom 5px
     .month
     .year
       vertical-align middle
@@ -52,26 +54,48 @@
       font-size 20px
       vertical-align middle
       cursor pointer
+      &:hover
+        color #00578f
     .prev-month
-      margin-right 20px
+      margin-right 5px
     .next-month
-      margin-left 20px
+      margin-left 5px
   .tz
     text-align right
     font-size 11px
     color #666
+  .left-buttons
+  .right-buttons
+    position absolute
+    bottom 0
+    padding 5px
+    font-size 14px
+  .left-buttons
+    left 0
+  .right-buttons
+    right 0
   .toggle-filters
-    float left
   .today
   .change-view
-    float right
+    cursor pointer
+    color #3872a7
+    &:hover
+      color #00578f
+  .today
+    margin-right 10px
 .osw-events-index.js-list-view
   .toggle-filters
     visibility hidden
   .days-of-week
     display none
+  .change-view[data-view=list]
+    font-weight bold
 .osw-events-index.js-month-view
 .osw-events-index.js-week-view
+  &.js-full-width .main
+    width 100%
+  .change-view[data-view=month]
+    font-weight bold
   .js-day-container
     display inline-block
     box-sizing border-box
@@ -83,7 +107,3 @@
     font-weight bold
     font-size 14px
     line-height 26px
-.osw-events-index.js-month-view
-.osw-events-index.js-week-view
-  &.js-full-width .main
-    width 100%

@@ -128,12 +128,11 @@
     },
 
     renderPortalList: function () {
-      this.views.portalList = new app.ListView({
+      this.views.portalList = new app.InfiniteListView({
         el: this.$('.js-list'),
         collection: this.filtered,
         modelView: app.PortalsIndexListItemView,
         modelViewOptions: {action: this.action},
-        infiniteScroll: true,
         pageSize: 20
       });
     },

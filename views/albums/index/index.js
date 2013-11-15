@@ -44,12 +44,11 @@
     },
 
     renderAlbumList: function () {
-      this.views.albumsList = new app.ListView({
+      this.views.albumsList = new app.InfiniteListView({
         el: this.$('.js-list'),
         modelView: app.AlbumsIndexListItemView,
         modelViewOptions: {action: this.action},
-        collection: this.albums,
-        infiniteScroll: true
+        collection: this.albums
       });
     },
 

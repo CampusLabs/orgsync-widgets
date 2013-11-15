@@ -26,12 +26,11 @@
 
     render: function () {
       View.prototype.render.apply(this, arguments);
-      this.views.commentsList = new app.ListView({
+      this.views.commentsList = new app.InfiniteListView({
         el: this.$('.js-comments'),
         collection: this.comments,
         modelView: app.CommentsShowView,
-        modelViewOptions: {tagName: 'li'},
-        infiniteScroll: true
+        modelViewOptions: {tagName: 'li'}
       });
       return this;
     }

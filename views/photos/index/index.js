@@ -44,12 +44,11 @@
     },
 
     renderPhotoList: function () {
-      this.views.photosList = new app.ListView({
+      this.views.photosList = new app.InfiniteListView({
         el: this.$('.js-list'),
         modelView: app.PhotosIndexListItemView,
         modelViewOptions: {action: this.action},
-        collection: this.photos,
-        infiniteScroll: true
+        collection: this.photos
       });
     },
 

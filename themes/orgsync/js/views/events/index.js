@@ -14,8 +14,8 @@
       .wrap($('<div>').addClass('js-day-container'));
     this.$('.js-toggle-filters').addClass('icon-office-shortcuts');
     this.$('.js-today').addClass('icon-calendar');
-    this.$('.js-prev-month').addClass('icon-pointer-right').text('');
-    this.$('.js-next-month').addClass('icon-pointer-left').text('');
+    this.$('.js-prev-month').addClass('icon-pointer-left').text('');
+    this.$('.js-next-month').addClass('icon-pointer-right').text('');
     return this;
   };
 })();

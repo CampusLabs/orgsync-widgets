@@ -7,8 +7,8 @@ var title = o.model.get('filler') ? '&nbsp;' : _.escape(event.get('title'));
   <% if (thumbnailUrl) { %><img src='<%- thumbnailUrl %>'><% } %>
 </div>
 <div class='info'>
-  <div class='short-time'><%- o.shortTime() %></div>
+  <div class='short-time'><%- o.model.shortTime() %></div>
   <div class='title'><%= title %></div>
-  <div class='long-time'><%- o.longTime() %></div>
+  <div class='long-time'><%- o.model.longTime() %></div>
   <div class='location'><%- event.get('location') %></div>
 </div>

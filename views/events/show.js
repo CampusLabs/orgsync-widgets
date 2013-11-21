@@ -11,6 +11,8 @@
   app.EventsShowView = View.extend({
     className: 'js-osw-events-show osw-events-show',
 
-    template: jst['events/show']
+    template: jst['events/show'],
+
+    options: ['eventDate']
   });
 })();

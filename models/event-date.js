@@ -52,6 +52,28 @@
     isMultiDay: function () {
       var startDay = this.start().clone().startOf('day');
       return startDay.add('days', 1).isBefore(this.end());
+    },
+
+    shortTime: function () {
+      if (this.get('event').get('is_all_day')) return 'all day';
+      if (!this.continued) return this.shortTimeFormat(this.start());
+      if (this.continues) return 'all day';
+      return 'ends ' + this.shortTimeFormat(this.end());
+    },
+
+    shortTimeFormat: function (date) {
+      return date.format('h:mma').replace(':00', '').replace('m', '');
+    },
+
+    longTime: function () {
+      var start = this.start();
+      var end = this.end();
+      var allDay = this.get('event').get('is_all_day');
+      var multiDay = this.isMultiDay();
+      if (!multiDay && allDay) return 'All Day';
+      var format = allDay ? '[All Day]' : 'LT';
+      if (multiDay) format += ', MMM D';
+      return start.format(format) + ' to ' + end.format(format);
     }
   });
 

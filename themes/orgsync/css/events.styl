@@ -107,3 +107,42 @@
     font-weight bold
     font-size 14px
     line-height 26px
+
+.js-olay-content
+  .osw-events-show
+    text-align left
+    padding 20px
+    max-width 480px
+    clearfix()
+    .picture-container
+      float right
+    .title
+      font-size 20px
+      font-weight bold
+    .datetime
+    .location
+    .portal
+    .description
+      padding 10px
+      &:before
+        display block
+        color #999
+    .datetime:before
+      content 'WHEN'
+    .location:before
+      content 'WHERE'
+    .portal:before
+      content 'HOST'
+    .description:before
+      content 'DETAILS'
+    .see-full-details
+      float right
+      display inline-block
+      padding 10px
+      text-decoration none
+      color #3872a7
+      border-radius 5px
+      border 1px solid #3872a7
+      &:hover
+        color #00578f
+        border-color #00578f

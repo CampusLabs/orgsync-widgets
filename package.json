@@ -11,6 +11,7 @@
     "cogs": "x",
     "csso": "x",
     "nib": "x",
+    "node-sass": "x",
     "orgsync-javascript-api": "git+ssh://git@github.com:orgsync/orgsync-api-javascript",
     "stylus": "x",
     "uglify-js": "x"

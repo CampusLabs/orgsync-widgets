@@ -5,6 +5,7 @@
     "async": "x",
     "backbone": "jashkenas/backbone#master",
     "backbone-relations": "x",
+    "bourbon": "x",
     "dpr": "x",
     "elementQuery": "tysonmatanich/elementQuery#prod",
     "moment": "x",

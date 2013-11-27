@@ -13,9 +13,9 @@
   },
   "targets": {
     "orgsync-widgets.js": "dist",
-    "css/orgsync-widgets.sass": "dist",
+    "css/orgsync-widgets.scss": "dist",
     "themes/*.js": "dist/themes",
-    "themes/*.sass": "dist/themes",
+    "themes/*.scss": "dist/themes",
     "bower_components/select2/*.gif": "dist",
     "bower_components/select2/*.png": "dist"
   }

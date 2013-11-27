@@ -1,0 +1,23 @@
+@import "config";
+
+.orgsync-widget.osw-event-filters-show {
+  display: block;
+  cursor: pointer;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  padding: 2px;
+  &.js-legend-mode {
+    cursor: default;
+    .enabled {
+      display: none;
+    }
+  }
+  .enabled {
+    cursor: pointer;
+    margin-right: 5px;
+  }
+  .js-icon {
+    float: right;
+  }
+}

@@ -1,0 +1,17 @@
+@import "config";
+
+.js-olay-container {
+  background: black;
+  background: rgba(0, 0, 0, 0.75);
+}
+
+.js-olay-cell {
+  padding: 10px;
+}
+
+.js-olay-content {
+  max-width: 800px;
+  background: white;
+  border-radius: 3px;
+  box-shadow: 0 1px 5px rgba(0, 0, 0, 0.75);
+}

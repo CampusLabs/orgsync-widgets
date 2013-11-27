@@ -1,0 +1,32 @@
+@import "config";
+
+.orgsync-widget.osw-comments-show {
+  text-align: left;
+  border: 1px solid #dddddd;
+  padding: 5px;
+  background: #f9f9f9;
+  @include clearfix;
+  &:not(:first-child) {
+    border-top: 0;
+  }
+  .info {
+    overflow: auto;
+    padding-left: 5px;
+  }
+  .picture {
+    float: left;
+    border: 1px solid #dddddd;
+    padding: 5px;
+    width: 40px;
+    height: 40px;
+    background: white;
+  }
+  .name {
+    display: inline;
+    font-weight: bold;
+  }
+  .time {
+    display: inline;
+    color: #666666;
+  }
+}

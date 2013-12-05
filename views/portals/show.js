@@ -1,4 +1,4 @@
-//= require ../view
+//= require ../view.js
 
 (function () {
   'use strict';
@@ -7,16 +7,16 @@
 
   var _ = window._;
   var View = app.View;
-  var jst = window.jst;
+  var JST = window.JST;
 
   app.PortalsShowView = View.extend({
     className: 'js-osw-portals-show osw-portals-show',
 
-    template: jst['portals/show/index'],
+    template: JST['jst/portals/show/index'],
 
-    loadingTemplate: jst['portals/show/loading'],
+    loadingTemplate: JST['jst/portals/show/loading'],
 
-    errorTemplate: jst['portals/show/error'],
+    errorTemplate: JST['jst/portals/show/error'],
 
     events: {
       'click .js-try-again': 'fetch'

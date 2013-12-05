@@ -1,4 +1,4 @@
-//= require ../../view
+//= require ../../view.js
 
 (function () {
   'use strict';
@@ -7,13 +7,13 @@
 
   var $ = window.jQuery;
   var _ = window._;
-  var jst = window.jst;
+  var JST = window.JST;
   var View = app.View;
 
 
   app.selectorViewMap['.js-osw-news-posts-index'] =
   app.NewsPostsIndexView = View.extend({
-    template: jst['news-posts/index/index'],
+    template: JST['jst/news-posts/index/index'],
 
     options: ['portalId', 'action', 'limit', 'truncate'],
 

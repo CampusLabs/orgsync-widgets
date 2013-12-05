@@ -1,4 +1,4 @@
-//= require model
+//= require ./model.js
 
 (function () {
   'use strict';

@@ -1,4 +1,4 @@
-//= require ../../view
+//= require ../../view.js
 
 (function () {
   'use strict';
@@ -16,7 +16,7 @@
 
     className: 'js-list-item list-item',
 
-    template: window.jst['albums/index/list-item'],
+    template: window.JST['jst/albums/index/list-item'],
 
     events: {
       click: 'select'

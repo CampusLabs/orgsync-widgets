@@ -1,4 +1,4 @@
-//= require ../view
+//= require ../view.js
 
 (function () {
   'use strict';
@@ -6,10 +6,10 @@
   var app = window.OrgSyncWidgets;
 
   var View = app.View;
-  var jst = window.jst;
+  var JST = window.JST;
 
   app.NewsPostsShowView = View.extend({
-    template: jst['news-posts/show'],
+    template: JST['jst/news-posts/show'],
 
     classes: [
       'orgsync-widget',

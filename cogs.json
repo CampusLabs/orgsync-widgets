@@ -1,15 +1,6 @@
 {
-  "verbose": true,
-  "paths": [
-    "jst",
-    "bower_components",
-    "node_modules",
-    "models",
-    "views"
-  ],
   "options": {
-    "processors.tmpl.options.variable": "o",
-    "processors.styl.options.nib": true
+    "processors.tmpl.options.variable": "o"
   },
   "targets": {
     "orgsync-widgets.js": "dist",

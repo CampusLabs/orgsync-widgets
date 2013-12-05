@@ -1,4 +1,4 @@
-//= require ../../view
+//= require ../../view.js
 
 (function () {
   'use strict';
@@ -7,14 +7,14 @@
 
   var $ = window.jQuery;
   var _ = window._;
-  var jst = window.jst;
+  var JST = window.JST;
   var View = app.View;
 
   var dirMap = {'37': -1, '39': 1};
 
   app.selectorViewMap['.js-osw-albums-index'] =
   app.AlbumsIndexView = View.extend({
-    template: jst['albums/index/index'],
+    template: JST['jst/albums/index/index'],
 
     options: ['portalId', 'action'],
 

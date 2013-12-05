@@ -4,8 +4,9 @@
   var app = window.OrgSyncWidgets;
 
   // This local delcaration is important to store for the Underscore templates
-  // since they use `_.escape`.
+  // since they use `_.escape`. Same for Mustache.
   var _ = window._;
+  var Mustache = window.Mustache;
 
   _.each(polutants, function (val, key) {
     app[key] = window[key];

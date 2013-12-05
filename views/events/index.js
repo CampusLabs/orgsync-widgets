@@ -1,4 +1,4 @@
-//= require ../view
+//= require ../view.js
 
 (function () {
   'use strict';
@@ -10,14 +10,14 @@
   var Community = app.Community;
   var Day = app.Day;
   var EventFilter = app.EventFilter;
-  var jst = window.jst;
+  var JST = window.JST;
   var moment = window.moment;
   var Portal = app.Portal;
   var View = app.View;
 
   app.selectorViewMap['.js-osw-events-index'] =
   app.EventsIndexView = View.extend({
-    template: jst['events/index/index'],
+    template: JST['jst/events/index/index'],
 
     events: {
       'click .js-change-view': 'clickChangeView',

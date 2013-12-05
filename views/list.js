@@ -1,4 +1,4 @@
-//= require view
+//= require ./view.js
 
 (function () {
   'use strict';

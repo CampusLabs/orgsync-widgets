@@ -1,4 +1,4 @@
-//= require ../../view
+//= require ../../view.js
 
 (function () {
   'use strict';
@@ -7,16 +7,16 @@
 
   var $ = window.jQuery;
   var _ = window._;
-  var jst = window.jst;
+  var JST = window.JST;
   var View = app.View;
 
   app.selectorViewMap['.js-osw-portals-index'] =
   app.PortalsIndexView = View.extend({
-    template: jst['portals/index/index'],
+    template: JST['jst/portals/index/index'],
 
-    noResultsTemplate: jst['portals/index/no-results'],
+    noResultsTemplate: JST['jst/portals/index/no-results'],
 
-    resultsSummaryTemplate: jst['portals/index/results-summary'],
+    resultsSummaryTemplate: JST['jst/portals/index/results-summary'],
 
     events: {
       'change .js-umbrella-selector': 'updateUmbrellaFilter',

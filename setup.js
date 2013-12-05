@@ -11,11 +11,12 @@
     elementQuery: null,
     herit: null,
     moment: null,
+    Mustache: null,
     Olay: null,
     OrgSyncApi: null,
     Select2: null,
     jQuery: null,
-    jst: null,
+    JST: null,
     jstz: null
   };
 

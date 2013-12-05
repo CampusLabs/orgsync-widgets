@@ -1,5 +1,5 @@
-//= require view
-//= require list
+//= require ./view.js
+//= require ./list.js
 
 (function () {
   'use strict';

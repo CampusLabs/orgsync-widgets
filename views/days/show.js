@@ -1,4 +1,4 @@
-//= require ../view
+//= require ../view.js
 
 (function () {
   'use strict';
@@ -7,11 +7,11 @@
 
   var EventDate = app.EventDate;
   var moment = window.moment;
-  var jst = window.jst;
+  var JST = window.JST;
   var View = app.View;
 
   app.DaysShowView = View.extend({
-    template: jst['days/show'],
+    template: JST['jst/days/show'],
 
     classes: [
       'orgsync-widget',

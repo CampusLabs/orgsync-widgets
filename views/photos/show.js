@@ -1,4 +1,4 @@
-//= require ../view
+//= require ../view.js
 
 (function () {
   'use strict';
@@ -6,10 +6,10 @@
   var app = window.OrgSyncWidgets;
 
   var View = app.View;
-  var jst = window.jst;
+  var JST = window.JST;
 
   app.PhotosShowView = View.extend({
-    template: jst['photos/show'],
+    template: JST['jst/photos/show'],
 
     events: {
       'click img': 'next',

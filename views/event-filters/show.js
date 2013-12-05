@@ -1,17 +1,17 @@
-//= require ../view
+//= require ../view.js
 
 (function () {
   'use strict';
 
   var app = window.OrgSyncWidgets;
 
-  var jst = window.jst;
+  var JST = window.JST;
   var View = app.View;
 
   app.EventFiltersShowView = View.extend({
     tagName: 'label',
 
-    template: jst['event-filters/show'],
+    template: JST['jst/event-filters/show'],
 
     classes: [
       'orgsync-widget',

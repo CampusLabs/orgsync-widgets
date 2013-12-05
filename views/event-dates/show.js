@@ -1,4 +1,4 @@
-//= require ../view
+//= require ../view.js
 
 (function () {
   'use strict';
@@ -6,11 +6,11 @@
   var app = window.OrgSyncWidgets;
 
   var Olay = window.Olay;
-  var jst = window.jst;
+  var JST = window.JST;
   var View = app.View;
 
   app.EventDatesShowView = View.extend({
-    template: jst['event-dates/show'],
+    template: JST['jst/event-dates/show'],
 
     events: {
       click: 'open'

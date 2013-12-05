@@ -17,6 +17,7 @@
 //= require orgsync-javascript-api/orgsync-javascript-api
 //= require dpr/dpr.js
 //= require elementQuery/elementQuery
+//= require mustache/mustache
 //= requireSelf
 //= requireTree models
 //= requireTree jst

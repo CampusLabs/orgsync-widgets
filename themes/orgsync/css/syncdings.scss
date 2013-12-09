@@ -1,20 +1,23 @@
 @import "config";
 
 @mixin font-src($ext, $format) {
-  $url: "https://orgsync.com/fonts/SyncDings-Regular.#{$ext}";
-  src: url($url) format($format);
+  src:
+    url("https://orgsync.com/fonts/SyncDings-Regular.#{$ext}")
+    format(#{$format});
 }
 
 @font-face {
   font-family: "SyncDings";
-  @include font-src(".eot", "embedded-opentype");
-  @include font-src("eot?#iefix", "embedded-opentype");
-  @include font-src("woff", "woff");
-  @include font-src("ttf", "truetype");
-  @include font-src("svg#SyncDingsRegular", "svg");
-  @include font-src("otf", "opentype");
   font-weight: normal;
   font-style: normal;
+  $url: "https://orgsync.com/fonts/SyncDings-Regular.";
+  src: url("#{$url}eot") format("embedded-opentype");
+  src:
+    url("#{$url}eot?#iefix") format("embedded-opentype"),
+    url("#{$url}woff") format("woff"),
+    url("#{$url}ttf") format("truetype"),
+    url("#{$url}svg#SyncDingsRegular") format("svg"),
+    url("#{$url}otf") format("opentype");
 }
 
 

@@ -3,6 +3,14 @@
 .orgsync-widget {
   font-family: "Helvetica Neue", Arial, Helvetica, sans-serif;
   font-size: 12px;
+
+  // More often than not, lists will have padding and margin of 0.
+  ul,
+  ol {
+    margin: 0;
+    padding: 0;
+  }
+
   // Reverse these odd website builder defaults.
   input,
   label,
@@ -13,6 +21,7 @@
     margin: 0;
     font-size: 12px;
   }
+
   input[type=button] {
     border: 1px solid #aaaaaa;
     padding: 5px;
@@ -31,6 +40,7 @@
       box-shadow: 0 1px 3px rgba(0, 0, 0, 0.75) inset;
     }
   }
+
   .js-loading,
   .loading {
     min-width: 128px;

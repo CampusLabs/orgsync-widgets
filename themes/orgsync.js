@@ -1,1 +1,1 @@
-//= requireTree ./orgsync/js
+//= requireTree ./orgsync/scripts

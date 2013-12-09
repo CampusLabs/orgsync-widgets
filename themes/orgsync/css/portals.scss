@@ -74,7 +74,7 @@
       word-break: break-all;
     }
     .filter-name {
-      border-radius: left 3px;
+      @include border-left-radius(3px);
       font-weight: bold;
       background: #00578f;
     }
@@ -84,7 +84,7 @@
       padding-left: 0;
       color: #00578f;
       font-weight: bold;
-      border-radius: right 3px;
+      @include border-right-radius(3px);
       &:hover,
       &:active {
         background: none;

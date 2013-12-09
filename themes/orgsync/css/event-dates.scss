@@ -65,7 +65,7 @@
       padding-left: 10px;
       border-left-width: 0;
       &:not(.js-continues) {
-        border-radius: right 5px;
+        @include border-right-radius(5px);
       }
     }
     &.js-continued:not(.js-first-dow) .title {

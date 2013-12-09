@@ -18,11 +18,12 @@
     "underscore.string": "x"
   },
   "ignore": [
-    "css",
     "jst",
     "models",
     "node_modules",
+    "styles",
     "themes",
+    "timezones",
     "views"
   ],
   "resolutions": {

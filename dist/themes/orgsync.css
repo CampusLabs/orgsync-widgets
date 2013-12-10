@@ -286,6 +286,10 @@
       border: none;
       outline: none;
       cursor: pointer;
+      -webkit-appearance: none;
+      -moz-appearance: none;
+      -ms-appearance: none;
+      -o-appearance: none;
       appearance: none;
       text-indent: 0.01px;
       text-overflow: "";
@@ -405,10 +409,16 @@
     border: 1px solid #aaaaaa;
     padding: 5px;
     color: #333333;
-    background: linear, false, #fafafa, #e8e8e8;
+    background-color: #fafafa;
+    background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #fafafa), color-stop(100%, #e8e8e8));
+    background-image: -webkit-linear-gradient( #fafafa, #e8e8e8);
+    background-image: linear-gradient(#fafafa, #e8e8e8);
     cursor: pointer; }
     .orgsync-widget input[type=button]:hover {
-      background: linear, false, #e8e8e8, #fafafa; }
+      background-color: #e8e8e8;
+      background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #e8e8e8), color-stop(100%, #fafafa));
+      background-image: -webkit-linear-gradient( #e8e8e8, #fafafa);
+      background-image: linear-gradient(#e8e8e8, #fafafa); }
     .orgsync-widget input[type=button]:active, .orgsync-widget input[type=button].js-selected {
       border-color: #00578f;
       color: white;

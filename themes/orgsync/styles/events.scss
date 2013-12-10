@@ -45,7 +45,7 @@
       border: none;
       outline: none;
       cursor: pointer;
-      appearance: none;
+      @include appearance(none);
       text-indent: 0.01px;
       text-overflow: "";
       border-radius: 0;

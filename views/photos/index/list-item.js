@@ -26,6 +26,17 @@
 
     options: ['action'],
 
+    toTemplate: function () {
+      var model = this.model;
+      var count = model.get('comments_count');
+      return {
+        url: model.orgsyncUrl(),
+        image: model.get('thumbnail_url'),
+        count: count,
+        plural: count !== 1 && ' plural'
+      };
+    },
+
     select: function () {
       if (this.action === 'redirect') return;
       this.collection.each(function (photo) {

@@ -4,6 +4,13 @@
   margin: 0 auto;
   max-width: 1100px;
   text-align: center;
+  .js-loading {
+    margin: 0 auto;
+    width: 148px;
+    height: 148px;
+    background-color: #fff;
+    border-radius: 5px;
+  }
   .info {
     padding: 20px;
   }
@@ -31,6 +38,7 @@
       padding: 5px;
       &:hover,
       &:focus {
+        outline: 0;
         .image-container {
           border-color: #0076a3;
         }

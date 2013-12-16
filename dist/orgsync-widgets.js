@@ -30546,13 +30546,13 @@ the specific language governing permissions and limitations under the Apache Lic
 // jst/albums/index/index.mustache
 (function (root, factory) {
   if (typeof define === 'function' && define.amd) {
-    define('jst/albums/index/index', [], factory);
-  } else if (typeof exports !== 'undefined') {
-    module.exports = factory();
-  } else {
-    (root.JST || (root.JST = {}))['jst/albums/index/index'] = factory();
+    define('jst/albums/index/index', ['mustache', 'underscore'], factory);
   }
-})(this, function () {
+  if (typeof exports !== 'undefined') {
+    module.exports = factory(require('mustache'), require('underscore'));
+  }
+  (root.JST || (root.JST = {}))['jst/albums/index/index'] = factory(root['Mustache'], root['_']);
+})(this, function (Mustache, _) {
   return (function () {
   var source = "<ol class='js-list list' aria-live='assertive'></ol>\n";
   var fn = function (data, partials) {
@@ -30566,15 +30566,15 @@ the specific language governing permissions and limitations under the Apache Lic
 // jst/albums/index/list-item.mustache
 (function (root, factory) {
   if (typeof define === 'function' && define.amd) {
-    define('jst/albums/index/list-item', [], factory);
-  } else if (typeof exports !== 'undefined') {
-    module.exports = factory();
-  } else {
-    (root.JST || (root.JST = {}))['jst/albums/index/list-item'] = factory();
+    define('jst/albums/index/list-item', ['mustache', 'underscore'], factory);
   }
-})(this, function () {
+  if (typeof exports !== 'undefined') {
+    module.exports = factory(require('mustache'), require('underscore'));
+  }
+  (root.JST || (root.JST = {}))['jst/albums/index/list-item'] = factory(root['Mustache'], root['_']);
+})(this, function (Mustache, _) {
   return (function () {
-  var source = "<a href='{{model.orgsyncUrl}}' tabindex='1'>\n  <div class='image-container'>\n    <img src='{{model.attributes.cover_photo}}'>\n  </div>\n  <div class='name'>{{model.attributes.name}}</div>\n  <div class='count'>{{model.attributes.photo_count}}</div>\n</a>\n";
+  var source = "<a href='{{url}}' tabindex='1'>\n  <div class='image-container'><img src='{{avatar}}'></div>\n  <div class='name'>{{name}}</div>\n  <div class='count'>{{count}}</div>\n</a>\n";
   var fn = function (data, partials) {
     return Mustache.render(source, data, partials);
   };
@@ -30583,50 +30583,36 @@ the specific language governing permissions and limitations under the Apache Lic
 })();
 });
 
-// jst/comments/show.tmpl
+// jst/comments/show.mustache
 (function (root, factory) {
   if (typeof define === 'function' && define.amd) {
-    define('jst/comments/show', [], factory);
-  } else if (typeof exports !== 'undefined') {
-    module.exports = factory();
-  } else {
-    (root.JST || (root.JST = {}))['jst/comments/show'] = factory();
+    define('jst/comments/show', ['mustache', 'underscore'], factory);
   }
-})(this, function () {
-  return function(o){
-var __t,__p='',__j=Array.prototype.join,print=function(){__p+=__j.call(arguments,'');};
-__p+='';
-
-var creator = o.model.get('creator');
-var src = creator.get('picture_url');
-
-__p+='\n<div class=\'picture\'>';
- if (src) { 
-__p+='<img src=\''+
-((__t=( src ))==null?'':_.escape(__t))+
-'\'>';
- } 
-__p+='</div>\n<div class=\'info\'>\n  <div class=\'name\'>'+
-((__t=( creator.get('display_name') ))==null?'':_.escape(__t))+
-'</div>\n  <div class=\'time\'>'+
-((__t=( o.model.time() ))==null?'':_.escape(__t))+
-'</div>\n  <div class=\'content\'>'+
-((__t=( o.model.get('content') ))==null?'':_.escape(__t))+
-'</div>\n</div>\n';
-return __p;
-};
+  if (typeof exports !== 'undefined') {
+    module.exports = factory(require('mustache'), require('underscore'));
+  }
+  (root.JST || (root.JST = {}))['jst/comments/show'] = factory(root['Mustache'], root['_']);
+})(this, function (Mustache, _) {
+  return (function () {
+  var source = "<div class='picture'>{{#avatar}}<img src='{{avatar}}'>{{/avatar}}</div>\n<div class='info'>\n  <div class='name'>{{name}}</div>\n  <div class='time'>{{time}}</div>\n  <div class='content'>{{content}}</div>\n</div>\n";
+  var fn = function (data, partials) {
+    return Mustache.render(source, data, partials);
+  };
+  fn.source = source;
+  return fn;
+})();
 });
 
 // jst/days/show.tmpl
 (function (root, factory) {
   if (typeof define === 'function' && define.amd) {
-    define('jst/days/show', [], factory);
-  } else if (typeof exports !== 'undefined') {
-    module.exports = factory();
-  } else {
-    (root.JST || (root.JST = {}))['jst/days/show'] = factory();
+    define('jst/days/show', ['mustache', 'underscore'], factory);
   }
-})(this, function () {
+  if (typeof exports !== 'undefined') {
+    module.exports = factory(require('mustache'), require('underscore'));
+  }
+  (root.JST || (root.JST = {}))['jst/days/show'] = factory(root['Mustache'], root['_']);
+})(this, function (Mustache, _) {
   return function(o){
 var __t,__p='',__j=Array.prototype.join,print=function(){__p+=__j.call(arguments,'');};
 __p+='<div class=\'js-long-date long-date\'>'+
@@ -30643,13 +30629,13 @@ return __p;
 // jst/event-dates/show.tmpl
 (function (root, factory) {
   if (typeof define === 'function' && define.amd) {
-    define('jst/event-dates/show', [], factory);
-  } else if (typeof exports !== 'undefined') {
-    module.exports = factory();
-  } else {
-    (root.JST || (root.JST = {}))['jst/event-dates/show'] = factory();
+    define('jst/event-dates/show', ['mustache', 'underscore'], factory);
   }
-})(this, function () {
+  if (typeof exports !== 'undefined') {
+    module.exports = factory(require('mustache'), require('underscore'));
+  }
+  (root.JST || (root.JST = {}))['jst/event-dates/show'] = factory(root['Mustache'], root['_']);
+})(this, function (Mustache, _) {
   return function(o){
 var __t,__p='',__j=Array.prototype.join,print=function(){__p+=__j.call(arguments,'');};
 __p+='';
@@ -30680,13 +30666,13 @@ return __p;
 // jst/event-filters/show.mustache
 (function (root, factory) {
   if (typeof define === 'function' && define.amd) {
-    define('jst/event-filters/show', [], factory);
-  } else if (typeof exports !== 'undefined') {
-    module.exports = factory();
-  } else {
-    (root.JST || (root.JST = {}))['jst/event-filters/show'] = factory();
+    define('jst/event-filters/show', ['mustache', 'underscore'], factory);
   }
-})(this, function () {
+  if (typeof exports !== 'undefined') {
+    module.exports = factory(require('mustache'), require('underscore'));
+  }
+  (root.JST || (root.JST = {}))['jst/event-filters/show'] = factory(root['Mustache'], root['_']);
+})(this, function (Mustache, _) {
   return (function () {
   var source = "<input type='checkbox' class='js-enabled enabled' checked\n>{{model.attributes.name}}\n";
   var fn = function (data, partials) {
@@ -30700,13 +30686,13 @@ return __p;
 // jst/events/index/index.tmpl
 (function (root, factory) {
   if (typeof define === 'function' && define.amd) {
-    define('jst/events/index/index', [], factory);
-  } else if (typeof exports !== 'undefined') {
-    module.exports = factory();
-  } else {
-    (root.JST || (root.JST = {}))['jst/events/index/index'] = factory();
+    define('jst/events/index/index', ['mustache', 'underscore'], factory);
   }
-})(this, function () {
+  if (typeof exports !== 'undefined') {
+    module.exports = factory(require('mustache'), require('underscore'));
+  }
+  (root.JST || (root.JST = {}))['jst/events/index/index'] = factory(root['Mustache'], root['_']);
+})(this, function (Mustache, _) {
   return function(o){
 var __t,__p='',__j=Array.prototype.join,print=function(){__p+=__j.call(arguments,'');};
 __p+='<div class=\'js-event-filters event-filters\'>\n  <input class=\'js-search-input search-input\' placeholder=\'Search Events\'>\n  <ol class=\'js-event-filters-list event-filters-list\'></ol>\n</div\n><div class=\'main\'>\n  <div class=\'top\'>\n    <div class=\'js-tz tz\'>'+
@@ -30739,13 +30725,13 @@ return __p;
 // jst/events/show.tmpl
 (function (root, factory) {
   if (typeof define === 'function' && define.amd) {
-    define('jst/events/show', [], factory);
-  } else if (typeof exports !== 'undefined') {
-    module.exports = factory();
-  } else {
-    (root.JST || (root.JST = {}))['jst/events/show'] = factory();
+    define('jst/events/show', ['mustache', 'underscore'], factory);
   }
-})(this, function () {
+  if (typeof exports !== 'undefined') {
+    module.exports = factory(require('mustache'), require('underscore'));
+  }
+  (root.JST || (root.JST = {}))['jst/events/show'] = factory(root['Mustache'], root['_']);
+})(this, function (Mustache, _) {
   return function(o){
 var __t,__p='',__j=Array.prototype.join,print=function(){__p+=__j.call(arguments,'');};
 __p+='';
@@ -30788,13 +30774,13 @@ return __p;
 // jst/news-posts/index/index.tmpl
 (function (root, factory) {
   if (typeof define === 'function' && define.amd) {
-    define('jst/news-posts/index/index', [], factory);
-  } else if (typeof exports !== 'undefined') {
-    module.exports = factory();
-  } else {
-    (root.JST || (root.JST = {}))['jst/news-posts/index/index'] = factory();
+    define('jst/news-posts/index/index', ['mustache', 'underscore'], factory);
   }
-})(this, function () {
+  if (typeof exports !== 'undefined') {
+    module.exports = factory(require('mustache'), require('underscore'));
+  }
+  (root.JST || (root.JST = {}))['jst/news-posts/index/index'] = factory(root['Mustache'], root['_']);
+})(this, function (Mustache, _) {
   return function(o){
 var __t,__p='',__j=Array.prototype.join,print=function(){__p+=__j.call(arguments,'');};
 __p+='<ol class=\'js-list list\' aria-live=\'assertive\'></ol>\n';
@@ -30805,13 +30791,13 @@ return __p;
 // jst/news-posts/index/list-item.tmpl
 (function (root, factory) {
   if (typeof define === 'function' && define.amd) {
-    define('jst/news-posts/index/list-item', [], factory);
-  } else if (typeof exports !== 'undefined') {
-    module.exports = factory();
-  } else {
-    (root.JST || (root.JST = {}))['jst/news-posts/index/list-item'] = factory();
+    define('jst/news-posts/index/list-item', ['mustache', 'underscore'], factory);
   }
-})(this, function () {
+  if (typeof exports !== 'undefined') {
+    module.exports = factory(require('mustache'), require('underscore'));
+  }
+  (root.JST || (root.JST = {}))['jst/news-posts/index/list-item'] = factory(root['Mustache'], root['_']);
+})(this, function (Mustache, _) {
   return function(o){
 var __t,__p='',__j=Array.prototype.join,print=function(){__p+=__j.call(arguments,'');};
 __p+='';
@@ -30852,13 +30838,13 @@ return __p;
 // jst/news-posts/show.tmpl
 (function (root, factory) {
   if (typeof define === 'function' && define.amd) {
-    define('jst/news-posts/show', [], factory);
-  } else if (typeof exports !== 'undefined') {
-    module.exports = factory();
-  } else {
-    (root.JST || (root.JST = {}))['jst/news-posts/show'] = factory();
+    define('jst/news-posts/show', ['mustache', 'underscore'], factory);
   }
-})(this, function () {
+  if (typeof exports !== 'undefined') {
+    module.exports = factory(require('mustache'), require('underscore'));
+  }
+  (root.JST || (root.JST = {}))['jst/news-posts/show'] = factory(root['Mustache'], root['_']);
+})(this, function (Mustache, _) {
   return function(o){
 var __t,__p='',__j=Array.prototype.join,print=function(){__p+=__j.call(arguments,'');};
 __p+='';
@@ -30884,96 +30870,76 @@ return __p;
 };
 });
 
-// jst/photos/index/index.tmpl
+// jst/photos/index/index.mustache
 (function (root, factory) {
   if (typeof define === 'function' && define.amd) {
-    define('jst/photos/index/index', [], factory);
-  } else if (typeof exports !== 'undefined') {
-    module.exports = factory();
-  } else {
-    (root.JST || (root.JST = {}))['jst/photos/index/index'] = factory();
+    define('jst/photos/index/index', ['mustache', 'underscore'], factory);
   }
-})(this, function () {
-  return function(o){
-var __t,__p='',__j=Array.prototype.join,print=function(){__p+=__j.call(arguments,'');};
-__p+='<div class=\'info\'>\n  <h1>'+
-((__t=( o.album.get('name') ))==null?'':__t)+
-'</h1>\n  <h2>'+
-((__t=( o.album.get('photo_count') ))==null?'':__t)+
-'</h2>\n</div>\n<ol class=\'js-list list\' aria-live=\'assertive\'></ol>\n';
-return __p;
-};
+  if (typeof exports !== 'undefined') {
+    module.exports = factory(require('mustache'), require('underscore'));
+  }
+  (root.JST || (root.JST = {}))['jst/photos/index/index'] = factory(root['Mustache'], root['_']);
+})(this, function (Mustache, _) {
+  return (function () {
+  var source = "<div class='info'>\n  <h1>{{name}}</h1>\n  <h2>{{count}}</h2>\n</div>\n<ol class='js-list list' aria-live='assertive'></ol>\n";
+  var fn = function (data, partials) {
+    return Mustache.render(source, data, partials);
+  };
+  fn.source = source;
+  return fn;
+})();
 });
 
-// jst/photos/index/list-item.tmpl
+// jst/photos/index/list-item.mustache
 (function (root, factory) {
   if (typeof define === 'function' && define.amd) {
-    define('jst/photos/index/list-item', [], factory);
-  } else if (typeof exports !== 'undefined') {
-    module.exports = factory();
-  } else {
-    (root.JST || (root.JST = {}))['jst/photos/index/list-item'] = factory();
+    define('jst/photos/index/list-item', ['mustache', 'underscore'], factory);
   }
-})(this, function () {
-  return function(o){
-var __t,__p='',__j=Array.prototype.join,print=function(){__p+=__j.call(arguments,'');};
-__p+='';
-
-var count = o.model.get('comments_count');
-var classes = '';
-if (count !== 1) classes += ' plural';
-if (!count) classes += ' none';
-
-__p+='\n<a href=\''+
-((__t=( o.model.orgsyncUrl() ))==null?'':_.escape(__t))+
-'\' tabindex=\'1\'>\n  <div class=\'image-container\'>\n    <img src=\''+
-((__t=( o.model.get('thumbnail_url') ))==null?'':_.escape(__t))+
-'\'>\n  </div>\n  <div class=\'comment-count'+
-((__t=( classes ))==null?'':__t)+
-'\'>'+
-((__t=( count ))==null?'':__t)+
-'</div>\n</a>\n';
-return __p;
-};
+  if (typeof exports !== 'undefined') {
+    module.exports = factory(require('mustache'), require('underscore'));
+  }
+  (root.JST || (root.JST = {}))['jst/photos/index/list-item'] = factory(root['Mustache'], root['_']);
+})(this, function (Mustache, _) {
+  return (function () {
+  var source = "<a href='{{url}}' tabindex='1'>\n  <div class='image-container'><img src='{{image}}'></div>\n  <div\n    class='\n      comment-count\n      {{^count}}none{{/count}}\n      {{#plural}}plural{{/plural}}\n    '\n  >\n    {{count}}\n  </div>\n</a>\n";
+  var fn = function (data, partials) {
+    return Mustache.render(source, data, partials);
+  };
+  fn.source = source;
+  return fn;
+})();
 });
 
-// jst/photos/show.tmpl
+// jst/photos/show.mustache
 (function (root, factory) {
   if (typeof define === 'function' && define.amd) {
-    define('jst/photos/show', [], factory);
-  } else if (typeof exports !== 'undefined') {
-    module.exports = factory();
-  } else {
-    (root.JST || (root.JST = {}))['jst/photos/show'] = factory();
+    define('jst/photos/show', ['mustache', 'underscore'], factory);
   }
-})(this, function () {
-  return function(o){
-var __t,__p='',__j=Array.prototype.join,print=function(){__p+=__j.call(arguments,'');};
-__p+='';
- var description = o.model.get('description') 
-__p+='\n<img src=\''+
-((__t=( o.model.get('full_url') ))==null?'':_.escape(__t))+
-'\'>\n<div class=\'description'+
-((__t=( description ? '' : ' js-none'))==null?'':__t)+
-'\'>\n  '+
-((__t=( description ))==null?'':_.escape(__t))+
-'\n</div>\n<ol class=\'js-comments comments\'></ol>\n<a href=\''+
-((__t=( o.model.orgsyncUrl() ))==null?'':_.escape(__t))+
-'\' class=\'comment-on-orgsync\'>\n  Comment on OrgSync\n</a>\n';
-return __p;
-};
+  if (typeof exports !== 'undefined') {
+    module.exports = factory(require('mustache'), require('underscore'));
+  }
+  (root.JST || (root.JST = {}))['jst/photos/show'] = factory(root['Mustache'], root['_']);
+})(this, function (Mustache, _) {
+  return (function () {
+  var source = "<img src='{{image}}'>\n<div class='description{{^description}} js-none{{/description}}'>\n  {{description}}\n</div>\n<ol class='js-comments comments'></ol>\n<a href='{{url}}' class='comment-on-orgsync'>Comment on OrgSync</a>\n";
+  var fn = function (data, partials) {
+    return Mustache.render(source, data, partials);
+  };
+  fn.source = source;
+  return fn;
+})();
 });
 
 // jst/portals/index/index.tmpl
 (function (root, factory) {
   if (typeof define === 'function' && define.amd) {
-    define('jst/portals/index/index', [], factory);
-  } else if (typeof exports !== 'undefined') {
-    module.exports = factory();
-  } else {
-    (root.JST || (root.JST = {}))['jst/portals/index/index'] = factory();
+    define('jst/portals/index/index', ['mustache', 'underscore'], factory);
   }
-})(this, function () {
+  if (typeof exports !== 'undefined') {
+    module.exports = factory(require('mustache'), require('underscore'));
+  }
+  (root.JST || (root.JST = {}))['jst/portals/index/index'] = factory(root['Mustache'], root['_']);
+})(this, function (Mustache, _) {
   return function(o){
 var __t,__p='',__j=Array.prototype.join,print=function(){__p+=__j.call(arguments,'');};
 __p+='<div class=\'filters\'>\n  <input class=\'js-search-input search-input\' placeholder=\'Search Portals\'\n  ><div class=\'js-umbrella-selector umbrella-selector\'></div\n  ><div class=\'js-category-selector category-selector\'></div\n  ><div class=\'letters\'>\n    <input type=\'button\' class=\'js-letter letter js-selected\' value=\'All\'\n    ';
@@ -30995,13 +30961,13 @@ return __p;
 // jst/portals/index/list-item.tmpl
 (function (root, factory) {
   if (typeof define === 'function' && define.amd) {
-    define('jst/portals/index/list-item', [], factory);
-  } else if (typeof exports !== 'undefined') {
-    module.exports = factory();
-  } else {
-    (root.JST || (root.JST = {}))['jst/portals/index/list-item'] = factory();
+    define('jst/portals/index/list-item', ['mustache', 'underscore'], factory);
   }
-})(this, function () {
+  if (typeof exports !== 'undefined') {
+    module.exports = factory(require('mustache'), require('underscore'));
+  }
+  (root.JST || (root.JST = {}))['jst/portals/index/list-item'] = factory(root['Mustache'], root['_']);
+})(this, function (Mustache, _) {
   return function(o){
 var __t,__p='',__j=Array.prototype.join,print=function(){__p+=__j.call(arguments,'');};
 __p+='';
@@ -31029,13 +30995,13 @@ return __p;
 // jst/portals/index/no-results.tmpl
 (function (root, factory) {
   if (typeof define === 'function' && define.amd) {
-    define('jst/portals/index/no-results', [], factory);
-  } else if (typeof exports !== 'undefined') {
-    module.exports = factory();
-  } else {
-    (root.JST || (root.JST = {}))['jst/portals/index/no-results'] = factory();
+    define('jst/portals/index/no-results', ['mustache', 'underscore'], factory);
   }
-})(this, function () {
+  if (typeof exports !== 'undefined') {
+    module.exports = factory(require('mustache'), require('underscore'));
+  }
+  (root.JST || (root.JST = {}))['jst/portals/index/no-results'] = factory(root['Mustache'], root['_']);
+})(this, function (Mustache, _) {
   return function(o){
 var __t,__p='',__j=Array.prototype.join,print=function(){__p+=__j.call(arguments,'');};
 __p+='<div class=\'js-no-results no-results\'>\n  <p>We\'re sorry, but no portals match your selected filters.</p>\n  <strong>Suggestions</strong>\n  <ul>\n    <li>Make sure all words are spelled correctly</li>\n    <li>Try different, or fewer, keywords</li>\n    <li>Clear all filters to return to all organizations</li>\n  </ul>\n  <input\n    type=\'button\'\n    class=\'js-clear-all-filters clear-all-filters\'\n    value=\'Clear all filters\'\n  >\n</div>\n';
@@ -31046,13 +31012,13 @@ return __p;
 // jst/portals/index/results-summary.tmpl
 (function (root, factory) {
   if (typeof define === 'function' && define.amd) {
-    define('jst/portals/index/results-summary', [], factory);
-  } else if (typeof exports !== 'undefined') {
-    module.exports = factory();
-  } else {
-    (root.JST || (root.JST = {}))['jst/portals/index/results-summary'] = factory();
+    define('jst/portals/index/results-summary', ['mustache', 'underscore'], factory);
   }
-})(this, function () {
+  if (typeof exports !== 'undefined') {
+    module.exports = factory(require('mustache'), require('underscore'));
+  }
+  (root.JST || (root.JST = {}))['jst/portals/index/results-summary'] = factory(root['Mustache'], root['_']);
+})(this, function (Mustache, _) {
   return function(o){
 var __t,__p='',__j=Array.prototype.join,print=function(){__p+=__j.call(arguments,'');};
 __p+='Showing '+
@@ -31081,13 +31047,13 @@ return __p;
 // jst/portals/show/error.tmpl
 (function (root, factory) {
   if (typeof define === 'function' && define.amd) {
-    define('jst/portals/show/error', [], factory);
-  } else if (typeof exports !== 'undefined') {
-    module.exports = factory();
-  } else {
-    (root.JST || (root.JST = {}))['jst/portals/show/error'] = factory();
+    define('jst/portals/show/error', ['mustache', 'underscore'], factory);
   }
-})(this, function () {
+  if (typeof exports !== 'undefined') {
+    module.exports = factory(require('mustache'), require('underscore'));
+  }
+  (root.JST || (root.JST = {}))['jst/portals/show/error'] = factory(root['Mustache'], root['_']);
+})(this, function (Mustache, _) {
   return function(o){
 var __t,__p='',__j=Array.prototype.join,print=function(){__p+=__j.call(arguments,'');};
 __p+='Whoops! An error occurred.<br>\n<br>\n<button class=\'js-try-again\'>Try Again</button>\n';
@@ -31098,13 +31064,13 @@ return __p;
 // jst/portals/show/index.tmpl
 (function (root, factory) {
   if (typeof define === 'function' && define.amd) {
-    define('jst/portals/show/index', [], factory);
-  } else if (typeof exports !== 'undefined') {
-    module.exports = factory();
-  } else {
-    (root.JST || (root.JST = {}))['jst/portals/show/index'] = factory();
+    define('jst/portals/show/index', ['mustache', 'underscore'], factory);
   }
-})(this, function () {
+  if (typeof exports !== 'undefined') {
+    module.exports = factory(require('mustache'), require('underscore'));
+  }
+  (root.JST || (root.JST = {}))['jst/portals/show/index'] = factory(root['Mustache'], root['_']);
+})(this, function (Mustache, _) {
   return function(o){
 var __t,__p='',__j=Array.prototype.join,print=function(){__p+=__j.call(arguments,'');};
 __p+='<img src="'+
@@ -31135,13 +31101,13 @@ return __p;
 // jst/portals/show/loading.tmpl
 (function (root, factory) {
   if (typeof define === 'function' && define.amd) {
-    define('jst/portals/show/loading', [], factory);
-  } else if (typeof exports !== 'undefined') {
-    module.exports = factory();
-  } else {
-    (root.JST || (root.JST = {}))['jst/portals/show/loading'] = factory();
+    define('jst/portals/show/loading', ['mustache', 'underscore'], factory);
   }
-})(this, function () {
+  if (typeof exports !== 'undefined') {
+    module.exports = factory(require('mustache'), require('underscore'));
+  }
+  (root.JST || (root.JST = {}))['jst/portals/show/loading'] = factory(root['Mustache'], root['_']);
+})(this, function (Mustache, _) {
   return function(o){
 var __t,__p='',__j=Array.prototype.join,print=function(){__p+=__j.call(arguments,'');};
 __p+='<div class=\'loading\'></div>\n';
@@ -31176,7 +31142,9 @@ return __p;
 
     render: function () {
       View.prototype.render.apply(this, arguments);
-      if (this.template) this.$el.html(this.template(this));
+      if (this.template) {
+        this.$el.html(this.template(_.result(this, 'toTemplate') || this));
+      }
       return this;
     },
 
@@ -31313,6 +31281,16 @@ return __p;
 
     options: ['portalId', 'action'],
 
+    toTemplate: function () {
+      var model = this.model;
+      return {
+        url: model.orgsyncUrl(),
+        avatar: model.get('cover_photo'),
+        name: model.get('name'),
+        count: model.get('photo_count')
+      };
+    },
+
     select: function () {
       if (this.action === 'redirect') return;
       this.collection.each(function (album) {
@@ -31363,7 +31341,18 @@ return __p;
       'orgsync-widget',
       'js-osw-comments-show',
       'osw-comments-show'
-    ]
+    ],
+
+    toTemplate: function () {
+      var model = this.model;
+      var creator = model.get('creator');
+      return {
+        avatar: creator.get('picture_url'),
+        name: creator.get('display_name'),
+        time: model.time(),
+        content: model.get('content')
+      };
+    }
   });
 })();
 
@@ -32256,11 +32245,8 @@ return __p;
       var needsPage = force === true || this.needsPage();
       if (needsPage && this.collection.length < this.available.length) {
         if (!this.page) this.$el.empty();
-        this.collection.add(
-          this.available.models.slice(
-            this.page * this.pageSize,
-            ++this.page * this.pageSize
-          )
+        this.collection.set(
+          this.available.models.slice(0, ++this.page * this.pageSize)
         );
         _.defer(this.nextPage);
       } else {
@@ -32463,12 +32449,19 @@ return __p;
       'osw-photos-index'
     ],
 
+    toTemplate: function () {
+      return {
+        name: this.album.get('name'),
+        count: this.album.get('photo_count')
+      };
+    },
+
     initialize: function () {
       View.prototype.initialize.apply(this, arguments);
       if (!this.album) this.album = new app.Album({id: this.albumId});
       this.photos = this.album.get('photos');
       this.$el.append($('<div>').addClass('js-loading'));
-      this.album.fetch({
+      this.photos.pagedFetch({
         success: _.bind(this.render, this),
         error: _.bind(this.$el.text, this.$el, 'Load failed...')
       });
@@ -32538,6 +32531,17 @@ return __p;
 
     options: ['action'],
 
+    toTemplate: function () {
+      var model = this.model;
+      var count = model.get('comments_count');
+      return {
+        url: model.orgsyncUrl(),
+        image: model.get('thumbnail_url'),
+        count: count,
+        plural: count !== 1 && ' plural'
+      };
+    },
+
     select: function () {
       if (this.action === 'redirect') return;
       this.collection.each(function (photo) {
@@ -32597,10 +32601,19 @@ return __p;
       'osw-photos-show'
     ],
 
+    toTemplate: function () {
+      var model = this.model;
+      return {
+        image: model.get('full_url'),
+        description: model.get('description'),
+        url: model.orgsyncUrl()
+      };
+    },
+
     initialize: function () {
       View.prototype.initialize.apply(this, arguments);
       this.comments = this.model.get('comments');
-      this.comments.url = this.model.get('comments_url');
+      this.comments.url = this.model.get('links').comments;
       this.comments.fetch();
     },
 
@@ -32979,11 +32992,6 @@ return __p;
 // of the overriden globals to their previous states.
 
   var app = window.OrgSyncWidgets;
-
-  // This local delcaration is important to store for the Underscore templates
-  // since they use `_.escape`. Same for Mustache.
-  var _ = window._;
-  var Mustache = window.Mustache;
 
   _.each(polutants, function (val, key) {
     app[key] = window[key];

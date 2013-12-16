@@ -24,7 +24,9 @@
 
     render: function () {
       View.prototype.render.apply(this, arguments);
-      if (this.template) this.$el.html(this.template(this));
+      if (this.template) {
+        this.$el.html(this.template(_.result(this, 'toTemplate') || this));
+      }
       return this;
     },
 

@@ -23,10 +23,19 @@
       'osw-photos-show'
     ],
 
+    toTemplate: function () {
+      var model = this.model;
+      return {
+        image: model.get('full_url'),
+        description: model.get('description'),
+        url: model.orgsyncUrl()
+      };
+    },
+
     initialize: function () {
       View.prototype.initialize.apply(this, arguments);
       this.comments = this.model.get('comments');
-      this.comments.url = this.model.get('comments_url');
+      this.comments.url = this.model.get('links').comments;
       this.comments.fetch();
     },
 

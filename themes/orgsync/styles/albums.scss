@@ -14,18 +14,19 @@
       text-decoration: none;
       &:hover,
       &:focus {
+        outline: 0;
         color: #0076a3;
         .image-container {
           box-shadow: 0 3px 10px #0076a3;
           &:not(:last-child) {
             &:nth-child(1) {
-              transform: translate(2px, -3px) rotate(3deg);
+              @include transform(translate(2px, -3px) rotate(3deg));
             }
             &:nth-child(2) {
-              transform: translate(3px, 4px) rotate(-4deg);
+              @include transform(translate(3px, 4px) rotate(-4deg));
             }
             &:nth-child(3) {
-              transform: translate(-3px, -3px) rotate(5deg);
+              @include transform(translate(-3px, -3px) rotate(5deg));
             }
           }
         }

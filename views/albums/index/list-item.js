@@ -28,6 +28,16 @@
 
     options: ['portalId', 'action'],
 
+    toTemplate: function () {
+      var model = this.model;
+      return {
+        url: model.orgsyncUrl(),
+        avatar: model.get('cover_photo'),
+        name: model.get('name'),
+        count: model.get('photo_count')
+      };
+    },
+
     select: function () {
       if (this.action === 'redirect') return;
       this.collection.each(function (album) {

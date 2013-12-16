@@ -61,11 +61,8 @@
       var needsPage = force === true || this.needsPage();
       if (needsPage && this.collection.length < this.available.length) {
         if (!this.page) this.$el.empty();
-        this.collection.add(
-          this.available.models.slice(
-            this.page * this.pageSize,
-            ++this.page * this.pageSize
-          )
+        this.collection.set(
+          this.available.models.slice(0, ++this.page * this.pageSize)
         );
         _.defer(this.nextPage);
       } else {

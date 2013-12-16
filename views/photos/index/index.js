@@ -24,12 +24,19 @@
       'osw-photos-index'
     ],
 
+    toTemplate: function () {
+      return {
+        name: this.album.get('name'),
+        count: this.album.get('photo_count')
+      };
+    },
+
     initialize: function () {
       View.prototype.initialize.apply(this, arguments);
       if (!this.album) this.album = new app.Album({id: this.albumId});
       this.photos = this.album.get('photos');
       this.$el.append($('<div>').addClass('js-loading'));
-      this.album.fetch({
+      this.photos.pagedFetch({
         success: _.bind(this.render, this),
         error: _.bind(this.$el.text, this.$el, 'Load failed...')
       });

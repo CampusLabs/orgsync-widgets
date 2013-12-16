@@ -1,13 +1,16 @@
 {
   "options": {
-    "processors.tmpl.options.variable": "o"
+    "processors.tmpl.options.variable": "o",
+    "processors.jst.options.dependencies": [
+      {"module": "mustache", "variable": "Mustache"},
+      {"module": "underscore", "variable": "_"}
+    ]
   },
   "targets": {
     "orgsync-widgets.js": "dist",
     "styles/orgsync-widgets.scss": "dist",
+    "images/*.{jpg,png,gif}": "dist",
     "themes/*.*": "dist/themes",
-    "themes/*.*": "dist/themes",
-    "bower_components/select2/*.gif": "dist",
-    "bower_components/select2/*.png": "dist"
+    "bower_components/select2/*.{jpg,png,gif}": "dist"
   }
 }

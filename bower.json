@@ -14,6 +14,7 @@
     "olay": "x",
     "jquery": "1.10.x",
     "select2": "x",
+    "tinycolor": "x",
     "underscore": "x",
     "underscore.string": "x"
   },

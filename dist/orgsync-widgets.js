@@ -30603,7 +30603,7 @@ the specific language governing permissions and limitations under the Apache Lic
 })();
 });
 
-// jst/days/show.tmpl
+// jst/days/show.mustache
 (function (root, factory) {
   if (typeof define === 'function' && define.amd) {
     define('jst/days/show', ['mustache', 'underscore'], factory);
@@ -30613,17 +30613,14 @@ the specific language governing permissions and limitations under the Apache Lic
   }
   (root.JST || (root.JST = {}))['jst/days/show'] = factory(root['Mustache'], root['_']);
 })(this, function (Mustache, _) {
-  return function(o){
-var __t,__p='',__j=Array.prototype.join,print=function(){__p+=__j.call(arguments,'');};
-__p+='<div class=\'js-long-date long-date\'>'+
-((__t=( o.longDate() ))==null?'':_.escape(__t))+
-'</div>\n<div\n  class=\'js-short-date short-date js-jump-to\'\n  data-date=\''+
-((__t=( o.model.date().format('YYYY-MM-DD') ))==null?'':__t)+
-'\'>\n  '+
-((__t=( o.shortDate() ))==null?'':_.escape(__t))+
-'\n</div>\n<ol class=\'js-event-dates-list event-dates-list\'></ol>\n';
-return __p;
-};
+  return (function () {
+  var source = "<div class='js-long-date long-date'>{{longDate}}</div>\n<div class='js-short-date short-date js-jump-to' data-date='{{dataDate}}'>\n  {{shortDate}}\n</div>\n<ol class='js-event-dates-list event-dates-list'></ol>\n";
+  var fn = function (data, partials) {
+    return Mustache.render(source, data, partials);
+  };
+  fn.source = source;
+  return fn;
+})();
 });
 
 // jst/event-dates/show.tmpl
@@ -31426,6 +31423,14 @@ return __p;
     view: 'month',
 
     options: ['view'],
+
+    toTemplate: function () {
+      return {
+        longDate: this.longDate(),
+        shortDate: this.shortDate(),
+        dataDate: this.model.date().format('YYYY-MM-DD')
+      };
+    },
 
     initialize: function () {
       View.prototype.initialize.apply(this, arguments);

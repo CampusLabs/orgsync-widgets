@@ -23,6 +23,14 @@
 
     options: ['view'],
 
+    toTemplate: function () {
+      return {
+        longDate: this.longDate(),
+        shortDate: this.shortDate(),
+        dataDate: this.model.date().format('YYYY-MM-DD')
+      };
+    },
+
     initialize: function () {
       View.prototype.initialize.apply(this, arguments);
       var date = this.model.date().clone();

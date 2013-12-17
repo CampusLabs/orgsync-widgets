@@ -18,6 +18,7 @@
 //= require bower_components/dpr/dpr.js
 //= require bower_components/elementQuery/elementQuery.js
 //= require node_modules/mustache/mustache.js
+//= require bower_components/tinycolor/tinycolor.js
 //= requireSelf
 //= requireTree models
 //= requireTree jst

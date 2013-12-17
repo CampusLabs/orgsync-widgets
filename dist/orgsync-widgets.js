@@ -30901,7 +30901,7 @@ return __p;
   (root.JST || (root.JST = {}))['jst/photos/index/list-item'] = factory(root['Mustache'], root['_']);
 })(this, function (Mustache, _) {
   return (function () {
-  var source = "<a href='{{url}}' tabindex='1'>\n  <div class='image-container'><img src='{{image}}'></div>\n  <div\n    class='\n      comment-count\n      {{^count}}none{{/count}}\n      {{#plural}}plural{{/plural}}\n    '\n  >\n    {{count}}\n  </div>\n</a>\n";
+  var source = "<a href='{{url}}' tabindex='1'>\n  <div class='image-container'><img src='{{image}}'></div>\n  <div\n    class='\n      comment-count\n      {{^count}}none{{/count}}\n      {{#isPlural}}plural{{/isPlural}}\n    '\n  >\n    {{count}}\n  </div>\n</a>\n";
   var fn = function (data, partials) {
     return Mustache.render(source, data, partials);
   };
@@ -32538,7 +32538,7 @@ return __p;
         url: model.orgsyncUrl(),
         image: model.get('thumbnail_url'),
         count: count,
-        plural: count !== 1 && ' plural'
+        isPlural: count !== 1
       };
     },
 

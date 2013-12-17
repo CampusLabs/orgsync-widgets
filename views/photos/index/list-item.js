@@ -33,7 +33,7 @@
         url: model.orgsyncUrl(),
         image: model.get('thumbnail_url'),
         count: count,
-        plural: count !== 1 && ' plural'
+        isPlural: count !== 1
       };
     },
 

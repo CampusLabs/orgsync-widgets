@@ -20,7 +20,7 @@
     initialize: function () {
       View.prototype.initialize.apply(this, arguments);
       this.comments = this.model.get('comments');
-      this.comments.url = this.model.get('comments_url');
+      this.comments.url = this.model.get('links').comments;
       this.comments.fetch();
     },
 

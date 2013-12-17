@@ -30,6 +30,18 @@
       event: {'change:visible': 'correctDisplay'}
     },
 
+    toTemplate: function () {
+      var eventDate = this.model;
+      var event = eventDate.get('event');
+      return {
+        image: event.get('thumbnail_url'),
+        shortTime: eventDate.shortTime(),
+        title: !eventDate.get('filler') && event.get('title'),
+        longTime: eventDate.longTime(),
+        location: event.get('location')
+      };
+    },
+
     initialize: function () {
       View.prototype.initialize.apply(this, arguments);
       this.event = this.model.get('event');

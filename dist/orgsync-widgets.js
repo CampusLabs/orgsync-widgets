@@ -27726,7 +27726,7 @@ the specific language governing permissions and limitations under the Apache Lic
       // desirable in a transition...
       this.$container[0].olay = this;
       this.$container.height();
-      this.$container.addClass('js-olay-show');
+      this.$container.addClass('js-olay-show').scrollTop(0);
 
       // Delegate events, ensuring no double-binding.
       delegate(this.$container, 'click', this._$containerClick);
@@ -30623,7 +30623,7 @@ the specific language governing permissions and limitations under the Apache Lic
 })();
 });
 
-// jst/event-dates/show.tmpl
+// jst/event-dates/show.mustache
 (function (root, factory) {
   if (typeof define === 'function' && define.amd) {
     define('jst/event-dates/show', ['mustache', 'underscore'], factory);
@@ -30633,31 +30633,14 @@ the specific language governing permissions and limitations under the Apache Lic
   }
   (root.JST || (root.JST = {}))['jst/event-dates/show'] = factory(root['Mustache'], root['_']);
 })(this, function (Mustache, _) {
-  return function(o){
-var __t,__p='',__j=Array.prototype.join,print=function(){__p+=__j.call(arguments,'');};
-__p+='';
-
-var event = o.model.get('event');
-var thumbnailUrl = event.get('thumbnail_url');
-var title = o.model.get('filler') ? '&nbsp;' : _.escape(event.get('title'));
-
-__p+='\n<div class=\'picture-container\'>\n  ';
- if (thumbnailUrl) { 
-__p+='<img src=\''+
-((__t=( thumbnailUrl ))==null?'':_.escape(__t))+
-'\'>';
- } 
-__p+='\n</div>\n<div class=\'info\'>\n  <div class=\'short-time\'>'+
-((__t=( o.model.shortTime() ))==null?'':_.escape(__t))+
-'</div>\n  <div class=\'title\'>'+
-((__t=( title ))==null?'':__t)+
-'</div>\n  <div class=\'long-time\'>'+
-((__t=( o.model.longTime() ))==null?'':_.escape(__t))+
-'</div>\n  <div class=\'location\'>'+
-((__t=( event.get('location') ))==null?'':_.escape(__t))+
-'</div>\n</div>\n';
-return __p;
-};
+  return (function () {
+  var source = "<div class='picture-container'>{{#image}}<img src='{{image}}'>{{/image}}</div>\n<div class='info'>\n  <div class='short-time'>{{shortTime}}</div>\n  <div class='title'>\n    {{#title}}{{title}}{{/title}}\n    {{^title}}&nbsp;{{/title}}\n  </div>\n  <div class='long-time'>{{longTime}}</div>\n  <div class='location'>{{location}}</div>\n</div>\n";
+  var fn = function (data, partials) {
+    return Mustache.render(source, data, partials);
+  };
+  fn.source = source;
+  return fn;
+})();
 });
 
 // jst/event-filters/show.mustache
@@ -31865,6 +31848,18 @@ return __p;
       event: {'change:visible': 'correctDisplay'}
     },
 
+    toTemplate: function () {
+      var eventDate = this.model;
+      var event = eventDate.get('event');
+      return {
+        image: event.get('thumbnail_url'),
+        shortTime: eventDate.shortTime(),
+        title: !eventDate.get('filler') && event.get('title'),
+        longTime: eventDate.longTime(),
+        location: event.get('location')
+      };
+    },
+
     initialize: function () {
       View.prototype.initialize.apply(this, arguments);
       this.event = this.model.get('event');
@@ -32412,7 +32407,7 @@ return __p;
     initialize: function () {
       View.prototype.initialize.apply(this, arguments);
       this.comments = this.model.get('comments');
-      this.comments.url = this.model.get('comments_url');
+      this.comments.url = this.model.get('links').comments;
       this.comments.fetch();
     },
 

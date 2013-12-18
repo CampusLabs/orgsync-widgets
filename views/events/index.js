@@ -62,7 +62,6 @@
       View.prototype.initialize.apply(this, arguments);
       this.days = new Day.Collection();
       this.days.tz = this.tz;
-      this.eventSource = new Community({id: this.communityId});
       var needsFilters = !this.eventFilters;
       this.eventFilters = new EventFilter.Collection(this.eventFilters);
       this.fetchedEvents = (function (self) {

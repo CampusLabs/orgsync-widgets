@@ -1,7 +1,7 @@
 @import "config";
 
 .osw-events-index.js-list-view {
-  .osw-event-dates-show {
+  .osw-event-dates-list-item {
     border: 1px solid #cccccc;
     border-left-width: 5px;
     border-bottom: none;
@@ -42,7 +42,7 @@
 
 .osw-events-index.js-month-view,
 .osw-events-index.js-week-view {
-  .osw-event-dates-show {
+  .osw-event-dates-list-item {
     position: relative;
     margin-top: 1px;
     border-left: 5px solid;
@@ -87,6 +87,57 @@
       overflow: hidden;
       text-overflow: ellipsis;
       white-space: nowrap;
+    }
+  }
+}
+
+.js-olay-content {
+  .osw-event-dates-show {
+    text-align: left;
+    padding: 20px;
+    max-width: 480px;
+    @include clearfix;
+    .picture-container {
+      float: right;
+    }
+    .title {
+      font-size: 20px;
+      font-weight: bold;
+    }
+    .datetime,
+    .location,
+    .portal,
+    .description {
+      padding: 10px;
+      &:before {
+        display: block;
+        color: #999999;
+      }
+    }
+    .datetime:before {
+      content: "WHEN";
+    }
+    .location:before {
+      content: "WHERE";
+    }
+    .portal:before {
+      content: "HOST";
+    }
+    .description:before {
+      content: "DETAILS";
+    }
+    .see-full-details {
+      float: right;
+      display: inline-block;
+      padding: 10px;
+      text-decoration: none;
+      color: #3872a7;
+      border-radius: 5px;
+      border: 1px solid #3872a7;
+      &:hover {
+        color: #00578f;
+        border-color: #00578f;
+      }
     }
   }
 }

@@ -5,22 +5,13 @@
 
   var app = window.OrgSyncWidgets;
 
-  var _ = window._;
-  var EventFilter = app.EventFilter;
-  var Olay = window.Olay;
   var JST = window.JST;
   var View = app.View;
 
   app.EventDatesShowView = View.extend({
     template: JST['jst/event-dates/show'],
 
-    events: {
-      click: 'open'
-    },
-
-    view: 'month',
-
-    options: ['day', 'view', 'eventFilters'],
+    options: ['day'],
 
     classes: [
       'orgsync-widget',
@@ -28,19 +19,22 @@
       'osw-event-dates-show'
     ],
 
-    listeners: {
-      model: {'change:visible': 'correctDisplay'}
-    },
-
     toTemplate: function () {
       var eventDate = this.model;
       var event = eventDate.get('event');
       return {
+        description: event.get('description'),
         image: event.get('thumbnail_url'),
-        shortTime: this.shortTime(),
-        title: !eventDate.get('filler') && event.get('title'),
+        isMultiDay: eventDate.isMultiDay(),
+        location: event.get('location'),
         longTime: this.longTime(),
-        location: event.get('location')
+        multiDayStart: eventDate.start().format('dddd, MMMM D, YYYY [at] LT'),
+        multiDayEnd: eventDate.end().format('dddd, MMMM D, YYYY [at] LT'),
+        singleDayDate: eventDate.start().format('dddd, MMMM D, YYYY'),
+        portalName: event.get('portal').get('name'),
+        shortTime: this.shortTime(),
+        title: event.get('title'),
+        url: eventDate.orgsyncUrl()
       };
     },
 
@@ -61,7 +55,6 @@
           this.$el.addClass('js-continues');
         }
       }
-      this.correctDisplay();
     },
 
     shortTime: function () {
@@ -84,28 +77,6 @@
       var format = allDay ? '[All Day]' : 'LT';
       if (multiDay) format += ', MMM D';
       return start.format(format) + ' to ' + end.format(format);
-    },
-
-    open: function () {
-      if (this.olay) return this.olay.show();
-      (this.views.event = new app.EventsShowView({
-        model: this.event,
-        eventDate: this.model
-      })).render();
-      (this.olay = new Olay(this.views.event.el)).show();
-    },
-
-    correctDisplay: function () {
-      this.$el.toggleClass('js-none', !this.model.get('visible'));
-    },
-
-    color: function () {
-      var eventFilters = this.eventFilters;
-      var eventFilterId = _.find(this.model.get('filters'), function (id) {
-        var eventFilter = eventFilters.get(id);
-        return eventFilter && eventFilter.get('enabled');
-      });
-      return (eventFilters.get(eventFilterId) || new EventFilter()).color();
-    },
+    }
   });
 })();

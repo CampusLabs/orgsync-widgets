@@ -24,19 +24,11 @@
       this.listenTo(this.get('eventDates'), {
         add: function (eventDate) {
           this.setVisible();
-          this.listenTo(
-            eventDate.get('event'),
-            'change:visible',
-            this.setVisible
-          );
+          this.listenTo(eventDate, 'change:visible', this.setVisible);
         },
         remove: function (eventDate) {
           this.setVisible();
-          this.stopListening(
-            eventDate.get('event'),
-            'change:visible',
-            this.setVisible
-          );
+          this.stopListening(eventDate, 'change:visible', this.setVisible);
         }
       });
     },

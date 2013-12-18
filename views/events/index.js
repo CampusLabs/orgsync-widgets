@@ -18,7 +18,7 @@
 
   app.selectorViewMap['.js-osw-events-index'] =
   app.EventsIndexView = View.extend({
-    template: JST['jst/events/index/index'],
+    template: JST['jst/events/index'],
 
     events: {
       'click .js-change-view': 'clickChangeView',

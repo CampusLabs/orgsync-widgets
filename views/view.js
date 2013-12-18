@@ -16,7 +16,8 @@
     initialize: function (options) {
       if (this.options) {
         _.extend(this, _.pick.apply(_,
-          [_.extend({}, this.$el.data(), options)].concat(this.options)
+          [_.extend({}, this.$el.data(), options)]
+            .concat(_.result(this, 'options'))
         ));
       }
       if (this.classes) this.$el.addClass(this.classes.join(' '));

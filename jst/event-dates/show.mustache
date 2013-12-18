@@ -1,10 +1,17 @@
 <div class='picture-container'>{{#image}}<img src='{{image}}'>{{/image}}</div>
 <div class='info'>
-  <div class='short-time'>{{shortTime}}</div>
-  <div class='title'>
-    {{#title}}{{title}}{{/title}}
-    {{^title}}&nbsp;{{/title}}
+  <div class='title'>{{title}}</div>
+  <div class='datetime'>
+    {{#isMultiDay}}
+    <div class='time'>{{multiDayStart}} to<br>{{multiDayEnd}}</div>
+    {{/isMultiDay}}
+    {{^isMultiDay}}
+    <div class='date'>{{singleDayDate}}</div>
+    <div class='time'>{{longTime}}</div>
+    {{/isMultiDay}}
   </div>
-  <div class='long-time'>{{longTime}}</div>
   <div class='location'>{{location}}</div>
+  <div class='portal'>{{portalName}}</div>
+  <div class='description'>{{description}}</div>
+  <a href='{{url}}' class='see-full-details'>See Full Details</a>
 </div>

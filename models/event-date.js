@@ -63,6 +63,11 @@
         return eventFilter && eventFilter.get('enabled');
       });
     },
+
+    orgsyncUrl: function () {
+      return this.get('event').orgsyncUrl() + '?date=' +
+        this.start().format('YYYY-MM-DD');
+    }
   });
 
   EventDate.Collection = Model.Collection.extend({

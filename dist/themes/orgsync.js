@@ -19,21 +19,21 @@
   };
 })();
 
-// themes/orgsync/scripts/views/event-dates/show.js
+// themes/orgsync/scripts/views/event-dates/list-item.js
 (function () {
   'use strict';
 
   var app = window.OrgSyncWidgets;
 
-  var EventDatesShowView = app.EventDatesShowView;
-  var correctDisplay = EventDatesShowView.prototype.correctDisplay;
+  var EventDatesListItemView = app.EventDatesListItemView;
+  var correctDisplay = EventDatesListItemView.prototype.correctDisplay;
   var tinycolor = app.tinycolor;
 
-  EventDatesShowView.prototype.listeners.eventFilters = {
+  EventDatesListItemView.prototype.listeners.eventFilters = {
     'change:enabled': 'correctDisplay'
   };
 
-  EventDatesShowView.prototype.correctDisplay = function () {
+  EventDatesListItemView.prototype.correctDisplay = function () {
     correctDisplay.apply(this, arguments);
     var event = this.model.get('event');
     this.$el.css({borderLeftColor: this.color().toHexString()});

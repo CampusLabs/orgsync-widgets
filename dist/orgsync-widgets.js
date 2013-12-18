@@ -31025,19 +31025,11 @@ else {
       this.listenTo(this.get('eventDates'), {
         add: function (eventDate) {
           this.setVisible();
-          this.listenTo(
-            eventDate.get('event'),
-            'change:visible',
-            this.setVisible
-          );
+          this.listenTo(eventDate, 'change:visible', this.setVisible);
         },
         remove: function (eventDate) {
           this.setVisible();
-          this.stopListening(
-            eventDate.get('event'),
-            'change:visible',
-            this.setVisible
-          );
+          this.stopListening(eventDate, 'change:visible', this.setVisible);
         }
       });
     },
@@ -31177,6 +31169,11 @@ else {
         return eventFilter && eventFilter.get('enabled');
       });
     },
+
+    orgsyncUrl: function () {
+      return this.get('event').orgsyncUrl() + '?date=' +
+        this.start().format('YYYY-MM-DD');
+    }
   });
 
   EventDate.Collection = Model.Collection.extend({
@@ -31249,11 +31246,9 @@ else {
       return data;
     },
 
-    orgsyncUrl: function (eventDate) {
-      var url = 'https://orgsync.com/' + this.get('portal').id +
-        '/events/' + this.id;
-      if (eventDate) url += '?date=' + eventDate.start().format('YYYY-MM-DD');
-      return url;
+    orgsyncUrl: function () {
+      return 'https://orgsync.com/' + this.get('portal').id + '/events/' +
+        this.id;
     },
 
     searchableWords: function () {
@@ -31504,6 +31499,26 @@ else {
 })();
 });
 
+// jst/event-dates/list-item.mustache
+(function (root, factory) {
+  if (typeof define === 'function' && define.amd) {
+    define('jst/event-dates/list-item', ['mustache', 'underscore'], factory);
+  }
+  if (typeof exports !== 'undefined') {
+    module.exports = factory(require('mustache'), require('underscore'));
+  }
+  (root.JST || (root.JST = {}))['jst/event-dates/list-item'] = factory(root['Mustache'], root['_']);
+})(this, function (Mustache, _) {
+  return (function () {
+  var source = "<div class='picture-container'>{{#image}}<img src='{{image}}'>{{/image}}</div>\n<div class='info'>\n  <div class='short-time'>{{shortTime}}</div>\n  <div class='title'>\n    {{#filler}}&nbsp;{{/filler}}\n    {{^filler}}{{title}}{{/filler}}\n  </div>\n  <div class='long-time'>{{longTime}}</div>\n  <div class='location'>{{location}}</div>\n</div>\n";
+  var fn = function (data, partials) {
+    return Mustache.render(source, data, partials);
+  };
+  fn.source = source;
+  return fn;
+})();
+});
+
 // jst/event-dates/show.mustache
 (function (root, factory) {
   if (typeof define === 'function' && define.amd) {
@@ -31515,7 +31530,7 @@ else {
   (root.JST || (root.JST = {}))['jst/event-dates/show'] = factory(root['Mustache'], root['_']);
 })(this, function (Mustache, _) {
   return (function () {
-  var source = "<div class='picture-container'>{{#image}}<img src='{{image}}'>{{/image}}</div>\n<div class='info'>\n  <div class='short-time'>{{shortTime}}</div>\n  <div class='title'>\n    {{#title}}{{title}}{{/title}}\n    {{^title}}&nbsp;{{/title}}\n  </div>\n  <div class='long-time'>{{longTime}}</div>\n  <div class='location'>{{location}}</div>\n</div>\n";
+  var source = "<div class='picture-container'>{{#image}}<img src='{{image}}'>{{/image}}</div>\n<div class='info'>\n  <div class='title'>{{title}}</div>\n  <div class='datetime'>\n    {{#isMultiDay}}\n    <div class='time'>{{multiDayStart}} to<br>{{multiDayEnd}}</div>\n    {{/isMultiDay}}\n    {{^isMultiDay}}\n    <div class='date'>{{singleDayDate}}</div>\n    <div class='time'>{{longTime}}</div>\n    {{/isMultiDay}}\n  </div>\n  <div class='location'>{{location}}</div>\n  <div class='portal'>{{portalName}}</div>\n  <div class='description'>{{description}}</div>\n  <a href='{{url}}' class='see-full-details'>See Full Details</a>\n</div>\n";
   var fn = function (data, partials) {
     return Mustache.render(source, data, partials);
   };
@@ -31544,15 +31559,15 @@ else {
 })();
 });
 
-// jst/events/index/index.tmpl
+// jst/events/index.tmpl
 (function (root, factory) {
   if (typeof define === 'function' && define.amd) {
-    define('jst/events/index/index', ['mustache', 'underscore'], factory);
+    define('jst/events/index', ['mustache', 'underscore'], factory);
   }
   if (typeof exports !== 'undefined') {
     module.exports = factory(require('mustache'), require('underscore'));
   }
-  (root.JST || (root.JST = {}))['jst/events/index/index'] = factory(root['Mustache'], root['_']);
+  (root.JST || (root.JST = {}))['jst/events/index'] = factory(root['Mustache'], root['_']);
 })(this, function (Mustache, _) {
   return function(o){
 var __t,__p='',__j=Array.prototype.join,print=function(){__p+=__j.call(arguments,'');};
@@ -31579,55 +31594,6 @@ __p+='\n        <option value=\''+
 '</option>\n        ';
  }); 
 __p+='\n      </select\n      ><span class=\'js-next-month next-month\'>&gt;</span>\n    </div>\n  </div>\n  <div class=\'events\'>\n    <div class=\'js-days-of-week days-of-week\'></div>\n    <ol class=\'js-events-list events-list\'></ol>\n  </div>\n</div>\n';
-return __p;
-};
-});
-
-// jst/events/show.tmpl
-(function (root, factory) {
-  if (typeof define === 'function' && define.amd) {
-    define('jst/events/show', ['mustache', 'underscore'], factory);
-  }
-  if (typeof exports !== 'undefined') {
-    module.exports = factory(require('mustache'), require('underscore'));
-  }
-  (root.JST || (root.JST = {}))['jst/events/show'] = factory(root['Mustache'], root['_']);
-})(this, function (Mustache, _) {
-  return function(o){
-var __t,__p='',__j=Array.prototype.join,print=function(){__p+=__j.call(arguments,'');};
-__p+='';
- var thumbnailUrl = o.model.get('thumbnail_url'); 
-__p+='\n<div class=\'picture-container\'>\n  ';
- if (thumbnailUrl) { 
-__p+='<img src=\''+
-((__t=( thumbnailUrl ))==null?'':_.escape(__t))+
-'\'>';
- } 
-__p+='\n</div>\n<div class=\'info\'>\n  <div class=\'title\'>'+
-((__t=( o.model.get('title') ))==null?'':_.escape(__t))+
-'</div>\n  <div class=\'datetime\'>\n    ';
- if (o.eventDate.isMultiDay()) { 
-__p+='\n    <div class=\'time\'>\n      '+
-((__t=( o.eventDate.start().format('dddd, MMMM D, YYYY [at] LT') ))==null?'':_.escape(__t))+
-' to<br>\n      '+
-((__t=( o.eventDate.end().format('dddd, MMMM D, YYYY [at] LT') ))==null?'':_.escape(__t))+
-'\n    </div>\n    ';
- } else { 
-__p+='\n    <div class=\'date\'>\n      '+
-((__t=( o.eventDate.start().format('dddd, MMMM D, YYYY') ))==null?'':_.escape(__t))+
-'\n    </div>\n    <div class=\'time\'>'+
-((__t=( o.eventDate.longTime() ))==null?'':_.escape(__t))+
-'</div>\n    ';
- } 
-__p+='\n  </div>\n  <div class=\'location\'>'+
-((__t=( o.model.get('location') ))==null?'':_.escape(__t))+
-'</div>\n  <div class=\'portal\'>'+
-((__t=( o.model.get('portal').get('name') ))==null?'':_.escape(__t))+
-'</div>\n  <div class=\'description\'>'+
-((__t=( o.model.get('description') ))==null?'':_.escape(__t))+
-'</div>\n  <a href=\''+
-((__t=( o.model.orgsyncUrl(o.eventDate) ))==null?'':_.escape(__t))+
-'\' class=\'see-full-details\'>\n    See Full Details\n  </a>\n</div>\n';
 return __p;
 };
 });
@@ -31995,7 +31961,8 @@ return __p;
     initialize: function (options) {
       if (this.options) {
         _.extend(this, _.pick.apply(_,
-          [_.extend({}, this.$el.data(), options)].concat(this.options)
+          [_.extend({}, this.$el.data(), options)]
+            .concat(_.result(this, 'options'))
         ));
       }
       if (this.classes) this.$el.addClass(this.classes.join(' '));
@@ -32322,10 +32289,9 @@ return __p;
       this.views.eventDatesList = new app.ListView({
         el: this.$('.js-event-dates-list'),
         collection: this.eventDates,
-        modelView: app.EventDatesShowView,
+        modelView: app.EventDatesListItemView,
         modelViewOptions: {
           day: this.model,
-          view: this.view,
           eventFilters: this.eventFilters
         }
       });
@@ -32709,22 +32675,13 @@ return __p;
 
   var app = window.OrgSyncWidgets;
 
-  var _ = window._;
-  var EventFilter = app.EventFilter;
-  var Olay = window.Olay;
   var JST = window.JST;
   var View = app.View;
 
   app.EventDatesShowView = View.extend({
     template: JST['jst/event-dates/show'],
 
-    events: {
-      click: 'open'
-    },
-
-    view: 'month',
-
-    options: ['day', 'view', 'eventFilters'],
+    options: ['day'],
 
     classes: [
       'orgsync-widget',
@@ -32732,19 +32689,22 @@ return __p;
       'osw-event-dates-show'
     ],
 
-    listeners: {
-      model: {'change:visible': 'correctDisplay'}
-    },
-
     toTemplate: function () {
       var eventDate = this.model;
       var event = eventDate.get('event');
       return {
+        description: event.get('description'),
         image: event.get('thumbnail_url'),
-        shortTime: this.shortTime(),
-        title: !eventDate.get('filler') && event.get('title'),
+        isMultiDay: eventDate.isMultiDay(),
+        location: event.get('location'),
         longTime: this.longTime(),
-        location: event.get('location')
+        multiDayStart: eventDate.start().format('dddd, MMMM D, YYYY [at] LT'),
+        multiDayEnd: eventDate.end().format('dddd, MMMM D, YYYY [at] LT'),
+        singleDayDate: eventDate.start().format('dddd, MMMM D, YYYY'),
+        portalName: event.get('portal').get('name'),
+        shortTime: this.shortTime(),
+        title: event.get('title'),
+        url: eventDate.orgsyncUrl()
       };
     },
 
@@ -32765,7 +32725,6 @@ return __p;
           this.$el.addClass('js-continues');
         }
       }
-      this.correctDisplay();
     },
 
     shortTime: function () {
@@ -32788,13 +32747,61 @@ return __p;
       var format = allDay ? '[All Day]' : 'LT';
       if (multiDay) format += ', MMM D';
       return start.format(format) + ' to ' + end.format(format);
+    }
+  });
+})();
+
+// views/event-dates/list-item.js
+(function () {
+  'use strict';
+
+  var app = window.OrgSyncWidgets;
+
+  var _ = window._;
+  var EventFilter = app.EventFilter;
+  var Olay = window.Olay;
+  var JST = window.JST;
+  var EventDatesShowView = app.EventDatesShowView;
+
+  app.EventDatesListItemView = EventDatesShowView.extend({
+    template: JST['jst/event-dates/list-item'],
+
+    events: {
+      click: 'open'
+    },
+
+    options: function () {
+      return (_.result(EventDatesShowView.prototype, 'options') || []).concat(
+        ['eventFilters']
+      );
+    },
+
+    classes: [
+      'orgsync-widget',
+      'js-osw-event-dates-list-item',
+      'osw-event-dates-list-item'
+    ],
+
+    listeners: {
+      model: {'change:visible': 'correctDisplay'}
+    },
+
+    toTemplate: function () {
+      return _.extend(EventDatesShowView.prototype.toTemplate.call(this), {
+        filler: this.model.get('filler')
+      });
+    },
+
+    initialize: function () {
+      EventDatesShowView.prototype.initialize.apply(this, arguments);
+      this.correctDisplay();
     },
 
     open: function () {
       if (this.olay) return this.olay.show();
-      (this.views.event = new app.EventsShowView({
-        model: this.event,
-        eventDate: this.model
+      (this.views.event = new app.EventDatesShowView({
+        model: this.model,
+        day: this.day
       })).render();
       (this.olay = new Olay(this.views.event.el)).show();
     },
@@ -32810,7 +32817,7 @@ return __p;
         return eventFilter && eventFilter.get('enabled');
       });
       return (eventFilters.get(eventFilterId) || new EventFilter()).color();
-    },
+    }
   });
 })();
 
@@ -32873,7 +32880,7 @@ return __p;
 
   app.selectorViewMap['.js-osw-events-index'] =
   app.EventsIndexView = View.extend({
-    template: JST['jst/events/index/index'],
+    template: JST['jst/events/index'],
 
     events: {
       'click .js-change-view': 'clickChangeView',
@@ -33102,24 +33109,6 @@ return __p;
       this.$el.toggleClass('js-full-width');
       this.updateFilterText();
     }
-  });
-})();
-
-// views/events/show.js
-(function () {
-  'use strict';
-
-  var app = window.OrgSyncWidgets;
-
-  var View = app.View;
-  var JST = window.JST;
-
-  app.EventsShowView = View.extend({
-    className: 'js-osw-events-show osw-events-show',
-
-    template: JST['jst/events/show'],
-
-    options: ['eventDate']
   });
 })();
 

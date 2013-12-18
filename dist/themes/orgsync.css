@@ -166,41 +166,41 @@
   height: 100%; }
 
 /* themes/orgsync/styles/event-dates.scss */
-.osw-events-index.js-list-view .osw-event-dates-show {
+.osw-events-index.js-list-view .osw-event-dates-list-item {
   border: 1px solid #cccccc;
   border-left-width: 5px;
   border-bottom: none;
   padding: 5px;
   cursor: pointer;
   *zoom: 1; }
-  .osw-events-index.js-list-view .osw-event-dates-show:before, .osw-events-index.js-list-view .osw-event-dates-show:after {
+  .osw-events-index.js-list-view .osw-event-dates-list-item:before, .osw-events-index.js-list-view .osw-event-dates-list-item:after {
     content: " ";
     display: table; }
-  .osw-events-index.js-list-view .osw-event-dates-show:after {
+  .osw-events-index.js-list-view .osw-event-dates-list-item:after {
     clear: both; }
-  .osw-events-index.js-list-view .osw-event-dates-show:first-child {
+  .osw-events-index.js-list-view .osw-event-dates-list-item:first-child {
     border-top: none; }
-  .osw-events-index.js-list-view .osw-event-dates-show .picture-container {
+  .osw-events-index.js-list-view .osw-event-dates-list-item .picture-container {
     float: left;
     width: 45px;
     height: 45px;
     margin: 0 5px 0 30px; }
-    .osw-events-index.js-list-view .osw-event-dates-show .picture-container img {
+    .osw-events-index.js-list-view .osw-event-dates-list-item .picture-container img {
       width: 100%; }
-  .osw-events-index.js-list-view .osw-event-dates-show .location, .osw-events-index.js-list-view .osw-event-dates-show .short-time {
+  .osw-events-index.js-list-view .osw-event-dates-list-item .location, .osw-events-index.js-list-view .osw-event-dates-list-item .short-time {
     display: none; }
-  .osw-events-index.js-list-view .osw-event-dates-show .title {
+  .osw-events-index.js-list-view .osw-event-dates-list-item .title {
     font-size: 14px;
     color: #333333; }
-  .osw-events-index.js-list-view .osw-event-dates-show .long-time {
+  .osw-events-index.js-list-view .osw-event-dates-list-item .long-time {
     display: inline;
     font-size: 11px;
     color: #666666; }
-  .osw-events-index.js-list-view .osw-event-dates-show .info {
+  .osw-events-index.js-list-view .osw-event-dates-list-item .info {
     padding: 8px 5px;
     overflow: auto; }
 
-.osw-events-index.js-month-view .osw-event-dates-show, .osw-events-index.js-week-view .osw-event-dates-show {
+.osw-events-index.js-month-view .osw-event-dates-list-item, .osw-events-index.js-week-view .osw-event-dates-list-item {
   position: relative;
   margin-top: 1px;
   border-left: 5px solid;
@@ -208,33 +208,73 @@
   font-size: 11px;
   box-sizing: border-box;
   cursor: pointer; }
-  .osw-events-index.js-month-view .osw-event-dates-show:first-child, .osw-events-index.js-week-view .osw-event-dates-show:first-child {
+  .osw-events-index.js-month-view .osw-event-dates-list-item:first-child, .osw-events-index.js-week-view .osw-event-dates-list-item:first-child {
     margin-top: 0; }
-  .osw-events-index.js-month-view .osw-event-dates-show.js-all-day .short-time, .osw-events-index.js-week-view .osw-event-dates-show.js-all-day .short-time {
+  .osw-events-index.js-month-view .osw-event-dates-list-item.js-all-day .short-time, .osw-events-index.js-week-view .osw-event-dates-list-item.js-all-day .short-time {
     display: none; }
-  .osw-events-index.js-month-view .osw-event-dates-show.js-continues, .osw-events-index.js-week-view .osw-event-dates-show.js-continues {
+  .osw-events-index.js-month-view .osw-event-dates-list-item.js-continues, .osw-events-index.js-week-view .osw-event-dates-list-item.js-continues {
     padding-right: 10px;
     margin-right: -5px; }
-  .osw-events-index.js-month-view .osw-event-dates-show.js-continued, .osw-events-index.js-week-view .osw-event-dates-show.js-continued {
+  .osw-events-index.js-month-view .osw-event-dates-list-item.js-continued, .osw-events-index.js-week-view .osw-event-dates-list-item.js-continued {
     margin-left: -5px;
     padding-left: 10px;
     border-left-width: 0; }
-    .osw-events-index.js-month-view .osw-event-dates-show.js-continued:not(.js-continues), .osw-events-index.js-week-view .osw-event-dates-show.js-continued:not(.js-continues) {
+    .osw-events-index.js-month-view .osw-event-dates-list-item.js-continued:not(.js-continues), .osw-events-index.js-week-view .osw-event-dates-list-item.js-continued:not(.js-continues) {
       border-top-right-radius: 5px;
       border-bottom-right-radius: 5px; }
-  .osw-events-index.js-month-view .osw-event-dates-show.js-continued:not(.js-first-dow) .title, .osw-events-index.js-week-view .osw-event-dates-show.js-continued:not(.js-first-dow) .title {
+  .osw-events-index.js-month-view .osw-event-dates-list-item.js-continued:not(.js-first-dow) .title, .osw-events-index.js-week-view .osw-event-dates-list-item.js-continued:not(.js-first-dow) .title {
     visibility: hidden; }
-  .osw-events-index.js-month-view .osw-event-dates-show .location, .osw-events-index.js-month-view .osw-event-dates-show .picture-container, .osw-events-index.js-month-view .osw-event-dates-show .long-time, .osw-events-index.js-week-view .osw-event-dates-show .location, .osw-events-index.js-week-view .osw-event-dates-show .picture-container, .osw-events-index.js-week-view .osw-event-dates-show .long-time {
+  .osw-events-index.js-month-view .osw-event-dates-list-item .location, .osw-events-index.js-month-view .osw-event-dates-list-item .picture-container, .osw-events-index.js-month-view .osw-event-dates-list-item .long-time, .osw-events-index.js-week-view .osw-event-dates-list-item .location, .osw-events-index.js-week-view .osw-event-dates-list-item .picture-container, .osw-events-index.js-week-view .osw-event-dates-list-item .long-time {
     display: none; }
-  .osw-events-index.js-month-view .osw-event-dates-show .short-time, .osw-events-index.js-week-view .osw-event-dates-show .short-time {
+  .osw-events-index.js-month-view .osw-event-dates-list-item .short-time, .osw-events-index.js-week-view .osw-event-dates-list-item .short-time {
     float: right;
     padding-left: 5px;
     max-width: 100%;
     color: #999999; }
-  .osw-events-index.js-month-view .osw-event-dates-show .short-time, .osw-events-index.js-month-view .osw-event-dates-show .title, .osw-events-index.js-week-view .osw-event-dates-show .short-time, .osw-events-index.js-week-view .osw-event-dates-show .title {
+  .osw-events-index.js-month-view .osw-event-dates-list-item .short-time, .osw-events-index.js-month-view .osw-event-dates-list-item .title, .osw-events-index.js-week-view .osw-event-dates-list-item .short-time, .osw-events-index.js-week-view .osw-event-dates-list-item .title {
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap; }
+
+.js-olay-content .osw-event-dates-show {
+  text-align: left;
+  padding: 20px;
+  max-width: 480px;
+  *zoom: 1; }
+  .js-olay-content .osw-event-dates-show:before, .js-olay-content .osw-event-dates-show:after {
+    content: " ";
+    display: table; }
+  .js-olay-content .osw-event-dates-show:after {
+    clear: both; }
+  .js-olay-content .osw-event-dates-show .picture-container {
+    float: right; }
+  .js-olay-content .osw-event-dates-show .title {
+    font-size: 20px;
+    font-weight: bold; }
+  .js-olay-content .osw-event-dates-show .datetime, .js-olay-content .osw-event-dates-show .location, .js-olay-content .osw-event-dates-show .portal, .js-olay-content .osw-event-dates-show .description {
+    padding: 10px; }
+    .js-olay-content .osw-event-dates-show .datetime:before, .js-olay-content .osw-event-dates-show .location:before, .js-olay-content .osw-event-dates-show .portal:before, .js-olay-content .osw-event-dates-show .description:before {
+      display: block;
+      color: #999999; }
+  .js-olay-content .osw-event-dates-show .datetime:before {
+    content: "WHEN"; }
+  .js-olay-content .osw-event-dates-show .location:before {
+    content: "WHERE"; }
+  .js-olay-content .osw-event-dates-show .portal:before {
+    content: "HOST"; }
+  .js-olay-content .osw-event-dates-show .description:before {
+    content: "DETAILS"; }
+  .js-olay-content .osw-event-dates-show .see-full-details {
+    float: right;
+    display: inline-block;
+    padding: 10px;
+    text-decoration: none;
+    color: #3872a7;
+    border-radius: 5px;
+    border: 1px solid #3872a7; }
+    .js-olay-content .osw-event-dates-show .see-full-details:hover {
+      color: #00578f;
+      border-color: #00578f; }
 
 /* themes/orgsync/styles/event-filters.scss */
 .orgsync-widget.osw-event-filters-show {
@@ -365,46 +405,6 @@
   font-weight: bold;
   font-size: 14px;
   line-height: 26px; }
-
-.js-olay-content .osw-events-show {
-  text-align: left;
-  padding: 20px;
-  max-width: 480px;
-  *zoom: 1; }
-  .js-olay-content .osw-events-show:before, .js-olay-content .osw-events-show:after {
-    content: " ";
-    display: table; }
-  .js-olay-content .osw-events-show:after {
-    clear: both; }
-  .js-olay-content .osw-events-show .picture-container {
-    float: right; }
-  .js-olay-content .osw-events-show .title {
-    font-size: 20px;
-    font-weight: bold; }
-  .js-olay-content .osw-events-show .datetime, .js-olay-content .osw-events-show .location, .js-olay-content .osw-events-show .portal, .js-olay-content .osw-events-show .description {
-    padding: 10px; }
-    .js-olay-content .osw-events-show .datetime:before, .js-olay-content .osw-events-show .location:before, .js-olay-content .osw-events-show .portal:before, .js-olay-content .osw-events-show .description:before {
-      display: block;
-      color: #999999; }
-  .js-olay-content .osw-events-show .datetime:before {
-    content: "WHEN"; }
-  .js-olay-content .osw-events-show .location:before {
-    content: "WHERE"; }
-  .js-olay-content .osw-events-show .portal:before {
-    content: "HOST"; }
-  .js-olay-content .osw-events-show .description:before {
-    content: "DETAILS"; }
-  .js-olay-content .osw-events-show .see-full-details {
-    float: right;
-    display: inline-block;
-    padding: 10px;
-    text-decoration: none;
-    color: #3872a7;
-    border-radius: 5px;
-    border: 1px solid #3872a7; }
-    .js-olay-content .osw-events-show .see-full-details:hover {
-      color: #00578f;
-      border-color: #00578f; }
 
 /* themes/orgsync/styles/index.scss */
 .orgsync-widget {

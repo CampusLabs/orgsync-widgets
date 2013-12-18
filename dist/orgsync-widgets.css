@@ -754,7 +754,7 @@ disabled look for disabled choices in the results dropdown
   position: relative; }
 
 /* styles/event-dates.scss */
-.osw-event-dates-show.js-filler {
+.osw-event-dates-list-item.js-filler {
   visibility: hidden; }
 
 /* styles/events.scss */

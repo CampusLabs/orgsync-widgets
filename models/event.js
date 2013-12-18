@@ -21,11 +21,9 @@
       return data;
     },
 
-    orgsyncUrl: function (eventDate) {
-      var url = 'https://orgsync.com/' + this.get('portal').id +
-        '/events/' + this.id;
-      if (eventDate) url += '?date=' + eventDate.start().format('YYYY-MM-DD');
-      return url;
+    orgsyncUrl: function () {
+      return 'https://orgsync.com/' + this.get('portal').id + '/events/' +
+        this.id;
     },
 
     searchableWords: function () {

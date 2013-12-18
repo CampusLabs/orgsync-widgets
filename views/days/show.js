@@ -57,10 +57,9 @@
       this.views.eventDatesList = new app.ListView({
         el: this.$('.js-event-dates-list'),
         collection: this.eventDates,
-        modelView: app.EventDatesShowView,
+        modelView: app.EventDatesListItemView,
         modelViewOptions: {
           day: this.model,
-          view: this.view,
           eventFilters: this.eventFilters
         }
       });

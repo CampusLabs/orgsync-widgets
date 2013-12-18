@@ -25,7 +25,8 @@
       'pageSize',
       'view',
       'initialDate',
-      'fetchedEvents'
+      'fetchedEvents',
+      'eventFilters'
     ],
 
     events: {
@@ -225,7 +226,7 @@
 
     setView: function (view, date) {
       this.view = view;
-      this.modelViewOptions = {view: view};
+      this.modelViewOptions = {view: view, eventFilters: this.eventFilters};
       this.collection.set();
       this.date(date);
     },

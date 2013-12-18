@@ -4,16 +4,20 @@
   var app = window.OrgSyncWidgets;
 
   var EventDatesShowView = app.EventDatesShowView;
-  var initialize = EventDatesShowView.prototype.initialize;
+  var correctDisplay = EventDatesShowView.prototype.correctDisplay;
+  var tinycolor = app.tinycolor;
 
-  EventDatesShowView.prototype.initialize = function () {
-    initialize.apply(this, arguments);
+  EventDatesShowView.prototype.correctDisplay = function () {
+    correctDisplay.apply(this, arguments);
     var event = this.model.get('event');
-    this.$el.css({borderLeftColor: '#' + event.hex()});
+    this.$el.css({borderLeftColor: this.color().toHexString()});
     if (this.view !== 'list' &&
         (this.continues || this.continued || event.get('is_all_day'))
       ) {
-      this.$el.css({background: '#' + event.hex(0.9)});
+      this.$el.css(
+        'background',
+        tinycolor.lighten(this.color(), 40).toHexString()
+      );
     }
   };
 })();

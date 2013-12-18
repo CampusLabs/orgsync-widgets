@@ -5,6 +5,7 @@
 
   var app = window.OrgSyncWidgets;
 
+  var tinycolor = window.tinycolor;
   var Model = app.Model;
 
   var EventFilter = app.EventFilter = Model.extend({
@@ -12,27 +13,24 @@
       enabled: true
     },
 
-    hex: function (scale) {
-      var hex = this.get('color');
-      if (scale) {
-        var n = parseInt(hex, '16');
-        var r = (n >> 16) & 0xFF;
-        r += Math.floor((scale > 0 ? (255 - r) : r) * scale);
-        var g = (n >> 8) & 0xFF;
-        g += Math.floor((scale > 0 ? (255 - g) : g) * scale);
-        var b = n & 0xFF;
-        b += Math.floor((scale > 0 ? (255 - b) : b) * scale);
-        n = (r << 16) + (g << 8) + b;
-        hex = n.toString(16);
-      }
-      while (hex.length < 6) hex = '0' + hex;
-      return hex;
-    }
+    color: function () { return tinycolor(this.get('color')); }
   });
 
   EventFilter.Collection = Model.Collection.extend({
     model: EventFilter,
 
-    comparator: 'name'
+    comparator: 'name',
+
+    initialize: function () { this.on('sort', this.generateColors); },
+
+    generateColors: function () {
+      var step = 360 / this.length;
+      this.each(function (eventFilter, i) {
+        eventFilter.set(
+          'color',
+          tinycolor({h: i * step, s: 1, l: 0.5}).toHex()
+        );
+      });
+    }
   });
 })();

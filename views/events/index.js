@@ -9,6 +9,7 @@
   var _ = window._;
   var Community = app.Community;
   var Day = app.Day;
+  var Event = app.Event;
   var EventFilter = app.EventFilter;
   var JST = window.JST;
   var moment = window.moment;
@@ -31,8 +32,8 @@
     },
 
     options: [
-      'communityId',
-      'portalId',
+      'type',
+      'id',
       'date',
       'tz',
       'view',
@@ -61,10 +62,26 @@
       View.prototype.initialize.apply(this, arguments);
       this.days = new Day.Collection();
       this.days.tz = this.tz;
-      this.community = new Community({id: this.communityId});
-      this.portal = new Portal({id: this.portalId});
+      this.eventSource = new Community({id: this.communityId});
+      var needsFilters = !this.eventFilters;
       this.eventFilters = new EventFilter.Collection(this.eventFilters);
-      this.fetchedEvents = this.community.get('events');
+      this.fetchedEvents = (function (self) {
+        switch (self.type) {
+        case 'community':
+          return (new Community({id: self.id})).get('events');
+        case 'portal':
+          return (new Portal({id: self.id})).get('events');
+        default:
+          var events = new Event.Collection();
+          events.url = '/my/events';
+          return events;
+        }
+      })(this);
+      if (needsFilters) {
+        this.eventFilters.url = _.result(this.fetchedEvents, 'url') +
+          '/filters';
+        this.eventFilters.fetch();
+      }
       this.render();
     },
 
@@ -114,7 +131,8 @@
         collection: this.days,
         view: this.view,
         initialDate: this.date(),
-        fetchedEvents: this.fetchedEvents
+        fetchedEvents: this.fetchedEvents,
+        eventFilters: this.eventFilters
       });
       $list.scroll(_.throttle(_.bind(this.updateMonth, this, false), 100));
     },
@@ -180,10 +198,13 @@
       var query = this.query;
       var date = this.date();
       this.fetchedEvents.each(function (event) {
-        event.set(
-          'visible',
-          event.matchesQuery(query) && event.matchesEventFilters(eventFilters)
-        );
+        var visible = event.matchesQuery(query);
+        event.get('dates').each(function (eventDate) {
+          eventDate.set(
+            'visible',
+            visible && eventDate.matchesEventFilters(eventFilters)
+          );
+        });
       });
       if (this.view === 'list') this.date(date);
       this.views.daysList.correctDisplay();

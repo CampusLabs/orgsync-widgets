@@ -5,6 +5,8 @@
 
   var app = window.OrgSyncWidgets;
 
+  var _ = window._;
+  var EventFilter = app.EventFilter;
   var Olay = window.Olay;
   var JST = window.JST;
   var View = app.View;
@@ -18,7 +20,7 @@
 
     view: 'month',
 
-    options: ['day', 'view'],
+    options: ['day', 'view', 'eventFilters'],
 
     classes: [
       'orgsync-widget',
@@ -27,7 +29,7 @@
     ],
 
     listeners: {
-      event: {'change:visible': 'correctDisplay'}
+      model: {'change:visible': 'correctDisplay'}
     },
 
     toTemplate: function () {
@@ -35,9 +37,9 @@
       var event = eventDate.get('event');
       return {
         image: event.get('thumbnail_url'),
-        shortTime: eventDate.shortTime(),
+        shortTime: this.shortTime(),
         title: !eventDate.get('filler') && event.get('title'),
-        longTime: eventDate.longTime(),
+        longTime: this.longTime(),
         location: event.get('location')
       };
     },
@@ -45,7 +47,6 @@
     initialize: function () {
       View.prototype.initialize.apply(this, arguments);
       this.event = this.model.get('event');
-      this.correctDisplay();
       if (this.event.get('is_all_day')) this.$el.addClass('js-all-day');
       if (this.model.get('filler')) this.$el.addClass('js-filler');
       if (this.day) {
@@ -60,6 +61,29 @@
           this.$el.addClass('js-continues');
         }
       }
+      this.correctDisplay();
+    },
+
+    shortTime: function () {
+      if (this.model.get('event').get('is_all_day')) return 'all day';
+      if (!this.continued) return this.shortTimeFormat(this.model.start());
+      if (this.continues) return 'all day';
+      return 'ends ' + this.shortTimeFormat(this.model.end());
+    },
+
+    shortTimeFormat: function (date) {
+      return date.format('h:mma').replace(':00', '').replace('m', '');
+    },
+
+    longTime: function () {
+      var start = this.model.start();
+      var end = this.model.end();
+      var allDay = this.model.get('event').get('is_all_day');
+      var multiDay = this.model.isMultiDay();
+      if (!multiDay && allDay) return 'All Day';
+      var format = allDay ? '[All Day]' : 'LT';
+      if (multiDay) format += ', MMM D';
+      return start.format(format) + ' to ' + end.format(format);
     },
 
     open: function () {
@@ -72,7 +96,15 @@
     },
 
     correctDisplay: function () {
-      this.$el.toggleClass('js-none', !this.event.get('visible'));
-    }
+      this.$el.toggleClass('js-none', !this.model.get('visible'));
+    },
+
+    color: function () {
+      var eventFilters = this.eventFilters;
+      var eventFilterId = _.find(this.model.get('filters'), function (id) {
+        return eventFilters.get(id);
+      });
+      return (eventFilters.get(eventFilterId) || new EventFilter()).color();
+    },
   });
 })();

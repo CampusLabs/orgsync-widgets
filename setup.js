@@ -15,6 +15,7 @@
     Olay: null,
     OrgSyncApi: null,
     Select2: null,
+    tinycolor: null,
     jQuery: null,
     JST: null,
     jstz: null

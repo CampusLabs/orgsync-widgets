@@ -5,6 +5,7 @@
 
   var app = window.OrgSyncWidgets;
 
+  var _ = window._;
   var Model = app.Model;
   var moment = window.moment;
 
@@ -14,7 +15,8 @@
     },
 
     defaults: {
-      tz: app.tz
+      tz: app.tz,
+      visible: true
     },
 
     initialize: function () {
@@ -54,27 +56,13 @@
       return startDay.add('days', 1).isBefore(this.end());
     },
 
-    shortTime: function () {
-      if (this.get('event').get('is_all_day')) return 'all day';
-      if (!this.continued) return this.shortTimeFormat(this.start());
-      if (this.continues) return 'all day';
-      return 'ends ' + this.shortTimeFormat(this.end());
+    matchesEventFilters: function (eventFilters) {
+      if (!eventFilters.length) return true;
+      return _.any(this.get('filters'), function (eventFilterId) {
+        var eventFilter = eventFilters.get(eventFilterId);
+        return eventFilter && eventFilter.get('enabled');
+      });
     },
-
-    shortTimeFormat: function (date) {
-      return date.format('h:mma').replace(':00', '').replace('m', '');
-    },
-
-    longTime: function () {
-      var start = this.start();
-      var end = this.end();
-      var allDay = this.get('event').get('is_all_day');
-      var multiDay = this.isMultiDay();
-      if (!multiDay && allDay) return 'All Day';
-      var format = allDay ? '[All Day]' : 'LT';
-      if (multiDay) format += ', MMM D';
-      return start.format(format) + ' to ' + end.format(format);
-    }
   });
 
   EventDate.Collection = Model.Collection.extend({

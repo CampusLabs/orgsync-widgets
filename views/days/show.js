@@ -21,7 +21,7 @@
 
     view: 'month',
 
-    options: ['view'],
+    options: ['view', 'eventFilters'],
 
     toTemplate: function () {
       return {
@@ -58,7 +58,11 @@
         el: this.$('.js-event-dates-list'),
         collection: this.eventDates,
         modelView: app.EventDatesShowView,
-        modelViewOptions: {day: this.model, view: this.view}
+        modelViewOptions: {
+          day: this.model,
+          view: this.view,
+          eventFilters: this.eventFilters
+        }
       });
       this.correctDisplay();
     },
@@ -99,7 +103,7 @@
         this.collection.at(this.collection.indexOf(day) - 1).get('eventDates');
       eventDates.each(function (eventDate) {
         if (eventDate.get('filler')) return;
-        if (!eventDate.get('event').get('visible')) {
+        if (!eventDate.get('visible')) {
           hidden.push(eventDate);
         } else if (eventDate.start().clone().startOf('day').isSame(date)) {
           starters.push(eventDate);

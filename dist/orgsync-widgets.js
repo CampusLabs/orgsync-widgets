@@ -32802,7 +32802,8 @@ return __p;
     color: function () {
       var eventFilters = this.eventFilters;
       var eventFilterId = _.find(this.model.get('filters'), function (id) {
-        return eventFilters.get(id);
+        var eventFilter = eventFilters.get(id);
+        return eventFilter && eventFilter.get('enabled');
       });
       return (eventFilters.get(eventFilterId) || new EventFilter()).color();
     },

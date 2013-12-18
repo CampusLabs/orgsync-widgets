@@ -31048,8 +31048,7 @@ else {
 
     setVisible: function () {
       this.set('visible', this.get('eventDates').any(function (eventDate) {
-        return !eventDate.get('filler') &&
-          eventDate.get('event').get('visible');
+        return !eventDate.get('filler') && eventDate.get('visible');
       }));
     }
   }, {
@@ -32918,7 +32917,6 @@ return __p;
       View.prototype.initialize.apply(this, arguments);
       this.days = new Day.Collection();
       this.days.tz = this.tz;
-      this.eventSource = new Community({id: this.communityId});
       var needsFilters = !this.eventFilters;
       this.eventFilters = new EventFilter.Collection(this.eventFilters);
       this.fetchedEvents = (function (self) {
@@ -32929,7 +32927,7 @@ return __p;
           return (new Portal({id: self.id})).get('events');
         default:
           var events = new Event.Collection();
-          events.url = '/my/events';
+          events.url = '/account/events';
           return events;
         }
       })(this);

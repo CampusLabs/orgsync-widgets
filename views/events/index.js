@@ -72,7 +72,7 @@
           return (new Portal({id: self.id})).get('events');
         default:
           var events = new Event.Collection();
-          events.url = '/my/events';
+          events.url = '/account/events';
           return events;
         }
       })(this);

@@ -21,6 +21,11 @@
 
     comparator: 'name',
 
+    constructor: function () {
+      Model.Collection.apply(this, arguments);
+      this.generateColors();
+    },
+
     initialize: function () { this.on('sort', this.generateColors); },
 
     generateColors: function () {

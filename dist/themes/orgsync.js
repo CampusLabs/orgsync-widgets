@@ -74,6 +74,7 @@
     this.$el.prepend(app.$('<span>')
       .addClass('js-icon icon-' + iconMap[this.model.get('type')])
     );
+    this.updateColor();
   };
 
   EventFiltersShowView.prototype.updateColor = function () {

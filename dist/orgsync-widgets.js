@@ -32263,6 +32263,7 @@ return __p;
 
   var app = window.OrgSyncWidgets;
 
+  var _ = window._;
   var EventDate = app.EventDate;
   var moment = window.moment;
   var JST = window.JST;
@@ -32347,6 +32348,7 @@ return __p;
     },
 
     correctDisplay: function () {
+      _.invoke(this.views.eventDatesList.views, 'correctDisplay');
       if (this.view === 'list') return;
       var day = this.model;
       var date = day.date();
@@ -32421,7 +32423,7 @@ return __p;
     initialize: function () {
       _.bindAll(this, 'padAndTrim');
       $(window).on('resize', this.padAndTrim);
-      this.debouncedCheckFetch = _.debounce(this.checkFetch, 100);
+      this.debouncedCheckFetch = _.debounce(this.checkFetch, 1000);
       this.debouncedOnMouseup = _.debounce(this.onMouseup, 1000);
       this.available = this.collection;
       this.collection = new Day.Collection();
@@ -32691,11 +32693,9 @@ return __p;
             }))
           );
           self.available.addEventDates(newEventDates);
-          self.available.fill(
-            day.date(),
-            newEventDates.last().start().clone().startOf('day'),
-            true
-          );
+          var last = newEventDates.last();
+          var endDate = last ? last.start().clone().startOf('day') : day.date();
+          self.available.fill(day.date(), endDate, true);
           if (self[fetchKey] === day) self.checkFetch();
         }
       });
@@ -33091,20 +33091,22 @@ return __p;
     },
 
     updateFiltered: function () {
-      var eventFilters = this.eventFilters;
-      var query = this.query;
-      var date = this.date();
-      this.fetchedEvents.each(function (event) {
-        var visible = event.matchesQuery(query);
-        event.get('dates').each(function (eventDate) {
-          eventDate.set(
-            'visible',
-            visible && eventDate.matchesEventFilters(eventFilters)
-          );
+      window.requestAnimationFrame(_.bind(function () {
+        var eventFilters = this.eventFilters;
+        var query = this.query;
+        var date = this.date();
+        this.fetchedEvents.each(function (event) {
+          var visible = event.matchesQuery(query);
+          event.get('dates').each(function (eventDate) {
+            eventDate.set(
+              'visible',
+              visible && eventDate.matchesEventFilters(eventFilters)
+            );
+          });
         });
-      });
-      if (this.view === 'list') this.date(date);
-      this.views.daysList.correctDisplay();
+        if (this.view === 'list') this.date(date);
+        this.views.daysList.correctDisplay();
+      }, this));
     },
 
     jumpToSelected: function () {
@@ -33212,7 +33214,7 @@ return __p;
         this.collection.set(
           this.available.models.slice(0, ++this.page * this.pageSize)
         );
-        _.defer(this.nextPage);
+        window.requestAnimationFrame(this.nextPage);
       } else {
         this.trigger('done-paging');
       }

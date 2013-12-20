@@ -42,7 +42,7 @@
     initialize: function () {
       _.bindAll(this, 'padAndTrim');
       $(window).on('resize', this.padAndTrim);
-      this.debouncedCheckFetch = _.debounce(this.checkFetch, 100);
+      this.debouncedCheckFetch = _.debounce(this.checkFetch, 1000);
       this.debouncedOnMouseup = _.debounce(this.onMouseup, 1000);
       this.available = this.collection;
       this.collection = new Day.Collection();
@@ -312,11 +312,9 @@
             }))
           );
           self.available.addEventDates(newEventDates);
-          self.available.fill(
-            day.date(),
-            newEventDates.last().start().clone().startOf('day'),
-            true
-          );
+          var last = newEventDates.last();
+          var endDate = last ? last.start().clone().startOf('day') : day.date();
+          self.available.fill(day.date(), endDate, true);
           if (self[fetchKey] === day) self.checkFetch();
         }
       });

@@ -29,10 +29,6 @@
   var correctDisplay = EventDatesListItemView.prototype.correctDisplay;
   var tinycolor = app.tinycolor;
 
-  EventDatesListItemView.prototype.listeners.eventFilters = {
-    'change:enabled': 'correctDisplay'
-  };
-
   EventDatesListItemView.prototype.correctDisplay = function () {
     correctDisplay.apply(this, arguments);
     var event = this.model.get('event');

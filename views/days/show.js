@@ -5,6 +5,7 @@
 
   var app = window.OrgSyncWidgets;
 
+  var _ = window._;
   var EventDate = app.EventDate;
   var moment = window.moment;
   var JST = window.JST;
@@ -89,6 +90,7 @@
     },
 
     correctDisplay: function () {
+      _.invoke(this.views.eventDatesList.views, 'correctDisplay');
       if (this.view === 'list') return;
       var day = this.model;
       var date = day.date();

@@ -64,7 +64,7 @@
         this.collection.set(
           this.available.models.slice(0, ++this.page * this.pageSize)
         );
-        _.defer(this.nextPage);
+        window.requestAnimationFrame(this.nextPage);
       } else {
         this.trigger('done-paging');
       }

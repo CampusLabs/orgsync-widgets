@@ -193,20 +193,22 @@
     },
 
     updateFiltered: function () {
-      var eventFilters = this.eventFilters;
-      var query = this.query;
-      var date = this.date();
-      this.fetchedEvents.each(function (event) {
-        var visible = event.matchesQuery(query);
-        event.get('dates').each(function (eventDate) {
-          eventDate.set(
-            'visible',
-            visible && eventDate.matchesEventFilters(eventFilters)
-          );
+      window.requestAnimationFrame(_.bind(function () {
+        var eventFilters = this.eventFilters;
+        var query = this.query;
+        var date = this.date();
+        this.fetchedEvents.each(function (event) {
+          var visible = event.matchesQuery(query);
+          event.get('dates').each(function (eventDate) {
+            eventDate.set(
+              'visible',
+              visible && eventDate.matchesEventFilters(eventFilters)
+            );
+          });
         });
-      });
-      if (this.view === 'list') this.date(date);
-      this.views.daysList.correctDisplay();
+        if (this.view === 'list') this.date(date);
+        this.views.daysList.correctDisplay();
+      }, this));
     },
 
     jumpToSelected: function () {

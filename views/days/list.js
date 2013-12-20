@@ -78,8 +78,7 @@
       case 'list':
         this.collection.add(this.listStep(target).prev);
       }
-      var delta = this.$el.prop('scrollHeight') - scrollHeight;
-      this.$el.scrollTop(this.$el.scrollTop() + delta);
+      this.adjustAbove(scrollHeight);
     },
 
     extraAbove: function () {
@@ -93,6 +92,10 @@
     removeAbove: function () {
       var scrollHeight = this.$el.prop('scrollHeight');
       this.collection.remove(this.collection.first(this.pageSize()));
+      this.adjustAbove(scrollHeight);
+    },
+
+    adjustAbove: function (scrollHeight) {
       var delta = this.$el.prop('scrollHeight') - scrollHeight;
       this.$el.scrollTop(this.$el.scrollTop() + delta);
     },
@@ -171,14 +174,19 @@
       }
       this.padAndTrimCalled = false;
 
-      // Add or remove elements below if necessary.
-      if (this.needsBelow()) this.renderBelow();
-      else if (this.needsAbove()) this.renderAbove();
-      else if (this.extraBelow()) this.removeBelow();
-      else if (this.extraAbove()) this.removeAbove();
-      else return;
+      window.cancelAnimationFrame(this.afid);
 
-      _.defer(this.padAndTrim);
+      this.afid = window.requestAnimationFrame(_.bind(function () {
+
+        // Add or remove elements below if necessary.
+        if (this.needsBelow()) this.renderBelow();
+        else if (this.needsAbove()) this.renderAbove();
+        else if (this.extraBelow()) this.removeBelow();
+        else if (this.extraAbove()) this.removeAbove();
+        else return;
+
+        this.padAndTrim();
+      }, this));
     },
 
     date: function (date) {

@@ -57,6 +57,26 @@
     tz: jstz.determine().name()
   };
 
+  // requestAnimationFrame shim.
+  _.each(['webkit', 'moz'], function (vendor) {
+    if (window.requestAnimationFrame) return;
+    window.requestAnimationFrame = window[vendor + 'RequestAnimationFrame'];
+    window.cancelAnimationFrame =
+      window[vendor + 'CancelAnimationFrame'] ||
+      window[vendor + 'CancelRequestAnimationFrame'];
+  });
+  if (!window.requestAnimationFrame) {
+    var lastTime = 0;
+    window.requestAnimationFrame = function (cb) {
+      var now = new Date().getTime();
+      var timeToCall = Math.max(0, 16 - (now - lastTime));
+      var id = window.setTimeout(_.partial(cb, now + timeToCall), timeToCall);
+      lastTime = now + timeToCall;
+      return id;
+    };
+    window.cancelAnimationFrame = clearTimeout;
+  }
+
   window.Olay = herit(window.Olay, {
     constructor: function () {
       Olay.apply(this, arguments);

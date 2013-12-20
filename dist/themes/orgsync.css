@@ -224,6 +224,8 @@
       border-bottom-right-radius: 5px; }
   .osw-events-index.js-month-view .osw-event-dates-list-item.js-continued:not(.js-first-dow) .title, .osw-events-index.js-week-view .osw-event-dates-list-item.js-continued:not(.js-first-dow) .title {
     visibility: hidden; }
+  .osw-events-index.js-month-view .osw-event-dates-list-item.js-is-going .title, .osw-events-index.js-week-view .osw-event-dates-list-item.js-is-going .title {
+    color: #94b363; }
   .osw-events-index.js-month-view .osw-event-dates-list-item .location, .osw-events-index.js-month-view .osw-event-dates-list-item .picture-container, .osw-events-index.js-month-view .osw-event-dates-list-item .long-time, .osw-events-index.js-week-view .osw-event-dates-list-item .location, .osw-events-index.js-week-view .osw-event-dates-list-item .picture-container, .osw-events-index.js-week-view .osw-event-dates-list-item .long-time {
     display: none; }
   .osw-events-index.js-month-view .osw-event-dates-list-item .short-time, .osw-events-index.js-week-view .osw-event-dates-list-item .short-time {
@@ -412,7 +414,8 @@
   font-size: 12px; }
   .orgsync-widget ul, .orgsync-widget ol {
     margin: 0;
-    padding: 0; }
+    padding: 0;
+    list-style: none; }
   .orgsync-widget input, .orgsync-widget label, .orgsync-widget select, .orgsync-widget textarea {
     float: none;
     padding: 0;

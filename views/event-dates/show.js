@@ -25,6 +25,7 @@
       return {
         description: event.get('description'),
         image: event.get('thumbnail_url'),
+        isGoing: eventDate.isGoing(),
         isMultiDay: eventDate.isMultiDay(),
         location: event.get('location'),
         longTime: this.longTime(),
@@ -55,6 +56,7 @@
           this.$el.addClass('js-continues');
         }
       }
+      if (this.model.isGoing()) this.$el.addClass('js-is-going');
     },
 
     shortTime: function () {

@@ -34,9 +34,10 @@
     },
 
     sortModels: function () {
+      var views = this.views;
       this.$el.html(this.collection.map(function (model) {
-        return this.views[model.cid].$el.detach();
-      }, this));
+        return views[model.cid].$el.detach();
+      }));
     },
 
     removeModel: function (model) {

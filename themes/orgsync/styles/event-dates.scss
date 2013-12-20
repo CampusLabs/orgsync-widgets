@@ -71,6 +71,9 @@
     &.js-continued:not(.js-first-dow) .title {
       visibility: hidden;
     }
+    &.js-is-going .title {
+      color: $green;
+    }
     .location,
     .picture-container,
     .long-time {

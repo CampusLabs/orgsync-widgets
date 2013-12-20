@@ -42,7 +42,7 @@
       ) {
       this.$el.css(
         'background',
-        tinycolor.lighten(this.color(), 40).toHexString()
+        tinycolor.lighten(this.color(), 45).toHexString()
       );
     }
   };

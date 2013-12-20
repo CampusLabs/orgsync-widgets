@@ -67,6 +67,11 @@
     orgsyncUrl: function () {
       return this.get('event').orgsyncUrl() + '?date=' +
         this.start().format('YYYY-MM-DD');
+    },
+
+    isGoing: function () {
+      var rsvp = this.get('rsvp');
+      return rsvp === 'Attending' || rsvp === 'Added by Admin';
     }
   });
 

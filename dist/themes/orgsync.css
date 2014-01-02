@@ -137,7 +137,8 @@
   border-width: 0 5px;
   width: 14.28571%;
   vertical-align: top;
-  height: 16.66667%; }
+  height: 16.66667%;
+  background: white; }
   .osw-events-index.js-month-view .osw-days-show:before, .osw-events-index.js-week-view .osw-days-show:before {
     display: block;
     content: "";

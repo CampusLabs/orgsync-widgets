@@ -31191,8 +31191,7 @@ else {
     },
 
     orgsyncUrl: function () {
-      return this.get('event').orgsyncUrl() + '?date=' +
-        this.start().format('YYYY-MM-DD');
+      return this.get('event').orgsyncUrl() + '/occurrences/' + this.id;
     },
 
     isGoing: function () {

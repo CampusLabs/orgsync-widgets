@@ -32673,8 +32673,8 @@ return __p;
       var date = day.date();
       var limit = this[limitKey];
       if (limit) {
-        if (dir === 'before' && date.isBefore(limit)) return;
-        if (dir === 'after' && date.isAfter(limit)) return;
+        if (dir === 'before' && !limit.isBefore(date)) return;
+        if (dir === 'after' && !limit.isAfter(date)) return;
       }
       var data = {page: page === Infinity ? 1 : page, per_page: 100};
       data[dir] = date.toISOString();

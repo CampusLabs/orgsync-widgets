@@ -56,13 +56,13 @@
       &:not(:last-child) {
         position: absolute;
         &:nth-child(1) {
-          transform: rotate(2deg);
+          @include transform(rotate(2deg));
         }
         &:nth-child(2) {
-          transform: rotate(-3deg);
+          @include transform(rotate(-3deg));
         }
         &:nth-child(3) {
-          transform: rotate(4deg);
+          @include transform(rotate(4deg));
         }
       }
     }

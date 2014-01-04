@@ -5,12 +5,12 @@
 
   var _ = window._;
   var async = window.async;
-  var Backbone = window.Backbone;
+  var BackboneRelations = window.BackboneRelations;
 
-  var Model = app.Model = Backbone.Model.extend({
+  var Model = app.Model = BackboneRelations.Model.extend({
     constructor: function () {
       this.constructor.relations();
-      Backbone.Model.apply(this, arguments);
+      BackboneRelations.Model.apply(this, arguments);
     },
 
     sync: function (method, model, options) {
@@ -53,7 +53,7 @@
     }
   });
 
-  Model.Collection = Backbone.Collection.extend({
+  Model.Collection = BackboneRelations.Collection.extend({
     model: Model,
 
     sync: Model.prototype.sync,

@@ -11774,11 +11774,12 @@ if ( typeof module === "object" && module && typeof module.exports === "object" 
 }(this, String);
 
 // bower_components/herit/herit.js
-(function () {
+(function (root, factory) {
+  if (typeof define === 'function' && define.amd) define([], factory);
+  else if (typeof exports !== 'undefined') module.exports = factory();
+  else root.herit = factory();
+})(this, function () {
   'use strict';
-
-  // Browser and Node.js friendly
-  var node = typeof window === 'undefined';
 
   var extend = function (objA) {
     for (var i = 1, l = arguments.length; i < l; ++i) {
@@ -11831,8 +11832,8 @@ if ( typeof module === "object" && module && typeof module.exports === "object" 
     return Child;
   };
 
-  node ? module.exports = herit : window.herit = herit;
-})();
+  return herit;
+});
 
 // bower_components/backbone/backbone.js
 //     Backbone.js 1.1.0
@@ -11843,31 +11844,14 @@ if ( typeof module === "object" && module && typeof module.exports === "object" 
 //     For all details and documentation:
 //     http://backbonejs.org
 
-(function(root, factory) {
-
-  // Set up Backbone appropriately for the environment. Start with AMD.
-  if (typeof define === 'function' && define.amd) {
-    define(['underscore', 'jquery', 'exports'], function(_, $, exports) {
-      // Export global even in AMD case in case this script is loaded with
-      // others that may still expect a global Backbone.
-      root.Backbone = factory(root, exports, _, $);
-    });
-
-  // Next for Node.js or CommonJS. jQuery may not be needed as a module.
-  } else if (typeof exports !== 'undefined') {
-    var _ = require('underscore'), $;
-    try { $ = require('jquery'); } catch(e) {};
-    factory(root, exports, _, $);
-
-  // Finally, as a browser global.
-  } else {
-    root.Backbone = factory(root, {}, root._, (root.jQuery || root.Zepto || root.ender || root.$));
-  }
-
-}(this, function(root, Backbone, _, $) {
+(function(){
 
   // Initial Setup
   // -------------
+
+  // Save a reference to the global object (`window` in the browser, `exports`
+  // on the server).
+  var root = this;
 
   // Save the previous value of the `Backbone` variable, so that it can be
   // restored later on, if `noConflict` is used.
@@ -11879,12 +11863,25 @@ if ( typeof module === "object" && module && typeof module.exports === "object" 
   var slice = array.slice;
   var splice = array.splice;
 
+  // The top-level namespace. All public Backbone classes and modules will
+  // be attached to this. Exported for both the browser and the server.
+  var Backbone;
+  if (typeof exports !== 'undefined') {
+    Backbone = exports;
+  } else {
+    Backbone = root.Backbone = {};
+  }
+
   // Current version of the library. Keep in sync with `package.json`.
   Backbone.VERSION = '1.1.0';
 
+  // Require Underscore, if we're on the server, and it's not already present.
+  var _ = root._;
+  if (!_ && (typeof require !== 'undefined')) _ = require('underscore');
+
   // For Backbone's purposes, jQuery, Zepto, Ender, or My Library (kidding) owns
   // the `$` variable.
-  Backbone.$ = $;
+  Backbone.$ = root.jQuery || root.Zepto || root.ender || root.$;
 
   // Runs Backbone.js in *noConflict* mode, returning the `Backbone` variable
   // to its previous owner. Returns a reference to this Backbone object.
@@ -11950,7 +11947,7 @@ if ( typeof module === "object" && module && typeof module.exports === "object" 
       var retain, ev, events, names, i, l, j, k;
       if (!this._events || !eventsApi(this, 'off', name, [callback, context])) return this;
       if (!name && !callback && !context) {
-        this._events = void 0;
+        this._events = {};
         return this;
       }
       names = name ? [name] : _.keys(this._events);
@@ -12191,7 +12188,7 @@ if ( typeof module === "object" && module && typeof module.exports === "object" 
 
       // Trigger all relevant attribute changes.
       if (!silent) {
-        if (changes.length) this._pending = options;
+        if (changes.length) this._pending = true;
         for (var i = 0, l = changes.length; i < l; i++) {
           this.trigger('change:' + changes[i], this, current[changes[i]], options);
         }
@@ -12202,7 +12199,6 @@ if ( typeof module === "object" && module && typeof module.exports === "object" 
       if (changing) return this;
       if (!silent) {
         while (this._pending) {
-          options = this._pending;
           this._pending = false;
           this.trigger('change', this, options);
         }
@@ -12388,7 +12384,7 @@ if ( typeof module === "object" && module && typeof module.exports === "object" 
 
     // A model is new if it has never been saved to the server, and lacks an id.
     isNew: function() {
-      return !this.has(this.idAttribute);
+      return this.id == null;
     },
 
     // Check if the model is currently in a valid state.
@@ -12483,6 +12479,8 @@ if ( typeof module === "object" && module && typeof module.exports === "object" 
       for (i = 0, l = models.length; i < l; i++) {
         model = models[i] = this.get(models[i]);
         if (!model) continue;
+        delete this._byId[model.id];
+        delete this._byId[model.cid];
         index = this.indexOf(model);
         this.models.splice(index, 1);
         this.length--;
@@ -12490,7 +12488,7 @@ if ( typeof module === "object" && module && typeof module.exports === "object" 
           options.index = index;
           model.trigger('remove', model, this, options);
         }
-        this._removeReference(model, options);
+        this._removeReference(model);
       }
       return singular ? models[0] : models;
     },
@@ -12516,11 +12514,11 @@ if ( typeof module === "object" && module && typeof module.exports === "object" 
       // Turn bare objects into model references, and prevent invalid models
       // from being added.
       for (i = 0, l = models.length; i < l; i++) {
-        attrs = models[i] || {};
+        attrs = models[i];
         if (attrs instanceof Model) {
           id = model = attrs;
         } else {
-          id = attrs[targetModel.prototype.idAttribute || 'id'];
+          id = attrs[targetModel.prototype.idAttribute];
         }
 
         // If a duplicate is found, prevent it from being added and
@@ -12540,7 +12538,12 @@ if ( typeof module === "object" && module && typeof module.exports === "object" 
           model = models[i] = this._prepareModel(attrs, options);
           if (!model) continue;
           toAdd.push(model);
-          this._addReference(model, options);
+
+          // Listen to added models' events, and index models for lookup by
+          // `id` and by `cid`.
+          model.on('all', this._onModelEvent, this);
+          this._byId[model.cid] = model;
+          if (model.id != null) this._byId[model.id] = model;
         }
         if (order) order.push(existing || model);
       }
@@ -12580,7 +12583,7 @@ if ( typeof module === "object" && module && typeof module.exports === "object" 
         }
         if (sort || (order && order.length)) this.trigger('sort', this, options);
       }
-
+      
       // Return the added (or merged) model (or models).
       return singular ? models[0] : models;
     },
@@ -12592,7 +12595,7 @@ if ( typeof module === "object" && module && typeof module.exports === "object" 
     reset: function(models, options) {
       options || (options = {});
       for (var i = 0, l = this.models.length; i < l; i++) {
-        this._removeReference(this.models[i], options);
+        this._removeReference(this.models[i]);
       }
       options.previousModels = this.models;
       this._reset();
@@ -12633,7 +12636,7 @@ if ( typeof module === "object" && module && typeof module.exports === "object" 
     // Get a model from the set by id.
     get: function(obj) {
       if (obj == null) return void 0;
-      return this._byId[obj] || this._byId[obj.id] || this._byId[obj.cid];
+      return this._byId[obj.id] || this._byId[obj.cid] || this._byId[obj];
     },
 
     // Get the model at the given index.
@@ -12709,7 +12712,7 @@ if ( typeof module === "object" && module && typeof module.exports === "object" 
       if (!options.wait) this.add(model, options);
       var collection = this;
       var success = options.success;
-      options.success = function(model, resp) {
+      options.success = function(model, resp, options) {
         if (options.wait) collection.add(model, options);
         if (success) success(model, resp, options);
       };
@@ -12739,7 +12742,10 @@ if ( typeof module === "object" && module && typeof module.exports === "object" 
     // Prepare a hash of attributes (or other model) to be added to this
     // collection.
     _prepareModel: function(attrs, options) {
-      if (attrs instanceof Model) return attrs;
+      if (attrs instanceof Model) {
+        if (!attrs.collection) attrs.collection = this;
+        return attrs;
+      }
       options = options ? _.clone(options) : {};
       options.collection = this;
       var model = new this.model(attrs, options);
@@ -12748,18 +12754,8 @@ if ( typeof module === "object" && module && typeof module.exports === "object" 
       return false;
     },
 
-    // Internal method to create a model's ties to a collection.
-    _addReference: function(model, options) {
-      this._byId[model.cid] = model;
-      if (model.id != null) this._byId[model.id] = model;
-      if (!model.collection) model.collection = this;
-      model.on('all', this._onModelEvent, this);
-    },
-
     // Internal method to sever a model's ties to a collection.
-    _removeReference: function(model, options) {
-      delete this._byId[model.id];
-      delete this._byId[model.cid];
+    _removeReference: function(model) {
       if (this === model.collection) delete model.collection;
       model.off('all', this._onModelEvent, this);
     },
@@ -12788,7 +12784,7 @@ if ( typeof module === "object" && module && typeof module.exports === "object" 
     'reject', 'every', 'all', 'some', 'any', 'include', 'contains', 'invoke',
     'max', 'min', 'toArray', 'size', 'first', 'head', 'take', 'initial', 'rest',
     'tail', 'drop', 'last', 'without', 'difference', 'indexOf', 'shuffle',
-    'lastIndexOf', 'isEmpty', 'chain', 'sample'];
+    'lastIndexOf', 'isEmpty', 'chain'];
 
   // Mix in each Underscore method as a proxy to `Collection#models`.
   _.each(methods, function(method) {
@@ -12800,7 +12796,7 @@ if ( typeof module === "object" && module && typeof module.exports === "object" 
   });
 
   // Underscore methods that take a property name as an argument.
-  var attributeMethods = ['groupBy', 'countBy', 'sortBy', 'indexBy'];
+  var attributeMethods = ['groupBy', 'countBy', 'sortBy'];
 
   // Use attributes instead of properties.
   _.each(attributeMethods, function(method) {
@@ -13022,9 +13018,7 @@ if ( typeof module === "object" && module && typeof module.exports === "object" 
     return xhr;
   };
 
-  var noXhrPatch =
-    typeof window !== 'undefined' && !!window.ActiveXObject &&
-      !(window.XMLHttpRequest && (new XMLHttpRequest).dispatchEvent);
+  var noXhrPatch = typeof window !== 'undefined' && !!window.ActiveXObject && !(window.XMLHttpRequest && (new XMLHttpRequest).dispatchEvent);
 
   // Map from CRUD to HTTP for our default `Backbone.sync` implementation.
   var methodMap = {
@@ -13220,8 +13214,7 @@ if ( typeof module === "object" && module && typeof module.exports === "object" 
       this.root = ('/' + this.root + '/').replace(rootStripper, '/');
 
       if (oldIE && this._wantsHashChange) {
-        var frame = Backbone.$('<iframe src="javascript:0" tabindex="-1">');
-        this.iframe = frame.hide().appendTo('body')[0].contentWindow;
+        this.iframe = Backbone.$('<iframe src="javascript:0" tabindex="-1" />').hide().appendTo('body')[0].contentWindow;
         this.navigate(fragment);
       }
 
@@ -13423,22 +13416,22 @@ if ( typeof module === "object" && module && typeof module.exports === "object" 
     };
   };
 
-  return Backbone;
-
-}));
+}).call(this);
 
 // bower_components/backbone-relations/backbone-relations.js
-(function () {
+(function (root, factory) {
+  if (typeof define === 'function' && define.amd) {
+    define(['underscore', 'backbone', 'herit'], factory);
+  } else if (typeof exports !== 'undefined') {
+    module.exports =
+      factory(require('underscore'), require('backbone'), require('herit'));
+  } else {
+    root.BackboneRelations = factory(root._, root.Backbone, root.herit);
+  }
+})(this, function (_, Backbone, herit) {
   'use strict';
 
-  var node = typeof window === 'undefined';
-
-  var _ = node ? require('underscore') : window._;
-  var Backbone = node ? require('backbone') : window.Backbone;
-  var herit = node ? require('herit') : window.herit;
-
   var proto = Backbone.Model.prototype;
-  var constructor = proto.constructor;
   var get = proto.get;
   var set = proto.set;
 
@@ -13531,7 +13524,7 @@ if ( typeof module === "object" && module && typeof module.exports === "object" 
     }
   });
 
-  Backbone.Model = Backbone.Model.extend({
+  var Model = Backbone.Model.extend({
     constructor: function () {
       var relations = _.result(this, 'relations');
       if (relations) {
@@ -13541,7 +13534,7 @@ if ( typeof module === "object" && module && typeof module.exports === "object" 
           return obj;
         }, {}, this);
       }
-      return constructor.apply(this, arguments);
+      return Backbone.Model.apply(this, arguments);
     },
 
     get: function (key) {
@@ -13578,8 +13571,8 @@ if ( typeof module === "object" && module && typeof module.exports === "object" 
     }
   });
 
-  _.extend(Backbone.Collection.prototype, {model: Backbone.Model});
-})();
+  return {Model: Model, Collection: Backbone.Collection.extend({model: Model})};
+});
 
 // bower_components/select2/select2.js
 /*
@@ -16840,7 +16833,7 @@ the specific language governing permissions and limitations under the Apache Lic
 
 // bower_components/moment/moment.js
 //! moment.js
-//! version : 2.4.0
+//! version : 2.5.0
 //! authors : Tim Wood, Iskren Chernev, Moment.js contributors
 //! license : MIT
 //! momentjs.com
@@ -16852,7 +16845,8 @@ the specific language governing permissions and limitations under the Apache Lic
     ************************************/
 
     var moment,
-        VERSION = "2.4.0",
+        VERSION = "2.5.0",
+        global = this,
         round = Math.round,
         i,
 
@@ -16868,7 +16862,7 @@ the specific language governing permissions and limitations under the Apache Lic
         languages = {},
 
         // check for nodeJS
-        hasModule = (typeof module !== 'undefined' && module.exports),
+        hasModule = (typeof module !== 'undefined' && module.exports && typeof require !== 'undefined'),
 
         // ASP.NET json date format regex
         aspNetJsonRegex = /^\/?Date\((\-?\d+)/i,
@@ -16879,24 +16873,30 @@ the specific language governing permissions and limitations under the Apache Lic
         isoDurationRegex = /^(-)?P(?:(?:([0-9,.]*)Y)?(?:([0-9,.]*)M)?(?:([0-9,.]*)D)?(?:T(?:([0-9,.]*)H)?(?:([0-9,.]*)M)?(?:([0-9,.]*)S)?)?|([0-9,.]*)W)$/,
 
         // format tokens
-        formattingTokens = /(\[[^\[]*\])|(\\)?(Mo|MM?M?M?|Do|DDDo|DD?D?D?|ddd?d?|do?|w[o|w]?|W[o|W]?|YYYYY|YYYY|YY|gg(ggg?)?|GG(GGG?)?|e|E|a|A|hh?|HH?|mm?|ss?|S{1,4}|X|zz?|ZZ?|.)/g,
+        formattingTokens = /(\[[^\[]*\])|(\\)?(Mo|MM?M?M?|Do|DDDo|DD?D?D?|ddd?d?|do?|w[o|w]?|W[o|W]?|YYYYYY|YYYYY|YYYY|YY|gg(ggg?)?|GG(GGG?)?|e|E|a|A|hh?|HH?|mm?|ss?|S{1,4}|X|zz?|ZZ?|.)/g,
         localFormattingTokens = /(\[[^\[]*\])|(\\)?(LT|LL?L?L?|l{1,4})/g,
 
         // parsing token regexes
         parseTokenOneOrTwoDigits = /\d\d?/, // 0 - 99
         parseTokenOneToThreeDigits = /\d{1,3}/, // 0 - 999
-        parseTokenThreeDigits = /\d{3}/, // 000 - 999
-        parseTokenFourDigits = /\d{1,4}/, // 0 - 9999
-        parseTokenSixDigits = /[+\-]?\d{1,6}/, // -999,999 - 999,999
+        parseTokenOneToFourDigits = /\d{1,4}/, // 0 - 9999
+        parseTokenOneToSixDigits = /[+\-]?\d{1,6}/, // -999,999 - 999,999
         parseTokenDigits = /\d+/, // nonzero number of digits
         parseTokenWord = /[0-9]*['a-z\u00A0-\u05FF\u0700-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF]+|[\u0600-\u06FF\/]+(\s*?[\u0600-\u06FF]+){1,2}/i, // any word (or two) characters or numbers including two/three word month in arabic.
-        parseTokenTimezone = /Z|[\+\-]\d\d:?\d\d/i, // +00:00 -00:00 +0000 -0000 or Z
-        parseTokenT = /T/i, // T (ISO seperator)
+        parseTokenTimezone = /Z|[\+\-]\d\d:?\d\d/gi, // +00:00 -00:00 +0000 -0000 or Z
+        parseTokenT = /T/i, // T (ISO separator)
         parseTokenTimestampMs = /[\+\-]?\d+(\.\d{1,3})?/, // 123456789 123456789.123
 
-        // preliminary iso regex
-        // 0000-00-00 0000-W00 or 0000-W00-0 + T + 00 or 00:00 or 00:00:00 or 00:00:00.000 + +00:00 or +0000)
-        isoRegex = /^\s*\d{4}-(?:(\d\d-\d\d)|(W\d\d$)|(W\d\d-\d)|(\d\d\d))((T| )(\d\d(:\d\d(:\d\d(\.\d+)?)?)?)?([\+\-]\d\d:?\d\d|Z)?)?$/,
+        //strict parsing regexes
+        parseTokenOneDigit = /\d/, // 0 - 9
+        parseTokenTwoDigits = /\d\d/, // 00 - 99
+        parseTokenThreeDigits = /\d{3}/, // 000 - 999
+        parseTokenFourDigits = /\d{4}/, // 0000 - 9999
+        parseTokenSixDigits = /[+\-]?\d{6}/, // -999,999 - 999,999
+
+        // iso 8601 regex
+        // 0000-00-00 0000-W00 or 0000-W00-0 + T + 00 or 00:00 or 00:00:00 or 00:00:00.000 + +00:00 or +0000 or +00)
+        isoRegex = /^\s*\d{4}-(?:(\d\d-\d\d)|(W\d\d$)|(W\d\d-\d)|(\d\d\d))((T| )(\d\d(:\d\d(:\d\d(\.\d+)?)?)?)?([\+\-]\d\d(?::?\d\d)?|\s*Z)?)?$/,
 
         isoFormat = 'YYYY-MM-DDTHH:mm:ssZ',
 
@@ -17006,6 +17006,10 @@ the specific language governing permissions and limitations under the Apache Lic
             YYYYY : function () {
                 return leftZeroFill(this.year(), 5);
             },
+            YYYYYY : function () {
+                var y = this.year(), sign = y >= 0 ? '+' : '-';
+                return sign + leftZeroFill(Math.abs(y), 6);
+            },
             gg   : function () {
                 return leftZeroFill(this.weekYear() % 100, 2);
             },
@@ -17076,7 +17080,7 @@ the specific language governing permissions and limitations under the Apache Lic
                     a = -a;
                     b = "-";
                 }
-                return b + leftZeroFill(toInt(10 * a / 6), 4);
+                return b + leftZeroFill(toInt(a / 60), 2) + leftZeroFill(toInt(a) % 60, 2);
             },
             z : function () {
                 return this.zoneAbbr();
@@ -17086,6 +17090,9 @@ the specific language governing permissions and limitations under the Apache Lic
             },
             X    : function () {
                 return this.unix();
+            },
+            Q : function () {
+                return this.quarter();
             }
         },
 
@@ -17138,9 +17145,6 @@ the specific language governing permissions and limitations under the Apache Lic
             minutes = normalizedInput.minute || 0,
             seconds = normalizedInput.second || 0,
             milliseconds = normalizedInput.millisecond || 0;
-
-        // store reference to input for deterministic cloning
-        this._input = duration;
 
         // representation for dateAddRemove
         this._milliseconds = +milliseconds +
@@ -17195,12 +17199,14 @@ the specific language governing permissions and limitations under the Apache Lic
 
     // left zero fill a number
     // see http://jsperf.com/left-zero-filling for performance comparison
-    function leftZeroFill(number, targetLength) {
-        var output = number + '';
+    function leftZeroFill(number, targetLength, forceSign) {
+        var output = Math.abs(number) + '',
+            sign = number >= 0;
+
         while (output.length < targetLength) {
             output = '0' + output;
         }
-        return output;
+        return (sign ? (forceSign ? '+' : '') : '-') + output;
     }
 
     // helper function for _.addTime and _.subtractTime
@@ -17271,8 +17277,7 @@ the specific language governing permissions and limitations under the Apache Lic
     function normalizeObjectUnits(inputObject) {
         var normalizedInput = {},
             normalizedProp,
-            prop,
-            index;
+            prop;
 
         for (prop in inputObject) {
             if (inputObject.hasOwnProperty(prop)) {
@@ -17411,6 +17416,12 @@ the specific language governing permissions and limitations under the Apache Lic
 
     function normalizeLanguage(key) {
         return key ? key.toLowerCase().replace('_', '-') : key;
+    }
+
+    // Return a moment from input, that is local/utc/zone equivalent to model.
+    function makeAs(input, model) {
+        return model._isUTC ? moment(input).zone(model._offset || 0) :
+            moment(input).local();
     }
 
     /************************************
@@ -17744,23 +17755,28 @@ the specific language governing permissions and limitations under the Apache Lic
 
     // get the regex to find the next token
     function getParseRegexForToken(token, config) {
-        var a;
+        var a, strict = config._strict;
         switch (token) {
         case 'DDDD':
             return parseTokenThreeDigits;
         case 'YYYY':
         case 'GGGG':
         case 'gggg':
-            return parseTokenFourDigits;
+            return strict ? parseTokenFourDigits : parseTokenOneToFourDigits;
+        case 'YYYYYY':
         case 'YYYYY':
         case 'GGGGG':
         case 'ggggg':
-            return parseTokenSixDigits;
+            return strict ? parseTokenSixDigits : parseTokenOneToSixDigits;
         case 'S':
+            if (strict) { return parseTokenOneDigit; }
+            /* falls through */
         case 'SS':
+            if (strict) { return parseTokenTwoDigits; }
+            /* falls through */
         case 'SSS':
         case 'DDD':
-            return parseTokenOneToThreeDigits;
+            return strict ? parseTokenThreeDigits : parseTokenOneToThreeDigits;
         case 'MMM':
         case 'MMMM':
         case 'dd':
@@ -17788,6 +17804,9 @@ the specific language governing permissions and limitations under the Apache Lic
         case 'hh':
         case 'mm':
         case 'ss':
+        case 'ww':
+        case 'WW':
+            return strict ? parseTokenTwoDigits : parseTokenOneOrTwoDigits;
         case 'M':
         case 'D':
         case 'd':
@@ -17796,12 +17815,10 @@ the specific language governing permissions and limitations under the Apache Lic
         case 'm':
         case 's':
         case 'w':
-        case 'ww':
         case 'W':
-        case 'WW':
         case 'e':
         case 'E':
-            return parseTokenOneOrTwoDigits;
+            return strict ? parseTokenOneDigit : parseTokenOneOrTwoDigits;
         default :
             a = new RegExp(regexpEscape(unescapeFormat(token.replace('\\', '')), "i"));
             return a;
@@ -17809,8 +17826,10 @@ the specific language governing permissions and limitations under the Apache Lic
     }
 
     function timezoneMinutesFromString(string) {
-        var tzchunk = (parseTokenTimezone.exec(string) || [])[0],
-            parts = (tzchunk + '').match(parseTimezoneChunker) || ['-', 0, 0],
+        string = string || "";
+        var possibleTzMatches = (string.match(parseTokenTimezone) || []),
+            tzChunk = possibleTzMatches[possibleTzMatches.length - 1] || [],
+            parts = (tzChunk + '').match(parseTimezoneChunker) || ['-', 0, 0],
             minutes = +(parts[1] * 60) + toInt(parts[2]);
 
         return parts[0] === '+' ? -minutes : minutes;
@@ -17859,6 +17878,7 @@ the specific language governing permissions and limitations under the Apache Lic
             break;
         case 'YYYY' :
         case 'YYYYY' :
+        case 'YYYYYY' :
             datePartArray[YEAR] = toInt(input);
             break;
         // AM / PM
@@ -17943,8 +17963,9 @@ the specific language governing permissions and limitations under the Apache Lic
         //compute day of the year from weeks and weekdays
         if (config._w && config._a[DATE] == null && config._a[MONTH] == null) {
             fixYear = function (val) {
+                var int_val = parseInt(val, 10);
                 return val ?
-                  (val.length < 3 ? (parseInt(val, 10) > 68 ? '19' + val : '20' + val) : val) :
+                  (val.length < 3 ? (int_val > 68 ? 1900 + int_val : 2000 + int_val) : int_val) :
                   (config._a[YEAR] == null ? moment().weekYear() : config._a[YEAR]);
             };
 
@@ -18056,7 +18077,7 @@ the specific language governing permissions and limitations under the Apache Lic
 
         for (i = 0; i < tokens.length; i++) {
             token = tokens[i];
-            parsedInput = (getParseRegexForToken(token, config).exec(string) || [])[0];
+            parsedInput = (string.match(getParseRegexForToken(token, config)) || [])[0];
             if (parsedInput) {
                 skipped = string.substr(0, string.indexOf(parsedInput));
                 if (skipped.length > 0) {
@@ -18174,7 +18195,7 @@ the specific language governing permissions and limitations under the Apache Lic
                     break;
                 }
             }
-            if (parseTokenTimezone.exec(string)) {
+            if (string.match(parseTokenTimezone)) {
                 config._f += "Z";
             }
             makeDateFromStringAndFormat(config);
@@ -18309,7 +18330,10 @@ the specific language governing permissions and limitations under the Apache Lic
 
     //http://en.wikipedia.org/wiki/ISO_week_date#Calculating_a_date_given_the_year.2C_week_number_and_weekday
     function dayOfYearFromWeeks(year, week, weekday, firstDayOfWeekOfYear, firstDayOfWeek) {
-        var d = new Date(Date.UTC(year, 0)).getUTCDay(),
+        // The only solid way to create an iso date from year is to use
+        // a string format (Date.UTC handles only years > 1900). Don't ask why
+        // it doesn't need Z at the end.
+        var d = new Date(leftZeroFill(year, 6, true) + '-01-01').getUTCDay(),
             daysToAdd, dayOfYear;
 
         weekday = weekday != null ? weekday : firstDayOfWeek;
@@ -18400,18 +18424,21 @@ the specific language governing permissions and limitations under the Apache Lic
 
     // duration
     moment.duration = function (input, key) {
-        var isDuration = moment.isDuration(input),
-            isNumber = (typeof input === 'number'),
-            duration = (isDuration ? input._input : (isNumber ? {} : input)),
+        var duration = input,
             // matching against regexp is expensive, do it on demand
             match = null,
             sign,
             ret,
-            parseIso,
-            timeEmpty,
-            dateTimeEmpty;
+            parseIso;
 
-        if (isNumber) {
+        if (moment.isDuration(input)) {
+            duration = {
+                ms: input._milliseconds,
+                d: input._days,
+                M: input._months
+            };
+        } else if (typeof input === 'number') {
+            duration = {};
             if (key) {
                 duration[key] = input;
             } else {
@@ -18450,7 +18477,7 @@ the specific language governing permissions and limitations under the Apache Lic
 
         ret = new Duration(duration);
 
-        if (isDuration && input.hasOwnProperty('_lang')) {
+        if (moment.isDuration(input) && input.hasOwnProperty('_lang')) {
             ret._lang = input._lang;
         }
 
@@ -18557,7 +18584,12 @@ the specific language governing permissions and limitations under the Apache Lic
         },
 
         toISOString : function () {
-            return formatMoment(moment(this).utc(), 'YYYY-MM-DD[T]HH:mm:ss.SSS[Z]');
+            var m = moment(this).utc();
+            if (0 < m.year() && m.year() <= 9999) {
+                return formatMoment(m, 'YYYY-MM-DD[T]HH:mm:ss.SSS[Z]');
+            } else {
+                return formatMoment(m, 'YYYYYY-MM-DD[T]HH:mm:ss.SSS[Z]');
+            }
         },
 
         toArray : function () {
@@ -18634,7 +18666,7 @@ the specific language governing permissions and limitations under the Apache Lic
         },
 
         diff : function (input, units, asFloat) {
-            var that = this._isUTC ? moment(input).zone(this._offset || 0) : moment(input).local(),
+            var that = makeAs(input, this),
                 zoneDiff = (this.zone() - that.zone()) * 6e4,
                 diff, output;
 
@@ -18676,13 +18708,16 @@ the specific language governing permissions and limitations under the Apache Lic
         },
 
         calendar : function () {
-            var diff = this.diff(moment().zone(this.zone()).startOf('day'), 'days', true),
+            // We want to compare the start of today, vs this.
+            // Getting start-of-today depends on whether we're zone'd or not.
+            var sod = makeAs(moment(), this).startOf('day'),
+                diff = this.diff(sod, 'days', true),
                 format = diff < -6 ? 'sameElse' :
-                diff < -1 ? 'lastWeek' :
-                diff < 0 ? 'lastDay' :
-                diff < 1 ? 'sameDay' :
-                diff < 2 ? 'nextDay' :
-                diff < 7 ? 'nextWeek' : 'sameElse';
+                    diff < -1 ? 'lastWeek' :
+                    diff < 0 ? 'lastDay' :
+                    diff < 1 ? 'sameDay' :
+                    diff < 2 ? 'nextDay' :
+                    diff < 7 ? 'nextWeek' : 'sameElse';
             return this.format(this.lang().calendar(format, this));
         },
 
@@ -18782,8 +18817,8 @@ the specific language governing permissions and limitations under the Apache Lic
         },
 
         isSame: function (input, units) {
-            units = typeof units !== 'undefined' ? units : 'millisecond';
-            return +this.clone().startOf(units) === +moment(input).startOf(units);
+            units = units || 'ms';
+            return +this.clone().startOf(units) === +makeAs(input, this).startOf(units);
         },
 
         min: function (other) {
@@ -18825,7 +18860,9 @@ the specific language governing permissions and limitations under the Apache Lic
         },
 
         parseZone : function () {
-            if (typeof this._i === 'string') {
+            if (this._tzm) {
+                this.zone(this._tzm);
+            } else if (typeof this._i === 'string') {
                 this.zone(this._i);
             }
             return this;
@@ -18849,6 +18886,10 @@ the specific language governing permissions and limitations under the Apache Lic
         dayOfYear : function (input) {
             var dayOfYear = round((moment(this).startOf('day') - moment(this).startOf('year')) / 864e5) + 1;
             return input == null ? dayOfYear : this.add("d", (input - dayOfYear));
+        },
+
+        quarter : function () {
+            return Math.ceil((this.month() + 1.0) / 3.0);
         },
 
         weekYear : function (input) {
@@ -19121,7 +19162,7 @@ the specific language governing permissions and limitations under the Apache Lic
         // add `moment` as a global object via a string identifier,
         // for Closure Compiler "advanced" mode
         if (deprecate) {
-            this.moment = function () {
+            global.moment = function () {
                 if (!warned && console && console.warn) {
                     warned = true;
                     console.warn(
@@ -19131,8 +19172,9 @@ the specific language governing permissions and limitations under the Apache Lic
                 }
                 return local_moment.apply(null, arguments);
             };
+            extend(global.moment, local_moment);
         } else {
-            this['moment'] = moment;
+            global['moment'] = moment;
         }
     }
 
@@ -19142,7 +19184,7 @@ the specific language governing permissions and limitations under the Apache Lic
         makeGlobal(true);
     } else if (typeof define === "function" && define.amd) {
         define("moment", function (require, exports, module) {
-            if (module.config().noGlobal !== true) {
+            if (module.config && module.config() && module.config().noGlobal !== true) {
                 // If user provided noGlobal, he is aware of global
                 makeGlobal(module.config().noGlobal === undefined);
             }
@@ -27619,11 +27661,16 @@ the specific language governing permissions and limitations under the Apache Lic
 })(this);
 
 // bower_components/olay/olay.js
-(function () {
+(function (root, factory) {
+  if (typeof define === 'function' && define.amd) {
+    define(['jquery'], factory);
+  } else if (typeof exports !== 'undefined') {
+    module.exports = factory(require('jquery'));
+  } else {
+    root.Olay = factory(root.jQuery);
+  }
+})(this, function ($) {
   'use strict';
-
-  // Store a local reference to jQuery.
-  var $ = window.jQuery;
 
   // Selector for tabbable elements.
   var tabbable =
@@ -27651,7 +27698,7 @@ the specific language governing permissions and limitations under the Apache Lic
   // ```js
   // var olay = new Olay('Howdy!', {duration: 5000});
   // ```
-  var Olay = window.Olay = function (el, options) {
+  var Olay = function (el, options) {
 
     // Extend the instance with its options.
     for (var name in options) this[name] = options[name];
@@ -27804,7 +27851,9 @@ the specific language governing permissions and limitations under the Apache Lic
 
   // Extend `Olay.prototype`.
   for (var name in proto) Olay.prototype[name] = proto[name];
-})();
+
+  return Olay;
+});
 
 // bower_components/async/lib/async.js
 /*global setImmediate: false, setTimeout: false, console: false */
@@ -28764,14 +28813,17 @@ the specific language governing permissions and limitations under the Apache Lic
 }());
 
 // node_modules/orgsync-javascript-api/orgsync-javascript-api.js
-(function () {
+(function (root, factory) {
+  if (typeof define === 'function' && define.amd) {
+    define(['jquery', 'underscore', 'superagent'], factory);
+  } else if (typeof exports !== 'undefined') {
+    module.exports =
+      factory(null, require('underscore'), require('superagent'));
+  } else {
+    root.OrgSyncApi = factory(root.jQuery, root._, root.superagent);
+  }
+})(this, function ($, _, superagent) {
   'use strict';
-
-  var node = typeof window === 'undefined';
-
-  var $ = node ? null : window.jQuery;
-  var _ = node ? require('underscore') : window._;
-  var superagent = node ? require('superagent') : window.superagent;
 
   var methods = ['get', 'post', 'patch', 'put', 'delete'];
 
@@ -28790,7 +28842,7 @@ the specific language governing permissions and limitations under the Apache Lic
       if (this.key) data.key = this.key;
       var url = this.urlRoot + path;
       if (superagent && this.cors) {
-        this.superagentReq(method, url, data, cb);
+        return this.superagentReq(method, url, data, cb);
       }
       return this.jQueryReq(method, url, data, cb);
     },
@@ -28840,17 +28892,23 @@ the specific language governing permissions and limitations under the Apache Lic
     return obj;
   }, {}));
 
-  node ? module.exports = OrgSyncApi : window.OrgSyncApi = OrgSyncApi;
-})();
+  return OrgSyncApi;
+});
 
 // bower_components/dpr/dpr.js
-(function () {
+(function (root, factory) {
+  if (typeof define === 'function' && define.amd) {
+    define(['jquery'], factory);
+  } else if (typeof exports !== 'undefined') {
+    module.exports = factory(require('jquery'));
+  } else {
+    root.dpr = factory(root.jQuery);
+  }
+})(this, function ($) {
   'use strict';
 
-  var $ = window.jQuery || window.Zepto;
-
   // Define the namespace
-  var dpr = window.dpr = function (arg) {
+  var dpr = function (arg) {
 
     // Return a formatted path if a path was given
     if (typeof arg === 'string') return format(arg);
@@ -28966,7 +29024,9 @@ the specific language governing permissions and limitations under the Apache Lic
     // Zepto)
     readyScan: true
   });
-})();
+
+  return dpr;
+});
 
 // bower_components/elementQuery/elementQuery.js
 /*! elementQuery | Author: Tyson Matanich (http://matanich.com), 2013 | License: MIT */
@@ -29637,11 +29697,14 @@ the specific language governing permissions and limitations under the Apache Lic
    * that is generated from the parse.
    */
   Writer.prototype.parse = function (template, tags) {
-    if (!(template in this.cache)) {
-      this.cache[template] = parseTemplate(template, tags);
+    var cache = this.cache;
+    var tokens = cache[template];
+
+    if (tokens == null) {
+      tokens = cache[template] = parseTemplate(template, tags);
     }
 
-    return this.cache[template];
+    return tokens;
   };
 
   /**
@@ -29719,8 +29782,8 @@ the specific language governing permissions and limitations under the Apache Lic
         break;
       case '>':
         if (!partials) continue;
-        value = this.parse(isFunction(partials) ? partials(token[1]) : partials[token[1]]);
-        if (value != null) buffer += this.renderTokens(value, context, partials, originalTemplate);
+        value = isFunction(partials) ? partials(token[1]) : partials[token[1]];
+        if (value != null) buffer += this.renderTokens(this.parse(value), context, partials, value);
         break;
       case '&':
         value = context.lookup(token[1]);
@@ -29740,7 +29803,7 @@ the specific language governing permissions and limitations under the Apache Lic
   };
 
   mustache.name = "mustache.js";
-  mustache.version = "0.8.0";
+  mustache.version = "0.8.1";
   mustache.tags = [ "{{", "}}" ];
 
   // All high-level mustache.* functions use this writer.
@@ -30819,12 +30882,12 @@ else {
 
   var _ = window._;
   var async = window.async;
-  var Backbone = window.Backbone;
+  var BackboneRelations = window.BackboneRelations;
 
-  var Model = app.Model = Backbone.Model.extend({
+  var Model = app.Model = BackboneRelations.Model.extend({
     constructor: function () {
       this.constructor.relations();
-      Backbone.Model.apply(this, arguments);
+      BackboneRelations.Model.apply(this, arguments);
     },
 
     sync: function (method, model, options) {
@@ -30867,7 +30930,7 @@ else {
     }
   });
 
-  Model.Collection = Backbone.Collection.extend({
+  Model.Collection = BackboneRelations.Collection.extend({
     model: Model,
 
     sync: Model.prototype.sync,
@@ -31446,154 +31509,154 @@ else {
 // jst/albums/index/index.mustache
 (function (root, factory) {
   if (typeof define === 'function' && define.amd) {
-    define('jst/albums/index/index', ['mustache', 'underscore'], factory);
-  }
-  if (typeof exports !== 'undefined') {
+    define(['mustache', 'underscore'], factory);
+  } else if (typeof exports !== 'undefined') {
     module.exports = factory(require('mustache'), require('underscore'));
+  } else {
+    (root.JST || (root.JST = {}))['jst/albums/index/index'] = factory(root['Mustache'], root['_']);
   }
-  (root.JST || (root.JST = {}))['jst/albums/index/index'] = factory(root['Mustache'], root['_']);
 })(this, function (Mustache, _) {
-  return (function () {
+  return ((function () {
   var source = "<ol class='js-list list' aria-live='assertive'></ol>\n";
   var fn = function (data, partials) {
     return Mustache.render(source, data, partials);
   };
   fn.source = source;
   return fn;
-})();
+})());
 });
 
 // jst/albums/index/list-item.mustache
 (function (root, factory) {
   if (typeof define === 'function' && define.amd) {
-    define('jst/albums/index/list-item', ['mustache', 'underscore'], factory);
-  }
-  if (typeof exports !== 'undefined') {
+    define(['mustache', 'underscore'], factory);
+  } else if (typeof exports !== 'undefined') {
     module.exports = factory(require('mustache'), require('underscore'));
+  } else {
+    (root.JST || (root.JST = {}))['jst/albums/index/list-item'] = factory(root['Mustache'], root['_']);
   }
-  (root.JST || (root.JST = {}))['jst/albums/index/list-item'] = factory(root['Mustache'], root['_']);
 })(this, function (Mustache, _) {
-  return (function () {
+  return ((function () {
   var source = "<a href='{{url}}' tabindex='1'>\n  <div class='image-container'><img src='{{avatar}}'></div>\n  <div class='name'>{{name}}</div>\n  <div class='count'>{{count}}</div>\n</a>\n";
   var fn = function (data, partials) {
     return Mustache.render(source, data, partials);
   };
   fn.source = source;
   return fn;
-})();
+})());
 });
 
 // jst/comments/show.mustache
 (function (root, factory) {
   if (typeof define === 'function' && define.amd) {
-    define('jst/comments/show', ['mustache', 'underscore'], factory);
-  }
-  if (typeof exports !== 'undefined') {
+    define(['mustache', 'underscore'], factory);
+  } else if (typeof exports !== 'undefined') {
     module.exports = factory(require('mustache'), require('underscore'));
+  } else {
+    (root.JST || (root.JST = {}))['jst/comments/show'] = factory(root['Mustache'], root['_']);
   }
-  (root.JST || (root.JST = {}))['jst/comments/show'] = factory(root['Mustache'], root['_']);
 })(this, function (Mustache, _) {
-  return (function () {
+  return ((function () {
   var source = "<div class='picture'>{{#avatar}}<img src='{{avatar}}'>{{/avatar}}</div>\n<div class='info'>\n  <div class='name'>{{name}}</div>\n  <div class='time'>{{time}}</div>\n  <div class='content'>{{content}}</div>\n</div>\n";
   var fn = function (data, partials) {
     return Mustache.render(source, data, partials);
   };
   fn.source = source;
   return fn;
-})();
+})());
 });
 
 // jst/days/show.mustache
 (function (root, factory) {
   if (typeof define === 'function' && define.amd) {
-    define('jst/days/show', ['mustache', 'underscore'], factory);
-  }
-  if (typeof exports !== 'undefined') {
+    define(['mustache', 'underscore'], factory);
+  } else if (typeof exports !== 'undefined') {
     module.exports = factory(require('mustache'), require('underscore'));
+  } else {
+    (root.JST || (root.JST = {}))['jst/days/show'] = factory(root['Mustache'], root['_']);
   }
-  (root.JST || (root.JST = {}))['jst/days/show'] = factory(root['Mustache'], root['_']);
 })(this, function (Mustache, _) {
-  return (function () {
+  return ((function () {
   var source = "<div class='js-long-date long-date'>{{longDate}}</div>\n<div class='js-short-date short-date js-jump-to' data-date='{{dataDate}}'>\n  {{shortDate}}\n</div>\n<ol class='js-event-dates-list event-dates-list'></ol>\n";
   var fn = function (data, partials) {
     return Mustache.render(source, data, partials);
   };
   fn.source = source;
   return fn;
-})();
+})());
 });
 
 // jst/event-dates/list-item.mustache
 (function (root, factory) {
   if (typeof define === 'function' && define.amd) {
-    define('jst/event-dates/list-item', ['mustache', 'underscore'], factory);
-  }
-  if (typeof exports !== 'undefined') {
+    define(['mustache', 'underscore'], factory);
+  } else if (typeof exports !== 'undefined') {
     module.exports = factory(require('mustache'), require('underscore'));
+  } else {
+    (root.JST || (root.JST = {}))['jst/event-dates/list-item'] = factory(root['Mustache'], root['_']);
   }
-  (root.JST || (root.JST = {}))['jst/event-dates/list-item'] = factory(root['Mustache'], root['_']);
 })(this, function (Mustache, _) {
-  return (function () {
+  return ((function () {
   var source = "<div class='picture-container'>{{#image}}<img src='{{image}}'>{{/image}}</div>\n<div class='info'>\n  <div class='short-time'>{{shortTime}}</div>\n  <div class='title'>\n    {{#filler}}&nbsp;{{/filler}}\n    {{^filler}}{{title}}{{/filler}}\n  </div>\n  <div class='long-time'>{{longTime}}</div>\n  <div class='location'>{{location}}</div>\n</div>\n";
   var fn = function (data, partials) {
     return Mustache.render(source, data, partials);
   };
   fn.source = source;
   return fn;
-})();
+})());
 });
 
 // jst/event-dates/show.mustache
 (function (root, factory) {
   if (typeof define === 'function' && define.amd) {
-    define('jst/event-dates/show', ['mustache', 'underscore'], factory);
-  }
-  if (typeof exports !== 'undefined') {
+    define(['mustache', 'underscore'], factory);
+  } else if (typeof exports !== 'undefined') {
     module.exports = factory(require('mustache'), require('underscore'));
+  } else {
+    (root.JST || (root.JST = {}))['jst/event-dates/show'] = factory(root['Mustache'], root['_']);
   }
-  (root.JST || (root.JST = {}))['jst/event-dates/show'] = factory(root['Mustache'], root['_']);
 })(this, function (Mustache, _) {
-  return (function () {
+  return ((function () {
   var source = "<div class='picture-container'>{{#image}}<img src='{{image}}'>{{/image}}</div>\n<div class='info'>\n  <div class='title'>{{title}}</div>\n  <div class='datetime'>\n    {{#isMultiDay}}\n    <div class='time'>{{multiDayStart}} to<br>{{multiDayEnd}}</div>\n    {{/isMultiDay}}\n    {{^isMultiDay}}\n    <div class='date'>{{singleDayDate}}</div>\n    <div class='time'>{{longTime}}</div>\n    {{/isMultiDay}}\n  </div>\n  <div class='location'>{{location}}</div>\n  <div class='portal'>{{portalName}}</div>\n  <div class='description'>{{description}}</div>\n  <a href='{{url}}' class='see-full-details'>See Full Details</a>\n</div>\n";
   var fn = function (data, partials) {
     return Mustache.render(source, data, partials);
   };
   fn.source = source;
   return fn;
-})();
+})());
 });
 
 // jst/event-filters/show.mustache
 (function (root, factory) {
   if (typeof define === 'function' && define.amd) {
-    define('jst/event-filters/show', ['mustache', 'underscore'], factory);
-  }
-  if (typeof exports !== 'undefined') {
+    define(['mustache', 'underscore'], factory);
+  } else if (typeof exports !== 'undefined') {
     module.exports = factory(require('mustache'), require('underscore'));
+  } else {
+    (root.JST || (root.JST = {}))['jst/event-filters/show'] = factory(root['Mustache'], root['_']);
   }
-  (root.JST || (root.JST = {}))['jst/event-filters/show'] = factory(root['Mustache'], root['_']);
 })(this, function (Mustache, _) {
-  return (function () {
+  return ((function () {
   var source = "<input type='checkbox' class='js-enabled enabled' checked\n>{{model.attributes.name}}\n";
   var fn = function (data, partials) {
     return Mustache.render(source, data, partials);
   };
   fn.source = source;
   return fn;
-})();
+})());
 });
 
 // jst/events/index.tmpl
 (function (root, factory) {
   if (typeof define === 'function' && define.amd) {
-    define('jst/events/index', ['mustache', 'underscore'], factory);
-  }
-  if (typeof exports !== 'undefined') {
+    define(['mustache', 'underscore'], factory);
+  } else if (typeof exports !== 'undefined') {
     module.exports = factory(require('mustache'), require('underscore'));
+  } else {
+    (root.JST || (root.JST = {}))['jst/events/index'] = factory(root['Mustache'], root['_']);
   }
-  (root.JST || (root.JST = {}))['jst/events/index'] = factory(root['Mustache'], root['_']);
 })(this, function (Mustache, _) {
-  return function(o){
+  return (function(o){
 var __t,__p='',__j=Array.prototype.join,print=function(){__p+=__j.call(arguments,'');};
 __p+='<div class=\'js-event-filters event-filters\'>\n  <input class=\'js-search-input search-input\' placeholder=\'Search Events\'>\n  <ol class=\'js-event-filters-list event-filters-list\'></ol>\n</div\n><div class=\'main\'>\n  <div class=\'top\'>\n    <div class=\'js-tz tz\'>'+
 ((__t=( o.tzDisplay() ))==null?'':_.escape(__t))+
@@ -31619,37 +31682,37 @@ __p+='\n        <option value=\''+
  }); 
 __p+='\n      </select\n      ><span class=\'js-next-month next-month\'>&gt;</span>\n    </div>\n  </div>\n  <div class=\'events\'>\n    <div class=\'js-days-of-week days-of-week\'></div>\n    <ol class=\'js-events-list events-list\'></ol>\n  </div>\n</div>\n';
 return __p;
-};
+});
 });
 
 // jst/news-posts/index/index.tmpl
 (function (root, factory) {
   if (typeof define === 'function' && define.amd) {
-    define('jst/news-posts/index/index', ['mustache', 'underscore'], factory);
-  }
-  if (typeof exports !== 'undefined') {
+    define(['mustache', 'underscore'], factory);
+  } else if (typeof exports !== 'undefined') {
     module.exports = factory(require('mustache'), require('underscore'));
+  } else {
+    (root.JST || (root.JST = {}))['jst/news-posts/index/index'] = factory(root['Mustache'], root['_']);
   }
-  (root.JST || (root.JST = {}))['jst/news-posts/index/index'] = factory(root['Mustache'], root['_']);
 })(this, function (Mustache, _) {
-  return function(o){
+  return (function(o){
 var __t,__p='',__j=Array.prototype.join,print=function(){__p+=__j.call(arguments,'');};
 __p+='<ol class=\'js-list list\' aria-live=\'assertive\'></ol>\n';
 return __p;
-};
+});
 });
 
 // jst/news-posts/index/list-item.tmpl
 (function (root, factory) {
   if (typeof define === 'function' && define.amd) {
-    define('jst/news-posts/index/list-item', ['mustache', 'underscore'], factory);
-  }
-  if (typeof exports !== 'undefined') {
+    define(['mustache', 'underscore'], factory);
+  } else if (typeof exports !== 'undefined') {
     module.exports = factory(require('mustache'), require('underscore'));
+  } else {
+    (root.JST || (root.JST = {}))['jst/news-posts/index/list-item'] = factory(root['Mustache'], root['_']);
   }
-  (root.JST || (root.JST = {}))['jst/news-posts/index/list-item'] = factory(root['Mustache'], root['_']);
 })(this, function (Mustache, _) {
-  return function(o){
+  return (function(o){
 var __t,__p='',__j=Array.prototype.join,print=function(){__p+=__j.call(arguments,'');};
 __p+='';
 
@@ -31683,20 +31746,20 @@ __p+='\n<a href=\''+
 ((__t=( o.model.truncatedBody(o.truncate) ))==null?'':_.escape(__t))+
 '</div>\n';
 return __p;
-};
+});
 });
 
 // jst/news-posts/show.tmpl
 (function (root, factory) {
   if (typeof define === 'function' && define.amd) {
-    define('jst/news-posts/show', ['mustache', 'underscore'], factory);
-  }
-  if (typeof exports !== 'undefined') {
+    define(['mustache', 'underscore'], factory);
+  } else if (typeof exports !== 'undefined') {
     module.exports = factory(require('mustache'), require('underscore'));
+  } else {
+    (root.JST || (root.JST = {}))['jst/news-posts/show'] = factory(root['Mustache'], root['_']);
   }
-  (root.JST || (root.JST = {}))['jst/news-posts/show'] = factory(root['Mustache'], root['_']);
 })(this, function (Mustache, _) {
-  return function(o){
+  return (function(o){
 var __t,__p='',__j=Array.prototype.join,print=function(){__p+=__j.call(arguments,'');};
 __p+='';
  var thumbnailUrl = o.model.get('thumbnail_url'); 
@@ -31718,80 +31781,80 @@ __p+='\n<div class=\'title\'>'+
 ((__t=( o.model.orgsyncUrl() ))==null?'':_.escape(__t))+
 '\' class=\'comment-on-orgsync\'>\n  Comment on OrgSync\n</a>\n';
 return __p;
-};
+});
 });
 
 // jst/photos/index/index.mustache
 (function (root, factory) {
   if (typeof define === 'function' && define.amd) {
-    define('jst/photos/index/index', ['mustache', 'underscore'], factory);
-  }
-  if (typeof exports !== 'undefined') {
+    define(['mustache', 'underscore'], factory);
+  } else if (typeof exports !== 'undefined') {
     module.exports = factory(require('mustache'), require('underscore'));
+  } else {
+    (root.JST || (root.JST = {}))['jst/photos/index/index'] = factory(root['Mustache'], root['_']);
   }
-  (root.JST || (root.JST = {}))['jst/photos/index/index'] = factory(root['Mustache'], root['_']);
 })(this, function (Mustache, _) {
-  return (function () {
+  return ((function () {
   var source = "<div class='info'>\n  <h1>{{name}}</h1>\n  <h2>{{count}}</h2>\n</div>\n<ol class='js-list list' aria-live='assertive'></ol>\n";
   var fn = function (data, partials) {
     return Mustache.render(source, data, partials);
   };
   fn.source = source;
   return fn;
-})();
+})());
 });
 
 // jst/photos/index/list-item.mustache
 (function (root, factory) {
   if (typeof define === 'function' && define.amd) {
-    define('jst/photos/index/list-item', ['mustache', 'underscore'], factory);
-  }
-  if (typeof exports !== 'undefined') {
+    define(['mustache', 'underscore'], factory);
+  } else if (typeof exports !== 'undefined') {
     module.exports = factory(require('mustache'), require('underscore'));
+  } else {
+    (root.JST || (root.JST = {}))['jst/photos/index/list-item'] = factory(root['Mustache'], root['_']);
   }
-  (root.JST || (root.JST = {}))['jst/photos/index/list-item'] = factory(root['Mustache'], root['_']);
 })(this, function (Mustache, _) {
-  return (function () {
+  return ((function () {
   var source = "<a href='{{url}}' tabindex='1'>\n  <div class='image-container'><img src='{{image}}'></div>\n  <div\n    class='\n      comment-count\n      {{^count}}none{{/count}}\n      {{#isPlural}}plural{{/isPlural}}\n    '\n  >\n    {{count}}\n  </div>\n</a>\n";
   var fn = function (data, partials) {
     return Mustache.render(source, data, partials);
   };
   fn.source = source;
   return fn;
-})();
+})());
 });
 
 // jst/photos/show.mustache
 (function (root, factory) {
   if (typeof define === 'function' && define.amd) {
-    define('jst/photos/show', ['mustache', 'underscore'], factory);
-  }
-  if (typeof exports !== 'undefined') {
+    define(['mustache', 'underscore'], factory);
+  } else if (typeof exports !== 'undefined') {
     module.exports = factory(require('mustache'), require('underscore'));
+  } else {
+    (root.JST || (root.JST = {}))['jst/photos/show'] = factory(root['Mustache'], root['_']);
   }
-  (root.JST || (root.JST = {}))['jst/photos/show'] = factory(root['Mustache'], root['_']);
 })(this, function (Mustache, _) {
-  return (function () {
+  return ((function () {
   var source = "<img src='{{image}}'>\n<div class='description{{^description}} js-none{{/description}}'>\n  {{description}}\n</div>\n<ol class='js-comments comments'></ol>\n<a href='{{url}}' class='comment-on-orgsync'>Comment on OrgSync</a>\n";
   var fn = function (data, partials) {
     return Mustache.render(source, data, partials);
   };
   fn.source = source;
   return fn;
-})();
+})());
 });
 
 // jst/portals/index/index.tmpl
 (function (root, factory) {
   if (typeof define === 'function' && define.amd) {
-    define('jst/portals/index/index', ['mustache', 'underscore'], factory);
-  }
-  if (typeof exports !== 'undefined') {
+    define(['mustache', 'underscore'], factory);
+  } else if (typeof exports !== 'undefined') {
     module.exports = factory(require('mustache'), require('underscore'));
+  } else {
+    (root.JST || (root.JST = {}))['jst/portals/index/index'] = factory(root['Mustache'], root['_']);
   }
-  (root.JST || (root.JST = {}))['jst/portals/index/index'] = factory(root['Mustache'], root['_']);
 })(this, function (Mustache, _) {
-  return function(o){
+  return (function(o){
 var __t,__p='',__j=Array.prototype.join,print=function(){__p+=__j.call(arguments,'');};
 __p+='<div class=\'filters\'>\n  <input class=\'js-search-input search-input\' placeholder=\'Search Portals\'\n  ><div class=\'js-umbrella-selector umbrella-selector\'></div\n  ><div class=\'js-category-selector category-selector\'></div\n  ><div class=\'letters\'>\n    <input type=\'button\' class=\'js-letter letter js-selected\' value=\'All\'\n    ';
 
@@ -31806,20 +31869,20 @@ __p+='\n    ><input\n      type=\'button\'\n      class=\'js-letter letter\'\n  
  }); 
 __p+='\n    ><input\n      type=\'button\'\n      class=\'js-letter letter\'\n      value=\'Other\'\n      data-re=\'[^a-z]\'\n    >\n  </div>\n  <div class=\'js-results-summary results-summary\'></div>\n</div>\n<ol class=\'js-list list\' aria-live=\'assertive\'></ol>\n';
 return __p;
-};
+});
 });
 
 // jst/portals/index/list-item.tmpl
 (function (root, factory) {
   if (typeof define === 'function' && define.amd) {
-    define('jst/portals/index/list-item', ['mustache', 'underscore'], factory);
-  }
-  if (typeof exports !== 'undefined') {
+    define(['mustache', 'underscore'], factory);
+  } else if (typeof exports !== 'undefined') {
     module.exports = factory(require('mustache'), require('underscore'));
+  } else {
+    (root.JST || (root.JST = {}))['jst/portals/index/list-item'] = factory(root['Mustache'], root['_']);
   }
-  (root.JST || (root.JST = {}))['jst/portals/index/list-item'] = factory(root['Mustache'], root['_']);
 })(this, function (Mustache, _) {
-  return function(o){
+  return (function(o){
 var __t,__p='',__j=Array.prototype.join,print=function(){__p+=__j.call(arguments,'');};
 __p+='';
 
@@ -31840,37 +31903,37 @@ __p+='\n<a href=\''+
 ((__t=( o.model.get('category').get('name') ))==null?'':_.escape(__t))+
 '</div>\n  </div>\n</a>\n';
 return __p;
-};
+});
 });
 
 // jst/portals/index/no-results.tmpl
 (function (root, factory) {
   if (typeof define === 'function' && define.amd) {
-    define('jst/portals/index/no-results', ['mustache', 'underscore'], factory);
-  }
-  if (typeof exports !== 'undefined') {
+    define(['mustache', 'underscore'], factory);
+  } else if (typeof exports !== 'undefined') {
     module.exports = factory(require('mustache'), require('underscore'));
+  } else {
+    (root.JST || (root.JST = {}))['jst/portals/index/no-results'] = factory(root['Mustache'], root['_']);
   }
-  (root.JST || (root.JST = {}))['jst/portals/index/no-results'] = factory(root['Mustache'], root['_']);
 })(this, function (Mustache, _) {
-  return function(o){
+  return (function(o){
 var __t,__p='',__j=Array.prototype.join,print=function(){__p+=__j.call(arguments,'');};
 __p+='<div class=\'js-no-results no-results\'>\n  <p>We\'re sorry, but no portals match your selected filters.</p>\n  <strong>Suggestions</strong>\n  <ul>\n    <li>Make sure all words are spelled correctly</li>\n    <li>Try different, or fewer, keywords</li>\n    <li>Clear all filters to return to all organizations</li>\n  </ul>\n  <input\n    type=\'button\'\n    class=\'js-clear-all-filters clear-all-filters\'\n    value=\'Clear all filters\'\n  >\n</div>\n';
 return __p;
-};
+});
 });
 
 // jst/portals/index/results-summary.tmpl
 (function (root, factory) {
   if (typeof define === 'function' && define.amd) {
-    define('jst/portals/index/results-summary', ['mustache', 'underscore'], factory);
-  }
-  if (typeof exports !== 'undefined') {
+    define(['mustache', 'underscore'], factory);
+  } else if (typeof exports !== 'undefined') {
     module.exports = factory(require('mustache'), require('underscore'));
+  } else {
+    (root.JST || (root.JST = {}))['jst/portals/index/results-summary'] = factory(root['Mustache'], root['_']);
   }
-  (root.JST || (root.JST = {}))['jst/portals/index/results-summary'] = factory(root['Mustache'], root['_']);
 })(this, function (Mustache, _) {
-  return function(o){
+  return (function(o){
 var __t,__p='',__j=Array.prototype.join,print=function(){__p+=__j.call(arguments,'');};
 __p+='Showing '+
 ((__t=( o.count ))==null?'':__t)+
@@ -31892,37 +31955,37 @@ __p+='\n<span class=\'active-filter\'>\n  <span class=\'filter-name\'>'+
  }); 
 __p+='\n<input\n  type=\'button\'\n  class=\'js-clear-all-filters clear-all-filters\'\n  value=\'Clear All Filters\'\n>\n';
 return __p;
-};
+});
 });
 
 // jst/portals/show/error.tmpl
 (function (root, factory) {
   if (typeof define === 'function' && define.amd) {
-    define('jst/portals/show/error', ['mustache', 'underscore'], factory);
-  }
-  if (typeof exports !== 'undefined') {
+    define(['mustache', 'underscore'], factory);
+  } else if (typeof exports !== 'undefined') {
     module.exports = factory(require('mustache'), require('underscore'));
+  } else {
+    (root.JST || (root.JST = {}))['jst/portals/show/error'] = factory(root['Mustache'], root['_']);
   }
-  (root.JST || (root.JST = {}))['jst/portals/show/error'] = factory(root['Mustache'], root['_']);
 })(this, function (Mustache, _) {
-  return function(o){
+  return (function(o){
 var __t,__p='',__j=Array.prototype.join,print=function(){__p+=__j.call(arguments,'');};
 __p+='Whoops! An error occurred.<br>\n<br>\n<button class=\'js-try-again\'>Try Again</button>\n';
 return __p;
-};
+});
 });
 
 // jst/portals/show/index.tmpl
 (function (root, factory) {
   if (typeof define === 'function' && define.amd) {
-    define('jst/portals/show/index', ['mustache', 'underscore'], factory);
-  }
-  if (typeof exports !== 'undefined') {
+    define(['mustache', 'underscore'], factory);
+  } else if (typeof exports !== 'undefined') {
     module.exports = factory(require('mustache'), require('underscore'));
+  } else {
+    (root.JST || (root.JST = {}))['jst/portals/show/index'] = factory(root['Mustache'], root['_']);
   }
-  (root.JST || (root.JST = {}))['jst/portals/show/index'] = factory(root['Mustache'], root['_']);
 })(this, function (Mustache, _) {
-  return function(o){
+  return (function(o){
 var __t,__p='',__j=Array.prototype.join,print=function(){__p+=__j.call(arguments,'');};
 __p+='<img src="'+
 ((__t=( o.model.picture() ))==null?'':_.escape(__t))+
@@ -31946,24 +32009,24 @@ __p+='\n  <a href="'+
 ((__t=( o.model.orgsyncUrl() ))==null?'':_.escape(__t))+
 '">On OrgSync.com</a>\n</div>\n';
 return __p;
-};
+});
 });
 
 // jst/portals/show/loading.tmpl
 (function (root, factory) {
   if (typeof define === 'function' && define.amd) {
-    define('jst/portals/show/loading', ['mustache', 'underscore'], factory);
-  }
-  if (typeof exports !== 'undefined') {
+    define(['mustache', 'underscore'], factory);
+  } else if (typeof exports !== 'undefined') {
     module.exports = factory(require('mustache'), require('underscore'));
+  } else {
+    (root.JST || (root.JST = {}))['jst/portals/show/loading'] = factory(root['Mustache'], root['_']);
   }
-  (root.JST || (root.JST = {}))['jst/portals/show/loading'] = factory(root['Mustache'], root['_']);
 })(this, function (Mustache, _) {
-  return function(o){
+  return (function(o){
 var __t,__p='',__j=Array.prototype.join,print=function(){__p+=__j.call(arguments,'');};
 __p+='<div class=\'loading\'></div>\n';
 return __p;
-};
+});
 });
 
 // views/view.js

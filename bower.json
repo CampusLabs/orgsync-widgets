@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "devDependencies": {
     "async": "x",
-    "backbone": "jashkenas/backbone#master",
+    "backbone": "x",
     "backbone-relations": "x",
     "bourbon": "d01f1d2ce9ab60520e57ccd897baa8c756949f18",
     "dpr": "x",
@@ -13,21 +13,16 @@
     "jstz": "https://bitbucket.org/pellepim/jstimezonedetect/get/f9e3e30e1e1f.zip",
     "olay": "x",
     "jquery": "1.10.x",
+    "requirejs": "x",
     "select2": "x",
     "tinycolor": "x",
     "underscore": "x",
     "underscore.string": "x"
   },
   "ignore": [
-    "jst",
-    "models",
-    "node_modules",
+    "images",
+    "scripts",
     "styles",
-    "themes",
-    "timezones",
-    "views"
-  ],
-  "resolutions": {
-    "backbone": "master"
-  }
+    "timezones"
+  ]
 }

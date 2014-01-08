@@ -1,0 +1,40 @@
+{
+  "baseUrl": "tmp",
+  "paths": {
+    "almond": "../bower_components/almond/almond",
+    "async": "../bower_components/async/lib/async",
+    "backbone-relations": "../bower_components/backbone-relations/backbone-relations",
+    "backbone": "../bower_components/backbone/backbone",
+    "dpr": "../bower_components/dpr/dpr",
+    "elementQuery": "../bower_components/elementQuery/elementQuery",
+    "herit": "../bower_components/herit/herit",
+    "jquery": "../bower_components/jquery/jquery",
+    "jstz": "../bower_components/jstz/jstz",
+    "moment-timezone": "../bower_components/moment-timezone/moment-timezone",
+    "moment-timezone.json": "../bower_components/moment-timezone/moment-timezone.json",
+    "moment": "../bower_components/moment/moment",
+    "olay": "../bower_components/olay/olay",
+    "requireLib": "../bower_components/requirejs/require",
+    "select2": "../bower_components/select2/select2",
+    "tinycolor": "../bower_components/tinycolor/tinycolor",
+    "text": "../bower_components/requirejs-text/text",
+    "underscore.string": "../bower_components/underscore.string/lib/underscore.string",
+    "underscore": "../bower_components/underscore/underscore",
+    "mustache": "../node_modules/mustache/mustache",
+    "orgsync-javascript-api": "../node_modules/orgsync-javascript-api/orgsync-javascript-api"
+  },
+  "shim": {
+    "backbone": {"exports": "Backbone", "deps": ["underscore", "jquery"]},
+    "elementQuery": {"exports": "elementQuery", "deps": ["jquery"]},
+    "jstz": {"exports": "jstz"},
+    "underscore": {"exports": "_"}
+  },
+  "include": ["app"],
+  "name": "almond",
+  "optimize": "none",
+  "out": "dist/orgsync-widgets.js",
+  "wrap": {
+    "startFile": "start.frag.js",
+    "endFile": "end.frag.js"
+  }
+}

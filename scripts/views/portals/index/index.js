@@ -121,9 +121,10 @@
           cb(self.select2Option(singular, plural, $el.select2('val')));
         }
       });
-      var id = this[singular + 'Id'];
-      if (!id) return;
-      $el.select2('val', id).addClass('js-none');
+      var name = this[singular];
+      var preselected = models.findWhere({name: name});
+      if (!preselected) return;
+      $el.select2('val', name);
       this.updateSelectorFilter(singular);
     },
 

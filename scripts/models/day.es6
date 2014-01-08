@@ -1,4 +1,4 @@
-import Model from 'models/model';
+import {Model, Collection} from 'models/base';
 import moment from 'moment';
 import {tz} from 'app';
 
@@ -40,7 +40,7 @@ var Day = Model.extend({
   id: function (date) { return date.format('YYYY-MM-DD'); }
 });
 
-Day.Collection = Model.Collection.extend({
+Day.Collection = Collection.extend({
   model: Day,
 
   comparator: 'id',

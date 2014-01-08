@@ -27,7 +27,14 @@ var app = {
   },
 
   // Only calculate the current timezone name once.
-  tz: jstz.determine().name()
+  tz: jstz.determine().name(),
+  
+  Olay: herit(Olay, {
+    constructor: function () {
+      Olay.apply(this, arguments);
+      this.$content.addClass('orgsync-widget');
+    }
+  })
 };
 
 // requestAnimationFrame shim.
@@ -49,13 +56,6 @@ if (!window.requestAnimationFrame) {
   };
   window.cancelAnimationFrame = clearTimeout;
 }
-
-Olay = herit(Olay, {
-  constructor: function () {
-    Olay.apply(this, arguments);
-    this.$content.addClass('orgsync-widget');
-  }
-});
 
 // Tell elementQuery to keep track of sizes for `.orgsync-widget`s
 elementQuery({

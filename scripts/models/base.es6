@@ -1,13 +1,13 @@
 import _ from 'underscore';
 import async from 'async';
 import {api} from 'app';
-import BackboneRelations from 'backbone-relations';
+import {Model, Collection} from 'backbone-relations';
 import require from 'require';
 
-var Model = BackboneRelations.Model.extend({
+var BaseModel = Model.extend({
   constructor: function () {
     this.constructor.relations();
-    BackboneRelations.Model.apply(this, arguments);
+    Model.apply(this, arguments);
   },
 
   sync: function (method, model, options) {
@@ -50,8 +50,8 @@ var Model = BackboneRelations.Model.extend({
   }
 });
 
-Model.Collection = BackboneRelations.Collection.extend({
-  model: Model,
+var BaseCollection = Collection.extend({
+  model: BaseModel,
 
   sync: Model.prototype.sync,
 
@@ -92,4 +92,5 @@ Model.Collection = BackboneRelations.Collection.extend({
   }
 });
 
-export default = Model;
+export var Model = BaseModel;
+export var Collection = BaseCollection;

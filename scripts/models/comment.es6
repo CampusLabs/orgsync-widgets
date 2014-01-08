@@ -1,4 +1,4 @@
-import Model from 'models/model';
+import {Model, Collection} from 'models/base';
 import moment from 'moment';
 
 var Comment = Model.extend({
@@ -11,7 +11,7 @@ var Comment = Model.extend({
   },
 });
 
-Comment.Collection = Model.Collection.extend({
+Comment.Collection = Collection.extend({
   model: Comment
 });
 

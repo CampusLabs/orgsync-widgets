@@ -1,4 +1,4 @@
-import Model from 'models/model';
+import {Model, Collection} from 'models/base';
 import tinycolor from 'tinycolor';
 
 var EventFilter = Model.extend({
@@ -9,7 +9,7 @@ var EventFilter = Model.extend({
   color: function () { return tinycolor(this.get('color')); }
 });
 
-EventFilter.Collection = Model.Collection.extend({
+EventFilter.Collection = Collection.extend({
   model: EventFilter,
 
   comparator: 'name',

@@ -1,5 +1,5 @@
 import $ from 'jquery';
-import Model from 'models/model';
+import {Model, Collection} from 'models/base';
 import moment from 'moments';
 
 var NewsPost = Model.extend({
@@ -31,7 +31,7 @@ var NewsPost = Model.extend({
   }
 });
 
-NewsPost.Collection = Model.Collection.extend({
+NewsPost.Collection = Collection.extend({
   model: NewsPost
 });
 

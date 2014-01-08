@@ -1,4 +1,4 @@
-import Model from 'models/model';
+import {Model, Collection} from 'models/base';
 
 var Photo = Model.extend({
   relations: {
@@ -11,7 +11,7 @@ var Photo = Model.extend({
   }
 });
 
-Photo.Collection = Model.Collection.extend({
+Photo.Collection = Collection.extend({
   model: Photo
 });
 

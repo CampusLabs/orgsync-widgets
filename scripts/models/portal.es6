@@ -1,5 +1,5 @@
 import _ from 'underscore';
-import Model from 'models/model';
+import {Model, Collection} from 'models/base';
 
 var Portal = Model.extend({
   relations: {
@@ -50,7 +50,7 @@ var Portal = Model.extend({
   }
 });
 
-Portal.Collection = Model.Collection.extend({
+Portal.Collection = Collection.extend({
   model: Portal,
 
   url: '/portals',

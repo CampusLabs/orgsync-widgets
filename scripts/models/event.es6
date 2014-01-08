@@ -1,5 +1,5 @@
 import _ from 'underscore';
-import Model from 'models/model';
+import {Model, Collection} from 'models/base';
 
 var Event = Model.extend({
   relations: {
@@ -38,7 +38,7 @@ var Event = Model.extend({
   }
 });
 
-Event.Collection = Model.Collection.extend({
+Event.Collection = Collection.extend({
   model: Event,
 
   comparator: 'name'

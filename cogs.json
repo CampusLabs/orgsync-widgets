@@ -1,10 +1,10 @@
 {
   "options": {
     "processors.tmpl.options.variable": "o",
-    "processors.jst.options.dependencies": [
-      {"module": "mustache", "variable": "Mustache"},
-      {"module": "underscore", "variable": "_"}
-    ],
+    "processors.jst.options.dependencies": {
+      "mustache": "Mustache",
+      "underscore": "_"
+    },
     "processors.es6.options.compatFix": true
   },
   "targets": {

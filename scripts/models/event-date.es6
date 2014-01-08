@@ -1,5 +1,5 @@
 import _ from 'underscore';
-import Model from 'models/model';
+import {Model, Collection} from 'models/base';
 import moment from 'moment';
 import {tz} from 'app';
 import require from 'require';
@@ -69,7 +69,7 @@ var EventDate = Model.extend({
   }
 });
 
-EventDate.Collection = Model.Collection.extend({
+EventDate.Collection = Collection.extend({
   model: EventDate,
 
   comparator: function (eventDate) { return eventDate.start(); }

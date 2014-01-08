@@ -1,4 +1,4 @@
-import Model from 'models/model';
+import {Model, Collection} from 'models/base';
 
 var Community = Model.extend({
   relations: {
@@ -11,7 +11,7 @@ var Community = Model.extend({
   urlRoot: '/communities'
 });
 
-Community.Collection = Model.Collection.extend({
+Community.Collection = Collection.extend({
   model: Community,
 
   url: '/communities'

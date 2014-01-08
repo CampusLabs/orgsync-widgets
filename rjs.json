@@ -29,7 +29,10 @@
     "jstz": {"exports": "jstz"},
     "underscore": {"exports": "_"}
   },
-  "include": ["app"],
+  "include": [
+    "app",
+    "views/albums/index/index"
+  ],
   "name": "almond",
   "optimize": "none",
   "out": "dist/orgsync-widgets.js",

@@ -1,4 +1,4 @@
-import Model from 'models/model';
+import {Model, Collection} from 'models/base';
 
 var Category = Model.extend({
   relations: {
@@ -6,7 +6,7 @@ var Category = Model.extend({
   }
 });
 
-Category.Collection = Model.Collection.extend({
+Category.Collection = Collection.extend({
   model: Category,
 
   comparator: 'name'

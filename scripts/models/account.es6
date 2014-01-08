@@ -1,8 +1,8 @@
-import Model from 'models/model';
+import {Model, Collection} from 'models/base';
 
 var Account = Model.extend({});
 
-Account.Collection = Model.Collection.extend({
+Account.Collection = Collection.extend({
   model: Account
 });
 

@@ -4,7 +4,6 @@ RJS=$(BIN)r.js
 WATCHY=$(BIN)watchy
 
 dev:
-	-rm -fr tmp
 	$(MAKE) -j cogs rjs server
 
 cogs:

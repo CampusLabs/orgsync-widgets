@@ -1,6 +1,6 @@
 import $ from 'jquery';
-import config from 'config';
 import _ from 'underscore';
+import config from 'config';
 import dpr from 'dpr';
 import elementQuery from 'elementQuery';
 import herit from 'herit';
@@ -8,34 +8,6 @@ import jstz from 'jstz';
 import moment from 'moment';
 import Olay from 'olay';
 import OrgSyncApi from 'orgsync-javascript-api';
-
-// Define our global namespace.
-var app = {
-  api: new OrgSyncApi(config.api),
-
-  // Views will add themselves to this map with their corresponding selectors.
-  // i.e. {'.js-osw-index-portals': app.IndexPortalsView}
-  selectorViewMap: {},
-
-  // In the ready function, run through the selectorViewMap and initialize
-  // views accordingly.
-  ready: function () {
-    $('html').addClass('dpr-' + dpr());
-    _.each(app.selectorViewMap, function (view, selector) {
-      $(selector).each(function () { new view({el: this}); });
-    });
-  },
-
-  // Only calculate the current timezone name once.
-  tz: jstz.determine().name(),
-  
-  Olay: herit(Olay, {
-    constructor: function () {
-      Olay.apply(this, arguments);
-      this.$content.addClass('orgsync-widget');
-    }
-  })
-};
 
 // requestAnimationFrame shim.
 _.each(['webkit', 'moz'], function (vendor) {
@@ -88,6 +60,31 @@ moment.updateOffset = function (date) {
   if (Math.abs(delta) <= 60) date.subtract('minutes', delta);
 };
 
-$(app.ready);
+// Views will add themselves to this map with their corresponding selectors.
+// i.e. {'.js-osw-index-portals': app.IndexPortalsView}
+var selectorViewMap = {};
 
-export default = app;
+var scan = function () {
+  $('html').addClass('dpr-' + dpr());
+  _.each(selectorViewMap, function (view, selector) {
+    $(selector).each(function () { new view({el: this}); });
+  });
+  elementQuery();
+};
+
+$(scan);
+
+var OriginalOlay = Olay;
+
+export {selectorViewMap, scan};
+export var api = new OrgSyncApi(config.api);
+export var Olay = herit(OriginalOlay, {
+  constructor: function () {
+    OriginalOlay.apply(this, arguments);
+    this.$content.addClass('orgsync-widget');
+  }
+});
+export var tz = jstz.determine().name();
+
+// Require each widget designated in the build.
+_.each(config.build.include, require);

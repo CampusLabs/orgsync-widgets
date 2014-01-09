@@ -1,13 +1,24 @@
 import _ from 'underscore';
-import {Model, Collection} from 'models/base';
 
-var Portal = Model.extend({
-  relations: {
-    umbrella: {hasOne: 'Portal', fk: 'umbrella_id'},
-    category: {hasOne: 'Category', fk: 'category_id'},
-    albums: {hasMany: 'Album', fk: 'portal_id'},
-    newsPosts: {hasMany: 'NewsPost', fk: 'portal_id', urlRoot: '/news'},
-    events: {hasMany: 'Event', fk: 'portal_id'}
+module Base from 'entities/base';
+module Album from 'entities/album';
+module Category from 'entities/category';
+module NewsPost from 'entities/news-post';
+module Event from 'entities/event';
+
+var Model = Base.Model.extend({
+  relations: function () {
+    return {
+      umbrella: {hasOne: Model, fk: 'umbrella_id'},
+      category: {hasOne: Category.Model, fk: 'category_id'},
+      albums: {hasMany: Album.Collection, fk: 'portal_id'},
+      newsPosts: {
+        hasMany: NewsPost.Collection,
+        fk: 'portal_id',
+        urlRoot: '/news'
+      },
+      events: {hasMany: Event.Collection, fk: 'portal_id'}
+    };
   },
 
   defaultPicture: 'https://orgsync.com/assets/no_org_profile_150.png',
@@ -50,8 +61,8 @@ var Portal = Model.extend({
   }
 });
 
-Portal.Collection = Collection.extend({
-  model: Portal,
+var Collection = Base.Collection.extend({
+  model: Model,
 
   url: '/portals',
 
@@ -65,4 +76,4 @@ Portal.Collection = Collection.extend({
   }
 });
 
-export default = Portal;
+export {Model, Collection};

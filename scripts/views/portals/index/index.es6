@@ -1,17 +1,19 @@
 import {selectorViewMap} from 'app';
 import $ from 'jquery';
+import select2 from 'select2';
 import _ from 'underscore';
+import _str from 'underscore.string';
 import BaseView from 'views/base';
 import InfiniteListView from 'views/infinite-list';
-import Community from 'models/community';
-import Portal from 'models/portal';
+module Community from 'entities/community';
+module Portal from 'entities/portal';
 import PortalsIndexListItemView from 'views/portals/index/list-item';
 import PortalsIndexTemplate from 'jst/portals/index/index';
 import PortalsIndexNoResultsTemplate from 'jst/portals/index/no-results';
 import PortalsIndexResultsSummaryTemplate from
   'jst/portals/index/results-summary';
 
-export default =
+export default
 selectorViewMap['.js-osw-portals-index'] =
 BaseView.extend({
   template: PortalsIndexTemplate,
@@ -46,7 +48,7 @@ BaseView.extend({
 
   initialize: function () {
     BaseView.prototype.initialize.apply(this, arguments);
-    this.community = new Community({id: this.communityId});
+    this.community = new Community.Model({id: this.communityId});
     var bootstrapped = this.portals;
     this.portals = this.community.get('portals');
     this.portals.set(bootstrapped);

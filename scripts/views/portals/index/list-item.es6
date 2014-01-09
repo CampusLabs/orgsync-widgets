@@ -1,13 +1,14 @@
 import {Olay} from 'app';
 import View from 'views/view';
 import PortalsShowView from 'views/portals/show';
+import PortalsIndexListItemTemplate from 'jst/portals/index/list-item';
 
-export default = View.extend({
+export default View.extend({
   tagName: 'li',
 
   className: 'js-list-item list-item',
 
-  template: window.JST['jst/portals/index/list-item'],
+  template: PortalsIndexListItemTemplate,
 
   events: {
     'click': 'open'

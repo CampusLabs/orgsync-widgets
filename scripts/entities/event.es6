@@ -1,12 +1,19 @@
 import _ from 'underscore';
-import {Model, Collection} from 'models/base';
 
-var Event = Model.extend({
-  relations: {
-    portal: {hasOne: 'portal', fk: 'portal_id'},
-    creator: {hasOne: 'account', fk: 'creator_id'},
-    dates: {hasMany: 'event-date', fk: 'event_id'},
-    comments: {hasMany: 'comment', fk: 'event_id'},
+module Base from 'entities/base';
+module Portal from 'entities/portal';
+module Account from 'entities/account';
+module EventDate from 'entities/event-date';
+module Comment from 'entities/comment';
+
+var Model = Base.Model.extend({
+  relations: function () {
+    return {
+      portal: {hasOne: Portal.Model, fk: 'portal_id'},
+      creator: {hasOne: Account.Model, fk: 'creator_id'},
+      dates: {hasMany: EventDate.Collection, fk: 'event_id'},
+      comments: {hasMany: Comment.Collection, fk: 'event_id'}
+    };
   },
 
   parse: function (data) {
@@ -38,10 +45,10 @@ var Event = Model.extend({
   }
 });
 
-Event.Collection = Collection.extend({
-  model: Event,
+var Collection = Base.Collection.extend({
+  model: Model,
 
   comparator: 'name'
 });
 
-export default = Event;
+export {Model, Collection};

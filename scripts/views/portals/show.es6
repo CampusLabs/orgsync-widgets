@@ -4,7 +4,7 @@ import PortalsShowTemplate from 'jst/portals/show/index';
 import PortalsShowLoadingTemplate from 'jst/portals/show/loading';
 import PortalsShowErrorTemplate from 'jst/portals/show/error';
 
-export default = BaseView.extend({
+export default BaseView.extend({
   className: 'js-osw-portals-show osw-portals-show',
 
   template: PortalsShowTemplate,

@@ -1,7 +1,7 @@
 import _ from 'underscore';
 import {View} from 'backbone';
 
-export default = View.extend({
+export default View.extend({
   constructor: function () {
     this.views = {};
     View.apply(this, arguments);

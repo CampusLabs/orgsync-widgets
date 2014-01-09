@@ -2,7 +2,6 @@
   "name": "orgsync-widgets",
   "version": "0.0.0",
   "devDependencies": {
-    "almond": "x",
     "async": "x",
     "backbone": "x",
     "backbone-relations": "x",

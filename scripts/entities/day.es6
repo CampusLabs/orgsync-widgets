@@ -1,11 +1,21 @@
-import {Model, Collection} from 'models/base';
 import moment from 'moment';
 import {tz} from 'app';
 
-var Day = Model.extend({
-  relations: {
-    eventDates: {hasMany: 'event-date', fk: 'day_id'},
-    events: {hasMany: 'event', via: 'eventDates#event', fk: 'event_id'}
+module Base from 'entities/base';
+module Day from 'entities/day';
+module EventDate from 'entities/event-date';
+module Event from 'entities/event';
+
+var Model = Base.Model.extend({
+  relations: function () {
+    return {
+      eventDates: {hasMany: EventDate.Collection, fk: 'day_id'},
+      events: {
+        hasMany: Event.Collection,
+        via: 'eventDates#event',
+        fk: 'event_id'
+      }
+    };
   },
 
   defaults: {
@@ -40,8 +50,8 @@ var Day = Model.extend({
   id: function (date) { return date.format('YYYY-MM-DD'); }
 });
 
-Day.Collection = Collection.extend({
-  model: Day,
+var Collection = Base.Collection.extend({
+  model: Model,
 
   comparator: 'id',
 
@@ -65,9 +75,9 @@ Day.Collection = Collection.extend({
     var start = eventDate.start().clone().startOf('day');
     var end = eventDate.end();
     do {
-      var id = Day.id(start);
+      var id = Day.Model.id(start);
       var day = this.get(id);
-      if (!day) this.add((day = new Day({id: id})).set('tz', tz));
+      if (!day) this.add((day = new Day.Model({id: id})).set('tz', tz));
       day.get('eventDates').add(eventDate);
     } while (start.add('days', 1).isBefore(end));
   },
@@ -83,7 +93,7 @@ Day.Collection = Collection.extend({
     // Fill in all gaps between the from and to days.
     from = from.clone();
     do {
-      var id = Day.id(from);
+      var id = Day.Model.id(from);
       var day = this.get(id);
       if (day) {
         if (fetched && from.isBefore(to)) day.set('fetched', Infinity);
@@ -97,4 +107,4 @@ Day.Collection = Collection.extend({
   }
 });
 
-export default = Day;
+export {Model, Collection};

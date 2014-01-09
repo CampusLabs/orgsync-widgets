@@ -1,12 +1,18 @@
 import $ from 'jquery';
-import {Model, Collection} from 'models/base';
-import moment from 'moments';
+import moment from 'moment';
 
-var NewsPost = Model.extend({
-  relations: {
-    portal: {hasOne: 'portal', fk: 'portal_id'},
-    creator: {hasOne: 'account', fk: 'creator_id'},
-    comments: {hasMany: 'comment', fk: 'news_post_id'}
+module Base from 'entities/base';
+module Portal from 'entities/portal';
+module Account from 'entities/account';
+module Comment from 'entities/comment';
+
+var Model = Base.Model.extend({
+  relations: function () {
+    return {
+      portal: {hasOne: Portal.Model, fk: 'portal_id'},
+      creator: {hasOne: Account.Model, fk: 'creator_id'},
+      comments: {hasMany: Comment.Collection, fk: 'news_post_id'}
+    };
   },
 
   orgsyncUrl: function () {
@@ -31,8 +37,8 @@ var NewsPost = Model.extend({
   }
 });
 
-NewsPost.Collection = Collection.extend({
-  model: NewsPost
+var Collection = Base.Collection.extend({
+  model: Model
 });
 
-export default = NewsPost;
+export {Model, Collection};

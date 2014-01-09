@@ -1,441 +1,72 @@
 ((function (root, factory) {
   if (typeof define === 'function' && define.amd) define(factory);
   else root.OrgSyncWidgets = factory();
-})(this, function () { 
+})(this, function () {
   return (function () {
-
-/**
- * @license almond 0.2.8 Copyright (c) 2011-2012, The Dojo Foundation All Rights Reserved.
- * Available via the MIT or new BSD license.
- * see: http://github.com/jrburke/almond for details
- */
-//Going sloppy to avoid 'use strict' string cost, but strict practices should
-//be followed.
-/*jslint sloppy: true */
-/*global setTimeout: false */
-
-var requirejs, require, define;
-(function (undef) {
-    var main, req, makeMap, handlers,
-        defined = {},
-        waiting = {},
-        config = {},
-        defining = {},
-        hasOwn = Object.prototype.hasOwnProperty,
-        aps = [].slice;
-
-    function hasProp(obj, prop) {
-        return hasOwn.call(obj, prop);
-    }
-
-    /**
-     * Given a relative module name, like ./something, normalize it to
-     * a real name that can be mapped to a path.
-     * @param {String} name the relative name
-     * @param {String} baseName a real name that the name arg is relative
-     * to.
-     * @returns {String} normalized name
-     */
-    function normalize(name, baseName) {
-        var nameParts, nameSegment, mapValue, foundMap, lastIndex,
-            foundI, foundStarMap, starI, i, j, part,
-            baseParts = baseName && baseName.split("/"),
-            map = config.map,
-            jsSuffixRegExp = /\.js$/,
-            starMap = (map && map['*']) || {};
-
-        //Adjust any relative paths.
-        if (name && name.charAt(0) === ".") {
-            //If have a base name, try to normalize against it,
-            //otherwise, assume it is a top-level require that will
-            //be relative to baseUrl in the end.
-            if (baseName) {
-                //Convert baseName to array, and lop off the last part,
-                //so that . matches that "directory" and not name of the baseName's
-                //module. For instance, baseName of "one/two/three", maps to
-                //"one/two/three.js", but we want the directory, "one/two" for
-                //this normalization.
-                baseParts = baseParts.slice(0, baseParts.length - 1);
-                name = name.split('/');
-                lastIndex = name.length - 1;
-
-                // Node .js allowance:
-                if (config.pkgs && hasProp(config.pkgs, baseParts[0]) &&
-                    jsSuffixRegExp.test(name[lastIndex])) {
-                    name[lastIndex] = name[lastIndex].replace(jsSuffixRegExp, '');
-                }
-
-                name = baseParts.concat(name);
-
-                //start trimDots
-                for (i = 0; i < name.length; i += 1) {
-                    part = name[i];
-                    if (part === ".") {
-                        name.splice(i, 1);
-                        i -= 1;
-                    } else if (part === "..") {
-                        if (i === 1 && (name[2] === '..' || name[0] === '..')) {
-                            //End of the line. Keep at least one non-dot
-                            //path segment at the front so it can be mapped
-                            //correctly to disk. Otherwise, there is likely
-                            //no path mapping for a path starting with '..'.
-                            //This can still fail, but catches the most reasonable
-                            //uses of ..
-                            break;
-                        } else if (i > 0) {
-                            name.splice(i - 1, 2);
-                            i -= 2;
-                        }
-                    }
-                }
-                //end trimDots
-
-                name = name.join("/");
-            } else if (name.indexOf('./') === 0) {
-                // No baseName, so this is ID is resolved relative
-                // to baseUrl, pull off the leading dot.
-                name = name.substring(2);
-            }
+    
+    // Neither require.js nor almond.js were working properly with the simple
+    // task of handling these `defines` and `requires` in a circular-dependency
+    // fashion, so this chunk of code acts as a more foolproof replacement for
+    // this project. It's also smaller in size than either of the above-
+    // mentioned.
+    var define, require;
+    (function () {
+      
+      
+      // Store modules in an object. 
+      var mods = {
+        require: {
+          isResolved: true,
+          exports: require
         }
-
-        //Apply map config if available.
-        if ((baseParts || starMap) && map) {
-            nameParts = name.split('/');
-
-            for (i = nameParts.length; i > 0; i -= 1) {
-                nameSegment = nameParts.slice(0, i).join("/");
-
-                if (baseParts) {
-                    //Find the longest baseName segment match in the config.
-                    //So, do joins on the biggest to smallest lengths of baseParts.
-                    for (j = baseParts.length; j > 0; j -= 1) {
-                        mapValue = map[baseParts.slice(0, j).join('/')];
-
-                        //baseName segment has  config, find if it has one for
-                        //this name.
-                        if (mapValue) {
-                            mapValue = mapValue[nameSegment];
-                            if (mapValue) {
-                                //Match, update name to the new value.
-                                foundMap = mapValue;
-                                foundI = i;
-                                break;
-                            }
-                        }
-                    }
-                }
-
-                if (foundMap) {
-                    break;
-                }
-
-                //Check for a star map match, but just hold on to it,
-                //if there is a shorter segment match later in a matching
-                //config, then favor over this star map.
-                if (!foundStarMap && starMap && starMap[nameSegment]) {
-                    foundStarMap = starMap[nameSegment];
-                    starI = i;
-                }
-            }
-
-            if (!foundMap && foundStarMap) {
-                foundMap = foundStarMap;
-                foundI = starI;
-            }
-
-            if (foundMap) {
-                nameParts.splice(0, foundI, foundMap);
-                name = nameParts.join('/');
-            }
+      };
+      
+      // Define just adds to the module storage.
+      define = function (name, deps, cb) {
+        if (!cb) {
+          cb = deps;
+          deps = [];
         }
-
-        return name;
-    }
-
-    function makeRequire(relName, forceSync) {
-        return function () {
-            //A version of a require function that passes a moduleName
-            //value for items that may need to
-            //look up paths relative to the moduleName
-            return req.apply(undef, aps.call(arguments, 0).concat([relName, forceSync]));
-        };
-    }
-
-    function makeNormalize(relName) {
-        return function (name) {
-            return normalize(name, relName);
-        };
-    }
-
-    function makeLoad(depName) {
-        return function (value) {
-            defined[depName] = value;
-        };
-    }
-
-    function callDep(name) {
-        if (hasProp(waiting, name)) {
-            var args = waiting[name];
-            delete waiting[name];
-            defining[name] = true;
-            main.apply(undef, args);
+        mods[name] = {isResolved: false, deps: deps, exports: {}, cb: cb};
+      };
+      
+      // Fool the masses.
+      define.amd = {};
+      
+      // Require the given module, recursively resolving dependencies as
+      // necessary.
+      require = function (name, requester) {
+        
+        // Special cases...
+        if (name === 'module') return mods[requester];
+        if (name === 'exports') return mods[requester].exports;
+        
+        // Pull the module from the storage object.
+        var mod = mods[name];
+        
+        // Return immediately if the module has already been resolved.
+        if (mod.isResolved) return mod.exports;
+        
+        // Otherwise, resolve all dependencies.
+        mod.isResolved = true;
+        var deps = mod.deps || [];
+        for (var i = 0, l = deps.length; i < l; ++i) {
+          deps[i] = require(deps[i], name);
         }
-
-        if (!hasProp(defined, name) && !hasProp(defining, name)) {
-            throw new Error('No ' + name);
-        }
-        return defined[name];
-    }
-
-    //Turns a plugin!resource to [plugin, resource]
-    //with the plugin being undefined if the name
-    //did not have a plugin prefix.
-    function splitPrefix(name) {
-        var prefix,
-            index = name ? name.indexOf('!') : -1;
-        if (index > -1) {
-            prefix = name.substring(0, index);
-            name = name.substring(index + 1, name.length);
-        }
-        return [prefix, name];
-    }
-
-    /**
-     * Makes a name map, normalizing the name, and using a plugin
-     * for normalization if necessary. Grabs a ref to plugin
-     * too, as an optimization.
-     */
-    makeMap = function (name, relName) {
-        var plugin,
-            parts = splitPrefix(name),
-            prefix = parts[0];
-
-        name = parts[1];
-
-        if (prefix) {
-            prefix = normalize(prefix, relName);
-            plugin = callDep(prefix);
-        }
-
-        //Normalize according
-        if (prefix) {
-            if (plugin && plugin.normalize) {
-                name = plugin.normalize(name, makeNormalize(relName));
-            } else {
-                name = normalize(name, relName);
-            }
-        } else {
-            name = normalize(name, relName);
-            parts = splitPrefix(name);
-            prefix = parts[0];
-            name = parts[1];
-            if (prefix) {
-                plugin = callDep(prefix);
-            }
-        }
-
-        //Using ridiculous property names for space reasons
-        return {
-            f: prefix ? prefix + '!' + name : name, //fullName
-            n: name,
-            pr: prefix,
-            p: plugin
-        };
-    };
-
-    function makeConfig(name) {
-        return function () {
-            return (config && config.config && config.config[name]) || {};
-        };
-    }
-
-    handlers = {
-        require: function (name) {
-            return makeRequire(name);
-        },
-        exports: function (name) {
-            var e = defined[name];
-            if (typeof e !== 'undefined') {
-                return e;
-            } else {
-                return (defined[name] = {});
-            }
-        },
-        module: function (name) {
-            return {
-                id: name,
-                uri: '',
-                exports: defined[name],
-                config: makeConfig(name)
-            };
-        }
-    };
-
-    main = function (name, deps, callback, relName) {
-        var cjsModule, depName, ret, map, i,
-            args = [],
-            callbackType = typeof callback,
-            usingExports;
-
-        //Use name if no relName
-        relName = relName || name;
-
-        //Call the callback to define the module, if necessary.
-        if (callbackType === 'undefined' || callbackType === 'function') {
-            //Pull out the defined dependencies and pass the ordered
-            //values to the callback.
-            //Default to [require, exports, module] if no deps
-            deps = !deps.length && callback.length ? ['require', 'exports', 'module'] : deps;
-            for (i = 0; i < deps.length; i += 1) {
-                map = makeMap(deps[i], relName);
-                depName = map.f;
-
-                //Fast path CommonJS standard dependencies.
-                if (depName === "require") {
-                    args[i] = handlers.require(name);
-                } else if (depName === "exports") {
-                    //CommonJS module spec 1.1
-                    args[i] = handlers.exports(name);
-                    usingExports = true;
-                } else if (depName === "module") {
-                    //CommonJS module spec 1.1
-                    cjsModule = args[i] = handlers.module(name);
-                } else if (hasProp(defined, depName) ||
-                           hasProp(waiting, depName) ||
-                           hasProp(defining, depName)) {
-                    args[i] = callDep(depName);
-                } else if (map.p) {
-                    map.p.load(map.n, makeRequire(relName, true), makeLoad(depName), {});
-                    args[i] = defined[depName];
-                } else {
-                    throw new Error(name + ' missing ' + depName);
-                }
-            }
-
-            ret = callback ? callback.apply(defined[name], args) : undefined;
-
-            if (name) {
-                //If setting exports via "module" is in play,
-                //favor that over return value and exports. After that,
-                //favor a non-undefined return value over exports use.
-                if (cjsModule && cjsModule.exports !== undef &&
-                        cjsModule.exports !== defined[name]) {
-                    defined[name] = cjsModule.exports;
-                } else if (ret !== undef || !usingExports) {
-                    //Use the return value from the function.
-                    defined[name] = ret;
-                }
-            }
-        } else if (name) {
-            //May just be an object definition for the module. Only
-            //worry about defining if have a module name.
-            defined[name] = callback;
-        }
-    };
-
-    requirejs = require = req = function (deps, callback, relName, forceSync, alt) {
-        var i, pkgs;
-        if (typeof deps === "string") {
-            if (handlers[deps]) {
-                //callback in this case is really relName
-                return handlers[deps](callback);
-            }
-            //Just return the module wanted. In this scenario, the
-            //deps arg is the module name, and second arg (if passed)
-            //is just the relName.
-            //Normalize module name, if it contains . or ..
-            return callDep(makeMap(deps, callback).f);
-        } else if (!deps.splice) {
-            //deps is a config object, not an array.
-            config = deps;
-            if (config.deps) {
-                req(config.deps, config.callback);
-            }
-            pkgs = config.packages;
-            if (config.packages) {
-                config.pkgs = {};
-                for (i = 0; i < pkgs.length; i++) {
-                    config.pkgs[pkgs[i].name || pkgs[i]] = true;
-                }
-            }
-            if (!callback) {
-                return;
-            }
-
-            if (callback.splice) {
-                //callback is an array, which means it is a dependency list.
-                //Adjust args if there are dependencies
-                deps = callback;
-                callback = relName;
-                relName = null;
-            } else {
-                deps = undef;
-            }
-        }
-
-        //Support require(['a'])
-        callback = callback || function () {};
-
-        //If relName is a function, it is an errback handler,
-        //so remove it.
-        if (typeof relName === 'function') {
-            relName = forceSync;
-            forceSync = alt;
-        }
-
-        //Simulate async callback;
-        if (forceSync) {
-            main(undef, deps, callback, relName);
-        } else {
-            //Using a non-zero value because of concern for what old browsers
-            //do, and latest browsers "upgrade" to 4 if lower value is used:
-            //http://www.whatwg.org/specs/web-apps/current-work/multipage/timers.html#dom-windowtimers-settimeout:
-            //If want a value immediately, use require('id') instead -- something
-            //that works in almond on the global level, but not guaranteed and
-            //unlikely to work in other AMD implementations.
-            setTimeout(function () {
-                main(undef, deps, callback, relName);
-            }, 4);
-        }
-
-        return req;
-    };
-
-    /**
-     * Just drops the config on the floor, but returns req in case
-     * the config return value is used.
-     */
-    req.config = function (cfg) {
-        return req(cfg);
-    };
-
-    /**
-     * Expose module registry for debugging and tooling
-     */
-    requirejs._defined = defined;
-
-    define = function (name, deps, callback) {
-
-        //This module may not have dependencies
-        if (!deps.splice) {
-            //deps is not an array, so probably means
-            //an object literal or factory function for
-            //the value. Adjust args.
-            callback = deps;
-            deps = [];
-        }
-
-        if (!hasProp(defined, name) && !hasProp(waiting, name)) {
-            waiting[name] = [name, deps, callback];
-        }
-    };
-
-    define.amd = {
-        jQuery: true
-    };
-}());
-
-define("almond", function(){});
+        var val =
+          typeof mod.cb === 'function' ?
+          mod.cb.apply(mod.exports, deps) :
+          mod.cb;
+          
+        // Delete obsolete variables.
+        delete mod.cb;
+        delete mod.deps;
+        
+        // Finally, return the module's return value, or fallback to exports.
+        if (val !== undefined) mod.exports = val;
+        return mod.exports;
+      };
+    })();
 
 /*!
  * jQuery JavaScript Library v1.10.2
@@ -10227,6 +9858,3268 @@ if ( typeof module === "object" && module && typeof module.exports === "object" 
 
 })( window );
 
+//     Underscore.js 1.5.2
+//     http://underscorejs.org
+//     (c) 2009-2013 Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
+//     Underscore may be freely distributed under the MIT license.
+
+(function() {
+
+  // Baseline setup
+  // --------------
+
+  // Establish the root object, `window` in the browser, or `exports` on the server.
+  var root = this;
+
+  // Save the previous value of the `_` variable.
+  var previousUnderscore = root._;
+
+  // Establish the object that gets returned to break out of a loop iteration.
+  var breaker = {};
+
+  // Save bytes in the minified (but not gzipped) version:
+  var ArrayProto = Array.prototype, ObjProto = Object.prototype, FuncProto = Function.prototype;
+
+  // Create quick reference variables for speed access to core prototypes.
+  var
+    push             = ArrayProto.push,
+    slice            = ArrayProto.slice,
+    concat           = ArrayProto.concat,
+    toString         = ObjProto.toString,
+    hasOwnProperty   = ObjProto.hasOwnProperty;
+
+  // All **ECMAScript 5** native function implementations that we hope to use
+  // are declared here.
+  var
+    nativeForEach      = ArrayProto.forEach,
+    nativeMap          = ArrayProto.map,
+    nativeReduce       = ArrayProto.reduce,
+    nativeReduceRight  = ArrayProto.reduceRight,
+    nativeFilter       = ArrayProto.filter,
+    nativeEvery        = ArrayProto.every,
+    nativeSome         = ArrayProto.some,
+    nativeIndexOf      = ArrayProto.indexOf,
+    nativeLastIndexOf  = ArrayProto.lastIndexOf,
+    nativeIsArray      = Array.isArray,
+    nativeKeys         = Object.keys,
+    nativeBind         = FuncProto.bind;
+
+  // Create a safe reference to the Underscore object for use below.
+  var _ = function(obj) {
+    if (obj instanceof _) return obj;
+    if (!(this instanceof _)) return new _(obj);
+    this._wrapped = obj;
+  };
+
+  // Export the Underscore object for **Node.js**, with
+  // backwards-compatibility for the old `require()` API. If we're in
+  // the browser, add `_` as a global object via a string identifier,
+  // for Closure Compiler "advanced" mode.
+  if (typeof exports !== 'undefined') {
+    if (typeof module !== 'undefined' && module.exports) {
+      exports = module.exports = _;
+    }
+    exports._ = _;
+  } else {
+    root._ = _;
+  }
+
+  // Current version.
+  _.VERSION = '1.5.2';
+
+  // Collection Functions
+  // --------------------
+
+  // The cornerstone, an `each` implementation, aka `forEach`.
+  // Handles objects with the built-in `forEach`, arrays, and raw objects.
+  // Delegates to **ECMAScript 5**'s native `forEach` if available.
+  var each = _.each = _.forEach = function(obj, iterator, context) {
+    if (obj == null) return;
+    if (nativeForEach && obj.forEach === nativeForEach) {
+      obj.forEach(iterator, context);
+    } else if (obj.length === +obj.length) {
+      for (var i = 0, length = obj.length; i < length; i++) {
+        if (iterator.call(context, obj[i], i, obj) === breaker) return;
+      }
+    } else {
+      var keys = _.keys(obj);
+      for (var i = 0, length = keys.length; i < length; i++) {
+        if (iterator.call(context, obj[keys[i]], keys[i], obj) === breaker) return;
+      }
+    }
+  };
+
+  // Return the results of applying the iterator to each element.
+  // Delegates to **ECMAScript 5**'s native `map` if available.
+  _.map = _.collect = function(obj, iterator, context) {
+    var results = [];
+    if (obj == null) return results;
+    if (nativeMap && obj.map === nativeMap) return obj.map(iterator, context);
+    each(obj, function(value, index, list) {
+      results.push(iterator.call(context, value, index, list));
+    });
+    return results;
+  };
+
+  var reduceError = 'Reduce of empty array with no initial value';
+
+  // **Reduce** builds up a single result from a list of values, aka `inject`,
+  // or `foldl`. Delegates to **ECMAScript 5**'s native `reduce` if available.
+  _.reduce = _.foldl = _.inject = function(obj, iterator, memo, context) {
+    var initial = arguments.length > 2;
+    if (obj == null) obj = [];
+    if (nativeReduce && obj.reduce === nativeReduce) {
+      if (context) iterator = _.bind(iterator, context);
+      return initial ? obj.reduce(iterator, memo) : obj.reduce(iterator);
+    }
+    each(obj, function(value, index, list) {
+      if (!initial) {
+        memo = value;
+        initial = true;
+      } else {
+        memo = iterator.call(context, memo, value, index, list);
+      }
+    });
+    if (!initial) throw new TypeError(reduceError);
+    return memo;
+  };
+
+  // The right-associative version of reduce, also known as `foldr`.
+  // Delegates to **ECMAScript 5**'s native `reduceRight` if available.
+  _.reduceRight = _.foldr = function(obj, iterator, memo, context) {
+    var initial = arguments.length > 2;
+    if (obj == null) obj = [];
+    if (nativeReduceRight && obj.reduceRight === nativeReduceRight) {
+      if (context) iterator = _.bind(iterator, context);
+      return initial ? obj.reduceRight(iterator, memo) : obj.reduceRight(iterator);
+    }
+    var length = obj.length;
+    if (length !== +length) {
+      var keys = _.keys(obj);
+      length = keys.length;
+    }
+    each(obj, function(value, index, list) {
+      index = keys ? keys[--length] : --length;
+      if (!initial) {
+        memo = obj[index];
+        initial = true;
+      } else {
+        memo = iterator.call(context, memo, obj[index], index, list);
+      }
+    });
+    if (!initial) throw new TypeError(reduceError);
+    return memo;
+  };
+
+  // Return the first value which passes a truth test. Aliased as `detect`.
+  _.find = _.detect = function(obj, iterator, context) {
+    var result;
+    any(obj, function(value, index, list) {
+      if (iterator.call(context, value, index, list)) {
+        result = value;
+        return true;
+      }
+    });
+    return result;
+  };
+
+  // Return all the elements that pass a truth test.
+  // Delegates to **ECMAScript 5**'s native `filter` if available.
+  // Aliased as `select`.
+  _.filter = _.select = function(obj, iterator, context) {
+    var results = [];
+    if (obj == null) return results;
+    if (nativeFilter && obj.filter === nativeFilter) return obj.filter(iterator, context);
+    each(obj, function(value, index, list) {
+      if (iterator.call(context, value, index, list)) results.push(value);
+    });
+    return results;
+  };
+
+  // Return all the elements for which a truth test fails.
+  _.reject = function(obj, iterator, context) {
+    return _.filter(obj, function(value, index, list) {
+      return !iterator.call(context, value, index, list);
+    }, context);
+  };
+
+  // Determine whether all of the elements match a truth test.
+  // Delegates to **ECMAScript 5**'s native `every` if available.
+  // Aliased as `all`.
+  _.every = _.all = function(obj, iterator, context) {
+    iterator || (iterator = _.identity);
+    var result = true;
+    if (obj == null) return result;
+    if (nativeEvery && obj.every === nativeEvery) return obj.every(iterator, context);
+    each(obj, function(value, index, list) {
+      if (!(result = result && iterator.call(context, value, index, list))) return breaker;
+    });
+    return !!result;
+  };
+
+  // Determine if at least one element in the object matches a truth test.
+  // Delegates to **ECMAScript 5**'s native `some` if available.
+  // Aliased as `any`.
+  var any = _.some = _.any = function(obj, iterator, context) {
+    iterator || (iterator = _.identity);
+    var result = false;
+    if (obj == null) return result;
+    if (nativeSome && obj.some === nativeSome) return obj.some(iterator, context);
+    each(obj, function(value, index, list) {
+      if (result || (result = iterator.call(context, value, index, list))) return breaker;
+    });
+    return !!result;
+  };
+
+  // Determine if the array or object contains a given value (using `===`).
+  // Aliased as `include`.
+  _.contains = _.include = function(obj, target) {
+    if (obj == null) return false;
+    if (nativeIndexOf && obj.indexOf === nativeIndexOf) return obj.indexOf(target) != -1;
+    return any(obj, function(value) {
+      return value === target;
+    });
+  };
+
+  // Invoke a method (with arguments) on every item in a collection.
+  _.invoke = function(obj, method) {
+    var args = slice.call(arguments, 2);
+    var isFunc = _.isFunction(method);
+    return _.map(obj, function(value) {
+      return (isFunc ? method : value[method]).apply(value, args);
+    });
+  };
+
+  // Convenience version of a common use case of `map`: fetching a property.
+  _.pluck = function(obj, key) {
+    return _.map(obj, function(value){ return value[key]; });
+  };
+
+  // Convenience version of a common use case of `filter`: selecting only objects
+  // containing specific `key:value` pairs.
+  _.where = function(obj, attrs, first) {
+    if (_.isEmpty(attrs)) return first ? void 0 : [];
+    return _[first ? 'find' : 'filter'](obj, function(value) {
+      for (var key in attrs) {
+        if (attrs[key] !== value[key]) return false;
+      }
+      return true;
+    });
+  };
+
+  // Convenience version of a common use case of `find`: getting the first object
+  // containing specific `key:value` pairs.
+  _.findWhere = function(obj, attrs) {
+    return _.where(obj, attrs, true);
+  };
+
+  // Return the maximum element or (element-based computation).
+  // Can't optimize arrays of integers longer than 65,535 elements.
+  // See [WebKit Bug 80797](https://bugs.webkit.org/show_bug.cgi?id=80797)
+  _.max = function(obj, iterator, context) {
+    if (!iterator && _.isArray(obj) && obj[0] === +obj[0] && obj.length < 65535) {
+      return Math.max.apply(Math, obj);
+    }
+    if (!iterator && _.isEmpty(obj)) return -Infinity;
+    var result = {computed : -Infinity, value: -Infinity};
+    each(obj, function(value, index, list) {
+      var computed = iterator ? iterator.call(context, value, index, list) : value;
+      computed > result.computed && (result = {value : value, computed : computed});
+    });
+    return result.value;
+  };
+
+  // Return the minimum element (or element-based computation).
+  _.min = function(obj, iterator, context) {
+    if (!iterator && _.isArray(obj) && obj[0] === +obj[0] && obj.length < 65535) {
+      return Math.min.apply(Math, obj);
+    }
+    if (!iterator && _.isEmpty(obj)) return Infinity;
+    var result = {computed : Infinity, value: Infinity};
+    each(obj, function(value, index, list) {
+      var computed = iterator ? iterator.call(context, value, index, list) : value;
+      computed < result.computed && (result = {value : value, computed : computed});
+    });
+    return result.value;
+  };
+
+  // Shuffle an array, using the modern version of the 
+  // [Fisher-Yates shuffle](http://en.wikipedia.org/wiki/Fisher–Yates_shuffle).
+  _.shuffle = function(obj) {
+    var rand;
+    var index = 0;
+    var shuffled = [];
+    each(obj, function(value) {
+      rand = _.random(index++);
+      shuffled[index - 1] = shuffled[rand];
+      shuffled[rand] = value;
+    });
+    return shuffled;
+  };
+
+  // Sample **n** random values from an array.
+  // If **n** is not specified, returns a single random element from the array.
+  // The internal `guard` argument allows it to work with `map`.
+  _.sample = function(obj, n, guard) {
+    if (arguments.length < 2 || guard) {
+      return obj[_.random(obj.length - 1)];
+    }
+    return _.shuffle(obj).slice(0, Math.max(0, n));
+  };
+
+  // An internal function to generate lookup iterators.
+  var lookupIterator = function(value) {
+    return _.isFunction(value) ? value : function(obj){ return obj[value]; };
+  };
+
+  // Sort the object's values by a criterion produced by an iterator.
+  _.sortBy = function(obj, value, context) {
+    var iterator = lookupIterator(value);
+    return _.pluck(_.map(obj, function(value, index, list) {
+      return {
+        value: value,
+        index: index,
+        criteria: iterator.call(context, value, index, list)
+      };
+    }).sort(function(left, right) {
+      var a = left.criteria;
+      var b = right.criteria;
+      if (a !== b) {
+        if (a > b || a === void 0) return 1;
+        if (a < b || b === void 0) return -1;
+      }
+      return left.index - right.index;
+    }), 'value');
+  };
+
+  // An internal function used for aggregate "group by" operations.
+  var group = function(behavior) {
+    return function(obj, value, context) {
+      var result = {};
+      var iterator = value == null ? _.identity : lookupIterator(value);
+      each(obj, function(value, index) {
+        var key = iterator.call(context, value, index, obj);
+        behavior(result, key, value);
+      });
+      return result;
+    };
+  };
+
+  // Groups the object's values by a criterion. Pass either a string attribute
+  // to group by, or a function that returns the criterion.
+  _.groupBy = group(function(result, key, value) {
+    (_.has(result, key) ? result[key] : (result[key] = [])).push(value);
+  });
+
+  // Indexes the object's values by a criterion, similar to `groupBy`, but for
+  // when you know that your index values will be unique.
+  _.indexBy = group(function(result, key, value) {
+    result[key] = value;
+  });
+
+  // Counts instances of an object that group by a certain criterion. Pass
+  // either a string attribute to count by, or a function that returns the
+  // criterion.
+  _.countBy = group(function(result, key) {
+    _.has(result, key) ? result[key]++ : result[key] = 1;
+  });
+
+  // Use a comparator function to figure out the smallest index at which
+  // an object should be inserted so as to maintain order. Uses binary search.
+  _.sortedIndex = function(array, obj, iterator, context) {
+    iterator = iterator == null ? _.identity : lookupIterator(iterator);
+    var value = iterator.call(context, obj);
+    var low = 0, high = array.length;
+    while (low < high) {
+      var mid = (low + high) >>> 1;
+      iterator.call(context, array[mid]) < value ? low = mid + 1 : high = mid;
+    }
+    return low;
+  };
+
+  // Safely create a real, live array from anything iterable.
+  _.toArray = function(obj) {
+    if (!obj) return [];
+    if (_.isArray(obj)) return slice.call(obj);
+    if (obj.length === +obj.length) return _.map(obj, _.identity);
+    return _.values(obj);
+  };
+
+  // Return the number of elements in an object.
+  _.size = function(obj) {
+    if (obj == null) return 0;
+    return (obj.length === +obj.length) ? obj.length : _.keys(obj).length;
+  };
+
+  // Array Functions
+  // ---------------
+
+  // Get the first element of an array. Passing **n** will return the first N
+  // values in the array. Aliased as `head` and `take`. The **guard** check
+  // allows it to work with `_.map`.
+  _.first = _.head = _.take = function(array, n, guard) {
+    if (array == null) return void 0;
+    return (n == null) || guard ? array[0] : slice.call(array, 0, n);
+  };
+
+  // Returns everything but the last entry of the array. Especially useful on
+  // the arguments object. Passing **n** will return all the values in
+  // the array, excluding the last N. The **guard** check allows it to work with
+  // `_.map`.
+  _.initial = function(array, n, guard) {
+    return slice.call(array, 0, array.length - ((n == null) || guard ? 1 : n));
+  };
+
+  // Get the last element of an array. Passing **n** will return the last N
+  // values in the array. The **guard** check allows it to work with `_.map`.
+  _.last = function(array, n, guard) {
+    if (array == null) return void 0;
+    if ((n == null) || guard) {
+      return array[array.length - 1];
+    } else {
+      return slice.call(array, Math.max(array.length - n, 0));
+    }
+  };
+
+  // Returns everything but the first entry of the array. Aliased as `tail` and `drop`.
+  // Especially useful on the arguments object. Passing an **n** will return
+  // the rest N values in the array. The **guard**
+  // check allows it to work with `_.map`.
+  _.rest = _.tail = _.drop = function(array, n, guard) {
+    return slice.call(array, (n == null) || guard ? 1 : n);
+  };
+
+  // Trim out all falsy values from an array.
+  _.compact = function(array) {
+    return _.filter(array, _.identity);
+  };
+
+  // Internal implementation of a recursive `flatten` function.
+  var flatten = function(input, shallow, output) {
+    if (shallow && _.every(input, _.isArray)) {
+      return concat.apply(output, input);
+    }
+    each(input, function(value) {
+      if (_.isArray(value) || _.isArguments(value)) {
+        shallow ? push.apply(output, value) : flatten(value, shallow, output);
+      } else {
+        output.push(value);
+      }
+    });
+    return output;
+  };
+
+  // Flatten out an array, either recursively (by default), or just one level.
+  _.flatten = function(array, shallow) {
+    return flatten(array, shallow, []);
+  };
+
+  // Return a version of the array that does not contain the specified value(s).
+  _.without = function(array) {
+    return _.difference(array, slice.call(arguments, 1));
+  };
+
+  // Produce a duplicate-free version of the array. If the array has already
+  // been sorted, you have the option of using a faster algorithm.
+  // Aliased as `unique`.
+  _.uniq = _.unique = function(array, isSorted, iterator, context) {
+    if (_.isFunction(isSorted)) {
+      context = iterator;
+      iterator = isSorted;
+      isSorted = false;
+    }
+    var initial = iterator ? _.map(array, iterator, context) : array;
+    var results = [];
+    var seen = [];
+    each(initial, function(value, index) {
+      if (isSorted ? (!index || seen[seen.length - 1] !== value) : !_.contains(seen, value)) {
+        seen.push(value);
+        results.push(array[index]);
+      }
+    });
+    return results;
+  };
+
+  // Produce an array that contains the union: each distinct element from all of
+  // the passed-in arrays.
+  _.union = function() {
+    return _.uniq(_.flatten(arguments, true));
+  };
+
+  // Produce an array that contains every item shared between all the
+  // passed-in arrays.
+  _.intersection = function(array) {
+    var rest = slice.call(arguments, 1);
+    return _.filter(_.uniq(array), function(item) {
+      return _.every(rest, function(other) {
+        return _.indexOf(other, item) >= 0;
+      });
+    });
+  };
+
+  // Take the difference between one array and a number of other arrays.
+  // Only the elements present in just the first array will remain.
+  _.difference = function(array) {
+    var rest = concat.apply(ArrayProto, slice.call(arguments, 1));
+    return _.filter(array, function(value){ return !_.contains(rest, value); });
+  };
+
+  // Zip together multiple lists into a single array -- elements that share
+  // an index go together.
+  _.zip = function() {
+    var length = _.max(_.pluck(arguments, "length").concat(0));
+    var results = new Array(length);
+    for (var i = 0; i < length; i++) {
+      results[i] = _.pluck(arguments, '' + i);
+    }
+    return results;
+  };
+
+  // Converts lists into objects. Pass either a single array of `[key, value]`
+  // pairs, or two parallel arrays of the same length -- one of keys, and one of
+  // the corresponding values.
+  _.object = function(list, values) {
+    if (list == null) return {};
+    var result = {};
+    for (var i = 0, length = list.length; i < length; i++) {
+      if (values) {
+        result[list[i]] = values[i];
+      } else {
+        result[list[i][0]] = list[i][1];
+      }
+    }
+    return result;
+  };
+
+  // If the browser doesn't supply us with indexOf (I'm looking at you, **MSIE**),
+  // we need this function. Return the position of the first occurrence of an
+  // item in an array, or -1 if the item is not included in the array.
+  // Delegates to **ECMAScript 5**'s native `indexOf` if available.
+  // If the array is large and already in sort order, pass `true`
+  // for **isSorted** to use binary search.
+  _.indexOf = function(array, item, isSorted) {
+    if (array == null) return -1;
+    var i = 0, length = array.length;
+    if (isSorted) {
+      if (typeof isSorted == 'number') {
+        i = (isSorted < 0 ? Math.max(0, length + isSorted) : isSorted);
+      } else {
+        i = _.sortedIndex(array, item);
+        return array[i] === item ? i : -1;
+      }
+    }
+    if (nativeIndexOf && array.indexOf === nativeIndexOf) return array.indexOf(item, isSorted);
+    for (; i < length; i++) if (array[i] === item) return i;
+    return -1;
+  };
+
+  // Delegates to **ECMAScript 5**'s native `lastIndexOf` if available.
+  _.lastIndexOf = function(array, item, from) {
+    if (array == null) return -1;
+    var hasIndex = from != null;
+    if (nativeLastIndexOf && array.lastIndexOf === nativeLastIndexOf) {
+      return hasIndex ? array.lastIndexOf(item, from) : array.lastIndexOf(item);
+    }
+    var i = (hasIndex ? from : array.length);
+    while (i--) if (array[i] === item) return i;
+    return -1;
+  };
+
+  // Generate an integer Array containing an arithmetic progression. A port of
+  // the native Python `range()` function. See
+  // [the Python documentation](http://docs.python.org/library/functions.html#range).
+  _.range = function(start, stop, step) {
+    if (arguments.length <= 1) {
+      stop = start || 0;
+      start = 0;
+    }
+    step = arguments[2] || 1;
+
+    var length = Math.max(Math.ceil((stop - start) / step), 0);
+    var idx = 0;
+    var range = new Array(length);
+
+    while(idx < length) {
+      range[idx++] = start;
+      start += step;
+    }
+
+    return range;
+  };
+
+  // Function (ahem) Functions
+  // ------------------
+
+  // Reusable constructor function for prototype setting.
+  var ctor = function(){};
+
+  // Create a function bound to a given object (assigning `this`, and arguments,
+  // optionally). Delegates to **ECMAScript 5**'s native `Function.bind` if
+  // available.
+  _.bind = function(func, context) {
+    var args, bound;
+    if (nativeBind && func.bind === nativeBind) return nativeBind.apply(func, slice.call(arguments, 1));
+    if (!_.isFunction(func)) throw new TypeError;
+    args = slice.call(arguments, 2);
+    return bound = function() {
+      if (!(this instanceof bound)) return func.apply(context, args.concat(slice.call(arguments)));
+      ctor.prototype = func.prototype;
+      var self = new ctor;
+      ctor.prototype = null;
+      var result = func.apply(self, args.concat(slice.call(arguments)));
+      if (Object(result) === result) return result;
+      return self;
+    };
+  };
+
+  // Partially apply a function by creating a version that has had some of its
+  // arguments pre-filled, without changing its dynamic `this` context.
+  _.partial = function(func) {
+    var args = slice.call(arguments, 1);
+    return function() {
+      return func.apply(this, args.concat(slice.call(arguments)));
+    };
+  };
+
+  // Bind all of an object's methods to that object. Useful for ensuring that
+  // all callbacks defined on an object belong to it.
+  _.bindAll = function(obj) {
+    var funcs = slice.call(arguments, 1);
+    if (funcs.length === 0) throw new Error("bindAll must be passed function names");
+    each(funcs, function(f) { obj[f] = _.bind(obj[f], obj); });
+    return obj;
+  };
+
+  // Memoize an expensive function by storing its results.
+  _.memoize = function(func, hasher) {
+    var memo = {};
+    hasher || (hasher = _.identity);
+    return function() {
+      var key = hasher.apply(this, arguments);
+      return _.has(memo, key) ? memo[key] : (memo[key] = func.apply(this, arguments));
+    };
+  };
+
+  // Delays a function for the given number of milliseconds, and then calls
+  // it with the arguments supplied.
+  _.delay = function(func, wait) {
+    var args = slice.call(arguments, 2);
+    return setTimeout(function(){ return func.apply(null, args); }, wait);
+  };
+
+  // Defers a function, scheduling it to run after the current call stack has
+  // cleared.
+  _.defer = function(func) {
+    return _.delay.apply(_, [func, 1].concat(slice.call(arguments, 1)));
+  };
+
+  // Returns a function, that, when invoked, will only be triggered at most once
+  // during a given window of time. Normally, the throttled function will run
+  // as much as it can, without ever going more than once per `wait` duration;
+  // but if you'd like to disable the execution on the leading edge, pass
+  // `{leading: false}`. To disable execution on the trailing edge, ditto.
+  _.throttle = function(func, wait, options) {
+    var context, args, result;
+    var timeout = null;
+    var previous = 0;
+    options || (options = {});
+    var later = function() {
+      previous = options.leading === false ? 0 : new Date;
+      timeout = null;
+      result = func.apply(context, args);
+    };
+    return function() {
+      var now = new Date;
+      if (!previous && options.leading === false) previous = now;
+      var remaining = wait - (now - previous);
+      context = this;
+      args = arguments;
+      if (remaining <= 0) {
+        clearTimeout(timeout);
+        timeout = null;
+        previous = now;
+        result = func.apply(context, args);
+      } else if (!timeout && options.trailing !== false) {
+        timeout = setTimeout(later, remaining);
+      }
+      return result;
+    };
+  };
+
+  // Returns a function, that, as long as it continues to be invoked, will not
+  // be triggered. The function will be called after it stops being called for
+  // N milliseconds. If `immediate` is passed, trigger the function on the
+  // leading edge, instead of the trailing.
+  _.debounce = function(func, wait, immediate) {
+    var timeout, args, context, timestamp, result;
+    return function() {
+      context = this;
+      args = arguments;
+      timestamp = new Date();
+      var later = function() {
+        var last = (new Date()) - timestamp;
+        if (last < wait) {
+          timeout = setTimeout(later, wait - last);
+        } else {
+          timeout = null;
+          if (!immediate) result = func.apply(context, args);
+        }
+      };
+      var callNow = immediate && !timeout;
+      if (!timeout) {
+        timeout = setTimeout(later, wait);
+      }
+      if (callNow) result = func.apply(context, args);
+      return result;
+    };
+  };
+
+  // Returns a function that will be executed at most one time, no matter how
+  // often you call it. Useful for lazy initialization.
+  _.once = function(func) {
+    var ran = false, memo;
+    return function() {
+      if (ran) return memo;
+      ran = true;
+      memo = func.apply(this, arguments);
+      func = null;
+      return memo;
+    };
+  };
+
+  // Returns the first function passed as an argument to the second,
+  // allowing you to adjust arguments, run code before and after, and
+  // conditionally execute the original function.
+  _.wrap = function(func, wrapper) {
+    return function() {
+      var args = [func];
+      push.apply(args, arguments);
+      return wrapper.apply(this, args);
+    };
+  };
+
+  // Returns a function that is the composition of a list of functions, each
+  // consuming the return value of the function that follows.
+  _.compose = function() {
+    var funcs = arguments;
+    return function() {
+      var args = arguments;
+      for (var i = funcs.length - 1; i >= 0; i--) {
+        args = [funcs[i].apply(this, args)];
+      }
+      return args[0];
+    };
+  };
+
+  // Returns a function that will only be executed after being called N times.
+  _.after = function(times, func) {
+    return function() {
+      if (--times < 1) {
+        return func.apply(this, arguments);
+      }
+    };
+  };
+
+  // Object Functions
+  // ----------------
+
+  // Retrieve the names of an object's properties.
+  // Delegates to **ECMAScript 5**'s native `Object.keys`
+  _.keys = nativeKeys || function(obj) {
+    if (obj !== Object(obj)) throw new TypeError('Invalid object');
+    var keys = [];
+    for (var key in obj) if (_.has(obj, key)) keys.push(key);
+    return keys;
+  };
+
+  // Retrieve the values of an object's properties.
+  _.values = function(obj) {
+    var keys = _.keys(obj);
+    var length = keys.length;
+    var values = new Array(length);
+    for (var i = 0; i < length; i++) {
+      values[i] = obj[keys[i]];
+    }
+    return values;
+  };
+
+  // Convert an object into a list of `[key, value]` pairs.
+  _.pairs = function(obj) {
+    var keys = _.keys(obj);
+    var length = keys.length;
+    var pairs = new Array(length);
+    for (var i = 0; i < length; i++) {
+      pairs[i] = [keys[i], obj[keys[i]]];
+    }
+    return pairs;
+  };
+
+  // Invert the keys and values of an object. The values must be serializable.
+  _.invert = function(obj) {
+    var result = {};
+    var keys = _.keys(obj);
+    for (var i = 0, length = keys.length; i < length; i++) {
+      result[obj[keys[i]]] = keys[i];
+    }
+    return result;
+  };
+
+  // Return a sorted list of the function names available on the object.
+  // Aliased as `methods`
+  _.functions = _.methods = function(obj) {
+    var names = [];
+    for (var key in obj) {
+      if (_.isFunction(obj[key])) names.push(key);
+    }
+    return names.sort();
+  };
+
+  // Extend a given object with all the properties in passed-in object(s).
+  _.extend = function(obj) {
+    each(slice.call(arguments, 1), function(source) {
+      if (source) {
+        for (var prop in source) {
+          obj[prop] = source[prop];
+        }
+      }
+    });
+    return obj;
+  };
+
+  // Return a copy of the object only containing the whitelisted properties.
+  _.pick = function(obj) {
+    var copy = {};
+    var keys = concat.apply(ArrayProto, slice.call(arguments, 1));
+    each(keys, function(key) {
+      if (key in obj) copy[key] = obj[key];
+    });
+    return copy;
+  };
+
+   // Return a copy of the object without the blacklisted properties.
+  _.omit = function(obj) {
+    var copy = {};
+    var keys = concat.apply(ArrayProto, slice.call(arguments, 1));
+    for (var key in obj) {
+      if (!_.contains(keys, key)) copy[key] = obj[key];
+    }
+    return copy;
+  };
+
+  // Fill in a given object with default properties.
+  _.defaults = function(obj) {
+    each(slice.call(arguments, 1), function(source) {
+      if (source) {
+        for (var prop in source) {
+          if (obj[prop] === void 0) obj[prop] = source[prop];
+        }
+      }
+    });
+    return obj;
+  };
+
+  // Create a (shallow-cloned) duplicate of an object.
+  _.clone = function(obj) {
+    if (!_.isObject(obj)) return obj;
+    return _.isArray(obj) ? obj.slice() : _.extend({}, obj);
+  };
+
+  // Invokes interceptor with the obj, and then returns obj.
+  // The primary purpose of this method is to "tap into" a method chain, in
+  // order to perform operations on intermediate results within the chain.
+  _.tap = function(obj, interceptor) {
+    interceptor(obj);
+    return obj;
+  };
+
+  // Internal recursive comparison function for `isEqual`.
+  var eq = function(a, b, aStack, bStack) {
+    // Identical objects are equal. `0 === -0`, but they aren't identical.
+    // See the [Harmony `egal` proposal](http://wiki.ecmascript.org/doku.php?id=harmony:egal).
+    if (a === b) return a !== 0 || 1 / a == 1 / b;
+    // A strict comparison is necessary because `null == undefined`.
+    if (a == null || b == null) return a === b;
+    // Unwrap any wrapped objects.
+    if (a instanceof _) a = a._wrapped;
+    if (b instanceof _) b = b._wrapped;
+    // Compare `[[Class]]` names.
+    var className = toString.call(a);
+    if (className != toString.call(b)) return false;
+    switch (className) {
+      // Strings, numbers, dates, and booleans are compared by value.
+      case '[object String]':
+        // Primitives and their corresponding object wrappers are equivalent; thus, `"5"` is
+        // equivalent to `new String("5")`.
+        return a == String(b);
+      case '[object Number]':
+        // `NaN`s are equivalent, but non-reflexive. An `egal` comparison is performed for
+        // other numeric values.
+        return a != +a ? b != +b : (a == 0 ? 1 / a == 1 / b : a == +b);
+      case '[object Date]':
+      case '[object Boolean]':
+        // Coerce dates and booleans to numeric primitive values. Dates are compared by their
+        // millisecond representations. Note that invalid dates with millisecond representations
+        // of `NaN` are not equivalent.
+        return +a == +b;
+      // RegExps are compared by their source patterns and flags.
+      case '[object RegExp]':
+        return a.source == b.source &&
+               a.global == b.global &&
+               a.multiline == b.multiline &&
+               a.ignoreCase == b.ignoreCase;
+    }
+    if (typeof a != 'object' || typeof b != 'object') return false;
+    // Assume equality for cyclic structures. The algorithm for detecting cyclic
+    // structures is adapted from ES 5.1 section 15.12.3, abstract operation `JO`.
+    var length = aStack.length;
+    while (length--) {
+      // Linear search. Performance is inversely proportional to the number of
+      // unique nested structures.
+      if (aStack[length] == a) return bStack[length] == b;
+    }
+    // Objects with different constructors are not equivalent, but `Object`s
+    // from different frames are.
+    var aCtor = a.constructor, bCtor = b.constructor;
+    if (aCtor !== bCtor && !(_.isFunction(aCtor) && (aCtor instanceof aCtor) &&
+                             _.isFunction(bCtor) && (bCtor instanceof bCtor))) {
+      return false;
+    }
+    // Add the first object to the stack of traversed objects.
+    aStack.push(a);
+    bStack.push(b);
+    var size = 0, result = true;
+    // Recursively compare objects and arrays.
+    if (className == '[object Array]') {
+      // Compare array lengths to determine if a deep comparison is necessary.
+      size = a.length;
+      result = size == b.length;
+      if (result) {
+        // Deep compare the contents, ignoring non-numeric properties.
+        while (size--) {
+          if (!(result = eq(a[size], b[size], aStack, bStack))) break;
+        }
+      }
+    } else {
+      // Deep compare objects.
+      for (var key in a) {
+        if (_.has(a, key)) {
+          // Count the expected number of properties.
+          size++;
+          // Deep compare each member.
+          if (!(result = _.has(b, key) && eq(a[key], b[key], aStack, bStack))) break;
+        }
+      }
+      // Ensure that both objects contain the same number of properties.
+      if (result) {
+        for (key in b) {
+          if (_.has(b, key) && !(size--)) break;
+        }
+        result = !size;
+      }
+    }
+    // Remove the first object from the stack of traversed objects.
+    aStack.pop();
+    bStack.pop();
+    return result;
+  };
+
+  // Perform a deep comparison to check if two objects are equal.
+  _.isEqual = function(a, b) {
+    return eq(a, b, [], []);
+  };
+
+  // Is a given array, string, or object empty?
+  // An "empty" object has no enumerable own-properties.
+  _.isEmpty = function(obj) {
+    if (obj == null) return true;
+    if (_.isArray(obj) || _.isString(obj)) return obj.length === 0;
+    for (var key in obj) if (_.has(obj, key)) return false;
+    return true;
+  };
+
+  // Is a given value a DOM element?
+  _.isElement = function(obj) {
+    return !!(obj && obj.nodeType === 1);
+  };
+
+  // Is a given value an array?
+  // Delegates to ECMA5's native Array.isArray
+  _.isArray = nativeIsArray || function(obj) {
+    return toString.call(obj) == '[object Array]';
+  };
+
+  // Is a given variable an object?
+  _.isObject = function(obj) {
+    return obj === Object(obj);
+  };
+
+  // Add some isType methods: isArguments, isFunction, isString, isNumber, isDate, isRegExp.
+  each(['Arguments', 'Function', 'String', 'Number', 'Date', 'RegExp'], function(name) {
+    _['is' + name] = function(obj) {
+      return toString.call(obj) == '[object ' + name + ']';
+    };
+  });
+
+  // Define a fallback version of the method in browsers (ahem, IE), where
+  // there isn't any inspectable "Arguments" type.
+  if (!_.isArguments(arguments)) {
+    _.isArguments = function(obj) {
+      return !!(obj && _.has(obj, 'callee'));
+    };
+  }
+
+  // Optimize `isFunction` if appropriate.
+  if (typeof (/./) !== 'function') {
+    _.isFunction = function(obj) {
+      return typeof obj === 'function';
+    };
+  }
+
+  // Is a given object a finite number?
+  _.isFinite = function(obj) {
+    return isFinite(obj) && !isNaN(parseFloat(obj));
+  };
+
+  // Is the given value `NaN`? (NaN is the only number which does not equal itself).
+  _.isNaN = function(obj) {
+    return _.isNumber(obj) && obj != +obj;
+  };
+
+  // Is a given value a boolean?
+  _.isBoolean = function(obj) {
+    return obj === true || obj === false || toString.call(obj) == '[object Boolean]';
+  };
+
+  // Is a given value equal to null?
+  _.isNull = function(obj) {
+    return obj === null;
+  };
+
+  // Is a given variable undefined?
+  _.isUndefined = function(obj) {
+    return obj === void 0;
+  };
+
+  // Shortcut function for checking if an object has a given property directly
+  // on itself (in other words, not on a prototype).
+  _.has = function(obj, key) {
+    return hasOwnProperty.call(obj, key);
+  };
+
+  // Utility Functions
+  // -----------------
+
+  // Run Underscore.js in *noConflict* mode, returning the `_` variable to its
+  // previous owner. Returns a reference to the Underscore object.
+  _.noConflict = function() {
+    root._ = previousUnderscore;
+    return this;
+  };
+
+  // Keep the identity function around for default iterators.
+  _.identity = function(value) {
+    return value;
+  };
+
+  // Run a function **n** times.
+  _.times = function(n, iterator, context) {
+    var accum = Array(Math.max(0, n));
+    for (var i = 0; i < n; i++) accum[i] = iterator.call(context, i);
+    return accum;
+  };
+
+  // Return a random integer between min and max (inclusive).
+  _.random = function(min, max) {
+    if (max == null) {
+      max = min;
+      min = 0;
+    }
+    return min + Math.floor(Math.random() * (max - min + 1));
+  };
+
+  // List of HTML entities for escaping.
+  var entityMap = {
+    escape: {
+      '&': '&amp;',
+      '<': '&lt;',
+      '>': '&gt;',
+      '"': '&quot;',
+      "'": '&#x27;'
+    }
+  };
+  entityMap.unescape = _.invert(entityMap.escape);
+
+  // Regexes containing the keys and values listed immediately above.
+  var entityRegexes = {
+    escape:   new RegExp('[' + _.keys(entityMap.escape).join('') + ']', 'g'),
+    unescape: new RegExp('(' + _.keys(entityMap.unescape).join('|') + ')', 'g')
+  };
+
+  // Functions for escaping and unescaping strings to/from HTML interpolation.
+  _.each(['escape', 'unescape'], function(method) {
+    _[method] = function(string) {
+      if (string == null) return '';
+      return ('' + string).replace(entityRegexes[method], function(match) {
+        return entityMap[method][match];
+      });
+    };
+  });
+
+  // If the value of the named `property` is a function then invoke it with the
+  // `object` as context; otherwise, return it.
+  _.result = function(object, property) {
+    if (object == null) return void 0;
+    var value = object[property];
+    return _.isFunction(value) ? value.call(object) : value;
+  };
+
+  // Add your own custom functions to the Underscore object.
+  _.mixin = function(obj) {
+    each(_.functions(obj), function(name) {
+      var func = _[name] = obj[name];
+      _.prototype[name] = function() {
+        var args = [this._wrapped];
+        push.apply(args, arguments);
+        return result.call(this, func.apply(_, args));
+      };
+    });
+  };
+
+  // Generate a unique integer id (unique within the entire client session).
+  // Useful for temporary DOM ids.
+  var idCounter = 0;
+  _.uniqueId = function(prefix) {
+    var id = ++idCounter + '';
+    return prefix ? prefix + id : id;
+  };
+
+  // By default, Underscore uses ERB-style template delimiters, change the
+  // following template settings to use alternative delimiters.
+  _.templateSettings = {
+    evaluate    : /<%([\s\S]+?)%>/g,
+    interpolate : /<%=([\s\S]+?)%>/g,
+    escape      : /<%-([\s\S]+?)%>/g
+  };
+
+  // When customizing `templateSettings`, if you don't want to define an
+  // interpolation, evaluation or escaping regex, we need one that is
+  // guaranteed not to match.
+  var noMatch = /(.)^/;
+
+  // Certain characters need to be escaped so that they can be put into a
+  // string literal.
+  var escapes = {
+    "'":      "'",
+    '\\':     '\\',
+    '\r':     'r',
+    '\n':     'n',
+    '\t':     't',
+    '\u2028': 'u2028',
+    '\u2029': 'u2029'
+  };
+
+  var escaper = /\\|'|\r|\n|\t|\u2028|\u2029/g;
+
+  // JavaScript micro-templating, similar to John Resig's implementation.
+  // Underscore templating handles arbitrary delimiters, preserves whitespace,
+  // and correctly escapes quotes within interpolated code.
+  _.template = function(text, data, settings) {
+    var render;
+    settings = _.defaults({}, settings, _.templateSettings);
+
+    // Combine delimiters into one regular expression via alternation.
+    var matcher = new RegExp([
+      (settings.escape || noMatch).source,
+      (settings.interpolate || noMatch).source,
+      (settings.evaluate || noMatch).source
+    ].join('|') + '|$', 'g');
+
+    // Compile the template source, escaping string literals appropriately.
+    var index = 0;
+    var source = "__p+='";
+    text.replace(matcher, function(match, escape, interpolate, evaluate, offset) {
+      source += text.slice(index, offset)
+        .replace(escaper, function(match) { return '\\' + escapes[match]; });
+
+      if (escape) {
+        source += "'+\n((__t=(" + escape + "))==null?'':_.escape(__t))+\n'";
+      }
+      if (interpolate) {
+        source += "'+\n((__t=(" + interpolate + "))==null?'':__t)+\n'";
+      }
+      if (evaluate) {
+        source += "';\n" + evaluate + "\n__p+='";
+      }
+      index = offset + match.length;
+      return match;
+    });
+    source += "';\n";
+
+    // If a variable is not specified, place data values in local scope.
+    if (!settings.variable) source = 'with(obj||{}){\n' + source + '}\n';
+
+    source = "var __t,__p='',__j=Array.prototype.join," +
+      "print=function(){__p+=__j.call(arguments,'');};\n" +
+      source + "return __p;\n";
+
+    try {
+      render = new Function(settings.variable || 'obj', '_', source);
+    } catch (e) {
+      e.source = source;
+      throw e;
+    }
+
+    if (data) return render(data, _);
+    var template = function(data) {
+      return render.call(this, data, _);
+    };
+
+    // Provide the compiled function source as a convenience for precompilation.
+    template.source = 'function(' + (settings.variable || 'obj') + '){\n' + source + '}';
+
+    return template;
+  };
+
+  // Add a "chain" function, which will delegate to the wrapper.
+  _.chain = function(obj) {
+    return _(obj).chain();
+  };
+
+  // OOP
+  // ---------------
+  // If Underscore is called as a function, it returns a wrapped object that
+  // can be used OO-style. This wrapper holds altered versions of all the
+  // underscore functions. Wrapped objects may be chained.
+
+  // Helper function to continue chaining intermediate results.
+  var result = function(obj) {
+    return this._chain ? _(obj).chain() : obj;
+  };
+
+  // Add all of the Underscore functions to the wrapper object.
+  _.mixin(_);
+
+  // Add all mutator Array functions to the wrapper.
+  each(['pop', 'push', 'reverse', 'shift', 'sort', 'splice', 'unshift'], function(name) {
+    var method = ArrayProto[name];
+    _.prototype[name] = function() {
+      var obj = this._wrapped;
+      method.apply(obj, arguments);
+      if ((name == 'shift' || name == 'splice') && obj.length === 0) delete obj[0];
+      return result.call(this, obj);
+    };
+  });
+
+  // Add all accessor Array functions to the wrapper.
+  each(['concat', 'join', 'slice'], function(name) {
+    var method = ArrayProto[name];
+    _.prototype[name] = function() {
+      return result.call(this, method.apply(this._wrapped, arguments));
+    };
+  });
+
+  _.extend(_.prototype, {
+
+    // Start chaining a wrapped Underscore object.
+    chain: function() {
+      this._chain = true;
+      return this;
+    },
+
+    // Extracts the result from a wrapped and chained object.
+    value: function() {
+      return this._wrapped;
+    }
+
+  });
+
+}).call(this);
+
+define("underscore", (function (global) {
+    return function () {
+        var ret, fn;
+        return ret || global._;
+    };
+}(this)));
+
+//     Backbone.js 1.1.0
+
+//     (c) 2010-2011 Jeremy Ashkenas, DocumentCloud Inc.
+//     (c) 2011-2013 Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
+//     Backbone may be freely distributed under the MIT license.
+//     For all details and documentation:
+//     http://backbonejs.org
+
+(function(){
+
+  // Initial Setup
+  // -------------
+
+  // Save a reference to the global object (`window` in the browser, `exports`
+  // on the server).
+  var root = this;
+
+  // Save the previous value of the `Backbone` variable, so that it can be
+  // restored later on, if `noConflict` is used.
+  var previousBackbone = root.Backbone;
+
+  // Create local references to array methods we'll want to use later.
+  var array = [];
+  var push = array.push;
+  var slice = array.slice;
+  var splice = array.splice;
+
+  // The top-level namespace. All public Backbone classes and modules will
+  // be attached to this. Exported for both the browser and the server.
+  var Backbone;
+  if (typeof exports !== 'undefined') {
+    Backbone = exports;
+  } else {
+    Backbone = root.Backbone = {};
+  }
+
+  // Current version of the library. Keep in sync with `package.json`.
+  Backbone.VERSION = '1.1.0';
+
+  // Require Underscore, if we're on the server, and it's not already present.
+  var _ = root._;
+  if (!_ && (typeof require !== 'undefined')) _ = require('underscore');
+
+  // For Backbone's purposes, jQuery, Zepto, Ender, or My Library (kidding) owns
+  // the `$` variable.
+  Backbone.$ = root.jQuery || root.Zepto || root.ender || root.$;
+
+  // Runs Backbone.js in *noConflict* mode, returning the `Backbone` variable
+  // to its previous owner. Returns a reference to this Backbone object.
+  Backbone.noConflict = function() {
+    root.Backbone = previousBackbone;
+    return this;
+  };
+
+  // Turn on `emulateHTTP` to support legacy HTTP servers. Setting this option
+  // will fake `"PATCH"`, `"PUT"` and `"DELETE"` requests via the `_method` parameter and
+  // set a `X-Http-Method-Override` header.
+  Backbone.emulateHTTP = false;
+
+  // Turn on `emulateJSON` to support legacy servers that can't deal with direct
+  // `application/json` requests ... will encode the body as
+  // `application/x-www-form-urlencoded` instead and will send the model in a
+  // form param named `model`.
+  Backbone.emulateJSON = false;
+
+  // Backbone.Events
+  // ---------------
+
+  // A module that can be mixed in to *any object* in order to provide it with
+  // custom events. You may bind with `on` or remove with `off` callback
+  // functions to an event; `trigger`-ing an event fires all callbacks in
+  // succession.
+  //
+  //     var object = {};
+  //     _.extend(object, Backbone.Events);
+  //     object.on('expand', function(){ alert('expanded'); });
+  //     object.trigger('expand');
+  //
+  var Events = Backbone.Events = {
+
+    // Bind an event to a `callback` function. Passing `"all"` will bind
+    // the callback to all events fired.
+    on: function(name, callback, context) {
+      if (!eventsApi(this, 'on', name, [callback, context]) || !callback) return this;
+      this._events || (this._events = {});
+      var events = this._events[name] || (this._events[name] = []);
+      events.push({callback: callback, context: context, ctx: context || this});
+      return this;
+    },
+
+    // Bind an event to only be triggered a single time. After the first time
+    // the callback is invoked, it will be removed.
+    once: function(name, callback, context) {
+      if (!eventsApi(this, 'once', name, [callback, context]) || !callback) return this;
+      var self = this;
+      var once = _.once(function() {
+        self.off(name, once);
+        callback.apply(this, arguments);
+      });
+      once._callback = callback;
+      return this.on(name, once, context);
+    },
+
+    // Remove one or many callbacks. If `context` is null, removes all
+    // callbacks with that function. If `callback` is null, removes all
+    // callbacks for the event. If `name` is null, removes all bound
+    // callbacks for all events.
+    off: function(name, callback, context) {
+      var retain, ev, events, names, i, l, j, k;
+      if (!this._events || !eventsApi(this, 'off', name, [callback, context])) return this;
+      if (!name && !callback && !context) {
+        this._events = {};
+        return this;
+      }
+      names = name ? [name] : _.keys(this._events);
+      for (i = 0, l = names.length; i < l; i++) {
+        name = names[i];
+        if (events = this._events[name]) {
+          this._events[name] = retain = [];
+          if (callback || context) {
+            for (j = 0, k = events.length; j < k; j++) {
+              ev = events[j];
+              if ((callback && callback !== ev.callback && callback !== ev.callback._callback) ||
+                  (context && context !== ev.context)) {
+                retain.push(ev);
+              }
+            }
+          }
+          if (!retain.length) delete this._events[name];
+        }
+      }
+
+      return this;
+    },
+
+    // Trigger one or many events, firing all bound callbacks. Callbacks are
+    // passed the same arguments as `trigger` is, apart from the event name
+    // (unless you're listening on `"all"`, which will cause your callback to
+    // receive the true name of the event as the first argument).
+    trigger: function(name) {
+      if (!this._events) return this;
+      var args = slice.call(arguments, 1);
+      if (!eventsApi(this, 'trigger', name, args)) return this;
+      var events = this._events[name];
+      var allEvents = this._events.all;
+      if (events) triggerEvents(events, args);
+      if (allEvents) triggerEvents(allEvents, arguments);
+      return this;
+    },
+
+    // Tell this object to stop listening to either specific events ... or
+    // to every object it's currently listening to.
+    stopListening: function(obj, name, callback) {
+      var listeningTo = this._listeningTo;
+      if (!listeningTo) return this;
+      var remove = !name && !callback;
+      if (!callback && typeof name === 'object') callback = this;
+      if (obj) (listeningTo = {})[obj._listenId] = obj;
+      for (var id in listeningTo) {
+        obj = listeningTo[id];
+        obj.off(name, callback, this);
+        if (remove || _.isEmpty(obj._events)) delete this._listeningTo[id];
+      }
+      return this;
+    }
+
+  };
+
+  // Regular expression used to split event strings.
+  var eventSplitter = /\s+/;
+
+  // Implement fancy features of the Events API such as multiple event
+  // names `"change blur"` and jQuery-style event maps `{change: action}`
+  // in terms of the existing API.
+  var eventsApi = function(obj, action, name, rest) {
+    if (!name) return true;
+
+    // Handle event maps.
+    if (typeof name === 'object') {
+      for (var key in name) {
+        obj[action].apply(obj, [key, name[key]].concat(rest));
+      }
+      return false;
+    }
+
+    // Handle space separated event names.
+    if (eventSplitter.test(name)) {
+      var names = name.split(eventSplitter);
+      for (var i = 0, l = names.length; i < l; i++) {
+        obj[action].apply(obj, [names[i]].concat(rest));
+      }
+      return false;
+    }
+
+    return true;
+  };
+
+  // A difficult-to-believe, but optimized internal dispatch function for
+  // triggering events. Tries to keep the usual cases speedy (most internal
+  // Backbone events have 3 arguments).
+  var triggerEvents = function(events, args) {
+    var ev, i = -1, l = events.length, a1 = args[0], a2 = args[1], a3 = args[2];
+    switch (args.length) {
+      case 0: while (++i < l) (ev = events[i]).callback.call(ev.ctx); return;
+      case 1: while (++i < l) (ev = events[i]).callback.call(ev.ctx, a1); return;
+      case 2: while (++i < l) (ev = events[i]).callback.call(ev.ctx, a1, a2); return;
+      case 3: while (++i < l) (ev = events[i]).callback.call(ev.ctx, a1, a2, a3); return;
+      default: while (++i < l) (ev = events[i]).callback.apply(ev.ctx, args);
+    }
+  };
+
+  var listenMethods = {listenTo: 'on', listenToOnce: 'once'};
+
+  // Inversion-of-control versions of `on` and `once`. Tell *this* object to
+  // listen to an event in another object ... keeping track of what it's
+  // listening to.
+  _.each(listenMethods, function(implementation, method) {
+    Events[method] = function(obj, name, callback) {
+      var listeningTo = this._listeningTo || (this._listeningTo = {});
+      var id = obj._listenId || (obj._listenId = _.uniqueId('l'));
+      listeningTo[id] = obj;
+      if (!callback && typeof name === 'object') callback = this;
+      obj[implementation](name, callback, this);
+      return this;
+    };
+  });
+
+  // Aliases for backwards compatibility.
+  Events.bind   = Events.on;
+  Events.unbind = Events.off;
+
+  // Allow the `Backbone` object to serve as a global event bus, for folks who
+  // want global "pubsub" in a convenient place.
+  _.extend(Backbone, Events);
+
+  // Backbone.Model
+  // --------------
+
+  // Backbone **Models** are the basic data object in the framework --
+  // frequently representing a row in a table in a database on your server.
+  // A discrete chunk of data and a bunch of useful, related methods for
+  // performing computations and transformations on that data.
+
+  // Create a new model with the specified attributes. A client id (`cid`)
+  // is automatically generated and assigned for you.
+  var Model = Backbone.Model = function(attributes, options) {
+    var attrs = attributes || {};
+    options || (options = {});
+    this.cid = _.uniqueId('c');
+    this.attributes = {};
+    if (options.collection) this.collection = options.collection;
+    if (options.parse) attrs = this.parse(attrs, options) || {};
+    attrs = _.defaults({}, attrs, _.result(this, 'defaults'));
+    this.set(attrs, options);
+    this.changed = {};
+    this.initialize.apply(this, arguments);
+  };
+
+  // Attach all inheritable methods to the Model prototype.
+  _.extend(Model.prototype, Events, {
+
+    // A hash of attributes whose current and previous value differ.
+    changed: null,
+
+    // The value returned during the last failed validation.
+    validationError: null,
+
+    // The default name for the JSON `id` attribute is `"id"`. MongoDB and
+    // CouchDB users may want to set this to `"_id"`.
+    idAttribute: 'id',
+
+    // Initialize is an empty function by default. Override it with your own
+    // initialization logic.
+    initialize: function(){},
+
+    // Return a copy of the model's `attributes` object.
+    toJSON: function(options) {
+      return _.clone(this.attributes);
+    },
+
+    // Proxy `Backbone.sync` by default -- but override this if you need
+    // custom syncing semantics for *this* particular model.
+    sync: function() {
+      return Backbone.sync.apply(this, arguments);
+    },
+
+    // Get the value of an attribute.
+    get: function(attr) {
+      return this.attributes[attr];
+    },
+
+    // Get the HTML-escaped value of an attribute.
+    escape: function(attr) {
+      return _.escape(this.get(attr));
+    },
+
+    // Returns `true` if the attribute contains a value that is not null
+    // or undefined.
+    has: function(attr) {
+      return this.get(attr) != null;
+    },
+
+    // Set a hash of model attributes on the object, firing `"change"`. This is
+    // the core primitive operation of a model, updating the data and notifying
+    // anyone who needs to know about the change in state. The heart of the beast.
+    set: function(key, val, options) {
+      var attr, attrs, unset, changes, silent, changing, prev, current;
+      if (key == null) return this;
+
+      // Handle both `"key", value` and `{key: value}` -style arguments.
+      if (typeof key === 'object') {
+        attrs = key;
+        options = val;
+      } else {
+        (attrs = {})[key] = val;
+      }
+
+      options || (options = {});
+
+      // Run validation.
+      if (!this._validate(attrs, options)) return false;
+
+      // Extract attributes and options.
+      unset           = options.unset;
+      silent          = options.silent;
+      changes         = [];
+      changing        = this._changing;
+      this._changing  = true;
+
+      if (!changing) {
+        this._previousAttributes = _.clone(this.attributes);
+        this.changed = {};
+      }
+      current = this.attributes, prev = this._previousAttributes;
+
+      // Check for changes of `id`.
+      if (this.idAttribute in attrs) this.id = attrs[this.idAttribute];
+
+      // For each `set` attribute, update or delete the current value.
+      for (attr in attrs) {
+        val = attrs[attr];
+        if (!_.isEqual(current[attr], val)) changes.push(attr);
+        if (!_.isEqual(prev[attr], val)) {
+          this.changed[attr] = val;
+        } else {
+          delete this.changed[attr];
+        }
+        unset ? delete current[attr] : current[attr] = val;
+      }
+
+      // Trigger all relevant attribute changes.
+      if (!silent) {
+        if (changes.length) this._pending = true;
+        for (var i = 0, l = changes.length; i < l; i++) {
+          this.trigger('change:' + changes[i], this, current[changes[i]], options);
+        }
+      }
+
+      // You might be wondering why there's a `while` loop here. Changes can
+      // be recursively nested within `"change"` events.
+      if (changing) return this;
+      if (!silent) {
+        while (this._pending) {
+          this._pending = false;
+          this.trigger('change', this, options);
+        }
+      }
+      this._pending = false;
+      this._changing = false;
+      return this;
+    },
+
+    // Remove an attribute from the model, firing `"change"`. `unset` is a noop
+    // if the attribute doesn't exist.
+    unset: function(attr, options) {
+      return this.set(attr, void 0, _.extend({}, options, {unset: true}));
+    },
+
+    // Clear all attributes on the model, firing `"change"`.
+    clear: function(options) {
+      var attrs = {};
+      for (var key in this.attributes) attrs[key] = void 0;
+      return this.set(attrs, _.extend({}, options, {unset: true}));
+    },
+
+    // Determine if the model has changed since the last `"change"` event.
+    // If you specify an attribute name, determine if that attribute has changed.
+    hasChanged: function(attr) {
+      if (attr == null) return !_.isEmpty(this.changed);
+      return _.has(this.changed, attr);
+    },
+
+    // Return an object containing all the attributes that have changed, or
+    // false if there are no changed attributes. Useful for determining what
+    // parts of a view need to be updated and/or what attributes need to be
+    // persisted to the server. Unset attributes will be set to undefined.
+    // You can also pass an attributes object to diff against the model,
+    // determining if there *would be* a change.
+    changedAttributes: function(diff) {
+      if (!diff) return this.hasChanged() ? _.clone(this.changed) : false;
+      var val, changed = false;
+      var old = this._changing ? this._previousAttributes : this.attributes;
+      for (var attr in diff) {
+        if (_.isEqual(old[attr], (val = diff[attr]))) continue;
+        (changed || (changed = {}))[attr] = val;
+      }
+      return changed;
+    },
+
+    // Get the previous value of an attribute, recorded at the time the last
+    // `"change"` event was fired.
+    previous: function(attr) {
+      if (attr == null || !this._previousAttributes) return null;
+      return this._previousAttributes[attr];
+    },
+
+    // Get all of the attributes of the model at the time of the previous
+    // `"change"` event.
+    previousAttributes: function() {
+      return _.clone(this._previousAttributes);
+    },
+
+    // Fetch the model from the server. If the server's representation of the
+    // model differs from its current attributes, they will be overridden,
+    // triggering a `"change"` event.
+    fetch: function(options) {
+      options = options ? _.clone(options) : {};
+      if (options.parse === void 0) options.parse = true;
+      var model = this;
+      var success = options.success;
+      options.success = function(resp) {
+        if (!model.set(model.parse(resp, options), options)) return false;
+        if (success) success(model, resp, options);
+        model.trigger('sync', model, resp, options);
+      };
+      wrapError(this, options);
+      return this.sync('read', this, options);
+    },
+
+    // Set a hash of model attributes, and sync the model to the server.
+    // If the server returns an attributes hash that differs, the model's
+    // state will be `set` again.
+    save: function(key, val, options) {
+      var attrs, method, xhr, attributes = this.attributes;
+
+      // Handle both `"key", value` and `{key: value}` -style arguments.
+      if (key == null || typeof key === 'object') {
+        attrs = key;
+        options = val;
+      } else {
+        (attrs = {})[key] = val;
+      }
+
+      options = _.extend({validate: true}, options);
+
+      // If we're not waiting and attributes exist, save acts as
+      // `set(attr).save(null, opts)` with validation. Otherwise, check if
+      // the model will be valid when the attributes, if any, are set.
+      if (attrs && !options.wait) {
+        if (!this.set(attrs, options)) return false;
+      } else {
+        if (!this._validate(attrs, options)) return false;
+      }
+
+      // Set temporary attributes if `{wait: true}`.
+      if (attrs && options.wait) {
+        this.attributes = _.extend({}, attributes, attrs);
+      }
+
+      // After a successful server-side save, the client is (optionally)
+      // updated with the server-side state.
+      if (options.parse === void 0) options.parse = true;
+      var model = this;
+      var success = options.success;
+      options.success = function(resp) {
+        // Ensure attributes are restored during synchronous saves.
+        model.attributes = attributes;
+        var serverAttrs = model.parse(resp, options);
+        if (options.wait) serverAttrs = _.extend(attrs || {}, serverAttrs);
+        if (_.isObject(serverAttrs) && !model.set(serverAttrs, options)) {
+          return false;
+        }
+        if (success) success(model, resp, options);
+        model.trigger('sync', model, resp, options);
+      };
+      wrapError(this, options);
+
+      method = this.isNew() ? 'create' : (options.patch ? 'patch' : 'update');
+      if (method === 'patch') options.attrs = attrs;
+      xhr = this.sync(method, this, options);
+
+      // Restore attributes.
+      if (attrs && options.wait) this.attributes = attributes;
+
+      return xhr;
+    },
+
+    // Destroy this model on the server if it was already persisted.
+    // Optimistically removes the model from its collection, if it has one.
+    // If `wait: true` is passed, waits for the server to respond before removal.
+    destroy: function(options) {
+      options = options ? _.clone(options) : {};
+      var model = this;
+      var success = options.success;
+
+      var destroy = function() {
+        model.trigger('destroy', model, model.collection, options);
+      };
+
+      options.success = function(resp) {
+        if (options.wait || model.isNew()) destroy();
+        if (success) success(model, resp, options);
+        if (!model.isNew()) model.trigger('sync', model, resp, options);
+      };
+
+      if (this.isNew()) {
+        options.success();
+        return false;
+      }
+      wrapError(this, options);
+
+      var xhr = this.sync('delete', this, options);
+      if (!options.wait) destroy();
+      return xhr;
+    },
+
+    // Default URL for the model's representation on the server -- if you're
+    // using Backbone's restful methods, override this to change the endpoint
+    // that will be called.
+    url: function() {
+      var base = _.result(this, 'urlRoot') || _.result(this.collection, 'url') || urlError();
+      if (this.isNew()) return base;
+      return base + (base.charAt(base.length - 1) === '/' ? '' : '/') + encodeURIComponent(this.id);
+    },
+
+    // **parse** converts a response into the hash of attributes to be `set` on
+    // the model. The default implementation is just to pass the response along.
+    parse: function(resp, options) {
+      return resp;
+    },
+
+    // Create a new model with identical attributes to this one.
+    clone: function() {
+      return new this.constructor(this.attributes);
+    },
+
+    // A model is new if it has never been saved to the server, and lacks an id.
+    isNew: function() {
+      return this.id == null;
+    },
+
+    // Check if the model is currently in a valid state.
+    isValid: function(options) {
+      return this._validate({}, _.extend(options || {}, { validate: true }));
+    },
+
+    // Run validation against the next complete set of model attributes,
+    // returning `true` if all is well. Otherwise, fire an `"invalid"` event.
+    _validate: function(attrs, options) {
+      if (!options.validate || !this.validate) return true;
+      attrs = _.extend({}, this.attributes, attrs);
+      var error = this.validationError = this.validate(attrs, options) || null;
+      if (!error) return true;
+      this.trigger('invalid', this, error, _.extend(options, {validationError: error}));
+      return false;
+    }
+
+  });
+
+  // Underscore methods that we want to implement on the Model.
+  var modelMethods = ['keys', 'values', 'pairs', 'invert', 'pick', 'omit'];
+
+  // Mix in each Underscore method as a proxy to `Model#attributes`.
+  _.each(modelMethods, function(method) {
+    Model.prototype[method] = function() {
+      var args = slice.call(arguments);
+      args.unshift(this.attributes);
+      return _[method].apply(_, args);
+    };
+  });
+
+  // Backbone.Collection
+  // -------------------
+
+  // If models tend to represent a single row of data, a Backbone Collection is
+  // more analagous to a table full of data ... or a small slice or page of that
+  // table, or a collection of rows that belong together for a particular reason
+  // -- all of the messages in this particular folder, all of the documents
+  // belonging to this particular author, and so on. Collections maintain
+  // indexes of their models, both in order, and for lookup by `id`.
+
+  // Create a new **Collection**, perhaps to contain a specific type of `model`.
+  // If a `comparator` is specified, the Collection will maintain
+  // its models in sort order, as they're added and removed.
+  var Collection = Backbone.Collection = function(models, options) {
+    options || (options = {});
+    if (options.model) this.model = options.model;
+    if (options.comparator !== void 0) this.comparator = options.comparator;
+    this._reset();
+    this.initialize.apply(this, arguments);
+    if (models) this.reset(models, _.extend({silent: true}, options));
+  };
+
+  // Default options for `Collection#set`.
+  var setOptions = {add: true, remove: true, merge: true};
+  var addOptions = {add: true, remove: false};
+
+  // Define the Collection's inheritable methods.
+  _.extend(Collection.prototype, Events, {
+
+    // The default model for a collection is just a **Backbone.Model**.
+    // This should be overridden in most cases.
+    model: Model,
+
+    // Initialize is an empty function by default. Override it with your own
+    // initialization logic.
+    initialize: function(){},
+
+    // The JSON representation of a Collection is an array of the
+    // models' attributes.
+    toJSON: function(options) {
+      return this.map(function(model){ return model.toJSON(options); });
+    },
+
+    // Proxy `Backbone.sync` by default.
+    sync: function() {
+      return Backbone.sync.apply(this, arguments);
+    },
+
+    // Add a model, or list of models to the set.
+    add: function(models, options) {
+      return this.set(models, _.extend({merge: false}, options, addOptions));
+    },
+
+    // Remove a model, or a list of models from the set.
+    remove: function(models, options) {
+      var singular = !_.isArray(models);
+      models = singular ? [models] : _.clone(models);
+      options || (options = {});
+      var i, l, index, model;
+      for (i = 0, l = models.length; i < l; i++) {
+        model = models[i] = this.get(models[i]);
+        if (!model) continue;
+        delete this._byId[model.id];
+        delete this._byId[model.cid];
+        index = this.indexOf(model);
+        this.models.splice(index, 1);
+        this.length--;
+        if (!options.silent) {
+          options.index = index;
+          model.trigger('remove', model, this, options);
+        }
+        this._removeReference(model);
+      }
+      return singular ? models[0] : models;
+    },
+
+    // Update a collection by `set`-ing a new list of models, adding new ones,
+    // removing models that are no longer present, and merging models that
+    // already exist in the collection, as necessary. Similar to **Model#set**,
+    // the core operation for updating the data contained by the collection.
+    set: function(models, options) {
+      options = _.defaults({}, options, setOptions);
+      if (options.parse) models = this.parse(models, options);
+      var singular = !_.isArray(models);
+      models = singular ? (models ? [models] : []) : _.clone(models);
+      var i, l, id, model, attrs, existing, sort;
+      var at = options.at;
+      var targetModel = this.model;
+      var sortable = this.comparator && (at == null) && options.sort !== false;
+      var sortAttr = _.isString(this.comparator) ? this.comparator : null;
+      var toAdd = [], toRemove = [], modelMap = {};
+      var add = options.add, merge = options.merge, remove = options.remove;
+      var order = !sortable && add && remove ? [] : false;
+
+      // Turn bare objects into model references, and prevent invalid models
+      // from being added.
+      for (i = 0, l = models.length; i < l; i++) {
+        attrs = models[i];
+        if (attrs instanceof Model) {
+          id = model = attrs;
+        } else {
+          id = attrs[targetModel.prototype.idAttribute];
+        }
+
+        // If a duplicate is found, prevent it from being added and
+        // optionally merge it into the existing model.
+        if (existing = this.get(id)) {
+          if (remove) modelMap[existing.cid] = true;
+          if (merge) {
+            attrs = attrs === model ? model.attributes : attrs;
+            if (options.parse) attrs = existing.parse(attrs, options);
+            existing.set(attrs, options);
+            if (sortable && !sort && existing.hasChanged(sortAttr)) sort = true;
+          }
+          models[i] = existing;
+
+        // If this is a new, valid model, push it to the `toAdd` list.
+        } else if (add) {
+          model = models[i] = this._prepareModel(attrs, options);
+          if (!model) continue;
+          toAdd.push(model);
+
+          // Listen to added models' events, and index models for lookup by
+          // `id` and by `cid`.
+          model.on('all', this._onModelEvent, this);
+          this._byId[model.cid] = model;
+          if (model.id != null) this._byId[model.id] = model;
+        }
+        if (order) order.push(existing || model);
+      }
+
+      // Remove nonexistent models if appropriate.
+      if (remove) {
+        for (i = 0, l = this.length; i < l; ++i) {
+          if (!modelMap[(model = this.models[i]).cid]) toRemove.push(model);
+        }
+        if (toRemove.length) this.remove(toRemove, options);
+      }
+
+      // See if sorting is needed, update `length` and splice in new models.
+      if (toAdd.length || (order && order.length)) {
+        if (sortable) sort = true;
+        this.length += toAdd.length;
+        if (at != null) {
+          for (i = 0, l = toAdd.length; i < l; i++) {
+            this.models.splice(at + i, 0, toAdd[i]);
+          }
+        } else {
+          if (order) this.models.length = 0;
+          var orderedModels = order || toAdd;
+          for (i = 0, l = orderedModels.length; i < l; i++) {
+            this.models.push(orderedModels[i]);
+          }
+        }
+      }
+
+      // Silently sort the collection if appropriate.
+      if (sort) this.sort({silent: true});
+
+      // Unless silenced, it's time to fire all appropriate add/sort events.
+      if (!options.silent) {
+        for (i = 0, l = toAdd.length; i < l; i++) {
+          (model = toAdd[i]).trigger('add', model, this, options);
+        }
+        if (sort || (order && order.length)) this.trigger('sort', this, options);
+      }
+      
+      // Return the added (or merged) model (or models).
+      return singular ? models[0] : models;
+    },
+
+    // When you have more items than you want to add or remove individually,
+    // you can reset the entire set with a new list of models, without firing
+    // any granular `add` or `remove` events. Fires `reset` when finished.
+    // Useful for bulk operations and optimizations.
+    reset: function(models, options) {
+      options || (options = {});
+      for (var i = 0, l = this.models.length; i < l; i++) {
+        this._removeReference(this.models[i]);
+      }
+      options.previousModels = this.models;
+      this._reset();
+      models = this.add(models, _.extend({silent: true}, options));
+      if (!options.silent) this.trigger('reset', this, options);
+      return models;
+    },
+
+    // Add a model to the end of the collection.
+    push: function(model, options) {
+      return this.add(model, _.extend({at: this.length}, options));
+    },
+
+    // Remove a model from the end of the collection.
+    pop: function(options) {
+      var model = this.at(this.length - 1);
+      this.remove(model, options);
+      return model;
+    },
+
+    // Add a model to the beginning of the collection.
+    unshift: function(model, options) {
+      return this.add(model, _.extend({at: 0}, options));
+    },
+
+    // Remove a model from the beginning of the collection.
+    shift: function(options) {
+      var model = this.at(0);
+      this.remove(model, options);
+      return model;
+    },
+
+    // Slice out a sub-array of models from the collection.
+    slice: function() {
+      return slice.apply(this.models, arguments);
+    },
+
+    // Get a model from the set by id.
+    get: function(obj) {
+      if (obj == null) return void 0;
+      return this._byId[obj.id] || this._byId[obj.cid] || this._byId[obj];
+    },
+
+    // Get the model at the given index.
+    at: function(index) {
+      return this.models[index];
+    },
+
+    // Return models with matching attributes. Useful for simple cases of
+    // `filter`.
+    where: function(attrs, first) {
+      if (_.isEmpty(attrs)) return first ? void 0 : [];
+      return this[first ? 'find' : 'filter'](function(model) {
+        for (var key in attrs) {
+          if (attrs[key] !== model.get(key)) return false;
+        }
+        return true;
+      });
+    },
+
+    // Return the first model with matching attributes. Useful for simple cases
+    // of `find`.
+    findWhere: function(attrs) {
+      return this.where(attrs, true);
+    },
+
+    // Force the collection to re-sort itself. You don't need to call this under
+    // normal circumstances, as the set will maintain sort order as each item
+    // is added.
+    sort: function(options) {
+      if (!this.comparator) throw new Error('Cannot sort a set without a comparator');
+      options || (options = {});
+
+      // Run sort based on type of `comparator`.
+      if (_.isString(this.comparator) || this.comparator.length === 1) {
+        this.models = this.sortBy(this.comparator, this);
+      } else {
+        this.models.sort(_.bind(this.comparator, this));
+      }
+
+      if (!options.silent) this.trigger('sort', this, options);
+      return this;
+    },
+
+    // Pluck an attribute from each model in the collection.
+    pluck: function(attr) {
+      return _.invoke(this.models, 'get', attr);
+    },
+
+    // Fetch the default set of models for this collection, resetting the
+    // collection when they arrive. If `reset: true` is passed, the response
+    // data will be passed through the `reset` method instead of `set`.
+    fetch: function(options) {
+      options = options ? _.clone(options) : {};
+      if (options.parse === void 0) options.parse = true;
+      var success = options.success;
+      var collection = this;
+      options.success = function(resp) {
+        var method = options.reset ? 'reset' : 'set';
+        collection[method](resp, options);
+        if (success) success(collection, resp, options);
+        collection.trigger('sync', collection, resp, options);
+      };
+      wrapError(this, options);
+      return this.sync('read', this, options);
+    },
+
+    // Create a new instance of a model in this collection. Add the model to the
+    // collection immediately, unless `wait: true` is passed, in which case we
+    // wait for the server to agree.
+    create: function(model, options) {
+      options = options ? _.clone(options) : {};
+      if (!(model = this._prepareModel(model, options))) return false;
+      if (!options.wait) this.add(model, options);
+      var collection = this;
+      var success = options.success;
+      options.success = function(model, resp, options) {
+        if (options.wait) collection.add(model, options);
+        if (success) success(model, resp, options);
+      };
+      model.save(null, options);
+      return model;
+    },
+
+    // **parse** converts a response into a list of models to be added to the
+    // collection. The default implementation is just to pass it through.
+    parse: function(resp, options) {
+      return resp;
+    },
+
+    // Create a new collection with an identical list of models as this one.
+    clone: function() {
+      return new this.constructor(this.models);
+    },
+
+    // Private method to reset all internal state. Called when the collection
+    // is first initialized or reset.
+    _reset: function() {
+      this.length = 0;
+      this.models = [];
+      this._byId  = {};
+    },
+
+    // Prepare a hash of attributes (or other model) to be added to this
+    // collection.
+    _prepareModel: function(attrs, options) {
+      if (attrs instanceof Model) {
+        if (!attrs.collection) attrs.collection = this;
+        return attrs;
+      }
+      options = options ? _.clone(options) : {};
+      options.collection = this;
+      var model = new this.model(attrs, options);
+      if (!model.validationError) return model;
+      this.trigger('invalid', this, model.validationError, options);
+      return false;
+    },
+
+    // Internal method to sever a model's ties to a collection.
+    _removeReference: function(model) {
+      if (this === model.collection) delete model.collection;
+      model.off('all', this._onModelEvent, this);
+    },
+
+    // Internal method called every time a model in the set fires an event.
+    // Sets need to update their indexes when models change ids. All other
+    // events simply proxy through. "add" and "remove" events that originate
+    // in other collections are ignored.
+    _onModelEvent: function(event, model, collection, options) {
+      if ((event === 'add' || event === 'remove') && collection !== this) return;
+      if (event === 'destroy') this.remove(model, options);
+      if (model && event === 'change:' + model.idAttribute) {
+        delete this._byId[model.previous(model.idAttribute)];
+        if (model.id != null) this._byId[model.id] = model;
+      }
+      this.trigger.apply(this, arguments);
+    }
+
+  });
+
+  // Underscore methods that we want to implement on the Collection.
+  // 90% of the core usefulness of Backbone Collections is actually implemented
+  // right here:
+  var methods = ['forEach', 'each', 'map', 'collect', 'reduce', 'foldl',
+    'inject', 'reduceRight', 'foldr', 'find', 'detect', 'filter', 'select',
+    'reject', 'every', 'all', 'some', 'any', 'include', 'contains', 'invoke',
+    'max', 'min', 'toArray', 'size', 'first', 'head', 'take', 'initial', 'rest',
+    'tail', 'drop', 'last', 'without', 'difference', 'indexOf', 'shuffle',
+    'lastIndexOf', 'isEmpty', 'chain'];
+
+  // Mix in each Underscore method as a proxy to `Collection#models`.
+  _.each(methods, function(method) {
+    Collection.prototype[method] = function() {
+      var args = slice.call(arguments);
+      args.unshift(this.models);
+      return _[method].apply(_, args);
+    };
+  });
+
+  // Underscore methods that take a property name as an argument.
+  var attributeMethods = ['groupBy', 'countBy', 'sortBy'];
+
+  // Use attributes instead of properties.
+  _.each(attributeMethods, function(method) {
+    Collection.prototype[method] = function(value, context) {
+      var iterator = _.isFunction(value) ? value : function(model) {
+        return model.get(value);
+      };
+      return _[method](this.models, iterator, context);
+    };
+  });
+
+  // Backbone.View
+  // -------------
+
+  // Backbone Views are almost more convention than they are actual code. A View
+  // is simply a JavaScript object that represents a logical chunk of UI in the
+  // DOM. This might be a single item, an entire list, a sidebar or panel, or
+  // even the surrounding frame which wraps your whole app. Defining a chunk of
+  // UI as a **View** allows you to define your DOM events declaratively, without
+  // having to worry about render order ... and makes it easy for the view to
+  // react to specific changes in the state of your models.
+
+  // Creating a Backbone.View creates its initial element outside of the DOM,
+  // if an existing element is not provided...
+  var View = Backbone.View = function(options) {
+    this.cid = _.uniqueId('view');
+    options || (options = {});
+    _.extend(this, _.pick(options, viewOptions));
+    this._ensureElement();
+    this.initialize.apply(this, arguments);
+    this.delegateEvents();
+  };
+
+  // Cached regex to split keys for `delegate`.
+  var delegateEventSplitter = /^(\S+)\s*(.*)$/;
+
+  // List of view options to be merged as properties.
+  var viewOptions = ['model', 'collection', 'el', 'id', 'attributes', 'className', 'tagName', 'events'];
+
+  // Set up all inheritable **Backbone.View** properties and methods.
+  _.extend(View.prototype, Events, {
+
+    // The default `tagName` of a View's element is `"div"`.
+    tagName: 'div',
+
+    // jQuery delegate for element lookup, scoped to DOM elements within the
+    // current view. This should be preferred to global lookups where possible.
+    $: function(selector) {
+      return this.$el.find(selector);
+    },
+
+    // Initialize is an empty function by default. Override it with your own
+    // initialization logic.
+    initialize: function(){},
+
+    // **render** is the core function that your view should override, in order
+    // to populate its element (`this.el`), with the appropriate HTML. The
+    // convention is for **render** to always return `this`.
+    render: function() {
+      return this;
+    },
+
+    // Remove this view by taking the element out of the DOM, and removing any
+    // applicable Backbone.Events listeners.
+    remove: function() {
+      this.$el.remove();
+      this.stopListening();
+      return this;
+    },
+
+    // Change the view's element (`this.el` property), including event
+    // re-delegation.
+    setElement: function(element, delegate) {
+      if (this.$el) this.undelegateEvents();
+      this.$el = element instanceof Backbone.$ ? element : Backbone.$(element);
+      this.el = this.$el[0];
+      if (delegate !== false) this.delegateEvents();
+      return this;
+    },
+
+    // Set callbacks, where `this.events` is a hash of
+    //
+    // *{"event selector": "callback"}*
+    //
+    //     {
+    //       'mousedown .title':  'edit',
+    //       'click .button':     'save',
+    //       'click .open':       function(e) { ... }
+    //     }
+    //
+    // pairs. Callbacks will be bound to the view, with `this` set properly.
+    // Uses event delegation for efficiency.
+    // Omitting the selector binds the event to `this.el`.
+    // This only works for delegate-able events: not `focus`, `blur`, and
+    // not `change`, `submit`, and `reset` in Internet Explorer.
+    delegateEvents: function(events) {
+      if (!(events || (events = _.result(this, 'events')))) return this;
+      this.undelegateEvents();
+      for (var key in events) {
+        var method = events[key];
+        if (!_.isFunction(method)) method = this[events[key]];
+        if (!method) continue;
+
+        var match = key.match(delegateEventSplitter);
+        var eventName = match[1], selector = match[2];
+        method = _.bind(method, this);
+        eventName += '.delegateEvents' + this.cid;
+        if (selector === '') {
+          this.$el.on(eventName, method);
+        } else {
+          this.$el.on(eventName, selector, method);
+        }
+      }
+      return this;
+    },
+
+    // Clears all callbacks previously bound to the view with `delegateEvents`.
+    // You usually don't need to use this, but may wish to if you have multiple
+    // Backbone views attached to the same DOM element.
+    undelegateEvents: function() {
+      this.$el.off('.delegateEvents' + this.cid);
+      return this;
+    },
+
+    // Ensure that the View has a DOM element to render into.
+    // If `this.el` is a string, pass it through `$()`, take the first
+    // matching element, and re-assign it to `el`. Otherwise, create
+    // an element from the `id`, `className` and `tagName` properties.
+    _ensureElement: function() {
+      if (!this.el) {
+        var attrs = _.extend({}, _.result(this, 'attributes'));
+        if (this.id) attrs.id = _.result(this, 'id');
+        if (this.className) attrs['class'] = _.result(this, 'className');
+        var $el = Backbone.$('<' + _.result(this, 'tagName') + '>').attr(attrs);
+        this.setElement($el, false);
+      } else {
+        this.setElement(_.result(this, 'el'), false);
+      }
+    }
+
+  });
+
+  // Backbone.sync
+  // -------------
+
+  // Override this function to change the manner in which Backbone persists
+  // models to the server. You will be passed the type of request, and the
+  // model in question. By default, makes a RESTful Ajax request
+  // to the model's `url()`. Some possible customizations could be:
+  //
+  // * Use `setTimeout` to batch rapid-fire updates into a single request.
+  // * Send up the models as XML instead of JSON.
+  // * Persist models via WebSockets instead of Ajax.
+  //
+  // Turn on `Backbone.emulateHTTP` in order to send `PUT` and `DELETE` requests
+  // as `POST`, with a `_method` parameter containing the true HTTP method,
+  // as well as all requests with the body as `application/x-www-form-urlencoded`
+  // instead of `application/json` with the model in a param named `model`.
+  // Useful when interfacing with server-side languages like **PHP** that make
+  // it difficult to read the body of `PUT` requests.
+  Backbone.sync = function(method, model, options) {
+    var type = methodMap[method];
+
+    // Default options, unless specified.
+    _.defaults(options || (options = {}), {
+      emulateHTTP: Backbone.emulateHTTP,
+      emulateJSON: Backbone.emulateJSON
+    });
+
+    // Default JSON-request options.
+    var params = {type: type, dataType: 'json'};
+
+    // Ensure that we have a URL.
+    if (!options.url) {
+      params.url = _.result(model, 'url') || urlError();
+    }
+
+    // Ensure that we have the appropriate request data.
+    if (options.data == null && model && (method === 'create' || method === 'update' || method === 'patch')) {
+      params.contentType = 'application/json';
+      params.data = JSON.stringify(options.attrs || model.toJSON(options));
+    }
+
+    // For older servers, emulate JSON by encoding the request into an HTML-form.
+    if (options.emulateJSON) {
+      params.contentType = 'application/x-www-form-urlencoded';
+      params.data = params.data ? {model: params.data} : {};
+    }
+
+    // For older servers, emulate HTTP by mimicking the HTTP method with `_method`
+    // And an `X-HTTP-Method-Override` header.
+    if (options.emulateHTTP && (type === 'PUT' || type === 'DELETE' || type === 'PATCH')) {
+      params.type = 'POST';
+      if (options.emulateJSON) params.data._method = type;
+      var beforeSend = options.beforeSend;
+      options.beforeSend = function(xhr) {
+        xhr.setRequestHeader('X-HTTP-Method-Override', type);
+        if (beforeSend) return beforeSend.apply(this, arguments);
+      };
+    }
+
+    // Don't process data on a non-GET request.
+    if (params.type !== 'GET' && !options.emulateJSON) {
+      params.processData = false;
+    }
+
+    // If we're sending a `PATCH` request, and we're in an old Internet Explorer
+    // that still has ActiveX enabled by default, override jQuery to use that
+    // for XHR instead. Remove this line when jQuery supports `PATCH` on IE8.
+    if (params.type === 'PATCH' && noXhrPatch) {
+      params.xhr = function() {
+        return new ActiveXObject("Microsoft.XMLHTTP");
+      };
+    }
+
+    // Make the request, allowing the user to override any Ajax options.
+    var xhr = options.xhr = Backbone.ajax(_.extend(params, options));
+    model.trigger('request', model, xhr, options);
+    return xhr;
+  };
+
+  var noXhrPatch = typeof window !== 'undefined' && !!window.ActiveXObject && !(window.XMLHttpRequest && (new XMLHttpRequest).dispatchEvent);
+
+  // Map from CRUD to HTTP for our default `Backbone.sync` implementation.
+  var methodMap = {
+    'create': 'POST',
+    'update': 'PUT',
+    'patch':  'PATCH',
+    'delete': 'DELETE',
+    'read':   'GET'
+  };
+
+  // Set the default implementation of `Backbone.ajax` to proxy through to `$`.
+  // Override this if you'd like to use a different library.
+  Backbone.ajax = function() {
+    return Backbone.$.ajax.apply(Backbone.$, arguments);
+  };
+
+  // Backbone.Router
+  // ---------------
+
+  // Routers map faux-URLs to actions, and fire events when routes are
+  // matched. Creating a new one sets its `routes` hash, if not set statically.
+  var Router = Backbone.Router = function(options) {
+    options || (options = {});
+    if (options.routes) this.routes = options.routes;
+    this._bindRoutes();
+    this.initialize.apply(this, arguments);
+  };
+
+  // Cached regular expressions for matching named param parts and splatted
+  // parts of route strings.
+  var optionalParam = /\((.*?)\)/g;
+  var namedParam    = /(\(\?)?:\w+/g;
+  var splatParam    = /\*\w+/g;
+  var escapeRegExp  = /[\-{}\[\]+?.,\\\^$|#\s]/g;
+
+  // Set up all inheritable **Backbone.Router** properties and methods.
+  _.extend(Router.prototype, Events, {
+
+    // Initialize is an empty function by default. Override it with your own
+    // initialization logic.
+    initialize: function(){},
+
+    // Manually bind a single named route to a callback. For example:
+    //
+    //     this.route('search/:query/p:num', 'search', function(query, num) {
+    //       ...
+    //     });
+    //
+    route: function(route, name, callback) {
+      if (!_.isRegExp(route)) route = this._routeToRegExp(route);
+      if (_.isFunction(name)) {
+        callback = name;
+        name = '';
+      }
+      if (!callback) callback = this[name];
+      var router = this;
+      Backbone.history.route(route, function(fragment) {
+        var args = router._extractParameters(route, fragment);
+        callback && callback.apply(router, args);
+        router.trigger.apply(router, ['route:' + name].concat(args));
+        router.trigger('route', name, args);
+        Backbone.history.trigger('route', router, name, args);
+      });
+      return this;
+    },
+
+    // Simple proxy to `Backbone.history` to save a fragment into the history.
+    navigate: function(fragment, options) {
+      Backbone.history.navigate(fragment, options);
+      return this;
+    },
+
+    // Bind all defined routes to `Backbone.history`. We have to reverse the
+    // order of the routes here to support behavior where the most general
+    // routes can be defined at the bottom of the route map.
+    _bindRoutes: function() {
+      if (!this.routes) return;
+      this.routes = _.result(this, 'routes');
+      var route, routes = _.keys(this.routes);
+      while ((route = routes.pop()) != null) {
+        this.route(route, this.routes[route]);
+      }
+    },
+
+    // Convert a route string into a regular expression, suitable for matching
+    // against the current location hash.
+    _routeToRegExp: function(route) {
+      route = route.replace(escapeRegExp, '\\$&')
+                   .replace(optionalParam, '(?:$1)?')
+                   .replace(namedParam, function(match, optional) {
+                     return optional ? match : '([^\/]+)';
+                   })
+                   .replace(splatParam, '(.*?)');
+      return new RegExp('^' + route + '$');
+    },
+
+    // Given a route, and a URL fragment that it matches, return the array of
+    // extracted decoded parameters. Empty or unmatched parameters will be
+    // treated as `null` to normalize cross-browser behavior.
+    _extractParameters: function(route, fragment) {
+      var params = route.exec(fragment).slice(1);
+      return _.map(params, function(param) {
+        return param ? decodeURIComponent(param) : null;
+      });
+    }
+
+  });
+
+  // Backbone.History
+  // ----------------
+
+  // Handles cross-browser history management, based on either
+  // [pushState](http://diveintohtml5.info/history.html) and real URLs, or
+  // [onhashchange](https://developer.mozilla.org/en-US/docs/DOM/window.onhashchange)
+  // and URL fragments. If the browser supports neither (old IE, natch),
+  // falls back to polling.
+  var History = Backbone.History = function() {
+    this.handlers = [];
+    _.bindAll(this, 'checkUrl');
+
+    // Ensure that `History` can be used outside of the browser.
+    if (typeof window !== 'undefined') {
+      this.location = window.location;
+      this.history = window.history;
+    }
+  };
+
+  // Cached regex for stripping a leading hash/slash and trailing space.
+  var routeStripper = /^[#\/]|\s+$/g;
+
+  // Cached regex for stripping leading and trailing slashes.
+  var rootStripper = /^\/+|\/+$/g;
+
+  // Cached regex for detecting MSIE.
+  var isExplorer = /msie [\w.]+/;
+
+  // Cached regex for removing a trailing slash.
+  var trailingSlash = /\/$/;
+
+  // Cached regex for stripping urls of hash and query.
+  var pathStripper = /[?#].*$/;
+
+  // Has the history handling already been started?
+  History.started = false;
+
+  // Set up all inheritable **Backbone.History** properties and methods.
+  _.extend(History.prototype, Events, {
+
+    // The default interval to poll for hash changes, if necessary, is
+    // twenty times a second.
+    interval: 50,
+
+    // Gets the true hash value. Cannot use location.hash directly due to bug
+    // in Firefox where location.hash will always be decoded.
+    getHash: function(window) {
+      var match = (window || this).location.href.match(/#(.*)$/);
+      return match ? match[1] : '';
+    },
+
+    // Get the cross-browser normalized URL fragment, either from the URL,
+    // the hash, or the override.
+    getFragment: function(fragment, forcePushState) {
+      if (fragment == null) {
+        if (this._hasPushState || !this._wantsHashChange || forcePushState) {
+          fragment = this.location.pathname;
+          var root = this.root.replace(trailingSlash, '');
+          if (!fragment.indexOf(root)) fragment = fragment.slice(root.length);
+        } else {
+          fragment = this.getHash();
+        }
+      }
+      return fragment.replace(routeStripper, '');
+    },
+
+    // Start the hash change handling, returning `true` if the current URL matches
+    // an existing route, and `false` otherwise.
+    start: function(options) {
+      if (History.started) throw new Error("Backbone.history has already been started");
+      History.started = true;
+
+      // Figure out the initial configuration. Do we need an iframe?
+      // Is pushState desired ... is it available?
+      this.options          = _.extend({root: '/'}, this.options, options);
+      this.root             = this.options.root;
+      this._wantsHashChange = this.options.hashChange !== false;
+      this._wantsPushState  = !!this.options.pushState;
+      this._hasPushState    = !!(this.options.pushState && this.history && this.history.pushState);
+      var fragment          = this.getFragment();
+      var docMode           = document.documentMode;
+      var oldIE             = (isExplorer.exec(navigator.userAgent.toLowerCase()) && (!docMode || docMode <= 7));
+
+      // Normalize root to always include a leading and trailing slash.
+      this.root = ('/' + this.root + '/').replace(rootStripper, '/');
+
+      if (oldIE && this._wantsHashChange) {
+        this.iframe = Backbone.$('<iframe src="javascript:0" tabindex="-1" />').hide().appendTo('body')[0].contentWindow;
+        this.navigate(fragment);
+      }
+
+      // Depending on whether we're using pushState or hashes, and whether
+      // 'onhashchange' is supported, determine how we check the URL state.
+      if (this._hasPushState) {
+        Backbone.$(window).on('popstate', this.checkUrl);
+      } else if (this._wantsHashChange && ('onhashchange' in window) && !oldIE) {
+        Backbone.$(window).on('hashchange', this.checkUrl);
+      } else if (this._wantsHashChange) {
+        this._checkUrlInterval = setInterval(this.checkUrl, this.interval);
+      }
+
+      // Determine if we need to change the base url, for a pushState link
+      // opened by a non-pushState browser.
+      this.fragment = fragment;
+      var loc = this.location;
+      var atRoot = loc.pathname.replace(/[^\/]$/, '$&/') === this.root;
+
+      // Transition from hashChange to pushState or vice versa if both are
+      // requested.
+      if (this._wantsHashChange && this._wantsPushState) {
+
+        // If we've started off with a route from a `pushState`-enabled
+        // browser, but we're currently in a browser that doesn't support it...
+        if (!this._hasPushState && !atRoot) {
+          this.fragment = this.getFragment(null, true);
+          this.location.replace(this.root + this.location.search + '#' + this.fragment);
+          // Return immediately as browser will do redirect to new url
+          return true;
+
+        // Or if we've started out with a hash-based route, but we're currently
+        // in a browser where it could be `pushState`-based instead...
+        } else if (this._hasPushState && atRoot && loc.hash) {
+          this.fragment = this.getHash().replace(routeStripper, '');
+          this.history.replaceState({}, document.title, this.root + this.fragment + loc.search);
+        }
+
+      }
+
+      if (!this.options.silent) return this.loadUrl();
+    },
+
+    // Disable Backbone.history, perhaps temporarily. Not useful in a real app,
+    // but possibly useful for unit testing Routers.
+    stop: function() {
+      Backbone.$(window).off('popstate', this.checkUrl).off('hashchange', this.checkUrl);
+      clearInterval(this._checkUrlInterval);
+      History.started = false;
+    },
+
+    // Add a route to be tested when the fragment changes. Routes added later
+    // may override previous routes.
+    route: function(route, callback) {
+      this.handlers.unshift({route: route, callback: callback});
+    },
+
+    // Checks the current URL to see if it has changed, and if it has,
+    // calls `loadUrl`, normalizing across the hidden iframe.
+    checkUrl: function(e) {
+      var current = this.getFragment();
+      if (current === this.fragment && this.iframe) {
+        current = this.getFragment(this.getHash(this.iframe));
+      }
+      if (current === this.fragment) return false;
+      if (this.iframe) this.navigate(current);
+      this.loadUrl();
+    },
+
+    // Attempt to load the current URL fragment. If a route succeeds with a
+    // match, returns `true`. If no defined routes matches the fragment,
+    // returns `false`.
+    loadUrl: function(fragment) {
+      fragment = this.fragment = this.getFragment(fragment);
+      return _.any(this.handlers, function(handler) {
+        if (handler.route.test(fragment)) {
+          handler.callback(fragment);
+          return true;
+        }
+      });
+    },
+
+    // Save a fragment into the hash history, or replace the URL state if the
+    // 'replace' option is passed. You are responsible for properly URL-encoding
+    // the fragment in advance.
+    //
+    // The options object can contain `trigger: true` if you wish to have the
+    // route callback be fired (not usually desirable), or `replace: true`, if
+    // you wish to modify the current URL without adding an entry to the history.
+    navigate: function(fragment, options) {
+      if (!History.started) return false;
+      if (!options || options === true) options = {trigger: !!options};
+
+      var url = this.root + (fragment = this.getFragment(fragment || ''));
+
+      // Strip the fragment of the query and hash for matching.
+      fragment = fragment.replace(pathStripper, '');
+
+      if (this.fragment === fragment) return;
+      this.fragment = fragment;
+
+      // Don't include a trailing slash on the root.
+      if (fragment === '' && url !== '/') url = url.slice(0, -1);
+
+      // If pushState is available, we use it to set the fragment as a real URL.
+      if (this._hasPushState) {
+        this.history[options.replace ? 'replaceState' : 'pushState']({}, document.title, url);
+
+      // If hash changes haven't been explicitly disabled, update the hash
+      // fragment to store history.
+      } else if (this._wantsHashChange) {
+        this._updateHash(this.location, fragment, options.replace);
+        if (this.iframe && (fragment !== this.getFragment(this.getHash(this.iframe)))) {
+          // Opening and closing the iframe tricks IE7 and earlier to push a
+          // history entry on hash-tag change.  When replace is true, we don't
+          // want this.
+          if(!options.replace) this.iframe.document.open().close();
+          this._updateHash(this.iframe.location, fragment, options.replace);
+        }
+
+      // If you've told us that you explicitly don't want fallback hashchange-
+      // based history, then `navigate` becomes a page refresh.
+      } else {
+        return this.location.assign(url);
+      }
+      if (options.trigger) return this.loadUrl(fragment);
+    },
+
+    // Update the hash location, either replacing the current entry, or adding
+    // a new one to the browser history.
+    _updateHash: function(location, fragment, replace) {
+      if (replace) {
+        var href = location.href.replace(/(javascript:|#).*$/, '');
+        location.replace(href + '#' + fragment);
+      } else {
+        // Some browsers require that `hash` contains a leading #.
+        location.hash = '#' + fragment;
+      }
+    }
+
+  });
+
+  // Create the default Backbone.history.
+  Backbone.history = new History;
+
+  // Helpers
+  // -------
+
+  // Helper function to correctly set up the prototype chain, for subclasses.
+  // Similar to `goog.inherits`, but uses a hash of prototype properties and
+  // class properties to be extended.
+  var extend = function(protoProps, staticProps) {
+    var parent = this;
+    var child;
+
+    // The constructor function for the new subclass is either defined by you
+    // (the "constructor" property in your `extend` definition), or defaulted
+    // by us to simply call the parent's constructor.
+    if (protoProps && _.has(protoProps, 'constructor')) {
+      child = protoProps.constructor;
+    } else {
+      child = function(){ return parent.apply(this, arguments); };
+    }
+
+    // Add static properties to the constructor function, if supplied.
+    _.extend(child, parent, staticProps);
+
+    // Set the prototype chain to inherit from `parent`, without calling
+    // `parent`'s constructor function.
+    var Surrogate = function(){ this.constructor = child; };
+    Surrogate.prototype = parent.prototype;
+    child.prototype = new Surrogate;
+
+    // Add prototype properties (instance properties) to the subclass,
+    // if supplied.
+    if (protoProps) _.extend(child.prototype, protoProps);
+
+    // Set a convenience property in case the parent's prototype is needed
+    // later.
+    child.__super__ = parent.prototype;
+
+    return child;
+  };
+
+  // Set up inheritance for the model, collection, router, view and history.
+  Model.extend = Collection.extend = Router.extend = View.extend = History.extend = extend;
+
+  // Throw an error when a URL is needed, and none is supplied.
+  var urlError = function() {
+    throw new Error('A "url" property or function must be specified');
+  };
+
+  // Wrap an optional error callback with a fallback error event.
+  var wrapError = function(model, options) {
+    var error = options.error;
+    options.error = function(resp) {
+      if (error) error(model, resp, options);
+      model.trigger('error', model, resp, options);
+    };
+  };
+
+}).call(this);
+
+define("backbone", ["underscore","jquery"], (function (global) {
+    return function () {
+        var ret, fn;
+        return ret || global.Backbone;
+    };
+}(this)));
+
+/**
+ * @license RequireJS text 2.0.10 Copyright (c) 2010-2012, The Dojo Foundation All Rights Reserved.
+ * Available via the MIT or new BSD license.
+ * see: http://github.com/requirejs/text for details
+ */
+/*jslint regexp: true */
+/*global require, XMLHttpRequest, ActiveXObject,
+  define, window, process, Packages,
+  java, location, Components, FileUtils */
+
+define('text',['module'], function (module) {
+    
+
+    var text, fs, Cc, Ci, xpcIsWindows,
+        progIds = ['Msxml2.XMLHTTP', 'Microsoft.XMLHTTP', 'Msxml2.XMLHTTP.4.0'],
+        xmlRegExp = /^\s*<\?xml(\s)+version=[\'\"](\d)*.(\d)*[\'\"](\s)*\?>/im,
+        bodyRegExp = /<body[^>]*>\s*([\s\S]+)\s*<\/body>/im,
+        hasLocation = typeof location !== 'undefined' && location.href,
+        defaultProtocol = hasLocation && location.protocol && location.protocol.replace(/\:/, ''),
+        defaultHostName = hasLocation && location.hostname,
+        defaultPort = hasLocation && (location.port || undefined),
+        buildMap = {},
+        masterConfig = (module.config && module.config()) || {};
+
+    text = {
+        version: '2.0.10',
+
+        strip: function (content) {
+            //Strips <?xml ...?> declarations so that external SVG and XML
+            //documents can be added to a document without worry. Also, if the string
+            //is an HTML document, only the part inside the body tag is returned.
+            if (content) {
+                content = content.replace(xmlRegExp, "");
+                var matches = content.match(bodyRegExp);
+                if (matches) {
+                    content = matches[1];
+                }
+            } else {
+                content = "";
+            }
+            return content;
+        },
+
+        jsEscape: function (content) {
+            return content.replace(/(['\\])/g, '\\$1')
+                .replace(/[\f]/g, "\\f")
+                .replace(/[\b]/g, "\\b")
+                .replace(/[\n]/g, "\\n")
+                .replace(/[\t]/g, "\\t")
+                .replace(/[\r]/g, "\\r")
+                .replace(/[\u2028]/g, "\\u2028")
+                .replace(/[\u2029]/g, "\\u2029");
+        },
+
+        createXhr: masterConfig.createXhr || function () {
+            //Would love to dump the ActiveX crap in here. Need IE 6 to die first.
+            var xhr, i, progId;
+            if (typeof XMLHttpRequest !== "undefined") {
+                return new XMLHttpRequest();
+            } else if (typeof ActiveXObject !== "undefined") {
+                for (i = 0; i < 3; i += 1) {
+                    progId = progIds[i];
+                    try {
+                        xhr = new ActiveXObject(progId);
+                    } catch (e) {}
+
+                    if (xhr) {
+                        progIds = [progId];  // so faster next time
+                        break;
+                    }
+                }
+            }
+
+            return xhr;
+        },
+
+        /**
+         * Parses a resource name into its component parts. Resource names
+         * look like: module/name.ext!strip, where the !strip part is
+         * optional.
+         * @param {String} name the resource name
+         * @returns {Object} with properties "moduleName", "ext" and "strip"
+         * where strip is a boolean.
+         */
+        parseName: function (name) {
+            var modName, ext, temp,
+                strip = false,
+                index = name.indexOf("."),
+                isRelative = name.indexOf('./') === 0 ||
+                             name.indexOf('../') === 0;
+
+            if (index !== -1 && (!isRelative || index > 1)) {
+                modName = name.substring(0, index);
+                ext = name.substring(index + 1, name.length);
+            } else {
+                modName = name;
+            }
+
+            temp = ext || modName;
+            index = temp.indexOf("!");
+            if (index !== -1) {
+                //Pull off the strip arg.
+                strip = temp.substring(index + 1) === "strip";
+                temp = temp.substring(0, index);
+                if (ext) {
+                    ext = temp;
+                } else {
+                    modName = temp;
+                }
+            }
+
+            return {
+                moduleName: modName,
+                ext: ext,
+                strip: strip
+            };
+        },
+
+        xdRegExp: /^((\w+)\:)?\/\/([^\/\\]+)/,
+
+        /**
+         * Is an URL on another domain. Only works for browser use, returns
+         * false in non-browser environments. Only used to know if an
+         * optimized .js version of a text resource should be loaded
+         * instead.
+         * @param {String} url
+         * @returns Boolean
+         */
+        useXhr: function (url, protocol, hostname, port) {
+            var uProtocol, uHostName, uPort,
+                match = text.xdRegExp.exec(url);
+            if (!match) {
+                return true;
+            }
+            uProtocol = match[2];
+            uHostName = match[3];
+
+            uHostName = uHostName.split(':');
+            uPort = uHostName[1];
+            uHostName = uHostName[0];
+
+            return (!uProtocol || uProtocol === protocol) &&
+                   (!uHostName || uHostName.toLowerCase() === hostname.toLowerCase()) &&
+                   ((!uPort && !uHostName) || uPort === port);
+        },
+
+        finishLoad: function (name, strip, content, onLoad) {
+            content = strip ? text.strip(content) : content;
+            if (masterConfig.isBuild) {
+                buildMap[name] = content;
+            }
+            onLoad(content);
+        },
+
+        load: function (name, req, onLoad, config) {
+            //Name has format: some.module.filext!strip
+            //The strip part is optional.
+            //if strip is present, then that means only get the string contents
+            //inside a body tag in an HTML string. For XML/SVG content it means
+            //removing the <?xml ...?> declarations so the content can be inserted
+            //into the current doc without problems.
+
+            // Do not bother with the work if a build and text will
+            // not be inlined.
+            if (config.isBuild && !config.inlineText) {
+                onLoad();
+                return;
+            }
+
+            masterConfig.isBuild = config.isBuild;
+
+            var parsed = text.parseName(name),
+                nonStripName = parsed.moduleName +
+                    (parsed.ext ? '.' + parsed.ext : ''),
+                url = req.toUrl(nonStripName),
+                useXhr = (masterConfig.useXhr) ||
+                         text.useXhr;
+
+            // Do not load if it is an empty: url
+            if (url.indexOf('empty:') === 0) {
+                onLoad();
+                return;
+            }
+
+            //Load the text. Use XHR if possible and in a browser.
+            if (!hasLocation || useXhr(url, defaultProtocol, defaultHostName, defaultPort)) {
+                text.get(url, function (content) {
+                    text.finishLoad(name, parsed.strip, content, onLoad);
+                }, function (err) {
+                    if (onLoad.error) {
+                        onLoad.error(err);
+                    }
+                });
+            } else {
+                //Need to fetch the resource across domains. Assume
+                //the resource has been optimized into a JS module. Fetch
+                //by the module name + extension, but do not include the
+                //!strip part to avoid file system issues.
+                req([nonStripName], function (content) {
+                    text.finishLoad(parsed.moduleName + '.' + parsed.ext,
+                                    parsed.strip, content, onLoad);
+                });
+            }
+        },
+
+        write: function (pluginName, moduleName, write, config) {
+            if (buildMap.hasOwnProperty(moduleName)) {
+                var content = text.jsEscape(buildMap[moduleName]);
+                write.asModule(pluginName + "!" + moduleName,
+                               "define(function () { return '" +
+                                   content +
+                               "';});\n");
+            }
+        },
+
+        writeFile: function (pluginName, moduleName, req, write, config) {
+            var parsed = text.parseName(moduleName),
+                extPart = parsed.ext ? '.' + parsed.ext : '',
+                nonStripName = parsed.moduleName + extPart,
+                //Use a '.js' file name so that it indicates it is a
+                //script that can be loaded across domains.
+                fileName = req.toUrl(parsed.moduleName + extPart) + '.js';
+
+            //Leverage own load() method to load plugin value, but only
+            //write out values that do not have the strip argument,
+            //to avoid any potential issues with ! in file names.
+            text.load(nonStripName, req, function (value) {
+                //Use own write() method to construct full module value.
+                //But need to create shell that translates writeFile's
+                //write() to the right interface.
+                var textWrite = function (contents) {
+                    return write(fileName, contents);
+                };
+                textWrite.asModule = function (moduleName, contents) {
+                    return write.asModule(moduleName, fileName, contents);
+                };
+
+                text.write(pluginName, nonStripName, textWrite, config);
+            }, config);
+        }
+    };
+
+    if (masterConfig.env === 'node' || (!masterConfig.env &&
+            typeof process !== "undefined" &&
+            process.versions &&
+            !!process.versions.node &&
+            !process.versions['node-webkit'])) {
+        //Using special require.nodeRequire, something added by r.js.
+        fs = require.nodeRequire('fs');
+
+        text.get = function (url, callback, errback) {
+            try {
+                var file = fs.readFileSync(url, 'utf8');
+                //Remove BOM (Byte Mark Order) from utf8 files if it is there.
+                if (file.indexOf('\uFEFF') === 0) {
+                    file = file.substring(1);
+                }
+                callback(file);
+            } catch (e) {
+                errback(e);
+            }
+        };
+    } else if (masterConfig.env === 'xhr' || (!masterConfig.env &&
+            text.createXhr())) {
+        text.get = function (url, callback, errback, headers) {
+            var xhr = text.createXhr(), header;
+            xhr.open('GET', url, true);
+
+            //Allow plugins direct access to xhr headers
+            if (headers) {
+                for (header in headers) {
+                    if (headers.hasOwnProperty(header)) {
+                        xhr.setRequestHeader(header.toLowerCase(), headers[header]);
+                    }
+                }
+            }
+
+            //Allow overrides specified in config
+            if (masterConfig.onXhr) {
+                masterConfig.onXhr(xhr, url);
+            }
+
+            xhr.onreadystatechange = function (evt) {
+                var status, err;
+                //Do not explicitly handle errors, those should be
+                //visible via console output in the browser.
+                if (xhr.readyState === 4) {
+                    status = xhr.status;
+                    if (status > 399 && status < 600) {
+                        //An http 4xx or 5xx error. Signal an error.
+                        err = new Error(url + ' HTTP status: ' + status);
+                        err.xhr = xhr;
+                        errback(err);
+                    } else {
+                        callback(xhr.responseText);
+                    }
+
+                    if (masterConfig.onXhrComplete) {
+                        masterConfig.onXhrComplete(xhr, url);
+                    }
+                }
+            };
+            xhr.send(null);
+        };
+    } else if (masterConfig.env === 'rhino' || (!masterConfig.env &&
+            typeof Packages !== 'undefined' && typeof java !== 'undefined')) {
+        //Why Java, why is this so awkward?
+        text.get = function (url, callback) {
+            var stringBuffer, line,
+                encoding = "utf-8",
+                file = new java.io.File(url),
+                lineSeparator = java.lang.System.getProperty("line.separator"),
+                input = new java.io.BufferedReader(new java.io.InputStreamReader(new java.io.FileInputStream(file), encoding)),
+                content = '';
+            try {
+                stringBuffer = new java.lang.StringBuffer();
+                line = input.readLine();
+
+                // Byte Order Mark (BOM) - The Unicode Standard, version 3.0, page 324
+                // http://www.unicode.org/faq/utf_bom.html
+
+                // Note that when we use utf-8, the BOM should appear as "EF BB BF", but it doesn't due to this bug in the JDK:
+                // http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=4508058
+                if (line && line.length() && line.charAt(0) === 0xfeff) {
+                    // Eat the BOM, since we've already found the encoding on this file,
+                    // and we plan to concatenating this buffer with others; the BOM should
+                    // only appear at the top of a file.
+                    line = line.substring(1);
+                }
+
+                if (line !== null) {
+                    stringBuffer.append(line);
+                }
+
+                while ((line = input.readLine()) !== null) {
+                    stringBuffer.append(lineSeparator);
+                    stringBuffer.append(line);
+                }
+                //Make sure we return a JavaScript string and not a Java string.
+                content = String(stringBuffer.toString()); //String
+            } finally {
+                input.close();
+            }
+            callback(content);
+        };
+    } else if (masterConfig.env === 'xpconnect' || (!masterConfig.env &&
+            typeof Components !== 'undefined' && Components.classes &&
+            Components.interfaces)) {
+        //Avert your gaze!
+        Cc = Components.classes,
+        Ci = Components.interfaces;
+        Components.utils['import']('resource://gre/modules/FileUtils.jsm');
+        xpcIsWindows = ('@mozilla.org/windows-registry-key;1' in Cc);
+
+        text.get = function (url, callback) {
+            var inStream, convertStream, fileObj,
+                readData = {};
+
+            if (xpcIsWindows) {
+                url = url.replace(/\//g, '\\');
+            }
+
+            fileObj = new FileUtils.File(url);
+
+            //XPCOM, you so crazy
+            try {
+                inStream = Cc['@mozilla.org/network/file-input-stream;1']
+                           .createInstance(Ci.nsIFileInputStream);
+                inStream.init(fileObj, 1, 0, false);
+
+                convertStream = Cc['@mozilla.org/intl/converter-input-stream;1']
+                                .createInstance(Ci.nsIConverterInputStream);
+                convertStream.init(inStream, "utf-8", inStream.available(),
+                Ci.nsIConverterInputStream.DEFAULT_REPLACEMENT_CHARACTER);
+
+                convertStream.readString(inStream.available(), readData);
+                convertStream.close();
+                inStream.close();
+                callback(readData.value);
+            } catch (e) {
+                throw new Error((fileObj && fileObj.path || '') + ': ' + e);
+            }
+        };
+    }
+    return text;
+});
+
+define('text!build',[],function () { return '{\n  "baseUrl": "tmp",\n  "paths": {\n    "async": "../bower_components/async/lib/async",\n    "backbone": "../bower_components/backbone/backbone",\n    "backbone-relations": "../bower_components/backbone-relations/backbone-relations",\n    "build": "../build.json",\n    "dpr": "../bower_components/dpr/dpr",\n    "elementQuery": "../bower_components/elementQuery/elementQuery",\n    "herit": "../bower_components/herit/herit",\n    "jquery": "../bower_components/jquery/jquery",\n    "jstz": "../bower_components/jstz/jstz",\n    "moment-timezone": "../bower_components/moment-timezone/moment-timezone",\n    "moment-timezone-config": "../bower_components/moment-timezone/moment-timezone.json",\n    "moment": "../bower_components/moment/moment",\n    "olay": "../bower_components/olay/olay",\n    "select2": "../bower_components/select2/select2",\n    "tinycolor": "../bower_components/tinycolor/tinycolor",\n    "text": "../bower_components/requirejs-text/text",\n    "underscore.string": "../bower_components/underscore.string/lib/underscore.string",\n    "underscore": "../bower_components/underscore/underscore",\n    "mustache": "../node_modules/mustache/mustache",\n    "orgsync-javascript-api": "../node_modules/orgsync-javascript-api/orgsync-javascript-api"\n  },\n  "shim": {\n    "backbone": {\n      "exports": "Backbone",\n      "deps": [\n        "underscore",\n        "jquery"\n      ]\n    },\n    "elementQuery": {\n      "exports": "elementQuery",\n      "deps": [\n        "jquery"\n      ]\n    },\n    "jstz": {\n      "exports": "jstz"\n    },\n    "underscore": {\n      "exports": "_"\n    }\n  },\n  "include": [\n    "views/albums/index/index",\n    "views/portals/index/index"\n  ],\n  "name": "app",\n  "optimize": "none",\n  "out": "dist/orgsync-widgets.js",\n  "wrap": {\n    "startFile": "start.frag.js",\n    "endFile": "end.frag.js"\n  }\n}\n';});
+
 //! moment.js
 //! version : 2.5.0
 //! authors : Tim Wood, Iskren Chernev, Moment.js contributors
@@ -13120,1695 +16013,30 @@ if ( typeof module === "object" && module && typeof module.exports === "object" 
 	}
 }).apply(this);
 
-/**
- * @license RequireJS text 2.0.10 Copyright (c) 2010-2012, The Dojo Foundation All Rights Reserved.
- * Available via the MIT or new BSD license.
- * see: http://github.com/requirejs/text for details
- */
-/*jslint regexp: true */
-/*global require, XMLHttpRequest, ActiveXObject,
-  define, window, process, Packages,
-  java, location, Components, FileUtils */
-
-define('text',['module'], function (module) {
-    
-
-    var text, fs, Cc, Ci, xpcIsWindows,
-        progIds = ['Msxml2.XMLHTTP', 'Microsoft.XMLHTTP', 'Msxml2.XMLHTTP.4.0'],
-        xmlRegExp = /^\s*<\?xml(\s)+version=[\'\"](\d)*.(\d)*[\'\"](\s)*\?>/im,
-        bodyRegExp = /<body[^>]*>\s*([\s\S]+)\s*<\/body>/im,
-        hasLocation = typeof location !== 'undefined' && location.href,
-        defaultProtocol = hasLocation && location.protocol && location.protocol.replace(/\:/, ''),
-        defaultHostName = hasLocation && location.hostname,
-        defaultPort = hasLocation && (location.port || undefined),
-        buildMap = {},
-        masterConfig = (module.config && module.config()) || {};
-
-    text = {
-        version: '2.0.10',
-
-        strip: function (content) {
-            //Strips <?xml ...?> declarations so that external SVG and XML
-            //documents can be added to a document without worry. Also, if the string
-            //is an HTML document, only the part inside the body tag is returned.
-            if (content) {
-                content = content.replace(xmlRegExp, "");
-                var matches = content.match(bodyRegExp);
-                if (matches) {
-                    content = matches[1];
-                }
-            } else {
-                content = "";
-            }
-            return content;
-        },
-
-        jsEscape: function (content) {
-            return content.replace(/(['\\])/g, '\\$1')
-                .replace(/[\f]/g, "\\f")
-                .replace(/[\b]/g, "\\b")
-                .replace(/[\n]/g, "\\n")
-                .replace(/[\t]/g, "\\t")
-                .replace(/[\r]/g, "\\r")
-                .replace(/[\u2028]/g, "\\u2028")
-                .replace(/[\u2029]/g, "\\u2029");
-        },
-
-        createXhr: masterConfig.createXhr || function () {
-            //Would love to dump the ActiveX crap in here. Need IE 6 to die first.
-            var xhr, i, progId;
-            if (typeof XMLHttpRequest !== "undefined") {
-                return new XMLHttpRequest();
-            } else if (typeof ActiveXObject !== "undefined") {
-                for (i = 0; i < 3; i += 1) {
-                    progId = progIds[i];
-                    try {
-                        xhr = new ActiveXObject(progId);
-                    } catch (e) {}
-
-                    if (xhr) {
-                        progIds = [progId];  // so faster next time
-                        break;
-                    }
-                }
-            }
-
-            return xhr;
-        },
-
-        /**
-         * Parses a resource name into its component parts. Resource names
-         * look like: module/name.ext!strip, where the !strip part is
-         * optional.
-         * @param {String} name the resource name
-         * @returns {Object} with properties "moduleName", "ext" and "strip"
-         * where strip is a boolean.
-         */
-        parseName: function (name) {
-            var modName, ext, temp,
-                strip = false,
-                index = name.indexOf("."),
-                isRelative = name.indexOf('./') === 0 ||
-                             name.indexOf('../') === 0;
-
-            if (index !== -1 && (!isRelative || index > 1)) {
-                modName = name.substring(0, index);
-                ext = name.substring(index + 1, name.length);
-            } else {
-                modName = name;
-            }
-
-            temp = ext || modName;
-            index = temp.indexOf("!");
-            if (index !== -1) {
-                //Pull off the strip arg.
-                strip = temp.substring(index + 1) === "strip";
-                temp = temp.substring(0, index);
-                if (ext) {
-                    ext = temp;
-                } else {
-                    modName = temp;
-                }
-            }
-
-            return {
-                moduleName: modName,
-                ext: ext,
-                strip: strip
-            };
-        },
-
-        xdRegExp: /^((\w+)\:)?\/\/([^\/\\]+)/,
-
-        /**
-         * Is an URL on another domain. Only works for browser use, returns
-         * false in non-browser environments. Only used to know if an
-         * optimized .js version of a text resource should be loaded
-         * instead.
-         * @param {String} url
-         * @returns Boolean
-         */
-        useXhr: function (url, protocol, hostname, port) {
-            var uProtocol, uHostName, uPort,
-                match = text.xdRegExp.exec(url);
-            if (!match) {
-                return true;
-            }
-            uProtocol = match[2];
-            uHostName = match[3];
-
-            uHostName = uHostName.split(':');
-            uPort = uHostName[1];
-            uHostName = uHostName[0];
-
-            return (!uProtocol || uProtocol === protocol) &&
-                   (!uHostName || uHostName.toLowerCase() === hostname.toLowerCase()) &&
-                   ((!uPort && !uHostName) || uPort === port);
-        },
-
-        finishLoad: function (name, strip, content, onLoad) {
-            content = strip ? text.strip(content) : content;
-            if (masterConfig.isBuild) {
-                buildMap[name] = content;
-            }
-            onLoad(content);
-        },
-
-        load: function (name, req, onLoad, config) {
-            //Name has format: some.module.filext!strip
-            //The strip part is optional.
-            //if strip is present, then that means only get the string contents
-            //inside a body tag in an HTML string. For XML/SVG content it means
-            //removing the <?xml ...?> declarations so the content can be inserted
-            //into the current doc without problems.
-
-            // Do not bother with the work if a build and text will
-            // not be inlined.
-            if (config.isBuild && !config.inlineText) {
-                onLoad();
-                return;
-            }
-
-            masterConfig.isBuild = config.isBuild;
-
-            var parsed = text.parseName(name),
-                nonStripName = parsed.moduleName +
-                    (parsed.ext ? '.' + parsed.ext : ''),
-                url = req.toUrl(nonStripName),
-                useXhr = (masterConfig.useXhr) ||
-                         text.useXhr;
-
-            // Do not load if it is an empty: url
-            if (url.indexOf('empty:') === 0) {
-                onLoad();
-                return;
-            }
-
-            //Load the text. Use XHR if possible and in a browser.
-            if (!hasLocation || useXhr(url, defaultProtocol, defaultHostName, defaultPort)) {
-                text.get(url, function (content) {
-                    text.finishLoad(name, parsed.strip, content, onLoad);
-                }, function (err) {
-                    if (onLoad.error) {
-                        onLoad.error(err);
-                    }
-                });
-            } else {
-                //Need to fetch the resource across domains. Assume
-                //the resource has been optimized into a JS module. Fetch
-                //by the module name + extension, but do not include the
-                //!strip part to avoid file system issues.
-                req([nonStripName], function (content) {
-                    text.finishLoad(parsed.moduleName + '.' + parsed.ext,
-                                    parsed.strip, content, onLoad);
-                });
-            }
-        },
-
-        write: function (pluginName, moduleName, write, config) {
-            if (buildMap.hasOwnProperty(moduleName)) {
-                var content = text.jsEscape(buildMap[moduleName]);
-                write.asModule(pluginName + "!" + moduleName,
-                               "define(function () { return '" +
-                                   content +
-                               "';});\n");
-            }
-        },
-
-        writeFile: function (pluginName, moduleName, req, write, config) {
-            var parsed = text.parseName(moduleName),
-                extPart = parsed.ext ? '.' + parsed.ext : '',
-                nonStripName = parsed.moduleName + extPart,
-                //Use a '.js' file name so that it indicates it is a
-                //script that can be loaded across domains.
-                fileName = req.toUrl(parsed.moduleName + extPart) + '.js';
-
-            //Leverage own load() method to load plugin value, but only
-            //write out values that do not have the strip argument,
-            //to avoid any potential issues with ! in file names.
-            text.load(nonStripName, req, function (value) {
-                //Use own write() method to construct full module value.
-                //But need to create shell that translates writeFile's
-                //write() to the right interface.
-                var textWrite = function (contents) {
-                    return write(fileName, contents);
-                };
-                textWrite.asModule = function (moduleName, contents) {
-                    return write.asModule(moduleName, fileName, contents);
-                };
-
-                text.write(pluginName, nonStripName, textWrite, config);
-            }, config);
-        }
-    };
-
-    if (masterConfig.env === 'node' || (!masterConfig.env &&
-            typeof process !== "undefined" &&
-            process.versions &&
-            !!process.versions.node &&
-            !process.versions['node-webkit'])) {
-        //Using special require.nodeRequire, something added by r.js.
-        fs = require.nodeRequire('fs');
-
-        text.get = function (url, callback, errback) {
-            try {
-                var file = fs.readFileSync(url, 'utf8');
-                //Remove BOM (Byte Mark Order) from utf8 files if it is there.
-                if (file.indexOf('\uFEFF') === 0) {
-                    file = file.substring(1);
-                }
-                callback(file);
-            } catch (e) {
-                errback(e);
-            }
-        };
-    } else if (masterConfig.env === 'xhr' || (!masterConfig.env &&
-            text.createXhr())) {
-        text.get = function (url, callback, errback, headers) {
-            var xhr = text.createXhr(), header;
-            xhr.open('GET', url, true);
-
-            //Allow plugins direct access to xhr headers
-            if (headers) {
-                for (header in headers) {
-                    if (headers.hasOwnProperty(header)) {
-                        xhr.setRequestHeader(header.toLowerCase(), headers[header]);
-                    }
-                }
-            }
-
-            //Allow overrides specified in config
-            if (masterConfig.onXhr) {
-                masterConfig.onXhr(xhr, url);
-            }
-
-            xhr.onreadystatechange = function (evt) {
-                var status, err;
-                //Do not explicitly handle errors, those should be
-                //visible via console output in the browser.
-                if (xhr.readyState === 4) {
-                    status = xhr.status;
-                    if (status > 399 && status < 600) {
-                        //An http 4xx or 5xx error. Signal an error.
-                        err = new Error(url + ' HTTP status: ' + status);
-                        err.xhr = xhr;
-                        errback(err);
-                    } else {
-                        callback(xhr.responseText);
-                    }
-
-                    if (masterConfig.onXhrComplete) {
-                        masterConfig.onXhrComplete(xhr, url);
-                    }
-                }
-            };
-            xhr.send(null);
-        };
-    } else if (masterConfig.env === 'rhino' || (!masterConfig.env &&
-            typeof Packages !== 'undefined' && typeof java !== 'undefined')) {
-        //Why Java, why is this so awkward?
-        text.get = function (url, callback) {
-            var stringBuffer, line,
-                encoding = "utf-8",
-                file = new java.io.File(url),
-                lineSeparator = java.lang.System.getProperty("line.separator"),
-                input = new java.io.BufferedReader(new java.io.InputStreamReader(new java.io.FileInputStream(file), encoding)),
-                content = '';
-            try {
-                stringBuffer = new java.lang.StringBuffer();
-                line = input.readLine();
-
-                // Byte Order Mark (BOM) - The Unicode Standard, version 3.0, page 324
-                // http://www.unicode.org/faq/utf_bom.html
-
-                // Note that when we use utf-8, the BOM should appear as "EF BB BF", but it doesn't due to this bug in the JDK:
-                // http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=4508058
-                if (line && line.length() && line.charAt(0) === 0xfeff) {
-                    // Eat the BOM, since we've already found the encoding on this file,
-                    // and we plan to concatenating this buffer with others; the BOM should
-                    // only appear at the top of a file.
-                    line = line.substring(1);
-                }
-
-                if (line !== null) {
-                    stringBuffer.append(line);
-                }
-
-                while ((line = input.readLine()) !== null) {
-                    stringBuffer.append(lineSeparator);
-                    stringBuffer.append(line);
-                }
-                //Make sure we return a JavaScript string and not a Java string.
-                content = String(stringBuffer.toString()); //String
-            } finally {
-                input.close();
-            }
-            callback(content);
-        };
-    } else if (masterConfig.env === 'xpconnect' || (!masterConfig.env &&
-            typeof Components !== 'undefined' && Components.classes &&
-            Components.interfaces)) {
-        //Avert your gaze!
-        Cc = Components.classes,
-        Ci = Components.interfaces;
-        Components.utils['import']('resource://gre/modules/FileUtils.jsm');
-        xpcIsWindows = ('@mozilla.org/windows-registry-key;1' in Cc);
-
-        text.get = function (url, callback) {
-            var inStream, convertStream, fileObj,
-                readData = {};
-
-            if (xpcIsWindows) {
-                url = url.replace(/\//g, '\\');
-            }
-
-            fileObj = new FileUtils.File(url);
-
-            //XPCOM, you so crazy
-            try {
-                inStream = Cc['@mozilla.org/network/file-input-stream;1']
-                           .createInstance(Ci.nsIFileInputStream);
-                inStream.init(fileObj, 1, 0, false);
-
-                convertStream = Cc['@mozilla.org/intl/converter-input-stream;1']
-                                .createInstance(Ci.nsIConverterInputStream);
-                convertStream.init(inStream, "utf-8", inStream.available(),
-                Ci.nsIConverterInputStream.DEFAULT_REPLACEMENT_CHARACTER);
-
-                convertStream.readString(inStream.available(), readData);
-                convertStream.close();
-                inStream.close();
-                callback(readData.value);
-            } catch (e) {
-                throw new Error((fileObj && fileObj.path || '') + ': ' + e);
-            }
-        };
-    }
-    return text;
-});
-
-define('text!moment-timezone.json',[],function () { return '{\n\t"links": {\n\t\t"Africa/Asmera": "Africa/Asmara",\n\t\t"Africa/Timbuktu": "Africa/Bamako",\n\t\t"America/Argentina/ComodRivadavia": "America/Argentina/Catamarca",\n\t\t"America/Atka": "America/Adak",\n\t\t"America/Buenos_Aires": "America/Argentina/Buenos_Aires",\n\t\t"America/Catamarca": "America/Argentina/Catamarca",\n\t\t"America/Coral_Harbour": "America/Atikokan",\n\t\t"America/Cordoba": "America/Argentina/Cordoba",\n\t\t"America/Ensenada": "America/Tijuana",\n\t\t"America/Fort_Wayne": "America/Indiana/Indianapolis",\n\t\t"America/Indianapolis": "America/Indiana/Indianapolis",\n\t\t"America/Jujuy": "America/Argentina/Jujuy",\n\t\t"America/Knox_IN": "America/Indiana/Knox",\n\t\t"America/Kralendijk": "America/Curacao",\n\t\t"America/Louisville": "America/Kentucky/Louisville",\n\t\t"America/Lower_Princes": "America/Curacao",\n\t\t"America/Marigot": "America/Guadeloupe",\n\t\t"America/Mendoza": "America/Argentina/Mendoza",\n\t\t"America/Porto_Acre": "America/Rio_Branco",\n\t\t"America/Rosario": "America/Argentina/Cordoba",\n\t\t"America/Shiprock": "America/Denver",\n\t\t"America/St_Barthelemy": "America/Guadeloupe",\n\t\t"America/Virgin": "America/St_Thomas",\n\t\t"Antarctica/South_Pole": "Antarctica/McMurdo",\n\t\t"Arctic/Longyearbyen": "Europe/Oslo",\n\t\t"Asia/Ashkhabad": "Asia/Ashgabat",\n\t\t"Asia/Calcutta": "Asia/Kolkata",\n\t\t"Asia/Chungking": "Asia/Chongqing",\n\t\t"Asia/Dacca": "Asia/Dhaka",\n\t\t"Asia/Istanbul": "Europe/Istanbul",\n\t\t"Asia/Katmandu": "Asia/Kathmandu",\n\t\t"Asia/Macao": "Asia/Macau",\n\t\t"Asia/Saigon": "Asia/Ho_Chi_Minh",\n\t\t"Asia/Tel_Aviv": "Asia/Jerusalem",\n\t\t"Asia/Thimbu": "Asia/Thimphu",\n\t\t"Asia/Ujung_Pandang": "Asia/Makassar",\n\t\t"Asia/Ulan_Bator": "Asia/Ulaanbaatar",\n\t\t"Atlantic/Faeroe": "Atlantic/Faroe",\n\t\t"Atlantic/Jan_Mayen": "Europe/Oslo",\n\t\t"Australia/ACT": "Australia/Sydney",\n\t\t"Australia/Canberra": "Australia/Sydney",\n\t\t"Australia/LHI": "Australia/Lord_Howe",\n\t\t"Australia/NSW": "Australia/Sydney",\n\t\t"Australia/North": "Australia/Darwin",\n\t\t"Australia/Queensland": "Australia/Brisbane",\n\t\t"Australia/South": "Australia/Adelaide",\n\t\t"Australia/Tasmania": "Australia/Hobart",\n\t\t"Australia/Victoria": "Australia/Melbourne",\n\t\t"Australia/West": "Australia/Perth",\n\t\t"Australia/Yancowinna": "Australia/Broken_Hill",\n\t\t"Brazil/Acre": "America/Rio_Branco",\n\t\t"Brazil/DeNoronha": "America/Noronha",\n\t\t"Brazil/East": "America/Sao_Paulo",\n\t\t"Brazil/West": "America/Manaus",\n\t\t"Canada/Atlantic": "America/Halifax",\n\t\t"Canada/Central": "America/Winnipeg",\n\t\t"Canada/East-Saskatchewan": "America/Regina",\n\t\t"Canada/Eastern": "America/Toronto",\n\t\t"Canada/Mountain": "America/Edmonton",\n\t\t"Canada/Newfoundland": "America/St_Johns",\n\t\t"Canada/Pacific": "America/Vancouver",\n\t\t"Canada/Saskatchewan": "America/Regina",\n\t\t"Canada/Yukon": "America/Whitehorse",\n\t\t"Chile/Continental": "America/Santiago",\n\t\t"Chile/EasterIsland": "Pacific/Easter",\n\t\t"Cuba": "America/Havana",\n\t\t"Egypt": "Africa/Cairo",\n\t\t"Eire": "Europe/Dublin",\n\t\t"Etc/GMT+0": "Etc/GMT",\n\t\t"Etc/GMT-0": "Etc/GMT",\n\t\t"Etc/GMT0": "Etc/GMT",\n\t\t"Etc/Greenwich": "Etc/GMT",\n\t\t"Etc/Universal": "Etc/UTC",\n\t\t"Etc/Zulu": "Etc/UTC",\n\t\t"Europe/Belfast": "Europe/London",\n\t\t"Europe/Bratislava": "Europe/Prague",\n\t\t"Europe/Busingen": "Europe/Zurich",\n\t\t"Europe/Guernsey": "Europe/London",\n\t\t"Europe/Isle_of_Man": "Europe/London",\n\t\t"Europe/Jersey": "Europe/London",\n\t\t"Europe/Ljubljana": "Europe/Belgrade",\n\t\t"Europe/Mariehamn": "Europe/Helsinki",\n\t\t"Europe/Nicosia": "Asia/Nicosia",\n\t\t"Europe/Podgorica": "Europe/Belgrade",\n\t\t"Europe/San_Marino": "Europe/Rome",\n\t\t"Europe/Sarajevo": "Europe/Belgrade",\n\t\t"Europe/Skopje": "Europe/Belgrade",\n\t\t"Europe/Tiraspol": "Europe/Chisinau",\n\t\t"Europe/Vatican": "Europe/Rome",\n\t\t"Europe/Zagreb": "Europe/Belgrade",\n\t\t"GB": "Europe/London",\n\t\t"GB-Eire": "Europe/London",\n\t\t"GMT": "Etc/GMT",\n\t\t"GMT+0": "Etc/GMT",\n\t\t"GMT-0": "Etc/GMT",\n\t\t"GMT0": "Etc/GMT",\n\t\t"Greenwich": "Etc/GMT",\n\t\t"Hongkong": "Asia/Hong_Kong",\n\t\t"Iceland": "Atlantic/Reykjavik",\n\t\t"Iran": "Asia/Tehran",\n\t\t"Israel": "Asia/Jerusalem",\n\t\t"Jamaica": "America/Jamaica",\n\t\t"Japan": "Asia/Tokyo",\n\t\t"Kwajalein": "Pacific/Kwajalein",\n\t\t"Libya": "Africa/Tripoli",\n\t\t"Mexico/BajaNorte": "America/Tijuana",\n\t\t"Mexico/BajaSur": "America/Mazatlan",\n\t\t"Mexico/General": "America/Mexico_City",\n\t\t"NZ": "Pacific/Auckland",\n\t\t"NZ-CHAT": "Pacific/Chatham",\n\t\t"Navajo": "America/Denver",\n\t\t"PRC": "Asia/Shanghai",\n\t\t"Pacific/Ponape": "Pacific/Pohnpei",\n\t\t"Pacific/Samoa": "Pacific/Pago_Pago",\n\t\t"Pacific/Truk": "Pacific/Chuuk",\n\t\t"Pacific/Yap": "Pacific/Chuuk",\n\t\t"Poland": "Europe/Warsaw",\n\t\t"Portugal": "Europe/Lisbon",\n\t\t"ROC": "Asia/Taipei",\n\t\t"ROK": "Asia/Seoul",\n\t\t"Singapore": "Asia/Singapore",\n\t\t"Turkey": "Europe/Istanbul",\n\t\t"UCT": "Etc/UCT",\n\t\t"US/Alaska": "America/Anchorage",\n\t\t"US/Aleutian": "America/Adak",\n\t\t"US/Arizona": "America/Phoenix",\n\t\t"US/Central": "America/Chicago",\n\t\t"US/East-Indiana": "America/Indiana/Indianapolis",\n\t\t"US/Eastern": "America/New_York",\n\t\t"US/Hawaii": "Pacific/Honolulu",\n\t\t"US/Indiana-Starke": "America/Indiana/Knox",\n\t\t"US/Michigan": "America/Detroit",\n\t\t"US/Mountain": "America/Denver",\n\t\t"US/Pacific": "America/Los_Angeles",\n\t\t"US/Samoa": "Pacific/Pago_Pago",\n\t\t"UTC": "Etc/UTC",\n\t\t"Universal": "Etc/UTC",\n\t\t"W-SU": "Europe/Moscow",\n\t\t"Zulu": "Etc/UTC"\n\t},\n\t"meta": {\n\t\t"Africa/Abidjan": {\n\t\t\t"lat": 5.3167,\n\t\t\t"lon": -3.9667,\n\t\t\t"rules": ""\n\t\t},\n\t\t"Africa/Accra": {\n\t\t\t"lat": 5.55,\n\t\t\t"lon": 0.2167,\n\t\t\t"rules": "Ghana"\n\t\t},\n\t\t"Africa/Addis_Ababa": {\n\t\t\t"lat": 9.0333,\n\t\t\t"lon": 38.7,\n\t\t\t"rules": ""\n\t\t},\n\t\t"Africa/Algiers": {\n\t\t\t"lat": 36.7833,\n\t\t\t"lon": 3.05,\n\t\t\t"rules": "Algeria"\n\t\t},\n\t\t"Africa/Asmara": {\n\t\t\t"lat": 15.3333,\n\t\t\t"lon": 38.8833,\n\t\t\t"rules": ""\n\t\t},\n\t\t"Africa/Bamako": {\n\t\t\t"lat": 12.65,\n\t\t\t"lon": -8,\n\t\t\t"rules": ""\n\t\t},\n\t\t"Africa/Bangui": {\n\t\t\t"lat": 4.3667,\n\t\t\t"lon": 18.5833,\n\t\t\t"rules": ""\n\t\t},\n\t\t"Africa/Banjul": {\n\t\t\t"lat": 13.4667,\n\t\t\t"lon": -15.35,\n\t\t\t"rules": ""\n\t\t},\n\t\t"Africa/Bissau": {\n\t\t\t"lat": 11.85,\n\t\t\t"lon": -14.4167,\n\t\t\t"rules": ""\n\t\t},\n\t\t"Africa/Blantyre": {\n\t\t\t"lat": -14.2167,\n\t\t\t"lon": 35,\n\t\t\t"rules": ""\n\t\t},\n\t\t"Africa/Brazzaville": {\n\t\t\t"lat": -3.7333,\n\t\t\t"lon": 15.2833,\n\t\t\t"rules": ""\n\t\t},\n\t\t"Africa/Bujumbura": {\n\t\t\t"lat": -2.6167,\n\t\t\t"lon": 29.3667,\n\t\t\t"rules": ""\n\t\t},\n\t\t"Africa/Cairo": {\n\t\t\t"lat": 30.05,\n\t\t\t"lon": 31.25,\n\t\t\t"rules": "Egypt"\n\t\t},\n\t\t"Africa/Casablanca": {\n\t\t\t"lat": 33.65,\n\t\t\t"lon": -6.4167,\n\t\t\t"rules": "Morocco"\n\t\t},\n\t\t"Africa/Ceuta": {\n\t\t\t"lat": 35.8833,\n\t\t\t"lon": -4.6833,\n\t\t\t"rules": "Spain SpainAfrica EU"\n\t\t},\n\t\t"Africa/Conakry": {\n\t\t\t"lat": 9.5167,\n\t\t\t"lon": -12.2833,\n\t\t\t"rules": ""\n\t\t},\n\t\t"Africa/Dakar": {\n\t\t\t"lat": 14.6667,\n\t\t\t"lon": -16.5667,\n\t\t\t"rules": ""\n\t\t},\n\t\t"Africa/Dar_es_Salaam": {\n\t\t\t"lat": -5.2,\n\t\t\t"lon": 39.2833,\n\t\t\t"rules": ""\n\t\t},\n\t\t"Africa/Djibouti": {\n\t\t\t"lat": 11.6,\n\t\t\t"lon": 43.15,\n\t\t\t"rules": ""\n\t\t},\n\t\t"Africa/Douala": {\n\t\t\t"lat": 4.05,\n\t\t\t"lon": 9.7,\n\t\t\t"rules": ""\n\t\t},\n\t\t"Africa/El_Aaiun": {\n\t\t\t"lat": 27.15,\n\t\t\t"lon": -12.8,\n\t\t\t"rules": ""\n\t\t},\n\t\t"Africa/Freetown": {\n\t\t\t"lat": 8.5,\n\t\t\t"lon": -12.75,\n\t\t\t"rules": "SL"\n\t\t},\n\t\t"Africa/Gaborone": {\n\t\t\t"lat": -23.35,\n\t\t\t"lon": 25.9167,\n\t\t\t"rules": ""\n\t\t},\n\t\t"Africa/Harare": {\n\t\t\t"lat": -16.1667,\n\t\t\t"lon": 31.05,\n\t\t\t"rules": ""\n\t\t},\n\t\t"Africa/Johannesburg": {\n\t\t\t"lat": -25.75,\n\t\t\t"lon": 28,\n\t\t\t"rules": "SA"\n\t\t},\n\t\t"Africa/Juba": {\n\t\t\t"lat": 4.85,\n\t\t\t"lon": 31.6,\n\t\t\t"rules": "Sudan"\n\t\t},\n\t\t"Africa/Kampala": {\n\t\t\t"lat": 0.3167,\n\t\t\t"lon": 32.4167,\n\t\t\t"rules": ""\n\t\t},\n\t\t"Africa/Khartoum": {\n\t\t\t"lat": 15.6,\n\t\t\t"lon": 32.5333,\n\t\t\t"rules": "Sudan"\n\t\t},\n\t\t"Africa/Kigali": {\n\t\t\t"lat": -0.05,\n\t\t\t"lon": 30.0667,\n\t\t\t"rules": ""\n\t\t},\n\t\t"Africa/Kinshasa": {\n\t\t\t"lat": -3.7,\n\t\t\t"lon": 15.3,\n\t\t\t"rules": ""\n\t\t},\n\t\t"Africa/Lagos": {\n\t\t\t"lat": 6.45,\n\t\t\t"lon": 3.4,\n\t\t\t"rules": ""\n\t\t},\n\t\t"Africa/Libreville": {\n\t\t\t"lat": 0.3833,\n\t\t\t"lon": 9.45,\n\t\t\t"rules": ""\n\t\t},\n\t\t"Africa/Lome": {\n\t\t\t"lat": 6.1333,\n\t\t\t"lon": 1.2167,\n\t\t\t"rules": ""\n\t\t},\n\t\t"Africa/Luanda": {\n\t\t\t"lat": -7.2,\n\t\t\t"lon": 13.2333,\n\t\t\t"rules": ""\n\t\t},\n\t\t"Africa/Lubumbashi": {\n\t\t\t"lat": -10.3333,\n\t\t\t"lon": 27.4667,\n\t\t\t"rules": ""\n\t\t},\n\t\t"Africa/Lusaka": {\n\t\t\t"lat": -14.5833,\n\t\t\t"lon": 28.2833,\n\t\t\t"rules": ""\n\t\t},\n\t\t"Africa/Malabo": {\n\t\t\t"lat": 3.75,\n\t\t\t"lon": 8.7833,\n\t\t\t"rules": ""\n\t\t},\n\t\t"Africa/Maputo": {\n\t\t\t"lat": -24.0333,\n\t\t\t"lon": 32.5833,\n\t\t\t"rules": ""\n\t\t},\n\t\t"Africa/Maseru": {\n\t\t\t"lat": -28.5333,\n\t\t\t"lon": 27.5,\n\t\t\t"rules": ""\n\t\t},\n\t\t"Africa/Mbabane": {\n\t\t\t"lat": -25.7,\n\t\t\t"lon": 31.1,\n\t\t\t"rules": ""\n\t\t},\n\t\t"Africa/Mogadishu": {\n\t\t\t"lat": 2.0667,\n\t\t\t"lon": 45.3667,\n\t\t\t"rules": ""\n\t\t},\n\t\t"Africa/Monrovia": {\n\t\t\t"lat": 6.3,\n\t\t\t"lon": -9.2167,\n\t\t\t"rules": ""\n\t\t},\n\t\t"Africa/Nairobi": {\n\t\t\t"lat": -0.7167,\n\t\t\t"lon": 36.8167,\n\t\t\t"rules": ""\n\t\t},\n\t\t"Africa/Ndjamena": {\n\t\t\t"lat": 12.1167,\n\t\t\t"lon": 15.05,\n\t\t\t"rules": ""\n\t\t},\n\t\t"Africa/Niamey": {\n\t\t\t"lat": 13.5167,\n\t\t\t"lon": 2.1167,\n\t\t\t"rules": ""\n\t\t},\n\t\t"Africa/Nouakchott": {\n\t\t\t"lat": 18.1,\n\t\t\t"lon": -14.05,\n\t\t\t"rules": ""\n\t\t},\n\t\t"Africa/Ouagadougou": {\n\t\t\t"lat": 12.3667,\n\t\t\t"lon": -0.4833,\n\t\t\t"rules": ""\n\t\t},\n\t\t"Africa/Porto-Novo": {\n\t\t\t"lat": 6.4833,\n\t\t\t"lon": 2.6167,\n\t\t\t"rules": ""\n\t\t},\n\t\t"Africa/Sao_Tome": {\n\t\t\t"lat": 0.3333,\n\t\t\t"lon": 6.7333,\n\t\t\t"rules": ""\n\t\t},\n\t\t"Africa/Tripoli": {\n\t\t\t"lat": 32.9,\n\t\t\t"lon": 13.1833,\n\t\t\t"rules": "Libya"\n\t\t},\n\t\t"Africa/Tunis": {\n\t\t\t"lat": 36.8,\n\t\t\t"lon": 10.1833,\n\t\t\t"rules": "Tunisia"\n\t\t},\n\t\t"Africa/Windhoek": {\n\t\t\t"lat": -21.4333,\n\t\t\t"lon": 17.1,\n\t\t\t"rules": "Namibia"\n\t\t},\n\t\t"America/Adak": {\n\t\t\t"lat": 51.88,\n\t\t\t"lon": -175.3419,\n\t\t\t"rules": "US"\n\t\t},\n\t\t"America/Anchorage": {\n\t\t\t"lat": 61.2181,\n\t\t\t"lon": -148.0997,\n\t\t\t"rules": "US"\n\t\t},\n\t\t"America/Anguilla": {\n\t\t\t"lat": 18.2,\n\t\t\t"lon": -62.9333,\n\t\t\t"rules": ""\n\t\t},\n\t\t"America/Antigua": {\n\t\t\t"lat": 17.05,\n\t\t\t"lon": -60.2,\n\t\t\t"rules": ""\n\t\t},\n\t\t"America/Araguaina": {\n\t\t\t"lat": -6.8,\n\t\t\t"lon": -47.8,\n\t\t\t"rules": "Brazil"\n\t\t},\n\t\t"America/Argentina/Buenos_Aires": {\n\t\t\t"lat": -33.4,\n\t\t\t"lon": -57.55,\n\t\t\t"rules": "Arg"\n\t\t},\n\t\t"America/Argentina/Catamarca": {\n\t\t\t"lat": -27.5333,\n\t\t\t"lon": -64.2167,\n\t\t\t"rules": "Arg"\n\t\t},\n\t\t"America/Argentina/Cordoba": {\n\t\t\t"lat": -30.6,\n\t\t\t"lon": -63.8167,\n\t\t\t"rules": "Arg"\n\t\t},\n\t\t"America/Argentina/Jujuy": {\n\t\t\t"lat": -23.8167,\n\t\t\t"lon": -64.7,\n\t\t\t"rules": "Arg"\n\t\t},\n\t\t"America/Argentina/La_Rioja": {\n\t\t\t"lat": -28.5667,\n\t\t\t"lon": -65.15,\n\t\t\t"rules": "Arg"\n\t\t},\n\t\t"America/Argentina/Mendoza": {\n\t\t\t"lat": -31.1167,\n\t\t\t"lon": -67.1833,\n\t\t\t"rules": "Arg"\n\t\t},\n\t\t"America/Argentina/Rio_Gallegos": {\n\t\t\t"lat": -50.3667,\n\t\t\t"lon": -68.7833,\n\t\t\t"rules": "Arg"\n\t\t},\n\t\t"America/Argentina/Salta": {\n\t\t\t"lat": -23.2167,\n\t\t\t"lon": -64.5833,\n\t\t\t"rules": "Arg"\n\t\t},\n\t\t"America/Argentina/San_Juan": {\n\t\t\t"lat": -30.4667,\n\t\t\t"lon": -67.4833,\n\t\t\t"rules": "Arg"\n\t\t},\n\t\t"America/Argentina/San_Luis": {\n\t\t\t"lat": -32.6833,\n\t\t\t"lon": -65.65,\n\t\t\t"rules": "Arg SanLuis"\n\t\t},\n\t\t"America/Argentina/Tucuman": {\n\t\t\t"lat": -25.1833,\n\t\t\t"lon": -64.7833,\n\t\t\t"rules": "Arg"\n\t\t},\n\t\t"America/Argentina/Ushuaia": {\n\t\t\t"lat": -53.2,\n\t\t\t"lon": -67.7,\n\t\t\t"rules": "Arg"\n\t\t},\n\t\t"America/Aruba": {\n\t\t\t"lat": 12.5,\n\t\t\t"lon": -68.0333,\n\t\t\t"rules": ""\n\t\t},\n\t\t"America/Asuncion": {\n\t\t\t"lat": -24.7333,\n\t\t\t"lon": -56.3333,\n\t\t\t"rules": "Para"\n\t\t},\n\t\t"America/Atikokan": {\n\t\t\t"lat": 48.7586,\n\t\t\t"lon": -90.3783,\n\t\t\t"rules": "Canada"\n\t\t},\n\t\t"America/Bahia": {\n\t\t\t"lat": -11.0167,\n\t\t\t"lon": -37.4833,\n\t\t\t"rules": "Brazil"\n\t\t},\n\t\t"America/Bahia_Banderas": {\n\t\t\t"lat": 20.8,\n\t\t\t"lon": -104.75,\n\t\t\t"rules": "Mexico"\n\t\t},\n\t\t"America/Barbados": {\n\t\t\t"lat": 13.1,\n\t\t\t"lon": -58.3833,\n\t\t\t"rules": "Barb"\n\t\t},\n\t\t"America/Belem": {\n\t\t\t"lat": -0.55,\n\t\t\t"lon": -47.5167,\n\t\t\t"rules": "Brazil"\n\t\t},\n\t\t"America/Belize": {\n\t\t\t"lat": 17.5,\n\t\t\t"lon": -87.8,\n\t\t\t"rules": "Belize"\n\t\t},\n\t\t"America/Blanc-Sablon": {\n\t\t\t"lat": 51.4167,\n\t\t\t"lon": -56.8833,\n\t\t\t"rules": "Canada"\n\t\t},\n\t\t"America/Boa_Vista": {\n\t\t\t"lat": 2.8167,\n\t\t\t"lon": -59.3333,\n\t\t\t"rules": "Brazil"\n\t\t},\n\t\t"America/Bogota": {\n\t\t\t"lat": 4.6,\n\t\t\t"lon": -73.9167,\n\t\t\t"rules": "CO"\n\t\t},\n\t\t"America/Boise": {\n\t\t\t"lat": 43.6136,\n\t\t\t"lon": -115.7975,\n\t\t\t"rules": "US"\n\t\t},\n\t\t"America/Cambridge_Bay": {\n\t\t\t"lat": 69.1139,\n\t\t\t"lon": -104.9472,\n\t\t\t"rules": "NT_YK Canada"\n\t\t},\n\t\t"America/Campo_Grande": {\n\t\t\t"lat": -19.55,\n\t\t\t"lon": -53.3833,\n\t\t\t"rules": "Brazil"\n\t\t},\n\t\t"America/Cancun": {\n\t\t\t"lat": 21.0833,\n\t\t\t"lon": -85.2333,\n\t\t\t"rules": "Mexico"\n\t\t},\n\t\t"America/Caracas": {\n\t\t\t"lat": 10.5,\n\t\t\t"lon": -65.0667,\n\t\t\t"rules": ""\n\t\t},\n\t\t"America/Cayenne": {\n\t\t\t"lat": 4.9333,\n\t\t\t"lon": -51.6667,\n\t\t\t"rules": ""\n\t\t},\n\t\t"America/Cayman": {\n\t\t\t"lat": 19.3,\n\t\t\t"lon": -80.6167,\n\t\t\t"rules": ""\n\t\t},\n\t\t"America/Chicago": {\n\t\t\t"lat": 41.85,\n\t\t\t"lon": -86.35,\n\t\t\t"rules": "US Chicago"\n\t\t},\n\t\t"America/Chihuahua": {\n\t\t\t"lat": 28.6333,\n\t\t\t"lon": -105.9167,\n\t\t\t"rules": "Mexico"\n\t\t},\n\t\t"America/Costa_Rica": {\n\t\t\t"lat": 9.9333,\n\t\t\t"lon": -83.9167,\n\t\t\t"rules": "CR"\n\t\t},\n\t\t"America/Creston": {\n\t\t\t"lat": 49.1,\n\t\t\t"lon": -115.4833,\n\t\t\t"rules": ""\n\t\t},\n\t\t"America/Cuiaba": {\n\t\t\t"lat": -14.4167,\n\t\t\t"lon": -55.9167,\n\t\t\t"rules": "Brazil"\n\t\t},\n\t\t"America/Curacao": {\n\t\t\t"lat": 12.1833,\n\t\t\t"lon": -69,\n\t\t\t"rules": ""\n\t\t},\n\t\t"America/Danmarkshavn": {\n\t\t\t"lat": 76.7667,\n\t\t\t"lon": -17.3333,\n\t\t\t"rules": "EU"\n\t\t},\n\t\t"America/Dawson": {\n\t\t\t"lat": 64.0667,\n\t\t\t"lon": -138.5833,\n\t\t\t"rules": "NT_YK Canada"\n\t\t},\n\t\t"America/Dawson_Creek": {\n\t\t\t"lat": 59.7667,\n\t\t\t"lon": -119.7667,\n\t\t\t"rules": "Canada Vanc"\n\t\t},\n\t\t"America/Denver": {\n\t\t\t"lat": 39.7392,\n\t\t\t"lon": -103.0158,\n\t\t\t"rules": "US Denver"\n\t\t},\n\t\t"America/Detroit": {\n\t\t\t"lat": 42.3314,\n\t\t\t"lon": -82.9542,\n\t\t\t"rules": "US Detroit"\n\t\t},\n\t\t"America/Dominica": {\n\t\t\t"lat": 15.3,\n\t\t\t"lon": -60.6,\n\t\t\t"rules": ""\n\t\t},\n\t\t"America/Edmonton": {\n\t\t\t"lat": 53.55,\n\t\t\t"lon": -112.5333,\n\t\t\t"rules": "Edm Canada"\n\t\t},\n\t\t"America/Eirunepe": {\n\t\t\t"lat": -5.3333,\n\t\t\t"lon": -68.1333,\n\t\t\t"rules": "Brazil"\n\t\t},\n\t\t"America/El_Salvador": {\n\t\t\t"lat": 13.7,\n\t\t\t"lon": -88.8,\n\t\t\t"rules": "Salv"\n\t\t},\n\t\t"America/Fortaleza": {\n\t\t\t"lat": -2.2833,\n\t\t\t"lon": -37.5,\n\t\t\t"rules": "Brazil"\n\t\t},\n\t\t"America/Glace_Bay": {\n\t\t\t"lat": 46.2,\n\t\t\t"lon": -58.05,\n\t\t\t"rules": "Canada Halifax"\n\t\t},\n\t\t"America/Godthab": {\n\t\t\t"lat": 64.1833,\n\t\t\t"lon": -50.2667,\n\t\t\t"rules": "EU"\n\t\t},\n\t\t"America/Goose_Bay": {\n\t\t\t"lat": 53.3333,\n\t\t\t"lon": -59.5833,\n\t\t\t"rules": "Canada StJohns"\n\t\t},\n\t\t"America/Grand_Turk": {\n\t\t\t"lat": 21.4667,\n\t\t\t"lon": -70.8667,\n\t\t\t"rules": "TC"\n\t\t},\n\t\t"America/Grenada": {\n\t\t\t"lat": 12.05,\n\t\t\t"lon": -60.25,\n\t\t\t"rules": ""\n\t\t},\n\t\t"America/Guadeloupe": {\n\t\t\t"lat": 16.2333,\n\t\t\t"lon": -60.4667,\n\t\t\t"rules": ""\n\t\t},\n\t\t"America/Guatemala": {\n\t\t\t"lat": 14.6333,\n\t\t\t"lon": -89.4833,\n\t\t\t"rules": "Guat"\n\t\t},\n\t\t"America/Guayaquil": {\n\t\t\t"lat": -1.8333,\n\t\t\t"lon": -78.1667,\n\t\t\t"rules": ""\n\t\t},\n\t\t"America/Guyana": {\n\t\t\t"lat": 6.8,\n\t\t\t"lon": -57.8333,\n\t\t\t"rules": ""\n\t\t},\n\t\t"America/Halifax": {\n\t\t\t"lat": 44.65,\n\t\t\t"lon": -62.4,\n\t\t\t"rules": "Halifax Canada"\n\t\t},\n\t\t"America/Havana": {\n\t\t\t"lat": 23.1333,\n\t\t\t"lon": -81.6333,\n\t\t\t"rules": "Cuba"\n\t\t},\n\t\t"America/Hermosillo": {\n\t\t\t"lat": 29.0667,\n\t\t\t"lon": -109.0333,\n\t\t\t"rules": "Mexico"\n\t\t},\n\t\t"America/Indiana/Indianapolis": {\n\t\t\t"lat": 39.7683,\n\t\t\t"lon": -85.8419,\n\t\t\t"rules": "US Indianapolis"\n\t\t},\n\t\t"America/Indiana/Knox": {\n\t\t\t"lat": 41.2958,\n\t\t\t"lon": -85.375,\n\t\t\t"rules": "US Starke"\n\t\t},\n\t\t"America/Indiana/Marengo": {\n\t\t\t"lat": 38.3756,\n\t\t\t"lon": -85.6553,\n\t\t\t"rules": "US Marengo"\n\t\t},\n\t\t"America/Indiana/Petersburg": {\n\t\t\t"lat": 38.4919,\n\t\t\t"lon": -86.7214,\n\t\t\t"rules": "US Pike"\n\t\t},\n\t\t"America/Indiana/Tell_City": {\n\t\t\t"lat": 37.9531,\n\t\t\t"lon": -85.2386,\n\t\t\t"rules": "US Perry"\n\t\t},\n\t\t"America/Indiana/Vevay": {\n\t\t\t"lat": 38.7478,\n\t\t\t"lon": -84.9328,\n\t\t\t"rules": "US"\n\t\t},\n\t\t"America/Indiana/Vincennes": {\n\t\t\t"lat": 38.6772,\n\t\t\t"lon": -86.4714,\n\t\t\t"rules": "US Vincennes"\n\t\t},\n\t\t"America/Indiana/Winamac": {\n\t\t\t"lat": 41.0514,\n\t\t\t"lon": -85.3969,\n\t\t\t"rules": "US Pulaski"\n\t\t},\n\t\t"America/Inuvik": {\n\t\t\t"lat": 68.3497,\n\t\t\t"lon": -132.2833,\n\t\t\t"rules": "NT_YK Canada"\n\t\t},\n\t\t"America/Iqaluit": {\n\t\t\t"lat": 63.7333,\n\t\t\t"lon": -67.5333,\n\t\t\t"rules": "NT_YK Canada"\n\t\t},\n\t\t"America/Jamaica": {\n\t\t\t"lat": 18,\n\t\t\t"lon": -75.2,\n\t\t\t"rules": "US"\n\t\t},\n\t\t"America/Juneau": {\n\t\t\t"lat": 58.3019,\n\t\t\t"lon": -133.5803,\n\t\t\t"rules": "US"\n\t\t},\n\t\t"America/Kentucky/Louisville": {\n\t\t\t"lat": 38.2542,\n\t\t\t"lon": -84.2406,\n\t\t\t"rules": "US Louisville"\n\t\t},\n\t\t"America/Kentucky/Monticello": {\n\t\t\t"lat": 36.8297,\n\t\t\t"lon": -83.1508,\n\t\t\t"rules": "US"\n\t\t},\n\t\t"America/Kralendijk": {\n\t\t\t"lat": 12.1508,\n\t\t\t"lon": -67.7233,\n\t\t\t"rules": ""\n\t\t},\n\t\t"America/La_Paz": {\n\t\t\t"lat": -15.5,\n\t\t\t"lon": -67.85,\n\t\t\t"rules": ""\n\t\t},\n\t\t"America/Lima": {\n\t\t\t"lat": -11.95,\n\t\t\t"lon": -76.95,\n\t\t\t"rules": "Peru"\n\t\t},\n\t\t"America/Los_Angeles": {\n\t\t\t"lat": 34.0522,\n\t\t\t"lon": -117.7572,\n\t\t\t"rules": "US CA"\n\t\t},\n\t\t"America/Lower_Princes": {\n\t\t\t"lat": 18.0514,\n\t\t\t"lon": -62.9528,\n\t\t\t"rules": ""\n\t\t},\n\t\t"America/Maceio": {\n\t\t\t"lat": -8.3333,\n\t\t\t"lon": -34.2833,\n\t\t\t"rules": "Brazil"\n\t\t},\n\t\t"America/Managua": {\n\t\t\t"lat": 12.15,\n\t\t\t"lon": -85.7167,\n\t\t\t"rules": "Nic"\n\t\t},\n\t\t"America/Manaus": {\n\t\t\t"lat": -2.8667,\n\t\t\t"lon": -59.9833,\n\t\t\t"rules": "Brazil"\n\t\t},\n\t\t"America/Marigot": {\n\t\t\t"lat": 18.0667,\n\t\t\t"lon": -62.9167,\n\t\t\t"rules": ""\n\t\t},\n\t\t"America/Martinique": {\n\t\t\t"lat": 14.6,\n\t\t\t"lon": -60.9167,\n\t\t\t"rules": ""\n\t\t},\n\t\t"America/Matamoros": {\n\t\t\t"lat": 25.8333,\n\t\t\t"lon": -96.5,\n\t\t\t"rules": "US Mexico"\n\t\t},\n\t\t"America/Mazatlan": {\n\t\t\t"lat": 23.2167,\n\t\t\t"lon": -105.5833,\n\t\t\t"rules": "Mexico"\n\t\t},\n\t\t"America/Menominee": {\n\t\t\t"lat": 45.1078,\n\t\t\t"lon": -86.3858,\n\t\t\t"rules": "US Menominee"\n\t\t},\n\t\t"America/Merida": {\n\t\t\t"lat": 20.9667,\n\t\t\t"lon": -88.3833,\n\t\t\t"rules": "Mexico"\n\t\t},\n\t\t"America/Metlakatla": {\n\t\t\t"lat": 55.1269,\n\t\t\t"lon": -130.4236,\n\t\t\t"rules": "US"\n\t\t},\n\t\t"America/Mexico_City": {\n\t\t\t"lat": 19.4,\n\t\t\t"lon": -98.85,\n\t\t\t"rules": "Mexico"\n\t\t},\n\t\t"America/Miquelon": {\n\t\t\t"lat": 47.05,\n\t\t\t"lon": -55.6667,\n\t\t\t"rules": "Canada"\n\t\t},\n\t\t"America/Moncton": {\n\t\t\t"lat": 46.1,\n\t\t\t"lon": -63.2167,\n\t\t\t"rules": "Canada Moncton"\n\t\t},\n\t\t"America/Monterrey": {\n\t\t\t"lat": 25.6667,\n\t\t\t"lon": -99.6833,\n\t\t\t"rules": "US Mexico"\n\t\t},\n\t\t"America/Montevideo": {\n\t\t\t"lat": -33.1167,\n\t\t\t"lon": -55.8167,\n\t\t\t"rules": "Uruguay"\n\t\t},\n\t\t"America/Montreal": {\n\t\t\t"lat": 45.5167,\n\t\t\t"lon": -72.4333,\n\t\t\t"rules": "Mont Canada"\n\t\t},\n\t\t"America/Montserrat": {\n\t\t\t"lat": 16.7167,\n\t\t\t"lon": -61.7833,\n\t\t\t"rules": ""\n\t\t},\n\t\t"America/Nassau": {\n\t\t\t"lat": 25.0833,\n\t\t\t"lon": -76.65,\n\t\t\t"rules": "Bahamas US"\n\t\t},\n\t\t"America/New_York": {\n\t\t\t"lat": 40.7142,\n\t\t\t"lon": -73.9936,\n\t\t\t"rules": "US NYC"\n\t\t},\n\t\t"America/Nipigon": {\n\t\t\t"lat": 49.0167,\n\t\t\t"lon": -87.7333,\n\t\t\t"rules": "Canada"\n\t\t},\n\t\t"America/Nome": {\n\t\t\t"lat": 64.5011,\n\t\t\t"lon": -164.5936,\n\t\t\t"rules": "US"\n\t\t},\n\t\t"America/Noronha": {\n\t\t\t"lat": -2.15,\n\t\t\t"lon": -31.5833,\n\t\t\t"rules": "Brazil"\n\t\t},\n\t\t"America/North_Dakota/Beulah": {\n\t\t\t"lat": 47.2642,\n\t\t\t"lon": -100.2222,\n\t\t\t"rules": "US"\n\t\t},\n\t\t"America/North_Dakota/Center": {\n\t\t\t"lat": 47.1164,\n\t\t\t"lon": -100.7008,\n\t\t\t"rules": "US"\n\t\t},\n\t\t"America/North_Dakota/New_Salem": {\n\t\t\t"lat": 46.845,\n\t\t\t"lon": -100.5892,\n\t\t\t"rules": "US"\n\t\t},\n\t\t"America/Ojinaga": {\n\t\t\t"lat": 29.5667,\n\t\t\t"lon": -103.5833,\n\t\t\t"rules": "Mexico US"\n\t\t},\n\t\t"America/Panama": {\n\t\t\t"lat": 8.9667,\n\t\t\t"lon": -78.4667,\n\t\t\t"rules": ""\n\t\t},\n\t\t"America/Pangnirtung": {\n\t\t\t"lat": 66.1333,\n\t\t\t"lon": -64.2667,\n\t\t\t"rules": "NT_YK Canada"\n\t\t},\n\t\t"America/Paramaribo": {\n\t\t\t"lat": 5.8333,\n\t\t\t"lon": -54.8333,\n\t\t\t"rules": ""\n\t\t},\n\t\t"America/Phoenix": {\n\t\t\t"lat": 33.4483,\n\t\t\t"lon": -111.9267,\n\t\t\t"rules": "US"\n\t\t},\n\t\t"America/Port-au-Prince": {\n\t\t\t"lat": 18.5333,\n\t\t\t"lon": -71.6667,\n\t\t\t"rules": "Haiti"\n\t\t},\n\t\t"America/Port_of_Spain": {\n\t\t\t"lat": 10.65,\n\t\t\t"lon": -60.4833,\n\t\t\t"rules": ""\n\t\t},\n\t\t"America/Porto_Velho": {\n\t\t\t"lat": -7.2333,\n\t\t\t"lon": -62.1,\n\t\t\t"rules": "Brazil"\n\t\t},\n\t\t"America/Puerto_Rico": {\n\t\t\t"lat": 18.4683,\n\t\t\t"lon": -65.8939,\n\t\t\t"rules": "US"\n\t\t},\n\t\t"America/Rainy_River": {\n\t\t\t"lat": 48.7167,\n\t\t\t"lon": -93.4333,\n\t\t\t"rules": "Canada"\n\t\t},\n\t\t"America/Rankin_Inlet": {\n\t\t\t"lat": 62.8167,\n\t\t\t"lon": -91.9169,\n\t\t\t"rules": "NT_YK Canada"\n\t\t},\n\t\t"America/Recife": {\n\t\t\t"lat": -7.95,\n\t\t\t"lon": -33.1,\n\t\t\t"rules": "Brazil"\n\t\t},\n\t\t"America/Regina": {\n\t\t\t"lat": 50.4,\n\t\t\t"lon": -103.35,\n\t\t\t"rules": "Regina"\n\t\t},\n\t\t"America/Resolute": {\n\t\t\t"lat": 74.6956,\n\t\t\t"lon": -93.1708,\n\t\t\t"rules": "NT_YK Canada"\n\t\t},\n\t\t"America/Rio_Branco": {\n\t\t\t"lat": -8.0333,\n\t\t\t"lon": -66.2,\n\t\t\t"rules": "Brazil"\n\t\t},\n\t\t"America/Santa_Isabel": {\n\t\t\t"lat": 30.3,\n\t\t\t"lon": -113.1333,\n\t\t\t"rules": "CA US Mexico"\n\t\t},\n\t\t"America/Santarem": {\n\t\t\t"lat": -1.5667,\n\t\t\t"lon": -53.1333,\n\t\t\t"rules": "Brazil"\n\t\t},\n\t\t"America/Santiago": {\n\t\t\t"lat": -32.55,\n\t\t\t"lon": -69.3333,\n\t\t\t"rules": "Chile"\n\t\t},\n\t\t"America/Santo_Domingo": {\n\t\t\t"lat": 18.4667,\n\t\t\t"lon": -68.1,\n\t\t\t"rules": "DR US"\n\t\t},\n\t\t"America/Sao_Paulo": {\n\t\t\t"lat": -22.4667,\n\t\t\t"lon": -45.3833,\n\t\t\t"rules": "Brazil"\n\t\t},\n\t\t"America/Scoresbysund": {\n\t\t\t"lat": 70.4833,\n\t\t\t"lon": -20.0333,\n\t\t\t"rules": "C-Eur EU"\n\t\t},\n\t\t"America/Shiprock": {\n\t\t\t"lat": 36.7856,\n\t\t\t"lon": -107.3136,\n\t\t\t"rules": ""\n\t\t},\n\t\t"America/Sitka": {\n\t\t\t"lat": 57.1764,\n\t\t\t"lon": -134.6981,\n\t\t\t"rules": "US"\n\t\t},\n\t\t"America/St_Barthelemy": {\n\t\t\t"lat": 17.8833,\n\t\t\t"lon": -61.15,\n\t\t\t"rules": ""\n\t\t},\n\t\t"America/St_Johns": {\n\t\t\t"lat": 47.5667,\n\t\t\t"lon": -51.2833,\n\t\t\t"rules": "StJohns Canada"\n\t\t},\n\t\t"America/St_Kitts": {\n\t\t\t"lat": 17.3,\n\t\t\t"lon": -61.2833,\n\t\t\t"rules": ""\n\t\t},\n\t\t"America/St_Lucia": {\n\t\t\t"lat": 14.0167,\n\t\t\t"lon": -61,\n\t\t\t"rules": ""\n\t\t},\n\t\t"America/St_Thomas": {\n\t\t\t"lat": 18.35,\n\t\t\t"lon": -63.0667,\n\t\t\t"rules": ""\n\t\t},\n\t\t"America/St_Vincent": {\n\t\t\t"lat": 13.15,\n\t\t\t"lon": -60.7667,\n\t\t\t"rules": ""\n\t\t},\n\t\t"America/Swift_Current": {\n\t\t\t"lat": 50.2833,\n\t\t\t"lon": -106.1667,\n\t\t\t"rules": "Canada Regina Swift"\n\t\t},\n\t\t"America/Tegucigalpa": {\n\t\t\t"lat": 14.1,\n\t\t\t"lon": -86.7833,\n\t\t\t"rules": "Hond"\n\t\t},\n\t\t"America/Thule": {\n\t\t\t"lat": 76.5667,\n\t\t\t"lon": -67.2167,\n\t\t\t"rules": "Thule"\n\t\t},\n\t\t"America/Thunder_Bay": {\n\t\t\t"lat": 48.3833,\n\t\t\t"lon": -88.75,\n\t\t\t"rules": "Canada Mont"\n\t\t},\n\t\t"America/Tijuana": {\n\t\t\t"lat": 32.5333,\n\t\t\t"lon": -116.9833,\n\t\t\t"rules": "CA US Mexico"\n\t\t},\n\t\t"America/Toronto": {\n\t\t\t"lat": 43.65,\n\t\t\t"lon": -78.6167,\n\t\t\t"rules": "Canada Toronto"\n\t\t},\n\t\t"America/Tortola": {\n\t\t\t"lat": 18.45,\n\t\t\t"lon": -63.3833,\n\t\t\t"rules": ""\n\t\t},\n\t\t"America/Vancouver": {\n\t\t\t"lat": 49.2667,\n\t\t\t"lon": -122.8833,\n\t\t\t"rules": "Vanc Canada"\n\t\t},\n\t\t"America/Whitehorse": {\n\t\t\t"lat": 60.7167,\n\t\t\t"lon": -134.95,\n\t\t\t"rules": "NT_YK Canada"\n\t\t},\n\t\t"America/Winnipeg": {\n\t\t\t"lat": 49.8833,\n\t\t\t"lon": -96.85,\n\t\t\t"rules": "Winn Canada"\n\t\t},\n\t\t"America/Yakutat": {\n\t\t\t"lat": 59.5469,\n\t\t\t"lon": -138.2728,\n\t\t\t"rules": "US"\n\t\t},\n\t\t"America/Yellowknife": {\n\t\t\t"lat": 62.45,\n\t\t\t"lon": -113.65,\n\t\t\t"rules": "NT_YK Canada"\n\t\t},\n\t\t"Antarctica/Casey": {\n\t\t\t"lat": -65.7167,\n\t\t\t"lon": 110.5167,\n\t\t\t"rules": ""\n\t\t},\n\t\t"Antarctica/Davis": {\n\t\t\t"lat": -67.4167,\n\t\t\t"lon": 77.9667,\n\t\t\t"rules": ""\n\t\t},\n\t\t"Antarctica/DumontDUrville": {\n\t\t\t"lat": -65.3333,\n\t\t\t"lon": 140.0167,\n\t\t\t"rules": ""\n\t\t},\n\t\t"Antarctica/Macquarie": {\n\t\t\t"lat": -53.5,\n\t\t\t"lon": 158.95,\n\t\t\t"rules": "Aus AT"\n\t\t},\n\t\t"Antarctica/Mawson": {\n\t\t\t"lat": -66.4,\n\t\t\t"lon": 62.8833,\n\t\t\t"rules": ""\n\t\t},\n\t\t"Antarctica/McMurdo": {\n\t\t\t"lat": -76.1667,\n\t\t\t"lon": 166.6,\n\t\t\t"rules": "NZAQ"\n\t\t},\n\t\t"Antarctica/Palmer": {\n\t\t\t"lat": -63.2,\n\t\t\t"lon": -63.9,\n\t\t\t"rules": "ArgAQ ChileAQ"\n\t\t},\n\t\t"Antarctica/Rothera": {\n\t\t\t"lat": -66.4333,\n\t\t\t"lon": -67.8667,\n\t\t\t"rules": ""\n\t\t},\n\t\t"Antarctica/South_Pole": {\n\t\t\t"lat": -90,\n\t\t\t"lon": 0,\n\t\t\t"rules": ""\n\t\t},\n\t\t"Antarctica/Syowa": {\n\t\t\t"lat": -68.9939,\n\t\t\t"lon": 39.59,\n\t\t\t"rules": ""\n\t\t},\n\t\t"Antarctica/Vostok": {\n\t\t\t"lat": -77.6,\n\t\t\t"lon": 106.9,\n\t\t\t"rules": ""\n\t\t},\n\t\t"Arctic/Longyearbyen": {\n\t\t\t"lat": 78,\n\t\t\t"lon": 16,\n\t\t\t"rules": ""\n\t\t},\n\t\t"Asia/Aden": {\n\t\t\t"lat": 12.75,\n\t\t\t"lon": 45.2,\n\t\t\t"rules": ""\n\t\t},\n\t\t"Asia/Almaty": {\n\t\t\t"lat": 43.25,\n\t\t\t"lon": 76.95,\n\t\t\t"rules": "RussiaAsia"\n\t\t},\n\t\t"Asia/Amman": {\n\t\t\t"lat": 31.95,\n\t\t\t"lon": 35.9333,\n\t\t\t"rules": "Jordan"\n\t\t},\n\t\t"Asia/Anadyr": {\n\t\t\t"lat": 64.75,\n\t\t\t"lon": 177.4833,\n\t\t\t"rules": "Russia"\n\t\t},\n\t\t"Asia/Aqtau": {\n\t\t\t"lat": 44.5167,\n\t\t\t"lon": 50.2667,\n\t\t\t"rules": "RussiaAsia"\n\t\t},\n\t\t"Asia/Aqtobe": {\n\t\t\t"lat": 50.2833,\n\t\t\t"lon": 57.1667,\n\t\t\t"rules": "RussiaAsia"\n\t\t},\n\t\t"Asia/Ashgabat": {\n\t\t\t"lat": 37.95,\n\t\t\t"lon": 58.3833,\n\t\t\t"rules": "RussiaAsia"\n\t\t},\n\t\t"Asia/Baghdad": {\n\t\t\t"lat": 33.35,\n\t\t\t"lon": 44.4167,\n\t\t\t"rules": "Iraq"\n\t\t},\n\t\t"Asia/Bahrain": {\n\t\t\t"lat": 26.3833,\n\t\t\t"lon": 50.5833,\n\t\t\t"rules": ""\n\t\t},\n\t\t"Asia/Baku": {\n\t\t\t"lat": 40.3833,\n\t\t\t"lon": 49.85,\n\t\t\t"rules": "RussiaAsia EUAsia Azer"\n\t\t},\n\t\t"Asia/Bangkok": {\n\t\t\t"lat": 13.75,\n\t\t\t"lon": 100.5167,\n\t\t\t"rules": ""\n\t\t},\n\t\t"Asia/Beirut": {\n\t\t\t"lat": 33.8833,\n\t\t\t"lon": 35.5,\n\t\t\t"rules": "Lebanon"\n\t\t},\n\t\t"Asia/Bishkek": {\n\t\t\t"lat": 42.9,\n\t\t\t"lon": 74.6,\n\t\t\t"rules": "RussiaAsia Kyrgyz"\n\t\t},\n\t\t"Asia/Brunei": {\n\t\t\t"lat": 4.9333,\n\t\t\t"lon": 114.9167,\n\t\t\t"rules": ""\n\t\t},\n\t\t"Asia/Choibalsan": {\n\t\t\t"lat": 48.0667,\n\t\t\t"lon": 114.5,\n\t\t\t"rules": "Mongol"\n\t\t},\n\t\t"Asia/Chongqing": {\n\t\t\t"lat": 29.5667,\n\t\t\t"lon": 106.5833,\n\t\t\t"rules": "PRC"\n\t\t},\n\t\t"Asia/Colombo": {\n\t\t\t"lat": 6.9333,\n\t\t\t"lon": 79.85,\n\t\t\t"rules": ""\n\t\t},\n\t\t"Asia/Damascus": {\n\t\t\t"lat": 33.5,\n\t\t\t"lon": 36.3,\n\t\t\t"rules": "Syria"\n\t\t},\n\t\t"Asia/Dhaka": {\n\t\t\t"lat": 23.7167,\n\t\t\t"lon": 90.4167,\n\t\t\t"rules": "Dhaka"\n\t\t},\n\t\t"Asia/Dili": {\n\t\t\t"lat": -7.45,\n\t\t\t"lon": 125.5833,\n\t\t\t"rules": ""\n\t\t},\n\t\t"Asia/Dubai": {\n\t\t\t"lat": 25.3,\n\t\t\t"lon": 55.3,\n\t\t\t"rules": ""\n\t\t},\n\t\t"Asia/Dushanbe": {\n\t\t\t"lat": 38.5833,\n\t\t\t"lon": 68.8,\n\t\t\t"rules": "RussiaAsia"\n\t\t},\n\t\t"Asia/Gaza": {\n\t\t\t"lat": 31.5,\n\t\t\t"lon": 34.4667,\n\t\t\t"rules": "Zion EgyptAsia Jordan Palestine"\n\t\t},\n\t\t"Asia/Harbin": {\n\t\t\t"lat": 45.75,\n\t\t\t"lon": 126.6833,\n\t\t\t"rules": "PRC"\n\t\t},\n\t\t"Asia/Hebron": {\n\t\t\t"lat": 31.5333,\n\t\t\t"lon": 35.095,\n\t\t\t"rules": "Zion EgyptAsia Jordan Palestine"\n\t\t},\n\t\t"Asia/Ho_Chi_Minh": {\n\t\t\t"lat": 10.75,\n\t\t\t"lon": 106.6667,\n\t\t\t"rules": ""\n\t\t},\n\t\t"Asia/Hong_Kong": {\n\t\t\t"lat": 22.2833,\n\t\t\t"lon": 114.15,\n\t\t\t"rules": "HK"\n\t\t},\n\t\t"Asia/Hovd": {\n\t\t\t"lat": 48.0167,\n\t\t\t"lon": 91.65,\n\t\t\t"rules": "Mongol"\n\t\t},\n\t\t"Asia/Irkutsk": {\n\t\t\t"lat": 52.2667,\n\t\t\t"lon": 104.3333,\n\t\t\t"rules": "Russia"\n\t\t},\n\t\t"Asia/Jakarta": {\n\t\t\t"lat": -5.8333,\n\t\t\t"lon": 106.8,\n\t\t\t"rules": ""\n\t\t},\n\t\t"Asia/Jayapura": {\n\t\t\t"lat": -1.4667,\n\t\t\t"lon": 140.7,\n\t\t\t"rules": ""\n\t\t},\n\t\t"Asia/Jerusalem": {\n\t\t\t"lat": 31.7667,\n\t\t\t"lon": 35.2333,\n\t\t\t"rules": "Zion"\n\t\t},\n\t\t"Asia/Kabul": {\n\t\t\t"lat": 34.5167,\n\t\t\t"lon": 69.2,\n\t\t\t"rules": ""\n\t\t},\n\t\t"Asia/Kamchatka": {\n\t\t\t"lat": 53.0167,\n\t\t\t"lon": 158.65,\n\t\t\t"rules": "Russia"\n\t\t},\n\t\t"Asia/Karachi": {\n\t\t\t"lat": 24.8667,\n\t\t\t"lon": 67.05,\n\t\t\t"rules": "Pakistan"\n\t\t},\n\t\t"Asia/Kashgar": {\n\t\t\t"lat": 39.4833,\n\t\t\t"lon": 75.9833,\n\t\t\t"rules": "PRC"\n\t\t},\n\t\t"Asia/Kathmandu": {\n\t\t\t"lat": 27.7167,\n\t\t\t"lon": 85.3167,\n\t\t\t"rules": ""\n\t\t},\n\t\t"Asia/Khandyga": {\n\t\t\t"lat": 62.6564,\n\t\t\t"lon": 135.5539,\n\t\t\t"rules": "Russia"\n\t\t},\n\t\t"Asia/Kolkata": {\n\t\t\t"lat": 22.5333,\n\t\t\t"lon": 88.3667,\n\t\t\t"rules": ""\n\t\t},\n\t\t"Asia/Krasnoyarsk": {\n\t\t\t"lat": 56.0167,\n\t\t\t"lon": 92.8333,\n\t\t\t"rules": "Russia"\n\t\t},\n\t\t"Asia/Kuala_Lumpur": {\n\t\t\t"lat": 3.1667,\n\t\t\t"lon": 101.7,\n\t\t\t"rules": ""\n\t\t},\n\t\t"Asia/Kuching": {\n\t\t\t"lat": 1.55,\n\t\t\t"lon": 110.3333,\n\t\t\t"rules": "NBorneo"\n\t\t},\n\t\t"Asia/Kuwait": {\n\t\t\t"lat": 29.3333,\n\t\t\t"lon": 47.9833,\n\t\t\t"rules": ""\n\t\t},\n\t\t"Asia/Macau": {\n\t\t\t"lat": 22.2333,\n\t\t\t"lon": 113.5833,\n\t\t\t"rules": "Macau PRC"\n\t\t},\n\t\t"Asia/Magadan": {\n\t\t\t"lat": 59.5667,\n\t\t\t"lon": 150.8,\n\t\t\t"rules": "Russia"\n\t\t},\n\t\t"Asia/Makassar": {\n\t\t\t"lat": -4.8833,\n\t\t\t"lon": 119.4,\n\t\t\t"rules": ""\n\t\t},\n\t\t"Asia/Manila": {\n\t\t\t"lat": 14.5833,\n\t\t\t"lon": 121,\n\t\t\t"rules": "Phil"\n\t\t},\n\t\t"Asia/Muscat": {\n\t\t\t"lat": 23.6,\n\t\t\t"lon": 58.5833,\n\t\t\t"rules": ""\n\t\t},\n\t\t"Asia/Nicosia": {\n\t\t\t"lat": 35.1667,\n\t\t\t"lon": 33.3667,\n\t\t\t"rules": "Cyprus EUAsia"\n\t\t},\n\t\t"Asia/Novokuznetsk": {\n\t\t\t"lat": 53.75,\n\t\t\t"lon": 87.1167,\n\t\t\t"rules": "Russia"\n\t\t},\n\t\t"Asia/Novosibirsk": {\n\t\t\t"lat": 55.0333,\n\t\t\t"lon": 82.9167,\n\t\t\t"rules": "Russia"\n\t\t},\n\t\t"Asia/Omsk": {\n\t\t\t"lat": 55,\n\t\t\t"lon": 73.4,\n\t\t\t"rules": "Russia"\n\t\t},\n\t\t"Asia/Oral": {\n\t\t\t"lat": 51.2167,\n\t\t\t"lon": 51.35,\n\t\t\t"rules": "RussiaAsia"\n\t\t},\n\t\t"Asia/Phnom_Penh": {\n\t\t\t"lat": 11.55,\n\t\t\t"lon": 104.9167,\n\t\t\t"rules": ""\n\t\t},\n\t\t"Asia/Pontianak": {\n\t\t\t"lat": 0.0333,\n\t\t\t"lon": 109.3333,\n\t\t\t"rules": ""\n\t\t},\n\t\t"Asia/Pyongyang": {\n\t\t\t"lat": 39.0167,\n\t\t\t"lon": 125.75,\n\t\t\t"rules": ""\n\t\t},\n\t\t"Asia/Qatar": {\n\t\t\t"lat": 25.2833,\n\t\t\t"lon": 51.5333,\n\t\t\t"rules": ""\n\t\t},\n\t\t"Asia/Qyzylorda": {\n\t\t\t"lat": 44.8,\n\t\t\t"lon": 65.4667,\n\t\t\t"rules": "RussiaAsia"\n\t\t},\n\t\t"Asia/Rangoon": {\n\t\t\t"lat": 16.7833,\n\t\t\t"lon": 96.1667,\n\t\t\t"rules": ""\n\t\t},\n\t\t"Asia/Riyadh": {\n\t\t\t"lat": 24.6333,\n\t\t\t"lon": 46.7167,\n\t\t\t"rules": ""\n\t\t},\n\t\t"Asia/Sakhalin": {\n\t\t\t"lat": 46.9667,\n\t\t\t"lon": 142.7,\n\t\t\t"rules": "Russia"\n\t\t},\n\t\t"Asia/Samarkand": {\n\t\t\t"lat": 39.6667,\n\t\t\t"lon": 66.8,\n\t\t\t"rules": "RussiaAsia"\n\t\t},\n\t\t"Asia/Seoul": {\n\t\t\t"lat": 37.55,\n\t\t\t"lon": 126.9667,\n\t\t\t"rules": "ROK"\n\t\t},\n\t\t"Asia/Shanghai": {\n\t\t\t"lat": 31.2333,\n\t\t\t"lon": 121.4667,\n\t\t\t"rules": "Shang PRC"\n\t\t},\n\t\t"Asia/Singapore": {\n\t\t\t"lat": 1.2833,\n\t\t\t"lon": 103.85,\n\t\t\t"rules": ""\n\t\t},\n\t\t"Asia/Taipei": {\n\t\t\t"lat": 25.05,\n\t\t\t"lon": 121.5,\n\t\t\t"rules": "Taiwan"\n\t\t},\n\t\t"Asia/Tashkent": {\n\t\t\t"lat": 41.3333,\n\t\t\t"lon": 69.3,\n\t\t\t"rules": "RussiaAsia"\n\t\t},\n\t\t"Asia/Tbilisi": {\n\t\t\t"lat": 41.7167,\n\t\t\t"lon": 44.8167,\n\t\t\t"rules": "RussiaAsia E-EurAsia"\n\t\t},\n\t\t"Asia/Tehran": {\n\t\t\t"lat": 35.6667,\n\t\t\t"lon": 51.4333,\n\t\t\t"rules": "Iran"\n\t\t},\n\t\t"Asia/Thimphu": {\n\t\t\t"lat": 27.4667,\n\t\t\t"lon": 89.65,\n\t\t\t"rules": ""\n\t\t},\n\t\t"Asia/Tokyo": {\n\t\t\t"lat": 35.6544,\n\t\t\t"lon": 139.7447,\n\t\t\t"rules": "Japan"\n\t\t},\n\t\t"Asia/Ulaanbaatar": {\n\t\t\t"lat": 47.9167,\n\t\t\t"lon": 106.8833,\n\t\t\t"rules": "Mongol"\n\t\t},\n\t\t"Asia/Urumqi": {\n\t\t\t"lat": 43.8,\n\t\t\t"lon": 87.5833,\n\t\t\t"rules": "PRC"\n\t\t},\n\t\t"Asia/Ust-Nera": {\n\t\t\t"lat": 64.5603,\n\t\t\t"lon": 143.2267,\n\t\t\t"rules": "Russia"\n\t\t},\n\t\t"Asia/Vientiane": {\n\t\t\t"lat": 17.9667,\n\t\t\t"lon": 102.6,\n\t\t\t"rules": ""\n\t\t},\n\t\t"Asia/Vladivostok": {\n\t\t\t"lat": 43.1667,\n\t\t\t"lon": 131.9333,\n\t\t\t"rules": "Russia"\n\t\t},\n\t\t"Asia/Yakutsk": {\n\t\t\t"lat": 62,\n\t\t\t"lon": 129.6667,\n\t\t\t"rules": "Russia"\n\t\t},\n\t\t"Asia/Yekaterinburg": {\n\t\t\t"lat": 56.85,\n\t\t\t"lon": 60.6,\n\t\t\t"rules": "Russia"\n\t\t},\n\t\t"Asia/Yerevan": {\n\t\t\t"lat": 40.1833,\n\t\t\t"lon": 44.5,\n\t\t\t"rules": "RussiaAsia"\n\t\t},\n\t\t"Atlantic/Azores": {\n\t\t\t"lat": 37.7333,\n\t\t\t"lon": -24.3333,\n\t\t\t"rules": "Port W-Eur EU"\n\t\t},\n\t\t"Atlantic/Bermuda": {\n\t\t\t"lat": 32.2833,\n\t\t\t"lon": -63.2333,\n\t\t\t"rules": "Bahamas US"\n\t\t},\n\t\t"Atlantic/Canary": {\n\t\t\t"lat": 28.1,\n\t\t\t"lon": -14.6,\n\t\t\t"rules": "EU"\n\t\t},\n\t\t"Atlantic/Cape_Verde": {\n\t\t\t"lat": 14.9167,\n\t\t\t"lon": -22.4833,\n\t\t\t"rules": ""\n\t\t},\n\t\t"Atlantic/Faroe": {\n\t\t\t"lat": 62.0167,\n\t\t\t"lon": -5.2333,\n\t\t\t"rules": "EU"\n\t\t},\n\t\t"Atlantic/Madeira": {\n\t\t\t"lat": 32.6333,\n\t\t\t"lon": -15.1,\n\t\t\t"rules": "Port EU"\n\t\t},\n\t\t"Atlantic/Reykjavik": {\n\t\t\t"lat": 64.15,\n\t\t\t"lon": -20.15,\n\t\t\t"rules": "Iceland"\n\t\t},\n\t\t"Atlantic/South_Georgia": {\n\t\t\t"lat": -53.7333,\n\t\t\t"lon": -35.4667,\n\t\t\t"rules": ""\n\t\t},\n\t\t"Atlantic/St_Helena": {\n\t\t\t"lat": -14.0833,\n\t\t\t"lon": -4.3,\n\t\t\t"rules": ""\n\t\t},\n\t\t"Atlantic/Stanley": {\n\t\t\t"lat": -50.3,\n\t\t\t"lon": -56.15,\n\t\t\t"rules": "Falk"\n\t\t},\n\t\t"Australia/Adelaide": {\n\t\t\t"lat": -33.0833,\n\t\t\t"lon": 138.5833,\n\t\t\t"rules": "Aus AS"\n\t\t},\n\t\t"Australia/Brisbane": {\n\t\t\t"lat": -26.5333,\n\t\t\t"lon": 153.0333,\n\t\t\t"rules": "Aus AQ"\n\t\t},\n\t\t"Australia/Broken_Hill": {\n\t\t\t"lat": -30.05,\n\t\t\t"lon": 141.45,\n\t\t\t"rules": "Aus AN AS"\n\t\t},\n\t\t"Australia/Currie": {\n\t\t\t"lat": -38.0667,\n\t\t\t"lon": 143.8667,\n\t\t\t"rules": "Aus AT"\n\t\t},\n\t\t"Australia/Darwin": {\n\t\t\t"lat": -11.5333,\n\t\t\t"lon": 130.8333,\n\t\t\t"rules": "Aus"\n\t\t},\n\t\t"Australia/Eucla": {\n\t\t\t"lat": -30.2833,\n\t\t\t"lon": 128.8667,\n\t\t\t"rules": "Aus AW"\n\t\t},\n\t\t"Australia/Hobart": {\n\t\t\t"lat": -41.1167,\n\t\t\t"lon": 147.3167,\n\t\t\t"rules": "Aus AT"\n\t\t},\n\t\t"Australia/Lindeman": {\n\t\t\t"lat": -19.7333,\n\t\t\t"lon": 149,\n\t\t\t"rules": "Aus AQ Holiday"\n\t\t},\n\t\t"Australia/Lord_Howe": {\n\t\t\t"lat": -30.45,\n\t\t\t"lon": 159.0833,\n\t\t\t"rules": "LH"\n\t\t},\n\t\t"Australia/Melbourne": {\n\t\t\t"lat": -36.1833,\n\t\t\t"lon": 144.9667,\n\t\t\t"rules": "Aus AV"\n\t\t},\n\t\t"Australia/Perth": {\n\t\t\t"lat": -30.05,\n\t\t\t"lon": 115.85,\n\t\t\t"rules": "Aus AW"\n\t\t},\n\t\t"Australia/Sydney": {\n\t\t\t"lat": -32.1333,\n\t\t\t"lon": 151.2167,\n\t\t\t"rules": "Aus AN"\n\t\t},\n\t\t"CET": {\n\t\t\t"rules": "C-Eur"\n\t\t},\n\t\t"CST6CDT": {\n\t\t\t"rules": "US"\n\t\t},\n\t\t"EET": {\n\t\t\t"rules": "EU"\n\t\t},\n\t\t"EST": {\n\t\t\t"rules": ""\n\t\t},\n\t\t"EST5EDT": {\n\t\t\t"rules": "US"\n\t\t},\n\t\t"Etc/GMT": {\n\t\t\t"rules": ""\n\t\t},\n\t\t"Etc/GMT+1": {\n\t\t\t"rules": ""\n\t\t},\n\t\t"Etc/GMT+10": {\n\t\t\t"rules": ""\n\t\t},\n\t\t"Etc/GMT+11": {\n\t\t\t"rules": ""\n\t\t},\n\t\t"Etc/GMT+12": {\n\t\t\t"rules": ""\n\t\t},\n\t\t"Etc/GMT+2": {\n\t\t\t"rules": ""\n\t\t},\n\t\t"Etc/GMT+3": {\n\t\t\t"rules": ""\n\t\t},\n\t\t"Etc/GMT+4": {\n\t\t\t"rules": ""\n\t\t},\n\t\t"Etc/GMT+5": {\n\t\t\t"rules": ""\n\t\t},\n\t\t"Etc/GMT+6": {\n\t\t\t"rules": ""\n\t\t},\n\t\t"Etc/GMT+7": {\n\t\t\t"rules": ""\n\t\t},\n\t\t"Etc/GMT+8": {\n\t\t\t"rules": ""\n\t\t},\n\t\t"Etc/GMT+9": {\n\t\t\t"rules": ""\n\t\t},\n\t\t"Etc/GMT-1": {\n\t\t\t"rules": ""\n\t\t},\n\t\t"Etc/GMT-10": {\n\t\t\t"rules": ""\n\t\t},\n\t\t"Etc/GMT-11": {\n\t\t\t"rules": ""\n\t\t},\n\t\t"Etc/GMT-12": {\n\t\t\t"rules": ""\n\t\t},\n\t\t"Etc/GMT-13": {\n\t\t\t"rules": ""\n\t\t},\n\t\t"Etc/GMT-14": {\n\t\t\t"rules": ""\n\t\t},\n\t\t"Etc/GMT-2": {\n\t\t\t"rules": ""\n\t\t},\n\t\t"Etc/GMT-3": {\n\t\t\t"rules": ""\n\t\t},\n\t\t"Etc/GMT-4": {\n\t\t\t"rules": ""\n\t\t},\n\t\t"Etc/GMT-5": {\n\t\t\t"rules": ""\n\t\t},\n\t\t"Etc/GMT-6": {\n\t\t\t"rules": ""\n\t\t},\n\t\t"Etc/GMT-7": {\n\t\t\t"rules": ""\n\t\t},\n\t\t"Etc/GMT-8": {\n\t\t\t"rules": ""\n\t\t},\n\t\t"Etc/GMT-9": {\n\t\t\t"rules": ""\n\t\t},\n\t\t"Etc/UCT": {\n\t\t\t"rules": ""\n\t\t},\n\t\t"Etc/UTC": {\n\t\t\t"rules": ""\n\t\t},\n\t\t"Europe/Amsterdam": {\n\t\t\t"lat": 52.3667,\n\t\t\t"lon": 4.9,\n\t\t\t"rules": "Neth C-Eur EU"\n\t\t},\n\t\t"Europe/Andorra": {\n\t\t\t"lat": 42.5,\n\t\t\t"lon": 1.5167,\n\t\t\t"rules": "EU"\n\t\t},\n\t\t"Europe/Athens": {\n\t\t\t"lat": 37.9667,\n\t\t\t"lon": 23.7167,\n\t\t\t"rules": "Greece EU"\n\t\t},\n\t\t"Europe/Belgrade": {\n\t\t\t"lat": 44.8333,\n\t\t\t"lon": 20.5,\n\t\t\t"rules": "C-Eur EU"\n\t\t},\n\t\t"Europe/Berlin": {\n\t\t\t"lat": 52.5,\n\t\t\t"lon": 13.3667,\n\t\t\t"rules": "C-Eur SovietZone Germany EU"\n\t\t},\n\t\t"Europe/Bratislava": {\n\t\t\t"lat": 48.15,\n\t\t\t"lon": 17.1167,\n\t\t\t"rules": ""\n\t\t},\n\t\t"Europe/Brussels": {\n\t\t\t"lat": 50.8333,\n\t\t\t"lon": 4.3333,\n\t\t\t"rules": "C-Eur Belgium EU"\n\t\t},\n\t\t"Europe/Bucharest": {\n\t\t\t"lat": 44.4333,\n\t\t\t"lon": 26.1,\n\t\t\t"rules": "Romania C-Eur E-Eur EU"\n\t\t},\n\t\t"Europe/Budapest": {\n\t\t\t"lat": 47.5,\n\t\t\t"lon": 19.0833,\n\t\t\t"rules": "C-Eur Hungary EU"\n\t\t},\n\t\t"Europe/Busingen": {\n\t\t\t"lat": 47.7,\n\t\t\t"lon": 8.6833,\n\t\t\t"rules": ""\n\t\t},\n\t\t"Europe/Chisinau": {\n\t\t\t"lat": 47,\n\t\t\t"lon": 28.8333,\n\t\t\t"rules": "Romania C-Eur Russia E-Eur EU"\n\t\t},\n\t\t"Europe/Copenhagen": {\n\t\t\t"lat": 55.6667,\n\t\t\t"lon": 12.5833,\n\t\t\t"rules": "Denmark C-Eur EU"\n\t\t},\n\t\t"Europe/Dublin": {\n\t\t\t"lat": 53.3333,\n\t\t\t"lon": -5.75,\n\t\t\t"rules": "GB-Eire EU"\n\t\t},\n\t\t"Europe/Gibraltar": {\n\t\t\t"lat": 36.1333,\n\t\t\t"lon": -4.65,\n\t\t\t"rules": "GB-Eire EU"\n\t\t},\n\t\t"Europe/Guernsey": {\n\t\t\t"lat": 49.45,\n\t\t\t"lon": -1.4667,\n\t\t\t"rules": ""\n\t\t},\n\t\t"Europe/Helsinki": {\n\t\t\t"lat": 60.1667,\n\t\t\t"lon": 24.9667,\n\t\t\t"rules": "Finland EU"\n\t\t},\n\t\t"Europe/Isle_of_Man": {\n\t\t\t"lat": 54.15,\n\t\t\t"lon": -3.5333,\n\t\t\t"rules": ""\n\t\t},\n\t\t"Europe/Istanbul": {\n\t\t\t"lat": 41.0167,\n\t\t\t"lon": 28.9667,\n\t\t\t"rules": "Turkey EU"\n\t\t},\n\t\t"Europe/Jersey": {\n\t\t\t"lat": 49.2,\n\t\t\t"lon": -1.8833,\n\t\t\t"rules": ""\n\t\t},\n\t\t"Europe/Kaliningrad": {\n\t\t\t"lat": 54.7167,\n\t\t\t"lon": 20.5,\n\t\t\t"rules": "C-Eur Poland Russia"\n\t\t},\n\t\t"Europe/Kiev": {\n\t\t\t"lat": 50.4333,\n\t\t\t"lon": 30.5167,\n\t\t\t"rules": "C-Eur Russia E-Eur EU"\n\t\t},\n\t\t"Europe/Lisbon": {\n\t\t\t"lat": 38.7167,\n\t\t\t"lon": -8.8667,\n\t\t\t"rules": "Port W-Eur EU"\n\t\t},\n\t\t"Europe/Ljubljana": {\n\t\t\t"lat": 46.05,\n\t\t\t"lon": 14.5167,\n\t\t\t"rules": ""\n\t\t},\n\t\t"Europe/London": {\n\t\t\t"lat": 51.5083,\n\t\t\t"lon": 0.1253,\n\t\t\t"rules": "GB-Eire EU"\n\t\t},\n\t\t"Europe/Luxembourg": {\n\t\t\t"lat": 49.6,\n\t\t\t"lon": 6.15,\n\t\t\t"rules": "Lux Belgium C-Eur EU"\n\t\t},\n\t\t"Europe/Madrid": {\n\t\t\t"lat": 40.4,\n\t\t\t"lon": -2.3167,\n\t\t\t"rules": "Spain EU"\n\t\t},\n\t\t"Europe/Malta": {\n\t\t\t"lat": 35.9,\n\t\t\t"lon": 14.5167,\n\t\t\t"rules": "Italy C-Eur Malta EU"\n\t\t},\n\t\t"Europe/Mariehamn": {\n\t\t\t"lat": 60.1,\n\t\t\t"lon": 19.95,\n\t\t\t"rules": ""\n\t\t},\n\t\t"Europe/Minsk": {\n\t\t\t"lat": 53.9,\n\t\t\t"lon": 27.5667,\n\t\t\t"rules": "C-Eur Russia"\n\t\t},\n\t\t"Europe/Monaco": {\n\t\t\t"lat": 43.7,\n\t\t\t"lon": 7.3833,\n\t\t\t"rules": "France EU"\n\t\t},\n\t\t"Europe/Moscow": {\n\t\t\t"lat": 55.75,\n\t\t\t"lon": 37.5833,\n\t\t\t"rules": "Russia"\n\t\t},\n\t\t"Europe/Oslo": {\n\t\t\t"lat": 59.9167,\n\t\t\t"lon": 10.75,\n\t\t\t"rules": "Norway C-Eur EU"\n\t\t},\n\t\t"Europe/Paris": {\n\t\t\t"lat": 48.8667,\n\t\t\t"lon": 2.3333,\n\t\t\t"rules": "France C-Eur EU"\n\t\t},\n\t\t"Europe/Podgorica": {\n\t\t\t"lat": 42.4333,\n\t\t\t"lon": 19.2667,\n\t\t\t"rules": ""\n\t\t},\n\t\t"Europe/Prague": {\n\t\t\t"lat": 50.0833,\n\t\t\t"lon": 14.4333,\n\t\t\t"rules": "C-Eur Czech EU"\n\t\t},\n\t\t"Europe/Riga": {\n\t\t\t"lat": 56.95,\n\t\t\t"lon": 24.1,\n\t\t\t"rules": "C-Eur Russia Latvia EU"\n\t\t},\n\t\t"Europe/Rome": {\n\t\t\t"lat": 41.9,\n\t\t\t"lon": 12.4833,\n\t\t\t"rules": "Italy C-Eur EU"\n\t\t},\n\t\t"Europe/Samara": {\n\t\t\t"lat": 53.2,\n\t\t\t"lon": 50.15,\n\t\t\t"rules": "Russia"\n\t\t},\n\t\t"Europe/San_Marino": {\n\t\t\t"lat": 43.9167,\n\t\t\t"lon": 12.4667,\n\t\t\t"rules": ""\n\t\t},\n\t\t"Europe/Sarajevo": {\n\t\t\t"lat": 43.8667,\n\t\t\t"lon": 18.4167,\n\t\t\t"rules": ""\n\t\t},\n\t\t"Europe/Simferopol": {\n\t\t\t"lat": 44.95,\n\t\t\t"lon": 34.1,\n\t\t\t"rules": "C-Eur Russia E-Eur EU"\n\t\t},\n\t\t"Europe/Skopje": {\n\t\t\t"lat": 41.9833,\n\t\t\t"lon": 21.4333,\n\t\t\t"rules": ""\n\t\t},\n\t\t"Europe/Sofia": {\n\t\t\t"lat": 42.6833,\n\t\t\t"lon": 23.3167,\n\t\t\t"rules": "C-Eur Bulg E-Eur EU"\n\t\t},\n\t\t"Europe/Stockholm": {\n\t\t\t"lat": 59.3333,\n\t\t\t"lon": 18.05,\n\t\t\t"rules": "EU"\n\t\t},\n\t\t"Europe/Tallinn": {\n\t\t\t"lat": 59.4167,\n\t\t\t"lon": 24.75,\n\t\t\t"rules": "C-Eur Russia EU"\n\t\t},\n\t\t"Europe/Tirane": {\n\t\t\t"lat": 41.3333,\n\t\t\t"lon": 19.8333,\n\t\t\t"rules": "Albania EU"\n\t\t},\n\t\t"Europe/Uzhgorod": {\n\t\t\t"lat": 48.6167,\n\t\t\t"lon": 22.3,\n\t\t\t"rules": "C-Eur Russia E-Eur EU"\n\t\t},\n\t\t"Europe/Vaduz": {\n\t\t\t"lat": 47.15,\n\t\t\t"lon": 9.5167,\n\t\t\t"rules": "EU"\n\t\t},\n\t\t"Europe/Vatican": {\n\t\t\t"lat": 41.9022,\n\t\t\t"lon": 12.4531,\n\t\t\t"rules": ""\n\t\t},\n\t\t"Europe/Vienna": {\n\t\t\t"lat": 48.2167,\n\t\t\t"lon": 16.3333,\n\t\t\t"rules": "C-Eur Austria EU"\n\t\t},\n\t\t"Europe/Vilnius": {\n\t\t\t"lat": 54.6833,\n\t\t\t"lon": 25.3167,\n\t\t\t"rules": "C-Eur Russia EU"\n\t\t},\n\t\t"Europe/Volgograd": {\n\t\t\t"lat": 48.7333,\n\t\t\t"lon": 44.4167,\n\t\t\t"rules": "Russia"\n\t\t},\n\t\t"Europe/Warsaw": {\n\t\t\t"lat": 52.25,\n\t\t\t"lon": 21,\n\t\t\t"rules": "C-Eur Poland W-Eur EU"\n\t\t},\n\t\t"Europe/Zagreb": {\n\t\t\t"lat": 45.8,\n\t\t\t"lon": 15.9667,\n\t\t\t"rules": ""\n\t\t},\n\t\t"Europe/Zaporozhye": {\n\t\t\t"lat": 47.8333,\n\t\t\t"lon": 35.1667,\n\t\t\t"rules": "C-Eur Russia E-Eur EU"\n\t\t},\n\t\t"Europe/Zurich": {\n\t\t\t"lat": 47.3833,\n\t\t\t"lon": 8.5333,\n\t\t\t"rules": "Swiss EU"\n\t\t},\n\t\t"HST": {\n\t\t\t"rules": ""\n\t\t},\n\t\t"Indian/Antananarivo": {\n\t\t\t"lat": -17.0833,\n\t\t\t"lon": 47.5167,\n\t\t\t"rules": ""\n\t\t},\n\t\t"Indian/Chagos": {\n\t\t\t"lat": -6.6667,\n\t\t\t"lon": 72.4167,\n\t\t\t"rules": ""\n\t\t},\n\t\t"Indian/Christmas": {\n\t\t\t"lat": -9.5833,\n\t\t\t"lon": 105.7167,\n\t\t\t"rules": ""\n\t\t},\n\t\t"Indian/Cocos": {\n\t\t\t"lat": -11.8333,\n\t\t\t"lon": 96.9167,\n\t\t\t"rules": ""\n\t\t},\n\t\t"Indian/Comoro": {\n\t\t\t"lat": -10.3167,\n\t\t\t"lon": 43.2667,\n\t\t\t"rules": ""\n\t\t},\n\t\t"Indian/Kerguelen": {\n\t\t\t"lat": -48.6472,\n\t\t\t"lon": 70.2175,\n\t\t\t"rules": ""\n\t\t},\n\t\t"Indian/Mahe": {\n\t\t\t"lat": -3.3333,\n\t\t\t"lon": 55.4667,\n\t\t\t"rules": ""\n\t\t},\n\t\t"Indian/Maldives": {\n\t\t\t"lat": 4.1667,\n\t\t\t"lon": 73.5,\n\t\t\t"rules": ""\n\t\t},\n\t\t"Indian/Mauritius": {\n\t\t\t"lat": -19.8333,\n\t\t\t"lon": 57.5,\n\t\t\t"rules": "Mauritius"\n\t\t},\n\t\t"Indian/Mayotte": {\n\t\t\t"lat": -11.2167,\n\t\t\t"lon": 45.2333,\n\t\t\t"rules": ""\n\t\t},\n\t\t"Indian/Reunion": {\n\t\t\t"lat": -19.1333,\n\t\t\t"lon": 55.4667,\n\t\t\t"rules": ""\n\t\t},\n\t\t"MET": {\n\t\t\t"rules": "C-Eur"\n\t\t},\n\t\t"MST": {\n\t\t\t"rules": ""\n\t\t},\n\t\t"MST7MDT": {\n\t\t\t"rules": "US"\n\t\t},\n\t\t"PST8PDT": {\n\t\t\t"rules": "US"\n\t\t},\n\t\t"Pacific/Apia": {\n\t\t\t"lat": -12.1667,\n\t\t\t"lon": -170.2667,\n\t\t\t"rules": "WS"\n\t\t},\n\t\t"Pacific/Auckland": {\n\t\t\t"lat": -35.1333,\n\t\t\t"lon": 174.7667,\n\t\t\t"rules": "NZ"\n\t\t},\n\t\t"Pacific/Chatham": {\n\t\t\t"lat": -42.05,\n\t\t\t"lon": -175.45,\n\t\t\t"rules": "Chatham"\n\t\t},\n\t\t"Pacific/Chuuk": {\n\t\t\t"lat": 7.4167,\n\t\t\t"lon": 151.7833,\n\t\t\t"rules": ""\n\t\t},\n\t\t"Pacific/Easter": {\n\t\t\t"lat": -26.85,\n\t\t\t"lon": -108.5667,\n\t\t\t"rules": "Chile"\n\t\t},\n\t\t"Pacific/Efate": {\n\t\t\t"lat": -16.3333,\n\t\t\t"lon": 168.4167,\n\t\t\t"rules": "Vanuatu"\n\t\t},\n\t\t"Pacific/Enderbury": {\n\t\t\t"lat": -2.8667,\n\t\t\t"lon": -170.9167,\n\t\t\t"rules": ""\n\t\t},\n\t\t"Pacific/Fakaofo": {\n\t\t\t"lat": -8.6333,\n\t\t\t"lon": -170.7667,\n\t\t\t"rules": ""\n\t\t},\n\t\t"Pacific/Fiji": {\n\t\t\t"lat": -17.8667,\n\t\t\t"lon": 178.4167,\n\t\t\t"rules": "Fiji"\n\t\t},\n\t\t"Pacific/Funafuti": {\n\t\t\t"lat": -7.4833,\n\t\t\t"lon": 179.2167,\n\t\t\t"rules": ""\n\t\t},\n\t\t"Pacific/Galapagos": {\n\t\t\t"lat": 0.9,\n\t\t\t"lon": -88.4,\n\t\t\t"rules": ""\n\t\t},\n\t\t"Pacific/Gambier": {\n\t\t\t"lat": -22.8667,\n\t\t\t"lon": -133.05,\n\t\t\t"rules": ""\n\t\t},\n\t\t"Pacific/Guadalcanal": {\n\t\t\t"lat": -8.4667,\n\t\t\t"lon": 160.2,\n\t\t\t"rules": ""\n\t\t},\n\t\t"Pacific/Guam": {\n\t\t\t"lat": 13.4667,\n\t\t\t"lon": 144.75,\n\t\t\t"rules": ""\n\t\t},\n\t\t"Pacific/Honolulu": {\n\t\t\t"lat": 21.3069,\n\t\t\t"lon": -156.1417,\n\t\t\t"rules": ""\n\t\t},\n\t\t"Pacific/Johnston": {\n\t\t\t"lat": 16.75,\n\t\t\t"lon": -168.4833,\n\t\t\t"rules": ""\n\t\t},\n\t\t"Pacific/Kiritimati": {\n\t\t\t"lat": 1.8667,\n\t\t\t"lon": -156.6667,\n\t\t\t"rules": ""\n\t\t},\n\t\t"Pacific/Kosrae": {\n\t\t\t"lat": 5.3167,\n\t\t\t"lon": 162.9833,\n\t\t\t"rules": ""\n\t\t},\n\t\t"Pacific/Kwajalein": {\n\t\t\t"lat": 9.0833,\n\t\t\t"lon": 167.3333,\n\t\t\t"rules": ""\n\t\t},\n\t\t"Pacific/Majuro": {\n\t\t\t"lat": 7.15,\n\t\t\t"lon": 171.2,\n\t\t\t"rules": ""\n\t\t},\n\t\t"Pacific/Marquesas": {\n\t\t\t"lat": -9,\n\t\t\t"lon": -138.5,\n\t\t\t"rules": ""\n\t\t},\n\t\t"Pacific/Midway": {\n\t\t\t"lat": 28.2167,\n\t\t\t"lon": -176.6333,\n\t\t\t"rules": ""\n\t\t},\n\t\t"Pacific/Nauru": {\n\t\t\t"lat": 0.5167,\n\t\t\t"lon": 166.9167,\n\t\t\t"rules": ""\n\t\t},\n\t\t"Pacific/Niue": {\n\t\t\t"lat": -18.9833,\n\t\t\t"lon": -168.0833,\n\t\t\t"rules": ""\n\t\t},\n\t\t"Pacific/Norfolk": {\n\t\t\t"lat": -28.95,\n\t\t\t"lon": 167.9667,\n\t\t\t"rules": ""\n\t\t},\n\t\t"Pacific/Noumea": {\n\t\t\t"lat": -21.7333,\n\t\t\t"lon": 166.45,\n\t\t\t"rules": "NC"\n\t\t},\n\t\t"Pacific/Pago_Pago": {\n\t\t\t"lat": -13.7333,\n\t\t\t"lon": -169.3,\n\t\t\t"rules": ""\n\t\t},\n\t\t"Pacific/Palau": {\n\t\t\t"lat": 7.3333,\n\t\t\t"lon": 134.4833,\n\t\t\t"rules": ""\n\t\t},\n\t\t"Pacific/Pitcairn": {\n\t\t\t"lat": -24.9333,\n\t\t\t"lon": -129.9167,\n\t\t\t"rules": ""\n\t\t},\n\t\t"Pacific/Pohnpei": {\n\t\t\t"lat": 6.9667,\n\t\t\t"lon": 158.2167,\n\t\t\t"rules": ""\n\t\t},\n\t\t"Pacific/Port_Moresby": {\n\t\t\t"lat": -8.5,\n\t\t\t"lon": 147.1667,\n\t\t\t"rules": ""\n\t\t},\n\t\t"Pacific/Rarotonga": {\n\t\t\t"lat": -20.7667,\n\t\t\t"lon": -158.2333,\n\t\t\t"rules": "Cook"\n\t\t},\n\t\t"Pacific/Saipan": {\n\t\t\t"lat": 15.2,\n\t\t\t"lon": 145.75,\n\t\t\t"rules": ""\n\t\t},\n\t\t"Pacific/Tahiti": {\n\t\t\t"lat": -16.4667,\n\t\t\t"lon": -148.4333,\n\t\t\t"rules": ""\n\t\t},\n\t\t"Pacific/Tarawa": {\n\t\t\t"lat": 1.4167,\n\t\t\t"lon": 173,\n\t\t\t"rules": ""\n\t\t},\n\t\t"Pacific/Tongatapu": {\n\t\t\t"lat": -20.8333,\n\t\t\t"lon": -174.8333,\n\t\t\t"rules": "Tonga"\n\t\t},\n\t\t"Pacific/Wake": {\n\t\t\t"lat": 19.2833,\n\t\t\t"lon": 166.6167,\n\t\t\t"rules": ""\n\t\t},\n\t\t"Pacific/Wallis": {\n\t\t\t"lat": -12.7,\n\t\t\t"lon": -175.8333,\n\t\t\t"rules": ""\n\t\t},\n\t\t"WET": {\n\t\t\t"rules": "EU"\n\t\t}\n\t},\n\t"rules": {\n\t\t"AN": [\n\t\t\t"1971 1985 9 0 8 2 2 1",\n\t\t\t"1972 1972 1 27 7 2 2 0",\n\t\t\t"1973 1981 2 1 0 2 2 0",\n\t\t\t"1982 1982 3 1 0 2 2 0",\n\t\t\t"1983 1985 2 1 0 2 2 0",\n\t\t\t"1986 1989 2 15 0 2 2 0",\n\t\t\t"1986 1986 9 19 7 2 2 1",\n\t\t\t"1987 1999 9 0 8 2 2 1",\n\t\t\t"1990 1995 2 1 0 2 2 0",\n\t\t\t"1996 2005 2 0 8 2 2 0",\n\t\t\t"2000 2000 7 0 8 2 2 1",\n\t\t\t"2001 2007 9 0 8 2 2 1",\n\t\t\t"2006 2006 3 1 0 2 2 0",\n\t\t\t"2007 2007 2 0 8 2 2 0",\n\t\t\t"2008 9999 3 1 0 2 2 0",\n\t\t\t"2008 9999 9 1 0 2 2 1"\n\t\t],\n\t\t"AQ": [\n\t\t\t"1971 1971 9 0 8 2 2 1",\n\t\t\t"1972 1972 1 0 8 2 2 0",\n\t\t\t"1989 1991 9 0 8 2 2 1",\n\t\t\t"1990 1992 2 1 0 2 2 0"\n\t\t],\n\t\t"AS": [\n\t\t\t"1971 1985 9 0 8 2 2 1",\n\t\t\t"1986 1986 9 19 7 2 2 1",\n\t\t\t"1987 2007 9 0 8 2 2 1",\n\t\t\t"1972 1972 1 27 7 2 2 0",\n\t\t\t"1973 1985 2 1 0 2 2 0",\n\t\t\t"1986 1990 2 15 0 2 2 0",\n\t\t\t"1991 1991 2 3 7 2 2 0",\n\t\t\t"1992 1992 2 22 7 2 2 0",\n\t\t\t"1993 1993 2 7 7 2 2 0",\n\t\t\t"1994 1994 2 20 7 2 2 0",\n\t\t\t"1995 2005 2 0 8 2 2 0",\n\t\t\t"2006 2006 3 2 7 2 2 0",\n\t\t\t"2007 2007 2 0 8 2 2 0",\n\t\t\t"2008 9999 3 1 0 2 2 0",\n\t\t\t"2008 9999 9 1 0 2 2 1"\n\t\t],\n\t\t"AT": [\n\t\t\t"1967 1967 9 1 0 2 2 1",\n\t\t\t"1968 1968 2 0 8 2 2 0",\n\t\t\t"1968 1985 9 0 8 2 2 1",\n\t\t\t"1969 1971 2 8 0 2 2 0",\n\t\t\t"1972 1972 1 0 8 2 2 0",\n\t\t\t"1973 1981 2 1 0 2 2 0",\n\t\t\t"1982 1983 2 0 8 2 2 0",\n\t\t\t"1984 1986 2 1 0 2 2 0",\n\t\t\t"1986 1986 9 15 0 2 2 1",\n\t\t\t"1987 1990 2 15 0 2 2 0",\n\t\t\t"1987 1987 9 22 0 2 2 1",\n\t\t\t"1988 1990 9 0 8 2 2 1",\n\t\t\t"1991 1999 9 1 0 2 2 1",\n\t\t\t"1991 2005 2 0 8 2 2 0",\n\t\t\t"2000 2000 7 0 8 2 2 1",\n\t\t\t"2001 9999 9 1 0 2 2 1",\n\t\t\t"2006 2006 3 1 0 2 2 0",\n\t\t\t"2007 2007 2 0 8 2 2 0",\n\t\t\t"2008 9999 3 1 0 2 2 0"\n\t\t],\n\t\t"AV": [\n\t\t\t"1971 1985 9 0 8 2 2 1",\n\t\t\t"1972 1972 1 0 8 2 2 0",\n\t\t\t"1973 1985 2 1 0 2 2 0",\n\t\t\t"1986 1990 2 15 0 2 2 0",\n\t\t\t"1986 1987 9 15 0 2 2 1",\n\t\t\t"1988 1999 9 0 8 2 2 1",\n\t\t\t"1991 1994 2 1 0 2 2 0",\n\t\t\t"1995 2005 2 0 8 2 2 0",\n\t\t\t"2000 2000 7 0 8 2 2 1",\n\t\t\t"2001 2007 9 0 8 2 2 1",\n\t\t\t"2006 2006 3 1 0 2 2 0",\n\t\t\t"2007 2007 2 0 8 2 2 0",\n\t\t\t"2008 9999 3 1 0 2 2 0",\n\t\t\t"2008 9999 9 1 0 2 2 1"\n\t\t],\n\t\t"AW": [\n\t\t\t"1974 1974 9 0 8 2 2 1",\n\t\t\t"1975 1975 2 1 0 2 2 0",\n\t\t\t"1983 1983 9 0 8 2 2 1",\n\t\t\t"1984 1984 2 1 0 2 2 0",\n\t\t\t"1991 1991 10 17 7 2 2 1",\n\t\t\t"1992 1992 2 1 0 2 2 0",\n\t\t\t"2006 2006 11 3 7 2 2 1",\n\t\t\t"2007 2009 2 0 8 2 2 0",\n\t\t\t"2007 2008 9 0 8 2 2 1"\n\t\t],\n\t\t"Albania": [\n\t\t\t"1940 1940 5 16 7 0 0 1 S",\n\t\t\t"1942 1942 10 2 7 3 0 0",\n\t\t\t"1943 1943 2 29 7 2 0 1 S",\n\t\t\t"1943 1943 3 10 7 3 0 0",\n\t\t\t"1974 1974 4 4 7 0 0 1 S",\n\t\t\t"1974 1974 9 2 7 0 0 0",\n\t\t\t"1975 1975 4 1 7 0 0 1 S",\n\t\t\t"1975 1975 9 2 7 0 0 0",\n\t\t\t"1976 1976 4 2 7 0 0 1 S",\n\t\t\t"1976 1976 9 3 7 0 0 0",\n\t\t\t"1977 1977 4 8 7 0 0 1 S",\n\t\t\t"1977 1977 9 2 7 0 0 0",\n\t\t\t"1978 1978 4 6 7 0 0 1 S",\n\t\t\t"1978 1978 9 1 7 0 0 0",\n\t\t\t"1979 1979 4 5 7 0 0 1 S",\n\t\t\t"1979 1979 8 30 7 0 0 0",\n\t\t\t"1980 1980 4 3 7 0 0 1 S",\n\t\t\t"1980 1980 9 4 7 0 0 0",\n\t\t\t"1981 1981 3 26 7 0 0 1 S",\n\t\t\t"1981 1981 8 27 7 0 0 0",\n\t\t\t"1982 1982 4 2 7 0 0 1 S",\n\t\t\t"1982 1982 9 3 7 0 0 0",\n\t\t\t"1983 1983 3 18 7 0 0 1 S",\n\t\t\t"1983 1983 9 1 7 0 0 0",\n\t\t\t"1984 1984 3 1 7 0 0 1 S"\n\t\t],\n\t\t"Algeria": [\n\t\t\t"1916 1916 5 14 7 23 2 1 S",\n\t\t\t"1916 1919 9 1 0 23 2 0",\n\t\t\t"1917 1917 2 24 7 23 2 1 S",\n\t\t\t"1918 1918 2 9 7 23 2 1 S",\n\t\t\t"1919 1919 2 1 7 23 2 1 S",\n\t\t\t"1920 1920 1 14 7 23 2 1 S",\n\t\t\t"1920 1920 9 23 7 23 2 0",\n\t\t\t"1921 1921 2 14 7 23 2 1 S",\n\t\t\t"1921 1921 5 21 7 23 2 0",\n\t\t\t"1939 1939 8 11 7 23 2 1 S",\n\t\t\t"1939 1939 10 19 7 1 0 0",\n\t\t\t"1944 1945 3 1 1 2 0 1 S",\n\t\t\t"1944 1944 9 8 7 2 0 0",\n\t\t\t"1945 1945 8 16 7 1 0 0",\n\t\t\t"1971 1971 3 25 7 23 2 1 S",\n\t\t\t"1971 1971 8 26 7 23 2 0",\n\t\t\t"1977 1977 4 6 7 0 0 1 S",\n\t\t\t"1977 1977 9 21 7 0 0 0",\n\t\t\t"1978 1978 2 24 7 1 0 1 S",\n\t\t\t"1978 1978 8 22 7 3 0 0",\n\t\t\t"1980 1980 3 25 7 0 0 1 S",\n\t\t\t"1980 1980 9 31 7 2 0 0"\n\t\t],\n\t\t"Arg": [\n\t\t\t"1930 1930 11 1 7 0 0 1 S",\n\t\t\t"1931 1931 3 1 7 0 0 0",\n\t\t\t"1931 1931 9 15 7 0 0 1 S",\n\t\t\t"1932 1940 2 1 7 0 0 0",\n\t\t\t"1932 1939 10 1 7 0 0 1 S",\n\t\t\t"1940 1940 6 1 7 0 0 1 S",\n\t\t\t"1941 1941 5 15 7 0 0 0",\n\t\t\t"1941 1941 9 15 7 0 0 1 S",\n\t\t\t"1943 1943 7 1 7 0 0 0",\n\t\t\t"1943 1943 9 15 7 0 0 1 S",\n\t\t\t"1946 1946 2 1 7 0 0 0",\n\t\t\t"1946 1946 9 1 7 0 0 1 S",\n\t\t\t"1963 1963 9 1 7 0 0 0",\n\t\t\t"1963 1963 11 15 7 0 0 1 S",\n\t\t\t"1964 1966 2 1 7 0 0 0",\n\t\t\t"1964 1966 9 15 7 0 0 1 S",\n\t\t\t"1967 1967 3 2 7 0 0 0",\n\t\t\t"1967 1968 9 1 0 0 0 1 S",\n\t\t\t"1968 1969 3 1 0 0 0 0",\n\t\t\t"1974 1974 0 23 7 0 0 1 S",\n\t\t\t"1974 1974 4 1 7 0 0 0",\n\t\t\t"1988 1988 11 1 7 0 0 1 S",\n\t\t\t"1989 1993 2 1 0 0 0 0",\n\t\t\t"1989 1992 9 15 0 0 0 1 S",\n\t\t\t"1999 1999 9 1 0 0 0 1 S",\n\t\t\t"2000 2000 2 3 7 0 0 0",\n\t\t\t"2007 2007 11 30 7 0 0 1 S",\n\t\t\t"2008 2009 2 15 0 0 0 0",\n\t\t\t"2008 2008 9 15 0 0 0 1 S"\n\t\t],\n\t\t"ArgAQ": [\n\t\t\t"1964 1966 2 1 7 0 0 0",\n\t\t\t"1964 1966 9 15 7 0 0 1 S",\n\t\t\t"1967 1967 3 2 7 0 0 0",\n\t\t\t"1967 1968 9 1 0 0 0 1 S",\n\t\t\t"1968 1969 3 1 0 0 0 0",\n\t\t\t"1974 1974 0 23 7 0 0 1 S",\n\t\t\t"1974 1974 4 1 7 0 0 0"\n\t\t],\n\t\t"Aus": [\n\t\t\t"1917 1917 0 1 7 0:1 0 1",\n\t\t\t"1917 1917 2 25 7 2 0 0",\n\t\t\t"1942 1942 0 1 7 2 0 1",\n\t\t\t"1942 1942 2 29 7 2 0 0",\n\t\t\t"1942 1942 8 27 7 2 0 1",\n\t\t\t"1943 1944 2 0 8 2 0 0",\n\t\t\t"1943 1943 9 3 7 2 0 1"\n\t\t],\n\t\t"Austria": [\n\t\t\t"1920 1920 3 5 7 2 2 1 S",\n\t\t\t"1920 1920 8 13 7 2 2 0",\n\t\t\t"1946 1946 3 14 7 2 2 1 S",\n\t\t\t"1946 1948 9 1 0 2 2 0",\n\t\t\t"1947 1947 3 6 7 2 2 1 S",\n\t\t\t"1948 1948 3 18 7 2 2 1 S",\n\t\t\t"1980 1980 3 6 7 0 0 1 S",\n\t\t\t"1980 1980 8 28 7 0 0 0"\n\t\t],\n\t\t"Azer": [\n\t\t\t"1997 9999 2 0 8 4 0 1 S",\n\t\t\t"1997 9999 9 0 8 5 0 0"\n\t\t],\n\t\t"Bahamas": [\n\t\t\t"1964 1975 9 0 8 2 0 0 S",\n\t\t\t"1964 1975 3 0 8 2 0 1 D"\n\t\t],\n\t\t"Barb": [\n\t\t\t"1977 1977 5 12 7 2 0 1 D",\n\t\t\t"1977 1978 9 1 0 2 0 0 S",\n\t\t\t"1978 1980 3 15 0 2 0 1 D",\n\t\t\t"1979 1979 8 30 7 2 0 0 S",\n\t\t\t"1980 1980 8 25 7 2 0 0 S"\n\t\t],\n\t\t"Belgium": [\n\t\t\t"1918 1918 2 9 7 0 2 1 S",\n\t\t\t"1918 1919 9 1 6 23 2 0",\n\t\t\t"1919 1919 2 1 7 23 2 1 S",\n\t\t\t"1920 1920 1 14 7 23 2 1 S",\n\t\t\t"1920 1920 9 23 7 23 2 0",\n\t\t\t"1921 1921 2 14 7 23 2 1 S",\n\t\t\t"1921 1921 9 25 7 23 2 0",\n\t\t\t"1922 1922 2 25 7 23 2 1 S",\n\t\t\t"1922 1927 9 1 6 23 2 0",\n\t\t\t"1923 1923 3 21 7 23 2 1 S",\n\t\t\t"1924 1924 2 29 7 23 2 1 S",\n\t\t\t"1925 1925 3 4 7 23 2 1 S",\n\t\t\t"1926 1926 3 17 7 23 2 1 S",\n\t\t\t"1927 1927 3 9 7 23 2 1 S",\n\t\t\t"1928 1928 3 14 7 23 2 1 S",\n\t\t\t"1928 1938 9 2 0 2 2 0",\n\t\t\t"1929 1929 3 21 7 2 2 1 S",\n\t\t\t"1930 1930 3 13 7 2 2 1 S",\n\t\t\t"1931 1931 3 19 7 2 2 1 S",\n\t\t\t"1932 1932 3 3 7 2 2 1 S",\n\t\t\t"1933 1933 2 26 7 2 2 1 S",\n\t\t\t"1934 1934 3 8 7 2 2 1 S",\n\t\t\t"1935 1935 2 31 7 2 2 1 S",\n\t\t\t"1936 1936 3 19 7 2 2 1 S",\n\t\t\t"1937 1937 3 4 7 2 2 1 S",\n\t\t\t"1938 1938 2 27 7 2 2 1 S",\n\t\t\t"1939 1939 3 16 7 2 2 1 S",\n\t\t\t"1939 1939 10 19 7 2 2 0",\n\t\t\t"1940 1940 1 25 7 2 2 1 S",\n\t\t\t"1944 1944 8 17 7 2 2 0",\n\t\t\t"1945 1945 3 2 7 2 2 1 S",\n\t\t\t"1945 1945 8 16 7 2 2 0",\n\t\t\t"1946 1946 4 19 7 2 2 1 S",\n\t\t\t"1946 1946 9 7 7 2 2 0"\n\t\t],\n\t\t"Belize": [\n\t\t\t"1918 1942 9 2 0 0 0 0:30 HD",\n\t\t\t"1919 1943 1 9 0 0 0 0 S",\n\t\t\t"1973 1973 11 5 7 0 0 1 D",\n\t\t\t"1974 1974 1 9 7 0 0 0 S",\n\t\t\t"1982 1982 11 18 7 0 0 1 D",\n\t\t\t"1983 1983 1 12 7 0 0 0 S"\n\t\t],\n\t\t"Brazil": [\n\t\t\t"1931 1931 9 3 7 11 0 1 S",\n\t\t\t"1932 1933 3 1 7 0 0 0",\n\t\t\t"1932 1932 9 3 7 0 0 1 S",\n\t\t\t"1949 1952 11 1 7 0 0 1 S",\n\t\t\t"1950 1950 3 16 7 1 0 0",\n\t\t\t"1951 1952 3 1 7 0 0 0",\n\t\t\t"1953 1953 2 1 7 0 0 0",\n\t\t\t"1963 1963 11 9 7 0 0 1 S",\n\t\t\t"1964 1964 2 1 7 0 0 0",\n\t\t\t"1965 1965 0 31 7 0 0 1 S",\n\t\t\t"1965 1965 2 31 7 0 0 0",\n\t\t\t"1965 1965 11 1 7 0 0 1 S",\n\t\t\t"1966 1968 2 1 7 0 0 0",\n\t\t\t"1966 1967 10 1 7 0 0 1 S",\n\t\t\t"1985 1985 10 2 7 0 0 1 S",\n\t\t\t"1986 1986 2 15 7 0 0 0",\n\t\t\t"1986 1986 9 25 7 0 0 1 S",\n\t\t\t"1987 1987 1 14 7 0 0 0",\n\t\t\t"1987 1987 9 25 7 0 0 1 S",\n\t\t\t"1988 1988 1 7 7 0 0 0",\n\t\t\t"1988 1988 9 16 7 0 0 1 S",\n\t\t\t"1989 1989 0 29 7 0 0 0",\n\t\t\t"1989 1989 9 15 7 0 0 1 S",\n\t\t\t"1990 1990 1 11 7 0 0 0",\n\t\t\t"1990 1990 9 21 7 0 0 1 S",\n\t\t\t"1991 1991 1 17 7 0 0 0",\n\t\t\t"1991 1991 9 20 7 0 0 1 S",\n\t\t\t"1992 1992 1 9 7 0 0 0",\n\t\t\t"1992 1992 9 25 7 0 0 1 S",\n\t\t\t"1993 1993 0 31 7 0 0 0",\n\t\t\t"1993 1995 9 11 0 0 0 1 S",\n\t\t\t"1994 1995 1 15 0 0 0 0",\n\t\t\t"1996 1996 1 11 7 0 0 0",\n\t\t\t"1996 1996 9 6 7 0 0 1 S",\n\t\t\t"1997 1997 1 16 7 0 0 0",\n\t\t\t"1997 1997 9 6 7 0 0 1 S",\n\t\t\t"1998 1998 2 1 7 0 0 0",\n\t\t\t"1998 1998 9 11 7 0 0 1 S",\n\t\t\t"1999 1999 1 21 7 0 0 0",\n\t\t\t"1999 1999 9 3 7 0 0 1 S",\n\t\t\t"2000 2000 1 27 7 0 0 0",\n\t\t\t"2000 2001 9 8 0 0 0 1 S",\n\t\t\t"2001 2006 1 15 0 0 0 0",\n\t\t\t"2002 2002 10 3 7 0 0 1 S",\n\t\t\t"2003 2003 9 19 7 0 0 1 S",\n\t\t\t"2004 2004 10 2 7 0 0 1 S",\n\t\t\t"2005 2005 9 16 7 0 0 1 S",\n\t\t\t"2006 2006 10 5 7 0 0 1 S",\n\t\t\t"2007 2007 1 25 7 0 0 0",\n\t\t\t"2007 2007 9 8 0 0 0 1 S",\n\t\t\t"2008 9999 9 15 0 0 0 1 S",\n\t\t\t"2008 2011 1 15 0 0 0 0",\n\t\t\t"2012 2012 1 22 0 0 0 0",\n\t\t\t"2013 2014 1 15 0 0 0 0",\n\t\t\t"2015 2015 1 22 0 0 0 0",\n\t\t\t"2016 2022 1 15 0 0 0 0",\n\t\t\t"2023 2023 1 22 0 0 0 0",\n\t\t\t"2024 2025 1 15 0 0 0 0",\n\t\t\t"2026 2026 1 22 0 0 0 0",\n\t\t\t"2027 2033 1 15 0 0 0 0",\n\t\t\t"2034 2034 1 22 0 0 0 0",\n\t\t\t"2035 2036 1 15 0 0 0 0",\n\t\t\t"2037 2037 1 22 0 0 0 0",\n\t\t\t"2038 9999 1 15 0 0 0 0"\n\t\t],\n\t\t"Bulg": [\n\t\t\t"1979 1979 2 31 7 23 0 1 S",\n\t\t\t"1979 1979 9 1 7 1 0 0",\n\t\t\t"1980 1982 3 1 6 23 0 1 S",\n\t\t\t"1980 1980 8 29 7 1 0 0",\n\t\t\t"1981 1981 8 27 7 2 0 0"\n\t\t],\n\t\t"C-Eur": [\n\t\t\t"1916 1916 3 30 7 23 0 1 S",\n\t\t\t"1916 1916 9 1 7 1 0 0",\n\t\t\t"1917 1918 3 15 1 2 2 1 S",\n\t\t\t"1917 1918 8 15 1 2 2 0",\n\t\t\t"1940 1940 3 1 7 2 2 1 S",\n\t\t\t"1942 1942 10 2 7 2 2 0",\n\t\t\t"1943 1943 2 29 7 2 2 1 S",\n\t\t\t"1943 1943 9 4 7 2 2 0",\n\t\t\t"1944 1945 3 1 1 2 2 1 S",\n\t\t\t"1944 1944 9 2 7 2 2 0",\n\t\t\t"1945 1945 8 16 7 2 2 0",\n\t\t\t"1977 1980 3 1 0 2 2 1 S",\n\t\t\t"1977 1977 8 0 8 2 2 0",\n\t\t\t"1978 1978 9 1 7 2 2 0",\n\t\t\t"1979 1995 8 0 8 2 2 0",\n\t\t\t"1981 9999 2 0 8 2 2 1 S",\n\t\t\t"1996 9999 9 0 8 2 2 0"\n\t\t],\n\t\t"CA": [\n\t\t\t"1948 1948 2 14 7 2 0 1 D",\n\t\t\t"1949 1949 0 1 7 2 0 0 S",\n\t\t\t"1950 1966 3 0 8 2 0 1 D",\n\t\t\t"1950 1961 8 0 8 2 0 0 S",\n\t\t\t"1962 1966 9 0 8 2 0 0 S"\n\t\t],\n\t\t"CO": [\n\t\t\t"1992 1992 4 3 7 0 0 1 S",\n\t\t\t"1993 1993 3 4 7 0 0 0"\n\t\t],\n\t\t"CR": [\n\t\t\t"1979 1980 1 0 8 0 0 1 D",\n\t\t\t"1979 1980 5 1 0 0 0 0 S",\n\t\t\t"1991 1992 0 15 6 0 0 1 D",\n\t\t\t"1991 1991 6 1 7 0 0 0 S",\n\t\t\t"1992 1992 2 15 7 0 0 0 S"\n\t\t],\n\t\t"Canada": [\n\t\t\t"1918 1918 3 14 7 2 0 1 D",\n\t\t\t"1918 1918 9 27 7 2 0 0 S",\n\t\t\t"1942 1942 1 9 7 2 0 1 W",\n\t\t\t"1945 1945 7 14 7 23 1 1 P",\n\t\t\t"1945 1945 8 30 7 2 0 0 S",\n\t\t\t"1974 1986 3 0 8 2 0 1 D",\n\t\t\t"1974 2006 9 0 8 2 0 0 S",\n\t\t\t"1987 2006 3 1 0 2 0 1 D",\n\t\t\t"2007 9999 2 8 0 2 0 1 D",\n\t\t\t"2007 9999 10 1 0 2 0 0 S"\n\t\t],\n\t\t"Chatham": [\n\t\t\t"1974 1974 10 1 0 2:45 2 1 D",\n\t\t\t"1975 1975 1 0 8 2:45 2 0 S",\n\t\t\t"1975 1988 9 0 8 2:45 2 1 D",\n\t\t\t"1976 1989 2 1 0 2:45 2 0 S",\n\t\t\t"1989 1989 9 8 0 2:45 2 1 D",\n\t\t\t"1990 2006 9 1 0 2:45 2 1 D",\n\t\t\t"1990 2007 2 15 0 2:45 2 0 S",\n\t\t\t"2007 9999 8 0 8 2:45 2 1 D",\n\t\t\t"2008 9999 3 1 0 2:45 2 0 S"\n\t\t],\n\t\t"Chicago": [\n\t\t\t"1920 1920 5 13 7 2 0 1 D",\n\t\t\t"1920 1921 9 0 8 2 0 0 S",\n\t\t\t"1921 1921 2 0 8 2 0 1 D",\n\t\t\t"1922 1966 3 0 8 2 0 1 D",\n\t\t\t"1922 1954 8 0 8 2 0 0 S",\n\t\t\t"1955 1966 9 0 8 2 0 0 S"\n\t\t],\n\t\t"Chile": [\n\t\t\t"1927 1932 8 1 7 0 0 1 S",\n\t\t\t"1928 1932 3 1 7 0 0 0",\n\t\t\t"1942 1942 5 1 7 4 1 0",\n\t\t\t"1942 1942 7 1 7 5 1 1 S",\n\t\t\t"1946 1946 6 15 7 4 1 1 S",\n\t\t\t"1946 1946 8 1 7 3 1 0",\n\t\t\t"1947 1947 3 1 7 4 1 0",\n\t\t\t"1968 1968 10 3 7 4 1 1 S",\n\t\t\t"1969 1969 2 30 7 3 1 0",\n\t\t\t"1969 1969 10 23 7 4 1 1 S",\n\t\t\t"1970 1970 2 29 7 3 1 0",\n\t\t\t"1971 1971 2 14 7 3 1 0",\n\t\t\t"1970 1972 9 9 0 4 1 1 S",\n\t\t\t"1972 1986 2 9 0 3 1 0",\n\t\t\t"1973 1973 8 30 7 4 1 1 S",\n\t\t\t"1974 1987 9 9 0 4 1 1 S",\n\t\t\t"1987 1987 3 12 7 3 1 0",\n\t\t\t"1988 1989 2 9 0 3 1 0",\n\t\t\t"1988 1988 9 1 0 4 1 1 S",\n\t\t\t"1989 1989 9 9 0 4 1 1 S",\n\t\t\t"1990 1990 2 18 7 3 1 0",\n\t\t\t"1990 1990 8 16 7 4 1 1 S",\n\t\t\t"1991 1996 2 9 0 3 1 0",\n\t\t\t"1991 1997 9 9 0 4 1 1 S",\n\t\t\t"1997 1997 2 30 7 3 1 0",\n\t\t\t"1998 1998 2 9 0 3 1 0",\n\t\t\t"1998 1998 8 27 7 4 1 1 S",\n\t\t\t"1999 1999 3 4 7 3 1 0",\n\t\t\t"1999 2010 9 9 0 4 1 1 S",\n\t\t\t"2000 2007 2 9 0 3 1 0",\n\t\t\t"2008 2008 2 30 7 3 1 0",\n\t\t\t"2009 2009 2 9 0 3 1 0",\n\t\t\t"2010 2010 3 1 0 3 1 0",\n\t\t\t"2011 2011 4 2 0 3 1 0",\n\t\t\t"2011 2011 7 16 0 4 1 1 S",\n\t\t\t"2012 9999 3 23 0 3 1 0",\n\t\t\t"2012 9999 8 2 0 4 1 1 S"\n\t\t],\n\t\t"ChileAQ": [\n\t\t\t"1972 1986 2 9 0 3 1 0",\n\t\t\t"1974 1987 9 9 0 4 1 1 S",\n\t\t\t"1987 1987 3 12 7 3 1 0",\n\t\t\t"1988 1989 2 9 0 3 1 0",\n\t\t\t"1988 1988 9 1 0 4 1 1 S",\n\t\t\t"1989 1989 9 9 0 4 1 1 S",\n\t\t\t"1990 1990 2 18 7 3 1 0",\n\t\t\t"1990 1990 8 16 7 4 1 1 S",\n\t\t\t"1991 1996 2 9 0 3 1 0",\n\t\t\t"1991 1997 9 9 0 4 1 1 S",\n\t\t\t"1997 1997 2 30 7 3 1 0",\n\t\t\t"1998 1998 2 9 0 3 1 0",\n\t\t\t"1998 1998 8 27 7 4 1 1 S",\n\t\t\t"1999 1999 3 4 7 3 1 0",\n\t\t\t"1999 2010 9 9 0 4 1 1 S",\n\t\t\t"2000 2007 2 9 0 3 1 0",\n\t\t\t"2008 2008 2 30 7 3 1 0",\n\t\t\t"2009 2009 2 9 0 3 1 0",\n\t\t\t"2010 2010 3 1 0 3 1 0",\n\t\t\t"2011 2011 4 2 0 3 1 0",\n\t\t\t"2011 2011 7 16 0 4 1 1 S",\n\t\t\t"2012 9999 3 23 0 3 1 0",\n\t\t\t"2012 9999 8 2 0 4 1 1 S"\n\t\t],\n\t\t"Cook": [\n\t\t\t"1978 1978 10 12 7 0 0 0:30 HS",\n\t\t\t"1979 1991 2 1 0 0 0 0",\n\t\t\t"1979 1990 9 0 8 0 0 0:30 HS"\n\t\t],\n\t\t"Cuba": [\n\t\t\t"1928 1928 5 10 7 0 0 1 D",\n\t\t\t"1928 1928 9 10 7 0 0 0 S",\n\t\t\t"1940 1942 5 1 0 0 0 1 D",\n\t\t\t"1940 1942 8 1 0 0 0 0 S",\n\t\t\t"1945 1946 5 1 0 0 0 1 D",\n\t\t\t"1945 1946 8 1 0 0 0 0 S",\n\t\t\t"1965 1965 5 1 7 0 0 1 D",\n\t\t\t"1965 1965 8 30 7 0 0 0 S",\n\t\t\t"1966 1966 4 29 7 0 0 1 D",\n\t\t\t"1966 1966 9 2 7 0 0 0 S",\n\t\t\t"1967 1967 3 8 7 0 0 1 D",\n\t\t\t"1967 1968 8 8 0 0 0 0 S",\n\t\t\t"1968 1968 3 14 7 0 0 1 D",\n\t\t\t"1969 1977 3 0 8 0 0 1 D",\n\t\t\t"1969 1971 9 0 8 0 0 0 S",\n\t\t\t"1972 1974 9 8 7 0 0 0 S",\n\t\t\t"1975 1977 9 0 8 0 0 0 S",\n\t\t\t"1978 1978 4 7 7 0 0 1 D",\n\t\t\t"1978 1990 9 8 0 0 0 0 S",\n\t\t\t"1979 1980 2 15 0 0 0 1 D",\n\t\t\t"1981 1985 4 5 0 0 0 1 D",\n\t\t\t"1986 1989 2 14 0 0 0 1 D",\n\t\t\t"1990 1997 3 1 0 0 0 1 D",\n\t\t\t"1991 1995 9 8 0 0 2 0 S",\n\t\t\t"1996 1996 9 6 7 0 2 0 S",\n\t\t\t"1997 1997 9 12 7 0 2 0 S",\n\t\t\t"1998 1999 2 0 8 0 2 1 D",\n\t\t\t"1998 2003 9 0 8 0 2 0 S",\n\t\t\t"2000 2004 3 1 0 0 2 1 D",\n\t\t\t"2006 2010 9 0 8 0 2 0 S",\n\t\t\t"2007 2007 2 8 0 0 2 1 D",\n\t\t\t"2008 2008 2 15 0 0 2 1 D",\n\t\t\t"2009 2010 2 8 0 0 2 1 D",\n\t\t\t"2011 2011 2 15 0 0 2 1 D",\n\t\t\t"2011 2011 10 13 7 0 2 0 S",\n\t\t\t"2012 2012 3 1 7 0 2 1 D",\n\t\t\t"2012 9999 10 1 0 0 2 0 S",\n\t\t\t"2013 9999 2 8 0 0 2 1 D"\n\t\t],\n\t\t"Cyprus": [\n\t\t\t"1975 1975 3 13 7 0 0 1 S",\n\t\t\t"1975 1975 9 12 7 0 0 0",\n\t\t\t"1976 1976 4 15 7 0 0 1 S",\n\t\t\t"1976 1976 9 11 7 0 0 0",\n\t\t\t"1977 1980 3 1 0 0 0 1 S",\n\t\t\t"1977 1977 8 25 7 0 0 0",\n\t\t\t"1978 1978 9 2 7 0 0 0",\n\t\t\t"1979 1997 8 0 8 0 0 0",\n\t\t\t"1981 1998 2 0 8 0 0 1 S"\n\t\t],\n\t\t"Czech": [\n\t\t\t"1945 1945 3 8 7 2 2 1 S",\n\t\t\t"1945 1945 10 18 7 2 2 0",\n\t\t\t"1946 1946 4 6 7 2 2 1 S",\n\t\t\t"1946 1949 9 1 0 2 2 0",\n\t\t\t"1947 1947 3 20 7 2 2 1 S",\n\t\t\t"1948 1948 3 18 7 2 2 1 S",\n\t\t\t"1949 1949 3 9 7 2 2 1 S"\n\t\t],\n\t\t"DR": [\n\t\t\t"1966 1966 9 30 7 0 0 1 D",\n\t\t\t"1967 1967 1 28 7 0 0 0 S",\n\t\t\t"1969 1973 9 0 8 0 0 0:30 HD",\n\t\t\t"1970 1970 1 21 7 0 0 0 S",\n\t\t\t"1971 1971 0 20 7 0 0 0 S",\n\t\t\t"1972 1974 0 21 7 0 0 0 S"\n\t\t],\n\t\t"Denmark": [\n\t\t\t"1916 1916 4 14 7 23 0 1 S",\n\t\t\t"1916 1916 8 30 7 23 0 0",\n\t\t\t"1940 1940 4 15 7 0 0 1 S",\n\t\t\t"1945 1945 3 2 7 2 2 1 S",\n\t\t\t"1945 1945 7 15 7 2 2 0",\n\t\t\t"1946 1946 4 1 7 2 2 1 S",\n\t\t\t"1946 1946 8 1 7 2 2 0",\n\t\t\t"1947 1947 4 4 7 2 2 1 S",\n\t\t\t"1947 1947 7 10 7 2 2 0",\n\t\t\t"1948 1948 4 9 7 2 2 1 S",\n\t\t\t"1948 1948 7 8 7 2 2 0"\n\t\t],\n\t\t"Denver": [\n\t\t\t"1920 1921 2 0 8 2 0 1 D",\n\t\t\t"1920 1920 9 0 8 2 0 0 S",\n\t\t\t"1921 1921 4 22 7 2 0 0 S",\n\t\t\t"1965 1966 3 0 8 2 0 1 D",\n\t\t\t"1965 1966 9 0 8 2 0 0 S"\n\t\t],\n\t\t"Detroit": [\n\t\t\t"1948 1948 3 0 8 2 0 1 D",\n\t\t\t"1948 1948 8 0 8 2 0 0 S",\n\t\t\t"1967 1967 5 14 7 2 0 1 D",\n\t\t\t"1967 1967 9 0 8 2 0 0 S"\n\t\t],\n\t\t"Dhaka": [\n\t\t\t"2009 2009 5 19 7 23 0 1 S",\n\t\t\t"2009 2009 11 31 7 23:59 0 0"\n\t\t],\n\t\t"E-Eur": [\n\t\t\t"1977 1980 3 1 0 0 0 1 S",\n\t\t\t"1977 1977 8 0 8 0 0 0",\n\t\t\t"1978 1978 9 1 7 0 0 0",\n\t\t\t"1979 1995 8 0 8 0 0 0",\n\t\t\t"1981 9999 2 0 8 0 0 1 S",\n\t\t\t"1996 9999 9 0 8 0 0 0"\n\t\t],\n\t\t"E-EurAsia": [\n\t\t\t"1981 9999 2 0 8 0 0 1 S",\n\t\t\t"1979 1995 8 0 8 0 0 0",\n\t\t\t"1996 9999 9 0 8 0 0 0"\n\t\t],\n\t\t"EU": [\n\t\t\t"1977 1980 3 1 0 1 1 1 S",\n\t\t\t"1977 1977 8 0 8 1 1 0",\n\t\t\t"1978 1978 9 1 7 1 1 0",\n\t\t\t"1979 1995 8 0 8 1 1 0",\n\t\t\t"1981 9999 2 0 8 1 1 1 S",\n\t\t\t"1996 9999 9 0 8 1 1 0"\n\t\t],\n\t\t"EUAsia": [\n\t\t\t"1981 9999 2 0 8 1 1 1 S",\n\t\t\t"1979 1995 8 0 8 1 1 0",\n\t\t\t"1996 9999 9 0 8 1 1 0"\n\t\t],\n\t\t"Edm": [\n\t\t\t"1918 1919 3 8 0 2 0 1 D",\n\t\t\t"1918 1918 9 27 7 2 0 0 S",\n\t\t\t"1919 1919 4 27 7 2 0 0 S",\n\t\t\t"1920 1923 3 0 8 2 0 1 D",\n\t\t\t"1920 1920 9 0 8 2 0 0 S",\n\t\t\t"1921 1923 8 0 8 2 0 0 S",\n\t\t\t"1942 1942 1 9 7 2 0 1 W",\n\t\t\t"1945 1945 7 14 7 23 1 1 P",\n\t\t\t"1945 1945 8 0 8 2 0 0 S",\n\t\t\t"1947 1947 3 0 8 2 0 1 D",\n\t\t\t"1947 1947 8 0 8 2 0 0 S",\n\t\t\t"1967 1967 3 0 8 2 0 1 D",\n\t\t\t"1967 1967 9 0 8 2 0 0 S",\n\t\t\t"1969 1969 3 0 8 2 0 1 D",\n\t\t\t"1969 1969 9 0 8 2 0 0 S",\n\t\t\t"1972 1986 3 0 8 2 0 1 D",\n\t\t\t"1972 2006 9 0 8 2 0 0 S"\n\t\t],\n\t\t"Egypt": [\n\t\t\t"1940 1940 6 15 7 0 0 1 S",\n\t\t\t"1940 1940 9 1 7 0 0 0",\n\t\t\t"1941 1941 3 15 7 0 0 1 S",\n\t\t\t"1941 1941 8 16 7 0 0 0",\n\t\t\t"1942 1944 3 1 7 0 0 1 S",\n\t\t\t"1942 1942 9 27 7 0 0 0",\n\t\t\t"1943 1945 10 1 7 0 0 0",\n\t\t\t"1945 1945 3 16 7 0 0 1 S",\n\t\t\t"1957 1957 4 10 7 0 0 1 S",\n\t\t\t"1957 1958 9 1 7 0 0 0",\n\t\t\t"1958 1958 4 1 7 0 0 1 S",\n\t\t\t"1959 1981 4 1 7 1 0 1 S",\n\t\t\t"1959 1965 8 30 7 3 0 0",\n\t\t\t"1966 1994 9 1 7 3 0 0",\n\t\t\t"1982 1982 6 25 7 1 0 1 S",\n\t\t\t"1983 1983 6 12 7 1 0 1 S",\n\t\t\t"1984 1988 4 1 7 1 0 1 S",\n\t\t\t"1989 1989 4 6 7 1 0 1 S",\n\t\t\t"1990 1994 4 1 7 1 0 1 S",\n\t\t\t"1995 2010 3 5 8 0 2 1 S",\n\t\t\t"1995 2005 8 4 8 23 2 0",\n\t\t\t"2006 2006 8 21 7 23 2 0",\n\t\t\t"2007 2007 8 1 4 23 2 0",\n\t\t\t"2008 2008 7 4 8 23 2 0",\n\t\t\t"2009 2009 7 20 7 23 2 0",\n\t\t\t"2010 2010 7 11 7 0 0 0",\n\t\t\t"2010 2010 8 10 7 0 0 1 S",\n\t\t\t"2010 2010 8 4 8 23 2 0"\n\t\t],\n\t\t"EgyptAsia": [\n\t\t\t"1957 1957 4 10 7 0 0 1 S",\n\t\t\t"1957 1958 9 1 7 0 0 0",\n\t\t\t"1958 1958 4 1 7 0 0 1 S",\n\t\t\t"1959 1967 4 1 7 1 0 1 S",\n\t\t\t"1959 1965 8 30 7 3 0 0",\n\t\t\t"1966 1966 9 1 7 3 0 0"\n\t\t],\n\t\t"Falk": [\n\t\t\t"1937 1938 8 0 8 0 0 1 S",\n\t\t\t"1938 1942 2 19 0 0 0 0",\n\t\t\t"1939 1939 9 1 7 0 0 1 S",\n\t\t\t"1940 1942 8 0 8 0 0 1 S",\n\t\t\t"1943 1943 0 1 7 0 0 0",\n\t\t\t"1983 1983 8 0 8 0 0 1 S",\n\t\t\t"1984 1985 3 0 8 0 0 0",\n\t\t\t"1984 1984 8 16 7 0 0 1 S",\n\t\t\t"1985 2000 8 9 0 0 0 1 S",\n\t\t\t"1986 2000 3 16 0 0 0 0",\n\t\t\t"2001 2010 3 15 0 2 0 0",\n\t\t\t"2001 2010 8 1 0 2 0 1 S"\n\t\t],\n\t\t"Fiji": [\n\t\t\t"1998 1999 10 1 0 2 0 1 S",\n\t\t\t"1999 2000 1 0 8 3 0 0",\n\t\t\t"2009 2009 10 29 7 2 0 1 S",\n\t\t\t"2010 2010 2 0 8 3 0 0",\n\t\t\t"2010 9999 9 18 0 2 0 1 S",\n\t\t\t"2011 2011 2 1 0 3 0 0",\n\t\t\t"2012 9999 0 18 0 3 0 0"\n\t\t],\n\t\t"Finland": [\n\t\t\t"1942 1942 3 3 7 0 0 1 S",\n\t\t\t"1942 1942 9 3 7 0 0 0",\n\t\t\t"1981 1982 2 0 8 2 0 1 S",\n\t\t\t"1981 1982 8 0 8 3 0 0"\n\t\t],\n\t\t"France": [\n\t\t\t"1916 1916 5 14 7 23 2 1 S",\n\t\t\t"1916 1919 9 1 0 23 2 0",\n\t\t\t"1917 1917 2 24 7 23 2 1 S",\n\t\t\t"1918 1918 2 9 7 23 2 1 S",\n\t\t\t"1919 1919 2 1 7 23 2 1 S",\n\t\t\t"1920 1920 1 14 7 23 2 1 S",\n\t\t\t"1920 1920 9 23 7 23 2 0",\n\t\t\t"1921 1921 2 14 7 23 2 1 S",\n\t\t\t"1921 1921 9 25 7 23 2 0",\n\t\t\t"1922 1922 2 25 7 23 2 1 S",\n\t\t\t"1922 1938 9 1 6 23 2 0",\n\t\t\t"1923 1923 4 26 7 23 2 1 S",\n\t\t\t"1924 1924 2 29 7 23 2 1 S",\n\t\t\t"1925 1925 3 4 7 23 2 1 S",\n\t\t\t"1926 1926 3 17 7 23 2 1 S",\n\t\t\t"1927 1927 3 9 7 23 2 1 S",\n\t\t\t"1928 1928 3 14 7 23 2 1 S",\n\t\t\t"1929 1929 3 20 7 23 2 1 S",\n\t\t\t"1930 1930 3 12 7 23 2 1 S",\n\t\t\t"1931 1931 3 18 7 23 2 1 S",\n\t\t\t"1932 1932 3 2 7 23 2 1 S",\n\t\t\t"1933 1933 2 25 7 23 2 1 S",\n\t\t\t"1934 1934 3 7 7 23 2 1 S",\n\t\t\t"1935 1935 2 30 7 23 2 1 S",\n\t\t\t"1936 1936 3 18 7 23 2 1 S",\n\t\t\t"1937 1937 3 3 7 23 2 1 S",\n\t\t\t"1938 1938 2 26 7 23 2 1 S",\n\t\t\t"1939 1939 3 15 7 23 2 1 S",\n\t\t\t"1939 1939 10 18 7 23 2 0",\n\t\t\t"1940 1940 1 25 7 2 0 1 S",\n\t\t\t"1941 1941 4 5 7 0 0 2 M",\n\t\t\t"1941 1941 9 6 7 0 0 1 S",\n\t\t\t"1942 1942 2 9 7 0 0 2 M",\n\t\t\t"1942 1942 10 2 7 3 0 1 S",\n\t\t\t"1943 1943 2 29 7 2 0 2 M",\n\t\t\t"1943 1943 9 4 7 3 0 1 S",\n\t\t\t"1944 1944 3 3 7 2 0 2 M",\n\t\t\t"1944 1944 9 8 7 1 0 1 S",\n\t\t\t"1945 1945 3 2 7 2 0 2 M",\n\t\t\t"1945 1945 8 16 7 3 0 0",\n\t\t\t"1976 1976 2 28 7 1 0 1 S",\n\t\t\t"1976 1976 8 26 7 1 0 0"\n\t\t],\n\t\t"GB-Eire": [\n\t\t\t"1916 1916 4 21 7 2 2 1 BST",\n\t\t\t"1916 1916 9 1 7 2 2 0 GMT",\n\t\t\t"1917 1917 3 8 7 2 2 1 BST",\n\t\t\t"1917 1917 8 17 7 2 2 0 GMT",\n\t\t\t"1918 1918 2 24 7 2 2 1 BST",\n\t\t\t"1918 1918 8 30 7 2 2 0 GMT",\n\t\t\t"1919 1919 2 30 7 2 2 1 BST",\n\t\t\t"1919 1919 8 29 7 2 2 0 GMT",\n\t\t\t"1920 1920 2 28 7 2 2 1 BST",\n\t\t\t"1920 1920 9 25 7 2 2 0 GMT",\n\t\t\t"1921 1921 3 3 7 2 2 1 BST",\n\t\t\t"1921 1921 9 3 7 2 2 0 GMT",\n\t\t\t"1922 1922 2 26 7 2 2 1 BST",\n\t\t\t"1922 1922 9 8 7 2 2 0 GMT",\n\t\t\t"1923 1923 3 16 0 2 2 1 BST",\n\t\t\t"1923 1924 8 16 0 2 2 0 GMT",\n\t\t\t"1924 1924 3 9 0 2 2 1 BST",\n\t\t\t"1925 1926 3 16 0 2 2 1 BST",\n\t\t\t"1925 1938 9 2 0 2 2 0 GMT",\n\t\t\t"1927 1927 3 9 0 2 2 1 BST",\n\t\t\t"1928 1929 3 16 0 2 2 1 BST",\n\t\t\t"1930 1930 3 9 0 2 2 1 BST",\n\t\t\t"1931 1932 3 16 0 2 2 1 BST",\n\t\t\t"1933 1933 3 9 0 2 2 1 BST",\n\t\t\t"1934 1934 3 16 0 2 2 1 BST",\n\t\t\t"1935 1935 3 9 0 2 2 1 BST",\n\t\t\t"1936 1937 3 16 0 2 2 1 BST",\n\t\t\t"1938 1938 3 9 0 2 2 1 BST",\n\t\t\t"1939 1939 3 16 0 2 2 1 BST",\n\t\t\t"1939 1939 10 16 0 2 2 0 GMT",\n\t\t\t"1940 1940 1 23 0 2 2 1 BST",\n\t\t\t"1941 1941 4 2 0 1 2 2 BDST",\n\t\t\t"1941 1943 7 9 0 1 2 1 BST",\n\t\t\t"1942 1944 3 2 0 1 2 2 BDST",\n\t\t\t"1944 1944 8 16 0 1 2 1 BST",\n\t\t\t"1945 1945 3 2 1 1 2 2 BDST",\n\t\t\t"1945 1945 6 9 0 1 2 1 BST",\n\t\t\t"1945 1946 9 2 0 2 2 0 GMT",\n\t\t\t"1946 1946 3 9 0 2 2 1 BST",\n\t\t\t"1947 1947 2 16 7 2 2 1 BST",\n\t\t\t"1947 1947 3 13 7 1 2 2 BDST",\n\t\t\t"1947 1947 7 10 7 1 2 1 BST",\n\t\t\t"1947 1947 10 2 7 2 2 0 GMT",\n\t\t\t"1948 1948 2 14 7 2 2 1 BST",\n\t\t\t"1948 1948 9 31 7 2 2 0 GMT",\n\t\t\t"1949 1949 3 3 7 2 2 1 BST",\n\t\t\t"1949 1949 9 30 7 2 2 0 GMT",\n\t\t\t"1950 1952 3 14 0 2 2 1 BST",\n\t\t\t"1950 1952 9 21 0 2 2 0 GMT",\n\t\t\t"1953 1953 3 16 0 2 2 1 BST",\n\t\t\t"1953 1960 9 2 0 2 2 0 GMT",\n\t\t\t"1954 1954 3 9 0 2 2 1 BST",\n\t\t\t"1955 1956 3 16 0 2 2 1 BST",\n\t\t\t"1957 1957 3 9 0 2 2 1 BST",\n\t\t\t"1958 1959 3 16 0 2 2 1 BST",\n\t\t\t"1960 1960 3 9 0 2 2 1 BST",\n\t\t\t"1961 1963 2 0 8 2 2 1 BST",\n\t\t\t"1961 1968 9 23 0 2 2 0 GMT",\n\t\t\t"1964 1967 2 19 0 2 2 1 BST",\n\t\t\t"1968 1968 1 18 7 2 2 1 BST",\n\t\t\t"1972 1980 2 16 0 2 2 1 BST",\n\t\t\t"1972 1980 9 23 0 2 2 0 GMT",\n\t\t\t"1981 1995 2 0 8 1 1 1 BST",\n\t\t\t"1981 1989 9 23 0 1 1 0 GMT",\n\t\t\t"1990 1995 9 22 0 1 1 0 GMT"\n\t\t],\n\t\t"Germany": [\n\t\t\t"1946 1946 3 14 7 2 2 1 S",\n\t\t\t"1946 1946 9 7 7 2 2 0",\n\t\t\t"1947 1949 9 1 0 2 2 0",\n\t\t\t"1947 1947 3 6 7 3 2 1 S",\n\t\t\t"1947 1947 4 11 7 2 2 2 M",\n\t\t\t"1947 1947 5 29 7 3 0 1 S",\n\t\t\t"1948 1948 3 18 7 2 2 1 S",\n\t\t\t"1949 1949 3 10 7 2 2 1 S"\n\t\t],\n\t\t"Ghana": [\n\t\t\t"1936 1942 8 1 7 0 0 0:20 GHST",\n\t\t\t"1936 1942 11 31 7 0 0 0 GMT"\n\t\t],\n\t\t"Greece": [\n\t\t\t"1932 1932 6 7 7 0 0 1 S",\n\t\t\t"1932 1932 8 1 7 0 0 0",\n\t\t\t"1941 1941 3 7 7 0 0 1 S",\n\t\t\t"1942 1942 10 2 7 3 0 0",\n\t\t\t"1943 1943 2 30 7 0 0 1 S",\n\t\t\t"1943 1943 9 4 7 0 0 0",\n\t\t\t"1952 1952 6 1 7 0 0 1 S",\n\t\t\t"1952 1952 10 2 7 0 0 0",\n\t\t\t"1975 1975 3 12 7 0 2 1 S",\n\t\t\t"1975 1975 10 26 7 0 2 0",\n\t\t\t"1976 1976 3 11 7 2 2 1 S",\n\t\t\t"1976 1976 9 10 7 2 2 0",\n\t\t\t"1977 1978 3 1 0 2 2 1 S",\n\t\t\t"1977 1977 8 26 7 2 2 0",\n\t\t\t"1978 1978 8 24 7 4 0 0",\n\t\t\t"1979 1979 3 1 7 9 0 1 S",\n\t\t\t"1979 1979 8 29 7 2 0 0",\n\t\t\t"1980 1980 3 1 7 0 0 1 S",\n\t\t\t"1980 1980 8 28 7 0 0 0"\n\t\t],\n\t\t"Guat": [\n\t\t\t"1973 1973 10 25 7 0 0 1 D",\n\t\t\t"1974 1974 1 24 7 0 0 0 S",\n\t\t\t"1983 1983 4 21 7 0 0 1 D",\n\t\t\t"1983 1983 8 22 7 0 0 0 S",\n\t\t\t"1991 1991 2 23 7 0 0 1 D",\n\t\t\t"1991 1991 8 7 7 0 0 0 S",\n\t\t\t"2006 2006 3 30 7 0 0 1 D",\n\t\t\t"2006 2006 9 1 7 0 0 0 S"\n\t\t],\n\t\t"HK": [\n\t\t\t"1941 1941 3 1 7 3:30 0 1 S",\n\t\t\t"1941 1941 8 30 7 3:30 0 0",\n\t\t\t"1946 1946 3 20 7 3:30 0 1 S",\n\t\t\t"1946 1946 11 1 7 3:30 0 0",\n\t\t\t"1947 1947 3 13 7 3:30 0 1 S",\n\t\t\t"1947 1947 11 30 7 3:30 0 0",\n\t\t\t"1948 1948 4 2 7 3:30 0 1 S",\n\t\t\t"1948 1951 9 0 8 3:30 0 0",\n\t\t\t"1952 1952 9 25 7 3:30 0 0",\n\t\t\t"1949 1953 3 1 0 3:30 0 1 S",\n\t\t\t"1953 1953 10 1 7 3:30 0 0",\n\t\t\t"1954 1964 2 18 0 3:30 0 1 S",\n\t\t\t"1954 1954 9 31 7 3:30 0 0",\n\t\t\t"1955 1964 10 1 0 3:30 0 0",\n\t\t\t"1965 1976 3 16 0 3:30 0 1 S",\n\t\t\t"1965 1976 9 16 0 3:30 0 0",\n\t\t\t"1973 1973 11 30 7 3:30 0 1 S",\n\t\t\t"1979 1979 4 8 0 3:30 0 1 S",\n\t\t\t"1979 1979 9 16 0 3:30 0 0"\n\t\t],\n\t\t"Haiti": [\n\t\t\t"1983 1983 4 8 7 0 0 1 D",\n\t\t\t"1984 1987 3 0 8 0 0 1 D",\n\t\t\t"1983 1987 9 0 8 0 0 0 S",\n\t\t\t"1988 1997 3 1 0 1 2 1 D",\n\t\t\t"1988 1997 9 0 8 1 2 0 S",\n\t\t\t"2005 2006 3 1 0 0 0 1 D",\n\t\t\t"2005 2006 9 0 8 0 0 0 S",\n\t\t\t"2012 9999 2 8 0 2 0 1 D",\n\t\t\t"2012 9999 10 1 0 2 0 0 S"\n\t\t],\n\t\t"Halifax": [\n\t\t\t"1916 1916 3 1 7 0 0 1 D",\n\t\t\t"1916 1916 9 1 7 0 0 0 S",\n\t\t\t"1920 1920 4 9 7 0 0 1 D",\n\t\t\t"1920 1920 7 29 7 0 0 0 S",\n\t\t\t"1921 1921 4 6 7 0 0 1 D",\n\t\t\t"1921 1922 8 5 7 0 0 0 S",\n\t\t\t"1922 1922 3 30 7 0 0 1 D",\n\t\t\t"1923 1925 4 1 0 0 0 1 D",\n\t\t\t"1923 1923 8 4 7 0 0 0 S",\n\t\t\t"1924 1924 8 15 7 0 0 0 S",\n\t\t\t"1925 1925 8 28 7 0 0 0 S",\n\t\t\t"1926 1926 4 16 7 0 0 1 D",\n\t\t\t"1926 1926 8 13 7 0 0 0 S",\n\t\t\t"1927 1927 4 1 7 0 0 1 D",\n\t\t\t"1927 1927 8 26 7 0 0 0 S",\n\t\t\t"1928 1931 4 8 0 0 0 1 D",\n\t\t\t"1928 1928 8 9 7 0 0 0 S",\n\t\t\t"1929 1929 8 3 7 0 0 0 S",\n\t\t\t"1930 1930 8 15 7 0 0 0 S",\n\t\t\t"1931 1932 8 24 1 0 0 0 S",\n\t\t\t"1932 1932 4 1 7 0 0 1 D",\n\t\t\t"1933 1933 3 30 7 0 0 1 D",\n\t\t\t"1933 1933 9 2 7 0 0 0 S",\n\t\t\t"1934 1934 4 20 7 0 0 1 D",\n\t\t\t"1934 1934 8 16 7 0 0 0 S",\n\t\t\t"1935 1935 5 2 7 0 0 1 D",\n\t\t\t"1935 1935 8 30 7 0 0 0 S",\n\t\t\t"1936 1936 5 1 7 0 0 1 D",\n\t\t\t"1936 1936 8 14 7 0 0 0 S",\n\t\t\t"1937 1938 4 1 0 0 0 1 D",\n\t\t\t"1937 1941 8 24 1 0 0 0 S",\n\t\t\t"1939 1939 4 28 7 0 0 1 D",\n\t\t\t"1940 1941 4 1 0 0 0 1 D",\n\t\t\t"1946 1949 3 0 8 2 0 1 D",\n\t\t\t"1946 1949 8 0 8 2 0 0 S",\n\t\t\t"1951 1954 3 0 8 2 0 1 D",\n\t\t\t"1951 1954 8 0 8 2 0 0 S",\n\t\t\t"1956 1959 3 0 8 2 0 1 D",\n\t\t\t"1956 1959 8 0 8 2 0 0 S",\n\t\t\t"1962 1973 3 0 8 2 0 1 D",\n\t\t\t"1962 1973 9 0 8 2 0 0 S"\n\t\t],\n\t\t"Holiday": [\n\t\t\t"1992 1993 9 0 8 2 2 1",\n\t\t\t"1993 1994 2 1 0 2 2 0"\n\t\t],\n\t\t"Hond": [\n\t\t\t"1987 1988 4 1 0 0 0 1 D",\n\t\t\t"1987 1988 8 0 8 0 0 0 S",\n\t\t\t"2006 2006 4 1 0 0 0 1 D",\n\t\t\t"2006 2006 7 1 1 0 0 0 S"\n\t\t],\n\t\t"Hungary": [\n\t\t\t"1918 1918 3 1 7 3 0 1 S",\n\t\t\t"1918 1918 8 29 7 3 0 0",\n\t\t\t"1919 1919 3 15 7 3 0 1 S",\n\t\t\t"1919 1919 8 15 7 3 0 0",\n\t\t\t"1920 1920 3 5 7 3 0 1 S",\n\t\t\t"1920 1920 8 30 7 3 0 0",\n\t\t\t"1945 1945 4 1 7 23 0 1 S",\n\t\t\t"1945 1945 10 3 7 0 0 0",\n\t\t\t"1946 1946 2 31 7 2 2 1 S",\n\t\t\t"1946 1949 9 1 0 2 2 0",\n\t\t\t"1947 1949 3 4 0 2 2 1 S",\n\t\t\t"1950 1950 3 17 7 2 2 1 S",\n\t\t\t"1950 1950 9 23 7 2 2 0",\n\t\t\t"1954 1955 4 23 7 0 0 1 S",\n\t\t\t"1954 1955 9 3 7 0 0 0",\n\t\t\t"1956 1956 5 1 0 0 0 1 S",\n\t\t\t"1956 1956 8 0 8 0 0 0",\n\t\t\t"1957 1957 5 1 0 1 0 1 S",\n\t\t\t"1957 1957 8 0 8 3 0 0",\n\t\t\t"1980 1980 3 6 7 1 0 1 S"\n\t\t],\n\t\t"Iceland": [\n\t\t\t"1917 1918 1 19 7 23 0 1 S",\n\t\t\t"1917 1917 9 21 7 1 0 0",\n\t\t\t"1918 1918 10 16 7 1 0 0",\n\t\t\t"1939 1939 3 29 7 23 0 1 S",\n\t\t\t"1939 1939 10 29 7 2 0 0",\n\t\t\t"1940 1940 1 25 7 2 0 1 S",\n\t\t\t"1940 1940 10 3 7 2 0 0",\n\t\t\t"1941 1941 2 2 7 1 2 1 S",\n\t\t\t"1941 1941 10 2 7 1 2 0",\n\t\t\t"1942 1942 2 8 7 1 2 1 S",\n\t\t\t"1942 1942 9 25 7 1 2 0",\n\t\t\t"1943 1946 2 1 0 1 2 1 S",\n\t\t\t"1943 1948 9 22 0 1 2 0",\n\t\t\t"1947 1967 3 1 0 1 2 1 S",\n\t\t\t"1949 1949 9 30 7 1 2 0",\n\t\t\t"1950 1966 9 22 0 1 2 0",\n\t\t\t"1967 1967 9 29 7 1 2 0"\n\t\t],\n\t\t"Indianapolis": [\n\t\t\t"1941 1941 5 22 7 2 0 1 D",\n\t\t\t"1941 1954 8 0 8 2 0 0 S",\n\t\t\t"1946 1954 3 0 8 2 0 1 D"\n\t\t],\n\t\t"Iran": [\n\t\t\t"1978 1980 2 21 7 0 0 1 D",\n\t\t\t"1978 1978 9 21 7 0 0 0 S",\n\t\t\t"1979 1979 8 19 7 0 0 0 S",\n\t\t\t"1980 1980 8 23 7 0 0 0 S",\n\t\t\t"1991 1991 4 3 7 0 0 1 D",\n\t\t\t"1992 1995 2 22 7 0 0 1 D",\n\t\t\t"1991 1995 8 22 7 0 0 0 S",\n\t\t\t"1996 1996 2 21 7 0 0 1 D",\n\t\t\t"1996 1996 8 21 7 0 0 0 S",\n\t\t\t"1997 1999 2 22 7 0 0 1 D",\n\t\t\t"1997 1999 8 22 7 0 0 0 S",\n\t\t\t"2000 2000 2 21 7 0 0 1 D",\n\t\t\t"2000 2000 8 21 7 0 0 0 S",\n\t\t\t"2001 2003 2 22 7 0 0 1 D",\n\t\t\t"2001 2003 8 22 7 0 0 0 S",\n\t\t\t"2004 2004 2 21 7 0 0 1 D",\n\t\t\t"2004 2004 8 21 7 0 0 0 S",\n\t\t\t"2005 2005 2 22 7 0 0 1 D",\n\t\t\t"2005 2005 8 22 7 0 0 0 S",\n\t\t\t"2008 2008 2 21 7 0 0 1 D",\n\t\t\t"2008 2008 8 21 7 0 0 0 S",\n\t\t\t"2009 2011 2 22 7 0 0 1 D",\n\t\t\t"2009 2011 8 22 7 0 0 0 S",\n\t\t\t"2012 2012 2 21 7 0 0 1 D",\n\t\t\t"2012 2012 8 21 7 0 0 0 S",\n\t\t\t"2013 2015 2 22 7 0 0 1 D",\n\t\t\t"2013 2015 8 22 7 0 0 0 S",\n\t\t\t"2016 2016 2 21 7 0 0 1 D",\n\t\t\t"2016 2016 8 21 7 0 0 0 S",\n\t\t\t"2017 2019 2 22 7 0 0 1 D",\n\t\t\t"2017 2019 8 22 7 0 0 0 S",\n\t\t\t"2020 2020 2 21 7 0 0 1 D",\n\t\t\t"2020 2020 8 21 7 0 0 0 S",\n\t\t\t"2021 2023 2 22 7 0 0 1 D",\n\t\t\t"2021 2023 8 22 7 0 0 0 S",\n\t\t\t"2024 2024 2 21 7 0 0 1 D",\n\t\t\t"2024 2024 8 21 7 0 0 0 S",\n\t\t\t"2025 2027 2 22 7 0 0 1 D",\n\t\t\t"2025 2027 8 22 7 0 0 0 S",\n\t\t\t"2028 2029 2 21 7 0 0 1 D",\n\t\t\t"2028 2029 8 21 7 0 0 0 S",\n\t\t\t"2030 2031 2 22 7 0 0 1 D",\n\t\t\t"2030 2031 8 22 7 0 0 0 S",\n\t\t\t"2032 2033 2 21 7 0 0 1 D",\n\t\t\t"2032 2033 8 21 7 0 0 0 S",\n\t\t\t"2034 2035 2 22 7 0 0 1 D",\n\t\t\t"2034 2035 8 22 7 0 0 0 S",\n\t\t\t"2036 2037 2 21 7 0 0 1 D",\n\t\t\t"2036 2037 8 21 7 0 0 0 S"\n\t\t],\n\t\t"Iraq": [\n\t\t\t"1982 1982 4 1 7 0 0 1 D",\n\t\t\t"1982 1984 9 1 7 0 0 0 S",\n\t\t\t"1983 1983 2 31 7 0 0 1 D",\n\t\t\t"1984 1985 3 1 7 0 0 1 D",\n\t\t\t"1985 1990 8 0 8 1 2 0 S",\n\t\t\t"1986 1990 2 0 8 1 2 1 D",\n\t\t\t"1991 2007 3 1 7 3 2 1 D",\n\t\t\t"1991 2007 9 1 7 3 2 0 S"\n\t\t],\n\t\t"Italy": [\n\t\t\t"1916 1916 5 3 7 0 2 1 S",\n\t\t\t"1916 1916 9 1 7 0 2 0",\n\t\t\t"1917 1917 3 1 7 0 2 1 S",\n\t\t\t"1917 1917 8 30 7 0 2 0",\n\t\t\t"1918 1918 2 10 7 0 2 1 S",\n\t\t\t"1918 1919 9 1 0 0 2 0",\n\t\t\t"1919 1919 2 2 7 0 2 1 S",\n\t\t\t"1920 1920 2 21 7 0 2 1 S",\n\t\t\t"1920 1920 8 19 7 0 2 0",\n\t\t\t"1940 1940 5 15 7 0 2 1 S",\n\t\t\t"1944 1944 8 17 7 0 2 0",\n\t\t\t"1945 1945 3 2 7 2 0 1 S",\n\t\t\t"1945 1945 8 15 7 0 2 0",\n\t\t\t"1946 1946 2 17 7 2 2 1 S",\n\t\t\t"1946 1946 9 6 7 2 2 0",\n\t\t\t"1947 1947 2 16 7 0 2 1 S",\n\t\t\t"1947 1947 9 5 7 0 2 0",\n\t\t\t"1948 1948 1 29 7 2 2 1 S",\n\t\t\t"1948 1948 9 3 7 2 2 0",\n\t\t\t"1966 1968 4 22 0 0 0 1 S",\n\t\t\t"1966 1969 8 22 0 0 0 0",\n\t\t\t"1969 1969 5 1 7 0 0 1 S",\n\t\t\t"1970 1970 4 31 7 0 0 1 S",\n\t\t\t"1970 1970 8 0 8 0 0 0",\n\t\t\t"1971 1972 4 22 0 0 0 1 S",\n\t\t\t"1971 1971 8 0 8 1 0 0",\n\t\t\t"1972 1972 9 1 7 0 0 0",\n\t\t\t"1973 1973 5 3 7 0 0 1 S",\n\t\t\t"1973 1974 8 0 8 0 0 0",\n\t\t\t"1974 1974 4 26 7 0 0 1 S",\n\t\t\t"1975 1975 5 1 7 0 2 1 S",\n\t\t\t"1975 1977 8 0 8 0 2 0",\n\t\t\t"1976 1976 4 30 7 0 2 1 S",\n\t\t\t"1977 1979 4 22 0 0 2 1 S",\n\t\t\t"1978 1978 9 1 7 0 2 0",\n\t\t\t"1979 1979 8 30 7 0 2 0"\n\t\t],\n\t\t"Japan": [\n\t\t\t"1948 1948 4 1 0 2 0 1 D",\n\t\t\t"1948 1951 8 8 6 2 0 0 S",\n\t\t\t"1949 1949 3 1 0 2 0 1 D",\n\t\t\t"1950 1951 4 1 0 2 0 1 D"\n\t\t],\n\t\t"Jordan": [\n\t\t\t"1973 1973 5 6 7 0 0 1 S",\n\t\t\t"1973 1975 9 1 7 0 0 0",\n\t\t\t"1974 1977 4 1 7 0 0 1 S",\n\t\t\t"1976 1976 10 1 7 0 0 0",\n\t\t\t"1977 1977 9 1 7 0 0 0",\n\t\t\t"1978 1978 3 30 7 0 0 1 S",\n\t\t\t"1978 1978 8 30 7 0 0 0",\n\t\t\t"1985 1985 3 1 7 0 0 1 S",\n\t\t\t"1985 1985 9 1 7 0 0 0",\n\t\t\t"1986 1988 3 1 5 0 0 1 S",\n\t\t\t"1986 1990 9 1 5 0 0 0",\n\t\t\t"1989 1989 4 8 7 0 0 1 S",\n\t\t\t"1990 1990 3 27 7 0 0 1 S",\n\t\t\t"1991 1991 3 17 7 0 0 1 S",\n\t\t\t"1991 1991 8 27 7 0 0 0",\n\t\t\t"1992 1992 3 10 7 0 0 1 S",\n\t\t\t"1992 1993 9 1 5 0 0 0",\n\t\t\t"1993 1998 3 1 5 0 0 1 S",\n\t\t\t"1994 1994 8 15 5 0 0 0",\n\t\t\t"1995 1998 8 15 5 0 2 0",\n\t\t\t"1999 1999 6 1 7 0 2 1 S",\n\t\t\t"1999 2002 8 5 8 0 2 0",\n\t\t\t"2000 2001 2 4 8 0 2 1 S",\n\t\t\t"2002 9999 2 4 8 24 0 1 S",\n\t\t\t"2003 2003 9 24 7 0 2 0",\n\t\t\t"2004 2004 9 15 7 0 2 0",\n\t\t\t"2005 2005 8 5 8 0 2 0",\n\t\t\t"2006 2011 9 5 8 0 2 0",\n\t\t\t"2013 9999 9 5 8 0 2 0"\n\t\t],\n\t\t"Kyrgyz": [\n\t\t\t"1992 1996 3 7 0 0 2 1 S",\n\t\t\t"1992 1996 8 0 8 0 0 0",\n\t\t\t"1997 2005 2 0 8 2:30 0 1 S",\n\t\t\t"1997 2004 9 0 8 2:30 0 0"\n\t\t],\n\t\t"LH": [\n\t\t\t"1981 1984 9 0 8 2 0 1",\n\t\t\t"1982 1985 2 1 0 2 0 0",\n\t\t\t"1985 1985 9 0 8 2 0 0:30",\n\t\t\t"1986 1989 2 15 0 2 0 0",\n\t\t\t"1986 1986 9 19 7 2 0 0:30",\n\t\t\t"1987 1999 9 0 8 2 0 0:30",\n\t\t\t"1990 1995 2 1 0 2 0 0",\n\t\t\t"1996 2005 2 0 8 2 0 0",\n\t\t\t"2000 2000 7 0 8 2 0 0:30",\n\t\t\t"2001 2007 9 0 8 2 0 0:30",\n\t\t\t"2006 2006 3 1 0 2 0 0",\n\t\t\t"2007 2007 2 0 8 2 0 0",\n\t\t\t"2008 9999 3 1 0 2 0 0",\n\t\t\t"2008 9999 9 1 0 2 0 0:30"\n\t\t],\n\t\t"Latvia": [\n\t\t\t"1989 1996 2 0 8 2 2 1 S",\n\t\t\t"1989 1996 8 0 8 2 2 0"\n\t\t],\n\t\t"Lebanon": [\n\t\t\t"1920 1920 2 28 7 0 0 1 S",\n\t\t\t"1920 1920 9 25 7 0 0 0",\n\t\t\t"1921 1921 3 3 7 0 0 1 S",\n\t\t\t"1921 1921 9 3 7 0 0 0",\n\t\t\t"1922 1922 2 26 7 0 0 1 S",\n\t\t\t"1922 1922 9 8 7 0 0 0",\n\t\t\t"1923 1923 3 22 7 0 0 1 S",\n\t\t\t"1923 1923 8 16 7 0 0 0",\n\t\t\t"1957 1961 4 1 7 0 0 1 S",\n\t\t\t"1957 1961 9 1 7 0 0 0",\n\t\t\t"1972 1972 5 22 7 0 0 1 S",\n\t\t\t"1972 1977 9 1 7 0 0 0",\n\t\t\t"1973 1977 4 1 7 0 0 1 S",\n\t\t\t"1978 1978 3 30 7 0 0 1 S",\n\t\t\t"1978 1978 8 30 7 0 0 0",\n\t\t\t"1984 1987 4 1 7 0 0 1 S",\n\t\t\t"1984 1991 9 16 7 0 0 0",\n\t\t\t"1988 1988 5 1 7 0 0 1 S",\n\t\t\t"1989 1989 4 10 7 0 0 1 S",\n\t\t\t"1990 1992 4 1 7 0 0 1 S",\n\t\t\t"1992 1992 9 4 7 0 0 0",\n\t\t\t"1993 9999 2 0 8 0 0 1 S",\n\t\t\t"1993 1998 8 0 8 0 0 0",\n\t\t\t"1999 9999 9 0 8 0 0 0"\n\t\t],\n\t\t"Libya": [\n\t\t\t"1951 1951 9 14 7 2 0 1 S",\n\t\t\t"1952 1952 0 1 7 0 0 0",\n\t\t\t"1953 1953 9 9 7 2 0 1 S",\n\t\t\t"1954 1954 0 1 7 0 0 0",\n\t\t\t"1955 1955 8 30 7 0 0 1 S",\n\t\t\t"1956 1956 0 1 7 0 0 0",\n\t\t\t"1982 1984 3 1 7 0 0 1 S",\n\t\t\t"1982 1985 9 1 7 0 0 0",\n\t\t\t"1985 1985 3 6 7 0 0 1 S",\n\t\t\t"1986 1986 3 4 7 0 0 1 S",\n\t\t\t"1986 1986 9 3 7 0 0 0",\n\t\t\t"1987 1989 3 1 7 0 0 1 S",\n\t\t\t"1987 1989 9 1 7 0 0 0",\n\t\t\t"1997 1997 3 4 7 0 0 1 S",\n\t\t\t"1997 1997 9 4 7 0 0 0",\n\t\t\t"2013 9999 2 5 8 1 0 1 S",\n\t\t\t"2013 9999 9 5 8 2 0 0"\n\t\t],\n\t\t"Louisville": [\n\t\t\t"1921 1921 4 1 7 2 0 1 D",\n\t\t\t"1921 1921 8 1 7 2 0 0 S",\n\t\t\t"1941 1961 3 0 8 2 0 1 D",\n\t\t\t"1941 1941 8 0 8 2 0 0 S",\n\t\t\t"1946 1946 5 2 7 2 0 0 S",\n\t\t\t"1950 1955 8 0 8 2 0 0 S",\n\t\t\t"1956 1960 9 0 8 2 0 0 S"\n\t\t],\n\t\t"Lux": [\n\t\t\t"1916 1916 4 14 7 23 0 1 S",\n\t\t\t"1916 1916 9 1 7 1 0 0",\n\t\t\t"1917 1917 3 28 7 23 0 1 S",\n\t\t\t"1917 1917 8 17 7 1 0 0",\n\t\t\t"1918 1918 3 15 1 2 2 1 S",\n\t\t\t"1918 1918 8 15 1 2 2 0",\n\t\t\t"1919 1919 2 1 7 23 0 1 S",\n\t\t\t"1919 1919 9 5 7 3 0 0",\n\t\t\t"1920 1920 1 14 7 23 0 1 S",\n\t\t\t"1920 1920 9 24 7 2 0 0",\n\t\t\t"1921 1921 2 14 7 23 0 1 S",\n\t\t\t"1921 1921 9 26 7 2 0 0",\n\t\t\t"1922 1922 2 25 7 23 0 1 S",\n\t\t\t"1922 1922 9 2 0 1 0 0",\n\t\t\t"1923 1923 3 21 7 23 0 1 S",\n\t\t\t"1923 1923 9 2 0 2 0 0",\n\t\t\t"1924 1924 2 29 7 23 0 1 S",\n\t\t\t"1924 1928 9 2 0 1 0 0",\n\t\t\t"1925 1925 3 5 7 23 0 1 S",\n\t\t\t"1926 1926 3 17 7 23 0 1 S",\n\t\t\t"1927 1927 3 9 7 23 0 1 S",\n\t\t\t"1928 1928 3 14 7 23 0 1 S",\n\t\t\t"1929 1929 3 20 7 23 0 1 S"\n\t\t],\n\t\t"Macau": [\n\t\t\t"1961 1962 2 16 0 3:30 0 1 S",\n\t\t\t"1961 1964 10 1 0 3:30 0 0",\n\t\t\t"1963 1963 2 16 0 0 0 1 S",\n\t\t\t"1964 1964 2 16 0 3:30 0 1 S",\n\t\t\t"1965 1965 2 16 0 0 0 1 S",\n\t\t\t"1965 1965 9 31 7 0 0 0",\n\t\t\t"1966 1971 3 16 0 3:30 0 1 S",\n\t\t\t"1966 1971 9 16 0 3:30 0 0",\n\t\t\t"1972 1974 3 15 0 0 0 1 S",\n\t\t\t"1972 1973 9 15 0 0 0 0",\n\t\t\t"1974 1977 9 15 0 3:30 0 0",\n\t\t\t"1975 1977 3 15 0 3:30 0 1 S",\n\t\t\t"1978 1980 3 15 0 0 0 1 S",\n\t\t\t"1978 1980 9 15 0 0 0 0"\n\t\t],\n\t\t"Malta": [\n\t\t\t"1973 1973 2 31 7 0 2 1 S",\n\t\t\t"1973 1973 8 29 7 0 2 0",\n\t\t\t"1974 1974 3 21 7 0 2 1 S",\n\t\t\t"1974 1974 8 16 7 0 2 0",\n\t\t\t"1975 1979 3 15 0 2 0 1 S",\n\t\t\t"1975 1980 8 15 0 2 0 0",\n\t\t\t"1980 1980 2 31 7 2 0 1 S"\n\t\t],\n\t\t"Marengo": [\n\t\t\t"1951 1951 3 0 8 2 0 1 D",\n\t\t\t"1951 1951 8 0 8 2 0 0 S",\n\t\t\t"1954 1960 3 0 8 2 0 1 D",\n\t\t\t"1954 1960 8 0 8 2 0 0 S"\n\t\t],\n\t\t"Mauritius": [\n\t\t\t"1982 1982 9 10 7 0 0 1 S",\n\t\t\t"1983 1983 2 21 7 0 0 0",\n\t\t\t"2008 2008 9 0 8 2 0 1 S",\n\t\t\t"2009 2009 2 0 8 2 0 0"\n\t\t],\n\t\t"Menominee": [\n\t\t\t"1946 1946 3 0 8 2 0 1 D",\n\t\t\t"1946 1946 8 0 8 2 0 0 S",\n\t\t\t"1966 1966 3 0 8 2 0 1 D",\n\t\t\t"1966 1966 9 0 8 2 0 0 S"\n\t\t],\n\t\t"Mexico": [\n\t\t\t"1939 1939 1 5 7 0 0 1 D",\n\t\t\t"1939 1939 5 25 7 0 0 0 S",\n\t\t\t"1940 1940 11 9 7 0 0 1 D",\n\t\t\t"1941 1941 3 1 7 0 0 0 S",\n\t\t\t"1943 1943 11 16 7 0 0 1 W",\n\t\t\t"1944 1944 4 1 7 0 0 0 S",\n\t\t\t"1950 1950 1 12 7 0 0 1 D",\n\t\t\t"1950 1950 6 30 7 0 0 0 S",\n\t\t\t"1996 2000 3 1 0 2 0 1 D",\n\t\t\t"1996 2000 9 0 8 2 0 0 S",\n\t\t\t"2001 2001 4 1 0 2 0 1 D",\n\t\t\t"2001 2001 8 0 8 2 0 0 S",\n\t\t\t"2002 9999 3 1 0 2 0 1 D",\n\t\t\t"2002 9999 9 0 8 2 0 0 S"\n\t\t],\n\t\t"Moncton": [\n\t\t\t"1933 1935 5 8 0 1 0 1 D",\n\t\t\t"1933 1935 8 8 0 1 0 0 S",\n\t\t\t"1936 1938 5 1 0 1 0 1 D",\n\t\t\t"1936 1938 8 1 0 1 0 0 S",\n\t\t\t"1939 1939 4 27 7 1 0 1 D",\n\t\t\t"1939 1941 8 21 6 1 0 0 S",\n\t\t\t"1940 1940 4 19 7 1 0 1 D",\n\t\t\t"1941 1941 4 4 7 1 0 1 D",\n\t\t\t"1946 1972 3 0 8 2 0 1 D",\n\t\t\t"1946 1956 8 0 8 2 0 0 S",\n\t\t\t"1957 1972 9 0 8 2 0 0 S",\n\t\t\t"1993 2006 3 1 0 0:1 0 1 D",\n\t\t\t"1993 2006 9 0 8 0:1 0 0 S"\n\t\t],\n\t\t"Mongol": [\n\t\t\t"1983 1984 3 1 7 0 0 1 S",\n\t\t\t"1983 1983 9 1 7 0 0 0",\n\t\t\t"1985 1998 2 0 8 0 0 1 S",\n\t\t\t"1984 1998 8 0 8 0 0 0",\n\t\t\t"2001 2001 3 6 8 2 0 1 S",\n\t\t\t"2001 2006 8 6 8 2 0 0",\n\t\t\t"2002 2006 2 6 8 2 0 1 S"\n\t\t],\n\t\t"Mont": [\n\t\t\t"1917 1917 2 25 7 2 0 1 D",\n\t\t\t"1917 1917 3 24 7 0 0 0 S",\n\t\t\t"1919 1919 2 31 7 2:30 0 1 D",\n\t\t\t"1919 1919 9 25 7 2:30 0 0 S",\n\t\t\t"1920 1920 4 2 7 2:30 0 1 D",\n\t\t\t"1920 1922 9 1 0 2:30 0 0 S",\n\t\t\t"1921 1921 4 1 7 2 0 1 D",\n\t\t\t"1922 1922 3 30 7 2 0 1 D",\n\t\t\t"1924 1924 4 17 7 2 0 1 D",\n\t\t\t"1924 1926 8 0 8 2:30 0 0 S",\n\t\t\t"1925 1926 4 1 0 2 0 1 D",\n\t\t\t"1927 1927 4 1 7 0 0 1 D",\n\t\t\t"1927 1932 8 0 8 0 0 0 S",\n\t\t\t"1928 1931 3 0 8 0 0 1 D",\n\t\t\t"1932 1932 4 1 7 0 0 1 D",\n\t\t\t"1933 1940 3 0 8 0 0 1 D",\n\t\t\t"1933 1933 9 1 7 0 0 0 S",\n\t\t\t"1934 1939 8 0 8 0 0 0 S",\n\t\t\t"1946 1973 3 0 8 2 0 1 D",\n\t\t\t"1945 1948 8 0 8 2 0 0 S",\n\t\t\t"1949 1950 9 0 8 2 0 0 S",\n\t\t\t"1951 1956 8 0 8 2 0 0 S",\n\t\t\t"1957 1973 9 0 8 2 0 0 S"\n\t\t],\n\t\t"Morocco": [\n\t\t\t"1939 1939 8 12 7 0 0 1 S",\n\t\t\t"1939 1939 10 19 7 0 0 0",\n\t\t\t"1940 1940 1 25 7 0 0 1 S",\n\t\t\t"1945 1945 10 18 7 0 0 0",\n\t\t\t"1950 1950 5 11 7 0 0 1 S",\n\t\t\t"1950 1950 9 29 7 0 0 0",\n\t\t\t"1967 1967 5 3 7 12 0 1 S",\n\t\t\t"1967 1967 9 1 7 0 0 0",\n\t\t\t"1974 1974 5 24 7 0 0 1 S",\n\t\t\t"1974 1974 8 1 7 0 0 0",\n\t\t\t"1976 1977 4 1 7 0 0 1 S",\n\t\t\t"1976 1976 7 1 7 0 0 0",\n\t\t\t"1977 1977 8 28 7 0 0 0",\n\t\t\t"1978 1978 5 1 7 0 0 1 S",\n\t\t\t"1978 1978 7 4 7 0 0 0",\n\t\t\t"2008 2008 5 1 7 0 0 1 S",\n\t\t\t"2008 2008 8 1 7 0 0 0",\n\t\t\t"2009 2009 5 1 7 0 0 1 S",\n\t\t\t"2009 2009 7 21 7 0 0 0",\n\t\t\t"2010 2010 4 2 7 0 0 1 S",\n\t\t\t"2010 2010 7 8 7 0 0 0",\n\t\t\t"2011 2011 3 3 7 0 0 1 S",\n\t\t\t"2011 2011 6 31 7 0 0 0",\n\t\t\t"2012 2019 3 0 8 2 0 1 S",\n\t\t\t"2012 9999 8 0 8 3 0 0",\n\t\t\t"2012 2012 6 20 7 3 0 0",\n\t\t\t"2012 2012 7 20 7 2 0 1 S",\n\t\t\t"2013 2013 6 9 7 3 0 0",\n\t\t\t"2013 2013 7 8 7 2 0 1 S",\n\t\t\t"2014 2014 5 29 7 3 0 0",\n\t\t\t"2014 2014 6 29 7 2 0 1 S",\n\t\t\t"2015 2015 5 18 7 3 0 0",\n\t\t\t"2015 2015 6 18 7 2 0 1 S",\n\t\t\t"2016 2016 5 7 7 3 0 0",\n\t\t\t"2016 2016 6 7 7 2 0 1 S",\n\t\t\t"2017 2017 4 27 7 3 0 0",\n\t\t\t"2017 2017 5 26 7 2 0 1 S",\n\t\t\t"2018 2018 4 16 7 3 0 0",\n\t\t\t"2018 2018 5 15 7 2 0 1 S",\n\t\t\t"2019 2019 4 6 7 3 0 0",\n\t\t\t"2019 2019 5 5 7 2 0 1 S",\n\t\t\t"2020 2020 4 24 7 2 0 1 S",\n\t\t\t"2021 2021 4 13 7 2 0 1 S",\n\t\t\t"2022 2022 4 3 7 2 0 1 S",\n\t\t\t"2023 9999 3 0 8 2 0 1 S"\n\t\t],\n\t\t"NBorneo": [\n\t\t\t"1935 1941 8 14 7 0 0 0:20 TS",\n\t\t\t"1935 1941 11 14 7 0 0 0"\n\t\t],\n\t\t"NC": [\n\t\t\t"1977 1978 11 1 0 0 0 1 S",\n\t\t\t"1978 1979 1 27 7 0 0 0",\n\t\t\t"1996 1996 11 1 7 2 2 1 S",\n\t\t\t"1997 1997 2 2 7 2 2 0"\n\t\t],\n\t\t"NT_YK": [\n\t\t\t"1918 1918 3 14 7 2 0 1 D",\n\t\t\t"1918 1918 9 27 7 2 0 0 S",\n\t\t\t"1919 1919 4 25 7 2 0 1 D",\n\t\t\t"1919 1919 10 1 7 0 0 0 S",\n\t\t\t"1942 1942 1 9 7 2 0 1 W",\n\t\t\t"1945 1945 7 14 7 23 1 1 P",\n\t\t\t"1945 1945 8 30 7 2 0 0 S",\n\t\t\t"1965 1965 3 0 8 0 0 2 DD",\n\t\t\t"1965 1965 9 0 8 2 0 0 S",\n\t\t\t"1980 1986 3 0 8 2 0 1 D",\n\t\t\t"1980 2006 9 0 8 2 0 0 S",\n\t\t\t"1987 2006 3 1 0 2 0 1 D"\n\t\t],\n\t\t"NYC": [\n\t\t\t"1920 1920 2 0 8 2 0 1 D",\n\t\t\t"1920 1920 9 0 8 2 0 0 S",\n\t\t\t"1921 1966 3 0 8 2 0 1 D",\n\t\t\t"1921 1954 8 0 8 2 0 0 S",\n\t\t\t"1955 1966 9 0 8 2 0 0 S"\n\t\t],\n\t\t"NZ": [\n\t\t\t"1927 1927 10 6 7 2 0 1 S",\n\t\t\t"1928 1928 2 4 7 2 0 0 M",\n\t\t\t"1928 1933 9 8 0 2 0 0:30 S",\n\t\t\t"1929 1933 2 15 0 2 0 0 M",\n\t\t\t"1934 1940 3 0 8 2 0 0 M",\n\t\t\t"1934 1940 8 0 8 2 0 0:30 S",\n\t\t\t"1946 1946 0 1 7 0 0 0 S",\n\t\t\t"1974 1974 10 1 0 2 2 1 D",\n\t\t\t"1975 1975 1 0 8 2 2 0 S",\n\t\t\t"1975 1988 9 0 8 2 2 1 D",\n\t\t\t"1976 1989 2 1 0 2 2 0 S",\n\t\t\t"1989 1989 9 8 0 2 2 1 D",\n\t\t\t"1990 2006 9 1 0 2 2 1 D",\n\t\t\t"1990 2007 2 15 0 2 2 0 S",\n\t\t\t"2007 9999 8 0 8 2 2 1 D",\n\t\t\t"2008 9999 3 1 0 2 2 0 S"\n\t\t],\n\t\t"NZAQ": [\n\t\t\t"1974 1974 10 3 7 2 2 1 D",\n\t\t\t"1975 1988 9 0 8 2 2 1 D",\n\t\t\t"1989 1989 9 8 7 2 2 1 D",\n\t\t\t"1990 2006 9 1 0 2 2 1 D",\n\t\t\t"1975 1975 1 23 7 2 2 0 S",\n\t\t\t"1976 1989 2 1 0 2 2 0 S",\n\t\t\t"1990 2007 2 15 0 2 2 0 S",\n\t\t\t"2007 9999 8 0 8 2 2 1 D",\n\t\t\t"2008 9999 3 1 0 2 2 0 S"\n\t\t],\n\t\t"Namibia": [\n\t\t\t"1994 9999 8 1 0 2 0 1 S",\n\t\t\t"1995 9999 3 1 0 2 0 0"\n\t\t],\n\t\t"Neth": [\n\t\t\t"1916 1916 4 1 7 0 0 1 NST",\n\t\t\t"1916 1916 9 1 7 0 0 0 AMT",\n\t\t\t"1917 1917 3 16 7 2 2 1 NST",\n\t\t\t"1917 1917 8 17 7 2 2 0 AMT",\n\t\t\t"1918 1921 3 1 1 2 2 1 NST",\n\t\t\t"1918 1921 8 1 8 2 2 0 AMT",\n\t\t\t"1922 1922 2 0 8 2 2 1 NST",\n\t\t\t"1922 1936 9 2 0 2 2 0 AMT",\n\t\t\t"1923 1923 5 1 5 2 2 1 NST",\n\t\t\t"1924 1924 2 0 8 2 2 1 NST",\n\t\t\t"1925 1925 5 1 5 2 2 1 NST",\n\t\t\t"1926 1931 4 15 7 2 2 1 NST",\n\t\t\t"1932 1932 4 22 7 2 2 1 NST",\n\t\t\t"1933 1936 4 15 7 2 2 1 NST",\n\t\t\t"1937 1937 4 22 7 2 2 1 NST",\n\t\t\t"1937 1937 6 1 7 0 0 1 S",\n\t\t\t"1937 1939 9 2 0 2 2 0",\n\t\t\t"1938 1939 4 15 7 2 2 1 S",\n\t\t\t"1945 1945 3 2 7 2 2 1 S",\n\t\t\t"1945 1945 8 16 7 2 2 0"\n\t\t],\n\t\t"Nic": [\n\t\t\t"1979 1980 2 16 0 0 0 1 D",\n\t\t\t"1979 1980 5 23 1 0 0 0 S",\n\t\t\t"2005 2005 3 10 7 0 0 1 D",\n\t\t\t"2005 2005 9 1 0 0 0 0 S",\n\t\t\t"2006 2006 3 30 7 2 0 1 D",\n\t\t\t"2006 2006 9 1 0 1 0 0 S"\n\t\t],\n\t\t"Norway": [\n\t\t\t"1916 1916 4 22 7 1 0 1 S",\n\t\t\t"1916 1916 8 30 7 0 0 0",\n\t\t\t"1945 1945 3 2 7 2 2 1 S",\n\t\t\t"1945 1945 9 1 7 2 2 0",\n\t\t\t"1959 1964 2 15 0 2 2 1 S",\n\t\t\t"1959 1965 8 15 0 2 2 0",\n\t\t\t"1965 1965 3 25 7 2 2 1 S"\n\t\t],\n\t\t"PRC": [\n\t\t\t"1986 1986 4 4 7 0 0 1 D",\n\t\t\t"1986 1991 8 11 0 0 0 0 S",\n\t\t\t"1987 1991 3 10 0 0 0 1 D"\n\t\t],\n\t\t"Pakistan": [\n\t\t\t"2002 2002 3 2 0 0:1 0 1 S",\n\t\t\t"2002 2002 9 2 0 0:1 0 0",\n\t\t\t"2008 2008 5 1 7 0 0 1 S",\n\t\t\t"2008 2008 10 1 7 0 0 0",\n\t\t\t"2009 2009 3 15 7 0 0 1 S",\n\t\t\t"2009 2009 10 1 7 0 0 0"\n\t\t],\n\t\t"Palestine": [\n\t\t\t"1999 2005 3 15 5 0 0 1 S",\n\t\t\t"1999 2003 9 15 5 0 0 0",\n\t\t\t"2004 2004 9 1 7 1 0 0",\n\t\t\t"2005 2005 9 4 7 2 0 0",\n\t\t\t"2006 2007 3 1 7 0 0 1 S",\n\t\t\t"2006 2006 8 22 7 0 0 0",\n\t\t\t"2007 2007 8 8 4 2 0 0",\n\t\t\t"2008 2009 2 5 8 0 0 1 S",\n\t\t\t"2008 2008 8 1 7 0 0 0",\n\t\t\t"2009 2009 8 1 5 1 0 0",\n\t\t\t"2010 2010 2 26 7 0 0 1 S",\n\t\t\t"2010 2010 7 11 7 0 0 0",\n\t\t\t"2011 2011 3 1 7 0:1 0 1 S",\n\t\t\t"2011 2011 7 1 7 0 0 0",\n\t\t\t"2011 2011 7 30 7 0 0 1 S",\n\t\t\t"2011 2011 8 30 7 0 0 0",\n\t\t\t"2012 9999 2 4 8 24 0 1 S",\n\t\t\t"2012 9999 8 21 5 1 0 0"\n\t\t],\n\t\t"Para": [\n\t\t\t"1975 1988 9 1 7 0 0 1 S",\n\t\t\t"1975 1978 2 1 7 0 0 0",\n\t\t\t"1979 1991 3 1 7 0 0 0",\n\t\t\t"1989 1989 9 22 7 0 0 1 S",\n\t\t\t"1990 1990 9 1 7 0 0 1 S",\n\t\t\t"1991 1991 9 6 7 0 0 1 S",\n\t\t\t"1992 1992 2 1 7 0 0 0",\n\t\t\t"1992 1992 9 5 7 0 0 1 S",\n\t\t\t"1993 1993 2 31 7 0 0 0",\n\t\t\t"1993 1995 9 1 7 0 0 1 S",\n\t\t\t"1994 1995 1 0 8 0 0 0",\n\t\t\t"1996 1996 2 1 7 0 0 0",\n\t\t\t"1996 2001 9 1 0 0 0 1 S",\n\t\t\t"1997 1997 1 0 8 0 0 0",\n\t\t\t"1998 2001 2 1 0 0 0 0",\n\t\t\t"2002 2004 3 1 0 0 0 0",\n\t\t\t"2002 2003 8 1 0 0 0 1 S",\n\t\t\t"2004 2009 9 15 0 0 0 1 S",\n\t\t\t"2005 2009 2 8 0 0 0 0",\n\t\t\t"2010 9999 9 1 0 0 0 1 S",\n\t\t\t"2010 2012 3 8 0 0 0 0",\n\t\t\t"2013 9999 2 22 0 0 0 0"\n\t\t],\n\t\t"Perry": [\n\t\t\t"1946 1946 3 0 8 2 0 1 D",\n\t\t\t"1946 1946 8 0 8 2 0 0 S",\n\t\t\t"1953 1954 3 0 8 2 0 1 D",\n\t\t\t"1953 1959 8 0 8 2 0 0 S",\n\t\t\t"1955 1955 4 1 7 0 0 1 D",\n\t\t\t"1956 1963 3 0 8 2 0 1 D",\n\t\t\t"1960 1960 9 0 8 2 0 0 S",\n\t\t\t"1961 1961 8 0 8 2 0 0 S",\n\t\t\t"1962 1963 9 0 8 2 0 0 S"\n\t\t],\n\t\t"Peru": [\n\t\t\t"1938 1938 0 1 7 0 0 1 S",\n\t\t\t"1938 1938 3 1 7 0 0 0",\n\t\t\t"1938 1939 8 0 8 0 0 1 S",\n\t\t\t"1939 1940 2 24 0 0 0 0",\n\t\t\t"1986 1987 0 1 7 0 0 1 S",\n\t\t\t"1986 1987 3 1 7 0 0 0",\n\t\t\t"1990 1990 0 1 7 0 0 1 S",\n\t\t\t"1990 1990 3 1 7 0 0 0",\n\t\t\t"1994 1994 0 1 7 0 0 1 S",\n\t\t\t"1994 1994 3 1 7 0 0 0"\n\t\t],\n\t\t"Phil": [\n\t\t\t"1936 1936 10 1 7 0 0 1 S",\n\t\t\t"1937 1937 1 1 7 0 0 0",\n\t\t\t"1954 1954 3 12 7 0 0 1 S",\n\t\t\t"1954 1954 6 1 7 0 0 0",\n\t\t\t"1978 1978 2 22 7 0 0 1 S",\n\t\t\t"1978 1978 8 21 7 0 0 0"\n\t\t],\n\t\t"Pike": [\n\t\t\t"1955 1955 4 1 7 0 0 1 D",\n\t\t\t"1955 1960 8 0 8 2 0 0 S",\n\t\t\t"1956 1964 3 0 8 2 0 1 D",\n\t\t\t"1961 1964 9 0 8 2 0 0 S"\n\t\t],\n\t\t"Poland": [\n\t\t\t"1918 1919 8 16 7 2 2 0",\n\t\t\t"1919 1919 3 15 7 2 2 1 S",\n\t\t\t"1944 1944 3 3 7 2 2 1 S",\n\t\t\t"1944 1944 9 4 7 2 0 0",\n\t\t\t"1945 1945 3 29 7 0 0 1 S",\n\t\t\t"1945 1945 10 1 7 0 0 0",\n\t\t\t"1946 1946 3 14 7 0 2 1 S",\n\t\t\t"1946 1946 9 7 7 2 2 0",\n\t\t\t"1947 1947 4 4 7 2 2 1 S",\n\t\t\t"1947 1949 9 1 0 2 2 0",\n\t\t\t"1948 1948 3 18 7 2 2 1 S",\n\t\t\t"1949 1949 3 10 7 2 2 1 S",\n\t\t\t"1957 1957 5 2 7 1 2 1 S",\n\t\t\t"1957 1958 8 0 8 1 2 0",\n\t\t\t"1958 1958 2 30 7 1 2 1 S",\n\t\t\t"1959 1959 4 31 7 1 2 1 S",\n\t\t\t"1959 1961 9 1 0 1 2 0",\n\t\t\t"1960 1960 3 3 7 1 2 1 S",\n\t\t\t"1961 1964 4 0 8 1 2 1 S",\n\t\t\t"1962 1964 8 0 8 1 2 0"\n\t\t],\n\t\t"Port": [\n\t\t\t"1916 1916 5 17 7 23 0 1 S",\n\t\t\t"1916 1916 10 1 7 1 0 0",\n\t\t\t"1917 1917 1 28 7 23 2 1 S",\n\t\t\t"1917 1921 9 14 7 23 2 0",\n\t\t\t"1918 1918 2 1 7 23 2 1 S",\n\t\t\t"1919 1919 1 28 7 23 2 1 S",\n\t\t\t"1920 1920 1 29 7 23 2 1 S",\n\t\t\t"1921 1921 1 28 7 23 2 1 S",\n\t\t\t"1924 1924 3 16 7 23 2 1 S",\n\t\t\t"1924 1924 9 14 7 23 2 0",\n\t\t\t"1926 1926 3 17 7 23 2 1 S",\n\t\t\t"1926 1929 9 1 6 23 2 0",\n\t\t\t"1927 1927 3 9 7 23 2 1 S",\n\t\t\t"1928 1928 3 14 7 23 2 1 S",\n\t\t\t"1929 1929 3 20 7 23 2 1 S",\n\t\t\t"1931 1931 3 18 7 23 2 1 S",\n\t\t\t"1931 1932 9 1 6 23 2 0",\n\t\t\t"1932 1932 3 2 7 23 2 1 S",\n\t\t\t"1934 1934 3 7 7 23 2 1 S",\n\t\t\t"1934 1938 9 1 6 23 2 0",\n\t\t\t"1935 1935 2 30 7 23 2 1 S",\n\t\t\t"1936 1936 3 18 7 23 2 1 S",\n\t\t\t"1937 1937 3 3 7 23 2 1 S",\n\t\t\t"1938 1938 2 26 7 23 2 1 S",\n\t\t\t"1939 1939 3 15 7 23 2 1 S",\n\t\t\t"1939 1939 10 18 7 23 2 0",\n\t\t\t"1940 1940 1 24 7 23 2 1 S",\n\t\t\t"1940 1941 9 5 7 23 2 0",\n\t\t\t"1941 1941 3 5 7 23 2 1 S",\n\t\t\t"1942 1945 2 8 6 23 2 1 S",\n\t\t\t"1942 1942 3 25 7 22 2 2 M",\n\t\t\t"1942 1942 7 15 7 22 2 1 S",\n\t\t\t"1942 1945 9 24 6 23 2 0",\n\t\t\t"1943 1943 3 17 7 22 2 2 M",\n\t\t\t"1943 1945 7 25 6 22 2 1 S",\n\t\t\t"1944 1945 3 21 6 22 2 2 M",\n\t\t\t"1946 1946 3 1 6 23 2 1 S",\n\t\t\t"1946 1946 9 1 6 23 2 0",\n\t\t\t"1947 1949 3 1 0 2 2 1 S",\n\t\t\t"1947 1949 9 1 0 2 2 0",\n\t\t\t"1951 1965 3 1 0 2 2 1 S",\n\t\t\t"1951 1965 9 1 0 2 2 0",\n\t\t\t"1977 1977 2 27 7 0 2 1 S",\n\t\t\t"1977 1977 8 25 7 0 2 0",\n\t\t\t"1978 1979 3 1 0 0 2 1 S",\n\t\t\t"1978 1978 9 1 7 0 2 0",\n\t\t\t"1979 1982 8 0 8 1 2 0",\n\t\t\t"1980 1980 2 0 8 0 2 1 S",\n\t\t\t"1981 1982 2 0 8 1 2 1 S",\n\t\t\t"1983 1983 2 0 8 2 2 1 S"\n\t\t],\n\t\t"Pulaski": [\n\t\t\t"1946 1960 3 0 8 2 0 1 D",\n\t\t\t"1946 1954 8 0 8 2 0 0 S",\n\t\t\t"1955 1956 9 0 8 2 0 0 S",\n\t\t\t"1957 1960 8 0 8 2 0 0 S"\n\t\t],\n\t\t"ROK": [\n\t\t\t"1960 1960 4 15 7 0 0 1 D",\n\t\t\t"1960 1960 8 13 7 0 0 0 S",\n\t\t\t"1987 1988 4 8 0 0 0 1 D",\n\t\t\t"1987 1988 9 8 0 0 0 0 S"\n\t\t],\n\t\t"Regina": [\n\t\t\t"1918 1918 3 14 7 2 0 1 D",\n\t\t\t"1918 1918 9 27 7 2 0 0 S",\n\t\t\t"1930 1934 4 1 0 0 0 1 D",\n\t\t\t"1930 1934 9 1 0 0 0 0 S",\n\t\t\t"1937 1941 3 8 0 0 0 1 D",\n\t\t\t"1937 1937 9 8 0 0 0 0 S",\n\t\t\t"1938 1938 9 1 0 0 0 0 S",\n\t\t\t"1939 1941 9 8 0 0 0 0 S",\n\t\t\t"1942 1942 1 9 7 2 0 1 W",\n\t\t\t"1945 1945 7 14 7 23 1 1 P",\n\t\t\t"1945 1945 8 0 8 2 0 0 S",\n\t\t\t"1946 1946 3 8 0 2 0 1 D",\n\t\t\t"1946 1946 9 8 0 2 0 0 S",\n\t\t\t"1947 1957 3 0 8 2 0 1 D",\n\t\t\t"1947 1957 8 0 8 2 0 0 S",\n\t\t\t"1959 1959 3 0 8 2 0 1 D",\n\t\t\t"1959 1959 9 0 8 2 0 0 S"\n\t\t],\n\t\t"Romania": [\n\t\t\t"1932 1932 4 21 7 0 2 1 S",\n\t\t\t"1932 1939 9 1 0 0 2 0",\n\t\t\t"1933 1939 3 2 0 0 2 1 S",\n\t\t\t"1979 1979 4 27 7 0 0 1 S",\n\t\t\t"1979 1979 8 0 8 0 0 0",\n\t\t\t"1980 1980 3 5 7 23 0 1 S",\n\t\t\t"1980 1980 8 0 8 1 0 0",\n\t\t\t"1991 1993 2 0 8 0 2 1 S",\n\t\t\t"1991 1993 8 0 8 0 2 0"\n\t\t],\n\t\t"Russia": [\n\t\t\t"1917 1917 6 1 7 23 0 1 MST",\n\t\t\t"1917 1917 11 28 7 0 0 0 MMT",\n\t\t\t"1918 1918 4 31 7 22 0 2 MDST",\n\t\t\t"1918 1918 8 16 7 1 0 1 MST",\n\t\t\t"1919 1919 4 31 7 23 0 2 MDST",\n\t\t\t"1919 1919 6 1 7 2 0 1 S",\n\t\t\t"1919 1919 7 16 7 0 0 0",\n\t\t\t"1921 1921 1 14 7 23 0 1 S",\n\t\t\t"1921 1921 2 20 7 23 0 2 M",\n\t\t\t"1921 1921 8 1 7 0 0 1 S",\n\t\t\t"1921 1921 9 1 7 0 0 0",\n\t\t\t"1981 1984 3 1 7 0 0 1 S",\n\t\t\t"1981 1983 9 1 7 0 0 0",\n\t\t\t"1984 1991 8 0 8 2 2 0",\n\t\t\t"1985 1991 2 0 8 2 2 1 S",\n\t\t\t"1992 1992 2 6 8 23 0 1 S",\n\t\t\t"1992 1992 8 6 8 23 0 0",\n\t\t\t"1993 2010 2 0 8 2 2 1 S",\n\t\t\t"1993 1995 8 0 8 2 2 0",\n\t\t\t"1996 2010 9 0 8 2 2 0"\n\t\t],\n\t\t"RussiaAsia": [\n\t\t\t"1981 1984 3 1 7 0 0 1 S",\n\t\t\t"1981 1983 9 1 7 0 0 0",\n\t\t\t"1984 1991 8 0 8 2 2 0",\n\t\t\t"1985 1991 2 0 8 2 2 1 S",\n\t\t\t"1992 1992 2 6 8 23 0 1 S",\n\t\t\t"1992 1992 8 6 8 23 0 0",\n\t\t\t"1993 9999 2 0 8 2 2 1 S",\n\t\t\t"1993 1995 8 0 8 2 2 0",\n\t\t\t"1996 9999 9 0 8 2 2 0"\n\t\t],\n\t\t"SA": [\n\t\t\t"1942 1943 8 15 0 2 0 1",\n\t\t\t"1943 1944 2 15 0 2 0 0"\n\t\t],\n\t\t"SL": [\n\t\t\t"1935 1942 5 1 7 0 0 0:40 SLST",\n\t\t\t"1935 1942 9 1 7 0 0 0 WAT",\n\t\t\t"1957 1962 5 1 7 0 0 1 SLST",\n\t\t\t"1957 1962 8 1 7 0 0 0 GMT"\n\t\t],\n\t\t"Salv": [\n\t\t\t"1987 1988 4 1 0 0 0 1 D",\n\t\t\t"1987 1988 8 0 8 0 0 0 S"\n\t\t],\n\t\t"SanLuis": [\n\t\t\t"2008 2009 2 8 0 0 0 0",\n\t\t\t"2007 2009 9 8 0 0 0 1 S"\n\t\t],\n\t\t"Shang": [\n\t\t\t"1940 1940 5 3 7 0 0 1 D",\n\t\t\t"1940 1941 9 1 7 0 0 0 S",\n\t\t\t"1941 1941 2 16 7 0 0 1 D"\n\t\t],\n\t\t"SovietZone": [\n\t\t\t"1945 1945 4 24 7 2 0 2 M",\n\t\t\t"1945 1945 8 24 7 3 0 1 S",\n\t\t\t"1945 1945 10 18 7 2 2 0"\n\t\t],\n\t\t"Spain": [\n\t\t\t"1917 1917 4 5 7 23 2 1 S",\n\t\t\t"1917 1919 9 6 7 23 2 0",\n\t\t\t"1918 1918 3 15 7 23 2 1 S",\n\t\t\t"1919 1919 3 5 7 23 2 1 S",\n\t\t\t"1924 1924 3 16 7 23 2 1 S",\n\t\t\t"1924 1924 9 4 7 23 2 0",\n\t\t\t"1926 1926 3 17 7 23 2 1 S",\n\t\t\t"1926 1929 9 1 6 23 2 0",\n\t\t\t"1927 1927 3 9 7 23 2 1 S",\n\t\t\t"1928 1928 3 14 7 23 2 1 S",\n\t\t\t"1929 1929 3 20 7 23 2 1 S",\n\t\t\t"1937 1937 4 22 7 23 2 1 S",\n\t\t\t"1937 1939 9 1 6 23 2 0",\n\t\t\t"1938 1938 2 22 7 23 2 1 S",\n\t\t\t"1939 1939 3 15 7 23 2 1 S",\n\t\t\t"1940 1940 2 16 7 23 2 1 S",\n\t\t\t"1942 1942 4 2 7 22 2 2 M",\n\t\t\t"1942 1942 8 1 7 22 2 1 S",\n\t\t\t"1943 1946 3 13 6 22 2 2 M",\n\t\t\t"1943 1943 9 3 7 22 2 1 S",\n\t\t\t"1944 1944 9 10 7 22 2 1 S",\n\t\t\t"1945 1945 8 30 7 1 0 1 S",\n\t\t\t"1946 1946 8 30 7 0 0 0",\n\t\t\t"1949 1949 3 30 7 23 0 1 S",\n\t\t\t"1949 1949 8 30 7 1 0 0",\n\t\t\t"1974 1975 3 13 6 23 0 1 S",\n\t\t\t"1974 1975 9 1 0 1 0 0",\n\t\t\t"1976 1976 2 27 7 23 0 1 S",\n\t\t\t"1976 1977 8 0 8 1 0 0",\n\t\t\t"1977 1978 3 2 7 23 0 1 S",\n\t\t\t"1978 1978 9 1 7 1 0 0"\n\t\t],\n\t\t"SpainAfrica": [\n\t\t\t"1967 1967 5 3 7 12 0 1 S",\n\t\t\t"1967 1967 9 1 7 0 0 0",\n\t\t\t"1974 1974 5 24 7 0 0 1 S",\n\t\t\t"1974 1974 8 1 7 0 0 0",\n\t\t\t"1976 1977 4 1 7 0 0 1 S",\n\t\t\t"1976 1976 7 1 7 0 0 0",\n\t\t\t"1977 1977 8 28 7 0 0 0",\n\t\t\t"1978 1978 5 1 7 0 0 1 S",\n\t\t\t"1978 1978 7 4 7 0 0 0"\n\t\t],\n\t\t"StJohns": [\n\t\t\t"1917 1917 3 8 7 2 0 1 D",\n\t\t\t"1917 1917 8 17 7 2 0 0 S",\n\t\t\t"1919 1919 4 5 7 23 0 1 D",\n\t\t\t"1919 1919 7 12 7 23 0 0 S",\n\t\t\t"1920 1935 4 1 0 23 0 1 D",\n\t\t\t"1920 1935 9 0 8 23 0 0 S",\n\t\t\t"1936 1941 4 9 1 0 0 1 D",\n\t\t\t"1936 1941 9 2 1 0 0 0 S",\n\t\t\t"1946 1950 4 8 0 2 0 1 D",\n\t\t\t"1946 1950 9 2 0 2 0 0 S",\n\t\t\t"1951 1986 3 0 8 2 0 1 D",\n\t\t\t"1951 1959 8 0 8 2 0 0 S",\n\t\t\t"1960 1986 9 0 8 2 0 0 S",\n\t\t\t"1987 1987 3 1 0 0:1 0 1 D",\n\t\t\t"1987 2006 9 0 8 0:1 0 0 S",\n\t\t\t"1988 1988 3 1 0 0:1 0 2 DD",\n\t\t\t"1989 2006 3 1 0 0:1 0 1 D",\n\t\t\t"2007 2011 2 8 0 0:1 0 1 D",\n\t\t\t"2007 2010 10 1 0 0:1 0 0 S"\n\t\t],\n\t\t"Starke": [\n\t\t\t"1947 1961 3 0 8 2 0 1 D",\n\t\t\t"1947 1954 8 0 8 2 0 0 S",\n\t\t\t"1955 1956 9 0 8 2 0 0 S",\n\t\t\t"1957 1958 8 0 8 2 0 0 S",\n\t\t\t"1959 1961 9 0 8 2 0 0 S"\n\t\t],\n\t\t"Sudan": [\n\t\t\t"1970 1970 4 1 7 0 0 1 S",\n\t\t\t"1970 1985 9 15 7 0 0 0",\n\t\t\t"1971 1971 3 30 7 0 0 1 S",\n\t\t\t"1972 1985 3 0 8 0 0 1 S"\n\t\t],\n\t\t"Swift": [\n\t\t\t"1957 1957 3 0 8 2 0 1 D",\n\t\t\t"1957 1957 9 0 8 2 0 0 S",\n\t\t\t"1959 1961 3 0 8 2 0 1 D",\n\t\t\t"1959 1959 9 0 8 2 0 0 S",\n\t\t\t"1960 1961 8 0 8 2 0 0 S"\n\t\t],\n\t\t"Swiss": [\n\t\t\t"1941 1942 4 1 1 1 0 1 S",\n\t\t\t"1941 1942 9 1 1 2 0 0"\n\t\t],\n\t\t"Syria": [\n\t\t\t"1920 1923 3 15 0 2 0 1 S",\n\t\t\t"1920 1923 9 1 0 2 0 0",\n\t\t\t"1962 1962 3 29 7 2 0 1 S",\n\t\t\t"1962 1962 9 1 7 2 0 0",\n\t\t\t"1963 1965 4 1 7 2 0 1 S",\n\t\t\t"1963 1963 8 30 7 2 0 0",\n\t\t\t"1964 1964 9 1 7 2 0 0",\n\t\t\t"1965 1965 8 30 7 2 0 0",\n\t\t\t"1966 1966 3 24 7 2 0 1 S",\n\t\t\t"1966 1976 9 1 7 2 0 0",\n\t\t\t"1967 1978 4 1 7 2 0 1 S",\n\t\t\t"1977 1978 8 1 7 2 0 0",\n\t\t\t"1983 1984 3 9 7 2 0 1 S",\n\t\t\t"1983 1984 9 1 7 2 0 0",\n\t\t\t"1986 1986 1 16 7 2 0 1 S",\n\t\t\t"1986 1986 9 9 7 2 0 0",\n\t\t\t"1987 1987 2 1 7 2 0 1 S",\n\t\t\t"1987 1988 9 31 7 2 0 0",\n\t\t\t"1988 1988 2 15 7 2 0 1 S",\n\t\t\t"1989 1989 2 31 7 2 0 1 S",\n\t\t\t"1989 1989 9 1 7 2 0 0",\n\t\t\t"1990 1990 3 1 7 2 0 1 S",\n\t\t\t"1990 1990 8 30 7 2 0 0",\n\t\t\t"1991 1991 3 1 7 0 0 1 S",\n\t\t\t"1991 1992 9 1 7 0 0 0",\n\t\t\t"1992 1992 3 8 7 0 0 1 S",\n\t\t\t"1993 1993 2 26 7 0 0 1 S",\n\t\t\t"1993 1993 8 25 7 0 0 0",\n\t\t\t"1994 1996 3 1 7 0 0 1 S",\n\t\t\t"1994 2005 9 1 7 0 0 0",\n\t\t\t"1997 1998 2 1 8 0 0 1 S",\n\t\t\t"1999 2006 3 1 7 0 0 1 S",\n\t\t\t"2006 2006 8 22 7 0 0 0",\n\t\t\t"2007 2007 2 5 8 0 0 1 S",\n\t\t\t"2007 2007 10 1 5 0 0 0",\n\t\t\t"2008 2008 3 1 5 0 0 1 S",\n\t\t\t"2008 2008 10 1 7 0 0 0",\n\t\t\t"2009 2009 2 5 8 0 0 1 S",\n\t\t\t"2010 2011 3 1 5 0 0 1 S",\n\t\t\t"2012 9999 2 5 8 0 0 1 S",\n\t\t\t"2009 9999 9 5 8 0 0 0"\n\t\t],\n\t\t"TC": [\n\t\t\t"1979 1986 3 0 8 2 0 1 D",\n\t\t\t"1979 2006 9 0 8 2 0 0 S",\n\t\t\t"1987 2006 3 1 0 2 0 1 D",\n\t\t\t"2007 9999 2 8 0 2 0 1 D",\n\t\t\t"2007 9999 10 1 0 2 0 0 S"\n\t\t],\n\t\t"Taiwan": [\n\t\t\t"1945 1951 4 1 7 0 0 1 D",\n\t\t\t"1945 1951 9 1 7 0 0 0 S",\n\t\t\t"1952 1952 2 1 7 0 0 1 D",\n\t\t\t"1952 1954 10 1 7 0 0 0 S",\n\t\t\t"1953 1959 3 1 7 0 0 1 D",\n\t\t\t"1955 1961 9 1 7 0 0 0 S",\n\t\t\t"1960 1961 5 1 7 0 0 1 D",\n\t\t\t"1974 1975 3 1 7 0 0 1 D",\n\t\t\t"1974 1975 9 1 7 0 0 0 S",\n\t\t\t"1979 1979 5 30 7 0 0 1 D",\n\t\t\t"1979 1979 8 30 7 0 0 0 S"\n\t\t],\n\t\t"Thule": [\n\t\t\t"1991 1992 2 0 8 2 0 1 D",\n\t\t\t"1991 1992 8 0 8 2 0 0 S",\n\t\t\t"1993 2006 3 1 0 2 0 1 D",\n\t\t\t"1993 2006 9 0 8 2 0 0 S",\n\t\t\t"2007 9999 2 8 0 2 0 1 D",\n\t\t\t"2007 9999 10 1 0 2 0 0 S"\n\t\t],\n\t\t"Tonga": [\n\t\t\t"1999 1999 9 7 7 2 2 1 S",\n\t\t\t"2000 2000 2 19 7 2 2 0",\n\t\t\t"2000 2001 10 1 0 2 0 1 S",\n\t\t\t"2001 2002 0 0 8 2 0 0"\n\t\t],\n\t\t"Toronto": [\n\t\t\t"1919 1919 2 30 7 23:30 0 1 D",\n\t\t\t"1919 1919 9 26 7 0 0 0 S",\n\t\t\t"1920 1920 4 2 7 2 0 1 D",\n\t\t\t"1920 1920 8 26 7 0 0 0 S",\n\t\t\t"1921 1921 4 15 7 2 0 1 D",\n\t\t\t"1921 1921 8 15 7 2 0 0 S",\n\t\t\t"1922 1923 4 8 0 2 0 1 D",\n\t\t\t"1922 1926 8 15 0 2 0 0 S",\n\t\t\t"1924 1927 4 1 0 2 0 1 D",\n\t\t\t"1927 1932 8 0 8 2 0 0 S",\n\t\t\t"1928 1931 3 0 8 2 0 1 D",\n\t\t\t"1932 1932 4 1 7 2 0 1 D",\n\t\t\t"1933 1940 3 0 8 2 0 1 D",\n\t\t\t"1933 1933 9 1 7 2 0 0 S",\n\t\t\t"1934 1939 8 0 8 2 0 0 S",\n\t\t\t"1945 1946 8 0 8 2 0 0 S",\n\t\t\t"1946 1946 3 0 8 2 0 1 D",\n\t\t\t"1947 1949 3 0 8 0 0 1 D",\n\t\t\t"1947 1948 8 0 8 0 0 0 S",\n\t\t\t"1949 1949 10 0 8 0 0 0 S",\n\t\t\t"1950 1973 3 0 8 2 0 1 D",\n\t\t\t"1950 1950 10 0 8 2 0 0 S",\n\t\t\t"1951 1956 8 0 8 2 0 0 S",\n\t\t\t"1957 1973 9 0 8 2 0 0 S"\n\t\t],\n\t\t"Tunisia": [\n\t\t\t"1939 1939 3 15 7 23 2 1 S",\n\t\t\t"1939 1939 10 18 7 23 2 0",\n\t\t\t"1940 1940 1 25 7 23 2 1 S",\n\t\t\t"1941 1941 9 6 7 0 0 0",\n\t\t\t"1942 1942 2 9 7 0 0 1 S",\n\t\t\t"1942 1942 10 2 7 3 0 0",\n\t\t\t"1943 1943 2 29 7 2 0 1 S",\n\t\t\t"1943 1943 3 17 7 2 0 0",\n\t\t\t"1943 1943 3 25 7 2 0 1 S",\n\t\t\t"1943 1943 9 4 7 2 0 0",\n\t\t\t"1944 1945 3 1 1 2 0 1 S",\n\t\t\t"1944 1944 9 8 7 0 0 0",\n\t\t\t"1945 1945 8 16 7 0 0 0",\n\t\t\t"1977 1977 3 30 7 0 2 1 S",\n\t\t\t"1977 1977 8 24 7 0 2 0",\n\t\t\t"1978 1978 4 1 7 0 2 1 S",\n\t\t\t"1978 1978 9 1 7 0 2 0",\n\t\t\t"1988 1988 5 1 7 0 2 1 S",\n\t\t\t"1988 1990 8 0 8 0 2 0",\n\t\t\t"1989 1989 2 26 7 0 2 1 S",\n\t\t\t"1990 1990 4 1 7 0 2 1 S",\n\t\t\t"2005 2005 4 1 7 0 2 1 S",\n\t\t\t"2005 2005 8 30 7 1 2 0",\n\t\t\t"2006 2008 2 0 8 2 2 1 S",\n\t\t\t"2006 2008 9 0 8 2 2 0"\n\t\t],\n\t\t"Turkey": [\n\t\t\t"1916 1916 4 1 7 0 0 1 S",\n\t\t\t"1916 1916 9 1 7 0 0 0",\n\t\t\t"1920 1920 2 28 7 0 0 1 S",\n\t\t\t"1920 1920 9 25 7 0 0 0",\n\t\t\t"1921 1921 3 3 7 0 0 1 S",\n\t\t\t"1921 1921 9 3 7 0 0 0",\n\t\t\t"1922 1922 2 26 7 0 0 1 S",\n\t\t\t"1922 1922 9 8 7 0 0 0",\n\t\t\t"1924 1924 4 13 7 0 0 1 S",\n\t\t\t"1924 1925 9 1 7 0 0 0",\n\t\t\t"1925 1925 4 1 7 0 0 1 S",\n\t\t\t"1940 1940 5 30 7 0 0 1 S",\n\t\t\t"1940 1940 9 5 7 0 0 0",\n\t\t\t"1940 1940 11 1 7 0 0 1 S",\n\t\t\t"1941 1941 8 21 7 0 0 0",\n\t\t\t"1942 1942 3 1 7 0 0 1 S",\n\t\t\t"1942 1942 10 1 7 0 0 0",\n\t\t\t"1945 1945 3 2 7 0 0 1 S",\n\t\t\t"1945 1945 9 8 7 0 0 0",\n\t\t\t"1946 1946 5 1 7 0 0 1 S",\n\t\t\t"1946 1946 9 1 7 0 0 0",\n\t\t\t"1947 1948 3 16 0 0 0 1 S",\n\t\t\t"1947 1950 9 2 0 0 0 0",\n\t\t\t"1949 1949 3 10 7 0 0 1 S",\n\t\t\t"1950 1950 3 19 7 0 0 1 S",\n\t\t\t"1951 1951 3 22 7 0 0 1 S",\n\t\t\t"1951 1951 9 8 7 0 0 0",\n\t\t\t"1962 1962 6 15 7 0 0 1 S",\n\t\t\t"1962 1962 9 8 7 0 0 0",\n\t\t\t"1964 1964 4 15 7 0 0 1 S",\n\t\t\t"1964 1964 9 1 7 0 0 0",\n\t\t\t"1970 1972 4 2 0 0 0 1 S",\n\t\t\t"1970 1972 9 2 0 0 0 0",\n\t\t\t"1973 1973 5 3 7 1 0 1 S",\n\t\t\t"1973 1973 10 4 7 3 0 0",\n\t\t\t"1974 1974 2 31 7 2 0 1 S",\n\t\t\t"1974 1974 10 3 7 5 0 0",\n\t\t\t"1975 1975 2 30 7 0 0 1 S",\n\t\t\t"1975 1976 9 0 8 0 0 0",\n\t\t\t"1976 1976 5 1 7 0 0 1 S",\n\t\t\t"1977 1978 3 1 0 0 0 1 S",\n\t\t\t"1977 1977 9 16 7 0 0 0",\n\t\t\t"1979 1980 3 1 0 3 0 1 S",\n\t\t\t"1979 1982 9 11 1 0 0 0",\n\t\t\t"1981 1982 2 0 8 3 0 1 S",\n\t\t\t"1983 1983 6 31 7 0 0 1 S",\n\t\t\t"1983 1983 9 2 7 0 0 0",\n\t\t\t"1985 1985 3 20 7 0 0 1 S",\n\t\t\t"1985 1985 8 28 7 0 0 0",\n\t\t\t"1986 1990 2 0 8 2 2 1 S",\n\t\t\t"1986 1990 8 0 8 2 2 0",\n\t\t\t"1991 2006 2 0 8 1 2 1 S",\n\t\t\t"1991 1995 8 0 8 1 2 0",\n\t\t\t"1996 2006 9 0 8 1 2 0"\n\t\t],\n\t\t"US": [\n\t\t\t"1918 1919 2 0 8 2 0 1 D",\n\t\t\t"1918 1919 9 0 8 2 0 0 S",\n\t\t\t"1942 1942 1 9 7 2 0 1 W",\n\t\t\t"1945 1945 7 14 7 23 1 1 P",\n\t\t\t"1945 1945 8 30 7 2 0 0 S",\n\t\t\t"1967 2006 9 0 8 2 0 0 S",\n\t\t\t"1967 1973 3 0 8 2 0 1 D",\n\t\t\t"1974 1974 0 6 7 2 0 1 D",\n\t\t\t"1975 1975 1 23 7 2 0 1 D",\n\t\t\t"1976 1986 3 0 8 2 0 1 D",\n\t\t\t"1987 2006 3 1 0 2 0 1 D",\n\t\t\t"2007 9999 2 8 0 2 0 1 D",\n\t\t\t"2007 9999 10 1 0 2 0 0 S"\n\t\t],\n\t\t"Uruguay": [\n\t\t\t"1923 1923 9 2 7 0 0 0:30 HS",\n\t\t\t"1924 1926 3 1 7 0 0 0",\n\t\t\t"1924 1925 9 1 7 0 0 0:30 HS",\n\t\t\t"1933 1935 9 0 8 0 0 0:30 HS",\n\t\t\t"1934 1936 2 25 6 23:30 2 0",\n\t\t\t"1936 1936 10 1 7 0 0 0:30 HS",\n\t\t\t"1937 1941 2 0 8 0 0 0",\n\t\t\t"1937 1940 9 0 8 0 0 0:30 HS",\n\t\t\t"1941 1941 7 1 7 0 0 0:30 HS",\n\t\t\t"1942 1942 0 1 7 0 0 0",\n\t\t\t"1942 1942 11 14 7 0 0 1 S",\n\t\t\t"1943 1943 2 14 7 0 0 0",\n\t\t\t"1959 1959 4 24 7 0 0 1 S",\n\t\t\t"1959 1959 10 15 7 0 0 0",\n\t\t\t"1960 1960 0 17 7 0 0 1 S",\n\t\t\t"1960 1960 2 6 7 0 0 0",\n\t\t\t"1965 1967 3 1 0 0 0 1 S",\n\t\t\t"1965 1965 8 26 7 0 0 0",\n\t\t\t"1966 1967 9 31 7 0 0 0",\n\t\t\t"1968 1970 4 27 7 0 0 0:30 HS",\n\t\t\t"1968 1970 11 2 7 0 0 0",\n\t\t\t"1972 1972 3 24 7 0 0 1 S",\n\t\t\t"1972 1972 7 15 7 0 0 0",\n\t\t\t"1974 1974 2 10 7 0 0 0:30 HS",\n\t\t\t"1974 1974 11 22 7 0 0 1 S",\n\t\t\t"1976 1976 9 1 7 0 0 0",\n\t\t\t"1977 1977 11 4 7 0 0 1 S",\n\t\t\t"1978 1978 3 1 7 0 0 0",\n\t\t\t"1979 1979 9 1 7 0 0 1 S",\n\t\t\t"1980 1980 4 1 7 0 0 0",\n\t\t\t"1987 1987 11 14 7 0 0 1 S",\n\t\t\t"1988 1988 2 14 7 0 0 0",\n\t\t\t"1988 1988 11 11 7 0 0 1 S",\n\t\t\t"1989 1989 2 12 7 0 0 0",\n\t\t\t"1989 1989 9 29 7 0 0 1 S",\n\t\t\t"1990 1992 2 1 0 0 0 0",\n\t\t\t"1990 1991 9 21 0 0 0 1 S",\n\t\t\t"1992 1992 9 18 7 0 0 1 S",\n\t\t\t"1993 1993 1 28 7 0 0 0",\n\t\t\t"2004 2004 8 19 7 0 0 1 S",\n\t\t\t"2005 2005 2 27 7 2 0 0",\n\t\t\t"2005 2005 9 9 7 2 0 1 S",\n\t\t\t"2006 2006 2 12 7 2 0 0",\n\t\t\t"2006 9999 9 1 0 2 0 1 S",\n\t\t\t"2007 9999 2 8 0 2 0 0"\n\t\t],\n\t\t"Vanc": [\n\t\t\t"1918 1918 3 14 7 2 0 1 D",\n\t\t\t"1918 1918 9 27 7 2 0 0 S",\n\t\t\t"1942 1942 1 9 7 2 0 1 W",\n\t\t\t"1945 1945 7 14 7 23 1 1 P",\n\t\t\t"1945 1945 8 30 7 2 0 0 S",\n\t\t\t"1946 1986 3 0 8 2 0 1 D",\n\t\t\t"1946 1946 9 13 7 2 0 0 S",\n\t\t\t"1947 1961 8 0 8 2 0 0 S",\n\t\t\t"1962 2006 9 0 8 2 0 0 S"\n\t\t],\n\t\t"Vanuatu": [\n\t\t\t"1983 1983 8 25 7 0 0 1 S",\n\t\t\t"1984 1991 2 23 0 0 0 0",\n\t\t\t"1984 1984 9 23 7 0 0 1 S",\n\t\t\t"1985 1991 8 23 0 0 0 1 S",\n\t\t\t"1992 1993 0 23 0 0 0 0",\n\t\t\t"1992 1992 9 23 0 0 0 1 S"\n\t\t],\n\t\t"Vincennes": [\n\t\t\t"1946 1946 3 0 8 2 0 1 D",\n\t\t\t"1946 1946 8 0 8 2 0 0 S",\n\t\t\t"1953 1954 3 0 8 2 0 1 D",\n\t\t\t"1953 1959 8 0 8 2 0 0 S",\n\t\t\t"1955 1955 4 1 7 0 0 1 D",\n\t\t\t"1956 1963 3 0 8 2 0 1 D",\n\t\t\t"1960 1960 9 0 8 2 0 0 S",\n\t\t\t"1961 1961 8 0 8 2 0 0 S",\n\t\t\t"1962 1963 9 0 8 2 0 0 S"\n\t\t],\n\t\t"W-Eur": [\n\t\t\t"1977 1980 3 1 0 1 2 1 S",\n\t\t\t"1977 1977 8 0 8 1 2 0",\n\t\t\t"1978 1978 9 1 7 1 2 0",\n\t\t\t"1979 1995 8 0 8 1 2 0",\n\t\t\t"1981 9999 2 0 8 1 2 1 S",\n\t\t\t"1996 9999 9 0 8 1 2 0"\n\t\t],\n\t\t"WS": [\n\t\t\t"2012 9999 8 0 8 3 0 1 D",\n\t\t\t"2012 9999 3 1 0 4 0 0"\n\t\t],\n\t\t"Winn": [\n\t\t\t"1916 1916 3 23 7 0 0 1 D",\n\t\t\t"1916 1916 8 17 7 0 0 0 S",\n\t\t\t"1918 1918 3 14 7 2 0 1 D",\n\t\t\t"1918 1918 9 27 7 2 0 0 S",\n\t\t\t"1937 1937 4 16 7 2 0 1 D",\n\t\t\t"1937 1937 8 26 7 2 0 0 S",\n\t\t\t"1942 1942 1 9 7 2 0 1 W",\n\t\t\t"1945 1945 7 14 7 23 1 1 P",\n\t\t\t"1945 1945 8 0 8 2 0 0 S",\n\t\t\t"1946 1946 4 12 7 2 0 1 D",\n\t\t\t"1946 1946 9 13 7 2 0 0 S",\n\t\t\t"1947 1949 3 0 8 2 0 1 D",\n\t\t\t"1947 1949 8 0 8 2 0 0 S",\n\t\t\t"1950 1950 4 1 7 2 0 1 D",\n\t\t\t"1950 1950 8 30 7 2 0 0 S",\n\t\t\t"1951 1960 3 0 8 2 0 1 D",\n\t\t\t"1951 1958 8 0 8 2 0 0 S",\n\t\t\t"1959 1959 9 0 8 2 0 0 S",\n\t\t\t"1960 1960 8 0 8 2 0 0 S",\n\t\t\t"1963 1963 3 0 8 2 0 1 D",\n\t\t\t"1963 1963 8 22 7 2 0 0 S",\n\t\t\t"1966 1986 3 0 8 2 2 1 D",\n\t\t\t"1966 2005 9 0 8 2 2 0 S",\n\t\t\t"1987 2005 3 1 0 2 2 1 D"\n\t\t],\n\t\t"Zion": [\n\t\t\t"1940 1940 5 1 7 0 0 1 D",\n\t\t\t"1942 1944 10 1 7 0 0 0 S",\n\t\t\t"1943 1943 3 1 7 2 0 1 D",\n\t\t\t"1944 1944 3 1 7 0 0 1 D",\n\t\t\t"1945 1945 3 16 7 0 0 1 D",\n\t\t\t"1945 1945 10 1 7 2 0 0 S",\n\t\t\t"1946 1946 3 16 7 2 0 1 D",\n\t\t\t"1946 1946 10 1 7 0 0 0 S",\n\t\t\t"1948 1948 4 23 7 0 0 2 DD",\n\t\t\t"1948 1948 8 1 7 0 0 1 D",\n\t\t\t"1948 1949 10 1 7 2 0 0 S",\n\t\t\t"1949 1949 4 1 7 0 0 1 D",\n\t\t\t"1950 1950 3 16 7 0 0 1 D",\n\t\t\t"1950 1950 8 15 7 3 0 0 S",\n\t\t\t"1951 1951 3 1 7 0 0 1 D",\n\t\t\t"1951 1951 10 11 7 3 0 0 S",\n\t\t\t"1952 1952 3 20 7 2 0 1 D",\n\t\t\t"1952 1952 9 19 7 3 0 0 S",\n\t\t\t"1953 1953 3 12 7 2 0 1 D",\n\t\t\t"1953 1953 8 13 7 3 0 0 S",\n\t\t\t"1954 1954 5 13 7 0 0 1 D",\n\t\t\t"1954 1954 8 12 7 0 0 0 S",\n\t\t\t"1955 1955 5 11 7 2 0 1 D",\n\t\t\t"1955 1955 8 11 7 0 0 0 S",\n\t\t\t"1956 1956 5 3 7 0 0 1 D",\n\t\t\t"1956 1956 8 30 7 3 0 0 S",\n\t\t\t"1957 1957 3 29 7 2 0 1 D",\n\t\t\t"1957 1957 8 22 7 0 0 0 S",\n\t\t\t"1974 1974 6 7 7 0 0 1 D",\n\t\t\t"1974 1974 9 13 7 0 0 0 S",\n\t\t\t"1975 1975 3 20 7 0 0 1 D",\n\t\t\t"1975 1975 7 31 7 0 0 0 S",\n\t\t\t"1985 1985 3 14 7 0 0 1 D",\n\t\t\t"1985 1985 8 15 7 0 0 0 S",\n\t\t\t"1986 1986 4 18 7 0 0 1 D",\n\t\t\t"1986 1986 8 7 7 0 0 0 S",\n\t\t\t"1987 1987 3 15 7 0 0 1 D",\n\t\t\t"1987 1987 8 13 7 0 0 0 S",\n\t\t\t"1988 1988 3 9 7 0 0 1 D",\n\t\t\t"1988 1988 8 3 7 0 0 0 S",\n\t\t\t"1989 1989 3 30 7 0 0 1 D",\n\t\t\t"1989 1989 8 3 7 0 0 0 S",\n\t\t\t"1990 1990 2 25 7 0 0 1 D",\n\t\t\t"1990 1990 7 26 7 0 0 0 S",\n\t\t\t"1991 1991 2 24 7 0 0 1 D",\n\t\t\t"1991 1991 8 1 7 0 0 0 S",\n\t\t\t"1992 1992 2 29 7 0 0 1 D",\n\t\t\t"1992 1992 8 6 7 0 0 0 S",\n\t\t\t"1993 1993 3 2 7 0 0 1 D",\n\t\t\t"1993 1993 8 5 7 0 0 0 S",\n\t\t\t"1994 1994 3 1 7 0 0 1 D",\n\t\t\t"1994 1994 7 28 7 0 0 0 S",\n\t\t\t"1995 1995 2 31 7 0 0 1 D",\n\t\t\t"1995 1995 8 3 7 0 0 0 S",\n\t\t\t"1996 1996 2 15 7 0 0 1 D",\n\t\t\t"1996 1996 8 16 7 0 0 0 S",\n\t\t\t"1997 1997 2 21 7 0 0 1 D",\n\t\t\t"1997 1997 8 14 7 0 0 0 S",\n\t\t\t"1998 1998 2 20 7 0 0 1 D",\n\t\t\t"1998 1998 8 6 7 0 0 0 S",\n\t\t\t"1999 1999 3 2 7 2 0 1 D",\n\t\t\t"1999 1999 8 3 7 2 0 0 S",\n\t\t\t"2000 2000 3 14 7 2 0 1 D",\n\t\t\t"2000 2000 9 6 7 1 0 0 S",\n\t\t\t"2001 2001 3 9 7 1 0 1 D",\n\t\t\t"2001 2001 8 24 7 1 0 0 S",\n\t\t\t"2002 2002 2 29 7 1 0 1 D",\n\t\t\t"2002 2002 9 7 7 1 0 0 S",\n\t\t\t"2003 2003 2 28 7 1 0 1 D",\n\t\t\t"2003 2003 9 3 7 1 0 0 S",\n\t\t\t"2004 2004 3 7 7 1 0 1 D",\n\t\t\t"2004 2004 8 22 7 1 0 0 S",\n\t\t\t"2005 2005 3 1 7 2 0 1 D",\n\t\t\t"2005 2005 9 9 7 2 0 0 S",\n\t\t\t"2006 2010 2 26 5 2 0 1 D",\n\t\t\t"2006 2006 9 1 7 2 0 0 S",\n\t\t\t"2007 2007 8 16 7 2 0 0 S",\n\t\t\t"2008 2008 9 5 7 2 0 0 S",\n\t\t\t"2009 2009 8 27 7 2 0 0 S",\n\t\t\t"2010 2010 8 12 7 2 0 0 S",\n\t\t\t"2011 2011 3 1 7 2 0 1 D",\n\t\t\t"2011 2011 9 2 7 2 0 0 S",\n\t\t\t"2012 2012 2 26 5 2 0 1 D",\n\t\t\t"2012 2012 8 23 7 2 0 0 S",\n\t\t\t"2013 9999 2 23 5 2 0 1 D",\n\t\t\t"2013 2026 9 2 0 2 0 0 S",\n\t\t\t"2027 2027 9 3 1 2 0 0 S",\n\t\t\t"2028 9999 9 2 0 2 0 0 S"\n\t\t]\n\t},\n\t"zones": {\n\t\t"Africa/Abidjan": [\n\t\t\t"-0:16:8 - LMT 1912 -0:16:8",\n\t\t\t"0 - GMT"\n\t\t],\n\t\t"Africa/Accra": [\n\t\t\t"-0:0:52 - LMT 1918 -0:0:52",\n\t\t\t"0 Ghana %s"\n\t\t],\n\t\t"Africa/Addis_Ababa": [\n\t\t\t"2:34:48 - LMT 1870 2:34:48",\n\t\t\t"2:35:20 - ADMT 1936_4_5 2:35:20",\n\t\t\t"3 - EAT"\n\t\t],\n\t\t"Africa/Algiers": [\n\t\t\t"0:12:12 - LMT 1891_2_15_0_1 0:12:12",\n\t\t\t"0:9:21 - PMT 1911_2_11 0:9:21",\n\t\t\t"0 Algeria WE%sT 1940_1_25_2",\n\t\t\t"1 Algeria CE%sT 1946_9_7 1",\n\t\t\t"0 - WET 1956_0_29",\n\t\t\t"1 - CET 1963_3_14 1",\n\t\t\t"0 Algeria WE%sT 1977_9_21 1",\n\t\t\t"1 Algeria CE%sT 1979_9_26 1",\n\t\t\t"0 Algeria WE%sT 1981_4",\n\t\t\t"1 - CET"\n\t\t],\n\t\t"Africa/Asmara": [\n\t\t\t"2:35:32 - LMT 1870 2:35:32",\n\t\t\t"2:35:32 - AMT 1890 2:35:32",\n\t\t\t"2:35:20 - ADMT 1936_4_5 2:35:20",\n\t\t\t"3 - EAT"\n\t\t],\n\t\t"Africa/Bamako": [\n\t\t\t"-0:32 - LMT 1912 -0:32",\n\t\t\t"0 - GMT 1934_1_26",\n\t\t\t"-1 - WAT 1960_5_20 -1",\n\t\t\t"0 - GMT"\n\t\t],\n\t\t"Africa/Bangui": [\n\t\t\t"1:14:20 - LMT 1912 1:14:20",\n\t\t\t"1 - WAT"\n\t\t],\n\t\t"Africa/Banjul": [\n\t\t\t"-1:6:36 - LMT 1912 -1:6:36",\n\t\t\t"-1:6:36 - BMT 1935 -1:6:36",\n\t\t\t"-1 - WAT 1964 -1",\n\t\t\t"0 - GMT"\n\t\t],\n\t\t"Africa/Bissau": [\n\t\t\t"-1:2:20 - LMT 1911_4_26 -1:2:20",\n\t\t\t"-1 - WAT 1975 -1",\n\t\t\t"0 - GMT"\n\t\t],\n\t\t"Africa/Blantyre": [\n\t\t\t"2:20 - LMT 1903_2 2:20",\n\t\t\t"2 - CAT"\n\t\t],\n\t\t"Africa/Brazzaville": [\n\t\t\t"1:1:8 - LMT 1912 1:1:8",\n\t\t\t"1 - WAT"\n\t\t],\n\t\t"Africa/Bujumbura": [\n\t\t\t"1:57:28 - LMT 1890 1:57:28",\n\t\t\t"2 - CAT"\n\t\t],\n\t\t"Africa/Cairo": [\n\t\t\t"2:5:9 - LMT 1900_9 2:5:9",\n\t\t\t"2 Egypt EE%sT"\n\t\t],\n\t\t"Africa/Casablanca": [\n\t\t\t"-0:30:20 - LMT 1913_9_26 -0:30:20",\n\t\t\t"0 Morocco WE%sT 1984_2_16",\n\t\t\t"1 - CET 1986 1",\n\t\t\t"0 Morocco WE%sT"\n\t\t],\n\t\t"Africa/Ceuta": [\n\t\t\t"-0:21:16 - LMT 1901 -0:21:16",\n\t\t\t"0 - WET 1918_4_6_23",\n\t\t\t"1 - WEST 1918_9_7_23 1",\n\t\t\t"0 - WET 1924",\n\t\t\t"0 Spain WE%sT 1929",\n\t\t\t"0 SpainAfrica WE%sT 1984_2_16",\n\t\t\t"1 - CET 1986 1",\n\t\t\t"1 EU CE%sT"\n\t\t],\n\t\t"Africa/Conakry": [\n\t\t\t"-0:54:52 - LMT 1912 -0:54:52",\n\t\t\t"0 - GMT 1934_1_26",\n\t\t\t"-1 - WAT 1960 -1",\n\t\t\t"0 - GMT"\n\t\t],\n\t\t"Africa/Dakar": [\n\t\t\t"-1:9:44 - LMT 1912 -1:9:44",\n\t\t\t"-1 - WAT 1941_5 -1",\n\t\t\t"0 - GMT"\n\t\t],\n\t\t"Africa/Dar_es_Salaam": [\n\t\t\t"2:37:8 - LMT 1931 2:37:8",\n\t\t\t"3 - EAT 1948 3",\n\t\t\t"2:45 - BEAUT 1961 2:45",\n\t\t\t"3 - EAT"\n\t\t],\n\t\t"Africa/Djibouti": [\n\t\t\t"2:52:36 - LMT 1911_6 2:52:36",\n\t\t\t"3 - EAT"\n\t\t],\n\t\t"Africa/Douala": [\n\t\t\t"0:38:48 - LMT 1912 0:38:48",\n\t\t\t"1 - WAT"\n\t\t],\n\t\t"Africa/El_Aaiun": [\n\t\t\t"-0:52:48 - LMT 1934_0 -0:52:48",\n\t\t\t"-1 - WAT 1976_3_14 -1",\n\t\t\t"0 - WET"\n\t\t],\n\t\t"Africa/Freetown": [\n\t\t\t"-0:53 - LMT 1882 -0:53",\n\t\t\t"-0:53 - FMT 1913_5 -0:53",\n\t\t\t"-1 SL %s 1957 -1",\n\t\t\t"0 SL %s"\n\t\t],\n\t\t"Africa/Gaborone": [\n\t\t\t"1:43:40 - LMT 1885 1:43:40",\n\t\t\t"1:30 - SAST 1903_2 1:30",\n\t\t\t"2 - CAT 1943_8_19_2 2",\n\t\t\t"3 - CAST 1944_2_19_2 3",\n\t\t\t"2 - CAT"\n\t\t],\n\t\t"Africa/Harare": [\n\t\t\t"2:4:12 - LMT 1903_2 2:4:12",\n\t\t\t"2 - CAT"\n\t\t],\n\t\t"Africa/Johannesburg": [\n\t\t\t"1:52 - LMT 1892_1_8 1:52",\n\t\t\t"1:30 - SAST 1903_2 1:30",\n\t\t\t"2 SA SAST"\n\t\t],\n\t\t"Africa/Juba": [\n\t\t\t"2:6:24 - LMT 1931 2:6:24",\n\t\t\t"2 Sudan CA%sT 2000_0_15_12 2",\n\t\t\t"3 - EAT"\n\t\t],\n\t\t"Africa/Kampala": [\n\t\t\t"2:9:40 - LMT 1928_6 2:9:40",\n\t\t\t"3 - EAT 1930 3",\n\t\t\t"2:30 - BEAT 1948 2:30",\n\t\t\t"2:45 - BEAUT 1957 2:45",\n\t\t\t"3 - EAT"\n\t\t],\n\t\t"Africa/Khartoum": [\n\t\t\t"2:10:8 - LMT 1931 2:10:8",\n\t\t\t"2 Sudan CA%sT 2000_0_15_12 2",\n\t\t\t"3 - EAT"\n\t\t],\n\t\t"Africa/Kigali": [\n\t\t\t"2:0:16 - LMT 1935_5 2:0:16",\n\t\t\t"2 - CAT"\n\t\t],\n\t\t"Africa/Kinshasa": [\n\t\t\t"1:1:12 - LMT 1897_10_9 1:1:12",\n\t\t\t"1 - WAT"\n\t\t],\n\t\t"Africa/Lagos": [\n\t\t\t"0:13:36 - LMT 1919_8 0:13:36",\n\t\t\t"1 - WAT"\n\t\t],\n\t\t"Africa/Libreville": [\n\t\t\t"0:37:48 - LMT 1912 0:37:48",\n\t\t\t"1 - WAT"\n\t\t],\n\t\t"Africa/Lome": [\n\t\t\t"0:4:52 - LMT 1893 0:4:52",\n\t\t\t"0 - GMT"\n\t\t],\n\t\t"Africa/Luanda": [\n\t\t\t"0:52:56 - LMT 1892 0:52:56",\n\t\t\t"0:52:4 - AOT 1911_4_26 0:52:4",\n\t\t\t"1 - WAT"\n\t\t],\n\t\t"Africa/Lubumbashi": [\n\t\t\t"1:49:52 - LMT 1897_10_9 1:49:52",\n\t\t\t"2 - CAT"\n\t\t],\n\t\t"Africa/Lusaka": [\n\t\t\t"1:53:8 - LMT 1903_2 1:53:8",\n\t\t\t"2 - CAT"\n\t\t],\n\t\t"Africa/Malabo": [\n\t\t\t"0:35:8 - LMT 1912 0:35:8",\n\t\t\t"0 - GMT 1963_11_15",\n\t\t\t"1 - WAT"\n\t\t],\n\t\t"Africa/Maputo": [\n\t\t\t"2:10:20 - LMT 1903_2 2:10:20",\n\t\t\t"2 - CAT"\n\t\t],\n\t\t"Africa/Maseru": [\n\t\t\t"1:50 - LMT 1903_2 1:50",\n\t\t\t"2 - SAST 1943_8_19_2 2",\n\t\t\t"3 - SAST 1944_2_19_2 3",\n\t\t\t"2 - SAST"\n\t\t],\n\t\t"Africa/Mbabane": [\n\t\t\t"2:4:24 - LMT 1903_2 2:4:24",\n\t\t\t"2 - SAST"\n\t\t],\n\t\t"Africa/Mogadishu": [\n\t\t\t"3:1:28 - LMT 1893_10 3:1:28",\n\t\t\t"3 - EAT 1931 3",\n\t\t\t"2:30 - BEAT 1957 2:30",\n\t\t\t"3 - EAT"\n\t\t],\n\t\t"Africa/Monrovia": [\n\t\t\t"-0:43:8 - LMT 1882 -0:43:8",\n\t\t\t"-0:43:8 - MMT 1919_2 -0:43:8",\n\t\t\t"-0:44:30 - LRT 1972_4 -0:44:30",\n\t\t\t"0 - GMT"\n\t\t],\n\t\t"Africa/Nairobi": [\n\t\t\t"2:27:16 - LMT 1928_6 2:27:16",\n\t\t\t"3 - EAT 1930 3",\n\t\t\t"2:30 - BEAT 1940 2:30",\n\t\t\t"2:45 - BEAUT 1960 2:45",\n\t\t\t"3 - EAT"\n\t\t],\n\t\t"Africa/Ndjamena": [\n\t\t\t"1:0:12 - LMT 1912 1:0:12",\n\t\t\t"1 - WAT 1979_9_14 1",\n\t\t\t"2 - WAST 1980_2_8 2",\n\t\t\t"1 - WAT"\n\t\t],\n\t\t"Africa/Niamey": [\n\t\t\t"0:8:28 - LMT 1912 0:8:28",\n\t\t\t"-1 - WAT 1934_1_26 -1",\n\t\t\t"0 - GMT 1960",\n\t\t\t"1 - WAT"\n\t\t],\n\t\t"Africa/Nouakchott": [\n\t\t\t"-1:3:48 - LMT 1912 -1:3:48",\n\t\t\t"0 - GMT 1934_1_26",\n\t\t\t"-1 - WAT 1960_10_28 -1",\n\t\t\t"0 - GMT"\n\t\t],\n\t\t"Africa/Ouagadougou": [\n\t\t\t"-0:6:4 - LMT 1912 -0:6:4",\n\t\t\t"0 - GMT"\n\t\t],\n\t\t"Africa/Porto-Novo": [\n\t\t\t"0:10:28 - LMT 1912 0:10:28",\n\t\t\t"0 - GMT 1934_1_26",\n\t\t\t"1 - WAT"\n\t\t],\n\t\t"Africa/Sao_Tome": [\n\t\t\t"0:26:56 - LMT 1884 0:26:56",\n\t\t\t"-0:36:32 - LMT 1912 -0:36:32",\n\t\t\t"0 - GMT"\n\t\t],\n\t\t"Africa/Tripoli": [\n\t\t\t"0:52:44 - LMT 1920 0:52:44",\n\t\t\t"1 Libya CE%sT 1959 1",\n\t\t\t"2 - EET 1982 2",\n\t\t\t"1 Libya CE%sT 1990_4_4 1",\n\t\t\t"2 - EET 1996_8_30 2",\n\t\t\t"1 Libya CE%sT 1997_9_4 2",\n\t\t\t"2 - EET 2012_10_10_2 2",\n\t\t\t"1 Libya CE%sT"\n\t\t],\n\t\t"Africa/Tunis": [\n\t\t\t"0:40:44 - LMT 1881_4_12 0:40:44",\n\t\t\t"0:9:21 - PMT 1911_2_11 0:9:21",\n\t\t\t"1 Tunisia CE%sT"\n\t\t],\n\t\t"Africa/Windhoek": [\n\t\t\t"1:8:24 - LMT 1892_1_8 1:8:24",\n\t\t\t"1:30 - SWAT 1903_2 1:30",\n\t\t\t"2 - SAST 1942_8_20_2 2",\n\t\t\t"3 - SAST 1943_2_21_2 3",\n\t\t\t"2 - SAST 1990_2_21 2",\n\t\t\t"2 - CAT 1994_3_3 2",\n\t\t\t"1 Namibia WA%sT"\n\t\t],\n\t\t"America/Adak": [\n\t\t\t"12:13:21 - LMT 1867_9_18 12:13:21",\n\t\t\t"-11:46:38 - LMT 1900_7_20_12 -11:46:38",\n\t\t\t"-11 - NST 1942 -11",\n\t\t\t"-11 US N%sT 1946 -11",\n\t\t\t"-11 - NST 1967_3 -11",\n\t\t\t"-11 - BST 1969 -11",\n\t\t\t"-11 US B%sT 1983_9_30_2 -10",\n\t\t\t"-10 US AH%sT 1983_10_30 -10",\n\t\t\t"-10 US HA%sT"\n\t\t],\n\t\t"America/Anchorage": [\n\t\t\t"14:0:24 - LMT 1867_9_18 14:0:24",\n\t\t\t"-9:59:36 - LMT 1900_7_20_12 -9:59:36",\n\t\t\t"-10 - CAT 1942 -10",\n\t\t\t"-10 US CAT/CAWT 1945_7_14_23",\n\t\t\t"-10 US CAT/CAPT 1946 -10",\n\t\t\t"-10 - CAT 1967_3 -10",\n\t\t\t"-10 - AHST 1969 -10",\n\t\t\t"-10 US AH%sT 1983_9_30_2 -9",\n\t\t\t"-9 US Y%sT 1983_10_30 -9",\n\t\t\t"-9 US AK%sT"\n\t\t],\n\t\t"America/Anguilla": [\n\t\t\t"-4:12:16 - LMT 1912_2_2 -4:12:16",\n\t\t\t"-4 - AST"\n\t\t],\n\t\t"America/Antigua": [\n\t\t\t"-4:7:12 - LMT 1912_2_2 -4:7:12",\n\t\t\t"-5 - EST 1951 -5",\n\t\t\t"-4 - AST"\n\t\t],\n\t\t"America/Araguaina": [\n\t\t\t"-3:12:48 - LMT 1914 -3:12:48",\n\t\t\t"-3 Brazil BR%sT 1990_8_17 -3",\n\t\t\t"-3 - BRT 1995_8_14 -3",\n\t\t\t"-3 Brazil BR%sT 2003_8_24 -3",\n\t\t\t"-3 - BRT 2012_9_21 -3",\n\t\t\t"-3 Brazil BR%sT"\n\t\t],\n\t\t"America/Argentina/Buenos_Aires": [\n\t\t\t"-3:53:48 - LMT 1894_9_31 -3:53:48",\n\t\t\t"-4:16:48 - CMT 1920_4 -4:16:48",\n\t\t\t"-4 - ART 1930_11 -4",\n\t\t\t"-4 Arg AR%sT 1969_9_5 -4",\n\t\t\t"-3 Arg AR%sT 1999_9_3 -3",\n\t\t\t"-4 Arg AR%sT 2000_2_3 -3",\n\t\t\t"-3 Arg AR%sT"\n\t\t],\n\t\t"America/Argentina/Catamarca": [\n\t\t\t"-4:23:8 - LMT 1894_9_31 -4:23:8",\n\t\t\t"-4:16:48 - CMT 1920_4 -4:16:48",\n\t\t\t"-4 - ART 1930_11 -4",\n\t\t\t"-4 Arg AR%sT 1969_9_5 -4",\n\t\t\t"-3 Arg AR%sT 1991_2_3 -2",\n\t\t\t"-4 - WART 1991_9_20 -4",\n\t\t\t"-3 Arg AR%sT 1999_9_3 -3",\n\t\t\t"-4 Arg AR%sT 2000_2_3 -3",\n\t\t\t"-3 - ART 2004_5_1 -3",\n\t\t\t"-4 - WART 2004_5_20 -4",\n\t\t\t"-3 Arg AR%sT 2008_9_18 -3",\n\t\t\t"-3 - ART"\n\t\t],\n\t\t"America/Argentina/Cordoba": [\n\t\t\t"-4:16:48 - LMT 1894_9_31 -4:16:48",\n\t\t\t"-4:16:48 - CMT 1920_4 -4:16:48",\n\t\t\t"-4 - ART 1930_11 -4",\n\t\t\t"-4 Arg AR%sT 1969_9_5 -4",\n\t\t\t"-3 Arg AR%sT 1991_2_3 -2",\n\t\t\t"-4 - WART 1991_9_20 -4",\n\t\t\t"-3 Arg AR%sT 1999_9_3 -3",\n\t\t\t"-4 Arg AR%sT 2000_2_3 -3",\n\t\t\t"-3 Arg AR%sT"\n\t\t],\n\t\t"America/Argentina/Jujuy": [\n\t\t\t"-4:21:12 - LMT 1894_9_31 -4:21:12",\n\t\t\t"-4:16:48 - CMT 1920_4 -4:16:48",\n\t\t\t"-4 - ART 1930_11 -4",\n\t\t\t"-4 Arg AR%sT 1969_9_5 -4",\n\t\t\t"-3 Arg AR%sT 1990_2_4 -2",\n\t\t\t"-4 - WART 1990_9_28 -4",\n\t\t\t"-3 - WARST 1991_2_17 -3",\n\t\t\t"-4 - WART 1991_9_6 -4",\n\t\t\t"-2 - ARST 1992 -2",\n\t\t\t"-3 Arg AR%sT 1999_9_3 -3",\n\t\t\t"-4 Arg AR%sT 2000_2_3 -3",\n\t\t\t"-3 Arg AR%sT 2008_9_18 -3",\n\t\t\t"-3 - ART"\n\t\t],\n\t\t"America/Argentina/La_Rioja": [\n\t\t\t"-4:27:24 - LMT 1894_9_31 -4:27:24",\n\t\t\t"-4:16:48 - CMT 1920_4 -4:16:48",\n\t\t\t"-4 - ART 1930_11 -4",\n\t\t\t"-4 Arg AR%sT 1969_9_5 -4",\n\t\t\t"-3 Arg AR%sT 1991_2_1 -2",\n\t\t\t"-4 - WART 1991_4_7 -4",\n\t\t\t"-3 Arg AR%sT 1999_9_3 -3",\n\t\t\t"-4 Arg AR%sT 2000_2_3 -3",\n\t\t\t"-3 - ART 2004_5_1 -3",\n\t\t\t"-4 - WART 2004_5_20 -4",\n\t\t\t"-3 Arg AR%sT 2008_9_18 -3",\n\t\t\t"-3 - ART"\n\t\t],\n\t\t"America/Argentina/Mendoza": [\n\t\t\t"-4:35:16 - LMT 1894_9_31 -4:35:16",\n\t\t\t"-4:16:48 - CMT 1920_4 -4:16:48",\n\t\t\t"-4 - ART 1930_11 -4",\n\t\t\t"-4 Arg AR%sT 1969_9_5 -4",\n\t\t\t"-3 Arg AR%sT 1990_2_4 -2",\n\t\t\t"-4 - WART 1990_9_15 -4",\n\t\t\t"-3 - WARST 1991_2_1 -3",\n\t\t\t"-4 - WART 1991_9_15 -4",\n\t\t\t"-3 - WARST 1992_2_1 -3",\n\t\t\t"-4 - WART 1992_9_18 -4",\n\t\t\t"-3 Arg AR%sT 1999_9_3 -3",\n\t\t\t"-4 Arg AR%sT 2000_2_3 -3",\n\t\t\t"-3 - ART 2004_4_23 -3",\n\t\t\t"-4 - WART 2004_8_26 -4",\n\t\t\t"-3 Arg AR%sT 2008_9_18 -3",\n\t\t\t"-3 - ART"\n\t\t],\n\t\t"America/Argentina/Rio_Gallegos": [\n\t\t\t"-4:36:52 - LMT 1894_9_31 -4:36:52",\n\t\t\t"-4:16:48 - CMT 1920_4 -4:16:48",\n\t\t\t"-4 - ART 1930_11 -4",\n\t\t\t"-4 Arg AR%sT 1969_9_5 -4",\n\t\t\t"-3 Arg AR%sT 1999_9_3 -3",\n\t\t\t"-4 Arg AR%sT 2000_2_3 -3",\n\t\t\t"-3 - ART 2004_5_1 -3",\n\t\t\t"-4 - WART 2004_5_20 -4",\n\t\t\t"-3 Arg AR%sT 2008_9_18 -3",\n\t\t\t"-3 - ART"\n\t\t],\n\t\t"America/Argentina/Salta": [\n\t\t\t"-4:21:40 - LMT 1894_9_31 -4:21:40",\n\t\t\t"-4:16:48 - CMT 1920_4 -4:16:48",\n\t\t\t"-4 - ART 1930_11 -4",\n\t\t\t"-4 Arg AR%sT 1969_9_5 -4",\n\t\t\t"-3 Arg AR%sT 1991_2_3 -2",\n\t\t\t"-4 - WART 1991_9_20 -4",\n\t\t\t"-3 Arg AR%sT 1999_9_3 -3",\n\t\t\t"-4 Arg AR%sT 2000_2_3 -3",\n\t\t\t"-3 Arg AR%sT 2008_9_18 -3",\n\t\t\t"-3 - ART"\n\t\t],\n\t\t"America/Argentina/San_Juan": [\n\t\t\t"-4:34:4 - LMT 1894_9_31 -4:34:4",\n\t\t\t"-4:16:48 - CMT 1920_4 -4:16:48",\n\t\t\t"-4 - ART 1930_11 -4",\n\t\t\t"-4 Arg AR%sT 1969_9_5 -4",\n\t\t\t"-3 Arg AR%sT 1991_2_1 -2",\n\t\t\t"-4 - WART 1991_4_7 -4",\n\t\t\t"-3 Arg AR%sT 1999_9_3 -3",\n\t\t\t"-4 Arg AR%sT 2000_2_3 -3",\n\t\t\t"-3 - ART 2004_4_31 -3",\n\t\t\t"-4 - WART 2004_6_25 -4",\n\t\t\t"-3 Arg AR%sT 2008_9_18 -3",\n\t\t\t"-3 - ART"\n\t\t],\n\t\t"America/Argentina/San_Luis": [\n\t\t\t"-4:25:24 - LMT 1894_9_31 -4:25:24",\n\t\t\t"-4:16:48 - CMT 1920_4 -4:16:48",\n\t\t\t"-4 - ART 1930_11 -4",\n\t\t\t"-4 Arg AR%sT 1969_9_5 -4",\n\t\t\t"-3 Arg AR%sT 1990 -2",\n\t\t\t"-2 - ARST 1990_2_14 -2",\n\t\t\t"-4 - WART 1990_9_15 -4",\n\t\t\t"-3 - WARST 1991_2_1 -3",\n\t\t\t"-4 - WART 1991_5_1 -4",\n\t\t\t"-3 - ART 1999_9_3 -3",\n\t\t\t"-3 - WARST 2000_2_3 -3",\n\t\t\t"-3 - ART 2004_4_31 -3",\n\t\t\t"-4 - WART 2004_6_25 -4",\n\t\t\t"-3 Arg AR%sT 2008_0_21 -2",\n\t\t\t"-4 SanLuis WAR%sT"\n\t\t],\n\t\t"America/Argentina/Tucuman": [\n\t\t\t"-4:20:52 - LMT 1894_9_31 -4:20:52",\n\t\t\t"-4:16:48 - CMT 1920_4 -4:16:48",\n\t\t\t"-4 - ART 1930_11 -4",\n\t\t\t"-4 Arg AR%sT 1969_9_5 -4",\n\t\t\t"-3 Arg AR%sT 1991_2_3 -2",\n\t\t\t"-4 - WART 1991_9_20 -4",\n\t\t\t"-3 Arg AR%sT 1999_9_3 -3",\n\t\t\t"-4 Arg AR%sT 2000_2_3 -3",\n\t\t\t"-3 - ART 2004_5_1 -3",\n\t\t\t"-4 - WART 2004_5_13 -4",\n\t\t\t"-3 Arg AR%sT"\n\t\t],\n\t\t"America/Argentina/Ushuaia": [\n\t\t\t"-4:33:12 - LMT 1894_9_31 -4:33:12",\n\t\t\t"-4:16:48 - CMT 1920_4 -4:16:48",\n\t\t\t"-4 - ART 1930_11 -4",\n\t\t\t"-4 Arg AR%sT 1969_9_5 -4",\n\t\t\t"-3 Arg AR%sT 1999_9_3 -3",\n\t\t\t"-4 Arg AR%sT 2000_2_3 -3",\n\t\t\t"-3 - ART 2004_4_30 -3",\n\t\t\t"-4 - WART 2004_5_20 -4",\n\t\t\t"-3 Arg AR%sT 2008_9_18 -3",\n\t\t\t"-3 - ART"\n\t\t],\n\t\t"America/Aruba": [\n\t\t\t"-4:40:24 - LMT 1912_1_12 -4:40:24",\n\t\t\t"-4:30 - ANT 1965 -4:30",\n\t\t\t"-4 - AST"\n\t\t],\n\t\t"America/Asuncion": [\n\t\t\t"-3:50:40 - LMT 1890 -3:50:40",\n\t\t\t"-3:50:40 - AMT 1931_9_10 -3:50:40",\n\t\t\t"-4 - PYT 1972_9 -4",\n\t\t\t"-3 - PYT 1974_3 -3",\n\t\t\t"-4 Para PY%sT"\n\t\t],\n\t\t"America/Atikokan": [\n\t\t\t"-6:6:28 - LMT 1895 -6:6:28",\n\t\t\t"-6 Canada C%sT 1940_8_29 -6",\n\t\t\t"-5 - CDT 1942_1_9_2 -6",\n\t\t\t"-6 Canada C%sT 1945_8_30_2 -5",\n\t\t\t"-5 - EST"\n\t\t],\n\t\t"America/Bahia": [\n\t\t\t"-2:34:4 - LMT 1914 -2:34:4",\n\t\t\t"-3 Brazil BR%sT 2003_8_24 -3",\n\t\t\t"-3 - BRT 2011_9_16 -3",\n\t\t\t"-3 Brazil BR%sT 2012_9_21 -3",\n\t\t\t"-3 - BRT"\n\t\t],\n\t\t"America/Bahia_Banderas": [\n\t\t\t"-7:1 - LMT 1921_11_31_23_59 -7:1",\n\t\t\t"-7 - MST 1927_5_10_23 -7",\n\t\t\t"-6 - CST 1930_10_15 -6",\n\t\t\t"-7 - MST 1931_4_1_23 -7",\n\t\t\t"-6 - CST 1931_9 -6",\n\t\t\t"-7 - MST 1932_3_1 -7",\n\t\t\t"-6 - CST 1942_3_24 -6",\n\t\t\t"-7 - MST 1949_0_14 -7",\n\t\t\t"-8 - PST 1970 -8",\n\t\t\t"-7 Mexico M%sT 2010_3_4_2 -7",\n\t\t\t"-6 Mexico C%sT"\n\t\t],\n\t\t"America/Barbados": [\n\t\t\t"-3:58:29 - LMT 1924 -3:58:29",\n\t\t\t"-3:58:29 - BMT 1932 -3:58:29",\n\t\t\t"-4 Barb A%sT"\n\t\t],\n\t\t"America/Belem": [\n\t\t\t"-3:13:56 - LMT 1914 -3:13:56",\n\t\t\t"-3 Brazil BR%sT 1988_8_12 -3",\n\t\t\t"-3 - BRT"\n\t\t],\n\t\t"America/Belize": [\n\t\t\t"-5:52:48 - LMT 1912_3 -5:52:48",\n\t\t\t"-6 Belize C%sT"\n\t\t],\n\t\t"America/Blanc-Sablon": [\n\t\t\t"-3:48:28 - LMT 1884 -3:48:28",\n\t\t\t"-4 Canada A%sT 1970 -4",\n\t\t\t"-4 - AST"\n\t\t],\n\t\t"America/Boa_Vista": [\n\t\t\t"-4:2:40 - LMT 1914 -4:2:40",\n\t\t\t"-4 Brazil AM%sT 1988_8_12 -4",\n\t\t\t"-4 - AMT 1999_8_30 -4",\n\t\t\t"-4 Brazil AM%sT 2000_9_15 -3",\n\t\t\t"-4 - AMT"\n\t\t],\n\t\t"America/Bogota": [\n\t\t\t"-4:56:16 - LMT 1884_2_13 -4:56:16",\n\t\t\t"-4:56:16 - BMT 1914_10_23 -4:56:16",\n\t\t\t"-5 CO CO%sT"\n\t\t],\n\t\t"America/Boise": [\n\t\t\t"-7:44:49 - LMT 1883_10_18_12_15_11 -7:44:49",\n\t\t\t"-8 US P%sT 1923_4_13_2 -8",\n\t\t\t"-7 US M%sT 1974 -7",\n\t\t\t"-7 - MST 1974_1_3_2 -7",\n\t\t\t"-7 US M%sT"\n\t\t],\n\t\t"America/Cambridge_Bay": [\n\t\t\t"0 - zzz 1920",\n\t\t\t"-7 NT_YK M%sT 1999_9_31_2 -6",\n\t\t\t"-6 Canada C%sT 2000_9_29_2 -5",\n\t\t\t"-5 - EST 2000_10_5_0 -5",\n\t\t\t"-6 - CST 2001_3_1_3 -6",\n\t\t\t"-7 Canada M%sT"\n\t\t],\n\t\t"America/Campo_Grande": [\n\t\t\t"-3:38:28 - LMT 1914 -3:38:28",\n\t\t\t"-4 Brazil AM%sT"\n\t\t],\n\t\t"America/Cancun": [\n\t\t\t"-5:47:4 - LMT 1922_0_1_0_12_56 -5:47:4",\n\t\t\t"-6 - CST 1981_11_23 -6",\n\t\t\t"-5 Mexico E%sT 1998_7_2_2 -4",\n\t\t\t"-6 Mexico C%sT"\n\t\t],\n\t\t"America/Caracas": [\n\t\t\t"-4:27:44 - LMT 1890 -4:27:44",\n\t\t\t"-4:27:40 - CMT 1912_1_12 -4:27:40",\n\t\t\t"-4:30 - VET 1965 -4:30",\n\t\t\t"-4 - VET 2007_11_9_03 -4",\n\t\t\t"-4:30 - VET"\n\t\t],\n\t\t"America/Cayenne": [\n\t\t\t"-3:29:20 - LMT 1911_6 -3:29:20",\n\t\t\t"-4 - GFT 1967_9 -4",\n\t\t\t"-3 - GFT"\n\t\t],\n\t\t"America/Cayman": [\n\t\t\t"-5:25:32 - LMT 1890 -5:25:32",\n\t\t\t"-5:7:12 - KMT 1912_1 -5:7:12",\n\t\t\t"-5 - EST"\n\t\t],\n\t\t"America/Chicago": [\n\t\t\t"-5:50:36 - LMT 1883_10_18_12_9_24 -5:50:36",\n\t\t\t"-6 US C%sT 1920 -6",\n\t\t\t"-6 Chicago C%sT 1936_2_1_2 -6",\n\t\t\t"-5 - EST 1936_10_15_2 -5",\n\t\t\t"-6 Chicago C%sT 1942 -6",\n\t\t\t"-6 US C%sT 1946 -6",\n\t\t\t"-6 Chicago C%sT 1967 -6",\n\t\t\t"-6 US C%sT"\n\t\t],\n\t\t"America/Chihuahua": [\n\t\t\t"-7:4:20 - LMT 1921_11_31_23_55_40 -7:4:20",\n\t\t\t"-7 - MST 1927_5_10_23 -7",\n\t\t\t"-6 - CST 1930_10_15 -6",\n\t\t\t"-7 - MST 1931_4_1_23 -7",\n\t\t\t"-6 - CST 1931_9 -6",\n\t\t\t"-7 - MST 1932_3_1 -7",\n\t\t\t"-6 - CST 1996 -6",\n\t\t\t"-6 Mexico C%sT 1998 -6",\n\t\t\t"-6 - CST 1998_3_5_3 -6",\n\t\t\t"-7 Mexico M%sT"\n\t\t],\n\t\t"America/Costa_Rica": [\n\t\t\t"-5:36:13 - LMT 1890 -5:36:13",\n\t\t\t"-5:36:13 - SJMT 1921_0_15 -5:36:13",\n\t\t\t"-6 CR C%sT"\n\t\t],\n\t\t"America/Creston": [\n\t\t\t"-7:46:4 - LMT 1884 -7:46:4",\n\t\t\t"-7 - MST 1916_9_1 -7",\n\t\t\t"-8 - PST 1918_5_2 -8",\n\t\t\t"-7 - MST"\n\t\t],\n\t\t"America/Cuiaba": [\n\t\t\t"-3:44:20 - LMT 1914 -3:44:20",\n\t\t\t"-4 Brazil AM%sT 2003_8_24 -4",\n\t\t\t"-4 - AMT 2004_9_1 -4",\n\t\t\t"-4 Brazil AM%sT"\n\t\t],\n\t\t"America/Curacao": [\n\t\t\t"-4:35:47 - LMT 1912_1_12 -4:35:47",\n\t\t\t"-4:30 - ANT 1965 -4:30",\n\t\t\t"-4 - AST"\n\t\t],\n\t\t"America/Danmarkshavn": [\n\t\t\t"-1:14:40 - LMT 1916_6_28 -1:14:40",\n\t\t\t"-3 - WGT 1980_3_6_2 -3",\n\t\t\t"-3 EU WG%sT 1996 -3",\n\t\t\t"0 - GMT"\n\t\t],\n\t\t"America/Dawson": [\n\t\t\t"-9:17:40 - LMT 1900_7_20 -9:17:40",\n\t\t\t"-9 NT_YK Y%sT 1973_9_28_0 -9",\n\t\t\t"-8 NT_YK P%sT 1980 -8",\n\t\t\t"-8 Canada P%sT"\n\t\t],\n\t\t"America/Dawson_Creek": [\n\t\t\t"-8:0:56 - LMT 1884 -8:0:56",\n\t\t\t"-8 Canada P%sT 1947 -8",\n\t\t\t"-8 Vanc P%sT 1972_7_30_2 -7",\n\t\t\t"-7 - MST"\n\t\t],\n\t\t"America/Denver": [\n\t\t\t"-6:59:56 - LMT 1883_10_18_12_0_4 -6:59:56",\n\t\t\t"-7 US M%sT 1920 -7",\n\t\t\t"-7 Denver M%sT 1942 -7",\n\t\t\t"-7 US M%sT 1946 -7",\n\t\t\t"-7 Denver M%sT 1967 -7",\n\t\t\t"-7 US M%sT"\n\t\t],\n\t\t"America/Detroit": [\n\t\t\t"-5:32:11 - LMT 1905 -5:32:11",\n\t\t\t"-6 - CST 1915_4_15_2 -6",\n\t\t\t"-5 - EST 1942 -5",\n\t\t\t"-5 US E%sT 1946 -5",\n\t\t\t"-5 Detroit E%sT 1973 -5",\n\t\t\t"-5 US E%sT 1975 -5",\n\t\t\t"-5 - EST 1975_3_27_2 -5",\n\t\t\t"-5 US E%sT"\n\t\t],\n\t\t"America/Dominica": [\n\t\t\t"-4:5:36 - LMT 1911_6_1_0_1 -4:5:36",\n\t\t\t"-4 - AST"\n\t\t],\n\t\t"America/Edmonton": [\n\t\t\t"-7:33:52 - LMT 1906_8 -7:33:52",\n\t\t\t"-7 Edm M%sT 1987 -7",\n\t\t\t"-7 Canada M%sT"\n\t\t],\n\t\t"America/Eirunepe": [\n\t\t\t"-4:39:28 - LMT 1914 -4:39:28",\n\t\t\t"-5 Brazil AC%sT 1988_8_12 -5",\n\t\t\t"-5 - ACT 1993_8_28 -5",\n\t\t\t"-5 Brazil AC%sT 1994_8_22 -5",\n\t\t\t"-5 - ACT 2008_5_24_00 -5",\n\t\t\t"-4 - AMT"\n\t\t],\n\t\t"America/El_Salvador": [\n\t\t\t"-5:56:48 - LMT 1921 -5:56:48",\n\t\t\t"-6 Salv C%sT"\n\t\t],\n\t\t"America/Fortaleza": [\n\t\t\t"-2:34 - LMT 1914 -2:34",\n\t\t\t"-3 Brazil BR%sT 1990_8_17 -3",\n\t\t\t"-3 - BRT 1999_8_30 -3",\n\t\t\t"-3 Brazil BR%sT 2000_9_22 -2",\n\t\t\t"-3 - BRT 2001_8_13 -3",\n\t\t\t"-3 Brazil BR%sT 2002_9_1 -3",\n\t\t\t"-3 - BRT"\n\t\t],\n\t\t"America/Glace_Bay": [\n\t\t\t"-3:59:48 - LMT 1902_5_15 -3:59:48",\n\t\t\t"-4 Canada A%sT 1953 -4",\n\t\t\t"-4 Halifax A%sT 1954 -4",\n\t\t\t"-4 - AST 1972 -4",\n\t\t\t"-4 Halifax A%sT 1974 -4",\n\t\t\t"-4 Canada A%sT"\n\t\t],\n\t\t"America/Godthab": [\n\t\t\t"-3:26:56 - LMT 1916_6_28 -3:26:56",\n\t\t\t"-3 - WGT 1980_3_6_2 -3",\n\t\t\t"-3 EU WG%sT"\n\t\t],\n\t\t"America/Goose_Bay": [\n\t\t\t"-4:1:40 - LMT 1884 -4:1:40",\n\t\t\t"-3:30:52 - NST 1918 -3:30:52",\n\t\t\t"-3:30:52 Canada N%sT 1919 -3:30:52",\n\t\t\t"-3:30:52 - NST 1935_2_30 -3:30:52",\n\t\t\t"-3:30 - NST 1936 -3:30",\n\t\t\t"-3:30 StJohns N%sT 1942_4_11 -3:30",\n\t\t\t"-3:30 Canada N%sT 1946 -3:30",\n\t\t\t"-3:30 StJohns N%sT 1966_2_15_2 -3:30",\n\t\t\t"-4 StJohns A%sT 2011_10 -3",\n\t\t\t"-4 Canada A%sT"\n\t\t],\n\t\t"America/Grand_Turk": [\n\t\t\t"-4:44:32 - LMT 1890 -4:44:32",\n\t\t\t"-5:7:12 - KMT 1912_1 -5:7:12",\n\t\t\t"-5 TC E%sT"\n\t\t],\n\t\t"America/Grenada": [\n\t\t\t"-4:7 - LMT 1911_6 -4:7",\n\t\t\t"-4 - AST"\n\t\t],\n\t\t"America/Guadeloupe": [\n\t\t\t"-4:6:8 - LMT 1911_5_8 -4:6:8",\n\t\t\t"-4 - AST"\n\t\t],\n\t\t"America/Guatemala": [\n\t\t\t"-6:2:4 - LMT 1918_9_5 -6:2:4",\n\t\t\t"-6 Guat C%sT"\n\t\t],\n\t\t"America/Guayaquil": [\n\t\t\t"-5:19:20 - LMT 1890 -5:19:20",\n\t\t\t"-5:14 - QMT 1931 -5:14",\n\t\t\t"-5 - ECT"\n\t\t],\n\t\t"America/Guyana": [\n\t\t\t"-3:52:40 - LMT 1915_2 -3:52:40",\n\t\t\t"-3:45 - GBGT 1966_4_26 -3:45",\n\t\t\t"-3:45 - GYT 1975_6_31 -3:45",\n\t\t\t"-3 - GYT 1991 -3",\n\t\t\t"-4 - GYT"\n\t\t],\n\t\t"America/Halifax": [\n\t\t\t"-4:14:24 - LMT 1902_5_15 -4:14:24",\n\t\t\t"-4 Halifax A%sT 1918 -4",\n\t\t\t"-4 Canada A%sT 1919 -4",\n\t\t\t"-4 Halifax A%sT 1942_1_9_2 -4",\n\t\t\t"-4 Canada A%sT 1946 -4",\n\t\t\t"-4 Halifax A%sT 1974 -4",\n\t\t\t"-4 Canada A%sT"\n\t\t],\n\t\t"America/Havana": [\n\t\t\t"-5:29:28 - LMT 1890 -5:29:28",\n\t\t\t"-5:29:36 - HMT 1925_6_19_12 -5:29:36",\n\t\t\t"-5 Cuba C%sT"\n\t\t],\n\t\t"America/Hermosillo": [\n\t\t\t"-7:23:52 - LMT 1921_11_31_23_36_8 -7:23:52",\n\t\t\t"-7 - MST 1927_5_10_23 -7",\n\t\t\t"-6 - CST 1930_10_15 -6",\n\t\t\t"-7 - MST 1931_4_1_23 -7",\n\t\t\t"-6 - CST 1931_9 -6",\n\t\t\t"-7 - MST 1932_3_1 -7",\n\t\t\t"-6 - CST 1942_3_24 -6",\n\t\t\t"-7 - MST 1949_0_14 -7",\n\t\t\t"-8 - PST 1970 -8",\n\t\t\t"-7 Mexico M%sT 1999 -7",\n\t\t\t"-7 - MST"\n\t\t],\n\t\t"America/Indiana/Indianapolis": [\n\t\t\t"-5:44:38 - LMT 1883_10_18_12_15_22 -5:44:38",\n\t\t\t"-6 US C%sT 1920 -6",\n\t\t\t"-6 Indianapolis C%sT 1942 -6",\n\t\t\t"-6 US C%sT 1946 -6",\n\t\t\t"-6 Indianapolis C%sT 1955_3_24_2 -6",\n\t\t\t"-5 - EST 1957_8_29_2 -5",\n\t\t\t"-6 - CST 1958_3_27_2 -6",\n\t\t\t"-5 - EST 1969 -5",\n\t\t\t"-5 US E%sT 1971 -5",\n\t\t\t"-5 - EST 2006 -5",\n\t\t\t"-5 US E%sT"\n\t\t],\n\t\t"America/Indiana/Knox": [\n\t\t\t"-5:46:30 - LMT 1883_10_18_12_13_30 -5:46:30",\n\t\t\t"-6 US C%sT 1947 -6",\n\t\t\t"-6 Starke C%sT 1962_3_29_2 -6",\n\t\t\t"-5 - EST 1963_9_27_2 -5",\n\t\t\t"-6 US C%sT 1991_9_27_2 -5",\n\t\t\t"-5 - EST 2006_3_2_2 -5",\n\t\t\t"-6 US C%sT"\n\t\t],\n\t\t"America/Indiana/Marengo": [\n\t\t\t"-5:45:23 - LMT 1883_10_18_12_14_37 -5:45:23",\n\t\t\t"-6 US C%sT 1951 -6",\n\t\t\t"-6 Marengo C%sT 1961_3_30_2 -6",\n\t\t\t"-5 - EST 1969 -5",\n\t\t\t"-5 US E%sT 1974_0_6_2 -5",\n\t\t\t"-5 - CDT 1974_9_27_2 -5",\n\t\t\t"-5 US E%sT 1976 -5",\n\t\t\t"-5 - EST 2006 -5",\n\t\t\t"-5 US E%sT"\n\t\t],\n\t\t"America/Indiana/Petersburg": [\n\t\t\t"-5:49:7 - LMT 1883_10_18_12_10_53 -5:49:7",\n\t\t\t"-6 US C%sT 1955 -6",\n\t\t\t"-6 Pike C%sT 1965_3_25_2 -6",\n\t\t\t"-5 - EST 1966_9_30_2 -5",\n\t\t\t"-6 US C%sT 1977_9_30_2 -5",\n\t\t\t"-5 - EST 2006_3_2_2 -5",\n\t\t\t"-6 US C%sT 2007_10_4_2 -5",\n\t\t\t"-5 US E%sT"\n\t\t],\n\t\t"America/Indiana/Tell_City": [\n\t\t\t"-5:47:3 - LMT 1883_10_18_12_12_57 -5:47:3",\n\t\t\t"-6 US C%sT 1946 -6",\n\t\t\t"-6 Perry C%sT 1964_3_26_2 -6",\n\t\t\t"-5 - EST 1969 -5",\n\t\t\t"-5 US E%sT 1971 -5",\n\t\t\t"-5 - EST 2006_3_2_2 -5",\n\t\t\t"-6 US C%sT"\n\t\t],\n\t\t"America/Indiana/Vevay": [\n\t\t\t"-5:40:16 - LMT 1883_10_18_12_19_44 -5:40:16",\n\t\t\t"-6 US C%sT 1954_3_25_2 -6",\n\t\t\t"-5 - EST 1969 -5",\n\t\t\t"-5 US E%sT 1973 -5",\n\t\t\t"-5 - EST 2006 -5",\n\t\t\t"-5 US E%sT"\n\t\t],\n\t\t"America/Indiana/Vincennes": [\n\t\t\t"-5:50:7 - LMT 1883_10_18_12_9_53 -5:50:7",\n\t\t\t"-6 US C%sT 1946 -6",\n\t\t\t"-6 Vincennes C%sT 1964_3_26_2 -6",\n\t\t\t"-5 - EST 1969 -5",\n\t\t\t"-5 US E%sT 1971 -5",\n\t\t\t"-5 - EST 2006_3_2_2 -5",\n\t\t\t"-6 US C%sT 2007_10_4_2 -5",\n\t\t\t"-5 US E%sT"\n\t\t],\n\t\t"America/Indiana/Winamac": [\n\t\t\t"-5:46:25 - LMT 1883_10_18_12_13_35 -5:46:25",\n\t\t\t"-6 US C%sT 1946 -6",\n\t\t\t"-6 Pulaski C%sT 1961_3_30_2 -6",\n\t\t\t"-5 - EST 1969 -5",\n\t\t\t"-5 US E%sT 1971 -5",\n\t\t\t"-5 - EST 2006_3_2_2 -5",\n\t\t\t"-6 US C%sT 2007_2_11_2 -6",\n\t\t\t"-5 US E%sT"\n\t\t],\n\t\t"America/Inuvik": [\n\t\t\t"0 - zzz 1953",\n\t\t\t"-8 NT_YK P%sT 1979_3_29_2 -8",\n\t\t\t"-7 NT_YK M%sT 1980 -7",\n\t\t\t"-7 Canada M%sT"\n\t\t],\n\t\t"America/Iqaluit": [\n\t\t\t"0 - zzz 1942_7",\n\t\t\t"-5 NT_YK E%sT 1999_9_31_2 -4",\n\t\t\t"-6 Canada C%sT 2000_9_29_2 -5",\n\t\t\t"-5 Canada E%sT"\n\t\t],\n\t\t"America/Jamaica": [\n\t\t\t"-5:7:12 - LMT 1890 -5:7:12",\n\t\t\t"-5:7:12 - KMT 1912_1 -5:7:12",\n\t\t\t"-5 - EST 1974_3_28_2 -5",\n\t\t\t"-5 US E%sT 1984 -5",\n\t\t\t"-5 - EST"\n\t\t],\n\t\t"America/Juneau": [\n\t\t\t"15:2:19 - LMT 1867_9_18 15:2:19",\n\t\t\t"-8:57:41 - LMT 1900_7_20_12 -8:57:41",\n\t\t\t"-8 - PST 1942 -8",\n\t\t\t"-8 US P%sT 1946 -8",\n\t\t\t"-8 - PST 1969 -8",\n\t\t\t"-8 US P%sT 1980_3_27_2 -8",\n\t\t\t"-9 US Y%sT 1980_9_26_2 -8",\n\t\t\t"-8 US P%sT 1983_9_30_2 -7",\n\t\t\t"-9 US Y%sT 1983_10_30 -9",\n\t\t\t"-9 US AK%sT"\n\t\t],\n\t\t"America/Kentucky/Louisville": [\n\t\t\t"-5:43:2 - LMT 1883_10_18_12_16_58 -5:43:2",\n\t\t\t"-6 US C%sT 1921 -6",\n\t\t\t"-6 Louisville C%sT 1942 -6",\n\t\t\t"-6 US C%sT 1946 -6",\n\t\t\t"-6 Louisville C%sT 1961_6_23_2 -5",\n\t\t\t"-5 - EST 1968 -5",\n\t\t\t"-5 US E%sT 1974_0_6_2 -5",\n\t\t\t"-5 - CDT 1974_9_27_2 -5",\n\t\t\t"-5 US E%sT"\n\t\t],\n\t\t"America/Kentucky/Monticello": [\n\t\t\t"-5:39:24 - LMT 1883_10_18_12_20_36 -5:39:24",\n\t\t\t"-6 US C%sT 1946 -6",\n\t\t\t"-6 - CST 1968 -6",\n\t\t\t"-6 US C%sT 2000_9_29_2 -5",\n\t\t\t"-5 US E%sT"\n\t\t],\n\t\t"America/La_Paz": [\n\t\t\t"-4:32:36 - LMT 1890 -4:32:36",\n\t\t\t"-4:32:36 - CMT 1931_9_15 -4:32:36",\n\t\t\t"-3:32:36 - BOST 1932_2_21 -3:32:36",\n\t\t\t"-4 - BOT"\n\t\t],\n\t\t"America/Lima": [\n\t\t\t"-5:8:12 - LMT 1890 -5:8:12",\n\t\t\t"-5:8:36 - LMT 1908_6_28 -5:8:36",\n\t\t\t"-5 Peru PE%sT"\n\t\t],\n\t\t"America/Los_Angeles": [\n\t\t\t"-7:52:58 - LMT 1883_10_18_12_7_2 -7:52:58",\n\t\t\t"-8 US P%sT 1946 -8",\n\t\t\t"-8 CA P%sT 1967 -8",\n\t\t\t"-8 US P%sT"\n\t\t],\n\t\t"America/Maceio": [\n\t\t\t"-2:22:52 - LMT 1914 -2:22:52",\n\t\t\t"-3 Brazil BR%sT 1990_8_17 -3",\n\t\t\t"-3 - BRT 1995_9_13 -3",\n\t\t\t"-3 Brazil BR%sT 1996_8_4 -3",\n\t\t\t"-3 - BRT 1999_8_30 -3",\n\t\t\t"-3 Brazil BR%sT 2000_9_22 -2",\n\t\t\t"-3 - BRT 2001_8_13 -3",\n\t\t\t"-3 Brazil BR%sT 2002_9_1 -3",\n\t\t\t"-3 - BRT"\n\t\t],\n\t\t"America/Managua": [\n\t\t\t"-5:45:8 - LMT 1890 -5:45:8",\n\t\t\t"-5:45:12 - MMT 1934_5_23 -5:45:12",\n\t\t\t"-6 - CST 1973_4 -6",\n\t\t\t"-5 - EST 1975_1_16 -5",\n\t\t\t"-6 Nic C%sT 1992_0_1_4 -6",\n\t\t\t"-5 - EST 1992_8_24 -5",\n\t\t\t"-6 - CST 1993 -6",\n\t\t\t"-5 - EST 1997 -5",\n\t\t\t"-6 Nic C%sT"\n\t\t],\n\t\t"America/Manaus": [\n\t\t\t"-4:0:4 - LMT 1914 -4:0:4",\n\t\t\t"-4 Brazil AM%sT 1988_8_12 -4",\n\t\t\t"-4 - AMT 1993_8_28 -4",\n\t\t\t"-4 Brazil AM%sT 1994_8_22 -4",\n\t\t\t"-4 - AMT"\n\t\t],\n\t\t"America/Martinique": [\n\t\t\t"-4:4:20 - LMT 1890 -4:4:20",\n\t\t\t"-4:4:20 - FFMT 1911_4 -4:4:20",\n\t\t\t"-4 - AST 1980_3_6 -4",\n\t\t\t"-3 - ADT 1980_8_28 -3",\n\t\t\t"-4 - AST"\n\t\t],\n\t\t"America/Matamoros": [\n\t\t\t"-6:40 - LMT 1921_11_31_23_20 -6:40",\n\t\t\t"-6 - CST 1988 -6",\n\t\t\t"-6 US C%sT 1989 -6",\n\t\t\t"-6 Mexico C%sT 2010 -6",\n\t\t\t"-6 US C%sT"\n\t\t],\n\t\t"America/Mazatlan": [\n\t\t\t"-7:5:40 - LMT 1921_11_31_23_54_20 -7:5:40",\n\t\t\t"-7 - MST 1927_5_10_23 -7",\n\t\t\t"-6 - CST 1930_10_15 -6",\n\t\t\t"-7 - MST 1931_4_1_23 -7",\n\t\t\t"-6 - CST 1931_9 -6",\n\t\t\t"-7 - MST 1932_3_1 -7",\n\t\t\t"-6 - CST 1942_3_24 -6",\n\t\t\t"-7 - MST 1949_0_14 -7",\n\t\t\t"-8 - PST 1970 -8",\n\t\t\t"-7 Mexico M%sT"\n\t\t],\n\t\t"America/Menominee": [\n\t\t\t"-5:50:27 - LMT 1885_8_18_12 -5:50:27",\n\t\t\t"-6 US C%sT 1946 -6",\n\t\t\t"-6 Menominee C%sT 1969_3_27_2 -6",\n\t\t\t"-5 - EST 1973_3_29_2 -5",\n\t\t\t"-6 US C%sT"\n\t\t],\n\t\t"America/Merida": [\n\t\t\t"-5:58:28 - LMT 1922_0_1_0_1_32 -5:58:28",\n\t\t\t"-6 - CST 1981_11_23 -6",\n\t\t\t"-5 - EST 1982_11_2 -5",\n\t\t\t"-6 Mexico C%sT"\n\t\t],\n\t\t"America/Metlakatla": [\n\t\t\t"15:13:42 - LMT 1867_9_18 15:13:42",\n\t\t\t"-8:46:18 - LMT 1900_7_20_12 -8:46:18",\n\t\t\t"-8 - PST 1942 -8",\n\t\t\t"-8 US P%sT 1946 -8",\n\t\t\t"-8 - PST 1969 -8",\n\t\t\t"-8 US P%sT 1983_9_30_2 -7",\n\t\t\t"-8 - MeST"\n\t\t],\n\t\t"America/Mexico_City": [\n\t\t\t"-6:36:36 - LMT 1922_0_1_0_23_24 -6:36:36",\n\t\t\t"-7 - MST 1927_5_10_23 -7",\n\t\t\t"-6 - CST 1930_10_15 -6",\n\t\t\t"-7 - MST 1931_4_1_23 -7",\n\t\t\t"-6 - CST 1931_9 -6",\n\t\t\t"-7 - MST 1932_3_1 -7",\n\t\t\t"-6 Mexico C%sT 2001_8_30_02 -5",\n\t\t\t"-6 - CST 2002_1_20 -6",\n\t\t\t"-6 Mexico C%sT"\n\t\t],\n\t\t"America/Miquelon": [\n\t\t\t"-3:44:40 - LMT 1911_4_15 -3:44:40",\n\t\t\t"-4 - AST 1980_4 -4",\n\t\t\t"-3 - PMST 1987 -3",\n\t\t\t"-3 Canada PM%sT"\n\t\t],\n\t\t"America/Moncton": [\n\t\t\t"-4:19:8 - LMT 1883_11_9 -4:19:8",\n\t\t\t"-5 - EST 1902_5_15 -5",\n\t\t\t"-4 Canada A%sT 1933 -4",\n\t\t\t"-4 Moncton A%sT 1942 -4",\n\t\t\t"-4 Canada A%sT 1946 -4",\n\t\t\t"-4 Moncton A%sT 1973 -4",\n\t\t\t"-4 Canada A%sT 1993 -4",\n\t\t\t"-4 Moncton A%sT 2007 -4",\n\t\t\t"-4 Canada A%sT"\n\t\t],\n\t\t"America/Monterrey": [\n\t\t\t"-6:41:16 - LMT 1921_11_31_23_18_44 -6:41:16",\n\t\t\t"-6 - CST 1988 -6",\n\t\t\t"-6 US C%sT 1989 -6",\n\t\t\t"-6 Mexico C%sT"\n\t\t],\n\t\t"America/Montevideo": [\n\t\t\t"-3:44:44 - LMT 1898_5_28 -3:44:44",\n\t\t\t"-3:44:44 - MMT 1920_4_1 -3:44:44",\n\t\t\t"-3:30 Uruguay UY%sT 1942_11_14 -3:30",\n\t\t\t"-3 Uruguay UY%sT"\n\t\t],\n\t\t"America/Montreal": [\n\t\t\t"-4:54:16 - LMT 1884 -4:54:16",\n\t\t\t"-5 Mont E%sT 1918 -5",\n\t\t\t"-5 Canada E%sT 1919 -5",\n\t\t\t"-5 Mont E%sT 1942_1_9_2 -5",\n\t\t\t"-5 Canada E%sT 1946 -5",\n\t\t\t"-5 Mont E%sT 1974 -5",\n\t\t\t"-5 Canada E%sT"\n\t\t],\n\t\t"America/Montserrat": [\n\t\t\t"-4:8:52 - LMT 1911_6_1_0_1 -4:8:52",\n\t\t\t"-4 - AST"\n\t\t],\n\t\t"America/Nassau": [\n\t\t\t"-5:9:30 - LMT 1912_2_2 -5:9:30",\n\t\t\t"-5 Bahamas E%sT 1976 -5",\n\t\t\t"-5 US E%sT"\n\t\t],\n\t\t"America/New_York": [\n\t\t\t"-4:56:2 - LMT 1883_10_18_12_3_58 -4:56:2",\n\t\t\t"-5 US E%sT 1920 -5",\n\t\t\t"-5 NYC E%sT 1942 -5",\n\t\t\t"-5 US E%sT 1946 -5",\n\t\t\t"-5 NYC E%sT 1967 -5",\n\t\t\t"-5 US E%sT"\n\t\t],\n\t\t"America/Nipigon": [\n\t\t\t"-5:53:4 - LMT 1895 -5:53:4",\n\t\t\t"-5 Canada E%sT 1940_8_29 -5",\n\t\t\t"-4 - EDT 1942_1_9_2 -5",\n\t\t\t"-5 Canada E%sT"\n\t\t],\n\t\t"America/Nome": [\n\t\t\t"12:58:21 - LMT 1867_9_18 12:58:21",\n\t\t\t"-11:1:38 - LMT 1900_7_20_12 -11:1:38",\n\t\t\t"-11 - NST 1942 -11",\n\t\t\t"-11 US N%sT 1946 -11",\n\t\t\t"-11 - NST 1967_3 -11",\n\t\t\t"-11 - BST 1969 -11",\n\t\t\t"-11 US B%sT 1983_9_30_2 -10",\n\t\t\t"-9 US Y%sT 1983_10_30 -9",\n\t\t\t"-9 US AK%sT"\n\t\t],\n\t\t"America/Noronha": [\n\t\t\t"-2:9:40 - LMT 1914 -2:9:40",\n\t\t\t"-2 Brazil FN%sT 1990_8_17 -2",\n\t\t\t"-2 - FNT 1999_8_30 -2",\n\t\t\t"-2 Brazil FN%sT 2000_9_15 -1",\n\t\t\t"-2 - FNT 2001_8_13 -2",\n\t\t\t"-2 Brazil FN%sT 2002_9_1 -2",\n\t\t\t"-2 - FNT"\n\t\t],\n\t\t"America/North_Dakota/Beulah": [\n\t\t\t"-6:47:7 - LMT 1883_10_18_12_12_53 -6:47:7",\n\t\t\t"-7 US M%sT 2010_10_7_2 -6",\n\t\t\t"-6 US C%sT"\n\t\t],\n\t\t"America/North_Dakota/Center": [\n\t\t\t"-6:45:12 - LMT 1883_10_18_12_14_48 -6:45:12",\n\t\t\t"-7 US M%sT 1992_9_25_02 -6",\n\t\t\t"-6 US C%sT"\n\t\t],\n\t\t"America/North_Dakota/New_Salem": [\n\t\t\t"-6:45:39 - LMT 1883_10_18_12_14_21 -6:45:39",\n\t\t\t"-7 US M%sT 2003_9_26_02 -6",\n\t\t\t"-6 US C%sT"\n\t\t],\n\t\t"America/Ojinaga": [\n\t\t\t"-6:57:40 - LMT 1922_0_1_0_2_20 -6:57:40",\n\t\t\t"-7 - MST 1927_5_10_23 -7",\n\t\t\t"-6 - CST 1930_10_15 -6",\n\t\t\t"-7 - MST 1931_4_1_23 -7",\n\t\t\t"-6 - CST 1931_9 -6",\n\t\t\t"-7 - MST 1932_3_1 -7",\n\t\t\t"-6 - CST 1996 -6",\n\t\t\t"-6 Mexico C%sT 1998 -6",\n\t\t\t"-6 - CST 1998_3_5_3 -6",\n\t\t\t"-7 Mexico M%sT 2010 -7",\n\t\t\t"-7 US M%sT"\n\t\t],\n\t\t"America/Panama": [\n\t\t\t"-5:18:8 - LMT 1890 -5:18:8",\n\t\t\t"-5:19:36 - CMT 1908_3_22 -5:19:36",\n\t\t\t"-5 - EST"\n\t\t],\n\t\t"America/Pangnirtung": [\n\t\t\t"0 - zzz 1921",\n\t\t\t"-4 NT_YK A%sT 1995_3_2_2 -4",\n\t\t\t"-5 Canada E%sT 1999_9_31_2 -4",\n\t\t\t"-6 Canada C%sT 2000_9_29_2 -5",\n\t\t\t"-5 Canada E%sT"\n\t\t],\n\t\t"America/Paramaribo": [\n\t\t\t"-3:40:40 - LMT 1911 -3:40:40",\n\t\t\t"-3:40:52 - PMT 1935 -3:40:52",\n\t\t\t"-3:40:36 - PMT 1945_9 -3:40:36",\n\t\t\t"-3:30 - NEGT 1975_10_20 -3:30",\n\t\t\t"-3:30 - SRT 1984_9 -3:30",\n\t\t\t"-3 - SRT"\n\t\t],\n\t\t"America/Phoenix": [\n\t\t\t"-7:28:18 - LMT 1883_10_18_11_31_42 -7:28:18",\n\t\t\t"-7 US M%sT 1944_0_1_00_1 -6",\n\t\t\t"-7 - MST 1944_3_1_00_1 -7",\n\t\t\t"-7 US M%sT 1944_9_1_00_1 -6",\n\t\t\t"-7 - MST 1967 -7",\n\t\t\t"-7 US M%sT 1968_2_21 -7",\n\t\t\t"-7 - MST"\n\t\t],\n\t\t"America/Port-au-Prince": [\n\t\t\t"-4:49:20 - LMT 1890 -4:49:20",\n\t\t\t"-4:49 - PPMT 1917_0_24_12 -4:49",\n\t\t\t"-5 Haiti E%sT"\n\t\t],\n\t\t"America/Port_of_Spain": [\n\t\t\t"-4:6:4 - LMT 1912_2_2 -4:6:4",\n\t\t\t"-4 - AST"\n\t\t],\n\t\t"America/Porto_Velho": [\n\t\t\t"-4:15:36 - LMT 1914 -4:15:36",\n\t\t\t"-4 Brazil AM%sT 1988_8_12 -4",\n\t\t\t"-4 - AMT"\n\t\t],\n\t\t"America/Puerto_Rico": [\n\t\t\t"-4:24:25 - LMT 1899_2_28_12 -4:24:25",\n\t\t\t"-4 - AST 1942_4_3 -4",\n\t\t\t"-4 US A%sT 1946 -4",\n\t\t\t"-4 - AST"\n\t\t],\n\t\t"America/Rainy_River": [\n\t\t\t"-6:18:16 - LMT 1895 -6:18:16",\n\t\t\t"-6 Canada C%sT 1940_8_29 -6",\n\t\t\t"-5 - CDT 1942_1_9_2 -6",\n\t\t\t"-6 Canada C%sT"\n\t\t],\n\t\t"America/Rankin_Inlet": [\n\t\t\t"0 - zzz 1957",\n\t\t\t"-6 NT_YK C%sT 2000_9_29_2 -5",\n\t\t\t"-5 - EST 2001_3_1_3 -5",\n\t\t\t"-6 Canada C%sT"\n\t\t],\n\t\t"America/Recife": [\n\t\t\t"-2:19:36 - LMT 1914 -2:19:36",\n\t\t\t"-3 Brazil BR%sT 1990_8_17 -3",\n\t\t\t"-3 - BRT 1999_8_30 -3",\n\t\t\t"-3 Brazil BR%sT 2000_9_15 -2",\n\t\t\t"-3 - BRT 2001_8_13 -3",\n\t\t\t"-3 Brazil BR%sT 2002_9_1 -3",\n\t\t\t"-3 - BRT"\n\t\t],\n\t\t"America/Regina": [\n\t\t\t"-6:58:36 - LMT 1905_8 -6:58:36",\n\t\t\t"-7 Regina M%sT 1960_3_24_2 -7",\n\t\t\t"-6 - CST"\n\t\t],\n\t\t"America/Resolute": [\n\t\t\t"0 - zzz 1947_7_31",\n\t\t\t"-6 NT_YK C%sT 2000_9_29_2 -5",\n\t\t\t"-5 - EST 2001_3_1_3 -5",\n\t\t\t"-6 Canada C%sT 2006_9_29_2 -5",\n\t\t\t"-5 - EST 2007_2_11_3 -5",\n\t\t\t"-6 Canada C%sT"\n\t\t],\n\t\t"America/Rio_Branco": [\n\t\t\t"-4:31:12 - LMT 1914 -4:31:12",\n\t\t\t"-5 Brazil AC%sT 1988_8_12 -5",\n\t\t\t"-5 - ACT 2008_5_24_00 -5",\n\t\t\t"-4 - AMT"\n\t\t],\n\t\t"America/Santa_Isabel": [\n\t\t\t"-7:39:28 - LMT 1922_0_1_0_20_32 -7:39:28",\n\t\t\t"-7 - MST 1924 -7",\n\t\t\t"-8 - PST 1927_5_10_23 -8",\n\t\t\t"-7 - MST 1930_10_15 -7",\n\t\t\t"-8 - PST 1931_3_1 -8",\n\t\t\t"-7 - PDT 1931_8_30 -7",\n\t\t\t"-8 - PST 1942_3_24 -8",\n\t\t\t"-7 - PWT 1945_7_14_23",\n\t\t\t"-7 - PPT 1945_10_12 -7",\n\t\t\t"-8 - PST 1948_3_5 -8",\n\t\t\t"-7 - PDT 1949_0_14 -7",\n\t\t\t"-8 - PST 1954 -8",\n\t\t\t"-8 CA P%sT 1961 -8",\n\t\t\t"-8 - PST 1976 -8",\n\t\t\t"-8 US P%sT 1996 -8",\n\t\t\t"-8 Mexico P%sT 2001 -8",\n\t\t\t"-8 US P%sT 2002_1_20 -8",\n\t\t\t"-8 Mexico P%sT"\n\t\t],\n\t\t"America/Santarem": [\n\t\t\t"-3:38:48 - LMT 1914 -3:38:48",\n\t\t\t"-4 Brazil AM%sT 1988_8_12 -4",\n\t\t\t"-4 - AMT 2008_5_24_00 -4",\n\t\t\t"-3 - BRT"\n\t\t],\n\t\t"America/Santiago": [\n\t\t\t"-4:42:46 - LMT 1890 -4:42:46",\n\t\t\t"-4:42:46 - SMT 1910 -4:42:46",\n\t\t\t"-5 - CLT 1916_6_1 -5",\n\t\t\t"-4:42:46 - SMT 1918_8_1 -4:42:46",\n\t\t\t"-4 - CLT 1919_6_1 -4",\n\t\t\t"-4:42:46 - SMT 1927_8_1 -4:42:46",\n\t\t\t"-5 Chile CL%sT 1947_4_22 -5",\n\t\t\t"-4 Chile CL%sT"\n\t\t],\n\t\t"America/Santo_Domingo": [\n\t\t\t"-4:39:36 - LMT 1890 -4:39:36",\n\t\t\t"-4:40 - SDMT 1933_3_1_12 -4:40",\n\t\t\t"-5 DR E%sT 1974_9_27 -5",\n\t\t\t"-4 - AST 2000_9_29_02 -4",\n\t\t\t"-5 US E%sT 2000_11_3_01 -5",\n\t\t\t"-4 - AST"\n\t\t],\n\t\t"America/Sao_Paulo": [\n\t\t\t"-3:6:28 - LMT 1914 -3:6:28",\n\t\t\t"-3 Brazil BR%sT 1963_9_23_00 -3",\n\t\t\t"-2 - BRST 1964 -2",\n\t\t\t"-3 Brazil BR%sT"\n\t\t],\n\t\t"America/Scoresbysund": [\n\t\t\t"-1:27:52 - LMT 1916_6_28 -1:27:52",\n\t\t\t"-2 - CGT 1980_3_6_2 -2",\n\t\t\t"-2 C-Eur CG%sT 1981_2_29 -2",\n\t\t\t"-1 EU EG%sT"\n\t\t],\n\t\t"America/Sitka": [\n\t\t\t"14:58:47 - LMT 1867_9_18 14:58:47",\n\t\t\t"-9:1:13 - LMT 1900_7_20_12 -9:1:13",\n\t\t\t"-8 - PST 1942 -8",\n\t\t\t"-8 US P%sT 1946 -8",\n\t\t\t"-8 - PST 1969 -8",\n\t\t\t"-8 US P%sT 1983_9_30_2 -7",\n\t\t\t"-9 US Y%sT 1983_10_30 -9",\n\t\t\t"-9 US AK%sT"\n\t\t],\n\t\t"America/St_Johns": [\n\t\t\t"-3:30:52 - LMT 1884 -3:30:52",\n\t\t\t"-3:30:52 StJohns N%sT 1918 -3:30:52",\n\t\t\t"-3:30:52 Canada N%sT 1919 -3:30:52",\n\t\t\t"-3:30:52 StJohns N%sT 1935_2_30 -3:30:52",\n\t\t\t"-3:30 StJohns N%sT 1942_4_11 -3:30",\n\t\t\t"-3:30 Canada N%sT 1946 -3:30",\n\t\t\t"-3:30 StJohns N%sT 2011_10 -2:30",\n\t\t\t"-3:30 Canada N%sT"\n\t\t],\n\t\t"America/St_Kitts": [\n\t\t\t"-4:10:52 - LMT 1912_2_2 -4:10:52",\n\t\t\t"-4 - AST"\n\t\t],\n\t\t"America/St_Lucia": [\n\t\t\t"-4:4 - LMT 1890 -4:4",\n\t\t\t"-4:4 - CMT 1912 -4:4",\n\t\t\t"-4 - AST"\n\t\t],\n\t\t"America/St_Thomas": [\n\t\t\t"-4:19:44 - LMT 1911_6 -4:19:44",\n\t\t\t"-4 - AST"\n\t\t],\n\t\t"America/St_Vincent": [\n\t\t\t"-4:4:56 - LMT 1890 -4:4:56",\n\t\t\t"-4:4:56 - KMT 1912 -4:4:56",\n\t\t\t"-4 - AST"\n\t\t],\n\t\t"America/Swift_Current": [\n\t\t\t"-7:11:20 - LMT 1905_8 -7:11:20",\n\t\t\t"-7 Canada M%sT 1946_3_28_2 -7",\n\t\t\t"-7 Regina M%sT 1950 -7",\n\t\t\t"-7 Swift M%sT 1972_3_30_2 -7",\n\t\t\t"-6 - CST"\n\t\t],\n\t\t"America/Tegucigalpa": [\n\t\t\t"-5:48:52 - LMT 1921_3 -5:48:52",\n\t\t\t"-6 Hond C%sT"\n\t\t],\n\t\t"America/Thule": [\n\t\t\t"-4:35:8 - LMT 1916_6_28 -4:35:8",\n\t\t\t"-4 Thule A%sT"\n\t\t],\n\t\t"America/Thunder_Bay": [\n\t\t\t"-5:57 - LMT 1895 -5:57",\n\t\t\t"-6 - CST 1910 -6",\n\t\t\t"-5 - EST 1942 -5",\n\t\t\t"-5 Canada E%sT 1970 -5",\n\t\t\t"-5 Mont E%sT 1973 -5",\n\t\t\t"-5 - EST 1974 -5",\n\t\t\t"-5 Canada E%sT"\n\t\t],\n\t\t"America/Tijuana": [\n\t\t\t"-7:48:4 - LMT 1922_0_1_0_11_56 -7:48:4",\n\t\t\t"-7 - MST 1924 -7",\n\t\t\t"-8 - PST 1927_5_10_23 -8",\n\t\t\t"-7 - MST 1930_10_15 -7",\n\t\t\t"-8 - PST 1931_3_1 -8",\n\t\t\t"-7 - PDT 1931_8_30 -7",\n\t\t\t"-8 - PST 1942_3_24 -8",\n\t\t\t"-7 - PWT 1945_7_14_23",\n\t\t\t"-7 - PPT 1945_10_12 -7",\n\t\t\t"-8 - PST 1948_3_5 -8",\n\t\t\t"-7 - PDT 1949_0_14 -7",\n\t\t\t"-8 - PST 1954 -8",\n\t\t\t"-8 CA P%sT 1961 -8",\n\t\t\t"-8 - PST 1976 -8",\n\t\t\t"-8 US P%sT 1996 -8",\n\t\t\t"-8 Mexico P%sT 2001 -8",\n\t\t\t"-8 US P%sT 2002_1_20 -8",\n\t\t\t"-8 Mexico P%sT 2010 -8",\n\t\t\t"-8 US P%sT"\n\t\t],\n\t\t"America/Toronto": [\n\t\t\t"-5:17:32 - LMT 1895 -5:17:32",\n\t\t\t"-5 Canada E%sT 1919 -5",\n\t\t\t"-5 Toronto E%sT 1942_1_9_2 -5",\n\t\t\t"-5 Canada E%sT 1946 -5",\n\t\t\t"-5 Toronto E%sT 1974 -5",\n\t\t\t"-5 Canada E%sT"\n\t\t],\n\t\t"America/Tortola": [\n\t\t\t"-4:18:28 - LMT 1911_6 -4:18:28",\n\t\t\t"-4 - AST"\n\t\t],\n\t\t"America/Vancouver": [\n\t\t\t"-8:12:28 - LMT 1884 -8:12:28",\n\t\t\t"-8 Vanc P%sT 1987 -8",\n\t\t\t"-8 Canada P%sT"\n\t\t],\n\t\t"America/Whitehorse": [\n\t\t\t"-9:0:12 - LMT 1900_7_20 -9:0:12",\n\t\t\t"-9 NT_YK Y%sT 1966_6_1_2 -9",\n\t\t\t"-8 NT_YK P%sT 1980 -8",\n\t\t\t"-8 Canada P%sT"\n\t\t],\n\t\t"America/Winnipeg": [\n\t\t\t"-6:28:36 - LMT 1887_6_16 -6:28:36",\n\t\t\t"-6 Winn C%sT 2006 -6",\n\t\t\t"-6 Canada C%sT"\n\t\t],\n\t\t"America/Yakutat": [\n\t\t\t"14:41:5 - LMT 1867_9_18 14:41:5",\n\t\t\t"-9:18:55 - LMT 1900_7_20_12 -9:18:55",\n\t\t\t"-9 - YST 1942 -9",\n\t\t\t"-9 US Y%sT 1946 -9",\n\t\t\t"-9 - YST 1969 -9",\n\t\t\t"-9 US Y%sT 1983_10_30 -9",\n\t\t\t"-9 US AK%sT"\n\t\t],\n\t\t"America/Yellowknife": [\n\t\t\t"0 - zzz 1935",\n\t\t\t"-7 NT_YK M%sT 1980 -7",\n\t\t\t"-7 Canada M%sT"\n\t\t],\n\t\t"Antarctica/Casey": [\n\t\t\t"0 - zzz 1969",\n\t\t\t"8 - WST 2009_9_18_2 8",\n\t\t\t"11 - CAST 2010_2_5_2 11",\n\t\t\t"8 - WST 2011_9_28_2 8",\n\t\t\t"11 - CAST 2012_1_21_17",\n\t\t\t"8 - WST"\n\t\t],\n\t\t"Antarctica/Davis": [\n\t\t\t"0 - zzz 1957_0_13",\n\t\t\t"7 - DAVT 1964_10 7",\n\t\t\t"0 - zzz 1969_1",\n\t\t\t"7 - DAVT 2009_9_18_2 7",\n\t\t\t"5 - DAVT 2010_2_10_20",\n\t\t\t"7 - DAVT 2011_9_28_2 7",\n\t\t\t"5 - DAVT 2012_1_21_20",\n\t\t\t"7 - DAVT"\n\t\t],\n\t\t"Antarctica/DumontDUrville": [\n\t\t\t"0 - zzz 1947",\n\t\t\t"10 - PMT 1952_0_14 10",\n\t\t\t"0 - zzz 1956_10",\n\t\t\t"10 - DDUT"\n\t\t],\n\t\t"Antarctica/Macquarie": [\n\t\t\t"0 - zzz 1899_10",\n\t\t\t"10 - EST 1916_9_1_2 10",\n\t\t\t"11 - EST 1917_1 11",\n\t\t\t"10 Aus EST 1919_3 10",\n\t\t\t"0 - zzz 1948_2_25",\n\t\t\t"10 Aus EST 1967 10",\n\t\t\t"10 AT EST 2010_3_4_3 11",\n\t\t\t"11 - MIST"\n\t\t],\n\t\t"Antarctica/Mawson": [\n\t\t\t"0 - zzz 1954_1_13",\n\t\t\t"6 - MAWT 2009_9_18_2 6",\n\t\t\t"5 - MAWT"\n\t\t],\n\t\t"Antarctica/McMurdo": [\n\t\t\t"0 - zzz 1956",\n\t\t\t"12 NZAQ NZ%sT"\n\t\t],\n\t\t"Antarctica/Palmer": [\n\t\t\t"0 - zzz 1965",\n\t\t\t"-4 ArgAQ AR%sT 1969_9_5 -4",\n\t\t\t"-3 ArgAQ AR%sT 1982_4 -3",\n\t\t\t"-4 ChileAQ CL%sT"\n\t\t],\n\t\t"Antarctica/Rothera": [\n\t\t\t"0 - zzz 1976_11_1",\n\t\t\t"-3 - ROTT"\n\t\t],\n\t\t"Antarctica/Syowa": [\n\t\t\t"0 - zzz 1957_0_29",\n\t\t\t"3 - SYOT"\n\t\t],\n\t\t"Antarctica/Vostok": [\n\t\t\t"0 - zzz 1957_11_16",\n\t\t\t"6 - VOST"\n\t\t],\n\t\t"Asia/Aden": [\n\t\t\t"2:59:54 - LMT 1950 2:59:54",\n\t\t\t"3 - AST"\n\t\t],\n\t\t"Asia/Almaty": [\n\t\t\t"5:7:48 - LMT 1924_4_2 5:7:48",\n\t\t\t"5 - ALMT 1930_5_21 5",\n\t\t\t"6 RussiaAsia ALM%sT 1991 6",\n\t\t\t"6 - ALMT 1992 6",\n\t\t\t"6 RussiaAsia ALM%sT 2005_2_15 6",\n\t\t\t"6 - ALMT"\n\t\t],\n\t\t"Asia/Amman": [\n\t\t\t"2:23:44 - LMT 1931 2:23:44",\n\t\t\t"2 Jordan EE%sT"\n\t\t],\n\t\t"Asia/Anadyr": [\n\t\t\t"11:49:56 - LMT 1924_4_2 11:49:56",\n\t\t\t"12 - ANAT 1930_5_21 12",\n\t\t\t"13 Russia ANA%sT 1982_3_1_0 13",\n\t\t\t"12 Russia ANA%sT 1991_2_31_2 12",\n\t\t\t"11 Russia ANA%sT 1992_0_19_2 11",\n\t\t\t"12 Russia ANA%sT 2010_2_28_2 12",\n\t\t\t"11 Russia ANA%sT 2011_2_27_2 11",\n\t\t\t"12 - ANAT"\n\t\t],\n\t\t"Asia/Aqtau": [\n\t\t\t"3:21:4 - LMT 1924_4_2 3:21:4",\n\t\t\t"4 - FORT 1930_5_21 4",\n\t\t\t"5 - FORT 1963 5",\n\t\t\t"5 - SHET 1981_9_1 5",\n\t\t\t"6 - SHET 1982_3_1 6",\n\t\t\t"5 RussiaAsia SHE%sT 1991 5",\n\t\t\t"5 - SHET 1991_11_16 5",\n\t\t\t"5 RussiaAsia AQT%sT 1995_2_26_2 5",\n\t\t\t"4 RussiaAsia AQT%sT 2005_2_15 4",\n\t\t\t"5 - AQTT"\n\t\t],\n\t\t"Asia/Aqtobe": [\n\t\t\t"3:48:40 - LMT 1924_4_2 3:48:40",\n\t\t\t"4 - AKTT 1930_5_21 4",\n\t\t\t"5 - AKTT 1981_3_1 5",\n\t\t\t"6 - AKTST 1981_9_1 6",\n\t\t\t"6 - AKTT 1982_3_1 6",\n\t\t\t"5 RussiaAsia AKT%sT 1991 5",\n\t\t\t"5 - AKTT 1991_11_16 5",\n\t\t\t"5 RussiaAsia AQT%sT 2005_2_15 5",\n\t\t\t"5 - AQTT"\n\t\t],\n\t\t"Asia/Ashgabat": [\n\t\t\t"3:53:32 - LMT 1924_4_2 3:53:32",\n\t\t\t"4 - ASHT 1930_5_21 4",\n\t\t\t"5 RussiaAsia ASH%sT 1991_2_31_2 5",\n\t\t\t"4 RussiaAsia ASH%sT 1991_9_27 4",\n\t\t\t"4 RussiaAsia TM%sT 1992_0_19_2 4",\n\t\t\t"5 - TMT"\n\t\t],\n\t\t"Asia/Baghdad": [\n\t\t\t"2:57:40 - LMT 1890 2:57:40",\n\t\t\t"2:57:36 - BMT 1918 2:57:36",\n\t\t\t"3 - AST 1982_4 3",\n\t\t\t"3 Iraq A%sT"\n\t\t],\n\t\t"Asia/Bahrain": [\n\t\t\t"3:22:20 - LMT 1920 3:22:20",\n\t\t\t"4 - GST 1972_5 4",\n\t\t\t"3 - AST"\n\t\t],\n\t\t"Asia/Baku": [\n\t\t\t"3:19:24 - LMT 1924_4_2 3:19:24",\n\t\t\t"3 - BAKT 1957_2 3",\n\t\t\t"4 RussiaAsia BAK%sT 1991_2_31_2 4",\n\t\t\t"4 - BAKST 1991_7_30 4",\n\t\t\t"3 RussiaAsia AZ%sT 1992_8_26_23 4",\n\t\t\t"4 - AZT 1996 4",\n\t\t\t"4 EUAsia AZ%sT 1997 4",\n\t\t\t"4 Azer AZ%sT"\n\t\t],\n\t\t"Asia/Bangkok": [\n\t\t\t"6:42:4 - LMT 1880 6:42:4",\n\t\t\t"6:42:4 - BMT 1920_3 6:42:4",\n\t\t\t"7 - ICT"\n\t\t],\n\t\t"Asia/Beirut": [\n\t\t\t"2:22 - LMT 1880 2:22",\n\t\t\t"2 Lebanon EE%sT"\n\t\t],\n\t\t"Asia/Bishkek": [\n\t\t\t"4:58:24 - LMT 1924_4_2 4:58:24",\n\t\t\t"5 - FRUT 1930_5_21 5",\n\t\t\t"6 RussiaAsia FRU%sT 1991_2_31_2 6",\n\t\t\t"6 - FRUST 1991_7_31_2 6",\n\t\t\t"5 Kyrgyz KG%sT 2005_7_12 6",\n\t\t\t"6 - KGT"\n\t\t],\n\t\t"Asia/Brunei": [\n\t\t\t"7:39:40 - LMT 1926_2 7:39:40",\n\t\t\t"7:30 - BNT 1933 7:30",\n\t\t\t"8 - BNT"\n\t\t],\n\t\t"Asia/Choibalsan": [\n\t\t\t"7:38 - LMT 1905_7 7:38",\n\t\t\t"7 - ULAT 1978 7",\n\t\t\t"8 - ULAT 1983_3 8",\n\t\t\t"9 Mongol CHO%sT 2008_2_31 9",\n\t\t\t"8 Mongol CHO%sT"\n\t\t],\n\t\t"Asia/Chongqing": [\n\t\t\t"7:6:20 - LMT 1928 7:6:20",\n\t\t\t"7 - LONT 1980_4 7",\n\t\t\t"8 PRC C%sT"\n\t\t],\n\t\t"Asia/Colombo": [\n\t\t\t"5:19:24 - LMT 1880 5:19:24",\n\t\t\t"5:19:32 - MMT 1906 5:19:32",\n\t\t\t"5:30 - IST 1942_0_5 5:30",\n\t\t\t"6 - IHST 1942_8 6",\n\t\t\t"6:30 - IST 1945_9_16_2 6:30",\n\t\t\t"5:30 - IST 1996_4_25_0 5:30",\n\t\t\t"6:30 - LKT 1996_9_26_0_30 6:30",\n\t\t\t"6 - LKT 2006_3_15_0_30 6",\n\t\t\t"5:30 - IST"\n\t\t],\n\t\t"Asia/Damascus": [\n\t\t\t"2:25:12 - LMT 1920 2:25:12",\n\t\t\t"2 Syria EE%sT"\n\t\t],\n\t\t"Asia/Dhaka": [\n\t\t\t"6:1:40 - LMT 1890 6:1:40",\n\t\t\t"5:53:20 - HMT 1941_9 5:53:20",\n\t\t\t"6:30 - BURT 1942_4_15 6:30",\n\t\t\t"5:30 - IST 1942_8 5:30",\n\t\t\t"6:30 - BURT 1951_8_30 6:30",\n\t\t\t"6 - DACT 1971_2_26 6",\n\t\t\t"6 - BDT 2009 6",\n\t\t\t"6 Dhaka BD%sT"\n\t\t],\n\t\t"Asia/Dili": [\n\t\t\t"8:22:20 - LMT 1912 8:22:20",\n\t\t\t"8 - TLT 1942_1_21_23 8",\n\t\t\t"9 - JST 1945_8_23 9",\n\t\t\t"9 - TLT 1976_4_3 9",\n\t\t\t"8 - CIT 2000_8_17_00 8",\n\t\t\t"9 - TLT"\n\t\t],\n\t\t"Asia/Dubai": [\n\t\t\t"3:41:12 - LMT 1920 3:41:12",\n\t\t\t"4 - GST"\n\t\t],\n\t\t"Asia/Dushanbe": [\n\t\t\t"4:35:12 - LMT 1924_4_2 4:35:12",\n\t\t\t"5 - DUST 1930_5_21 5",\n\t\t\t"6 RussiaAsia DUS%sT 1991_2_31_2 6",\n\t\t\t"6 - DUSST 1991_8_9_2 5",\n\t\t\t"5 - TJT"\n\t\t],\n\t\t"Asia/Gaza": [\n\t\t\t"2:17:52 - LMT 1900_9 2:17:52",\n\t\t\t"2 Zion EET 1948_4_15 2",\n\t\t\t"2 EgyptAsia EE%sT 1967_5_5 3",\n\t\t\t"2 Zion I%sT 1996 2",\n\t\t\t"2 Jordan EE%sT 1999 2",\n\t\t\t"2 Palestine EE%sT 2008_7_29_0 3",\n\t\t\t"2 - EET 2008_8 2",\n\t\t\t"2 Palestine EE%sT 2010 2",\n\t\t\t"2 - EET 2010_2_27_0_1 2",\n\t\t\t"2 Palestine EE%sT 2011_7_1 3",\n\t\t\t"2 - EET 2012 2",\n\t\t\t"2 Palestine EE%sT"\n\t\t],\n\t\t"Asia/Harbin": [\n\t\t\t"8:26:44 - LMT 1928 8:26:44",\n\t\t\t"8:30 - CHAT 1932_2 8:30",\n\t\t\t"8 - CST 1940 8",\n\t\t\t"9 - CHAT 1966_4 9",\n\t\t\t"8:30 - CHAT 1980_4 8:30",\n\t\t\t"8 PRC C%sT"\n\t\t],\n\t\t"Asia/Hebron": [\n\t\t\t"2:20:23 - LMT 1900_9 2:20:23",\n\t\t\t"2 Zion EET 1948_4_15 2",\n\t\t\t"2 EgyptAsia EE%sT 1967_5_5 3",\n\t\t\t"2 Zion I%sT 1996 2",\n\t\t\t"2 Jordan EE%sT 1999 2",\n\t\t\t"2 Palestine EE%sT"\n\t\t],\n\t\t"Asia/Ho_Chi_Minh": [\n\t\t\t"7:6:40 - LMT 1906_5_9 7:6:40",\n\t\t\t"7:6:20 - SMT 1911_2_11_0_1 7:6:20",\n\t\t\t"7 - ICT 1912_4 7",\n\t\t\t"8 - ICT 1931_4 8",\n\t\t\t"7 - ICT"\n\t\t],\n\t\t"Asia/Hong_Kong": [\n\t\t\t"7:36:42 - LMT 1904_9_30 7:36:42",\n\t\t\t"8 HK HK%sT 1941_11_25 8",\n\t\t\t"9 - JST 1945_8_15 9",\n\t\t\t"8 HK HK%sT"\n\t\t],\n\t\t"Asia/Hovd": [\n\t\t\t"6:6:36 - LMT 1905_7 6:6:36",\n\t\t\t"6 - HOVT 1978 6",\n\t\t\t"7 Mongol HOV%sT"\n\t\t],\n\t\t"Asia/Irkutsk": [\n\t\t\t"6:57:20 - LMT 1880 6:57:20",\n\t\t\t"6:57:20 - IMT 1920_0_25 6:57:20",\n\t\t\t"7 - IRKT 1930_5_21 7",\n\t\t\t"8 Russia IRK%sT 1991_2_31_2 8",\n\t\t\t"7 Russia IRK%sT 1992_0_19_2 7",\n\t\t\t"8 Russia IRK%sT 2011_2_27_2 8",\n\t\t\t"9 - IRKT"\n\t\t],\n\t\t"Asia/Jakarta": [\n\t\t\t"7:7:12 - LMT 1867_7_10 7:7:12",\n\t\t\t"7:7:12 - JMT 1923_11_31_23_47_12 7:7:12",\n\t\t\t"7:20 - JAVT 1932_10 7:20",\n\t\t\t"7:30 - WIT 1942_2_23 7:30",\n\t\t\t"9 - JST 1945_8_23 9",\n\t\t\t"7:30 - WIT 1948_4 7:30",\n\t\t\t"8 - WIT 1950_4 8",\n\t\t\t"7:30 - WIT 1964 7:30",\n\t\t\t"7 - WIT"\n\t\t],\n\t\t"Asia/Jayapura": [\n\t\t\t"9:22:48 - LMT 1932_10 9:22:48",\n\t\t\t"9 - EIT 1944_8_1 9",\n\t\t\t"9:30 - CST 1964 9:30",\n\t\t\t"9 - EIT"\n\t\t],\n\t\t"Asia/Jerusalem": [\n\t\t\t"2:20:56 - LMT 1880 2:20:56",\n\t\t\t"2:20:40 - JMT 1918 2:20:40",\n\t\t\t"2 Zion I%sT"\n\t\t],\n\t\t"Asia/Kabul": [\n\t\t\t"4:36:48 - LMT 1890 4:36:48",\n\t\t\t"4 - AFT 1945 4",\n\t\t\t"4:30 - AFT"\n\t\t],\n\t\t"Asia/Kamchatka": [\n\t\t\t"10:34:36 - LMT 1922_10_10 10:34:36",\n\t\t\t"11 - PETT 1930_5_21 11",\n\t\t\t"12 Russia PET%sT 1991_2_31_2 12",\n\t\t\t"11 Russia PET%sT 1992_0_19_2 11",\n\t\t\t"12 Russia PET%sT 2010_2_28_2 12",\n\t\t\t"11 Russia PET%sT 2011_2_27_2 11",\n\t\t\t"12 - PETT"\n\t\t],\n\t\t"Asia/Karachi": [\n\t\t\t"4:28:12 - LMT 1907 4:28:12",\n\t\t\t"5:30 - IST 1942_8 5:30",\n\t\t\t"6:30 - IST 1945_9_15 6:30",\n\t\t\t"5:30 - IST 1951_8_30 5:30",\n\t\t\t"5 - KART 1971_2_26 5",\n\t\t\t"5 Pakistan PK%sT"\n\t\t],\n\t\t"Asia/Kashgar": [\n\t\t\t"5:3:56 - LMT 1928 5:3:56",\n\t\t\t"5:30 - KAST 1940 5:30",\n\t\t\t"5 - KAST 1980_4 5",\n\t\t\t"8 PRC C%sT"\n\t\t],\n\t\t"Asia/Kathmandu": [\n\t\t\t"5:41:16 - LMT 1920 5:41:16",\n\t\t\t"5:30 - IST 1986 5:30",\n\t\t\t"5:45 - NPT"\n\t\t],\n\t\t"Asia/Khandyga": [\n\t\t\t"9:2:13 - LMT 1919_11_15 9:2:13",\n\t\t\t"8 - YAKT 1930_5_21 8",\n\t\t\t"9 Russia YAK%sT 1991_2_31_2 9",\n\t\t\t"8 Russia YAK%sT 1992_0_19_2 8",\n\t\t\t"9 Russia YAK%sT 2004 9",\n\t\t\t"10 Russia VLA%sT 2011_2_27_2 10",\n\t\t\t"11 - VLAT 2011_8_13_0 11",\n\t\t\t"10 - YAKT"\n\t\t],\n\t\t"Asia/Kolkata": [\n\t\t\t"5:53:28 - LMT 1880 5:53:28",\n\t\t\t"5:53:20 - HMT 1941_9 5:53:20",\n\t\t\t"6:30 - BURT 1942_4_15 6:30",\n\t\t\t"5:30 - IST 1942_8 5:30",\n\t\t\t"6:30 - IST 1945_9_15 6:30",\n\t\t\t"5:30 - IST"\n\t\t],\n\t\t"Asia/Krasnoyarsk": [\n\t\t\t"6:11:20 - LMT 1920_0_6 6:11:20",\n\t\t\t"6 - KRAT 1930_5_21 6",\n\t\t\t"7 Russia KRA%sT 1991_2_31_2 7",\n\t\t\t"6 Russia KRA%sT 1992_0_19_2 6",\n\t\t\t"7 Russia KRA%sT 2011_2_27_2 7",\n\t\t\t"8 - KRAT"\n\t\t],\n\t\t"Asia/Kuala_Lumpur": [\n\t\t\t"6:46:46 - LMT 1901_0_1 6:46:46",\n\t\t\t"6:55:25 - SMT 1905_5_1 6:55:25",\n\t\t\t"7 - MALT 1933_0_1 7",\n\t\t\t"7:20 - MALST 1936_0_1 7:20",\n\t\t\t"7:20 - MALT 1941_8_1 7:20",\n\t\t\t"7:30 - MALT 1942_1_16 7:30",\n\t\t\t"9 - JST 1945_8_12 9",\n\t\t\t"7:30 - MALT 1982_0_1 7:30",\n\t\t\t"8 - MYT"\n\t\t],\n\t\t"Asia/Kuching": [\n\t\t\t"7:21:20 - LMT 1926_2 7:21:20",\n\t\t\t"7:30 - BORT 1933 7:30",\n\t\t\t"8 NBorneo BOR%sT 1942_1_16 8",\n\t\t\t"9 - JST 1945_8_12 9",\n\t\t\t"8 - BORT 1982_0_1 8",\n\t\t\t"8 - MYT"\n\t\t],\n\t\t"Asia/Kuwait": [\n\t\t\t"3:11:56 - LMT 1950 3:11:56",\n\t\t\t"3 - AST"\n\t\t],\n\t\t"Asia/Macau": [\n\t\t\t"7:34:20 - LMT 1912 7:34:20",\n\t\t\t"8 Macau MO%sT 1999_11_20 8",\n\t\t\t"8 PRC C%sT"\n\t\t],\n\t\t"Asia/Magadan": [\n\t\t\t"10:3:12 - LMT 1924_4_2 10:3:12",\n\t\t\t"10 - MAGT 1930_5_21 10",\n\t\t\t"11 Russia MAG%sT 1991_2_31_2 11",\n\t\t\t"10 Russia MAG%sT 1992_0_19_2 10",\n\t\t\t"11 Russia MAG%sT 2011_2_27_2 11",\n\t\t\t"12 - MAGT"\n\t\t],\n\t\t"Asia/Makassar": [\n\t\t\t"7:57:36 - LMT 1920 7:57:36",\n\t\t\t"7:57:36 - MMT 1932_10 7:57:36",\n\t\t\t"8 - CIT 1942_1_9 8",\n\t\t\t"9 - JST 1945_8_23 9",\n\t\t\t"8 - CIT"\n\t\t],\n\t\t"Asia/Manila": [\n\t\t\t"-15:56 - LMT 1844_11_31 -15:56",\n\t\t\t"8:4 - LMT 1899_4_11 8:4",\n\t\t\t"8 Phil PH%sT 1942_4 8",\n\t\t\t"9 - JST 1944_10 9",\n\t\t\t"8 Phil PH%sT"\n\t\t],\n\t\t"Asia/Muscat": [\n\t\t\t"3:54:24 - LMT 1920 3:54:24",\n\t\t\t"4 - GST"\n\t\t],\n\t\t"Asia/Nicosia": [\n\t\t\t"2:13:28 - LMT 1921_10_14 2:13:28",\n\t\t\t"2 Cyprus EE%sT 1998_8 3",\n\t\t\t"2 EUAsia EE%sT"\n\t\t],\n\t\t"Asia/Novokuznetsk": [\n\t\t\t"5:48:48 - NMT 1920_0_6 5:48:48",\n\t\t\t"6 - KRAT 1930_5_21 6",\n\t\t\t"7 Russia KRA%sT 1991_2_31_2 7",\n\t\t\t"6 Russia KRA%sT 1992_0_19_2 6",\n\t\t\t"7 Russia KRA%sT 2010_2_28_2 7",\n\t\t\t"6 Russia NOV%sT 2011_2_27_2 6",\n\t\t\t"7 - NOVT"\n\t\t],\n\t\t"Asia/Novosibirsk": [\n\t\t\t"5:31:40 - LMT 1919_11_14_6 5:31:40",\n\t\t\t"6 - NOVT 1930_5_21 6",\n\t\t\t"7 Russia NOV%sT 1991_2_31_2 7",\n\t\t\t"6 Russia NOV%sT 1992_0_19_2 6",\n\t\t\t"7 Russia NOV%sT 1993_4_23 8",\n\t\t\t"6 Russia NOV%sT 2011_2_27_2 6",\n\t\t\t"7 - NOVT"\n\t\t],\n\t\t"Asia/Omsk": [\n\t\t\t"4:53:36 - LMT 1919_10_14 4:53:36",\n\t\t\t"5 - OMST 1930_5_21 5",\n\t\t\t"6 Russia OMS%sT 1991_2_31_2 6",\n\t\t\t"5 Russia OMS%sT 1992_0_19_2 5",\n\t\t\t"6 Russia OMS%sT 2011_2_27_2 6",\n\t\t\t"7 - OMST"\n\t\t],\n\t\t"Asia/Oral": [\n\t\t\t"3:25:24 - LMT 1924_4_2 3:25:24",\n\t\t\t"4 - URAT 1930_5_21 4",\n\t\t\t"5 - URAT 1981_3_1 5",\n\t\t\t"6 - URAST 1981_9_1 6",\n\t\t\t"6 - URAT 1982_3_1 6",\n\t\t\t"5 RussiaAsia URA%sT 1989_2_26_2 5",\n\t\t\t"4 RussiaAsia URA%sT 1991 4",\n\t\t\t"4 - URAT 1991_11_16 4",\n\t\t\t"4 RussiaAsia ORA%sT 2005_2_15 4",\n\t\t\t"5 - ORAT"\n\t\t],\n\t\t"Asia/Phnom_Penh": [\n\t\t\t"6:59:40 - LMT 1906_5_9 6:59:40",\n\t\t\t"7:6:20 - SMT 1911_2_11_0_1 7:6:20",\n\t\t\t"7 - ICT 1912_4 7",\n\t\t\t"8 - ICT 1931_4 8",\n\t\t\t"7 - ICT"\n\t\t],\n\t\t"Asia/Pontianak": [\n\t\t\t"7:17:20 - LMT 1908_4 7:17:20",\n\t\t\t"7:17:20 - PMT 1932_10 7:17:20",\n\t\t\t"7:30 - WIT 1942_0_29 7:30",\n\t\t\t"9 - JST 1945_8_23 9",\n\t\t\t"7:30 - WIT 1948_4 7:30",\n\t\t\t"8 - WIT 1950_4 8",\n\t\t\t"7:30 - WIT 1964 7:30",\n\t\t\t"8 - CIT 1988_0_1 8",\n\t\t\t"7 - WIT"\n\t\t],\n\t\t"Asia/Pyongyang": [\n\t\t\t"8:23 - LMT 1890 8:23",\n\t\t\t"8:30 - KST 1904_11 8:30",\n\t\t\t"9 - KST 1928 9",\n\t\t\t"8:30 - KST 1932 8:30",\n\t\t\t"9 - KST 1954_2_21 9",\n\t\t\t"8 - KST 1961_7_10 8",\n\t\t\t"9 - KST"\n\t\t],\n\t\t"Asia/Qatar": [\n\t\t\t"3:26:8 - LMT 1920 3:26:8",\n\t\t\t"4 - GST 1972_5 4",\n\t\t\t"3 - AST"\n\t\t],\n\t\t"Asia/Qyzylorda": [\n\t\t\t"4:21:52 - LMT 1924_4_2 4:21:52",\n\t\t\t"4 - KIZT 1930_5_21 4",\n\t\t\t"5 - KIZT 1981_3_1 5",\n\t\t\t"6 - KIZST 1981_9_1 6",\n\t\t\t"6 - KIZT 1982_3_1 6",\n\t\t\t"5 RussiaAsia KIZ%sT 1991 5",\n\t\t\t"5 - KIZT 1991_11_16 5",\n\t\t\t"5 - QYZT 1992_0_19_2 5",\n\t\t\t"6 RussiaAsia QYZ%sT 2005_2_15 6",\n\t\t\t"6 - QYZT"\n\t\t],\n\t\t"Asia/Rangoon": [\n\t\t\t"6:24:40 - LMT 1880 6:24:40",\n\t\t\t"6:24:40 - RMT 1920 6:24:40",\n\t\t\t"6:30 - BURT 1942_4 6:30",\n\t\t\t"9 - JST 1945_4_3 9",\n\t\t\t"6:30 - MMT"\n\t\t],\n\t\t"Asia/Riyadh": [\n\t\t\t"3:6:52 - LMT 1950 3:6:52",\n\t\t\t"3 - AST"\n\t\t],\n\t\t"Asia/Sakhalin": [\n\t\t\t"9:30:48 - LMT 1905_7_23 9:30:48",\n\t\t\t"9 - CJT 1938 9",\n\t\t\t"9 - JST 1945_7_25 9",\n\t\t\t"11 Russia SAK%sT 1991_2_31_2 11",\n\t\t\t"10 Russia SAK%sT 1992_0_19_2 10",\n\t\t\t"11 Russia SAK%sT 1997_2_30_2 11",\n\t\t\t"10 Russia SAK%sT 2011_2_27_2 10",\n\t\t\t"11 - SAKT"\n\t\t],\n\t\t"Asia/Samarkand": [\n\t\t\t"4:27:12 - LMT 1924_4_2 4:27:12",\n\t\t\t"4 - SAMT 1930_5_21 4",\n\t\t\t"5 - SAMT 1981_3_1 5",\n\t\t\t"6 - SAMST 1981_9_1 6",\n\t\t\t"6 - TAST 1982_3_1 6",\n\t\t\t"5 RussiaAsia SAM%sT 1991_8_1 6",\n\t\t\t"5 RussiaAsia UZ%sT 1992 5",\n\t\t\t"5 - UZT"\n\t\t],\n\t\t"Asia/Seoul": [\n\t\t\t"8:27:52 - LMT 1890 8:27:52",\n\t\t\t"8:30 - KST 1904_11 8:30",\n\t\t\t"9 - KST 1928 9",\n\t\t\t"8:30 - KST 1932 8:30",\n\t\t\t"9 - KST 1954_2_21 9",\n\t\t\t"8 ROK K%sT 1961_7_10 8",\n\t\t\t"8:30 - KST 1968_9 8:30",\n\t\t\t"9 ROK K%sT"\n\t\t],\n\t\t"Asia/Shanghai": [\n\t\t\t"8:5:57 - LMT 1928 8:5:57",\n\t\t\t"8 Shang C%sT 1949 8",\n\t\t\t"8 PRC C%sT"\n\t\t],\n\t\t"Asia/Singapore": [\n\t\t\t"6:55:25 - LMT 1901_0_1 6:55:25",\n\t\t\t"6:55:25 - SMT 1905_5_1 6:55:25",\n\t\t\t"7 - MALT 1933_0_1 7",\n\t\t\t"7:20 - MALST 1936_0_1 7:20",\n\t\t\t"7:20 - MALT 1941_8_1 7:20",\n\t\t\t"7:30 - MALT 1942_1_16 7:30",\n\t\t\t"9 - JST 1945_8_12 9",\n\t\t\t"7:30 - MALT 1965_7_9 7:30",\n\t\t\t"7:30 - SGT 1982_0_1 7:30",\n\t\t\t"8 - SGT"\n\t\t],\n\t\t"Asia/Taipei": [\n\t\t\t"8:6 - LMT 1896 8:6",\n\t\t\t"8 Taiwan C%sT"\n\t\t],\n\t\t"Asia/Tashkent": [\n\t\t\t"4:37:12 - LMT 1924_4_2 4:37:12",\n\t\t\t"5 - TAST 1930_5_21 5",\n\t\t\t"6 RussiaAsia TAS%sT 1991_2_31_2 6",\n\t\t\t"5 RussiaAsia TAS%sT 1991_8_1 6",\n\t\t\t"5 RussiaAsia UZ%sT 1992 5",\n\t\t\t"5 - UZT"\n\t\t],\n\t\t"Asia/Tbilisi": [\n\t\t\t"2:59:16 - LMT 1880 2:59:16",\n\t\t\t"2:59:16 - TBMT 1924_4_2 2:59:16",\n\t\t\t"3 - TBIT 1957_2 3",\n\t\t\t"4 RussiaAsia TBI%sT 1991_2_31_2 4",\n\t\t\t"4 - TBIST 1991_3_9 4",\n\t\t\t"3 RussiaAsia GE%sT 1992 3",\n\t\t\t"3 E-EurAsia GE%sT 1994_8_25 4",\n\t\t\t"4 E-EurAsia GE%sT 1996_9_27 5",\n\t\t\t"5 - GEST 1997_2_30 5",\n\t\t\t"4 E-EurAsia GE%sT 2004_5_27 5",\n\t\t\t"3 RussiaAsia GE%sT 2005_2_27_2 3",\n\t\t\t"4 - GET"\n\t\t],\n\t\t"Asia/Tehran": [\n\t\t\t"3:25:44 - LMT 1916 3:25:44",\n\t\t\t"3:25:44 - TMT 1946 3:25:44",\n\t\t\t"3:30 - IRST 1977_10 3:30",\n\t\t\t"4 Iran IR%sT 1979 4",\n\t\t\t"3:30 Iran IR%sT"\n\t\t],\n\t\t"Asia/Thimphu": [\n\t\t\t"5:58:36 - LMT 1947_7_15 5:58:36",\n\t\t\t"5:30 - IST 1987_9 5:30",\n\t\t\t"6 - BTT"\n\t\t],\n\t\t"Asia/Tokyo": [\n\t\t\t"9:18:59 - LMT 1887_11_31_15",\n\t\t\t"9 - JST 1896 9",\n\t\t\t"9 - CJT 1938 9",\n\t\t\t"9 Japan J%sT"\n\t\t],\n\t\t"Asia/Ulaanbaatar": [\n\t\t\t"7:7:32 - LMT 1905_7 7:7:32",\n\t\t\t"7 - ULAT 1978 7",\n\t\t\t"8 Mongol ULA%sT"\n\t\t],\n\t\t"Asia/Urumqi": [\n\t\t\t"5:50:20 - LMT 1928 5:50:20",\n\t\t\t"6 - URUT 1980_4 6",\n\t\t\t"8 PRC C%sT"\n\t\t],\n\t\t"Asia/Ust-Nera": [\n\t\t\t"9:32:54 - LMT 1919_11_15 9:32:54",\n\t\t\t"8 - YAKT 1930_5_21 8",\n\t\t\t"9 Russia YAKT 1981_3_1 9",\n\t\t\t"11 Russia MAG%sT 1991_2_31_2 11",\n\t\t\t"10 Russia MAG%sT 1992_0_19_2 10",\n\t\t\t"11 Russia MAG%sT 2011_2_27_2 11",\n\t\t\t"12 - MAGT 2011_8_13_0 12",\n\t\t\t"11 - VLAT"\n\t\t],\n\t\t"Asia/Vientiane": [\n\t\t\t"6:50:24 - LMT 1906_5_9 6:50:24",\n\t\t\t"7:6:20 - SMT 1911_2_11_0_1 7:6:20",\n\t\t\t"7 - ICT 1912_4 7",\n\t\t\t"8 - ICT 1931_4 8",\n\t\t\t"7 - ICT"\n\t\t],\n\t\t"Asia/Vladivostok": [\n\t\t\t"8:47:44 - LMT 1922_10_15 8:47:44",\n\t\t\t"9 - VLAT 1930_5_21 9",\n\t\t\t"10 Russia VLA%sT 1991_2_31_2 10",\n\t\t\t"9 Russia VLA%sST 1992_0_19_2 9",\n\t\t\t"10 Russia VLA%sT 2011_2_27_2 10",\n\t\t\t"11 - VLAT"\n\t\t],\n\t\t"Asia/Yakutsk": [\n\t\t\t"8:38:40 - LMT 1919_11_15 8:38:40",\n\t\t\t"8 - YAKT 1930_5_21 8",\n\t\t\t"9 Russia YAK%sT 1991_2_31_2 9",\n\t\t\t"8 Russia YAK%sT 1992_0_19_2 8",\n\t\t\t"9 Russia YAK%sT 2011_2_27_2 9",\n\t\t\t"10 - YAKT"\n\t\t],\n\t\t"Asia/Yekaterinburg": [\n\t\t\t"4:2:24 - LMT 1919_6_15_4 4:2:24",\n\t\t\t"4 - SVET 1930_5_21 4",\n\t\t\t"5 Russia SVE%sT 1991_2_31_2 5",\n\t\t\t"4 Russia SVE%sT 1992_0_19_2 4",\n\t\t\t"5 Russia YEK%sT 2011_2_27_2 5",\n\t\t\t"6 - YEKT"\n\t\t],\n\t\t"Asia/Yerevan": [\n\t\t\t"2:58 - LMT 1924_4_2 2:58",\n\t\t\t"3 - YERT 1957_2 3",\n\t\t\t"4 RussiaAsia YER%sT 1991_2_31_2 4",\n\t\t\t"4 - YERST 1991_8_23 4",\n\t\t\t"3 RussiaAsia AM%sT 1995_8_24_2 3",\n\t\t\t"4 - AMT 1997 4",\n\t\t\t"4 RussiaAsia AM%sT 2012_2_25_2 4",\n\t\t\t"4 - AMT"\n\t\t],\n\t\t"Atlantic/Azores": [\n\t\t\t"-1:42:40 - LMT 1884 -1:42:40",\n\t\t\t"-1:54:32 - HMT 1911_4_24 -1:54:32",\n\t\t\t"-2 Port AZO%sT 1966_3_3_2 -2",\n\t\t\t"-1 Port AZO%sT 1983_8_25_1 -1",\n\t\t\t"-1 W-Eur AZO%sT 1992_8_27_1 -1",\n\t\t\t"0 EU WE%sT 1993_2_28_1",\n\t\t\t"-1 EU AZO%sT"\n\t\t],\n\t\t"Atlantic/Bermuda": [\n\t\t\t"-4:19:18 - LMT 1930_0_1_2 -4:19:18",\n\t\t\t"-4 - AST 1974_3_28_2 -4",\n\t\t\t"-4 Bahamas A%sT 1976 -4",\n\t\t\t"-4 US A%sT"\n\t\t],\n\t\t"Atlantic/Canary": [\n\t\t\t"-1:1:36 - LMT 1922_2 -1:1:36",\n\t\t\t"-1 - CANT 1946_8_30_1 -1",\n\t\t\t"0 - WET 1980_3_6_0",\n\t\t\t"1 - WEST 1980_8_28_0",\n\t\t\t"0 EU WE%sT"\n\t\t],\n\t\t"Atlantic/Cape_Verde": [\n\t\t\t"-1:34:4 - LMT 1907 -1:34:4",\n\t\t\t"-2 - CVT 1942_8 -2",\n\t\t\t"-1 - CVST 1945_9_15 -1",\n\t\t\t"-2 - CVT 1975_10_25_2 -2",\n\t\t\t"-1 - CVT"\n\t\t],\n\t\t"Atlantic/Faroe": [\n\t\t\t"-0:27:4 - LMT 1908_0_11 -0:27:4",\n\t\t\t"0 - WET 1981",\n\t\t\t"0 EU WE%sT"\n\t\t],\n\t\t"Atlantic/Madeira": [\n\t\t\t"-1:7:36 - LMT 1884 -1:7:36",\n\t\t\t"-1:7:36 - FMT 1911_4_24 -1:7:36",\n\t\t\t"-1 Port MAD%sT 1966_3_3_2 -1",\n\t\t\t"0 Port WE%sT 1983_8_25_1",\n\t\t\t"0 EU WE%sT"\n\t\t],\n\t\t"Atlantic/Reykjavik": [\n\t\t\t"-1:27:24 - LMT 1837 -1:27:24",\n\t\t\t"-1:27:48 - RMT 1908 -1:27:48",\n\t\t\t"-1 Iceland IS%sT 1968_3_7_1 -1",\n\t\t\t"0 - GMT"\n\t\t],\n\t\t"Atlantic/South_Georgia": [\n\t\t\t"-2:26:8 - LMT 1890 -2:26:8",\n\t\t\t"-2 - GST"\n\t\t],\n\t\t"Atlantic/St_Helena": [\n\t\t\t"-0:22:48 - LMT 1890 -0:22:48",\n\t\t\t"-0:22:48 - JMT 1951 -0:22:48",\n\t\t\t"0 - GMT"\n\t\t],\n\t\t"Atlantic/Stanley": [\n\t\t\t"-3:51:24 - LMT 1890 -3:51:24",\n\t\t\t"-3:51:24 - SMT 1912_2_12 -3:51:24",\n\t\t\t"-4 Falk FK%sT 1983_4 -4",\n\t\t\t"-3 Falk FK%sT 1985_8_15 -3",\n\t\t\t"-4 Falk FK%sT 2010_8_5_02 -4",\n\t\t\t"-3 - FKST"\n\t\t],\n\t\t"Australia/Adelaide": [\n\t\t\t"9:14:20 - LMT 1895_1 9:14:20",\n\t\t\t"9 - CST 1899_4 9",\n\t\t\t"9:30 Aus CST 1971 9:30",\n\t\t\t"9:30 AS CST"\n\t\t],\n\t\t"Australia/Brisbane": [\n\t\t\t"10:12:8 - LMT 1895 10:12:8",\n\t\t\t"10 Aus EST 1971 10",\n\t\t\t"10 AQ EST"\n\t\t],\n\t\t"Australia/Broken_Hill": [\n\t\t\t"9:25:48 - LMT 1895_1 9:25:48",\n\t\t\t"10 - EST 1896_7_23 10",\n\t\t\t"9 - CST 1899_4 9",\n\t\t\t"9:30 Aus CST 1971 9:30",\n\t\t\t"9:30 AN CST 2000 10:30",\n\t\t\t"9:30 AS CST"\n\t\t],\n\t\t"Australia/Currie": [\n\t\t\t"9:35:28 - LMT 1895_8 9:35:28",\n\t\t\t"10 - EST 1916_9_1_2 10",\n\t\t\t"11 - EST 1917_1 11",\n\t\t\t"10 Aus EST 1971_6 10",\n\t\t\t"10 AT EST"\n\t\t],\n\t\t"Australia/Darwin": [\n\t\t\t"8:43:20 - LMT 1895_1 8:43:20",\n\t\t\t"9 - CST 1899_4 9",\n\t\t\t"9:30 Aus CST"\n\t\t],\n\t\t"Australia/Eucla": [\n\t\t\t"8:35:28 - LMT 1895_11 8:35:28",\n\t\t\t"8:45 Aus CWST 1943_6 8:45",\n\t\t\t"8:45 AW CWST"\n\t\t],\n\t\t"Australia/Hobart": [\n\t\t\t"9:49:16 - LMT 1895_8 9:49:16",\n\t\t\t"10 - EST 1916_9_1_2 10",\n\t\t\t"11 - EST 1917_1 11",\n\t\t\t"10 Aus EST 1967 10",\n\t\t\t"10 AT EST"\n\t\t],\n\t\t"Australia/Lindeman": [\n\t\t\t"9:55:56 - LMT 1895 9:55:56",\n\t\t\t"10 Aus EST 1971 10",\n\t\t\t"10 AQ EST 1992_6 10",\n\t\t\t"10 Holiday EST"\n\t\t],\n\t\t"Australia/Lord_Howe": [\n\t\t\t"10:36:20 - LMT 1895_1 10:36:20",\n\t\t\t"10 - EST 1981_2 10",\n\t\t\t"10:30 LH LHST"\n\t\t],\n\t\t"Australia/Melbourne": [\n\t\t\t"9:39:52 - LMT 1895_1 9:39:52",\n\t\t\t"10 Aus EST 1971 10",\n\t\t\t"10 AV EST"\n\t\t],\n\t\t"Australia/Perth": [\n\t\t\t"7:43:24 - LMT 1895_11 7:43:24",\n\t\t\t"8 Aus WST 1943_6 8",\n\t\t\t"8 AW WST"\n\t\t],\n\t\t"Australia/Sydney": [\n\t\t\t"10:4:52 - LMT 1895_1 10:4:52",\n\t\t\t"10 Aus EST 1971 10",\n\t\t\t"10 AN EST"\n\t\t],\n\t\t"CET": [\n\t\t\t"1 C-Eur CE%sT"\n\t\t],\n\t\t"CST6CDT": [\n\t\t\t"-6 US C%sT"\n\t\t],\n\t\t"EET": [\n\t\t\t"2 EU EE%sT"\n\t\t],\n\t\t"EST": [\n\t\t\t"-5 - EST"\n\t\t],\n\t\t"EST5EDT": [\n\t\t\t"-5 US E%sT"\n\t\t],\n\t\t"Etc/GMT": [\n\t\t\t"0 - GMT"\n\t\t],\n\t\t"Etc/GMT+1": [\n\t\t\t"-1 - GMT+1"\n\t\t],\n\t\t"Etc/GMT+10": [\n\t\t\t"-10 - GMT+10"\n\t\t],\n\t\t"Etc/GMT+11": [\n\t\t\t"-11 - GMT+11"\n\t\t],\n\t\t"Etc/GMT+12": [\n\t\t\t"-12 - GMT+12"\n\t\t],\n\t\t"Etc/GMT+2": [\n\t\t\t"-2 - GMT+2"\n\t\t],\n\t\t"Etc/GMT+3": [\n\t\t\t"-3 - GMT+3"\n\t\t],\n\t\t"Etc/GMT+4": [\n\t\t\t"-4 - GMT+4"\n\t\t],\n\t\t"Etc/GMT+5": [\n\t\t\t"-5 - GMT+5"\n\t\t],\n\t\t"Etc/GMT+6": [\n\t\t\t"-6 - GMT+6"\n\t\t],\n\t\t"Etc/GMT+7": [\n\t\t\t"-7 - GMT+7"\n\t\t],\n\t\t"Etc/GMT+8": [\n\t\t\t"-8 - GMT+8"\n\t\t],\n\t\t"Etc/GMT+9": [\n\t\t\t"-9 - GMT+9"\n\t\t],\n\t\t"Etc/GMT-1": [\n\t\t\t"1 - GMT-1"\n\t\t],\n\t\t"Etc/GMT-10": [\n\t\t\t"10 - GMT-10"\n\t\t],\n\t\t"Etc/GMT-11": [\n\t\t\t"11 - GMT-11"\n\t\t],\n\t\t"Etc/GMT-12": [\n\t\t\t"12 - GMT-12"\n\t\t],\n\t\t"Etc/GMT-13": [\n\t\t\t"13 - GMT-13"\n\t\t],\n\t\t"Etc/GMT-14": [\n\t\t\t"14 - GMT-14"\n\t\t],\n\t\t"Etc/GMT-2": [\n\t\t\t"2 - GMT-2"\n\t\t],\n\t\t"Etc/GMT-3": [\n\t\t\t"3 - GMT-3"\n\t\t],\n\t\t"Etc/GMT-4": [\n\t\t\t"4 - GMT-4"\n\t\t],\n\t\t"Etc/GMT-5": [\n\t\t\t"5 - GMT-5"\n\t\t],\n\t\t"Etc/GMT-6": [\n\t\t\t"6 - GMT-6"\n\t\t],\n\t\t"Etc/GMT-7": [\n\t\t\t"7 - GMT-7"\n\t\t],\n\t\t"Etc/GMT-8": [\n\t\t\t"8 - GMT-8"\n\t\t],\n\t\t"Etc/GMT-9": [\n\t\t\t"9 - GMT-9"\n\t\t],\n\t\t"Etc/UCT": [\n\t\t\t"0 - UCT"\n\t\t],\n\t\t"Etc/UTC": [\n\t\t\t"0 - UTC"\n\t\t],\n\t\t"Europe/Amsterdam": [\n\t\t\t"0:19:32 - LMT 1835 0:19:32",\n\t\t\t"0:19:32 Neth %s 1937_6_1 1:19:32",\n\t\t\t"0:20 Neth NE%sT 1940_4_16_0 0:20",\n\t\t\t"1 C-Eur CE%sT 1945_3_2_2 1",\n\t\t\t"1 Neth CE%sT 1977 1",\n\t\t\t"1 EU CE%sT"\n\t\t],\n\t\t"Europe/Andorra": [\n\t\t\t"0:6:4 - LMT 1901 0:6:4",\n\t\t\t"0 - WET 1946_8_30",\n\t\t\t"1 - CET 1985_2_31_2 1",\n\t\t\t"1 EU CE%sT"\n\t\t],\n\t\t"Europe/Athens": [\n\t\t\t"1:34:52 - LMT 1895_8_14 1:34:52",\n\t\t\t"1:34:52 - AMT 1916_6_28_0_1 1:34:52",\n\t\t\t"2 Greece EE%sT 1941_3_30 3",\n\t\t\t"1 Greece CE%sT 1944_3_4 1",\n\t\t\t"2 Greece EE%sT 1981 2",\n\t\t\t"2 EU EE%sT"\n\t\t],\n\t\t"Europe/Belgrade": [\n\t\t\t"1:22 - LMT 1884 1:22",\n\t\t\t"1 - CET 1941_3_18_23 1",\n\t\t\t"1 C-Eur CE%sT 1945 1",\n\t\t\t"1 - CET 1945_4_8_2 1",\n\t\t\t"2 - CEST 1945_8_16_2 1",\n\t\t\t"1 - CET 1982_10_27 1",\n\t\t\t"1 EU CE%sT"\n\t\t],\n\t\t"Europe/Berlin": [\n\t\t\t"0:53:28 - LMT 1893_3 0:53:28",\n\t\t\t"1 C-Eur CE%sT 1945_4_24_2 2",\n\t\t\t"1 SovietZone CE%sT 1946 1",\n\t\t\t"1 Germany CE%sT 1980 1",\n\t\t\t"1 EU CE%sT"\n\t\t],\n\t\t"Europe/Brussels": [\n\t\t\t"0:17:30 - LMT 1880 0:17:30",\n\t\t\t"0:17:30 - BMT 1892_4_1_12 0:17:30",\n\t\t\t"0 - WET 1914_10_8",\n\t\t\t"1 - CET 1916_4_1_0 1",\n\t\t\t"1 C-Eur CE%sT 1918_10_11_11",\n\t\t\t"0 Belgium WE%sT 1940_4_20_2",\n\t\t\t"1 C-Eur CE%sT 1944_8_3 2",\n\t\t\t"1 Belgium CE%sT 1977 1",\n\t\t\t"1 EU CE%sT"\n\t\t],\n\t\t"Europe/Bucharest": [\n\t\t\t"1:44:24 - LMT 1891_9 1:44:24",\n\t\t\t"1:44:24 - BMT 1931_6_24 1:44:24",\n\t\t\t"2 Romania EE%sT 1981_2_29_2 2",\n\t\t\t"2 C-Eur EE%sT 1991 2",\n\t\t\t"2 Romania EE%sT 1994 2",\n\t\t\t"2 E-Eur EE%sT 1997 2",\n\t\t\t"2 EU EE%sT"\n\t\t],\n\t\t"Europe/Budapest": [\n\t\t\t"1:16:20 - LMT 1890_9 1:16:20",\n\t\t\t"1 C-Eur CE%sT 1918 1",\n\t\t\t"1 Hungary CE%sT 1941_3_6_2 1",\n\t\t\t"1 C-Eur CE%sT 1945 1",\n\t\t\t"1 Hungary CE%sT 1980_8_28_2 1",\n\t\t\t"1 EU CE%sT"\n\t\t],\n\t\t"Europe/Chisinau": [\n\t\t\t"1:55:20 - LMT 1880 1:55:20",\n\t\t\t"1:55 - CMT 1918_1_15 1:55",\n\t\t\t"1:44:24 - BMT 1931_6_24 1:44:24",\n\t\t\t"2 Romania EE%sT 1940_7_15 2",\n\t\t\t"3 - EEST 1941_6_17 3",\n\t\t\t"1 C-Eur CE%sT 1944_7_24 2",\n\t\t\t"3 Russia MSK/MSD 1990 3",\n\t\t\t"3 - MSK 1990_4_6 3",\n\t\t\t"2 - EET 1991 2",\n\t\t\t"2 Russia EE%sT 1992 2",\n\t\t\t"2 E-Eur EE%sT 1997 2",\n\t\t\t"2 EU EE%sT"\n\t\t],\n\t\t"Europe/Copenhagen": [\n\t\t\t"0:50:20 - LMT 1890 0:50:20",\n\t\t\t"0:50:20 - CMT 1894_0_1 0:50:20",\n\t\t\t"1 Denmark CE%sT 1942_10_2_2 1",\n\t\t\t"1 C-Eur CE%sT 1945_3_2_2 1",\n\t\t\t"1 Denmark CE%sT 1980 1",\n\t\t\t"1 EU CE%sT"\n\t\t],\n\t\t"Europe/Dublin": [\n\t\t\t"-0:25 - LMT 1880_7_2 -0:25",\n\t\t\t"-0:25:21 - DMT 1916_4_21_2 -0:25:21",\n\t\t\t"0:34:39 - IST 1916_9_1_2 -0:25:21",\n\t\t\t"0 GB-Eire %s 1921_11_6",\n\t\t\t"0 GB-Eire GMT/IST 1940_1_25_2",\n\t\t\t"1 - IST 1946_9_6_2 1",\n\t\t\t"0 - GMT 1947_2_16_2",\n\t\t\t"1 - IST 1947_10_2_2 1",\n\t\t\t"0 - GMT 1948_3_18_2",\n\t\t\t"0 GB-Eire GMT/IST 1968_9_27 1",\n\t\t\t"1 - IST 1971_9_31_2",\n\t\t\t"0 GB-Eire GMT/IST 1996",\n\t\t\t"0 EU GMT/IST"\n\t\t],\n\t\t"Europe/Gibraltar": [\n\t\t\t"-0:21:24 - LMT 1880_7_2_0 -0:21:24",\n\t\t\t"0 GB-Eire %s 1957_3_14_2",\n\t\t\t"1 - CET 1982 1",\n\t\t\t"1 EU CE%sT"\n\t\t],\n\t\t"Europe/Helsinki": [\n\t\t\t"1:39:52 - LMT 1878_4_31 1:39:52",\n\t\t\t"1:39:52 - HMT 1921_4 1:39:52",\n\t\t\t"2 Finland EE%sT 1983 2",\n\t\t\t"2 EU EE%sT"\n\t\t],\n\t\t"Europe/Istanbul": [\n\t\t\t"1:55:52 - LMT 1880 1:55:52",\n\t\t\t"1:56:56 - IMT 1910_9 1:56:56",\n\t\t\t"2 Turkey EE%sT 1978_9_15 3",\n\t\t\t"3 Turkey TR%sT 1985_3_20 3",\n\t\t\t"2 Turkey EE%sT 2007 2",\n\t\t\t"2 EU EE%sT 2011_2_27_1",\n\t\t\t"2 - EET 2011_2_28_1",\n\t\t\t"2 EU EE%sT"\n\t\t],\n\t\t"Europe/Kaliningrad": [\n\t\t\t"1:22 - LMT 1893_3 1:22",\n\t\t\t"1 C-Eur CE%sT 1945 1",\n\t\t\t"2 Poland CE%sT 1946 2",\n\t\t\t"3 Russia MSK/MSD 1991_2_31_2 3",\n\t\t\t"2 Russia EE%sT 2011_2_27_2 2",\n\t\t\t"3 - FET"\n\t\t],\n\t\t"Europe/Kiev": [\n\t\t\t"2:2:4 - LMT 1880 2:2:4",\n\t\t\t"2:2:4 - KMT 1924_4_2 2:2:4",\n\t\t\t"2 - EET 1930_5_21 2",\n\t\t\t"3 - MSK 1941_8_20 3",\n\t\t\t"1 C-Eur CE%sT 1943_10_6 1",\n\t\t\t"3 Russia MSK/MSD 1990 3",\n\t\t\t"3 - MSK 1990_6_1_2 3",\n\t\t\t"2 - EET 1992 2",\n\t\t\t"2 E-Eur EE%sT 1995 2",\n\t\t\t"2 EU EE%sT"\n\t\t],\n\t\t"Europe/Lisbon": [\n\t\t\t"-0:36:32 - LMT 1884 -0:36:32",\n\t\t\t"-0:36:32 - LMT 1912_0_1 -0:36:32",\n\t\t\t"0 Port WE%sT 1966_3_3_2",\n\t\t\t"1 - CET 1976_8_26_1 1",\n\t\t\t"0 Port WE%sT 1983_8_25_1",\n\t\t\t"0 W-Eur WE%sT 1992_8_27_1",\n\t\t\t"1 EU CE%sT 1996_2_31_1",\n\t\t\t"0 EU WE%sT"\n\t\t],\n\t\t"Europe/London": [\n\t\t\t"-0:1:15 - LMT 1847_11_1_0 -0:1:15",\n\t\t\t"0 GB-Eire %s 1968_9_27 1",\n\t\t\t"1 - BST 1971_9_31_2",\n\t\t\t"0 GB-Eire %s 1996",\n\t\t\t"0 EU GMT/BST"\n\t\t],\n\t\t"Europe/Luxembourg": [\n\t\t\t"0:24:36 - LMT 1904_5 0:24:36",\n\t\t\t"1 Lux CE%sT 1918_10_25 1",\n\t\t\t"0 Lux WE%sT 1929_9_6_2",\n\t\t\t"0 Belgium WE%sT 1940_4_14_3 1",\n\t\t\t"1 C-Eur WE%sT 1944_8_18_3 2",\n\t\t\t"1 Belgium CE%sT 1977 1",\n\t\t\t"1 EU CE%sT"\n\t\t],\n\t\t"Europe/Madrid": [\n\t\t\t"-0:14:44 - LMT 1901_0_1_0 -0:14:44",\n\t\t\t"0 Spain WE%sT 1946_8_30 2",\n\t\t\t"1 Spain CE%sT 1979 1",\n\t\t\t"1 EU CE%sT"\n\t\t],\n\t\t"Europe/Malta": [\n\t\t\t"0:58:4 - LMT 1893_10_2_0 0:58:4",\n\t\t\t"1 Italy CE%sT 1942_10_2_2 1",\n\t\t\t"1 C-Eur CE%sT 1945_3_2_2 1",\n\t\t\t"1 Italy CE%sT 1973_2_31 1",\n\t\t\t"1 Malta CE%sT 1981 1",\n\t\t\t"1 EU CE%sT"\n\t\t],\n\t\t"Europe/Minsk": [\n\t\t\t"1:50:16 - LMT 1880 1:50:16",\n\t\t\t"1:50 - MMT 1924_4_2 1:50",\n\t\t\t"2 - EET 1930_5_21 2",\n\t\t\t"3 - MSK 1941_5_28 3",\n\t\t\t"1 C-Eur CE%sT 1944_6_3 2",\n\t\t\t"3 Russia MSK/MSD 1990 3",\n\t\t\t"3 - MSK 1991_2_31_2 3",\n\t\t\t"3 - EEST 1991_8_29_2 2",\n\t\t\t"2 - EET 1992_2_29_0 2",\n\t\t\t"3 - EEST 1992_8_27_0 2",\n\t\t\t"2 Russia EE%sT 2011_2_27_2 2",\n\t\t\t"3 - FET"\n\t\t],\n\t\t"Europe/Monaco": [\n\t\t\t"0:29:32 - LMT 1891_2_15 0:29:32",\n\t\t\t"0:9:21 - PMT 1911_2_11 0:9:21",\n\t\t\t"0 France WE%sT 1945_8_16_3 2",\n\t\t\t"1 France CE%sT 1977 1",\n\t\t\t"1 EU CE%sT"\n\t\t],\n\t\t"Europe/Moscow": [\n\t\t\t"2:30:20 - LMT 1880 2:30:20",\n\t\t\t"2:30 - MMT 1916_6_3 2:30",\n\t\t\t"2:30:48 Russia %s 1919_6_1_2 4:30:48",\n\t\t\t"3 Russia MSK/MSD 1922_9 3",\n\t\t\t"2 - EET 1930_5_21 2",\n\t\t\t"3 Russia MSK/MSD 1991_2_31_2 3",\n\t\t\t"2 Russia EE%sT 1992_0_19_2 2",\n\t\t\t"3 Russia MSK/MSD 2011_2_27_2 3",\n\t\t\t"4 - MSK"\n\t\t],\n\t\t"Europe/Oslo": [\n\t\t\t"0:43 - LMT 1895_0_1 0:43",\n\t\t\t"1 Norway CE%sT 1940_7_10_23 1",\n\t\t\t"1 C-Eur CE%sT 1945_3_2_2 1",\n\t\t\t"1 Norway CE%sT 1980 1",\n\t\t\t"1 EU CE%sT"\n\t\t],\n\t\t"Europe/Paris": [\n\t\t\t"0:9:21 - LMT 1891_2_15_0_1 0:9:21",\n\t\t\t"0:9:21 - PMT 1911_2_11_0_1 0:9:21",\n\t\t\t"0 France WE%sT 1940_5_14_23 1",\n\t\t\t"1 C-Eur CE%sT 1944_7_25 2",\n\t\t\t"0 France WE%sT 1945_8_16_3 2",\n\t\t\t"1 France CE%sT 1977 1",\n\t\t\t"1 EU CE%sT"\n\t\t],\n\t\t"Europe/Prague": [\n\t\t\t"0:57:44 - LMT 1850 0:57:44",\n\t\t\t"0:57:44 - PMT 1891_9 0:57:44",\n\t\t\t"1 C-Eur CE%sT 1944_8_17_2 1",\n\t\t\t"1 Czech CE%sT 1979 1",\n\t\t\t"1 EU CE%sT"\n\t\t],\n\t\t"Europe/Riga": [\n\t\t\t"1:36:24 - LMT 1880 1:36:24",\n\t\t\t"1:36:24 - RMT 1918_3_15_2 1:36:24",\n\t\t\t"2:36:24 - LST 1918_8_16_3 2:36:24",\n\t\t\t"1:36:24 - RMT 1919_3_1_2 1:36:24",\n\t\t\t"2:36:24 - LST 1919_4_22_3 2:36:24",\n\t\t\t"1:36:24 - RMT 1926_4_11 1:36:24",\n\t\t\t"2 - EET 1940_7_5 2",\n\t\t\t"3 - MSK 1941_6 3",\n\t\t\t"1 C-Eur CE%sT 1944_9_13 1",\n\t\t\t"3 Russia MSK/MSD 1989_2_26_2 3",\n\t\t\t"3 - EEST 1989_8_24_2 2",\n\t\t\t"2 Latvia EE%sT 1997_0_21 2",\n\t\t\t"2 EU EE%sT 2000_1_29 2",\n\t\t\t"2 - EET 2001_0_2 2",\n\t\t\t"2 EU EE%sT"\n\t\t],\n\t\t"Europe/Rome": [\n\t\t\t"0:49:56 - LMT 1866_8_22 0:49:56",\n\t\t\t"0:49:56 - RMT 1893_10_1_0 0:49:56",\n\t\t\t"1 Italy CE%sT 1942_10_2_2 1",\n\t\t\t"1 C-Eur CE%sT 1944_6 2",\n\t\t\t"1 Italy CE%sT 1980 1",\n\t\t\t"1 EU CE%sT"\n\t\t],\n\t\t"Europe/Samara": [\n\t\t\t"3:20:36 - LMT 1919_6_1_2 3:20:36",\n\t\t\t"3 - SAMT 1930_5_21 3",\n\t\t\t"4 - SAMT 1935_0_27 4",\n\t\t\t"4 Russia KUY%sT 1989_2_26_2 4",\n\t\t\t"3 Russia KUY%sT 1991_2_31_2 3",\n\t\t\t"2 Russia KUY%sT 1991_8_29_2 2",\n\t\t\t"3 - KUYT 1991_9_20_3 3",\n\t\t\t"4 Russia SAM%sT 2010_2_28_2 4",\n\t\t\t"3 Russia SAM%sT 2011_2_27_2 3",\n\t\t\t"4 - SAMT"\n\t\t],\n\t\t"Europe/Simferopol": [\n\t\t\t"2:16:24 - LMT 1880 2:16:24",\n\t\t\t"2:16 - SMT 1924_4_2 2:16",\n\t\t\t"2 - EET 1930_5_21 2",\n\t\t\t"3 - MSK 1941_10 3",\n\t\t\t"1 C-Eur CE%sT 1944_3_13 2",\n\t\t\t"3 Russia MSK/MSD 1990 3",\n\t\t\t"3 - MSK 1990_6_1_2 3",\n\t\t\t"2 - EET 1992 2",\n\t\t\t"2 E-Eur EE%sT 1994_4 3",\n\t\t\t"3 E-Eur MSK/MSD 1996_2_31_3 3",\n\t\t\t"4 - MSD 1996_9_27_3 3",\n\t\t\t"3 Russia MSK/MSD 1997 3",\n\t\t\t"3 - MSK 1997_2_30_1",\n\t\t\t"2 EU EE%sT"\n\t\t],\n\t\t"Europe/Sofia": [\n\t\t\t"1:33:16 - LMT 1880 1:33:16",\n\t\t\t"1:56:56 - IMT 1894_10_30 1:56:56",\n\t\t\t"2 - EET 1942_10_2_3 2",\n\t\t\t"1 C-Eur CE%sT 1945 1",\n\t\t\t"1 - CET 1945_3_2_3 1",\n\t\t\t"2 - EET 1979_2_31_23 2",\n\t\t\t"2 Bulg EE%sT 1982_8_26_2 3",\n\t\t\t"2 C-Eur EE%sT 1991 2",\n\t\t\t"2 E-Eur EE%sT 1997 2",\n\t\t\t"2 EU EE%sT"\n\t\t],\n\t\t"Europe/Stockholm": [\n\t\t\t"1:12:12 - LMT 1879_0_1 1:12:12",\n\t\t\t"1:0:14 - SET 1900_0_1 1:0:14",\n\t\t\t"1 - CET 1916_4_14_23 1",\n\t\t\t"2 - CEST 1916_9_1_01 2",\n\t\t\t"1 - CET 1980 1",\n\t\t\t"1 EU CE%sT"\n\t\t],\n\t\t"Europe/Tallinn": [\n\t\t\t"1:39 - LMT 1880 1:39",\n\t\t\t"1:39 - TMT 1918_1 1:39",\n\t\t\t"1 C-Eur CE%sT 1919_6 1",\n\t\t\t"1:39 - TMT 1921_4 1:39",\n\t\t\t"2 - EET 1940_7_6 2",\n\t\t\t"3 - MSK 1941_8_15 3",\n\t\t\t"1 C-Eur CE%sT 1944_8_22 2",\n\t\t\t"3 Russia MSK/MSD 1989_2_26_2 3",\n\t\t\t"3 - EEST 1989_8_24_2 2",\n\t\t\t"2 C-Eur EE%sT 1998_8_22 3",\n\t\t\t"2 EU EE%sT 1999_10_1 3",\n\t\t\t"2 - EET 2002_1_21 2",\n\t\t\t"2 EU EE%sT"\n\t\t],\n\t\t"Europe/Tirane": [\n\t\t\t"1:19:20 - LMT 1914 1:19:20",\n\t\t\t"1 - CET 1940_5_16 1",\n\t\t\t"1 Albania CE%sT 1984_6 2",\n\t\t\t"1 EU CE%sT"\n\t\t],\n\t\t"Europe/Uzhgorod": [\n\t\t\t"1:29:12 - LMT 1890_9 1:29:12",\n\t\t\t"1 - CET 1940 1",\n\t\t\t"1 C-Eur CE%sT 1944_9 2",\n\t\t\t"2 - CEST 1944_9_26 2",\n\t\t\t"1 - CET 1945_5_29 1",\n\t\t\t"3 Russia MSK/MSD 1990 3",\n\t\t\t"3 - MSK 1990_6_1_2 3",\n\t\t\t"1 - CET 1991_2_31_3 1",\n\t\t\t"2 - EET 1992 2",\n\t\t\t"2 E-Eur EE%sT 1995 2",\n\t\t\t"2 EU EE%sT"\n\t\t],\n\t\t"Europe/Vaduz": [\n\t\t\t"0:38:4 - LMT 1894_5 0:38:4",\n\t\t\t"1 - CET 1981 1",\n\t\t\t"1 EU CE%sT"\n\t\t],\n\t\t"Europe/Vienna": [\n\t\t\t"1:5:21 - LMT 1893_3 1:5:21",\n\t\t\t"1 C-Eur CE%sT 1920 1",\n\t\t\t"1 Austria CE%sT 1940_3_1_2 1",\n\t\t\t"1 C-Eur CE%sT 1945_3_2_2 1",\n\t\t\t"2 - CEST 1945_3_12_2 1",\n\t\t\t"1 - CET 1946 1",\n\t\t\t"1 Austria CE%sT 1981 1",\n\t\t\t"1 EU CE%sT"\n\t\t],\n\t\t"Europe/Vilnius": [\n\t\t\t"1:41:16 - LMT 1880 1:41:16",\n\t\t\t"1:24 - WMT 1917 1:24",\n\t\t\t"1:35:36 - KMT 1919_9_10 1:35:36",\n\t\t\t"1 - CET 1920_6_12 1",\n\t\t\t"2 - EET 1920_9_9 2",\n\t\t\t"1 - CET 1940_7_3 1",\n\t\t\t"3 - MSK 1941_5_24 3",\n\t\t\t"1 C-Eur CE%sT 1944_7 2",\n\t\t\t"3 Russia MSK/MSD 1991_2_31_2 3",\n\t\t\t"3 - EEST 1991_8_29_2 2",\n\t\t\t"2 C-Eur EE%sT 1998 2",\n\t\t\t"2 - EET 1998_2_29_1",\n\t\t\t"1 EU CE%sT 1999_9_31_1",\n\t\t\t"2 - EET 2003_0_1 2",\n\t\t\t"2 EU EE%sT"\n\t\t],\n\t\t"Europe/Volgograd": [\n\t\t\t"2:57:40 - LMT 1920_0_3 2:57:40",\n\t\t\t"3 - TSAT 1925_3_6 3",\n\t\t\t"3 - STAT 1930_5_21 3",\n\t\t\t"4 - STAT 1961_10_11 4",\n\t\t\t"4 Russia VOL%sT 1989_2_26_2 4",\n\t\t\t"3 Russia VOL%sT 1991_2_31_2 3",\n\t\t\t"4 - VOLT 1992_2_29_2 4",\n\t\t\t"3 Russia VOL%sT 2011_2_27_2 3",\n\t\t\t"4 - VOLT"\n\t\t],\n\t\t"Europe/Warsaw": [\n\t\t\t"1:24 - LMT 1880 1:24",\n\t\t\t"1:24 - WMT 1915_7_5 1:24",\n\t\t\t"1 C-Eur CE%sT 1918_8_16_3 2",\n\t\t\t"2 Poland EE%sT 1922_5 2",\n\t\t\t"1 Poland CE%sT 1940_5_23_2 1",\n\t\t\t"1 C-Eur CE%sT 1944_9 2",\n\t\t\t"1 Poland CE%sT 1977 1",\n\t\t\t"1 W-Eur CE%sT 1988 1",\n\t\t\t"1 EU CE%sT"\n\t\t],\n\t\t"Europe/Zaporozhye": [\n\t\t\t"2:20:40 - LMT 1880 2:20:40",\n\t\t\t"2:20 - CUT 1924_4_2 2:20",\n\t\t\t"2 - EET 1930_5_21 2",\n\t\t\t"3 - MSK 1941_7_25 3",\n\t\t\t"1 C-Eur CE%sT 1943_9_25 1",\n\t\t\t"3 Russia MSK/MSD 1991_2_31_2 3",\n\t\t\t"2 E-Eur EE%sT 1995 2",\n\t\t\t"2 EU EE%sT"\n\t\t],\n\t\t"Europe/Zurich": [\n\t\t\t"0:34:8 - LMT 1848_8_12 0:34:8",\n\t\t\t"0:29:44 - BMT 1894_5 0:29:44",\n\t\t\t"1 Swiss CE%sT 1981 1",\n\t\t\t"1 EU CE%sT"\n\t\t],\n\t\t"HST": [\n\t\t\t"-10 - HST"\n\t\t],\n\t\t"Indian/Antananarivo": [\n\t\t\t"3:10:4 - LMT 1911_6 3:10:4",\n\t\t\t"3 - EAT 1954_1_27_23 3",\n\t\t\t"4 - EAST 1954_4_29_23 3",\n\t\t\t"3 - EAT"\n\t\t],\n\t\t"Indian/Chagos": [\n\t\t\t"4:49:40 - LMT 1907 4:49:40",\n\t\t\t"5 - IOT 1996 5",\n\t\t\t"6 - IOT"\n\t\t],\n\t\t"Indian/Christmas": [\n\t\t\t"7:2:52 - LMT 1895_1 7:2:52",\n\t\t\t"7 - CXT"\n\t\t],\n\t\t"Indian/Cocos": [\n\t\t\t"6:27:40 - LMT 1900 6:27:40",\n\t\t\t"6:30 - CCT"\n\t\t],\n\t\t"Indian/Comoro": [\n\t\t\t"2:53:4 - LMT 1911_6 2:53:4",\n\t\t\t"3 - EAT"\n\t\t],\n\t\t"Indian/Kerguelen": [\n\t\t\t"0 - zzz 1950",\n\t\t\t"5 - TFT"\n\t\t],\n\t\t"Indian/Mahe": [\n\t\t\t"3:41:48 - LMT 1906_5 3:41:48",\n\t\t\t"4 - SCT"\n\t\t],\n\t\t"Indian/Maldives": [\n\t\t\t"4:54 - LMT 1880 4:54",\n\t\t\t"4:54 - MMT 1960 4:54",\n\t\t\t"5 - MVT"\n\t\t],\n\t\t"Indian/Mauritius": [\n\t\t\t"3:50 - LMT 1907 3:50",\n\t\t\t"4 Mauritius MU%sT"\n\t\t],\n\t\t"Indian/Mayotte": [\n\t\t\t"3:0:56 - LMT 1911_6 3:0:56",\n\t\t\t"3 - EAT"\n\t\t],\n\t\t"Indian/Reunion": [\n\t\t\t"3:41:52 - LMT 1911_5 3:41:52",\n\t\t\t"4 - RET"\n\t\t],\n\t\t"MET": [\n\t\t\t"1 C-Eur ME%sT"\n\t\t],\n\t\t"MST": [\n\t\t\t"-7 - MST"\n\t\t],\n\t\t"MST7MDT": [\n\t\t\t"-7 US M%sT"\n\t\t],\n\t\t"PST8PDT": [\n\t\t\t"-8 US P%sT"\n\t\t],\n\t\t"Pacific/Apia": [\n\t\t\t"12:33:4 - LMT 1879_6_5 12:33:4",\n\t\t\t"-11:26:56 - LMT 1911 -11:26:56",\n\t\t\t"-11:30 - SAMT 1950 -11:30",\n\t\t\t"-11 - WST 2010_8_26 -11",\n\t\t\t"-10 - WSDT 2011_3_2_4 -10",\n\t\t\t"-11 - WST 2011_8_24_3 -11",\n\t\t\t"-10 - WSDT 2011_11_30 -10",\n\t\t\t"14 - WSDT 2012_3_1_4 14",\n\t\t\t"13 WS WS%sT"\n\t\t],\n\t\t"Pacific/Auckland": [\n\t\t\t"11:39:4 - LMT 1868_10_2 11:39:4",\n\t\t\t"11:30 NZ NZ%sT 1946_0_1 12",\n\t\t\t"12 NZ NZ%sT"\n\t\t],\n\t\t"Pacific/Chatham": [\n\t\t\t"12:13:48 - LMT 1957_0_1 12:13:48",\n\t\t\t"12:45 Chatham CHA%sT"\n\t\t],\n\t\t"Pacific/Chuuk": [\n\t\t\t"10:7:8 - LMT 1901 10:7:8",\n\t\t\t"10 - CHUT"\n\t\t],\n\t\t"Pacific/Easter": [\n\t\t\t"-7:17:44 - LMT 1890 -7:17:44",\n\t\t\t"-7:17:28 - EMT 1932_8 -7:17:28",\n\t\t\t"-7 Chile EAS%sT 1982_2_13_21 -6",\n\t\t\t"-6 Chile EAS%sT"\n\t\t],\n\t\t"Pacific/Efate": [\n\t\t\t"11:13:16 - LMT 1912_0_13 11:13:16",\n\t\t\t"11 Vanuatu VU%sT"\n\t\t],\n\t\t"Pacific/Enderbury": [\n\t\t\t"-11:24:20 - LMT 1901 -11:24:20",\n\t\t\t"-12 - PHOT 1979_9 -12",\n\t\t\t"-11 - PHOT 1995 -11",\n\t\t\t"13 - PHOT"\n\t\t],\n\t\t"Pacific/Fakaofo": [\n\t\t\t"-11:24:56 - LMT 1901 -11:24:56",\n\t\t\t"-11 - TKT 2011_11_30 -11",\n\t\t\t"13 - TKT"\n\t\t],\n\t\t"Pacific/Fiji": [\n\t\t\t"11:55:44 - LMT 1915_9_26 11:55:44",\n\t\t\t"12 Fiji FJ%sT"\n\t\t],\n\t\t"Pacific/Funafuti": [\n\t\t\t"11:56:52 - LMT 1901 11:56:52",\n\t\t\t"12 - TVT"\n\t\t],\n\t\t"Pacific/Galapagos": [\n\t\t\t"-5:58:24 - LMT 1931 -5:58:24",\n\t\t\t"-5 - ECT 1986 -5",\n\t\t\t"-6 - GALT"\n\t\t],\n\t\t"Pacific/Gambier": [\n\t\t\t"-8:59:48 - LMT 1912_9 -8:59:48",\n\t\t\t"-9 - GAMT"\n\t\t],\n\t\t"Pacific/Guadalcanal": [\n\t\t\t"10:39:48 - LMT 1912_9 10:39:48",\n\t\t\t"11 - SBT"\n\t\t],\n\t\t"Pacific/Guam": [\n\t\t\t"-14:21 - LMT 1844_11_31 -14:21",\n\t\t\t"9:39 - LMT 1901 9:39",\n\t\t\t"10 - GST 2000_11_23 10",\n\t\t\t"10 - ChST"\n\t\t],\n\t\t"Pacific/Honolulu": [\n\t\t\t"-10:31:26 - LMT 1896_0_13_12 -10:31:26",\n\t\t\t"-10:30 - HST 1933_3_30_2 -10:30",\n\t\t\t"-9:30 - HDT 1933_4_21_12 -9:30",\n\t\t\t"-10:30 - HST 1942_1_09_2 -10:30",\n\t\t\t"-9:30 - HDT 1945_8_30_2 -9:30",\n\t\t\t"-10:30 - HST 1947_5_8_2 -10:30",\n\t\t\t"-10 - HST"\n\t\t],\n\t\t"Pacific/Johnston": [\n\t\t\t"-10 - HST"\n\t\t],\n\t\t"Pacific/Kiritimati": [\n\t\t\t"-10:29:20 - LMT 1901 -10:29:20",\n\t\t\t"-10:40 - LINT 1979_9 -10:40",\n\t\t\t"-10 - LINT 1995 -10",\n\t\t\t"14 - LINT"\n\t\t],\n\t\t"Pacific/Kosrae": [\n\t\t\t"10:51:56 - LMT 1901 10:51:56",\n\t\t\t"11 - KOST 1969_9 11",\n\t\t\t"12 - KOST 1999 12",\n\t\t\t"11 - KOST"\n\t\t],\n\t\t"Pacific/Kwajalein": [\n\t\t\t"11:9:20 - LMT 1901 11:9:20",\n\t\t\t"11 - MHT 1969_9 11",\n\t\t\t"-12 - KWAT 1993_7_20 -12",\n\t\t\t"12 - MHT"\n\t\t],\n\t\t"Pacific/Majuro": [\n\t\t\t"11:24:48 - LMT 1901 11:24:48",\n\t\t\t"11 - MHT 1969_9 11",\n\t\t\t"12 - MHT"\n\t\t],\n\t\t"Pacific/Marquesas": [\n\t\t\t"-9:18 - LMT 1912_9 -9:18",\n\t\t\t"-9:30 - MART"\n\t\t],\n\t\t"Pacific/Midway": [\n\t\t\t"-11:49:28 - LMT 1901 -11:49:28",\n\t\t\t"-11 - NST 1956_5_3 -11",\n\t\t\t"-10 - NDT 1956_8_2 -10",\n\t\t\t"-11 - NST 1967_3 -11",\n\t\t\t"-11 - BST 1983_10_30 -11",\n\t\t\t"-11 - SST"\n\t\t],\n\t\t"Pacific/Nauru": [\n\t\t\t"11:7:40 - LMT 1921_0_15 11:7:40",\n\t\t\t"11:30 - NRT 1942_2_15 11:30",\n\t\t\t"9 - JST 1944_7_15 9",\n\t\t\t"11:30 - NRT 1979_4 11:30",\n\t\t\t"12 - NRT"\n\t\t],\n\t\t"Pacific/Niue": [\n\t\t\t"-11:19:40 - LMT 1901 -11:19:40",\n\t\t\t"-11:20 - NUT 1951 -11:20",\n\t\t\t"-11:30 - NUT 1978_9_1 -11:30",\n\t\t\t"-11 - NUT"\n\t\t],\n\t\t"Pacific/Norfolk": [\n\t\t\t"11:11:52 - LMT 1901 11:11:52",\n\t\t\t"11:12 - NMT 1951 11:12",\n\t\t\t"11:30 - NFT"\n\t\t],\n\t\t"Pacific/Noumea": [\n\t\t\t"11:5:48 - LMT 1912_0_13 11:5:48",\n\t\t\t"11 NC NC%sT"\n\t\t],\n\t\t"Pacific/Pago_Pago": [\n\t\t\t"12:37:12 - LMT 1879_6_5 12:37:12",\n\t\t\t"-11:22:48 - LMT 1911 -11:22:48",\n\t\t\t"-11:30 - SAMT 1950 -11:30",\n\t\t\t"-11 - NST 1967_3 -11",\n\t\t\t"-11 - BST 1983_10_30 -11",\n\t\t\t"-11 - SST"\n\t\t],\n\t\t"Pacific/Palau": [\n\t\t\t"8:57:56 - LMT 1901 8:57:56",\n\t\t\t"9 - PWT"\n\t\t],\n\t\t"Pacific/Pitcairn": [\n\t\t\t"-8:40:20 - LMT 1901 -8:40:20",\n\t\t\t"-8:30 - PNT 1998_3_27_00 -8:30",\n\t\t\t"-8 - PST"\n\t\t],\n\t\t"Pacific/Pohnpei": [\n\t\t\t"10:32:52 - LMT 1901 10:32:52",\n\t\t\t"11 - PONT"\n\t\t],\n\t\t"Pacific/Port_Moresby": [\n\t\t\t"9:48:40 - LMT 1880 9:48:40",\n\t\t\t"9:48:32 - PMMT 1895 9:48:32",\n\t\t\t"10 - PGT"\n\t\t],\n\t\t"Pacific/Rarotonga": [\n\t\t\t"-10:39:4 - LMT 1901 -10:39:4",\n\t\t\t"-10:30 - CKT 1978_10_12 -10:30",\n\t\t\t"-10 Cook CK%sT"\n\t\t],\n\t\t"Pacific/Saipan": [\n\t\t\t"-14:17 - LMT 1844_11_31 -14:17",\n\t\t\t"9:43 - LMT 1901 9:43",\n\t\t\t"9 - MPT 1969_9 9",\n\t\t\t"10 - MPT 2000_11_23 10",\n\t\t\t"10 - ChST"\n\t\t],\n\t\t"Pacific/Tahiti": [\n\t\t\t"-9:58:16 - LMT 1912_9 -9:58:16",\n\t\t\t"-10 - TAHT"\n\t\t],\n\t\t"Pacific/Tarawa": [\n\t\t\t"11:32:4 - LMT 1901 11:32:4",\n\t\t\t"12 - GILT"\n\t\t],\n\t\t"Pacific/Tongatapu": [\n\t\t\t"12:19:20 - LMT 1901 12:19:20",\n\t\t\t"12:20 - TOT 1941 12:20",\n\t\t\t"13 - TOT 1999 13",\n\t\t\t"13 Tonga TO%sT"\n\t\t],\n\t\t"Pacific/Wake": [\n\t\t\t"11:6:28 - LMT 1901 11:6:28",\n\t\t\t"12 - WAKT"\n\t\t],\n\t\t"Pacific/Wallis": [\n\t\t\t"12:15:20 - LMT 1901 12:15:20",\n\t\t\t"12 - WFT"\n\t\t],\n\t\t"WET": [\n\t\t\t"0 EU WE%sT"\n\t\t]\n\t}\n}';});
+define('text!moment-timezone-config',[],function () { return '{\n\t"links": {\n\t\t"Africa/Asmera": "Africa/Asmara",\n\t\t"Africa/Timbuktu": "Africa/Bamako",\n\t\t"America/Argentina/ComodRivadavia": "America/Argentina/Catamarca",\n\t\t"America/Atka": "America/Adak",\n\t\t"America/Buenos_Aires": "America/Argentina/Buenos_Aires",\n\t\t"America/Catamarca": "America/Argentina/Catamarca",\n\t\t"America/Coral_Harbour": "America/Atikokan",\n\t\t"America/Cordoba": "America/Argentina/Cordoba",\n\t\t"America/Ensenada": "America/Tijuana",\n\t\t"America/Fort_Wayne": "America/Indiana/Indianapolis",\n\t\t"America/Indianapolis": "America/Indiana/Indianapolis",\n\t\t"America/Jujuy": "America/Argentina/Jujuy",\n\t\t"America/Knox_IN": "America/Indiana/Knox",\n\t\t"America/Kralendijk": "America/Curacao",\n\t\t"America/Louisville": "America/Kentucky/Louisville",\n\t\t"America/Lower_Princes": "America/Curacao",\n\t\t"America/Marigot": "America/Guadeloupe",\n\t\t"America/Mendoza": "America/Argentina/Mendoza",\n\t\t"America/Porto_Acre": "America/Rio_Branco",\n\t\t"America/Rosario": "America/Argentina/Cordoba",\n\t\t"America/Shiprock": "America/Denver",\n\t\t"America/St_Barthelemy": "America/Guadeloupe",\n\t\t"America/Virgin": "America/St_Thomas",\n\t\t"Antarctica/South_Pole": "Antarctica/McMurdo",\n\t\t"Arctic/Longyearbyen": "Europe/Oslo",\n\t\t"Asia/Ashkhabad": "Asia/Ashgabat",\n\t\t"Asia/Calcutta": "Asia/Kolkata",\n\t\t"Asia/Chungking": "Asia/Chongqing",\n\t\t"Asia/Dacca": "Asia/Dhaka",\n\t\t"Asia/Istanbul": "Europe/Istanbul",\n\t\t"Asia/Katmandu": "Asia/Kathmandu",\n\t\t"Asia/Macao": "Asia/Macau",\n\t\t"Asia/Saigon": "Asia/Ho_Chi_Minh",\n\t\t"Asia/Tel_Aviv": "Asia/Jerusalem",\n\t\t"Asia/Thimbu": "Asia/Thimphu",\n\t\t"Asia/Ujung_Pandang": "Asia/Makassar",\n\t\t"Asia/Ulan_Bator": "Asia/Ulaanbaatar",\n\t\t"Atlantic/Faeroe": "Atlantic/Faroe",\n\t\t"Atlantic/Jan_Mayen": "Europe/Oslo",\n\t\t"Australia/ACT": "Australia/Sydney",\n\t\t"Australia/Canberra": "Australia/Sydney",\n\t\t"Australia/LHI": "Australia/Lord_Howe",\n\t\t"Australia/NSW": "Australia/Sydney",\n\t\t"Australia/North": "Australia/Darwin",\n\t\t"Australia/Queensland": "Australia/Brisbane",\n\t\t"Australia/South": "Australia/Adelaide",\n\t\t"Australia/Tasmania": "Australia/Hobart",\n\t\t"Australia/Victoria": "Australia/Melbourne",\n\t\t"Australia/West": "Australia/Perth",\n\t\t"Australia/Yancowinna": "Australia/Broken_Hill",\n\t\t"Brazil/Acre": "America/Rio_Branco",\n\t\t"Brazil/DeNoronha": "America/Noronha",\n\t\t"Brazil/East": "America/Sao_Paulo",\n\t\t"Brazil/West": "America/Manaus",\n\t\t"Canada/Atlantic": "America/Halifax",\n\t\t"Canada/Central": "America/Winnipeg",\n\t\t"Canada/East-Saskatchewan": "America/Regina",\n\t\t"Canada/Eastern": "America/Toronto",\n\t\t"Canada/Mountain": "America/Edmonton",\n\t\t"Canada/Newfoundland": "America/St_Johns",\n\t\t"Canada/Pacific": "America/Vancouver",\n\t\t"Canada/Saskatchewan": "America/Regina",\n\t\t"Canada/Yukon": "America/Whitehorse",\n\t\t"Chile/Continental": "America/Santiago",\n\t\t"Chile/EasterIsland": "Pacific/Easter",\n\t\t"Cuba": "America/Havana",\n\t\t"Egypt": "Africa/Cairo",\n\t\t"Eire": "Europe/Dublin",\n\t\t"Etc/GMT+0": "Etc/GMT",\n\t\t"Etc/GMT-0": "Etc/GMT",\n\t\t"Etc/GMT0": "Etc/GMT",\n\t\t"Etc/Greenwich": "Etc/GMT",\n\t\t"Etc/Universal": "Etc/UTC",\n\t\t"Etc/Zulu": "Etc/UTC",\n\t\t"Europe/Belfast": "Europe/London",\n\t\t"Europe/Bratislava": "Europe/Prague",\n\t\t"Europe/Busingen": "Europe/Zurich",\n\t\t"Europe/Guernsey": "Europe/London",\n\t\t"Europe/Isle_of_Man": "Europe/London",\n\t\t"Europe/Jersey": "Europe/London",\n\t\t"Europe/Ljubljana": "Europe/Belgrade",\n\t\t"Europe/Mariehamn": "Europe/Helsinki",\n\t\t"Europe/Nicosia": "Asia/Nicosia",\n\t\t"Europe/Podgorica": "Europe/Belgrade",\n\t\t"Europe/San_Marino": "Europe/Rome",\n\t\t"Europe/Sarajevo": "Europe/Belgrade",\n\t\t"Europe/Skopje": "Europe/Belgrade",\n\t\t"Europe/Tiraspol": "Europe/Chisinau",\n\t\t"Europe/Vatican": "Europe/Rome",\n\t\t"Europe/Zagreb": "Europe/Belgrade",\n\t\t"GB": "Europe/London",\n\t\t"GB-Eire": "Europe/London",\n\t\t"GMT": "Etc/GMT",\n\t\t"GMT+0": "Etc/GMT",\n\t\t"GMT-0": "Etc/GMT",\n\t\t"GMT0": "Etc/GMT",\n\t\t"Greenwich": "Etc/GMT",\n\t\t"Hongkong": "Asia/Hong_Kong",\n\t\t"Iceland": "Atlantic/Reykjavik",\n\t\t"Iran": "Asia/Tehran",\n\t\t"Israel": "Asia/Jerusalem",\n\t\t"Jamaica": "America/Jamaica",\n\t\t"Japan": "Asia/Tokyo",\n\t\t"Kwajalein": "Pacific/Kwajalein",\n\t\t"Libya": "Africa/Tripoli",\n\t\t"Mexico/BajaNorte": "America/Tijuana",\n\t\t"Mexico/BajaSur": "America/Mazatlan",\n\t\t"Mexico/General": "America/Mexico_City",\n\t\t"NZ": "Pacific/Auckland",\n\t\t"NZ-CHAT": "Pacific/Chatham",\n\t\t"Navajo": "America/Denver",\n\t\t"PRC": "Asia/Shanghai",\n\t\t"Pacific/Ponape": "Pacific/Pohnpei",\n\t\t"Pacific/Samoa": "Pacific/Pago_Pago",\n\t\t"Pacific/Truk": "Pacific/Chuuk",\n\t\t"Pacific/Yap": "Pacific/Chuuk",\n\t\t"Poland": "Europe/Warsaw",\n\t\t"Portugal": "Europe/Lisbon",\n\t\t"ROC": "Asia/Taipei",\n\t\t"ROK": "Asia/Seoul",\n\t\t"Singapore": "Asia/Singapore",\n\t\t"Turkey": "Europe/Istanbul",\n\t\t"UCT": "Etc/UCT",\n\t\t"US/Alaska": "America/Anchorage",\n\t\t"US/Aleutian": "America/Adak",\n\t\t"US/Arizona": "America/Phoenix",\n\t\t"US/Central": "America/Chicago",\n\t\t"US/East-Indiana": "America/Indiana/Indianapolis",\n\t\t"US/Eastern": "America/New_York",\n\t\t"US/Hawaii": "Pacific/Honolulu",\n\t\t"US/Indiana-Starke": "America/Indiana/Knox",\n\t\t"US/Michigan": "America/Detroit",\n\t\t"US/Mountain": "America/Denver",\n\t\t"US/Pacific": "America/Los_Angeles",\n\t\t"US/Samoa": "Pacific/Pago_Pago",\n\t\t"UTC": "Etc/UTC",\n\t\t"Universal": "Etc/UTC",\n\t\t"W-SU": "Europe/Moscow",\n\t\t"Zulu": "Etc/UTC"\n\t},\n\t"meta": {\n\t\t"Africa/Abidjan": {\n\t\t\t"lat": 5.3167,\n\t\t\t"lon": -3.9667,\n\t\t\t"rules": ""\n\t\t},\n\t\t"Africa/Accra": {\n\t\t\t"lat": 5.55,\n\t\t\t"lon": 0.2167,\n\t\t\t"rules": "Ghana"\n\t\t},\n\t\t"Africa/Addis_Ababa": {\n\t\t\t"lat": 9.0333,\n\t\t\t"lon": 38.7,\n\t\t\t"rules": ""\n\t\t},\n\t\t"Africa/Algiers": {\n\t\t\t"lat": 36.7833,\n\t\t\t"lon": 3.05,\n\t\t\t"rules": "Algeria"\n\t\t},\n\t\t"Africa/Asmara": {\n\t\t\t"lat": 15.3333,\n\t\t\t"lon": 38.8833,\n\t\t\t"rules": ""\n\t\t},\n\t\t"Africa/Bamako": {\n\t\t\t"lat": 12.65,\n\t\t\t"lon": -8,\n\t\t\t"rules": ""\n\t\t},\n\t\t"Africa/Bangui": {\n\t\t\t"lat": 4.3667,\n\t\t\t"lon": 18.5833,\n\t\t\t"rules": ""\n\t\t},\n\t\t"Africa/Banjul": {\n\t\t\t"lat": 13.4667,\n\t\t\t"lon": -15.35,\n\t\t\t"rules": ""\n\t\t},\n\t\t"Africa/Bissau": {\n\t\t\t"lat": 11.85,\n\t\t\t"lon": -14.4167,\n\t\t\t"rules": ""\n\t\t},\n\t\t"Africa/Blantyre": {\n\t\t\t"lat": -14.2167,\n\t\t\t"lon": 35,\n\t\t\t"rules": ""\n\t\t},\n\t\t"Africa/Brazzaville": {\n\t\t\t"lat": -3.7333,\n\t\t\t"lon": 15.2833,\n\t\t\t"rules": ""\n\t\t},\n\t\t"Africa/Bujumbura": {\n\t\t\t"lat": -2.6167,\n\t\t\t"lon": 29.3667,\n\t\t\t"rules": ""\n\t\t},\n\t\t"Africa/Cairo": {\n\t\t\t"lat": 30.05,\n\t\t\t"lon": 31.25,\n\t\t\t"rules": "Egypt"\n\t\t},\n\t\t"Africa/Casablanca": {\n\t\t\t"lat": 33.65,\n\t\t\t"lon": -6.4167,\n\t\t\t"rules": "Morocco"\n\t\t},\n\t\t"Africa/Ceuta": {\n\t\t\t"lat": 35.8833,\n\t\t\t"lon": -4.6833,\n\t\t\t"rules": "Spain SpainAfrica EU"\n\t\t},\n\t\t"Africa/Conakry": {\n\t\t\t"lat": 9.5167,\n\t\t\t"lon": -12.2833,\n\t\t\t"rules": ""\n\t\t},\n\t\t"Africa/Dakar": {\n\t\t\t"lat": 14.6667,\n\t\t\t"lon": -16.5667,\n\t\t\t"rules": ""\n\t\t},\n\t\t"Africa/Dar_es_Salaam": {\n\t\t\t"lat": -5.2,\n\t\t\t"lon": 39.2833,\n\t\t\t"rules": ""\n\t\t},\n\t\t"Africa/Djibouti": {\n\t\t\t"lat": 11.6,\n\t\t\t"lon": 43.15,\n\t\t\t"rules": ""\n\t\t},\n\t\t"Africa/Douala": {\n\t\t\t"lat": 4.05,\n\t\t\t"lon": 9.7,\n\t\t\t"rules": ""\n\t\t},\n\t\t"Africa/El_Aaiun": {\n\t\t\t"lat": 27.15,\n\t\t\t"lon": -12.8,\n\t\t\t"rules": ""\n\t\t},\n\t\t"Africa/Freetown": {\n\t\t\t"lat": 8.5,\n\t\t\t"lon": -12.75,\n\t\t\t"rules": "SL"\n\t\t},\n\t\t"Africa/Gaborone": {\n\t\t\t"lat": -23.35,\n\t\t\t"lon": 25.9167,\n\t\t\t"rules": ""\n\t\t},\n\t\t"Africa/Harare": {\n\t\t\t"lat": -16.1667,\n\t\t\t"lon": 31.05,\n\t\t\t"rules": ""\n\t\t},\n\t\t"Africa/Johannesburg": {\n\t\t\t"lat": -25.75,\n\t\t\t"lon": 28,\n\t\t\t"rules": "SA"\n\t\t},\n\t\t"Africa/Juba": {\n\t\t\t"lat": 4.85,\n\t\t\t"lon": 31.6,\n\t\t\t"rules": "Sudan"\n\t\t},\n\t\t"Africa/Kampala": {\n\t\t\t"lat": 0.3167,\n\t\t\t"lon": 32.4167,\n\t\t\t"rules": ""\n\t\t},\n\t\t"Africa/Khartoum": {\n\t\t\t"lat": 15.6,\n\t\t\t"lon": 32.5333,\n\t\t\t"rules": "Sudan"\n\t\t},\n\t\t"Africa/Kigali": {\n\t\t\t"lat": -0.05,\n\t\t\t"lon": 30.0667,\n\t\t\t"rules": ""\n\t\t},\n\t\t"Africa/Kinshasa": {\n\t\t\t"lat": -3.7,\n\t\t\t"lon": 15.3,\n\t\t\t"rules": ""\n\t\t},\n\t\t"Africa/Lagos": {\n\t\t\t"lat": 6.45,\n\t\t\t"lon": 3.4,\n\t\t\t"rules": ""\n\t\t},\n\t\t"Africa/Libreville": {\n\t\t\t"lat": 0.3833,\n\t\t\t"lon": 9.45,\n\t\t\t"rules": ""\n\t\t},\n\t\t"Africa/Lome": {\n\t\t\t"lat": 6.1333,\n\t\t\t"lon": 1.2167,\n\t\t\t"rules": ""\n\t\t},\n\t\t"Africa/Luanda": {\n\t\t\t"lat": -7.2,\n\t\t\t"lon": 13.2333,\n\t\t\t"rules": ""\n\t\t},\n\t\t"Africa/Lubumbashi": {\n\t\t\t"lat": -10.3333,\n\t\t\t"lon": 27.4667,\n\t\t\t"rules": ""\n\t\t},\n\t\t"Africa/Lusaka": {\n\t\t\t"lat": -14.5833,\n\t\t\t"lon": 28.2833,\n\t\t\t"rules": ""\n\t\t},\n\t\t"Africa/Malabo": {\n\t\t\t"lat": 3.75,\n\t\t\t"lon": 8.7833,\n\t\t\t"rules": ""\n\t\t},\n\t\t"Africa/Maputo": {\n\t\t\t"lat": -24.0333,\n\t\t\t"lon": 32.5833,\n\t\t\t"rules": ""\n\t\t},\n\t\t"Africa/Maseru": {\n\t\t\t"lat": -28.5333,\n\t\t\t"lon": 27.5,\n\t\t\t"rules": ""\n\t\t},\n\t\t"Africa/Mbabane": {\n\t\t\t"lat": -25.7,\n\t\t\t"lon": 31.1,\n\t\t\t"rules": ""\n\t\t},\n\t\t"Africa/Mogadishu": {\n\t\t\t"lat": 2.0667,\n\t\t\t"lon": 45.3667,\n\t\t\t"rules": ""\n\t\t},\n\t\t"Africa/Monrovia": {\n\t\t\t"lat": 6.3,\n\t\t\t"lon": -9.2167,\n\t\t\t"rules": ""\n\t\t},\n\t\t"Africa/Nairobi": {\n\t\t\t"lat": -0.7167,\n\t\t\t"lon": 36.8167,\n\t\t\t"rules": ""\n\t\t},\n\t\t"Africa/Ndjamena": {\n\t\t\t"lat": 12.1167,\n\t\t\t"lon": 15.05,\n\t\t\t"rules": ""\n\t\t},\n\t\t"Africa/Niamey": {\n\t\t\t"lat": 13.5167,\n\t\t\t"lon": 2.1167,\n\t\t\t"rules": ""\n\t\t},\n\t\t"Africa/Nouakchott": {\n\t\t\t"lat": 18.1,\n\t\t\t"lon": -14.05,\n\t\t\t"rules": ""\n\t\t},\n\t\t"Africa/Ouagadougou": {\n\t\t\t"lat": 12.3667,\n\t\t\t"lon": -0.4833,\n\t\t\t"rules": ""\n\t\t},\n\t\t"Africa/Porto-Novo": {\n\t\t\t"lat": 6.4833,\n\t\t\t"lon": 2.6167,\n\t\t\t"rules": ""\n\t\t},\n\t\t"Africa/Sao_Tome": {\n\t\t\t"lat": 0.3333,\n\t\t\t"lon": 6.7333,\n\t\t\t"rules": ""\n\t\t},\n\t\t"Africa/Tripoli": {\n\t\t\t"lat": 32.9,\n\t\t\t"lon": 13.1833,\n\t\t\t"rules": "Libya"\n\t\t},\n\t\t"Africa/Tunis": {\n\t\t\t"lat": 36.8,\n\t\t\t"lon": 10.1833,\n\t\t\t"rules": "Tunisia"\n\t\t},\n\t\t"Africa/Windhoek": {\n\t\t\t"lat": -21.4333,\n\t\t\t"lon": 17.1,\n\t\t\t"rules": "Namibia"\n\t\t},\n\t\t"America/Adak": {\n\t\t\t"lat": 51.88,\n\t\t\t"lon": -175.3419,\n\t\t\t"rules": "US"\n\t\t},\n\t\t"America/Anchorage": {\n\t\t\t"lat": 61.2181,\n\t\t\t"lon": -148.0997,\n\t\t\t"rules": "US"\n\t\t},\n\t\t"America/Anguilla": {\n\t\t\t"lat": 18.2,\n\t\t\t"lon": -62.9333,\n\t\t\t"rules": ""\n\t\t},\n\t\t"America/Antigua": {\n\t\t\t"lat": 17.05,\n\t\t\t"lon": -60.2,\n\t\t\t"rules": ""\n\t\t},\n\t\t"America/Araguaina": {\n\t\t\t"lat": -6.8,\n\t\t\t"lon": -47.8,\n\t\t\t"rules": "Brazil"\n\t\t},\n\t\t"America/Argentina/Buenos_Aires": {\n\t\t\t"lat": -33.4,\n\t\t\t"lon": -57.55,\n\t\t\t"rules": "Arg"\n\t\t},\n\t\t"America/Argentina/Catamarca": {\n\t\t\t"lat": -27.5333,\n\t\t\t"lon": -64.2167,\n\t\t\t"rules": "Arg"\n\t\t},\n\t\t"America/Argentina/Cordoba": {\n\t\t\t"lat": -30.6,\n\t\t\t"lon": -63.8167,\n\t\t\t"rules": "Arg"\n\t\t},\n\t\t"America/Argentina/Jujuy": {\n\t\t\t"lat": -23.8167,\n\t\t\t"lon": -64.7,\n\t\t\t"rules": "Arg"\n\t\t},\n\t\t"America/Argentina/La_Rioja": {\n\t\t\t"lat": -28.5667,\n\t\t\t"lon": -65.15,\n\t\t\t"rules": "Arg"\n\t\t},\n\t\t"America/Argentina/Mendoza": {\n\t\t\t"lat": -31.1167,\n\t\t\t"lon": -67.1833,\n\t\t\t"rules": "Arg"\n\t\t},\n\t\t"America/Argentina/Rio_Gallegos": {\n\t\t\t"lat": -50.3667,\n\t\t\t"lon": -68.7833,\n\t\t\t"rules": "Arg"\n\t\t},\n\t\t"America/Argentina/Salta": {\n\t\t\t"lat": -23.2167,\n\t\t\t"lon": -64.5833,\n\t\t\t"rules": "Arg"\n\t\t},\n\t\t"America/Argentina/San_Juan": {\n\t\t\t"lat": -30.4667,\n\t\t\t"lon": -67.4833,\n\t\t\t"rules": "Arg"\n\t\t},\n\t\t"America/Argentina/San_Luis": {\n\t\t\t"lat": -32.6833,\n\t\t\t"lon": -65.65,\n\t\t\t"rules": "Arg SanLuis"\n\t\t},\n\t\t"America/Argentina/Tucuman": {\n\t\t\t"lat": -25.1833,\n\t\t\t"lon": -64.7833,\n\t\t\t"rules": "Arg"\n\t\t},\n\t\t"America/Argentina/Ushuaia": {\n\t\t\t"lat": -53.2,\n\t\t\t"lon": -67.7,\n\t\t\t"rules": "Arg"\n\t\t},\n\t\t"America/Aruba": {\n\t\t\t"lat": 12.5,\n\t\t\t"lon": -68.0333,\n\t\t\t"rules": ""\n\t\t},\n\t\t"America/Asuncion": {\n\t\t\t"lat": -24.7333,\n\t\t\t"lon": -56.3333,\n\t\t\t"rules": "Para"\n\t\t},\n\t\t"America/Atikokan": {\n\t\t\t"lat": 48.7586,\n\t\t\t"lon": -90.3783,\n\t\t\t"rules": "Canada"\n\t\t},\n\t\t"America/Bahia": {\n\t\t\t"lat": -11.0167,\n\t\t\t"lon": -37.4833,\n\t\t\t"rules": "Brazil"\n\t\t},\n\t\t"America/Bahia_Banderas": {\n\t\t\t"lat": 20.8,\n\t\t\t"lon": -104.75,\n\t\t\t"rules": "Mexico"\n\t\t},\n\t\t"America/Barbados": {\n\t\t\t"lat": 13.1,\n\t\t\t"lon": -58.3833,\n\t\t\t"rules": "Barb"\n\t\t},\n\t\t"America/Belem": {\n\t\t\t"lat": -0.55,\n\t\t\t"lon": -47.5167,\n\t\t\t"rules": "Brazil"\n\t\t},\n\t\t"America/Belize": {\n\t\t\t"lat": 17.5,\n\t\t\t"lon": -87.8,\n\t\t\t"rules": "Belize"\n\t\t},\n\t\t"America/Blanc-Sablon": {\n\t\t\t"lat": 51.4167,\n\t\t\t"lon": -56.8833,\n\t\t\t"rules": "Canada"\n\t\t},\n\t\t"America/Boa_Vista": {\n\t\t\t"lat": 2.8167,\n\t\t\t"lon": -59.3333,\n\t\t\t"rules": "Brazil"\n\t\t},\n\t\t"America/Bogota": {\n\t\t\t"lat": 4.6,\n\t\t\t"lon": -73.9167,\n\t\t\t"rules": "CO"\n\t\t},\n\t\t"America/Boise": {\n\t\t\t"lat": 43.6136,\n\t\t\t"lon": -115.7975,\n\t\t\t"rules": "US"\n\t\t},\n\t\t"America/Cambridge_Bay": {\n\t\t\t"lat": 69.1139,\n\t\t\t"lon": -104.9472,\n\t\t\t"rules": "NT_YK Canada"\n\t\t},\n\t\t"America/Campo_Grande": {\n\t\t\t"lat": -19.55,\n\t\t\t"lon": -53.3833,\n\t\t\t"rules": "Brazil"\n\t\t},\n\t\t"America/Cancun": {\n\t\t\t"lat": 21.0833,\n\t\t\t"lon": -85.2333,\n\t\t\t"rules": "Mexico"\n\t\t},\n\t\t"America/Caracas": {\n\t\t\t"lat": 10.5,\n\t\t\t"lon": -65.0667,\n\t\t\t"rules": ""\n\t\t},\n\t\t"America/Cayenne": {\n\t\t\t"lat": 4.9333,\n\t\t\t"lon": -51.6667,\n\t\t\t"rules": ""\n\t\t},\n\t\t"America/Cayman": {\n\t\t\t"lat": 19.3,\n\t\t\t"lon": -80.6167,\n\t\t\t"rules": ""\n\t\t},\n\t\t"America/Chicago": {\n\t\t\t"lat": 41.85,\n\t\t\t"lon": -86.35,\n\t\t\t"rules": "US Chicago"\n\t\t},\n\t\t"America/Chihuahua": {\n\t\t\t"lat": 28.6333,\n\t\t\t"lon": -105.9167,\n\t\t\t"rules": "Mexico"\n\t\t},\n\t\t"America/Costa_Rica": {\n\t\t\t"lat": 9.9333,\n\t\t\t"lon": -83.9167,\n\t\t\t"rules": "CR"\n\t\t},\n\t\t"America/Creston": {\n\t\t\t"lat": 49.1,\n\t\t\t"lon": -115.4833,\n\t\t\t"rules": ""\n\t\t},\n\t\t"America/Cuiaba": {\n\t\t\t"lat": -14.4167,\n\t\t\t"lon": -55.9167,\n\t\t\t"rules": "Brazil"\n\t\t},\n\t\t"America/Curacao": {\n\t\t\t"lat": 12.1833,\n\t\t\t"lon": -69,\n\t\t\t"rules": ""\n\t\t},\n\t\t"America/Danmarkshavn": {\n\t\t\t"lat": 76.7667,\n\t\t\t"lon": -17.3333,\n\t\t\t"rules": "EU"\n\t\t},\n\t\t"America/Dawson": {\n\t\t\t"lat": 64.0667,\n\t\t\t"lon": -138.5833,\n\t\t\t"rules": "NT_YK Canada"\n\t\t},\n\t\t"America/Dawson_Creek": {\n\t\t\t"lat": 59.7667,\n\t\t\t"lon": -119.7667,\n\t\t\t"rules": "Canada Vanc"\n\t\t},\n\t\t"America/Denver": {\n\t\t\t"lat": 39.7392,\n\t\t\t"lon": -103.0158,\n\t\t\t"rules": "US Denver"\n\t\t},\n\t\t"America/Detroit": {\n\t\t\t"lat": 42.3314,\n\t\t\t"lon": -82.9542,\n\t\t\t"rules": "US Detroit"\n\t\t},\n\t\t"America/Dominica": {\n\t\t\t"lat": 15.3,\n\t\t\t"lon": -60.6,\n\t\t\t"rules": ""\n\t\t},\n\t\t"America/Edmonton": {\n\t\t\t"lat": 53.55,\n\t\t\t"lon": -112.5333,\n\t\t\t"rules": "Edm Canada"\n\t\t},\n\t\t"America/Eirunepe": {\n\t\t\t"lat": -5.3333,\n\t\t\t"lon": -68.1333,\n\t\t\t"rules": "Brazil"\n\t\t},\n\t\t"America/El_Salvador": {\n\t\t\t"lat": 13.7,\n\t\t\t"lon": -88.8,\n\t\t\t"rules": "Salv"\n\t\t},\n\t\t"America/Fortaleza": {\n\t\t\t"lat": -2.2833,\n\t\t\t"lon": -37.5,\n\t\t\t"rules": "Brazil"\n\t\t},\n\t\t"America/Glace_Bay": {\n\t\t\t"lat": 46.2,\n\t\t\t"lon": -58.05,\n\t\t\t"rules": "Canada Halifax"\n\t\t},\n\t\t"America/Godthab": {\n\t\t\t"lat": 64.1833,\n\t\t\t"lon": -50.2667,\n\t\t\t"rules": "EU"\n\t\t},\n\t\t"America/Goose_Bay": {\n\t\t\t"lat": 53.3333,\n\t\t\t"lon": -59.5833,\n\t\t\t"rules": "Canada StJohns"\n\t\t},\n\t\t"America/Grand_Turk": {\n\t\t\t"lat": 21.4667,\n\t\t\t"lon": -70.8667,\n\t\t\t"rules": "TC"\n\t\t},\n\t\t"America/Grenada": {\n\t\t\t"lat": 12.05,\n\t\t\t"lon": -60.25,\n\t\t\t"rules": ""\n\t\t},\n\t\t"America/Guadeloupe": {\n\t\t\t"lat": 16.2333,\n\t\t\t"lon": -60.4667,\n\t\t\t"rules": ""\n\t\t},\n\t\t"America/Guatemala": {\n\t\t\t"lat": 14.6333,\n\t\t\t"lon": -89.4833,\n\t\t\t"rules": "Guat"\n\t\t},\n\t\t"America/Guayaquil": {\n\t\t\t"lat": -1.8333,\n\t\t\t"lon": -78.1667,\n\t\t\t"rules": ""\n\t\t},\n\t\t"America/Guyana": {\n\t\t\t"lat": 6.8,\n\t\t\t"lon": -57.8333,\n\t\t\t"rules": ""\n\t\t},\n\t\t"America/Halifax": {\n\t\t\t"lat": 44.65,\n\t\t\t"lon": -62.4,\n\t\t\t"rules": "Halifax Canada"\n\t\t},\n\t\t"America/Havana": {\n\t\t\t"lat": 23.1333,\n\t\t\t"lon": -81.6333,\n\t\t\t"rules": "Cuba"\n\t\t},\n\t\t"America/Hermosillo": {\n\t\t\t"lat": 29.0667,\n\t\t\t"lon": -109.0333,\n\t\t\t"rules": "Mexico"\n\t\t},\n\t\t"America/Indiana/Indianapolis": {\n\t\t\t"lat": 39.7683,\n\t\t\t"lon": -85.8419,\n\t\t\t"rules": "US Indianapolis"\n\t\t},\n\t\t"America/Indiana/Knox": {\n\t\t\t"lat": 41.2958,\n\t\t\t"lon": -85.375,\n\t\t\t"rules": "US Starke"\n\t\t},\n\t\t"America/Indiana/Marengo": {\n\t\t\t"lat": 38.3756,\n\t\t\t"lon": -85.6553,\n\t\t\t"rules": "US Marengo"\n\t\t},\n\t\t"America/Indiana/Petersburg": {\n\t\t\t"lat": 38.4919,\n\t\t\t"lon": -86.7214,\n\t\t\t"rules": "US Pike"\n\t\t},\n\t\t"America/Indiana/Tell_City": {\n\t\t\t"lat": 37.9531,\n\t\t\t"lon": -85.2386,\n\t\t\t"rules": "US Perry"\n\t\t},\n\t\t"America/Indiana/Vevay": {\n\t\t\t"lat": 38.7478,\n\t\t\t"lon": -84.9328,\n\t\t\t"rules": "US"\n\t\t},\n\t\t"America/Indiana/Vincennes": {\n\t\t\t"lat": 38.6772,\n\t\t\t"lon": -86.4714,\n\t\t\t"rules": "US Vincennes"\n\t\t},\n\t\t"America/Indiana/Winamac": {\n\t\t\t"lat": 41.0514,\n\t\t\t"lon": -85.3969,\n\t\t\t"rules": "US Pulaski"\n\t\t},\n\t\t"America/Inuvik": {\n\t\t\t"lat": 68.3497,\n\t\t\t"lon": -132.2833,\n\t\t\t"rules": "NT_YK Canada"\n\t\t},\n\t\t"America/Iqaluit": {\n\t\t\t"lat": 63.7333,\n\t\t\t"lon": -67.5333,\n\t\t\t"rules": "NT_YK Canada"\n\t\t},\n\t\t"America/Jamaica": {\n\t\t\t"lat": 18,\n\t\t\t"lon": -75.2,\n\t\t\t"rules": "US"\n\t\t},\n\t\t"America/Juneau": {\n\t\t\t"lat": 58.3019,\n\t\t\t"lon": -133.5803,\n\t\t\t"rules": "US"\n\t\t},\n\t\t"America/Kentucky/Louisville": {\n\t\t\t"lat": 38.2542,\n\t\t\t"lon": -84.2406,\n\t\t\t"rules": "US Louisville"\n\t\t},\n\t\t"America/Kentucky/Monticello": {\n\t\t\t"lat": 36.8297,\n\t\t\t"lon": -83.1508,\n\t\t\t"rules": "US"\n\t\t},\n\t\t"America/Kralendijk": {\n\t\t\t"lat": 12.1508,\n\t\t\t"lon": -67.7233,\n\t\t\t"rules": ""\n\t\t},\n\t\t"America/La_Paz": {\n\t\t\t"lat": -15.5,\n\t\t\t"lon": -67.85,\n\t\t\t"rules": ""\n\t\t},\n\t\t"America/Lima": {\n\t\t\t"lat": -11.95,\n\t\t\t"lon": -76.95,\n\t\t\t"rules": "Peru"\n\t\t},\n\t\t"America/Los_Angeles": {\n\t\t\t"lat": 34.0522,\n\t\t\t"lon": -117.7572,\n\t\t\t"rules": "US CA"\n\t\t},\n\t\t"America/Lower_Princes": {\n\t\t\t"lat": 18.0514,\n\t\t\t"lon": -62.9528,\n\t\t\t"rules": ""\n\t\t},\n\t\t"America/Maceio": {\n\t\t\t"lat": -8.3333,\n\t\t\t"lon": -34.2833,\n\t\t\t"rules": "Brazil"\n\t\t},\n\t\t"America/Managua": {\n\t\t\t"lat": 12.15,\n\t\t\t"lon": -85.7167,\n\t\t\t"rules": "Nic"\n\t\t},\n\t\t"America/Manaus": {\n\t\t\t"lat": -2.8667,\n\t\t\t"lon": -59.9833,\n\t\t\t"rules": "Brazil"\n\t\t},\n\t\t"America/Marigot": {\n\t\t\t"lat": 18.0667,\n\t\t\t"lon": -62.9167,\n\t\t\t"rules": ""\n\t\t},\n\t\t"America/Martinique": {\n\t\t\t"lat": 14.6,\n\t\t\t"lon": -60.9167,\n\t\t\t"rules": ""\n\t\t},\n\t\t"America/Matamoros": {\n\t\t\t"lat": 25.8333,\n\t\t\t"lon": -96.5,\n\t\t\t"rules": "US Mexico"\n\t\t},\n\t\t"America/Mazatlan": {\n\t\t\t"lat": 23.2167,\n\t\t\t"lon": -105.5833,\n\t\t\t"rules": "Mexico"\n\t\t},\n\t\t"America/Menominee": {\n\t\t\t"lat": 45.1078,\n\t\t\t"lon": -86.3858,\n\t\t\t"rules": "US Menominee"\n\t\t},\n\t\t"America/Merida": {\n\t\t\t"lat": 20.9667,\n\t\t\t"lon": -88.3833,\n\t\t\t"rules": "Mexico"\n\t\t},\n\t\t"America/Metlakatla": {\n\t\t\t"lat": 55.1269,\n\t\t\t"lon": -130.4236,\n\t\t\t"rules": "US"\n\t\t},\n\t\t"America/Mexico_City": {\n\t\t\t"lat": 19.4,\n\t\t\t"lon": -98.85,\n\t\t\t"rules": "Mexico"\n\t\t},\n\t\t"America/Miquelon": {\n\t\t\t"lat": 47.05,\n\t\t\t"lon": -55.6667,\n\t\t\t"rules": "Canada"\n\t\t},\n\t\t"America/Moncton": {\n\t\t\t"lat": 46.1,\n\t\t\t"lon": -63.2167,\n\t\t\t"rules": "Canada Moncton"\n\t\t},\n\t\t"America/Monterrey": {\n\t\t\t"lat": 25.6667,\n\t\t\t"lon": -99.6833,\n\t\t\t"rules": "US Mexico"\n\t\t},\n\t\t"America/Montevideo": {\n\t\t\t"lat": -33.1167,\n\t\t\t"lon": -55.8167,\n\t\t\t"rules": "Uruguay"\n\t\t},\n\t\t"America/Montreal": {\n\t\t\t"lat": 45.5167,\n\t\t\t"lon": -72.4333,\n\t\t\t"rules": "Mont Canada"\n\t\t},\n\t\t"America/Montserrat": {\n\t\t\t"lat": 16.7167,\n\t\t\t"lon": -61.7833,\n\t\t\t"rules": ""\n\t\t},\n\t\t"America/Nassau": {\n\t\t\t"lat": 25.0833,\n\t\t\t"lon": -76.65,\n\t\t\t"rules": "Bahamas US"\n\t\t},\n\t\t"America/New_York": {\n\t\t\t"lat": 40.7142,\n\t\t\t"lon": -73.9936,\n\t\t\t"rules": "US NYC"\n\t\t},\n\t\t"America/Nipigon": {\n\t\t\t"lat": 49.0167,\n\t\t\t"lon": -87.7333,\n\t\t\t"rules": "Canada"\n\t\t},\n\t\t"America/Nome": {\n\t\t\t"lat": 64.5011,\n\t\t\t"lon": -164.5936,\n\t\t\t"rules": "US"\n\t\t},\n\t\t"America/Noronha": {\n\t\t\t"lat": -2.15,\n\t\t\t"lon": -31.5833,\n\t\t\t"rules": "Brazil"\n\t\t},\n\t\t"America/North_Dakota/Beulah": {\n\t\t\t"lat": 47.2642,\n\t\t\t"lon": -100.2222,\n\t\t\t"rules": "US"\n\t\t},\n\t\t"America/North_Dakota/Center": {\n\t\t\t"lat": 47.1164,\n\t\t\t"lon": -100.7008,\n\t\t\t"rules": "US"\n\t\t},\n\t\t"America/North_Dakota/New_Salem": {\n\t\t\t"lat": 46.845,\n\t\t\t"lon": -100.5892,\n\t\t\t"rules": "US"\n\t\t},\n\t\t"America/Ojinaga": {\n\t\t\t"lat": 29.5667,\n\t\t\t"lon": -103.5833,\n\t\t\t"rules": "Mexico US"\n\t\t},\n\t\t"America/Panama": {\n\t\t\t"lat": 8.9667,\n\t\t\t"lon": -78.4667,\n\t\t\t"rules": ""\n\t\t},\n\t\t"America/Pangnirtung": {\n\t\t\t"lat": 66.1333,\n\t\t\t"lon": -64.2667,\n\t\t\t"rules": "NT_YK Canada"\n\t\t},\n\t\t"America/Paramaribo": {\n\t\t\t"lat": 5.8333,\n\t\t\t"lon": -54.8333,\n\t\t\t"rules": ""\n\t\t},\n\t\t"America/Phoenix": {\n\t\t\t"lat": 33.4483,\n\t\t\t"lon": -111.9267,\n\t\t\t"rules": "US"\n\t\t},\n\t\t"America/Port-au-Prince": {\n\t\t\t"lat": 18.5333,\n\t\t\t"lon": -71.6667,\n\t\t\t"rules": "Haiti"\n\t\t},\n\t\t"America/Port_of_Spain": {\n\t\t\t"lat": 10.65,\n\t\t\t"lon": -60.4833,\n\t\t\t"rules": ""\n\t\t},\n\t\t"America/Porto_Velho": {\n\t\t\t"lat": -7.2333,\n\t\t\t"lon": -62.1,\n\t\t\t"rules": "Brazil"\n\t\t},\n\t\t"America/Puerto_Rico": {\n\t\t\t"lat": 18.4683,\n\t\t\t"lon": -65.8939,\n\t\t\t"rules": "US"\n\t\t},\n\t\t"America/Rainy_River": {\n\t\t\t"lat": 48.7167,\n\t\t\t"lon": -93.4333,\n\t\t\t"rules": "Canada"\n\t\t},\n\t\t"America/Rankin_Inlet": {\n\t\t\t"lat": 62.8167,\n\t\t\t"lon": -91.9169,\n\t\t\t"rules": "NT_YK Canada"\n\t\t},\n\t\t"America/Recife": {\n\t\t\t"lat": -7.95,\n\t\t\t"lon": -33.1,\n\t\t\t"rules": "Brazil"\n\t\t},\n\t\t"America/Regina": {\n\t\t\t"lat": 50.4,\n\t\t\t"lon": -103.35,\n\t\t\t"rules": "Regina"\n\t\t},\n\t\t"America/Resolute": {\n\t\t\t"lat": 74.6956,\n\t\t\t"lon": -93.1708,\n\t\t\t"rules": "NT_YK Canada"\n\t\t},\n\t\t"America/Rio_Branco": {\n\t\t\t"lat": -8.0333,\n\t\t\t"lon": -66.2,\n\t\t\t"rules": "Brazil"\n\t\t},\n\t\t"America/Santa_Isabel": {\n\t\t\t"lat": 30.3,\n\t\t\t"lon": -113.1333,\n\t\t\t"rules": "CA US Mexico"\n\t\t},\n\t\t"America/Santarem": {\n\t\t\t"lat": -1.5667,\n\t\t\t"lon": -53.1333,\n\t\t\t"rules": "Brazil"\n\t\t},\n\t\t"America/Santiago": {\n\t\t\t"lat": -32.55,\n\t\t\t"lon": -69.3333,\n\t\t\t"rules": "Chile"\n\t\t},\n\t\t"America/Santo_Domingo": {\n\t\t\t"lat": 18.4667,\n\t\t\t"lon": -68.1,\n\t\t\t"rules": "DR US"\n\t\t},\n\t\t"America/Sao_Paulo": {\n\t\t\t"lat": -22.4667,\n\t\t\t"lon": -45.3833,\n\t\t\t"rules": "Brazil"\n\t\t},\n\t\t"America/Scoresbysund": {\n\t\t\t"lat": 70.4833,\n\t\t\t"lon": -20.0333,\n\t\t\t"rules": "C-Eur EU"\n\t\t},\n\t\t"America/Shiprock": {\n\t\t\t"lat": 36.7856,\n\t\t\t"lon": -107.3136,\n\t\t\t"rules": ""\n\t\t},\n\t\t"America/Sitka": {\n\t\t\t"lat": 57.1764,\n\t\t\t"lon": -134.6981,\n\t\t\t"rules": "US"\n\t\t},\n\t\t"America/St_Barthelemy": {\n\t\t\t"lat": 17.8833,\n\t\t\t"lon": -61.15,\n\t\t\t"rules": ""\n\t\t},\n\t\t"America/St_Johns": {\n\t\t\t"lat": 47.5667,\n\t\t\t"lon": -51.2833,\n\t\t\t"rules": "StJohns Canada"\n\t\t},\n\t\t"America/St_Kitts": {\n\t\t\t"lat": 17.3,\n\t\t\t"lon": -61.2833,\n\t\t\t"rules": ""\n\t\t},\n\t\t"America/St_Lucia": {\n\t\t\t"lat": 14.0167,\n\t\t\t"lon": -61,\n\t\t\t"rules": ""\n\t\t},\n\t\t"America/St_Thomas": {\n\t\t\t"lat": 18.35,\n\t\t\t"lon": -63.0667,\n\t\t\t"rules": ""\n\t\t},\n\t\t"America/St_Vincent": {\n\t\t\t"lat": 13.15,\n\t\t\t"lon": -60.7667,\n\t\t\t"rules": ""\n\t\t},\n\t\t"America/Swift_Current": {\n\t\t\t"lat": 50.2833,\n\t\t\t"lon": -106.1667,\n\t\t\t"rules": "Canada Regina Swift"\n\t\t},\n\t\t"America/Tegucigalpa": {\n\t\t\t"lat": 14.1,\n\t\t\t"lon": -86.7833,\n\t\t\t"rules": "Hond"\n\t\t},\n\t\t"America/Thule": {\n\t\t\t"lat": 76.5667,\n\t\t\t"lon": -67.2167,\n\t\t\t"rules": "Thule"\n\t\t},\n\t\t"America/Thunder_Bay": {\n\t\t\t"lat": 48.3833,\n\t\t\t"lon": -88.75,\n\t\t\t"rules": "Canada Mont"\n\t\t},\n\t\t"America/Tijuana": {\n\t\t\t"lat": 32.5333,\n\t\t\t"lon": -116.9833,\n\t\t\t"rules": "CA US Mexico"\n\t\t},\n\t\t"America/Toronto": {\n\t\t\t"lat": 43.65,\n\t\t\t"lon": -78.6167,\n\t\t\t"rules": "Canada Toronto"\n\t\t},\n\t\t"America/Tortola": {\n\t\t\t"lat": 18.45,\n\t\t\t"lon": -63.3833,\n\t\t\t"rules": ""\n\t\t},\n\t\t"America/Vancouver": {\n\t\t\t"lat": 49.2667,\n\t\t\t"lon": -122.8833,\n\t\t\t"rules": "Vanc Canada"\n\t\t},\n\t\t"America/Whitehorse": {\n\t\t\t"lat": 60.7167,\n\t\t\t"lon": -134.95,\n\t\t\t"rules": "NT_YK Canada"\n\t\t},\n\t\t"America/Winnipeg": {\n\t\t\t"lat": 49.8833,\n\t\t\t"lon": -96.85,\n\t\t\t"rules": "Winn Canada"\n\t\t},\n\t\t"America/Yakutat": {\n\t\t\t"lat": 59.5469,\n\t\t\t"lon": -138.2728,\n\t\t\t"rules": "US"\n\t\t},\n\t\t"America/Yellowknife": {\n\t\t\t"lat": 62.45,\n\t\t\t"lon": -113.65,\n\t\t\t"rules": "NT_YK Canada"\n\t\t},\n\t\t"Antarctica/Casey": {\n\t\t\t"lat": -65.7167,\n\t\t\t"lon": 110.5167,\n\t\t\t"rules": ""\n\t\t},\n\t\t"Antarctica/Davis": {\n\t\t\t"lat": -67.4167,\n\t\t\t"lon": 77.9667,\n\t\t\t"rules": ""\n\t\t},\n\t\t"Antarctica/DumontDUrville": {\n\t\t\t"lat": -65.3333,\n\t\t\t"lon": 140.0167,\n\t\t\t"rules": ""\n\t\t},\n\t\t"Antarctica/Macquarie": {\n\t\t\t"lat": -53.5,\n\t\t\t"lon": 158.95,\n\t\t\t"rules": "Aus AT"\n\t\t},\n\t\t"Antarctica/Mawson": {\n\t\t\t"lat": -66.4,\n\t\t\t"lon": 62.8833,\n\t\t\t"rules": ""\n\t\t},\n\t\t"Antarctica/McMurdo": {\n\t\t\t"lat": -76.1667,\n\t\t\t"lon": 166.6,\n\t\t\t"rules": "NZAQ"\n\t\t},\n\t\t"Antarctica/Palmer": {\n\t\t\t"lat": -63.2,\n\t\t\t"lon": -63.9,\n\t\t\t"rules": "ArgAQ ChileAQ"\n\t\t},\n\t\t"Antarctica/Rothera": {\n\t\t\t"lat": -66.4333,\n\t\t\t"lon": -67.8667,\n\t\t\t"rules": ""\n\t\t},\n\t\t"Antarctica/South_Pole": {\n\t\t\t"lat": -90,\n\t\t\t"lon": 0,\n\t\t\t"rules": ""\n\t\t},\n\t\t"Antarctica/Syowa": {\n\t\t\t"lat": -68.9939,\n\t\t\t"lon": 39.59,\n\t\t\t"rules": ""\n\t\t},\n\t\t"Antarctica/Vostok": {\n\t\t\t"lat": -77.6,\n\t\t\t"lon": 106.9,\n\t\t\t"rules": ""\n\t\t},\n\t\t"Arctic/Longyearbyen": {\n\t\t\t"lat": 78,\n\t\t\t"lon": 16,\n\t\t\t"rules": ""\n\t\t},\n\t\t"Asia/Aden": {\n\t\t\t"lat": 12.75,\n\t\t\t"lon": 45.2,\n\t\t\t"rules": ""\n\t\t},\n\t\t"Asia/Almaty": {\n\t\t\t"lat": 43.25,\n\t\t\t"lon": 76.95,\n\t\t\t"rules": "RussiaAsia"\n\t\t},\n\t\t"Asia/Amman": {\n\t\t\t"lat": 31.95,\n\t\t\t"lon": 35.9333,\n\t\t\t"rules": "Jordan"\n\t\t},\n\t\t"Asia/Anadyr": {\n\t\t\t"lat": 64.75,\n\t\t\t"lon": 177.4833,\n\t\t\t"rules": "Russia"\n\t\t},\n\t\t"Asia/Aqtau": {\n\t\t\t"lat": 44.5167,\n\t\t\t"lon": 50.2667,\n\t\t\t"rules": "RussiaAsia"\n\t\t},\n\t\t"Asia/Aqtobe": {\n\t\t\t"lat": 50.2833,\n\t\t\t"lon": 57.1667,\n\t\t\t"rules": "RussiaAsia"\n\t\t},\n\t\t"Asia/Ashgabat": {\n\t\t\t"lat": 37.95,\n\t\t\t"lon": 58.3833,\n\t\t\t"rules": "RussiaAsia"\n\t\t},\n\t\t"Asia/Baghdad": {\n\t\t\t"lat": 33.35,\n\t\t\t"lon": 44.4167,\n\t\t\t"rules": "Iraq"\n\t\t},\n\t\t"Asia/Bahrain": {\n\t\t\t"lat": 26.3833,\n\t\t\t"lon": 50.5833,\n\t\t\t"rules": ""\n\t\t},\n\t\t"Asia/Baku": {\n\t\t\t"lat": 40.3833,\n\t\t\t"lon": 49.85,\n\t\t\t"rules": "RussiaAsia EUAsia Azer"\n\t\t},\n\t\t"Asia/Bangkok": {\n\t\t\t"lat": 13.75,\n\t\t\t"lon": 100.5167,\n\t\t\t"rules": ""\n\t\t},\n\t\t"Asia/Beirut": {\n\t\t\t"lat": 33.8833,\n\t\t\t"lon": 35.5,\n\t\t\t"rules": "Lebanon"\n\t\t},\n\t\t"Asia/Bishkek": {\n\t\t\t"lat": 42.9,\n\t\t\t"lon": 74.6,\n\t\t\t"rules": "RussiaAsia Kyrgyz"\n\t\t},\n\t\t"Asia/Brunei": {\n\t\t\t"lat": 4.9333,\n\t\t\t"lon": 114.9167,\n\t\t\t"rules": ""\n\t\t},\n\t\t"Asia/Choibalsan": {\n\t\t\t"lat": 48.0667,\n\t\t\t"lon": 114.5,\n\t\t\t"rules": "Mongol"\n\t\t},\n\t\t"Asia/Chongqing": {\n\t\t\t"lat": 29.5667,\n\t\t\t"lon": 106.5833,\n\t\t\t"rules": "PRC"\n\t\t},\n\t\t"Asia/Colombo": {\n\t\t\t"lat": 6.9333,\n\t\t\t"lon": 79.85,\n\t\t\t"rules": ""\n\t\t},\n\t\t"Asia/Damascus": {\n\t\t\t"lat": 33.5,\n\t\t\t"lon": 36.3,\n\t\t\t"rules": "Syria"\n\t\t},\n\t\t"Asia/Dhaka": {\n\t\t\t"lat": 23.7167,\n\t\t\t"lon": 90.4167,\n\t\t\t"rules": "Dhaka"\n\t\t},\n\t\t"Asia/Dili": {\n\t\t\t"lat": -7.45,\n\t\t\t"lon": 125.5833,\n\t\t\t"rules": ""\n\t\t},\n\t\t"Asia/Dubai": {\n\t\t\t"lat": 25.3,\n\t\t\t"lon": 55.3,\n\t\t\t"rules": ""\n\t\t},\n\t\t"Asia/Dushanbe": {\n\t\t\t"lat": 38.5833,\n\t\t\t"lon": 68.8,\n\t\t\t"rules": "RussiaAsia"\n\t\t},\n\t\t"Asia/Gaza": {\n\t\t\t"lat": 31.5,\n\t\t\t"lon": 34.4667,\n\t\t\t"rules": "Zion EgyptAsia Jordan Palestine"\n\t\t},\n\t\t"Asia/Harbin": {\n\t\t\t"lat": 45.75,\n\t\t\t"lon": 126.6833,\n\t\t\t"rules": "PRC"\n\t\t},\n\t\t"Asia/Hebron": {\n\t\t\t"lat": 31.5333,\n\t\t\t"lon": 35.095,\n\t\t\t"rules": "Zion EgyptAsia Jordan Palestine"\n\t\t},\n\t\t"Asia/Ho_Chi_Minh": {\n\t\t\t"lat": 10.75,\n\t\t\t"lon": 106.6667,\n\t\t\t"rules": ""\n\t\t},\n\t\t"Asia/Hong_Kong": {\n\t\t\t"lat": 22.2833,\n\t\t\t"lon": 114.15,\n\t\t\t"rules": "HK"\n\t\t},\n\t\t"Asia/Hovd": {\n\t\t\t"lat": 48.0167,\n\t\t\t"lon": 91.65,\n\t\t\t"rules": "Mongol"\n\t\t},\n\t\t"Asia/Irkutsk": {\n\t\t\t"lat": 52.2667,\n\t\t\t"lon": 104.3333,\n\t\t\t"rules": "Russia"\n\t\t},\n\t\t"Asia/Jakarta": {\n\t\t\t"lat": -5.8333,\n\t\t\t"lon": 106.8,\n\t\t\t"rules": ""\n\t\t},\n\t\t"Asia/Jayapura": {\n\t\t\t"lat": -1.4667,\n\t\t\t"lon": 140.7,\n\t\t\t"rules": ""\n\t\t},\n\t\t"Asia/Jerusalem": {\n\t\t\t"lat": 31.7667,\n\t\t\t"lon": 35.2333,\n\t\t\t"rules": "Zion"\n\t\t},\n\t\t"Asia/Kabul": {\n\t\t\t"lat": 34.5167,\n\t\t\t"lon": 69.2,\n\t\t\t"rules": ""\n\t\t},\n\t\t"Asia/Kamchatka": {\n\t\t\t"lat": 53.0167,\n\t\t\t"lon": 158.65,\n\t\t\t"rules": "Russia"\n\t\t},\n\t\t"Asia/Karachi": {\n\t\t\t"lat": 24.8667,\n\t\t\t"lon": 67.05,\n\t\t\t"rules": "Pakistan"\n\t\t},\n\t\t"Asia/Kashgar": {\n\t\t\t"lat": 39.4833,\n\t\t\t"lon": 75.9833,\n\t\t\t"rules": "PRC"\n\t\t},\n\t\t"Asia/Kathmandu": {\n\t\t\t"lat": 27.7167,\n\t\t\t"lon": 85.3167,\n\t\t\t"rules": ""\n\t\t},\n\t\t"Asia/Khandyga": {\n\t\t\t"lat": 62.6564,\n\t\t\t"lon": 135.5539,\n\t\t\t"rules": "Russia"\n\t\t},\n\t\t"Asia/Kolkata": {\n\t\t\t"lat": 22.5333,\n\t\t\t"lon": 88.3667,\n\t\t\t"rules": ""\n\t\t},\n\t\t"Asia/Krasnoyarsk": {\n\t\t\t"lat": 56.0167,\n\t\t\t"lon": 92.8333,\n\t\t\t"rules": "Russia"\n\t\t},\n\t\t"Asia/Kuala_Lumpur": {\n\t\t\t"lat": 3.1667,\n\t\t\t"lon": 101.7,\n\t\t\t"rules": ""\n\t\t},\n\t\t"Asia/Kuching": {\n\t\t\t"lat": 1.55,\n\t\t\t"lon": 110.3333,\n\t\t\t"rules": "NBorneo"\n\t\t},\n\t\t"Asia/Kuwait": {\n\t\t\t"lat": 29.3333,\n\t\t\t"lon": 47.9833,\n\t\t\t"rules": ""\n\t\t},\n\t\t"Asia/Macau": {\n\t\t\t"lat": 22.2333,\n\t\t\t"lon": 113.5833,\n\t\t\t"rules": "Macau PRC"\n\t\t},\n\t\t"Asia/Magadan": {\n\t\t\t"lat": 59.5667,\n\t\t\t"lon": 150.8,\n\t\t\t"rules": "Russia"\n\t\t},\n\t\t"Asia/Makassar": {\n\t\t\t"lat": -4.8833,\n\t\t\t"lon": 119.4,\n\t\t\t"rules": ""\n\t\t},\n\t\t"Asia/Manila": {\n\t\t\t"lat": 14.5833,\n\t\t\t"lon": 121,\n\t\t\t"rules": "Phil"\n\t\t},\n\t\t"Asia/Muscat": {\n\t\t\t"lat": 23.6,\n\t\t\t"lon": 58.5833,\n\t\t\t"rules": ""\n\t\t},\n\t\t"Asia/Nicosia": {\n\t\t\t"lat": 35.1667,\n\t\t\t"lon": 33.3667,\n\t\t\t"rules": "Cyprus EUAsia"\n\t\t},\n\t\t"Asia/Novokuznetsk": {\n\t\t\t"lat": 53.75,\n\t\t\t"lon": 87.1167,\n\t\t\t"rules": "Russia"\n\t\t},\n\t\t"Asia/Novosibirsk": {\n\t\t\t"lat": 55.0333,\n\t\t\t"lon": 82.9167,\n\t\t\t"rules": "Russia"\n\t\t},\n\t\t"Asia/Omsk": {\n\t\t\t"lat": 55,\n\t\t\t"lon": 73.4,\n\t\t\t"rules": "Russia"\n\t\t},\n\t\t"Asia/Oral": {\n\t\t\t"lat": 51.2167,\n\t\t\t"lon": 51.35,\n\t\t\t"rules": "RussiaAsia"\n\t\t},\n\t\t"Asia/Phnom_Penh": {\n\t\t\t"lat": 11.55,\n\t\t\t"lon": 104.9167,\n\t\t\t"rules": ""\n\t\t},\n\t\t"Asia/Pontianak": {\n\t\t\t"lat": 0.0333,\n\t\t\t"lon": 109.3333,\n\t\t\t"rules": ""\n\t\t},\n\t\t"Asia/Pyongyang": {\n\t\t\t"lat": 39.0167,\n\t\t\t"lon": 125.75,\n\t\t\t"rules": ""\n\t\t},\n\t\t"Asia/Qatar": {\n\t\t\t"lat": 25.2833,\n\t\t\t"lon": 51.5333,\n\t\t\t"rules": ""\n\t\t},\n\t\t"Asia/Qyzylorda": {\n\t\t\t"lat": 44.8,\n\t\t\t"lon": 65.4667,\n\t\t\t"rules": "RussiaAsia"\n\t\t},\n\t\t"Asia/Rangoon": {\n\t\t\t"lat": 16.7833,\n\t\t\t"lon": 96.1667,\n\t\t\t"rules": ""\n\t\t},\n\t\t"Asia/Riyadh": {\n\t\t\t"lat": 24.6333,\n\t\t\t"lon": 46.7167,\n\t\t\t"rules": ""\n\t\t},\n\t\t"Asia/Sakhalin": {\n\t\t\t"lat": 46.9667,\n\t\t\t"lon": 142.7,\n\t\t\t"rules": "Russia"\n\t\t},\n\t\t"Asia/Samarkand": {\n\t\t\t"lat": 39.6667,\n\t\t\t"lon": 66.8,\n\t\t\t"rules": "RussiaAsia"\n\t\t},\n\t\t"Asia/Seoul": {\n\t\t\t"lat": 37.55,\n\t\t\t"lon": 126.9667,\n\t\t\t"rules": "ROK"\n\t\t},\n\t\t"Asia/Shanghai": {\n\t\t\t"lat": 31.2333,\n\t\t\t"lon": 121.4667,\n\t\t\t"rules": "Shang PRC"\n\t\t},\n\t\t"Asia/Singapore": {\n\t\t\t"lat": 1.2833,\n\t\t\t"lon": 103.85,\n\t\t\t"rules": ""\n\t\t},\n\t\t"Asia/Taipei": {\n\t\t\t"lat": 25.05,\n\t\t\t"lon": 121.5,\n\t\t\t"rules": "Taiwan"\n\t\t},\n\t\t"Asia/Tashkent": {\n\t\t\t"lat": 41.3333,\n\t\t\t"lon": 69.3,\n\t\t\t"rules": "RussiaAsia"\n\t\t},\n\t\t"Asia/Tbilisi": {\n\t\t\t"lat": 41.7167,\n\t\t\t"lon": 44.8167,\n\t\t\t"rules": "RussiaAsia E-EurAsia"\n\t\t},\n\t\t"Asia/Tehran": {\n\t\t\t"lat": 35.6667,\n\t\t\t"lon": 51.4333,\n\t\t\t"rules": "Iran"\n\t\t},\n\t\t"Asia/Thimphu": {\n\t\t\t"lat": 27.4667,\n\t\t\t"lon": 89.65,\n\t\t\t"rules": ""\n\t\t},\n\t\t"Asia/Tokyo": {\n\t\t\t"lat": 35.6544,\n\t\t\t"lon": 139.7447,\n\t\t\t"rules": "Japan"\n\t\t},\n\t\t"Asia/Ulaanbaatar": {\n\t\t\t"lat": 47.9167,\n\t\t\t"lon": 106.8833,\n\t\t\t"rules": "Mongol"\n\t\t},\n\t\t"Asia/Urumqi": {\n\t\t\t"lat": 43.8,\n\t\t\t"lon": 87.5833,\n\t\t\t"rules": "PRC"\n\t\t},\n\t\t"Asia/Ust-Nera": {\n\t\t\t"lat": 64.5603,\n\t\t\t"lon": 143.2267,\n\t\t\t"rules": "Russia"\n\t\t},\n\t\t"Asia/Vientiane": {\n\t\t\t"lat": 17.9667,\n\t\t\t"lon": 102.6,\n\t\t\t"rules": ""\n\t\t},\n\t\t"Asia/Vladivostok": {\n\t\t\t"lat": 43.1667,\n\t\t\t"lon": 131.9333,\n\t\t\t"rules": "Russia"\n\t\t},\n\t\t"Asia/Yakutsk": {\n\t\t\t"lat": 62,\n\t\t\t"lon": 129.6667,\n\t\t\t"rules": "Russia"\n\t\t},\n\t\t"Asia/Yekaterinburg": {\n\t\t\t"lat": 56.85,\n\t\t\t"lon": 60.6,\n\t\t\t"rules": "Russia"\n\t\t},\n\t\t"Asia/Yerevan": {\n\t\t\t"lat": 40.1833,\n\t\t\t"lon": 44.5,\n\t\t\t"rules": "RussiaAsia"\n\t\t},\n\t\t"Atlantic/Azores": {\n\t\t\t"lat": 37.7333,\n\t\t\t"lon": -24.3333,\n\t\t\t"rules": "Port W-Eur EU"\n\t\t},\n\t\t"Atlantic/Bermuda": {\n\t\t\t"lat": 32.2833,\n\t\t\t"lon": -63.2333,\n\t\t\t"rules": "Bahamas US"\n\t\t},\n\t\t"Atlantic/Canary": {\n\t\t\t"lat": 28.1,\n\t\t\t"lon": -14.6,\n\t\t\t"rules": "EU"\n\t\t},\n\t\t"Atlantic/Cape_Verde": {\n\t\t\t"lat": 14.9167,\n\t\t\t"lon": -22.4833,\n\t\t\t"rules": ""\n\t\t},\n\t\t"Atlantic/Faroe": {\n\t\t\t"lat": 62.0167,\n\t\t\t"lon": -5.2333,\n\t\t\t"rules": "EU"\n\t\t},\n\t\t"Atlantic/Madeira": {\n\t\t\t"lat": 32.6333,\n\t\t\t"lon": -15.1,\n\t\t\t"rules": "Port EU"\n\t\t},\n\t\t"Atlantic/Reykjavik": {\n\t\t\t"lat": 64.15,\n\t\t\t"lon": -20.15,\n\t\t\t"rules": "Iceland"\n\t\t},\n\t\t"Atlantic/South_Georgia": {\n\t\t\t"lat": -53.7333,\n\t\t\t"lon": -35.4667,\n\t\t\t"rules": ""\n\t\t},\n\t\t"Atlantic/St_Helena": {\n\t\t\t"lat": -14.0833,\n\t\t\t"lon": -4.3,\n\t\t\t"rules": ""\n\t\t},\n\t\t"Atlantic/Stanley": {\n\t\t\t"lat": -50.3,\n\t\t\t"lon": -56.15,\n\t\t\t"rules": "Falk"\n\t\t},\n\t\t"Australia/Adelaide": {\n\t\t\t"lat": -33.0833,\n\t\t\t"lon": 138.5833,\n\t\t\t"rules": "Aus AS"\n\t\t},\n\t\t"Australia/Brisbane": {\n\t\t\t"lat": -26.5333,\n\t\t\t"lon": 153.0333,\n\t\t\t"rules": "Aus AQ"\n\t\t},\n\t\t"Australia/Broken_Hill": {\n\t\t\t"lat": -30.05,\n\t\t\t"lon": 141.45,\n\t\t\t"rules": "Aus AN AS"\n\t\t},\n\t\t"Australia/Currie": {\n\t\t\t"lat": -38.0667,\n\t\t\t"lon": 143.8667,\n\t\t\t"rules": "Aus AT"\n\t\t},\n\t\t"Australia/Darwin": {\n\t\t\t"lat": -11.5333,\n\t\t\t"lon": 130.8333,\n\t\t\t"rules": "Aus"\n\t\t},\n\t\t"Australia/Eucla": {\n\t\t\t"lat": -30.2833,\n\t\t\t"lon": 128.8667,\n\t\t\t"rules": "Aus AW"\n\t\t},\n\t\t"Australia/Hobart": {\n\t\t\t"lat": -41.1167,\n\t\t\t"lon": 147.3167,\n\t\t\t"rules": "Aus AT"\n\t\t},\n\t\t"Australia/Lindeman": {\n\t\t\t"lat": -19.7333,\n\t\t\t"lon": 149,\n\t\t\t"rules": "Aus AQ Holiday"\n\t\t},\n\t\t"Australia/Lord_Howe": {\n\t\t\t"lat": -30.45,\n\t\t\t"lon": 159.0833,\n\t\t\t"rules": "LH"\n\t\t},\n\t\t"Australia/Melbourne": {\n\t\t\t"lat": -36.1833,\n\t\t\t"lon": 144.9667,\n\t\t\t"rules": "Aus AV"\n\t\t},\n\t\t"Australia/Perth": {\n\t\t\t"lat": -30.05,\n\t\t\t"lon": 115.85,\n\t\t\t"rules": "Aus AW"\n\t\t},\n\t\t"Australia/Sydney": {\n\t\t\t"lat": -32.1333,\n\t\t\t"lon": 151.2167,\n\t\t\t"rules": "Aus AN"\n\t\t},\n\t\t"CET": {\n\t\t\t"rules": "C-Eur"\n\t\t},\n\t\t"CST6CDT": {\n\t\t\t"rules": "US"\n\t\t},\n\t\t"EET": {\n\t\t\t"rules": "EU"\n\t\t},\n\t\t"EST": {\n\t\t\t"rules": ""\n\t\t},\n\t\t"EST5EDT": {\n\t\t\t"rules": "US"\n\t\t},\n\t\t"Etc/GMT": {\n\t\t\t"rules": ""\n\t\t},\n\t\t"Etc/GMT+1": {\n\t\t\t"rules": ""\n\t\t},\n\t\t"Etc/GMT+10": {\n\t\t\t"rules": ""\n\t\t},\n\t\t"Etc/GMT+11": {\n\t\t\t"rules": ""\n\t\t},\n\t\t"Etc/GMT+12": {\n\t\t\t"rules": ""\n\t\t},\n\t\t"Etc/GMT+2": {\n\t\t\t"rules": ""\n\t\t},\n\t\t"Etc/GMT+3": {\n\t\t\t"rules": ""\n\t\t},\n\t\t"Etc/GMT+4": {\n\t\t\t"rules": ""\n\t\t},\n\t\t"Etc/GMT+5": {\n\t\t\t"rules": ""\n\t\t},\n\t\t"Etc/GMT+6": {\n\t\t\t"rules": ""\n\t\t},\n\t\t"Etc/GMT+7": {\n\t\t\t"rules": ""\n\t\t},\n\t\t"Etc/GMT+8": {\n\t\t\t"rules": ""\n\t\t},\n\t\t"Etc/GMT+9": {\n\t\t\t"rules": ""\n\t\t},\n\t\t"Etc/GMT-1": {\n\t\t\t"rules": ""\n\t\t},\n\t\t"Etc/GMT-10": {\n\t\t\t"rules": ""\n\t\t},\n\t\t"Etc/GMT-11": {\n\t\t\t"rules": ""\n\t\t},\n\t\t"Etc/GMT-12": {\n\t\t\t"rules": ""\n\t\t},\n\t\t"Etc/GMT-13": {\n\t\t\t"rules": ""\n\t\t},\n\t\t"Etc/GMT-14": {\n\t\t\t"rules": ""\n\t\t},\n\t\t"Etc/GMT-2": {\n\t\t\t"rules": ""\n\t\t},\n\t\t"Etc/GMT-3": {\n\t\t\t"rules": ""\n\t\t},\n\t\t"Etc/GMT-4": {\n\t\t\t"rules": ""\n\t\t},\n\t\t"Etc/GMT-5": {\n\t\t\t"rules": ""\n\t\t},\n\t\t"Etc/GMT-6": {\n\t\t\t"rules": ""\n\t\t},\n\t\t"Etc/GMT-7": {\n\t\t\t"rules": ""\n\t\t},\n\t\t"Etc/GMT-8": {\n\t\t\t"rules": ""\n\t\t},\n\t\t"Etc/GMT-9": {\n\t\t\t"rules": ""\n\t\t},\n\t\t"Etc/UCT": {\n\t\t\t"rules": ""\n\t\t},\n\t\t"Etc/UTC": {\n\t\t\t"rules": ""\n\t\t},\n\t\t"Europe/Amsterdam": {\n\t\t\t"lat": 52.3667,\n\t\t\t"lon": 4.9,\n\t\t\t"rules": "Neth C-Eur EU"\n\t\t},\n\t\t"Europe/Andorra": {\n\t\t\t"lat": 42.5,\n\t\t\t"lon": 1.5167,\n\t\t\t"rules": "EU"\n\t\t},\n\t\t"Europe/Athens": {\n\t\t\t"lat": 37.9667,\n\t\t\t"lon": 23.7167,\n\t\t\t"rules": "Greece EU"\n\t\t},\n\t\t"Europe/Belgrade": {\n\t\t\t"lat": 44.8333,\n\t\t\t"lon": 20.5,\n\t\t\t"rules": "C-Eur EU"\n\t\t},\n\t\t"Europe/Berlin": {\n\t\t\t"lat": 52.5,\n\t\t\t"lon": 13.3667,\n\t\t\t"rules": "C-Eur SovietZone Germany EU"\n\t\t},\n\t\t"Europe/Bratislava": {\n\t\t\t"lat": 48.15,\n\t\t\t"lon": 17.1167,\n\t\t\t"rules": ""\n\t\t},\n\t\t"Europe/Brussels": {\n\t\t\t"lat": 50.8333,\n\t\t\t"lon": 4.3333,\n\t\t\t"rules": "C-Eur Belgium EU"\n\t\t},\n\t\t"Europe/Bucharest": {\n\t\t\t"lat": 44.4333,\n\t\t\t"lon": 26.1,\n\t\t\t"rules": "Romania C-Eur E-Eur EU"\n\t\t},\n\t\t"Europe/Budapest": {\n\t\t\t"lat": 47.5,\n\t\t\t"lon": 19.0833,\n\t\t\t"rules": "C-Eur Hungary EU"\n\t\t},\n\t\t"Europe/Busingen": {\n\t\t\t"lat": 47.7,\n\t\t\t"lon": 8.6833,\n\t\t\t"rules": ""\n\t\t},\n\t\t"Europe/Chisinau": {\n\t\t\t"lat": 47,\n\t\t\t"lon": 28.8333,\n\t\t\t"rules": "Romania C-Eur Russia E-Eur EU"\n\t\t},\n\t\t"Europe/Copenhagen": {\n\t\t\t"lat": 55.6667,\n\t\t\t"lon": 12.5833,\n\t\t\t"rules": "Denmark C-Eur EU"\n\t\t},\n\t\t"Europe/Dublin": {\n\t\t\t"lat": 53.3333,\n\t\t\t"lon": -5.75,\n\t\t\t"rules": "GB-Eire EU"\n\t\t},\n\t\t"Europe/Gibraltar": {\n\t\t\t"lat": 36.1333,\n\t\t\t"lon": -4.65,\n\t\t\t"rules": "GB-Eire EU"\n\t\t},\n\t\t"Europe/Guernsey": {\n\t\t\t"lat": 49.45,\n\t\t\t"lon": -1.4667,\n\t\t\t"rules": ""\n\t\t},\n\t\t"Europe/Helsinki": {\n\t\t\t"lat": 60.1667,\n\t\t\t"lon": 24.9667,\n\t\t\t"rules": "Finland EU"\n\t\t},\n\t\t"Europe/Isle_of_Man": {\n\t\t\t"lat": 54.15,\n\t\t\t"lon": -3.5333,\n\t\t\t"rules": ""\n\t\t},\n\t\t"Europe/Istanbul": {\n\t\t\t"lat": 41.0167,\n\t\t\t"lon": 28.9667,\n\t\t\t"rules": "Turkey EU"\n\t\t},\n\t\t"Europe/Jersey": {\n\t\t\t"lat": 49.2,\n\t\t\t"lon": -1.8833,\n\t\t\t"rules": ""\n\t\t},\n\t\t"Europe/Kaliningrad": {\n\t\t\t"lat": 54.7167,\n\t\t\t"lon": 20.5,\n\t\t\t"rules": "C-Eur Poland Russia"\n\t\t},\n\t\t"Europe/Kiev": {\n\t\t\t"lat": 50.4333,\n\t\t\t"lon": 30.5167,\n\t\t\t"rules": "C-Eur Russia E-Eur EU"\n\t\t},\n\t\t"Europe/Lisbon": {\n\t\t\t"lat": 38.7167,\n\t\t\t"lon": -8.8667,\n\t\t\t"rules": "Port W-Eur EU"\n\t\t},\n\t\t"Europe/Ljubljana": {\n\t\t\t"lat": 46.05,\n\t\t\t"lon": 14.5167,\n\t\t\t"rules": ""\n\t\t},\n\t\t"Europe/London": {\n\t\t\t"lat": 51.5083,\n\t\t\t"lon": 0.1253,\n\t\t\t"rules": "GB-Eire EU"\n\t\t},\n\t\t"Europe/Luxembourg": {\n\t\t\t"lat": 49.6,\n\t\t\t"lon": 6.15,\n\t\t\t"rules": "Lux Belgium C-Eur EU"\n\t\t},\n\t\t"Europe/Madrid": {\n\t\t\t"lat": 40.4,\n\t\t\t"lon": -2.3167,\n\t\t\t"rules": "Spain EU"\n\t\t},\n\t\t"Europe/Malta": {\n\t\t\t"lat": 35.9,\n\t\t\t"lon": 14.5167,\n\t\t\t"rules": "Italy C-Eur Malta EU"\n\t\t},\n\t\t"Europe/Mariehamn": {\n\t\t\t"lat": 60.1,\n\t\t\t"lon": 19.95,\n\t\t\t"rules": ""\n\t\t},\n\t\t"Europe/Minsk": {\n\t\t\t"lat": 53.9,\n\t\t\t"lon": 27.5667,\n\t\t\t"rules": "C-Eur Russia"\n\t\t},\n\t\t"Europe/Monaco": {\n\t\t\t"lat": 43.7,\n\t\t\t"lon": 7.3833,\n\t\t\t"rules": "France EU"\n\t\t},\n\t\t"Europe/Moscow": {\n\t\t\t"lat": 55.75,\n\t\t\t"lon": 37.5833,\n\t\t\t"rules": "Russia"\n\t\t},\n\t\t"Europe/Oslo": {\n\t\t\t"lat": 59.9167,\n\t\t\t"lon": 10.75,\n\t\t\t"rules": "Norway C-Eur EU"\n\t\t},\n\t\t"Europe/Paris": {\n\t\t\t"lat": 48.8667,\n\t\t\t"lon": 2.3333,\n\t\t\t"rules": "France C-Eur EU"\n\t\t},\n\t\t"Europe/Podgorica": {\n\t\t\t"lat": 42.4333,\n\t\t\t"lon": 19.2667,\n\t\t\t"rules": ""\n\t\t},\n\t\t"Europe/Prague": {\n\t\t\t"lat": 50.0833,\n\t\t\t"lon": 14.4333,\n\t\t\t"rules": "C-Eur Czech EU"\n\t\t},\n\t\t"Europe/Riga": {\n\t\t\t"lat": 56.95,\n\t\t\t"lon": 24.1,\n\t\t\t"rules": "C-Eur Russia Latvia EU"\n\t\t},\n\t\t"Europe/Rome": {\n\t\t\t"lat": 41.9,\n\t\t\t"lon": 12.4833,\n\t\t\t"rules": "Italy C-Eur EU"\n\t\t},\n\t\t"Europe/Samara": {\n\t\t\t"lat": 53.2,\n\t\t\t"lon": 50.15,\n\t\t\t"rules": "Russia"\n\t\t},\n\t\t"Europe/San_Marino": {\n\t\t\t"lat": 43.9167,\n\t\t\t"lon": 12.4667,\n\t\t\t"rules": ""\n\t\t},\n\t\t"Europe/Sarajevo": {\n\t\t\t"lat": 43.8667,\n\t\t\t"lon": 18.4167,\n\t\t\t"rules": ""\n\t\t},\n\t\t"Europe/Simferopol": {\n\t\t\t"lat": 44.95,\n\t\t\t"lon": 34.1,\n\t\t\t"rules": "C-Eur Russia E-Eur EU"\n\t\t},\n\t\t"Europe/Skopje": {\n\t\t\t"lat": 41.9833,\n\t\t\t"lon": 21.4333,\n\t\t\t"rules": ""\n\t\t},\n\t\t"Europe/Sofia": {\n\t\t\t"lat": 42.6833,\n\t\t\t"lon": 23.3167,\n\t\t\t"rules": "C-Eur Bulg E-Eur EU"\n\t\t},\n\t\t"Europe/Stockholm": {\n\t\t\t"lat": 59.3333,\n\t\t\t"lon": 18.05,\n\t\t\t"rules": "EU"\n\t\t},\n\t\t"Europe/Tallinn": {\n\t\t\t"lat": 59.4167,\n\t\t\t"lon": 24.75,\n\t\t\t"rules": "C-Eur Russia EU"\n\t\t},\n\t\t"Europe/Tirane": {\n\t\t\t"lat": 41.3333,\n\t\t\t"lon": 19.8333,\n\t\t\t"rules": "Albania EU"\n\t\t},\n\t\t"Europe/Uzhgorod": {\n\t\t\t"lat": 48.6167,\n\t\t\t"lon": 22.3,\n\t\t\t"rules": "C-Eur Russia E-Eur EU"\n\t\t},\n\t\t"Europe/Vaduz": {\n\t\t\t"lat": 47.15,\n\t\t\t"lon": 9.5167,\n\t\t\t"rules": "EU"\n\t\t},\n\t\t"Europe/Vatican": {\n\t\t\t"lat": 41.9022,\n\t\t\t"lon": 12.4531,\n\t\t\t"rules": ""\n\t\t},\n\t\t"Europe/Vienna": {\n\t\t\t"lat": 48.2167,\n\t\t\t"lon": 16.3333,\n\t\t\t"rules": "C-Eur Austria EU"\n\t\t},\n\t\t"Europe/Vilnius": {\n\t\t\t"lat": 54.6833,\n\t\t\t"lon": 25.3167,\n\t\t\t"rules": "C-Eur Russia EU"\n\t\t},\n\t\t"Europe/Volgograd": {\n\t\t\t"lat": 48.7333,\n\t\t\t"lon": 44.4167,\n\t\t\t"rules": "Russia"\n\t\t},\n\t\t"Europe/Warsaw": {\n\t\t\t"lat": 52.25,\n\t\t\t"lon": 21,\n\t\t\t"rules": "C-Eur Poland W-Eur EU"\n\t\t},\n\t\t"Europe/Zagreb": {\n\t\t\t"lat": 45.8,\n\t\t\t"lon": 15.9667,\n\t\t\t"rules": ""\n\t\t},\n\t\t"Europe/Zaporozhye": {\n\t\t\t"lat": 47.8333,\n\t\t\t"lon": 35.1667,\n\t\t\t"rules": "C-Eur Russia E-Eur EU"\n\t\t},\n\t\t"Europe/Zurich": {\n\t\t\t"lat": 47.3833,\n\t\t\t"lon": 8.5333,\n\t\t\t"rules": "Swiss EU"\n\t\t},\n\t\t"HST": {\n\t\t\t"rules": ""\n\t\t},\n\t\t"Indian/Antananarivo": {\n\t\t\t"lat": -17.0833,\n\t\t\t"lon": 47.5167,\n\t\t\t"rules": ""\n\t\t},\n\t\t"Indian/Chagos": {\n\t\t\t"lat": -6.6667,\n\t\t\t"lon": 72.4167,\n\t\t\t"rules": ""\n\t\t},\n\t\t"Indian/Christmas": {\n\t\t\t"lat": -9.5833,\n\t\t\t"lon": 105.7167,\n\t\t\t"rules": ""\n\t\t},\n\t\t"Indian/Cocos": {\n\t\t\t"lat": -11.8333,\n\t\t\t"lon": 96.9167,\n\t\t\t"rules": ""\n\t\t},\n\t\t"Indian/Comoro": {\n\t\t\t"lat": -10.3167,\n\t\t\t"lon": 43.2667,\n\t\t\t"rules": ""\n\t\t},\n\t\t"Indian/Kerguelen": {\n\t\t\t"lat": -48.6472,\n\t\t\t"lon": 70.2175,\n\t\t\t"rules": ""\n\t\t},\n\t\t"Indian/Mahe": {\n\t\t\t"lat": -3.3333,\n\t\t\t"lon": 55.4667,\n\t\t\t"rules": ""\n\t\t},\n\t\t"Indian/Maldives": {\n\t\t\t"lat": 4.1667,\n\t\t\t"lon": 73.5,\n\t\t\t"rules": ""\n\t\t},\n\t\t"Indian/Mauritius": {\n\t\t\t"lat": -19.8333,\n\t\t\t"lon": 57.5,\n\t\t\t"rules": "Mauritius"\n\t\t},\n\t\t"Indian/Mayotte": {\n\t\t\t"lat": -11.2167,\n\t\t\t"lon": 45.2333,\n\t\t\t"rules": ""\n\t\t},\n\t\t"Indian/Reunion": {\n\t\t\t"lat": -19.1333,\n\t\t\t"lon": 55.4667,\n\t\t\t"rules": ""\n\t\t},\n\t\t"MET": {\n\t\t\t"rules": "C-Eur"\n\t\t},\n\t\t"MST": {\n\t\t\t"rules": ""\n\t\t},\n\t\t"MST7MDT": {\n\t\t\t"rules": "US"\n\t\t},\n\t\t"PST8PDT": {\n\t\t\t"rules": "US"\n\t\t},\n\t\t"Pacific/Apia": {\n\t\t\t"lat": -12.1667,\n\t\t\t"lon": -170.2667,\n\t\t\t"rules": "WS"\n\t\t},\n\t\t"Pacific/Auckland": {\n\t\t\t"lat": -35.1333,\n\t\t\t"lon": 174.7667,\n\t\t\t"rules": "NZ"\n\t\t},\n\t\t"Pacific/Chatham": {\n\t\t\t"lat": -42.05,\n\t\t\t"lon": -175.45,\n\t\t\t"rules": "Chatham"\n\t\t},\n\t\t"Pacific/Chuuk": {\n\t\t\t"lat": 7.4167,\n\t\t\t"lon": 151.7833,\n\t\t\t"rules": ""\n\t\t},\n\t\t"Pacific/Easter": {\n\t\t\t"lat": -26.85,\n\t\t\t"lon": -108.5667,\n\t\t\t"rules": "Chile"\n\t\t},\n\t\t"Pacific/Efate": {\n\t\t\t"lat": -16.3333,\n\t\t\t"lon": 168.4167,\n\t\t\t"rules": "Vanuatu"\n\t\t},\n\t\t"Pacific/Enderbury": {\n\t\t\t"lat": -2.8667,\n\t\t\t"lon": -170.9167,\n\t\t\t"rules": ""\n\t\t},\n\t\t"Pacific/Fakaofo": {\n\t\t\t"lat": -8.6333,\n\t\t\t"lon": -170.7667,\n\t\t\t"rules": ""\n\t\t},\n\t\t"Pacific/Fiji": {\n\t\t\t"lat": -17.8667,\n\t\t\t"lon": 178.4167,\n\t\t\t"rules": "Fiji"\n\t\t},\n\t\t"Pacific/Funafuti": {\n\t\t\t"lat": -7.4833,\n\t\t\t"lon": 179.2167,\n\t\t\t"rules": ""\n\t\t},\n\t\t"Pacific/Galapagos": {\n\t\t\t"lat": 0.9,\n\t\t\t"lon": -88.4,\n\t\t\t"rules": ""\n\t\t},\n\t\t"Pacific/Gambier": {\n\t\t\t"lat": -22.8667,\n\t\t\t"lon": -133.05,\n\t\t\t"rules": ""\n\t\t},\n\t\t"Pacific/Guadalcanal": {\n\t\t\t"lat": -8.4667,\n\t\t\t"lon": 160.2,\n\t\t\t"rules": ""\n\t\t},\n\t\t"Pacific/Guam": {\n\t\t\t"lat": 13.4667,\n\t\t\t"lon": 144.75,\n\t\t\t"rules": ""\n\t\t},\n\t\t"Pacific/Honolulu": {\n\t\t\t"lat": 21.3069,\n\t\t\t"lon": -156.1417,\n\t\t\t"rules": ""\n\t\t},\n\t\t"Pacific/Johnston": {\n\t\t\t"lat": 16.75,\n\t\t\t"lon": -168.4833,\n\t\t\t"rules": ""\n\t\t},\n\t\t"Pacific/Kiritimati": {\n\t\t\t"lat": 1.8667,\n\t\t\t"lon": -156.6667,\n\t\t\t"rules": ""\n\t\t},\n\t\t"Pacific/Kosrae": {\n\t\t\t"lat": 5.3167,\n\t\t\t"lon": 162.9833,\n\t\t\t"rules": ""\n\t\t},\n\t\t"Pacific/Kwajalein": {\n\t\t\t"lat": 9.0833,\n\t\t\t"lon": 167.3333,\n\t\t\t"rules": ""\n\t\t},\n\t\t"Pacific/Majuro": {\n\t\t\t"lat": 7.15,\n\t\t\t"lon": 171.2,\n\t\t\t"rules": ""\n\t\t},\n\t\t"Pacific/Marquesas": {\n\t\t\t"lat": -9,\n\t\t\t"lon": -138.5,\n\t\t\t"rules": ""\n\t\t},\n\t\t"Pacific/Midway": {\n\t\t\t"lat": 28.2167,\n\t\t\t"lon": -176.6333,\n\t\t\t"rules": ""\n\t\t},\n\t\t"Pacific/Nauru": {\n\t\t\t"lat": 0.5167,\n\t\t\t"lon": 166.9167,\n\t\t\t"rules": ""\n\t\t},\n\t\t"Pacific/Niue": {\n\t\t\t"lat": -18.9833,\n\t\t\t"lon": -168.0833,\n\t\t\t"rules": ""\n\t\t},\n\t\t"Pacific/Norfolk": {\n\t\t\t"lat": -28.95,\n\t\t\t"lon": 167.9667,\n\t\t\t"rules": ""\n\t\t},\n\t\t"Pacific/Noumea": {\n\t\t\t"lat": -21.7333,\n\t\t\t"lon": 166.45,\n\t\t\t"rules": "NC"\n\t\t},\n\t\t"Pacific/Pago_Pago": {\n\t\t\t"lat": -13.7333,\n\t\t\t"lon": -169.3,\n\t\t\t"rules": ""\n\t\t},\n\t\t"Pacific/Palau": {\n\t\t\t"lat": 7.3333,\n\t\t\t"lon": 134.4833,\n\t\t\t"rules": ""\n\t\t},\n\t\t"Pacific/Pitcairn": {\n\t\t\t"lat": -24.9333,\n\t\t\t"lon": -129.9167,\n\t\t\t"rules": ""\n\t\t},\n\t\t"Pacific/Pohnpei": {\n\t\t\t"lat": 6.9667,\n\t\t\t"lon": 158.2167,\n\t\t\t"rules": ""\n\t\t},\n\t\t"Pacific/Port_Moresby": {\n\t\t\t"lat": -8.5,\n\t\t\t"lon": 147.1667,\n\t\t\t"rules": ""\n\t\t},\n\t\t"Pacific/Rarotonga": {\n\t\t\t"lat": -20.7667,\n\t\t\t"lon": -158.2333,\n\t\t\t"rules": "Cook"\n\t\t},\n\t\t"Pacific/Saipan": {\n\t\t\t"lat": 15.2,\n\t\t\t"lon": 145.75,\n\t\t\t"rules": ""\n\t\t},\n\t\t"Pacific/Tahiti": {\n\t\t\t"lat": -16.4667,\n\t\t\t"lon": -148.4333,\n\t\t\t"rules": ""\n\t\t},\n\t\t"Pacific/Tarawa": {\n\t\t\t"lat": 1.4167,\n\t\t\t"lon": 173,\n\t\t\t"rules": ""\n\t\t},\n\t\t"Pacific/Tongatapu": {\n\t\t\t"lat": -20.8333,\n\t\t\t"lon": -174.8333,\n\t\t\t"rules": "Tonga"\n\t\t},\n\t\t"Pacific/Wake": {\n\t\t\t"lat": 19.2833,\n\t\t\t"lon": 166.6167,\n\t\t\t"rules": ""\n\t\t},\n\t\t"Pacific/Wallis": {\n\t\t\t"lat": -12.7,\n\t\t\t"lon": -175.8333,\n\t\t\t"rules": ""\n\t\t},\n\t\t"WET": {\n\t\t\t"rules": "EU"\n\t\t}\n\t},\n\t"rules": {\n\t\t"AN": [\n\t\t\t"1971 1985 9 0 8 2 2 1",\n\t\t\t"1972 1972 1 27 7 2 2 0",\n\t\t\t"1973 1981 2 1 0 2 2 0",\n\t\t\t"1982 1982 3 1 0 2 2 0",\n\t\t\t"1983 1985 2 1 0 2 2 0",\n\t\t\t"1986 1989 2 15 0 2 2 0",\n\t\t\t"1986 1986 9 19 7 2 2 1",\n\t\t\t"1987 1999 9 0 8 2 2 1",\n\t\t\t"1990 1995 2 1 0 2 2 0",\n\t\t\t"1996 2005 2 0 8 2 2 0",\n\t\t\t"2000 2000 7 0 8 2 2 1",\n\t\t\t"2001 2007 9 0 8 2 2 1",\n\t\t\t"2006 2006 3 1 0 2 2 0",\n\t\t\t"2007 2007 2 0 8 2 2 0",\n\t\t\t"2008 9999 3 1 0 2 2 0",\n\t\t\t"2008 9999 9 1 0 2 2 1"\n\t\t],\n\t\t"AQ": [\n\t\t\t"1971 1971 9 0 8 2 2 1",\n\t\t\t"1972 1972 1 0 8 2 2 0",\n\t\t\t"1989 1991 9 0 8 2 2 1",\n\t\t\t"1990 1992 2 1 0 2 2 0"\n\t\t],\n\t\t"AS": [\n\t\t\t"1971 1985 9 0 8 2 2 1",\n\t\t\t"1986 1986 9 19 7 2 2 1",\n\t\t\t"1987 2007 9 0 8 2 2 1",\n\t\t\t"1972 1972 1 27 7 2 2 0",\n\t\t\t"1973 1985 2 1 0 2 2 0",\n\t\t\t"1986 1990 2 15 0 2 2 0",\n\t\t\t"1991 1991 2 3 7 2 2 0",\n\t\t\t"1992 1992 2 22 7 2 2 0",\n\t\t\t"1993 1993 2 7 7 2 2 0",\n\t\t\t"1994 1994 2 20 7 2 2 0",\n\t\t\t"1995 2005 2 0 8 2 2 0",\n\t\t\t"2006 2006 3 2 7 2 2 0",\n\t\t\t"2007 2007 2 0 8 2 2 0",\n\t\t\t"2008 9999 3 1 0 2 2 0",\n\t\t\t"2008 9999 9 1 0 2 2 1"\n\t\t],\n\t\t"AT": [\n\t\t\t"1967 1967 9 1 0 2 2 1",\n\t\t\t"1968 1968 2 0 8 2 2 0",\n\t\t\t"1968 1985 9 0 8 2 2 1",\n\t\t\t"1969 1971 2 8 0 2 2 0",\n\t\t\t"1972 1972 1 0 8 2 2 0",\n\t\t\t"1973 1981 2 1 0 2 2 0",\n\t\t\t"1982 1983 2 0 8 2 2 0",\n\t\t\t"1984 1986 2 1 0 2 2 0",\n\t\t\t"1986 1986 9 15 0 2 2 1",\n\t\t\t"1987 1990 2 15 0 2 2 0",\n\t\t\t"1987 1987 9 22 0 2 2 1",\n\t\t\t"1988 1990 9 0 8 2 2 1",\n\t\t\t"1991 1999 9 1 0 2 2 1",\n\t\t\t"1991 2005 2 0 8 2 2 0",\n\t\t\t"2000 2000 7 0 8 2 2 1",\n\t\t\t"2001 9999 9 1 0 2 2 1",\n\t\t\t"2006 2006 3 1 0 2 2 0",\n\t\t\t"2007 2007 2 0 8 2 2 0",\n\t\t\t"2008 9999 3 1 0 2 2 0"\n\t\t],\n\t\t"AV": [\n\t\t\t"1971 1985 9 0 8 2 2 1",\n\t\t\t"1972 1972 1 0 8 2 2 0",\n\t\t\t"1973 1985 2 1 0 2 2 0",\n\t\t\t"1986 1990 2 15 0 2 2 0",\n\t\t\t"1986 1987 9 15 0 2 2 1",\n\t\t\t"1988 1999 9 0 8 2 2 1",\n\t\t\t"1991 1994 2 1 0 2 2 0",\n\t\t\t"1995 2005 2 0 8 2 2 0",\n\t\t\t"2000 2000 7 0 8 2 2 1",\n\t\t\t"2001 2007 9 0 8 2 2 1",\n\t\t\t"2006 2006 3 1 0 2 2 0",\n\t\t\t"2007 2007 2 0 8 2 2 0",\n\t\t\t"2008 9999 3 1 0 2 2 0",\n\t\t\t"2008 9999 9 1 0 2 2 1"\n\t\t],\n\t\t"AW": [\n\t\t\t"1974 1974 9 0 8 2 2 1",\n\t\t\t"1975 1975 2 1 0 2 2 0",\n\t\t\t"1983 1983 9 0 8 2 2 1",\n\t\t\t"1984 1984 2 1 0 2 2 0",\n\t\t\t"1991 1991 10 17 7 2 2 1",\n\t\t\t"1992 1992 2 1 0 2 2 0",\n\t\t\t"2006 2006 11 3 7 2 2 1",\n\t\t\t"2007 2009 2 0 8 2 2 0",\n\t\t\t"2007 2008 9 0 8 2 2 1"\n\t\t],\n\t\t"Albania": [\n\t\t\t"1940 1940 5 16 7 0 0 1 S",\n\t\t\t"1942 1942 10 2 7 3 0 0",\n\t\t\t"1943 1943 2 29 7 2 0 1 S",\n\t\t\t"1943 1943 3 10 7 3 0 0",\n\t\t\t"1974 1974 4 4 7 0 0 1 S",\n\t\t\t"1974 1974 9 2 7 0 0 0",\n\t\t\t"1975 1975 4 1 7 0 0 1 S",\n\t\t\t"1975 1975 9 2 7 0 0 0",\n\t\t\t"1976 1976 4 2 7 0 0 1 S",\n\t\t\t"1976 1976 9 3 7 0 0 0",\n\t\t\t"1977 1977 4 8 7 0 0 1 S",\n\t\t\t"1977 1977 9 2 7 0 0 0",\n\t\t\t"1978 1978 4 6 7 0 0 1 S",\n\t\t\t"1978 1978 9 1 7 0 0 0",\n\t\t\t"1979 1979 4 5 7 0 0 1 S",\n\t\t\t"1979 1979 8 30 7 0 0 0",\n\t\t\t"1980 1980 4 3 7 0 0 1 S",\n\t\t\t"1980 1980 9 4 7 0 0 0",\n\t\t\t"1981 1981 3 26 7 0 0 1 S",\n\t\t\t"1981 1981 8 27 7 0 0 0",\n\t\t\t"1982 1982 4 2 7 0 0 1 S",\n\t\t\t"1982 1982 9 3 7 0 0 0",\n\t\t\t"1983 1983 3 18 7 0 0 1 S",\n\t\t\t"1983 1983 9 1 7 0 0 0",\n\t\t\t"1984 1984 3 1 7 0 0 1 S"\n\t\t],\n\t\t"Algeria": [\n\t\t\t"1916 1916 5 14 7 23 2 1 S",\n\t\t\t"1916 1919 9 1 0 23 2 0",\n\t\t\t"1917 1917 2 24 7 23 2 1 S",\n\t\t\t"1918 1918 2 9 7 23 2 1 S",\n\t\t\t"1919 1919 2 1 7 23 2 1 S",\n\t\t\t"1920 1920 1 14 7 23 2 1 S",\n\t\t\t"1920 1920 9 23 7 23 2 0",\n\t\t\t"1921 1921 2 14 7 23 2 1 S",\n\t\t\t"1921 1921 5 21 7 23 2 0",\n\t\t\t"1939 1939 8 11 7 23 2 1 S",\n\t\t\t"1939 1939 10 19 7 1 0 0",\n\t\t\t"1944 1945 3 1 1 2 0 1 S",\n\t\t\t"1944 1944 9 8 7 2 0 0",\n\t\t\t"1945 1945 8 16 7 1 0 0",\n\t\t\t"1971 1971 3 25 7 23 2 1 S",\n\t\t\t"1971 1971 8 26 7 23 2 0",\n\t\t\t"1977 1977 4 6 7 0 0 1 S",\n\t\t\t"1977 1977 9 21 7 0 0 0",\n\t\t\t"1978 1978 2 24 7 1 0 1 S",\n\t\t\t"1978 1978 8 22 7 3 0 0",\n\t\t\t"1980 1980 3 25 7 0 0 1 S",\n\t\t\t"1980 1980 9 31 7 2 0 0"\n\t\t],\n\t\t"Arg": [\n\t\t\t"1930 1930 11 1 7 0 0 1 S",\n\t\t\t"1931 1931 3 1 7 0 0 0",\n\t\t\t"1931 1931 9 15 7 0 0 1 S",\n\t\t\t"1932 1940 2 1 7 0 0 0",\n\t\t\t"1932 1939 10 1 7 0 0 1 S",\n\t\t\t"1940 1940 6 1 7 0 0 1 S",\n\t\t\t"1941 1941 5 15 7 0 0 0",\n\t\t\t"1941 1941 9 15 7 0 0 1 S",\n\t\t\t"1943 1943 7 1 7 0 0 0",\n\t\t\t"1943 1943 9 15 7 0 0 1 S",\n\t\t\t"1946 1946 2 1 7 0 0 0",\n\t\t\t"1946 1946 9 1 7 0 0 1 S",\n\t\t\t"1963 1963 9 1 7 0 0 0",\n\t\t\t"1963 1963 11 15 7 0 0 1 S",\n\t\t\t"1964 1966 2 1 7 0 0 0",\n\t\t\t"1964 1966 9 15 7 0 0 1 S",\n\t\t\t"1967 1967 3 2 7 0 0 0",\n\t\t\t"1967 1968 9 1 0 0 0 1 S",\n\t\t\t"1968 1969 3 1 0 0 0 0",\n\t\t\t"1974 1974 0 23 7 0 0 1 S",\n\t\t\t"1974 1974 4 1 7 0 0 0",\n\t\t\t"1988 1988 11 1 7 0 0 1 S",\n\t\t\t"1989 1993 2 1 0 0 0 0",\n\t\t\t"1989 1992 9 15 0 0 0 1 S",\n\t\t\t"1999 1999 9 1 0 0 0 1 S",\n\t\t\t"2000 2000 2 3 7 0 0 0",\n\t\t\t"2007 2007 11 30 7 0 0 1 S",\n\t\t\t"2008 2009 2 15 0 0 0 0",\n\t\t\t"2008 2008 9 15 0 0 0 1 S"\n\t\t],\n\t\t"ArgAQ": [\n\t\t\t"1964 1966 2 1 7 0 0 0",\n\t\t\t"1964 1966 9 15 7 0 0 1 S",\n\t\t\t"1967 1967 3 2 7 0 0 0",\n\t\t\t"1967 1968 9 1 0 0 0 1 S",\n\t\t\t"1968 1969 3 1 0 0 0 0",\n\t\t\t"1974 1974 0 23 7 0 0 1 S",\n\t\t\t"1974 1974 4 1 7 0 0 0"\n\t\t],\n\t\t"Aus": [\n\t\t\t"1917 1917 0 1 7 0:1 0 1",\n\t\t\t"1917 1917 2 25 7 2 0 0",\n\t\t\t"1942 1942 0 1 7 2 0 1",\n\t\t\t"1942 1942 2 29 7 2 0 0",\n\t\t\t"1942 1942 8 27 7 2 0 1",\n\t\t\t"1943 1944 2 0 8 2 0 0",\n\t\t\t"1943 1943 9 3 7 2 0 1"\n\t\t],\n\t\t"Austria": [\n\t\t\t"1920 1920 3 5 7 2 2 1 S",\n\t\t\t"1920 1920 8 13 7 2 2 0",\n\t\t\t"1946 1946 3 14 7 2 2 1 S",\n\t\t\t"1946 1948 9 1 0 2 2 0",\n\t\t\t"1947 1947 3 6 7 2 2 1 S",\n\t\t\t"1948 1948 3 18 7 2 2 1 S",\n\t\t\t"1980 1980 3 6 7 0 0 1 S",\n\t\t\t"1980 1980 8 28 7 0 0 0"\n\t\t],\n\t\t"Azer": [\n\t\t\t"1997 9999 2 0 8 4 0 1 S",\n\t\t\t"1997 9999 9 0 8 5 0 0"\n\t\t],\n\t\t"Bahamas": [\n\t\t\t"1964 1975 9 0 8 2 0 0 S",\n\t\t\t"1964 1975 3 0 8 2 0 1 D"\n\t\t],\n\t\t"Barb": [\n\t\t\t"1977 1977 5 12 7 2 0 1 D",\n\t\t\t"1977 1978 9 1 0 2 0 0 S",\n\t\t\t"1978 1980 3 15 0 2 0 1 D",\n\t\t\t"1979 1979 8 30 7 2 0 0 S",\n\t\t\t"1980 1980 8 25 7 2 0 0 S"\n\t\t],\n\t\t"Belgium": [\n\t\t\t"1918 1918 2 9 7 0 2 1 S",\n\t\t\t"1918 1919 9 1 6 23 2 0",\n\t\t\t"1919 1919 2 1 7 23 2 1 S",\n\t\t\t"1920 1920 1 14 7 23 2 1 S",\n\t\t\t"1920 1920 9 23 7 23 2 0",\n\t\t\t"1921 1921 2 14 7 23 2 1 S",\n\t\t\t"1921 1921 9 25 7 23 2 0",\n\t\t\t"1922 1922 2 25 7 23 2 1 S",\n\t\t\t"1922 1927 9 1 6 23 2 0",\n\t\t\t"1923 1923 3 21 7 23 2 1 S",\n\t\t\t"1924 1924 2 29 7 23 2 1 S",\n\t\t\t"1925 1925 3 4 7 23 2 1 S",\n\t\t\t"1926 1926 3 17 7 23 2 1 S",\n\t\t\t"1927 1927 3 9 7 23 2 1 S",\n\t\t\t"1928 1928 3 14 7 23 2 1 S",\n\t\t\t"1928 1938 9 2 0 2 2 0",\n\t\t\t"1929 1929 3 21 7 2 2 1 S",\n\t\t\t"1930 1930 3 13 7 2 2 1 S",\n\t\t\t"1931 1931 3 19 7 2 2 1 S",\n\t\t\t"1932 1932 3 3 7 2 2 1 S",\n\t\t\t"1933 1933 2 26 7 2 2 1 S",\n\t\t\t"1934 1934 3 8 7 2 2 1 S",\n\t\t\t"1935 1935 2 31 7 2 2 1 S",\n\t\t\t"1936 1936 3 19 7 2 2 1 S",\n\t\t\t"1937 1937 3 4 7 2 2 1 S",\n\t\t\t"1938 1938 2 27 7 2 2 1 S",\n\t\t\t"1939 1939 3 16 7 2 2 1 S",\n\t\t\t"1939 1939 10 19 7 2 2 0",\n\t\t\t"1940 1940 1 25 7 2 2 1 S",\n\t\t\t"1944 1944 8 17 7 2 2 0",\n\t\t\t"1945 1945 3 2 7 2 2 1 S",\n\t\t\t"1945 1945 8 16 7 2 2 0",\n\t\t\t"1946 1946 4 19 7 2 2 1 S",\n\t\t\t"1946 1946 9 7 7 2 2 0"\n\t\t],\n\t\t"Belize": [\n\t\t\t"1918 1942 9 2 0 0 0 0:30 HD",\n\t\t\t"1919 1943 1 9 0 0 0 0 S",\n\t\t\t"1973 1973 11 5 7 0 0 1 D",\n\t\t\t"1974 1974 1 9 7 0 0 0 S",\n\t\t\t"1982 1982 11 18 7 0 0 1 D",\n\t\t\t"1983 1983 1 12 7 0 0 0 S"\n\t\t],\n\t\t"Brazil": [\n\t\t\t"1931 1931 9 3 7 11 0 1 S",\n\t\t\t"1932 1933 3 1 7 0 0 0",\n\t\t\t"1932 1932 9 3 7 0 0 1 S",\n\t\t\t"1949 1952 11 1 7 0 0 1 S",\n\t\t\t"1950 1950 3 16 7 1 0 0",\n\t\t\t"1951 1952 3 1 7 0 0 0",\n\t\t\t"1953 1953 2 1 7 0 0 0",\n\t\t\t"1963 1963 11 9 7 0 0 1 S",\n\t\t\t"1964 1964 2 1 7 0 0 0",\n\t\t\t"1965 1965 0 31 7 0 0 1 S",\n\t\t\t"1965 1965 2 31 7 0 0 0",\n\t\t\t"1965 1965 11 1 7 0 0 1 S",\n\t\t\t"1966 1968 2 1 7 0 0 0",\n\t\t\t"1966 1967 10 1 7 0 0 1 S",\n\t\t\t"1985 1985 10 2 7 0 0 1 S",\n\t\t\t"1986 1986 2 15 7 0 0 0",\n\t\t\t"1986 1986 9 25 7 0 0 1 S",\n\t\t\t"1987 1987 1 14 7 0 0 0",\n\t\t\t"1987 1987 9 25 7 0 0 1 S",\n\t\t\t"1988 1988 1 7 7 0 0 0",\n\t\t\t"1988 1988 9 16 7 0 0 1 S",\n\t\t\t"1989 1989 0 29 7 0 0 0",\n\t\t\t"1989 1989 9 15 7 0 0 1 S",\n\t\t\t"1990 1990 1 11 7 0 0 0",\n\t\t\t"1990 1990 9 21 7 0 0 1 S",\n\t\t\t"1991 1991 1 17 7 0 0 0",\n\t\t\t"1991 1991 9 20 7 0 0 1 S",\n\t\t\t"1992 1992 1 9 7 0 0 0",\n\t\t\t"1992 1992 9 25 7 0 0 1 S",\n\t\t\t"1993 1993 0 31 7 0 0 0",\n\t\t\t"1993 1995 9 11 0 0 0 1 S",\n\t\t\t"1994 1995 1 15 0 0 0 0",\n\t\t\t"1996 1996 1 11 7 0 0 0",\n\t\t\t"1996 1996 9 6 7 0 0 1 S",\n\t\t\t"1997 1997 1 16 7 0 0 0",\n\t\t\t"1997 1997 9 6 7 0 0 1 S",\n\t\t\t"1998 1998 2 1 7 0 0 0",\n\t\t\t"1998 1998 9 11 7 0 0 1 S",\n\t\t\t"1999 1999 1 21 7 0 0 0",\n\t\t\t"1999 1999 9 3 7 0 0 1 S",\n\t\t\t"2000 2000 1 27 7 0 0 0",\n\t\t\t"2000 2001 9 8 0 0 0 1 S",\n\t\t\t"2001 2006 1 15 0 0 0 0",\n\t\t\t"2002 2002 10 3 7 0 0 1 S",\n\t\t\t"2003 2003 9 19 7 0 0 1 S",\n\t\t\t"2004 2004 10 2 7 0 0 1 S",\n\t\t\t"2005 2005 9 16 7 0 0 1 S",\n\t\t\t"2006 2006 10 5 7 0 0 1 S",\n\t\t\t"2007 2007 1 25 7 0 0 0",\n\t\t\t"2007 2007 9 8 0 0 0 1 S",\n\t\t\t"2008 9999 9 15 0 0 0 1 S",\n\t\t\t"2008 2011 1 15 0 0 0 0",\n\t\t\t"2012 2012 1 22 0 0 0 0",\n\t\t\t"2013 2014 1 15 0 0 0 0",\n\t\t\t"2015 2015 1 22 0 0 0 0",\n\t\t\t"2016 2022 1 15 0 0 0 0",\n\t\t\t"2023 2023 1 22 0 0 0 0",\n\t\t\t"2024 2025 1 15 0 0 0 0",\n\t\t\t"2026 2026 1 22 0 0 0 0",\n\t\t\t"2027 2033 1 15 0 0 0 0",\n\t\t\t"2034 2034 1 22 0 0 0 0",\n\t\t\t"2035 2036 1 15 0 0 0 0",\n\t\t\t"2037 2037 1 22 0 0 0 0",\n\t\t\t"2038 9999 1 15 0 0 0 0"\n\t\t],\n\t\t"Bulg": [\n\t\t\t"1979 1979 2 31 7 23 0 1 S",\n\t\t\t"1979 1979 9 1 7 1 0 0",\n\t\t\t"1980 1982 3 1 6 23 0 1 S",\n\t\t\t"1980 1980 8 29 7 1 0 0",\n\t\t\t"1981 1981 8 27 7 2 0 0"\n\t\t],\n\t\t"C-Eur": [\n\t\t\t"1916 1916 3 30 7 23 0 1 S",\n\t\t\t"1916 1916 9 1 7 1 0 0",\n\t\t\t"1917 1918 3 15 1 2 2 1 S",\n\t\t\t"1917 1918 8 15 1 2 2 0",\n\t\t\t"1940 1940 3 1 7 2 2 1 S",\n\t\t\t"1942 1942 10 2 7 2 2 0",\n\t\t\t"1943 1943 2 29 7 2 2 1 S",\n\t\t\t"1943 1943 9 4 7 2 2 0",\n\t\t\t"1944 1945 3 1 1 2 2 1 S",\n\t\t\t"1944 1944 9 2 7 2 2 0",\n\t\t\t"1945 1945 8 16 7 2 2 0",\n\t\t\t"1977 1980 3 1 0 2 2 1 S",\n\t\t\t"1977 1977 8 0 8 2 2 0",\n\t\t\t"1978 1978 9 1 7 2 2 0",\n\t\t\t"1979 1995 8 0 8 2 2 0",\n\t\t\t"1981 9999 2 0 8 2 2 1 S",\n\t\t\t"1996 9999 9 0 8 2 2 0"\n\t\t],\n\t\t"CA": [\n\t\t\t"1948 1948 2 14 7 2 0 1 D",\n\t\t\t"1949 1949 0 1 7 2 0 0 S",\n\t\t\t"1950 1966 3 0 8 2 0 1 D",\n\t\t\t"1950 1961 8 0 8 2 0 0 S",\n\t\t\t"1962 1966 9 0 8 2 0 0 S"\n\t\t],\n\t\t"CO": [\n\t\t\t"1992 1992 4 3 7 0 0 1 S",\n\t\t\t"1993 1993 3 4 7 0 0 0"\n\t\t],\n\t\t"CR": [\n\t\t\t"1979 1980 1 0 8 0 0 1 D",\n\t\t\t"1979 1980 5 1 0 0 0 0 S",\n\t\t\t"1991 1992 0 15 6 0 0 1 D",\n\t\t\t"1991 1991 6 1 7 0 0 0 S",\n\t\t\t"1992 1992 2 15 7 0 0 0 S"\n\t\t],\n\t\t"Canada": [\n\t\t\t"1918 1918 3 14 7 2 0 1 D",\n\t\t\t"1918 1918 9 27 7 2 0 0 S",\n\t\t\t"1942 1942 1 9 7 2 0 1 W",\n\t\t\t"1945 1945 7 14 7 23 1 1 P",\n\t\t\t"1945 1945 8 30 7 2 0 0 S",\n\t\t\t"1974 1986 3 0 8 2 0 1 D",\n\t\t\t"1974 2006 9 0 8 2 0 0 S",\n\t\t\t"1987 2006 3 1 0 2 0 1 D",\n\t\t\t"2007 9999 2 8 0 2 0 1 D",\n\t\t\t"2007 9999 10 1 0 2 0 0 S"\n\t\t],\n\t\t"Chatham": [\n\t\t\t"1974 1974 10 1 0 2:45 2 1 D",\n\t\t\t"1975 1975 1 0 8 2:45 2 0 S",\n\t\t\t"1975 1988 9 0 8 2:45 2 1 D",\n\t\t\t"1976 1989 2 1 0 2:45 2 0 S",\n\t\t\t"1989 1989 9 8 0 2:45 2 1 D",\n\t\t\t"1990 2006 9 1 0 2:45 2 1 D",\n\t\t\t"1990 2007 2 15 0 2:45 2 0 S",\n\t\t\t"2007 9999 8 0 8 2:45 2 1 D",\n\t\t\t"2008 9999 3 1 0 2:45 2 0 S"\n\t\t],\n\t\t"Chicago": [\n\t\t\t"1920 1920 5 13 7 2 0 1 D",\n\t\t\t"1920 1921 9 0 8 2 0 0 S",\n\t\t\t"1921 1921 2 0 8 2 0 1 D",\n\t\t\t"1922 1966 3 0 8 2 0 1 D",\n\t\t\t"1922 1954 8 0 8 2 0 0 S",\n\t\t\t"1955 1966 9 0 8 2 0 0 S"\n\t\t],\n\t\t"Chile": [\n\t\t\t"1927 1932 8 1 7 0 0 1 S",\n\t\t\t"1928 1932 3 1 7 0 0 0",\n\t\t\t"1942 1942 5 1 7 4 1 0",\n\t\t\t"1942 1942 7 1 7 5 1 1 S",\n\t\t\t"1946 1946 6 15 7 4 1 1 S",\n\t\t\t"1946 1946 8 1 7 3 1 0",\n\t\t\t"1947 1947 3 1 7 4 1 0",\n\t\t\t"1968 1968 10 3 7 4 1 1 S",\n\t\t\t"1969 1969 2 30 7 3 1 0",\n\t\t\t"1969 1969 10 23 7 4 1 1 S",\n\t\t\t"1970 1970 2 29 7 3 1 0",\n\t\t\t"1971 1971 2 14 7 3 1 0",\n\t\t\t"1970 1972 9 9 0 4 1 1 S",\n\t\t\t"1972 1986 2 9 0 3 1 0",\n\t\t\t"1973 1973 8 30 7 4 1 1 S",\n\t\t\t"1974 1987 9 9 0 4 1 1 S",\n\t\t\t"1987 1987 3 12 7 3 1 0",\n\t\t\t"1988 1989 2 9 0 3 1 0",\n\t\t\t"1988 1988 9 1 0 4 1 1 S",\n\t\t\t"1989 1989 9 9 0 4 1 1 S",\n\t\t\t"1990 1990 2 18 7 3 1 0",\n\t\t\t"1990 1990 8 16 7 4 1 1 S",\n\t\t\t"1991 1996 2 9 0 3 1 0",\n\t\t\t"1991 1997 9 9 0 4 1 1 S",\n\t\t\t"1997 1997 2 30 7 3 1 0",\n\t\t\t"1998 1998 2 9 0 3 1 0",\n\t\t\t"1998 1998 8 27 7 4 1 1 S",\n\t\t\t"1999 1999 3 4 7 3 1 0",\n\t\t\t"1999 2010 9 9 0 4 1 1 S",\n\t\t\t"2000 2007 2 9 0 3 1 0",\n\t\t\t"2008 2008 2 30 7 3 1 0",\n\t\t\t"2009 2009 2 9 0 3 1 0",\n\t\t\t"2010 2010 3 1 0 3 1 0",\n\t\t\t"2011 2011 4 2 0 3 1 0",\n\t\t\t"2011 2011 7 16 0 4 1 1 S",\n\t\t\t"2012 9999 3 23 0 3 1 0",\n\t\t\t"2012 9999 8 2 0 4 1 1 S"\n\t\t],\n\t\t"ChileAQ": [\n\t\t\t"1972 1986 2 9 0 3 1 0",\n\t\t\t"1974 1987 9 9 0 4 1 1 S",\n\t\t\t"1987 1987 3 12 7 3 1 0",\n\t\t\t"1988 1989 2 9 0 3 1 0",\n\t\t\t"1988 1988 9 1 0 4 1 1 S",\n\t\t\t"1989 1989 9 9 0 4 1 1 S",\n\t\t\t"1990 1990 2 18 7 3 1 0",\n\t\t\t"1990 1990 8 16 7 4 1 1 S",\n\t\t\t"1991 1996 2 9 0 3 1 0",\n\t\t\t"1991 1997 9 9 0 4 1 1 S",\n\t\t\t"1997 1997 2 30 7 3 1 0",\n\t\t\t"1998 1998 2 9 0 3 1 0",\n\t\t\t"1998 1998 8 27 7 4 1 1 S",\n\t\t\t"1999 1999 3 4 7 3 1 0",\n\t\t\t"1999 2010 9 9 0 4 1 1 S",\n\t\t\t"2000 2007 2 9 0 3 1 0",\n\t\t\t"2008 2008 2 30 7 3 1 0",\n\t\t\t"2009 2009 2 9 0 3 1 0",\n\t\t\t"2010 2010 3 1 0 3 1 0",\n\t\t\t"2011 2011 4 2 0 3 1 0",\n\t\t\t"2011 2011 7 16 0 4 1 1 S",\n\t\t\t"2012 9999 3 23 0 3 1 0",\n\t\t\t"2012 9999 8 2 0 4 1 1 S"\n\t\t],\n\t\t"Cook": [\n\t\t\t"1978 1978 10 12 7 0 0 0:30 HS",\n\t\t\t"1979 1991 2 1 0 0 0 0",\n\t\t\t"1979 1990 9 0 8 0 0 0:30 HS"\n\t\t],\n\t\t"Cuba": [\n\t\t\t"1928 1928 5 10 7 0 0 1 D",\n\t\t\t"1928 1928 9 10 7 0 0 0 S",\n\t\t\t"1940 1942 5 1 0 0 0 1 D",\n\t\t\t"1940 1942 8 1 0 0 0 0 S",\n\t\t\t"1945 1946 5 1 0 0 0 1 D",\n\t\t\t"1945 1946 8 1 0 0 0 0 S",\n\t\t\t"1965 1965 5 1 7 0 0 1 D",\n\t\t\t"1965 1965 8 30 7 0 0 0 S",\n\t\t\t"1966 1966 4 29 7 0 0 1 D",\n\t\t\t"1966 1966 9 2 7 0 0 0 S",\n\t\t\t"1967 1967 3 8 7 0 0 1 D",\n\t\t\t"1967 1968 8 8 0 0 0 0 S",\n\t\t\t"1968 1968 3 14 7 0 0 1 D",\n\t\t\t"1969 1977 3 0 8 0 0 1 D",\n\t\t\t"1969 1971 9 0 8 0 0 0 S",\n\t\t\t"1972 1974 9 8 7 0 0 0 S",\n\t\t\t"1975 1977 9 0 8 0 0 0 S",\n\t\t\t"1978 1978 4 7 7 0 0 1 D",\n\t\t\t"1978 1990 9 8 0 0 0 0 S",\n\t\t\t"1979 1980 2 15 0 0 0 1 D",\n\t\t\t"1981 1985 4 5 0 0 0 1 D",\n\t\t\t"1986 1989 2 14 0 0 0 1 D",\n\t\t\t"1990 1997 3 1 0 0 0 1 D",\n\t\t\t"1991 1995 9 8 0 0 2 0 S",\n\t\t\t"1996 1996 9 6 7 0 2 0 S",\n\t\t\t"1997 1997 9 12 7 0 2 0 S",\n\t\t\t"1998 1999 2 0 8 0 2 1 D",\n\t\t\t"1998 2003 9 0 8 0 2 0 S",\n\t\t\t"2000 2004 3 1 0 0 2 1 D",\n\t\t\t"2006 2010 9 0 8 0 2 0 S",\n\t\t\t"2007 2007 2 8 0 0 2 1 D",\n\t\t\t"2008 2008 2 15 0 0 2 1 D",\n\t\t\t"2009 2010 2 8 0 0 2 1 D",\n\t\t\t"2011 2011 2 15 0 0 2 1 D",\n\t\t\t"2011 2011 10 13 7 0 2 0 S",\n\t\t\t"2012 2012 3 1 7 0 2 1 D",\n\t\t\t"2012 9999 10 1 0 0 2 0 S",\n\t\t\t"2013 9999 2 8 0 0 2 1 D"\n\t\t],\n\t\t"Cyprus": [\n\t\t\t"1975 1975 3 13 7 0 0 1 S",\n\t\t\t"1975 1975 9 12 7 0 0 0",\n\t\t\t"1976 1976 4 15 7 0 0 1 S",\n\t\t\t"1976 1976 9 11 7 0 0 0",\n\t\t\t"1977 1980 3 1 0 0 0 1 S",\n\t\t\t"1977 1977 8 25 7 0 0 0",\n\t\t\t"1978 1978 9 2 7 0 0 0",\n\t\t\t"1979 1997 8 0 8 0 0 0",\n\t\t\t"1981 1998 2 0 8 0 0 1 S"\n\t\t],\n\t\t"Czech": [\n\t\t\t"1945 1945 3 8 7 2 2 1 S",\n\t\t\t"1945 1945 10 18 7 2 2 0",\n\t\t\t"1946 1946 4 6 7 2 2 1 S",\n\t\t\t"1946 1949 9 1 0 2 2 0",\n\t\t\t"1947 1947 3 20 7 2 2 1 S",\n\t\t\t"1948 1948 3 18 7 2 2 1 S",\n\t\t\t"1949 1949 3 9 7 2 2 1 S"\n\t\t],\n\t\t"DR": [\n\t\t\t"1966 1966 9 30 7 0 0 1 D",\n\t\t\t"1967 1967 1 28 7 0 0 0 S",\n\t\t\t"1969 1973 9 0 8 0 0 0:30 HD",\n\t\t\t"1970 1970 1 21 7 0 0 0 S",\n\t\t\t"1971 1971 0 20 7 0 0 0 S",\n\t\t\t"1972 1974 0 21 7 0 0 0 S"\n\t\t],\n\t\t"Denmark": [\n\t\t\t"1916 1916 4 14 7 23 0 1 S",\n\t\t\t"1916 1916 8 30 7 23 0 0",\n\t\t\t"1940 1940 4 15 7 0 0 1 S",\n\t\t\t"1945 1945 3 2 7 2 2 1 S",\n\t\t\t"1945 1945 7 15 7 2 2 0",\n\t\t\t"1946 1946 4 1 7 2 2 1 S",\n\t\t\t"1946 1946 8 1 7 2 2 0",\n\t\t\t"1947 1947 4 4 7 2 2 1 S",\n\t\t\t"1947 1947 7 10 7 2 2 0",\n\t\t\t"1948 1948 4 9 7 2 2 1 S",\n\t\t\t"1948 1948 7 8 7 2 2 0"\n\t\t],\n\t\t"Denver": [\n\t\t\t"1920 1921 2 0 8 2 0 1 D",\n\t\t\t"1920 1920 9 0 8 2 0 0 S",\n\t\t\t"1921 1921 4 22 7 2 0 0 S",\n\t\t\t"1965 1966 3 0 8 2 0 1 D",\n\t\t\t"1965 1966 9 0 8 2 0 0 S"\n\t\t],\n\t\t"Detroit": [\n\t\t\t"1948 1948 3 0 8 2 0 1 D",\n\t\t\t"1948 1948 8 0 8 2 0 0 S",\n\t\t\t"1967 1967 5 14 7 2 0 1 D",\n\t\t\t"1967 1967 9 0 8 2 0 0 S"\n\t\t],\n\t\t"Dhaka": [\n\t\t\t"2009 2009 5 19 7 23 0 1 S",\n\t\t\t"2009 2009 11 31 7 23:59 0 0"\n\t\t],\n\t\t"E-Eur": [\n\t\t\t"1977 1980 3 1 0 0 0 1 S",\n\t\t\t"1977 1977 8 0 8 0 0 0",\n\t\t\t"1978 1978 9 1 7 0 0 0",\n\t\t\t"1979 1995 8 0 8 0 0 0",\n\t\t\t"1981 9999 2 0 8 0 0 1 S",\n\t\t\t"1996 9999 9 0 8 0 0 0"\n\t\t],\n\t\t"E-EurAsia": [\n\t\t\t"1981 9999 2 0 8 0 0 1 S",\n\t\t\t"1979 1995 8 0 8 0 0 0",\n\t\t\t"1996 9999 9 0 8 0 0 0"\n\t\t],\n\t\t"EU": [\n\t\t\t"1977 1980 3 1 0 1 1 1 S",\n\t\t\t"1977 1977 8 0 8 1 1 0",\n\t\t\t"1978 1978 9 1 7 1 1 0",\n\t\t\t"1979 1995 8 0 8 1 1 0",\n\t\t\t"1981 9999 2 0 8 1 1 1 S",\n\t\t\t"1996 9999 9 0 8 1 1 0"\n\t\t],\n\t\t"EUAsia": [\n\t\t\t"1981 9999 2 0 8 1 1 1 S",\n\t\t\t"1979 1995 8 0 8 1 1 0",\n\t\t\t"1996 9999 9 0 8 1 1 0"\n\t\t],\n\t\t"Edm": [\n\t\t\t"1918 1919 3 8 0 2 0 1 D",\n\t\t\t"1918 1918 9 27 7 2 0 0 S",\n\t\t\t"1919 1919 4 27 7 2 0 0 S",\n\t\t\t"1920 1923 3 0 8 2 0 1 D",\n\t\t\t"1920 1920 9 0 8 2 0 0 S",\n\t\t\t"1921 1923 8 0 8 2 0 0 S",\n\t\t\t"1942 1942 1 9 7 2 0 1 W",\n\t\t\t"1945 1945 7 14 7 23 1 1 P",\n\t\t\t"1945 1945 8 0 8 2 0 0 S",\n\t\t\t"1947 1947 3 0 8 2 0 1 D",\n\t\t\t"1947 1947 8 0 8 2 0 0 S",\n\t\t\t"1967 1967 3 0 8 2 0 1 D",\n\t\t\t"1967 1967 9 0 8 2 0 0 S",\n\t\t\t"1969 1969 3 0 8 2 0 1 D",\n\t\t\t"1969 1969 9 0 8 2 0 0 S",\n\t\t\t"1972 1986 3 0 8 2 0 1 D",\n\t\t\t"1972 2006 9 0 8 2 0 0 S"\n\t\t],\n\t\t"Egypt": [\n\t\t\t"1940 1940 6 15 7 0 0 1 S",\n\t\t\t"1940 1940 9 1 7 0 0 0",\n\t\t\t"1941 1941 3 15 7 0 0 1 S",\n\t\t\t"1941 1941 8 16 7 0 0 0",\n\t\t\t"1942 1944 3 1 7 0 0 1 S",\n\t\t\t"1942 1942 9 27 7 0 0 0",\n\t\t\t"1943 1945 10 1 7 0 0 0",\n\t\t\t"1945 1945 3 16 7 0 0 1 S",\n\t\t\t"1957 1957 4 10 7 0 0 1 S",\n\t\t\t"1957 1958 9 1 7 0 0 0",\n\t\t\t"1958 1958 4 1 7 0 0 1 S",\n\t\t\t"1959 1981 4 1 7 1 0 1 S",\n\t\t\t"1959 1965 8 30 7 3 0 0",\n\t\t\t"1966 1994 9 1 7 3 0 0",\n\t\t\t"1982 1982 6 25 7 1 0 1 S",\n\t\t\t"1983 1983 6 12 7 1 0 1 S",\n\t\t\t"1984 1988 4 1 7 1 0 1 S",\n\t\t\t"1989 1989 4 6 7 1 0 1 S",\n\t\t\t"1990 1994 4 1 7 1 0 1 S",\n\t\t\t"1995 2010 3 5 8 0 2 1 S",\n\t\t\t"1995 2005 8 4 8 23 2 0",\n\t\t\t"2006 2006 8 21 7 23 2 0",\n\t\t\t"2007 2007 8 1 4 23 2 0",\n\t\t\t"2008 2008 7 4 8 23 2 0",\n\t\t\t"2009 2009 7 20 7 23 2 0",\n\t\t\t"2010 2010 7 11 7 0 0 0",\n\t\t\t"2010 2010 8 10 7 0 0 1 S",\n\t\t\t"2010 2010 8 4 8 23 2 0"\n\t\t],\n\t\t"EgyptAsia": [\n\t\t\t"1957 1957 4 10 7 0 0 1 S",\n\t\t\t"1957 1958 9 1 7 0 0 0",\n\t\t\t"1958 1958 4 1 7 0 0 1 S",\n\t\t\t"1959 1967 4 1 7 1 0 1 S",\n\t\t\t"1959 1965 8 30 7 3 0 0",\n\t\t\t"1966 1966 9 1 7 3 0 0"\n\t\t],\n\t\t"Falk": [\n\t\t\t"1937 1938 8 0 8 0 0 1 S",\n\t\t\t"1938 1942 2 19 0 0 0 0",\n\t\t\t"1939 1939 9 1 7 0 0 1 S",\n\t\t\t"1940 1942 8 0 8 0 0 1 S",\n\t\t\t"1943 1943 0 1 7 0 0 0",\n\t\t\t"1983 1983 8 0 8 0 0 1 S",\n\t\t\t"1984 1985 3 0 8 0 0 0",\n\t\t\t"1984 1984 8 16 7 0 0 1 S",\n\t\t\t"1985 2000 8 9 0 0 0 1 S",\n\t\t\t"1986 2000 3 16 0 0 0 0",\n\t\t\t"2001 2010 3 15 0 2 0 0",\n\t\t\t"2001 2010 8 1 0 2 0 1 S"\n\t\t],\n\t\t"Fiji": [\n\t\t\t"1998 1999 10 1 0 2 0 1 S",\n\t\t\t"1999 2000 1 0 8 3 0 0",\n\t\t\t"2009 2009 10 29 7 2 0 1 S",\n\t\t\t"2010 2010 2 0 8 3 0 0",\n\t\t\t"2010 9999 9 18 0 2 0 1 S",\n\t\t\t"2011 2011 2 1 0 3 0 0",\n\t\t\t"2012 9999 0 18 0 3 0 0"\n\t\t],\n\t\t"Finland": [\n\t\t\t"1942 1942 3 3 7 0 0 1 S",\n\t\t\t"1942 1942 9 3 7 0 0 0",\n\t\t\t"1981 1982 2 0 8 2 0 1 S",\n\t\t\t"1981 1982 8 0 8 3 0 0"\n\t\t],\n\t\t"France": [\n\t\t\t"1916 1916 5 14 7 23 2 1 S",\n\t\t\t"1916 1919 9 1 0 23 2 0",\n\t\t\t"1917 1917 2 24 7 23 2 1 S",\n\t\t\t"1918 1918 2 9 7 23 2 1 S",\n\t\t\t"1919 1919 2 1 7 23 2 1 S",\n\t\t\t"1920 1920 1 14 7 23 2 1 S",\n\t\t\t"1920 1920 9 23 7 23 2 0",\n\t\t\t"1921 1921 2 14 7 23 2 1 S",\n\t\t\t"1921 1921 9 25 7 23 2 0",\n\t\t\t"1922 1922 2 25 7 23 2 1 S",\n\t\t\t"1922 1938 9 1 6 23 2 0",\n\t\t\t"1923 1923 4 26 7 23 2 1 S",\n\t\t\t"1924 1924 2 29 7 23 2 1 S",\n\t\t\t"1925 1925 3 4 7 23 2 1 S",\n\t\t\t"1926 1926 3 17 7 23 2 1 S",\n\t\t\t"1927 1927 3 9 7 23 2 1 S",\n\t\t\t"1928 1928 3 14 7 23 2 1 S",\n\t\t\t"1929 1929 3 20 7 23 2 1 S",\n\t\t\t"1930 1930 3 12 7 23 2 1 S",\n\t\t\t"1931 1931 3 18 7 23 2 1 S",\n\t\t\t"1932 1932 3 2 7 23 2 1 S",\n\t\t\t"1933 1933 2 25 7 23 2 1 S",\n\t\t\t"1934 1934 3 7 7 23 2 1 S",\n\t\t\t"1935 1935 2 30 7 23 2 1 S",\n\t\t\t"1936 1936 3 18 7 23 2 1 S",\n\t\t\t"1937 1937 3 3 7 23 2 1 S",\n\t\t\t"1938 1938 2 26 7 23 2 1 S",\n\t\t\t"1939 1939 3 15 7 23 2 1 S",\n\t\t\t"1939 1939 10 18 7 23 2 0",\n\t\t\t"1940 1940 1 25 7 2 0 1 S",\n\t\t\t"1941 1941 4 5 7 0 0 2 M",\n\t\t\t"1941 1941 9 6 7 0 0 1 S",\n\t\t\t"1942 1942 2 9 7 0 0 2 M",\n\t\t\t"1942 1942 10 2 7 3 0 1 S",\n\t\t\t"1943 1943 2 29 7 2 0 2 M",\n\t\t\t"1943 1943 9 4 7 3 0 1 S",\n\t\t\t"1944 1944 3 3 7 2 0 2 M",\n\t\t\t"1944 1944 9 8 7 1 0 1 S",\n\t\t\t"1945 1945 3 2 7 2 0 2 M",\n\t\t\t"1945 1945 8 16 7 3 0 0",\n\t\t\t"1976 1976 2 28 7 1 0 1 S",\n\t\t\t"1976 1976 8 26 7 1 0 0"\n\t\t],\n\t\t"GB-Eire": [\n\t\t\t"1916 1916 4 21 7 2 2 1 BST",\n\t\t\t"1916 1916 9 1 7 2 2 0 GMT",\n\t\t\t"1917 1917 3 8 7 2 2 1 BST",\n\t\t\t"1917 1917 8 17 7 2 2 0 GMT",\n\t\t\t"1918 1918 2 24 7 2 2 1 BST",\n\t\t\t"1918 1918 8 30 7 2 2 0 GMT",\n\t\t\t"1919 1919 2 30 7 2 2 1 BST",\n\t\t\t"1919 1919 8 29 7 2 2 0 GMT",\n\t\t\t"1920 1920 2 28 7 2 2 1 BST",\n\t\t\t"1920 1920 9 25 7 2 2 0 GMT",\n\t\t\t"1921 1921 3 3 7 2 2 1 BST",\n\t\t\t"1921 1921 9 3 7 2 2 0 GMT",\n\t\t\t"1922 1922 2 26 7 2 2 1 BST",\n\t\t\t"1922 1922 9 8 7 2 2 0 GMT",\n\t\t\t"1923 1923 3 16 0 2 2 1 BST",\n\t\t\t"1923 1924 8 16 0 2 2 0 GMT",\n\t\t\t"1924 1924 3 9 0 2 2 1 BST",\n\t\t\t"1925 1926 3 16 0 2 2 1 BST",\n\t\t\t"1925 1938 9 2 0 2 2 0 GMT",\n\t\t\t"1927 1927 3 9 0 2 2 1 BST",\n\t\t\t"1928 1929 3 16 0 2 2 1 BST",\n\t\t\t"1930 1930 3 9 0 2 2 1 BST",\n\t\t\t"1931 1932 3 16 0 2 2 1 BST",\n\t\t\t"1933 1933 3 9 0 2 2 1 BST",\n\t\t\t"1934 1934 3 16 0 2 2 1 BST",\n\t\t\t"1935 1935 3 9 0 2 2 1 BST",\n\t\t\t"1936 1937 3 16 0 2 2 1 BST",\n\t\t\t"1938 1938 3 9 0 2 2 1 BST",\n\t\t\t"1939 1939 3 16 0 2 2 1 BST",\n\t\t\t"1939 1939 10 16 0 2 2 0 GMT",\n\t\t\t"1940 1940 1 23 0 2 2 1 BST",\n\t\t\t"1941 1941 4 2 0 1 2 2 BDST",\n\t\t\t"1941 1943 7 9 0 1 2 1 BST",\n\t\t\t"1942 1944 3 2 0 1 2 2 BDST",\n\t\t\t"1944 1944 8 16 0 1 2 1 BST",\n\t\t\t"1945 1945 3 2 1 1 2 2 BDST",\n\t\t\t"1945 1945 6 9 0 1 2 1 BST",\n\t\t\t"1945 1946 9 2 0 2 2 0 GMT",\n\t\t\t"1946 1946 3 9 0 2 2 1 BST",\n\t\t\t"1947 1947 2 16 7 2 2 1 BST",\n\t\t\t"1947 1947 3 13 7 1 2 2 BDST",\n\t\t\t"1947 1947 7 10 7 1 2 1 BST",\n\t\t\t"1947 1947 10 2 7 2 2 0 GMT",\n\t\t\t"1948 1948 2 14 7 2 2 1 BST",\n\t\t\t"1948 1948 9 31 7 2 2 0 GMT",\n\t\t\t"1949 1949 3 3 7 2 2 1 BST",\n\t\t\t"1949 1949 9 30 7 2 2 0 GMT",\n\t\t\t"1950 1952 3 14 0 2 2 1 BST",\n\t\t\t"1950 1952 9 21 0 2 2 0 GMT",\n\t\t\t"1953 1953 3 16 0 2 2 1 BST",\n\t\t\t"1953 1960 9 2 0 2 2 0 GMT",\n\t\t\t"1954 1954 3 9 0 2 2 1 BST",\n\t\t\t"1955 1956 3 16 0 2 2 1 BST",\n\t\t\t"1957 1957 3 9 0 2 2 1 BST",\n\t\t\t"1958 1959 3 16 0 2 2 1 BST",\n\t\t\t"1960 1960 3 9 0 2 2 1 BST",\n\t\t\t"1961 1963 2 0 8 2 2 1 BST",\n\t\t\t"1961 1968 9 23 0 2 2 0 GMT",\n\t\t\t"1964 1967 2 19 0 2 2 1 BST",\n\t\t\t"1968 1968 1 18 7 2 2 1 BST",\n\t\t\t"1972 1980 2 16 0 2 2 1 BST",\n\t\t\t"1972 1980 9 23 0 2 2 0 GMT",\n\t\t\t"1981 1995 2 0 8 1 1 1 BST",\n\t\t\t"1981 1989 9 23 0 1 1 0 GMT",\n\t\t\t"1990 1995 9 22 0 1 1 0 GMT"\n\t\t],\n\t\t"Germany": [\n\t\t\t"1946 1946 3 14 7 2 2 1 S",\n\t\t\t"1946 1946 9 7 7 2 2 0",\n\t\t\t"1947 1949 9 1 0 2 2 0",\n\t\t\t"1947 1947 3 6 7 3 2 1 S",\n\t\t\t"1947 1947 4 11 7 2 2 2 M",\n\t\t\t"1947 1947 5 29 7 3 0 1 S",\n\t\t\t"1948 1948 3 18 7 2 2 1 S",\n\t\t\t"1949 1949 3 10 7 2 2 1 S"\n\t\t],\n\t\t"Ghana": [\n\t\t\t"1936 1942 8 1 7 0 0 0:20 GHST",\n\t\t\t"1936 1942 11 31 7 0 0 0 GMT"\n\t\t],\n\t\t"Greece": [\n\t\t\t"1932 1932 6 7 7 0 0 1 S",\n\t\t\t"1932 1932 8 1 7 0 0 0",\n\t\t\t"1941 1941 3 7 7 0 0 1 S",\n\t\t\t"1942 1942 10 2 7 3 0 0",\n\t\t\t"1943 1943 2 30 7 0 0 1 S",\n\t\t\t"1943 1943 9 4 7 0 0 0",\n\t\t\t"1952 1952 6 1 7 0 0 1 S",\n\t\t\t"1952 1952 10 2 7 0 0 0",\n\t\t\t"1975 1975 3 12 7 0 2 1 S",\n\t\t\t"1975 1975 10 26 7 0 2 0",\n\t\t\t"1976 1976 3 11 7 2 2 1 S",\n\t\t\t"1976 1976 9 10 7 2 2 0",\n\t\t\t"1977 1978 3 1 0 2 2 1 S",\n\t\t\t"1977 1977 8 26 7 2 2 0",\n\t\t\t"1978 1978 8 24 7 4 0 0",\n\t\t\t"1979 1979 3 1 7 9 0 1 S",\n\t\t\t"1979 1979 8 29 7 2 0 0",\n\t\t\t"1980 1980 3 1 7 0 0 1 S",\n\t\t\t"1980 1980 8 28 7 0 0 0"\n\t\t],\n\t\t"Guat": [\n\t\t\t"1973 1973 10 25 7 0 0 1 D",\n\t\t\t"1974 1974 1 24 7 0 0 0 S",\n\t\t\t"1983 1983 4 21 7 0 0 1 D",\n\t\t\t"1983 1983 8 22 7 0 0 0 S",\n\t\t\t"1991 1991 2 23 7 0 0 1 D",\n\t\t\t"1991 1991 8 7 7 0 0 0 S",\n\t\t\t"2006 2006 3 30 7 0 0 1 D",\n\t\t\t"2006 2006 9 1 7 0 0 0 S"\n\t\t],\n\t\t"HK": [\n\t\t\t"1941 1941 3 1 7 3:30 0 1 S",\n\t\t\t"1941 1941 8 30 7 3:30 0 0",\n\t\t\t"1946 1946 3 20 7 3:30 0 1 S",\n\t\t\t"1946 1946 11 1 7 3:30 0 0",\n\t\t\t"1947 1947 3 13 7 3:30 0 1 S",\n\t\t\t"1947 1947 11 30 7 3:30 0 0",\n\t\t\t"1948 1948 4 2 7 3:30 0 1 S",\n\t\t\t"1948 1951 9 0 8 3:30 0 0",\n\t\t\t"1952 1952 9 25 7 3:30 0 0",\n\t\t\t"1949 1953 3 1 0 3:30 0 1 S",\n\t\t\t"1953 1953 10 1 7 3:30 0 0",\n\t\t\t"1954 1964 2 18 0 3:30 0 1 S",\n\t\t\t"1954 1954 9 31 7 3:30 0 0",\n\t\t\t"1955 1964 10 1 0 3:30 0 0",\n\t\t\t"1965 1976 3 16 0 3:30 0 1 S",\n\t\t\t"1965 1976 9 16 0 3:30 0 0",\n\t\t\t"1973 1973 11 30 7 3:30 0 1 S",\n\t\t\t"1979 1979 4 8 0 3:30 0 1 S",\n\t\t\t"1979 1979 9 16 0 3:30 0 0"\n\t\t],\n\t\t"Haiti": [\n\t\t\t"1983 1983 4 8 7 0 0 1 D",\n\t\t\t"1984 1987 3 0 8 0 0 1 D",\n\t\t\t"1983 1987 9 0 8 0 0 0 S",\n\t\t\t"1988 1997 3 1 0 1 2 1 D",\n\t\t\t"1988 1997 9 0 8 1 2 0 S",\n\t\t\t"2005 2006 3 1 0 0 0 1 D",\n\t\t\t"2005 2006 9 0 8 0 0 0 S",\n\t\t\t"2012 9999 2 8 0 2 0 1 D",\n\t\t\t"2012 9999 10 1 0 2 0 0 S"\n\t\t],\n\t\t"Halifax": [\n\t\t\t"1916 1916 3 1 7 0 0 1 D",\n\t\t\t"1916 1916 9 1 7 0 0 0 S",\n\t\t\t"1920 1920 4 9 7 0 0 1 D",\n\t\t\t"1920 1920 7 29 7 0 0 0 S",\n\t\t\t"1921 1921 4 6 7 0 0 1 D",\n\t\t\t"1921 1922 8 5 7 0 0 0 S",\n\t\t\t"1922 1922 3 30 7 0 0 1 D",\n\t\t\t"1923 1925 4 1 0 0 0 1 D",\n\t\t\t"1923 1923 8 4 7 0 0 0 S",\n\t\t\t"1924 1924 8 15 7 0 0 0 S",\n\t\t\t"1925 1925 8 28 7 0 0 0 S",\n\t\t\t"1926 1926 4 16 7 0 0 1 D",\n\t\t\t"1926 1926 8 13 7 0 0 0 S",\n\t\t\t"1927 1927 4 1 7 0 0 1 D",\n\t\t\t"1927 1927 8 26 7 0 0 0 S",\n\t\t\t"1928 1931 4 8 0 0 0 1 D",\n\t\t\t"1928 1928 8 9 7 0 0 0 S",\n\t\t\t"1929 1929 8 3 7 0 0 0 S",\n\t\t\t"1930 1930 8 15 7 0 0 0 S",\n\t\t\t"1931 1932 8 24 1 0 0 0 S",\n\t\t\t"1932 1932 4 1 7 0 0 1 D",\n\t\t\t"1933 1933 3 30 7 0 0 1 D",\n\t\t\t"1933 1933 9 2 7 0 0 0 S",\n\t\t\t"1934 1934 4 20 7 0 0 1 D",\n\t\t\t"1934 1934 8 16 7 0 0 0 S",\n\t\t\t"1935 1935 5 2 7 0 0 1 D",\n\t\t\t"1935 1935 8 30 7 0 0 0 S",\n\t\t\t"1936 1936 5 1 7 0 0 1 D",\n\t\t\t"1936 1936 8 14 7 0 0 0 S",\n\t\t\t"1937 1938 4 1 0 0 0 1 D",\n\t\t\t"1937 1941 8 24 1 0 0 0 S",\n\t\t\t"1939 1939 4 28 7 0 0 1 D",\n\t\t\t"1940 1941 4 1 0 0 0 1 D",\n\t\t\t"1946 1949 3 0 8 2 0 1 D",\n\t\t\t"1946 1949 8 0 8 2 0 0 S",\n\t\t\t"1951 1954 3 0 8 2 0 1 D",\n\t\t\t"1951 1954 8 0 8 2 0 0 S",\n\t\t\t"1956 1959 3 0 8 2 0 1 D",\n\t\t\t"1956 1959 8 0 8 2 0 0 S",\n\t\t\t"1962 1973 3 0 8 2 0 1 D",\n\t\t\t"1962 1973 9 0 8 2 0 0 S"\n\t\t],\n\t\t"Holiday": [\n\t\t\t"1992 1993 9 0 8 2 2 1",\n\t\t\t"1993 1994 2 1 0 2 2 0"\n\t\t],\n\t\t"Hond": [\n\t\t\t"1987 1988 4 1 0 0 0 1 D",\n\t\t\t"1987 1988 8 0 8 0 0 0 S",\n\t\t\t"2006 2006 4 1 0 0 0 1 D",\n\t\t\t"2006 2006 7 1 1 0 0 0 S"\n\t\t],\n\t\t"Hungary": [\n\t\t\t"1918 1918 3 1 7 3 0 1 S",\n\t\t\t"1918 1918 8 29 7 3 0 0",\n\t\t\t"1919 1919 3 15 7 3 0 1 S",\n\t\t\t"1919 1919 8 15 7 3 0 0",\n\t\t\t"1920 1920 3 5 7 3 0 1 S",\n\t\t\t"1920 1920 8 30 7 3 0 0",\n\t\t\t"1945 1945 4 1 7 23 0 1 S",\n\t\t\t"1945 1945 10 3 7 0 0 0",\n\t\t\t"1946 1946 2 31 7 2 2 1 S",\n\t\t\t"1946 1949 9 1 0 2 2 0",\n\t\t\t"1947 1949 3 4 0 2 2 1 S",\n\t\t\t"1950 1950 3 17 7 2 2 1 S",\n\t\t\t"1950 1950 9 23 7 2 2 0",\n\t\t\t"1954 1955 4 23 7 0 0 1 S",\n\t\t\t"1954 1955 9 3 7 0 0 0",\n\t\t\t"1956 1956 5 1 0 0 0 1 S",\n\t\t\t"1956 1956 8 0 8 0 0 0",\n\t\t\t"1957 1957 5 1 0 1 0 1 S",\n\t\t\t"1957 1957 8 0 8 3 0 0",\n\t\t\t"1980 1980 3 6 7 1 0 1 S"\n\t\t],\n\t\t"Iceland": [\n\t\t\t"1917 1918 1 19 7 23 0 1 S",\n\t\t\t"1917 1917 9 21 7 1 0 0",\n\t\t\t"1918 1918 10 16 7 1 0 0",\n\t\t\t"1939 1939 3 29 7 23 0 1 S",\n\t\t\t"1939 1939 10 29 7 2 0 0",\n\t\t\t"1940 1940 1 25 7 2 0 1 S",\n\t\t\t"1940 1940 10 3 7 2 0 0",\n\t\t\t"1941 1941 2 2 7 1 2 1 S",\n\t\t\t"1941 1941 10 2 7 1 2 0",\n\t\t\t"1942 1942 2 8 7 1 2 1 S",\n\t\t\t"1942 1942 9 25 7 1 2 0",\n\t\t\t"1943 1946 2 1 0 1 2 1 S",\n\t\t\t"1943 1948 9 22 0 1 2 0",\n\t\t\t"1947 1967 3 1 0 1 2 1 S",\n\t\t\t"1949 1949 9 30 7 1 2 0",\n\t\t\t"1950 1966 9 22 0 1 2 0",\n\t\t\t"1967 1967 9 29 7 1 2 0"\n\t\t],\n\t\t"Indianapolis": [\n\t\t\t"1941 1941 5 22 7 2 0 1 D",\n\t\t\t"1941 1954 8 0 8 2 0 0 S",\n\t\t\t"1946 1954 3 0 8 2 0 1 D"\n\t\t],\n\t\t"Iran": [\n\t\t\t"1978 1980 2 21 7 0 0 1 D",\n\t\t\t"1978 1978 9 21 7 0 0 0 S",\n\t\t\t"1979 1979 8 19 7 0 0 0 S",\n\t\t\t"1980 1980 8 23 7 0 0 0 S",\n\t\t\t"1991 1991 4 3 7 0 0 1 D",\n\t\t\t"1992 1995 2 22 7 0 0 1 D",\n\t\t\t"1991 1995 8 22 7 0 0 0 S",\n\t\t\t"1996 1996 2 21 7 0 0 1 D",\n\t\t\t"1996 1996 8 21 7 0 0 0 S",\n\t\t\t"1997 1999 2 22 7 0 0 1 D",\n\t\t\t"1997 1999 8 22 7 0 0 0 S",\n\t\t\t"2000 2000 2 21 7 0 0 1 D",\n\t\t\t"2000 2000 8 21 7 0 0 0 S",\n\t\t\t"2001 2003 2 22 7 0 0 1 D",\n\t\t\t"2001 2003 8 22 7 0 0 0 S",\n\t\t\t"2004 2004 2 21 7 0 0 1 D",\n\t\t\t"2004 2004 8 21 7 0 0 0 S",\n\t\t\t"2005 2005 2 22 7 0 0 1 D",\n\t\t\t"2005 2005 8 22 7 0 0 0 S",\n\t\t\t"2008 2008 2 21 7 0 0 1 D",\n\t\t\t"2008 2008 8 21 7 0 0 0 S",\n\t\t\t"2009 2011 2 22 7 0 0 1 D",\n\t\t\t"2009 2011 8 22 7 0 0 0 S",\n\t\t\t"2012 2012 2 21 7 0 0 1 D",\n\t\t\t"2012 2012 8 21 7 0 0 0 S",\n\t\t\t"2013 2015 2 22 7 0 0 1 D",\n\t\t\t"2013 2015 8 22 7 0 0 0 S",\n\t\t\t"2016 2016 2 21 7 0 0 1 D",\n\t\t\t"2016 2016 8 21 7 0 0 0 S",\n\t\t\t"2017 2019 2 22 7 0 0 1 D",\n\t\t\t"2017 2019 8 22 7 0 0 0 S",\n\t\t\t"2020 2020 2 21 7 0 0 1 D",\n\t\t\t"2020 2020 8 21 7 0 0 0 S",\n\t\t\t"2021 2023 2 22 7 0 0 1 D",\n\t\t\t"2021 2023 8 22 7 0 0 0 S",\n\t\t\t"2024 2024 2 21 7 0 0 1 D",\n\t\t\t"2024 2024 8 21 7 0 0 0 S",\n\t\t\t"2025 2027 2 22 7 0 0 1 D",\n\t\t\t"2025 2027 8 22 7 0 0 0 S",\n\t\t\t"2028 2029 2 21 7 0 0 1 D",\n\t\t\t"2028 2029 8 21 7 0 0 0 S",\n\t\t\t"2030 2031 2 22 7 0 0 1 D",\n\t\t\t"2030 2031 8 22 7 0 0 0 S",\n\t\t\t"2032 2033 2 21 7 0 0 1 D",\n\t\t\t"2032 2033 8 21 7 0 0 0 S",\n\t\t\t"2034 2035 2 22 7 0 0 1 D",\n\t\t\t"2034 2035 8 22 7 0 0 0 S",\n\t\t\t"2036 2037 2 21 7 0 0 1 D",\n\t\t\t"2036 2037 8 21 7 0 0 0 S"\n\t\t],\n\t\t"Iraq": [\n\t\t\t"1982 1982 4 1 7 0 0 1 D",\n\t\t\t"1982 1984 9 1 7 0 0 0 S",\n\t\t\t"1983 1983 2 31 7 0 0 1 D",\n\t\t\t"1984 1985 3 1 7 0 0 1 D",\n\t\t\t"1985 1990 8 0 8 1 2 0 S",\n\t\t\t"1986 1990 2 0 8 1 2 1 D",\n\t\t\t"1991 2007 3 1 7 3 2 1 D",\n\t\t\t"1991 2007 9 1 7 3 2 0 S"\n\t\t],\n\t\t"Italy": [\n\t\t\t"1916 1916 5 3 7 0 2 1 S",\n\t\t\t"1916 1916 9 1 7 0 2 0",\n\t\t\t"1917 1917 3 1 7 0 2 1 S",\n\t\t\t"1917 1917 8 30 7 0 2 0",\n\t\t\t"1918 1918 2 10 7 0 2 1 S",\n\t\t\t"1918 1919 9 1 0 0 2 0",\n\t\t\t"1919 1919 2 2 7 0 2 1 S",\n\t\t\t"1920 1920 2 21 7 0 2 1 S",\n\t\t\t"1920 1920 8 19 7 0 2 0",\n\t\t\t"1940 1940 5 15 7 0 2 1 S",\n\t\t\t"1944 1944 8 17 7 0 2 0",\n\t\t\t"1945 1945 3 2 7 2 0 1 S",\n\t\t\t"1945 1945 8 15 7 0 2 0",\n\t\t\t"1946 1946 2 17 7 2 2 1 S",\n\t\t\t"1946 1946 9 6 7 2 2 0",\n\t\t\t"1947 1947 2 16 7 0 2 1 S",\n\t\t\t"1947 1947 9 5 7 0 2 0",\n\t\t\t"1948 1948 1 29 7 2 2 1 S",\n\t\t\t"1948 1948 9 3 7 2 2 0",\n\t\t\t"1966 1968 4 22 0 0 0 1 S",\n\t\t\t"1966 1969 8 22 0 0 0 0",\n\t\t\t"1969 1969 5 1 7 0 0 1 S",\n\t\t\t"1970 1970 4 31 7 0 0 1 S",\n\t\t\t"1970 1970 8 0 8 0 0 0",\n\t\t\t"1971 1972 4 22 0 0 0 1 S",\n\t\t\t"1971 1971 8 0 8 1 0 0",\n\t\t\t"1972 1972 9 1 7 0 0 0",\n\t\t\t"1973 1973 5 3 7 0 0 1 S",\n\t\t\t"1973 1974 8 0 8 0 0 0",\n\t\t\t"1974 1974 4 26 7 0 0 1 S",\n\t\t\t"1975 1975 5 1 7 0 2 1 S",\n\t\t\t"1975 1977 8 0 8 0 2 0",\n\t\t\t"1976 1976 4 30 7 0 2 1 S",\n\t\t\t"1977 1979 4 22 0 0 2 1 S",\n\t\t\t"1978 1978 9 1 7 0 2 0",\n\t\t\t"1979 1979 8 30 7 0 2 0"\n\t\t],\n\t\t"Japan": [\n\t\t\t"1948 1948 4 1 0 2 0 1 D",\n\t\t\t"1948 1951 8 8 6 2 0 0 S",\n\t\t\t"1949 1949 3 1 0 2 0 1 D",\n\t\t\t"1950 1951 4 1 0 2 0 1 D"\n\t\t],\n\t\t"Jordan": [\n\t\t\t"1973 1973 5 6 7 0 0 1 S",\n\t\t\t"1973 1975 9 1 7 0 0 0",\n\t\t\t"1974 1977 4 1 7 0 0 1 S",\n\t\t\t"1976 1976 10 1 7 0 0 0",\n\t\t\t"1977 1977 9 1 7 0 0 0",\n\t\t\t"1978 1978 3 30 7 0 0 1 S",\n\t\t\t"1978 1978 8 30 7 0 0 0",\n\t\t\t"1985 1985 3 1 7 0 0 1 S",\n\t\t\t"1985 1985 9 1 7 0 0 0",\n\t\t\t"1986 1988 3 1 5 0 0 1 S",\n\t\t\t"1986 1990 9 1 5 0 0 0",\n\t\t\t"1989 1989 4 8 7 0 0 1 S",\n\t\t\t"1990 1990 3 27 7 0 0 1 S",\n\t\t\t"1991 1991 3 17 7 0 0 1 S",\n\t\t\t"1991 1991 8 27 7 0 0 0",\n\t\t\t"1992 1992 3 10 7 0 0 1 S",\n\t\t\t"1992 1993 9 1 5 0 0 0",\n\t\t\t"1993 1998 3 1 5 0 0 1 S",\n\t\t\t"1994 1994 8 15 5 0 0 0",\n\t\t\t"1995 1998 8 15 5 0 2 0",\n\t\t\t"1999 1999 6 1 7 0 2 1 S",\n\t\t\t"1999 2002 8 5 8 0 2 0",\n\t\t\t"2000 2001 2 4 8 0 2 1 S",\n\t\t\t"2002 9999 2 4 8 24 0 1 S",\n\t\t\t"2003 2003 9 24 7 0 2 0",\n\t\t\t"2004 2004 9 15 7 0 2 0",\n\t\t\t"2005 2005 8 5 8 0 2 0",\n\t\t\t"2006 2011 9 5 8 0 2 0",\n\t\t\t"2013 9999 9 5 8 0 2 0"\n\t\t],\n\t\t"Kyrgyz": [\n\t\t\t"1992 1996 3 7 0 0 2 1 S",\n\t\t\t"1992 1996 8 0 8 0 0 0",\n\t\t\t"1997 2005 2 0 8 2:30 0 1 S",\n\t\t\t"1997 2004 9 0 8 2:30 0 0"\n\t\t],\n\t\t"LH": [\n\t\t\t"1981 1984 9 0 8 2 0 1",\n\t\t\t"1982 1985 2 1 0 2 0 0",\n\t\t\t"1985 1985 9 0 8 2 0 0:30",\n\t\t\t"1986 1989 2 15 0 2 0 0",\n\t\t\t"1986 1986 9 19 7 2 0 0:30",\n\t\t\t"1987 1999 9 0 8 2 0 0:30",\n\t\t\t"1990 1995 2 1 0 2 0 0",\n\t\t\t"1996 2005 2 0 8 2 0 0",\n\t\t\t"2000 2000 7 0 8 2 0 0:30",\n\t\t\t"2001 2007 9 0 8 2 0 0:30",\n\t\t\t"2006 2006 3 1 0 2 0 0",\n\t\t\t"2007 2007 2 0 8 2 0 0",\n\t\t\t"2008 9999 3 1 0 2 0 0",\n\t\t\t"2008 9999 9 1 0 2 0 0:30"\n\t\t],\n\t\t"Latvia": [\n\t\t\t"1989 1996 2 0 8 2 2 1 S",\n\t\t\t"1989 1996 8 0 8 2 2 0"\n\t\t],\n\t\t"Lebanon": [\n\t\t\t"1920 1920 2 28 7 0 0 1 S",\n\t\t\t"1920 1920 9 25 7 0 0 0",\n\t\t\t"1921 1921 3 3 7 0 0 1 S",\n\t\t\t"1921 1921 9 3 7 0 0 0",\n\t\t\t"1922 1922 2 26 7 0 0 1 S",\n\t\t\t"1922 1922 9 8 7 0 0 0",\n\t\t\t"1923 1923 3 22 7 0 0 1 S",\n\t\t\t"1923 1923 8 16 7 0 0 0",\n\t\t\t"1957 1961 4 1 7 0 0 1 S",\n\t\t\t"1957 1961 9 1 7 0 0 0",\n\t\t\t"1972 1972 5 22 7 0 0 1 S",\n\t\t\t"1972 1977 9 1 7 0 0 0",\n\t\t\t"1973 1977 4 1 7 0 0 1 S",\n\t\t\t"1978 1978 3 30 7 0 0 1 S",\n\t\t\t"1978 1978 8 30 7 0 0 0",\n\t\t\t"1984 1987 4 1 7 0 0 1 S",\n\t\t\t"1984 1991 9 16 7 0 0 0",\n\t\t\t"1988 1988 5 1 7 0 0 1 S",\n\t\t\t"1989 1989 4 10 7 0 0 1 S",\n\t\t\t"1990 1992 4 1 7 0 0 1 S",\n\t\t\t"1992 1992 9 4 7 0 0 0",\n\t\t\t"1993 9999 2 0 8 0 0 1 S",\n\t\t\t"1993 1998 8 0 8 0 0 0",\n\t\t\t"1999 9999 9 0 8 0 0 0"\n\t\t],\n\t\t"Libya": [\n\t\t\t"1951 1951 9 14 7 2 0 1 S",\n\t\t\t"1952 1952 0 1 7 0 0 0",\n\t\t\t"1953 1953 9 9 7 2 0 1 S",\n\t\t\t"1954 1954 0 1 7 0 0 0",\n\t\t\t"1955 1955 8 30 7 0 0 1 S",\n\t\t\t"1956 1956 0 1 7 0 0 0",\n\t\t\t"1982 1984 3 1 7 0 0 1 S",\n\t\t\t"1982 1985 9 1 7 0 0 0",\n\t\t\t"1985 1985 3 6 7 0 0 1 S",\n\t\t\t"1986 1986 3 4 7 0 0 1 S",\n\t\t\t"1986 1986 9 3 7 0 0 0",\n\t\t\t"1987 1989 3 1 7 0 0 1 S",\n\t\t\t"1987 1989 9 1 7 0 0 0",\n\t\t\t"1997 1997 3 4 7 0 0 1 S",\n\t\t\t"1997 1997 9 4 7 0 0 0",\n\t\t\t"2013 9999 2 5 8 1 0 1 S",\n\t\t\t"2013 9999 9 5 8 2 0 0"\n\t\t],\n\t\t"Louisville": [\n\t\t\t"1921 1921 4 1 7 2 0 1 D",\n\t\t\t"1921 1921 8 1 7 2 0 0 S",\n\t\t\t"1941 1961 3 0 8 2 0 1 D",\n\t\t\t"1941 1941 8 0 8 2 0 0 S",\n\t\t\t"1946 1946 5 2 7 2 0 0 S",\n\t\t\t"1950 1955 8 0 8 2 0 0 S",\n\t\t\t"1956 1960 9 0 8 2 0 0 S"\n\t\t],\n\t\t"Lux": [\n\t\t\t"1916 1916 4 14 7 23 0 1 S",\n\t\t\t"1916 1916 9 1 7 1 0 0",\n\t\t\t"1917 1917 3 28 7 23 0 1 S",\n\t\t\t"1917 1917 8 17 7 1 0 0",\n\t\t\t"1918 1918 3 15 1 2 2 1 S",\n\t\t\t"1918 1918 8 15 1 2 2 0",\n\t\t\t"1919 1919 2 1 7 23 0 1 S",\n\t\t\t"1919 1919 9 5 7 3 0 0",\n\t\t\t"1920 1920 1 14 7 23 0 1 S",\n\t\t\t"1920 1920 9 24 7 2 0 0",\n\t\t\t"1921 1921 2 14 7 23 0 1 S",\n\t\t\t"1921 1921 9 26 7 2 0 0",\n\t\t\t"1922 1922 2 25 7 23 0 1 S",\n\t\t\t"1922 1922 9 2 0 1 0 0",\n\t\t\t"1923 1923 3 21 7 23 0 1 S",\n\t\t\t"1923 1923 9 2 0 2 0 0",\n\t\t\t"1924 1924 2 29 7 23 0 1 S",\n\t\t\t"1924 1928 9 2 0 1 0 0",\n\t\t\t"1925 1925 3 5 7 23 0 1 S",\n\t\t\t"1926 1926 3 17 7 23 0 1 S",\n\t\t\t"1927 1927 3 9 7 23 0 1 S",\n\t\t\t"1928 1928 3 14 7 23 0 1 S",\n\t\t\t"1929 1929 3 20 7 23 0 1 S"\n\t\t],\n\t\t"Macau": [\n\t\t\t"1961 1962 2 16 0 3:30 0 1 S",\n\t\t\t"1961 1964 10 1 0 3:30 0 0",\n\t\t\t"1963 1963 2 16 0 0 0 1 S",\n\t\t\t"1964 1964 2 16 0 3:30 0 1 S",\n\t\t\t"1965 1965 2 16 0 0 0 1 S",\n\t\t\t"1965 1965 9 31 7 0 0 0",\n\t\t\t"1966 1971 3 16 0 3:30 0 1 S",\n\t\t\t"1966 1971 9 16 0 3:30 0 0",\n\t\t\t"1972 1974 3 15 0 0 0 1 S",\n\t\t\t"1972 1973 9 15 0 0 0 0",\n\t\t\t"1974 1977 9 15 0 3:30 0 0",\n\t\t\t"1975 1977 3 15 0 3:30 0 1 S",\n\t\t\t"1978 1980 3 15 0 0 0 1 S",\n\t\t\t"1978 1980 9 15 0 0 0 0"\n\t\t],\n\t\t"Malta": [\n\t\t\t"1973 1973 2 31 7 0 2 1 S",\n\t\t\t"1973 1973 8 29 7 0 2 0",\n\t\t\t"1974 1974 3 21 7 0 2 1 S",\n\t\t\t"1974 1974 8 16 7 0 2 0",\n\t\t\t"1975 1979 3 15 0 2 0 1 S",\n\t\t\t"1975 1980 8 15 0 2 0 0",\n\t\t\t"1980 1980 2 31 7 2 0 1 S"\n\t\t],\n\t\t"Marengo": [\n\t\t\t"1951 1951 3 0 8 2 0 1 D",\n\t\t\t"1951 1951 8 0 8 2 0 0 S",\n\t\t\t"1954 1960 3 0 8 2 0 1 D",\n\t\t\t"1954 1960 8 0 8 2 0 0 S"\n\t\t],\n\t\t"Mauritius": [\n\t\t\t"1982 1982 9 10 7 0 0 1 S",\n\t\t\t"1983 1983 2 21 7 0 0 0",\n\t\t\t"2008 2008 9 0 8 2 0 1 S",\n\t\t\t"2009 2009 2 0 8 2 0 0"\n\t\t],\n\t\t"Menominee": [\n\t\t\t"1946 1946 3 0 8 2 0 1 D",\n\t\t\t"1946 1946 8 0 8 2 0 0 S",\n\t\t\t"1966 1966 3 0 8 2 0 1 D",\n\t\t\t"1966 1966 9 0 8 2 0 0 S"\n\t\t],\n\t\t"Mexico": [\n\t\t\t"1939 1939 1 5 7 0 0 1 D",\n\t\t\t"1939 1939 5 25 7 0 0 0 S",\n\t\t\t"1940 1940 11 9 7 0 0 1 D",\n\t\t\t"1941 1941 3 1 7 0 0 0 S",\n\t\t\t"1943 1943 11 16 7 0 0 1 W",\n\t\t\t"1944 1944 4 1 7 0 0 0 S",\n\t\t\t"1950 1950 1 12 7 0 0 1 D",\n\t\t\t"1950 1950 6 30 7 0 0 0 S",\n\t\t\t"1996 2000 3 1 0 2 0 1 D",\n\t\t\t"1996 2000 9 0 8 2 0 0 S",\n\t\t\t"2001 2001 4 1 0 2 0 1 D",\n\t\t\t"2001 2001 8 0 8 2 0 0 S",\n\t\t\t"2002 9999 3 1 0 2 0 1 D",\n\t\t\t"2002 9999 9 0 8 2 0 0 S"\n\t\t],\n\t\t"Moncton": [\n\t\t\t"1933 1935 5 8 0 1 0 1 D",\n\t\t\t"1933 1935 8 8 0 1 0 0 S",\n\t\t\t"1936 1938 5 1 0 1 0 1 D",\n\t\t\t"1936 1938 8 1 0 1 0 0 S",\n\t\t\t"1939 1939 4 27 7 1 0 1 D",\n\t\t\t"1939 1941 8 21 6 1 0 0 S",\n\t\t\t"1940 1940 4 19 7 1 0 1 D",\n\t\t\t"1941 1941 4 4 7 1 0 1 D",\n\t\t\t"1946 1972 3 0 8 2 0 1 D",\n\t\t\t"1946 1956 8 0 8 2 0 0 S",\n\t\t\t"1957 1972 9 0 8 2 0 0 S",\n\t\t\t"1993 2006 3 1 0 0:1 0 1 D",\n\t\t\t"1993 2006 9 0 8 0:1 0 0 S"\n\t\t],\n\t\t"Mongol": [\n\t\t\t"1983 1984 3 1 7 0 0 1 S",\n\t\t\t"1983 1983 9 1 7 0 0 0",\n\t\t\t"1985 1998 2 0 8 0 0 1 S",\n\t\t\t"1984 1998 8 0 8 0 0 0",\n\t\t\t"2001 2001 3 6 8 2 0 1 S",\n\t\t\t"2001 2006 8 6 8 2 0 0",\n\t\t\t"2002 2006 2 6 8 2 0 1 S"\n\t\t],\n\t\t"Mont": [\n\t\t\t"1917 1917 2 25 7 2 0 1 D",\n\t\t\t"1917 1917 3 24 7 0 0 0 S",\n\t\t\t"1919 1919 2 31 7 2:30 0 1 D",\n\t\t\t"1919 1919 9 25 7 2:30 0 0 S",\n\t\t\t"1920 1920 4 2 7 2:30 0 1 D",\n\t\t\t"1920 1922 9 1 0 2:30 0 0 S",\n\t\t\t"1921 1921 4 1 7 2 0 1 D",\n\t\t\t"1922 1922 3 30 7 2 0 1 D",\n\t\t\t"1924 1924 4 17 7 2 0 1 D",\n\t\t\t"1924 1926 8 0 8 2:30 0 0 S",\n\t\t\t"1925 1926 4 1 0 2 0 1 D",\n\t\t\t"1927 1927 4 1 7 0 0 1 D",\n\t\t\t"1927 1932 8 0 8 0 0 0 S",\n\t\t\t"1928 1931 3 0 8 0 0 1 D",\n\t\t\t"1932 1932 4 1 7 0 0 1 D",\n\t\t\t"1933 1940 3 0 8 0 0 1 D",\n\t\t\t"1933 1933 9 1 7 0 0 0 S",\n\t\t\t"1934 1939 8 0 8 0 0 0 S",\n\t\t\t"1946 1973 3 0 8 2 0 1 D",\n\t\t\t"1945 1948 8 0 8 2 0 0 S",\n\t\t\t"1949 1950 9 0 8 2 0 0 S",\n\t\t\t"1951 1956 8 0 8 2 0 0 S",\n\t\t\t"1957 1973 9 0 8 2 0 0 S"\n\t\t],\n\t\t"Morocco": [\n\t\t\t"1939 1939 8 12 7 0 0 1 S",\n\t\t\t"1939 1939 10 19 7 0 0 0",\n\t\t\t"1940 1940 1 25 7 0 0 1 S",\n\t\t\t"1945 1945 10 18 7 0 0 0",\n\t\t\t"1950 1950 5 11 7 0 0 1 S",\n\t\t\t"1950 1950 9 29 7 0 0 0",\n\t\t\t"1967 1967 5 3 7 12 0 1 S",\n\t\t\t"1967 1967 9 1 7 0 0 0",\n\t\t\t"1974 1974 5 24 7 0 0 1 S",\n\t\t\t"1974 1974 8 1 7 0 0 0",\n\t\t\t"1976 1977 4 1 7 0 0 1 S",\n\t\t\t"1976 1976 7 1 7 0 0 0",\n\t\t\t"1977 1977 8 28 7 0 0 0",\n\t\t\t"1978 1978 5 1 7 0 0 1 S",\n\t\t\t"1978 1978 7 4 7 0 0 0",\n\t\t\t"2008 2008 5 1 7 0 0 1 S",\n\t\t\t"2008 2008 8 1 7 0 0 0",\n\t\t\t"2009 2009 5 1 7 0 0 1 S",\n\t\t\t"2009 2009 7 21 7 0 0 0",\n\t\t\t"2010 2010 4 2 7 0 0 1 S",\n\t\t\t"2010 2010 7 8 7 0 0 0",\n\t\t\t"2011 2011 3 3 7 0 0 1 S",\n\t\t\t"2011 2011 6 31 7 0 0 0",\n\t\t\t"2012 2019 3 0 8 2 0 1 S",\n\t\t\t"2012 9999 8 0 8 3 0 0",\n\t\t\t"2012 2012 6 20 7 3 0 0",\n\t\t\t"2012 2012 7 20 7 2 0 1 S",\n\t\t\t"2013 2013 6 9 7 3 0 0",\n\t\t\t"2013 2013 7 8 7 2 0 1 S",\n\t\t\t"2014 2014 5 29 7 3 0 0",\n\t\t\t"2014 2014 6 29 7 2 0 1 S",\n\t\t\t"2015 2015 5 18 7 3 0 0",\n\t\t\t"2015 2015 6 18 7 2 0 1 S",\n\t\t\t"2016 2016 5 7 7 3 0 0",\n\t\t\t"2016 2016 6 7 7 2 0 1 S",\n\t\t\t"2017 2017 4 27 7 3 0 0",\n\t\t\t"2017 2017 5 26 7 2 0 1 S",\n\t\t\t"2018 2018 4 16 7 3 0 0",\n\t\t\t"2018 2018 5 15 7 2 0 1 S",\n\t\t\t"2019 2019 4 6 7 3 0 0",\n\t\t\t"2019 2019 5 5 7 2 0 1 S",\n\t\t\t"2020 2020 4 24 7 2 0 1 S",\n\t\t\t"2021 2021 4 13 7 2 0 1 S",\n\t\t\t"2022 2022 4 3 7 2 0 1 S",\n\t\t\t"2023 9999 3 0 8 2 0 1 S"\n\t\t],\n\t\t"NBorneo": [\n\t\t\t"1935 1941 8 14 7 0 0 0:20 TS",\n\t\t\t"1935 1941 11 14 7 0 0 0"\n\t\t],\n\t\t"NC": [\n\t\t\t"1977 1978 11 1 0 0 0 1 S",\n\t\t\t"1978 1979 1 27 7 0 0 0",\n\t\t\t"1996 1996 11 1 7 2 2 1 S",\n\t\t\t"1997 1997 2 2 7 2 2 0"\n\t\t],\n\t\t"NT_YK": [\n\t\t\t"1918 1918 3 14 7 2 0 1 D",\n\t\t\t"1918 1918 9 27 7 2 0 0 S",\n\t\t\t"1919 1919 4 25 7 2 0 1 D",\n\t\t\t"1919 1919 10 1 7 0 0 0 S",\n\t\t\t"1942 1942 1 9 7 2 0 1 W",\n\t\t\t"1945 1945 7 14 7 23 1 1 P",\n\t\t\t"1945 1945 8 30 7 2 0 0 S",\n\t\t\t"1965 1965 3 0 8 0 0 2 DD",\n\t\t\t"1965 1965 9 0 8 2 0 0 S",\n\t\t\t"1980 1986 3 0 8 2 0 1 D",\n\t\t\t"1980 2006 9 0 8 2 0 0 S",\n\t\t\t"1987 2006 3 1 0 2 0 1 D"\n\t\t],\n\t\t"NYC": [\n\t\t\t"1920 1920 2 0 8 2 0 1 D",\n\t\t\t"1920 1920 9 0 8 2 0 0 S",\n\t\t\t"1921 1966 3 0 8 2 0 1 D",\n\t\t\t"1921 1954 8 0 8 2 0 0 S",\n\t\t\t"1955 1966 9 0 8 2 0 0 S"\n\t\t],\n\t\t"NZ": [\n\t\t\t"1927 1927 10 6 7 2 0 1 S",\n\t\t\t"1928 1928 2 4 7 2 0 0 M",\n\t\t\t"1928 1933 9 8 0 2 0 0:30 S",\n\t\t\t"1929 1933 2 15 0 2 0 0 M",\n\t\t\t"1934 1940 3 0 8 2 0 0 M",\n\t\t\t"1934 1940 8 0 8 2 0 0:30 S",\n\t\t\t"1946 1946 0 1 7 0 0 0 S",\n\t\t\t"1974 1974 10 1 0 2 2 1 D",\n\t\t\t"1975 1975 1 0 8 2 2 0 S",\n\t\t\t"1975 1988 9 0 8 2 2 1 D",\n\t\t\t"1976 1989 2 1 0 2 2 0 S",\n\t\t\t"1989 1989 9 8 0 2 2 1 D",\n\t\t\t"1990 2006 9 1 0 2 2 1 D",\n\t\t\t"1990 2007 2 15 0 2 2 0 S",\n\t\t\t"2007 9999 8 0 8 2 2 1 D",\n\t\t\t"2008 9999 3 1 0 2 2 0 S"\n\t\t],\n\t\t"NZAQ": [\n\t\t\t"1974 1974 10 3 7 2 2 1 D",\n\t\t\t"1975 1988 9 0 8 2 2 1 D",\n\t\t\t"1989 1989 9 8 7 2 2 1 D",\n\t\t\t"1990 2006 9 1 0 2 2 1 D",\n\t\t\t"1975 1975 1 23 7 2 2 0 S",\n\t\t\t"1976 1989 2 1 0 2 2 0 S",\n\t\t\t"1990 2007 2 15 0 2 2 0 S",\n\t\t\t"2007 9999 8 0 8 2 2 1 D",\n\t\t\t"2008 9999 3 1 0 2 2 0 S"\n\t\t],\n\t\t"Namibia": [\n\t\t\t"1994 9999 8 1 0 2 0 1 S",\n\t\t\t"1995 9999 3 1 0 2 0 0"\n\t\t],\n\t\t"Neth": [\n\t\t\t"1916 1916 4 1 7 0 0 1 NST",\n\t\t\t"1916 1916 9 1 7 0 0 0 AMT",\n\t\t\t"1917 1917 3 16 7 2 2 1 NST",\n\t\t\t"1917 1917 8 17 7 2 2 0 AMT",\n\t\t\t"1918 1921 3 1 1 2 2 1 NST",\n\t\t\t"1918 1921 8 1 8 2 2 0 AMT",\n\t\t\t"1922 1922 2 0 8 2 2 1 NST",\n\t\t\t"1922 1936 9 2 0 2 2 0 AMT",\n\t\t\t"1923 1923 5 1 5 2 2 1 NST",\n\t\t\t"1924 1924 2 0 8 2 2 1 NST",\n\t\t\t"1925 1925 5 1 5 2 2 1 NST",\n\t\t\t"1926 1931 4 15 7 2 2 1 NST",\n\t\t\t"1932 1932 4 22 7 2 2 1 NST",\n\t\t\t"1933 1936 4 15 7 2 2 1 NST",\n\t\t\t"1937 1937 4 22 7 2 2 1 NST",\n\t\t\t"1937 1937 6 1 7 0 0 1 S",\n\t\t\t"1937 1939 9 2 0 2 2 0",\n\t\t\t"1938 1939 4 15 7 2 2 1 S",\n\t\t\t"1945 1945 3 2 7 2 2 1 S",\n\t\t\t"1945 1945 8 16 7 2 2 0"\n\t\t],\n\t\t"Nic": [\n\t\t\t"1979 1980 2 16 0 0 0 1 D",\n\t\t\t"1979 1980 5 23 1 0 0 0 S",\n\t\t\t"2005 2005 3 10 7 0 0 1 D",\n\t\t\t"2005 2005 9 1 0 0 0 0 S",\n\t\t\t"2006 2006 3 30 7 2 0 1 D",\n\t\t\t"2006 2006 9 1 0 1 0 0 S"\n\t\t],\n\t\t"Norway": [\n\t\t\t"1916 1916 4 22 7 1 0 1 S",\n\t\t\t"1916 1916 8 30 7 0 0 0",\n\t\t\t"1945 1945 3 2 7 2 2 1 S",\n\t\t\t"1945 1945 9 1 7 2 2 0",\n\t\t\t"1959 1964 2 15 0 2 2 1 S",\n\t\t\t"1959 1965 8 15 0 2 2 0",\n\t\t\t"1965 1965 3 25 7 2 2 1 S"\n\t\t],\n\t\t"PRC": [\n\t\t\t"1986 1986 4 4 7 0 0 1 D",\n\t\t\t"1986 1991 8 11 0 0 0 0 S",\n\t\t\t"1987 1991 3 10 0 0 0 1 D"\n\t\t],\n\t\t"Pakistan": [\n\t\t\t"2002 2002 3 2 0 0:1 0 1 S",\n\t\t\t"2002 2002 9 2 0 0:1 0 0",\n\t\t\t"2008 2008 5 1 7 0 0 1 S",\n\t\t\t"2008 2008 10 1 7 0 0 0",\n\t\t\t"2009 2009 3 15 7 0 0 1 S",\n\t\t\t"2009 2009 10 1 7 0 0 0"\n\t\t],\n\t\t"Palestine": [\n\t\t\t"1999 2005 3 15 5 0 0 1 S",\n\t\t\t"1999 2003 9 15 5 0 0 0",\n\t\t\t"2004 2004 9 1 7 1 0 0",\n\t\t\t"2005 2005 9 4 7 2 0 0",\n\t\t\t"2006 2007 3 1 7 0 0 1 S",\n\t\t\t"2006 2006 8 22 7 0 0 0",\n\t\t\t"2007 2007 8 8 4 2 0 0",\n\t\t\t"2008 2009 2 5 8 0 0 1 S",\n\t\t\t"2008 2008 8 1 7 0 0 0",\n\t\t\t"2009 2009 8 1 5 1 0 0",\n\t\t\t"2010 2010 2 26 7 0 0 1 S",\n\t\t\t"2010 2010 7 11 7 0 0 0",\n\t\t\t"2011 2011 3 1 7 0:1 0 1 S",\n\t\t\t"2011 2011 7 1 7 0 0 0",\n\t\t\t"2011 2011 7 30 7 0 0 1 S",\n\t\t\t"2011 2011 8 30 7 0 0 0",\n\t\t\t"2012 9999 2 4 8 24 0 1 S",\n\t\t\t"2012 9999 8 21 5 1 0 0"\n\t\t],\n\t\t"Para": [\n\t\t\t"1975 1988 9 1 7 0 0 1 S",\n\t\t\t"1975 1978 2 1 7 0 0 0",\n\t\t\t"1979 1991 3 1 7 0 0 0",\n\t\t\t"1989 1989 9 22 7 0 0 1 S",\n\t\t\t"1990 1990 9 1 7 0 0 1 S",\n\t\t\t"1991 1991 9 6 7 0 0 1 S",\n\t\t\t"1992 1992 2 1 7 0 0 0",\n\t\t\t"1992 1992 9 5 7 0 0 1 S",\n\t\t\t"1993 1993 2 31 7 0 0 0",\n\t\t\t"1993 1995 9 1 7 0 0 1 S",\n\t\t\t"1994 1995 1 0 8 0 0 0",\n\t\t\t"1996 1996 2 1 7 0 0 0",\n\t\t\t"1996 2001 9 1 0 0 0 1 S",\n\t\t\t"1997 1997 1 0 8 0 0 0",\n\t\t\t"1998 2001 2 1 0 0 0 0",\n\t\t\t"2002 2004 3 1 0 0 0 0",\n\t\t\t"2002 2003 8 1 0 0 0 1 S",\n\t\t\t"2004 2009 9 15 0 0 0 1 S",\n\t\t\t"2005 2009 2 8 0 0 0 0",\n\t\t\t"2010 9999 9 1 0 0 0 1 S",\n\t\t\t"2010 2012 3 8 0 0 0 0",\n\t\t\t"2013 9999 2 22 0 0 0 0"\n\t\t],\n\t\t"Perry": [\n\t\t\t"1946 1946 3 0 8 2 0 1 D",\n\t\t\t"1946 1946 8 0 8 2 0 0 S",\n\t\t\t"1953 1954 3 0 8 2 0 1 D",\n\t\t\t"1953 1959 8 0 8 2 0 0 S",\n\t\t\t"1955 1955 4 1 7 0 0 1 D",\n\t\t\t"1956 1963 3 0 8 2 0 1 D",\n\t\t\t"1960 1960 9 0 8 2 0 0 S",\n\t\t\t"1961 1961 8 0 8 2 0 0 S",\n\t\t\t"1962 1963 9 0 8 2 0 0 S"\n\t\t],\n\t\t"Peru": [\n\t\t\t"1938 1938 0 1 7 0 0 1 S",\n\t\t\t"1938 1938 3 1 7 0 0 0",\n\t\t\t"1938 1939 8 0 8 0 0 1 S",\n\t\t\t"1939 1940 2 24 0 0 0 0",\n\t\t\t"1986 1987 0 1 7 0 0 1 S",\n\t\t\t"1986 1987 3 1 7 0 0 0",\n\t\t\t"1990 1990 0 1 7 0 0 1 S",\n\t\t\t"1990 1990 3 1 7 0 0 0",\n\t\t\t"1994 1994 0 1 7 0 0 1 S",\n\t\t\t"1994 1994 3 1 7 0 0 0"\n\t\t],\n\t\t"Phil": [\n\t\t\t"1936 1936 10 1 7 0 0 1 S",\n\t\t\t"1937 1937 1 1 7 0 0 0",\n\t\t\t"1954 1954 3 12 7 0 0 1 S",\n\t\t\t"1954 1954 6 1 7 0 0 0",\n\t\t\t"1978 1978 2 22 7 0 0 1 S",\n\t\t\t"1978 1978 8 21 7 0 0 0"\n\t\t],\n\t\t"Pike": [\n\t\t\t"1955 1955 4 1 7 0 0 1 D",\n\t\t\t"1955 1960 8 0 8 2 0 0 S",\n\t\t\t"1956 1964 3 0 8 2 0 1 D",\n\t\t\t"1961 1964 9 0 8 2 0 0 S"\n\t\t],\n\t\t"Poland": [\n\t\t\t"1918 1919 8 16 7 2 2 0",\n\t\t\t"1919 1919 3 15 7 2 2 1 S",\n\t\t\t"1944 1944 3 3 7 2 2 1 S",\n\t\t\t"1944 1944 9 4 7 2 0 0",\n\t\t\t"1945 1945 3 29 7 0 0 1 S",\n\t\t\t"1945 1945 10 1 7 0 0 0",\n\t\t\t"1946 1946 3 14 7 0 2 1 S",\n\t\t\t"1946 1946 9 7 7 2 2 0",\n\t\t\t"1947 1947 4 4 7 2 2 1 S",\n\t\t\t"1947 1949 9 1 0 2 2 0",\n\t\t\t"1948 1948 3 18 7 2 2 1 S",\n\t\t\t"1949 1949 3 10 7 2 2 1 S",\n\t\t\t"1957 1957 5 2 7 1 2 1 S",\n\t\t\t"1957 1958 8 0 8 1 2 0",\n\t\t\t"1958 1958 2 30 7 1 2 1 S",\n\t\t\t"1959 1959 4 31 7 1 2 1 S",\n\t\t\t"1959 1961 9 1 0 1 2 0",\n\t\t\t"1960 1960 3 3 7 1 2 1 S",\n\t\t\t"1961 1964 4 0 8 1 2 1 S",\n\t\t\t"1962 1964 8 0 8 1 2 0"\n\t\t],\n\t\t"Port": [\n\t\t\t"1916 1916 5 17 7 23 0 1 S",\n\t\t\t"1916 1916 10 1 7 1 0 0",\n\t\t\t"1917 1917 1 28 7 23 2 1 S",\n\t\t\t"1917 1921 9 14 7 23 2 0",\n\t\t\t"1918 1918 2 1 7 23 2 1 S",\n\t\t\t"1919 1919 1 28 7 23 2 1 S",\n\t\t\t"1920 1920 1 29 7 23 2 1 S",\n\t\t\t"1921 1921 1 28 7 23 2 1 S",\n\t\t\t"1924 1924 3 16 7 23 2 1 S",\n\t\t\t"1924 1924 9 14 7 23 2 0",\n\t\t\t"1926 1926 3 17 7 23 2 1 S",\n\t\t\t"1926 1929 9 1 6 23 2 0",\n\t\t\t"1927 1927 3 9 7 23 2 1 S",\n\t\t\t"1928 1928 3 14 7 23 2 1 S",\n\t\t\t"1929 1929 3 20 7 23 2 1 S",\n\t\t\t"1931 1931 3 18 7 23 2 1 S",\n\t\t\t"1931 1932 9 1 6 23 2 0",\n\t\t\t"1932 1932 3 2 7 23 2 1 S",\n\t\t\t"1934 1934 3 7 7 23 2 1 S",\n\t\t\t"1934 1938 9 1 6 23 2 0",\n\t\t\t"1935 1935 2 30 7 23 2 1 S",\n\t\t\t"1936 1936 3 18 7 23 2 1 S",\n\t\t\t"1937 1937 3 3 7 23 2 1 S",\n\t\t\t"1938 1938 2 26 7 23 2 1 S",\n\t\t\t"1939 1939 3 15 7 23 2 1 S",\n\t\t\t"1939 1939 10 18 7 23 2 0",\n\t\t\t"1940 1940 1 24 7 23 2 1 S",\n\t\t\t"1940 1941 9 5 7 23 2 0",\n\t\t\t"1941 1941 3 5 7 23 2 1 S",\n\t\t\t"1942 1945 2 8 6 23 2 1 S",\n\t\t\t"1942 1942 3 25 7 22 2 2 M",\n\t\t\t"1942 1942 7 15 7 22 2 1 S",\n\t\t\t"1942 1945 9 24 6 23 2 0",\n\t\t\t"1943 1943 3 17 7 22 2 2 M",\n\t\t\t"1943 1945 7 25 6 22 2 1 S",\n\t\t\t"1944 1945 3 21 6 22 2 2 M",\n\t\t\t"1946 1946 3 1 6 23 2 1 S",\n\t\t\t"1946 1946 9 1 6 23 2 0",\n\t\t\t"1947 1949 3 1 0 2 2 1 S",\n\t\t\t"1947 1949 9 1 0 2 2 0",\n\t\t\t"1951 1965 3 1 0 2 2 1 S",\n\t\t\t"1951 1965 9 1 0 2 2 0",\n\t\t\t"1977 1977 2 27 7 0 2 1 S",\n\t\t\t"1977 1977 8 25 7 0 2 0",\n\t\t\t"1978 1979 3 1 0 0 2 1 S",\n\t\t\t"1978 1978 9 1 7 0 2 0",\n\t\t\t"1979 1982 8 0 8 1 2 0",\n\t\t\t"1980 1980 2 0 8 0 2 1 S",\n\t\t\t"1981 1982 2 0 8 1 2 1 S",\n\t\t\t"1983 1983 2 0 8 2 2 1 S"\n\t\t],\n\t\t"Pulaski": [\n\t\t\t"1946 1960 3 0 8 2 0 1 D",\n\t\t\t"1946 1954 8 0 8 2 0 0 S",\n\t\t\t"1955 1956 9 0 8 2 0 0 S",\n\t\t\t"1957 1960 8 0 8 2 0 0 S"\n\t\t],\n\t\t"ROK": [\n\t\t\t"1960 1960 4 15 7 0 0 1 D",\n\t\t\t"1960 1960 8 13 7 0 0 0 S",\n\t\t\t"1987 1988 4 8 0 0 0 1 D",\n\t\t\t"1987 1988 9 8 0 0 0 0 S"\n\t\t],\n\t\t"Regina": [\n\t\t\t"1918 1918 3 14 7 2 0 1 D",\n\t\t\t"1918 1918 9 27 7 2 0 0 S",\n\t\t\t"1930 1934 4 1 0 0 0 1 D",\n\t\t\t"1930 1934 9 1 0 0 0 0 S",\n\t\t\t"1937 1941 3 8 0 0 0 1 D",\n\t\t\t"1937 1937 9 8 0 0 0 0 S",\n\t\t\t"1938 1938 9 1 0 0 0 0 S",\n\t\t\t"1939 1941 9 8 0 0 0 0 S",\n\t\t\t"1942 1942 1 9 7 2 0 1 W",\n\t\t\t"1945 1945 7 14 7 23 1 1 P",\n\t\t\t"1945 1945 8 0 8 2 0 0 S",\n\t\t\t"1946 1946 3 8 0 2 0 1 D",\n\t\t\t"1946 1946 9 8 0 2 0 0 S",\n\t\t\t"1947 1957 3 0 8 2 0 1 D",\n\t\t\t"1947 1957 8 0 8 2 0 0 S",\n\t\t\t"1959 1959 3 0 8 2 0 1 D",\n\t\t\t"1959 1959 9 0 8 2 0 0 S"\n\t\t],\n\t\t"Romania": [\n\t\t\t"1932 1932 4 21 7 0 2 1 S",\n\t\t\t"1932 1939 9 1 0 0 2 0",\n\t\t\t"1933 1939 3 2 0 0 2 1 S",\n\t\t\t"1979 1979 4 27 7 0 0 1 S",\n\t\t\t"1979 1979 8 0 8 0 0 0",\n\t\t\t"1980 1980 3 5 7 23 0 1 S",\n\t\t\t"1980 1980 8 0 8 1 0 0",\n\t\t\t"1991 1993 2 0 8 0 2 1 S",\n\t\t\t"1991 1993 8 0 8 0 2 0"\n\t\t],\n\t\t"Russia": [\n\t\t\t"1917 1917 6 1 7 23 0 1 MST",\n\t\t\t"1917 1917 11 28 7 0 0 0 MMT",\n\t\t\t"1918 1918 4 31 7 22 0 2 MDST",\n\t\t\t"1918 1918 8 16 7 1 0 1 MST",\n\t\t\t"1919 1919 4 31 7 23 0 2 MDST",\n\t\t\t"1919 1919 6 1 7 2 0 1 S",\n\t\t\t"1919 1919 7 16 7 0 0 0",\n\t\t\t"1921 1921 1 14 7 23 0 1 S",\n\t\t\t"1921 1921 2 20 7 23 0 2 M",\n\t\t\t"1921 1921 8 1 7 0 0 1 S",\n\t\t\t"1921 1921 9 1 7 0 0 0",\n\t\t\t"1981 1984 3 1 7 0 0 1 S",\n\t\t\t"1981 1983 9 1 7 0 0 0",\n\t\t\t"1984 1991 8 0 8 2 2 0",\n\t\t\t"1985 1991 2 0 8 2 2 1 S",\n\t\t\t"1992 1992 2 6 8 23 0 1 S",\n\t\t\t"1992 1992 8 6 8 23 0 0",\n\t\t\t"1993 2010 2 0 8 2 2 1 S",\n\t\t\t"1993 1995 8 0 8 2 2 0",\n\t\t\t"1996 2010 9 0 8 2 2 0"\n\t\t],\n\t\t"RussiaAsia": [\n\t\t\t"1981 1984 3 1 7 0 0 1 S",\n\t\t\t"1981 1983 9 1 7 0 0 0",\n\t\t\t"1984 1991 8 0 8 2 2 0",\n\t\t\t"1985 1991 2 0 8 2 2 1 S",\n\t\t\t"1992 1992 2 6 8 23 0 1 S",\n\t\t\t"1992 1992 8 6 8 23 0 0",\n\t\t\t"1993 9999 2 0 8 2 2 1 S",\n\t\t\t"1993 1995 8 0 8 2 2 0",\n\t\t\t"1996 9999 9 0 8 2 2 0"\n\t\t],\n\t\t"SA": [\n\t\t\t"1942 1943 8 15 0 2 0 1",\n\t\t\t"1943 1944 2 15 0 2 0 0"\n\t\t],\n\t\t"SL": [\n\t\t\t"1935 1942 5 1 7 0 0 0:40 SLST",\n\t\t\t"1935 1942 9 1 7 0 0 0 WAT",\n\t\t\t"1957 1962 5 1 7 0 0 1 SLST",\n\t\t\t"1957 1962 8 1 7 0 0 0 GMT"\n\t\t],\n\t\t"Salv": [\n\t\t\t"1987 1988 4 1 0 0 0 1 D",\n\t\t\t"1987 1988 8 0 8 0 0 0 S"\n\t\t],\n\t\t"SanLuis": [\n\t\t\t"2008 2009 2 8 0 0 0 0",\n\t\t\t"2007 2009 9 8 0 0 0 1 S"\n\t\t],\n\t\t"Shang": [\n\t\t\t"1940 1940 5 3 7 0 0 1 D",\n\t\t\t"1940 1941 9 1 7 0 0 0 S",\n\t\t\t"1941 1941 2 16 7 0 0 1 D"\n\t\t],\n\t\t"SovietZone": [\n\t\t\t"1945 1945 4 24 7 2 0 2 M",\n\t\t\t"1945 1945 8 24 7 3 0 1 S",\n\t\t\t"1945 1945 10 18 7 2 2 0"\n\t\t],\n\t\t"Spain": [\n\t\t\t"1917 1917 4 5 7 23 2 1 S",\n\t\t\t"1917 1919 9 6 7 23 2 0",\n\t\t\t"1918 1918 3 15 7 23 2 1 S",\n\t\t\t"1919 1919 3 5 7 23 2 1 S",\n\t\t\t"1924 1924 3 16 7 23 2 1 S",\n\t\t\t"1924 1924 9 4 7 23 2 0",\n\t\t\t"1926 1926 3 17 7 23 2 1 S",\n\t\t\t"1926 1929 9 1 6 23 2 0",\n\t\t\t"1927 1927 3 9 7 23 2 1 S",\n\t\t\t"1928 1928 3 14 7 23 2 1 S",\n\t\t\t"1929 1929 3 20 7 23 2 1 S",\n\t\t\t"1937 1937 4 22 7 23 2 1 S",\n\t\t\t"1937 1939 9 1 6 23 2 0",\n\t\t\t"1938 1938 2 22 7 23 2 1 S",\n\t\t\t"1939 1939 3 15 7 23 2 1 S",\n\t\t\t"1940 1940 2 16 7 23 2 1 S",\n\t\t\t"1942 1942 4 2 7 22 2 2 M",\n\t\t\t"1942 1942 8 1 7 22 2 1 S",\n\t\t\t"1943 1946 3 13 6 22 2 2 M",\n\t\t\t"1943 1943 9 3 7 22 2 1 S",\n\t\t\t"1944 1944 9 10 7 22 2 1 S",\n\t\t\t"1945 1945 8 30 7 1 0 1 S",\n\t\t\t"1946 1946 8 30 7 0 0 0",\n\t\t\t"1949 1949 3 30 7 23 0 1 S",\n\t\t\t"1949 1949 8 30 7 1 0 0",\n\t\t\t"1974 1975 3 13 6 23 0 1 S",\n\t\t\t"1974 1975 9 1 0 1 0 0",\n\t\t\t"1976 1976 2 27 7 23 0 1 S",\n\t\t\t"1976 1977 8 0 8 1 0 0",\n\t\t\t"1977 1978 3 2 7 23 0 1 S",\n\t\t\t"1978 1978 9 1 7 1 0 0"\n\t\t],\n\t\t"SpainAfrica": [\n\t\t\t"1967 1967 5 3 7 12 0 1 S",\n\t\t\t"1967 1967 9 1 7 0 0 0",\n\t\t\t"1974 1974 5 24 7 0 0 1 S",\n\t\t\t"1974 1974 8 1 7 0 0 0",\n\t\t\t"1976 1977 4 1 7 0 0 1 S",\n\t\t\t"1976 1976 7 1 7 0 0 0",\n\t\t\t"1977 1977 8 28 7 0 0 0",\n\t\t\t"1978 1978 5 1 7 0 0 1 S",\n\t\t\t"1978 1978 7 4 7 0 0 0"\n\t\t],\n\t\t"StJohns": [\n\t\t\t"1917 1917 3 8 7 2 0 1 D",\n\t\t\t"1917 1917 8 17 7 2 0 0 S",\n\t\t\t"1919 1919 4 5 7 23 0 1 D",\n\t\t\t"1919 1919 7 12 7 23 0 0 S",\n\t\t\t"1920 1935 4 1 0 23 0 1 D",\n\t\t\t"1920 1935 9 0 8 23 0 0 S",\n\t\t\t"1936 1941 4 9 1 0 0 1 D",\n\t\t\t"1936 1941 9 2 1 0 0 0 S",\n\t\t\t"1946 1950 4 8 0 2 0 1 D",\n\t\t\t"1946 1950 9 2 0 2 0 0 S",\n\t\t\t"1951 1986 3 0 8 2 0 1 D",\n\t\t\t"1951 1959 8 0 8 2 0 0 S",\n\t\t\t"1960 1986 9 0 8 2 0 0 S",\n\t\t\t"1987 1987 3 1 0 0:1 0 1 D",\n\t\t\t"1987 2006 9 0 8 0:1 0 0 S",\n\t\t\t"1988 1988 3 1 0 0:1 0 2 DD",\n\t\t\t"1989 2006 3 1 0 0:1 0 1 D",\n\t\t\t"2007 2011 2 8 0 0:1 0 1 D",\n\t\t\t"2007 2010 10 1 0 0:1 0 0 S"\n\t\t],\n\t\t"Starke": [\n\t\t\t"1947 1961 3 0 8 2 0 1 D",\n\t\t\t"1947 1954 8 0 8 2 0 0 S",\n\t\t\t"1955 1956 9 0 8 2 0 0 S",\n\t\t\t"1957 1958 8 0 8 2 0 0 S",\n\t\t\t"1959 1961 9 0 8 2 0 0 S"\n\t\t],\n\t\t"Sudan": [\n\t\t\t"1970 1970 4 1 7 0 0 1 S",\n\t\t\t"1970 1985 9 15 7 0 0 0",\n\t\t\t"1971 1971 3 30 7 0 0 1 S",\n\t\t\t"1972 1985 3 0 8 0 0 1 S"\n\t\t],\n\t\t"Swift": [\n\t\t\t"1957 1957 3 0 8 2 0 1 D",\n\t\t\t"1957 1957 9 0 8 2 0 0 S",\n\t\t\t"1959 1961 3 0 8 2 0 1 D",\n\t\t\t"1959 1959 9 0 8 2 0 0 S",\n\t\t\t"1960 1961 8 0 8 2 0 0 S"\n\t\t],\n\t\t"Swiss": [\n\t\t\t"1941 1942 4 1 1 1 0 1 S",\n\t\t\t"1941 1942 9 1 1 2 0 0"\n\t\t],\n\t\t"Syria": [\n\t\t\t"1920 1923 3 15 0 2 0 1 S",\n\t\t\t"1920 1923 9 1 0 2 0 0",\n\t\t\t"1962 1962 3 29 7 2 0 1 S",\n\t\t\t"1962 1962 9 1 7 2 0 0",\n\t\t\t"1963 1965 4 1 7 2 0 1 S",\n\t\t\t"1963 1963 8 30 7 2 0 0",\n\t\t\t"1964 1964 9 1 7 2 0 0",\n\t\t\t"1965 1965 8 30 7 2 0 0",\n\t\t\t"1966 1966 3 24 7 2 0 1 S",\n\t\t\t"1966 1976 9 1 7 2 0 0",\n\t\t\t"1967 1978 4 1 7 2 0 1 S",\n\t\t\t"1977 1978 8 1 7 2 0 0",\n\t\t\t"1983 1984 3 9 7 2 0 1 S",\n\t\t\t"1983 1984 9 1 7 2 0 0",\n\t\t\t"1986 1986 1 16 7 2 0 1 S",\n\t\t\t"1986 1986 9 9 7 2 0 0",\n\t\t\t"1987 1987 2 1 7 2 0 1 S",\n\t\t\t"1987 1988 9 31 7 2 0 0",\n\t\t\t"1988 1988 2 15 7 2 0 1 S",\n\t\t\t"1989 1989 2 31 7 2 0 1 S",\n\t\t\t"1989 1989 9 1 7 2 0 0",\n\t\t\t"1990 1990 3 1 7 2 0 1 S",\n\t\t\t"1990 1990 8 30 7 2 0 0",\n\t\t\t"1991 1991 3 1 7 0 0 1 S",\n\t\t\t"1991 1992 9 1 7 0 0 0",\n\t\t\t"1992 1992 3 8 7 0 0 1 S",\n\t\t\t"1993 1993 2 26 7 0 0 1 S",\n\t\t\t"1993 1993 8 25 7 0 0 0",\n\t\t\t"1994 1996 3 1 7 0 0 1 S",\n\t\t\t"1994 2005 9 1 7 0 0 0",\n\t\t\t"1997 1998 2 1 8 0 0 1 S",\n\t\t\t"1999 2006 3 1 7 0 0 1 S",\n\t\t\t"2006 2006 8 22 7 0 0 0",\n\t\t\t"2007 2007 2 5 8 0 0 1 S",\n\t\t\t"2007 2007 10 1 5 0 0 0",\n\t\t\t"2008 2008 3 1 5 0 0 1 S",\n\t\t\t"2008 2008 10 1 7 0 0 0",\n\t\t\t"2009 2009 2 5 8 0 0 1 S",\n\t\t\t"2010 2011 3 1 5 0 0 1 S",\n\t\t\t"2012 9999 2 5 8 0 0 1 S",\n\t\t\t"2009 9999 9 5 8 0 0 0"\n\t\t],\n\t\t"TC": [\n\t\t\t"1979 1986 3 0 8 2 0 1 D",\n\t\t\t"1979 2006 9 0 8 2 0 0 S",\n\t\t\t"1987 2006 3 1 0 2 0 1 D",\n\t\t\t"2007 9999 2 8 0 2 0 1 D",\n\t\t\t"2007 9999 10 1 0 2 0 0 S"\n\t\t],\n\t\t"Taiwan": [\n\t\t\t"1945 1951 4 1 7 0 0 1 D",\n\t\t\t"1945 1951 9 1 7 0 0 0 S",\n\t\t\t"1952 1952 2 1 7 0 0 1 D",\n\t\t\t"1952 1954 10 1 7 0 0 0 S",\n\t\t\t"1953 1959 3 1 7 0 0 1 D",\n\t\t\t"1955 1961 9 1 7 0 0 0 S",\n\t\t\t"1960 1961 5 1 7 0 0 1 D",\n\t\t\t"1974 1975 3 1 7 0 0 1 D",\n\t\t\t"1974 1975 9 1 7 0 0 0 S",\n\t\t\t"1979 1979 5 30 7 0 0 1 D",\n\t\t\t"1979 1979 8 30 7 0 0 0 S"\n\t\t],\n\t\t"Thule": [\n\t\t\t"1991 1992 2 0 8 2 0 1 D",\n\t\t\t"1991 1992 8 0 8 2 0 0 S",\n\t\t\t"1993 2006 3 1 0 2 0 1 D",\n\t\t\t"1993 2006 9 0 8 2 0 0 S",\n\t\t\t"2007 9999 2 8 0 2 0 1 D",\n\t\t\t"2007 9999 10 1 0 2 0 0 S"\n\t\t],\n\t\t"Tonga": [\n\t\t\t"1999 1999 9 7 7 2 2 1 S",\n\t\t\t"2000 2000 2 19 7 2 2 0",\n\t\t\t"2000 2001 10 1 0 2 0 1 S",\n\t\t\t"2001 2002 0 0 8 2 0 0"\n\t\t],\n\t\t"Toronto": [\n\t\t\t"1919 1919 2 30 7 23:30 0 1 D",\n\t\t\t"1919 1919 9 26 7 0 0 0 S",\n\t\t\t"1920 1920 4 2 7 2 0 1 D",\n\t\t\t"1920 1920 8 26 7 0 0 0 S",\n\t\t\t"1921 1921 4 15 7 2 0 1 D",\n\t\t\t"1921 1921 8 15 7 2 0 0 S",\n\t\t\t"1922 1923 4 8 0 2 0 1 D",\n\t\t\t"1922 1926 8 15 0 2 0 0 S",\n\t\t\t"1924 1927 4 1 0 2 0 1 D",\n\t\t\t"1927 1932 8 0 8 2 0 0 S",\n\t\t\t"1928 1931 3 0 8 2 0 1 D",\n\t\t\t"1932 1932 4 1 7 2 0 1 D",\n\t\t\t"1933 1940 3 0 8 2 0 1 D",\n\t\t\t"1933 1933 9 1 7 2 0 0 S",\n\t\t\t"1934 1939 8 0 8 2 0 0 S",\n\t\t\t"1945 1946 8 0 8 2 0 0 S",\n\t\t\t"1946 1946 3 0 8 2 0 1 D",\n\t\t\t"1947 1949 3 0 8 0 0 1 D",\n\t\t\t"1947 1948 8 0 8 0 0 0 S",\n\t\t\t"1949 1949 10 0 8 0 0 0 S",\n\t\t\t"1950 1973 3 0 8 2 0 1 D",\n\t\t\t"1950 1950 10 0 8 2 0 0 S",\n\t\t\t"1951 1956 8 0 8 2 0 0 S",\n\t\t\t"1957 1973 9 0 8 2 0 0 S"\n\t\t],\n\t\t"Tunisia": [\n\t\t\t"1939 1939 3 15 7 23 2 1 S",\n\t\t\t"1939 1939 10 18 7 23 2 0",\n\t\t\t"1940 1940 1 25 7 23 2 1 S",\n\t\t\t"1941 1941 9 6 7 0 0 0",\n\t\t\t"1942 1942 2 9 7 0 0 1 S",\n\t\t\t"1942 1942 10 2 7 3 0 0",\n\t\t\t"1943 1943 2 29 7 2 0 1 S",\n\t\t\t"1943 1943 3 17 7 2 0 0",\n\t\t\t"1943 1943 3 25 7 2 0 1 S",\n\t\t\t"1943 1943 9 4 7 2 0 0",\n\t\t\t"1944 1945 3 1 1 2 0 1 S",\n\t\t\t"1944 1944 9 8 7 0 0 0",\n\t\t\t"1945 1945 8 16 7 0 0 0",\n\t\t\t"1977 1977 3 30 7 0 2 1 S",\n\t\t\t"1977 1977 8 24 7 0 2 0",\n\t\t\t"1978 1978 4 1 7 0 2 1 S",\n\t\t\t"1978 1978 9 1 7 0 2 0",\n\t\t\t"1988 1988 5 1 7 0 2 1 S",\n\t\t\t"1988 1990 8 0 8 0 2 0",\n\t\t\t"1989 1989 2 26 7 0 2 1 S",\n\t\t\t"1990 1990 4 1 7 0 2 1 S",\n\t\t\t"2005 2005 4 1 7 0 2 1 S",\n\t\t\t"2005 2005 8 30 7 1 2 0",\n\t\t\t"2006 2008 2 0 8 2 2 1 S",\n\t\t\t"2006 2008 9 0 8 2 2 0"\n\t\t],\n\t\t"Turkey": [\n\t\t\t"1916 1916 4 1 7 0 0 1 S",\n\t\t\t"1916 1916 9 1 7 0 0 0",\n\t\t\t"1920 1920 2 28 7 0 0 1 S",\n\t\t\t"1920 1920 9 25 7 0 0 0",\n\t\t\t"1921 1921 3 3 7 0 0 1 S",\n\t\t\t"1921 1921 9 3 7 0 0 0",\n\t\t\t"1922 1922 2 26 7 0 0 1 S",\n\t\t\t"1922 1922 9 8 7 0 0 0",\n\t\t\t"1924 1924 4 13 7 0 0 1 S",\n\t\t\t"1924 1925 9 1 7 0 0 0",\n\t\t\t"1925 1925 4 1 7 0 0 1 S",\n\t\t\t"1940 1940 5 30 7 0 0 1 S",\n\t\t\t"1940 1940 9 5 7 0 0 0",\n\t\t\t"1940 1940 11 1 7 0 0 1 S",\n\t\t\t"1941 1941 8 21 7 0 0 0",\n\t\t\t"1942 1942 3 1 7 0 0 1 S",\n\t\t\t"1942 1942 10 1 7 0 0 0",\n\t\t\t"1945 1945 3 2 7 0 0 1 S",\n\t\t\t"1945 1945 9 8 7 0 0 0",\n\t\t\t"1946 1946 5 1 7 0 0 1 S",\n\t\t\t"1946 1946 9 1 7 0 0 0",\n\t\t\t"1947 1948 3 16 0 0 0 1 S",\n\t\t\t"1947 1950 9 2 0 0 0 0",\n\t\t\t"1949 1949 3 10 7 0 0 1 S",\n\t\t\t"1950 1950 3 19 7 0 0 1 S",\n\t\t\t"1951 1951 3 22 7 0 0 1 S",\n\t\t\t"1951 1951 9 8 7 0 0 0",\n\t\t\t"1962 1962 6 15 7 0 0 1 S",\n\t\t\t"1962 1962 9 8 7 0 0 0",\n\t\t\t"1964 1964 4 15 7 0 0 1 S",\n\t\t\t"1964 1964 9 1 7 0 0 0",\n\t\t\t"1970 1972 4 2 0 0 0 1 S",\n\t\t\t"1970 1972 9 2 0 0 0 0",\n\t\t\t"1973 1973 5 3 7 1 0 1 S",\n\t\t\t"1973 1973 10 4 7 3 0 0",\n\t\t\t"1974 1974 2 31 7 2 0 1 S",\n\t\t\t"1974 1974 10 3 7 5 0 0",\n\t\t\t"1975 1975 2 30 7 0 0 1 S",\n\t\t\t"1975 1976 9 0 8 0 0 0",\n\t\t\t"1976 1976 5 1 7 0 0 1 S",\n\t\t\t"1977 1978 3 1 0 0 0 1 S",\n\t\t\t"1977 1977 9 16 7 0 0 0",\n\t\t\t"1979 1980 3 1 0 3 0 1 S",\n\t\t\t"1979 1982 9 11 1 0 0 0",\n\t\t\t"1981 1982 2 0 8 3 0 1 S",\n\t\t\t"1983 1983 6 31 7 0 0 1 S",\n\t\t\t"1983 1983 9 2 7 0 0 0",\n\t\t\t"1985 1985 3 20 7 0 0 1 S",\n\t\t\t"1985 1985 8 28 7 0 0 0",\n\t\t\t"1986 1990 2 0 8 2 2 1 S",\n\t\t\t"1986 1990 8 0 8 2 2 0",\n\t\t\t"1991 2006 2 0 8 1 2 1 S",\n\t\t\t"1991 1995 8 0 8 1 2 0",\n\t\t\t"1996 2006 9 0 8 1 2 0"\n\t\t],\n\t\t"US": [\n\t\t\t"1918 1919 2 0 8 2 0 1 D",\n\t\t\t"1918 1919 9 0 8 2 0 0 S",\n\t\t\t"1942 1942 1 9 7 2 0 1 W",\n\t\t\t"1945 1945 7 14 7 23 1 1 P",\n\t\t\t"1945 1945 8 30 7 2 0 0 S",\n\t\t\t"1967 2006 9 0 8 2 0 0 S",\n\t\t\t"1967 1973 3 0 8 2 0 1 D",\n\t\t\t"1974 1974 0 6 7 2 0 1 D",\n\t\t\t"1975 1975 1 23 7 2 0 1 D",\n\t\t\t"1976 1986 3 0 8 2 0 1 D",\n\t\t\t"1987 2006 3 1 0 2 0 1 D",\n\t\t\t"2007 9999 2 8 0 2 0 1 D",\n\t\t\t"2007 9999 10 1 0 2 0 0 S"\n\t\t],\n\t\t"Uruguay": [\n\t\t\t"1923 1923 9 2 7 0 0 0:30 HS",\n\t\t\t"1924 1926 3 1 7 0 0 0",\n\t\t\t"1924 1925 9 1 7 0 0 0:30 HS",\n\t\t\t"1933 1935 9 0 8 0 0 0:30 HS",\n\t\t\t"1934 1936 2 25 6 23:30 2 0",\n\t\t\t"1936 1936 10 1 7 0 0 0:30 HS",\n\t\t\t"1937 1941 2 0 8 0 0 0",\n\t\t\t"1937 1940 9 0 8 0 0 0:30 HS",\n\t\t\t"1941 1941 7 1 7 0 0 0:30 HS",\n\t\t\t"1942 1942 0 1 7 0 0 0",\n\t\t\t"1942 1942 11 14 7 0 0 1 S",\n\t\t\t"1943 1943 2 14 7 0 0 0",\n\t\t\t"1959 1959 4 24 7 0 0 1 S",\n\t\t\t"1959 1959 10 15 7 0 0 0",\n\t\t\t"1960 1960 0 17 7 0 0 1 S",\n\t\t\t"1960 1960 2 6 7 0 0 0",\n\t\t\t"1965 1967 3 1 0 0 0 1 S",\n\t\t\t"1965 1965 8 26 7 0 0 0",\n\t\t\t"1966 1967 9 31 7 0 0 0",\n\t\t\t"1968 1970 4 27 7 0 0 0:30 HS",\n\t\t\t"1968 1970 11 2 7 0 0 0",\n\t\t\t"1972 1972 3 24 7 0 0 1 S",\n\t\t\t"1972 1972 7 15 7 0 0 0",\n\t\t\t"1974 1974 2 10 7 0 0 0:30 HS",\n\t\t\t"1974 1974 11 22 7 0 0 1 S",\n\t\t\t"1976 1976 9 1 7 0 0 0",\n\t\t\t"1977 1977 11 4 7 0 0 1 S",\n\t\t\t"1978 1978 3 1 7 0 0 0",\n\t\t\t"1979 1979 9 1 7 0 0 1 S",\n\t\t\t"1980 1980 4 1 7 0 0 0",\n\t\t\t"1987 1987 11 14 7 0 0 1 S",\n\t\t\t"1988 1988 2 14 7 0 0 0",\n\t\t\t"1988 1988 11 11 7 0 0 1 S",\n\t\t\t"1989 1989 2 12 7 0 0 0",\n\t\t\t"1989 1989 9 29 7 0 0 1 S",\n\t\t\t"1990 1992 2 1 0 0 0 0",\n\t\t\t"1990 1991 9 21 0 0 0 1 S",\n\t\t\t"1992 1992 9 18 7 0 0 1 S",\n\t\t\t"1993 1993 1 28 7 0 0 0",\n\t\t\t"2004 2004 8 19 7 0 0 1 S",\n\t\t\t"2005 2005 2 27 7 2 0 0",\n\t\t\t"2005 2005 9 9 7 2 0 1 S",\n\t\t\t"2006 2006 2 12 7 2 0 0",\n\t\t\t"2006 9999 9 1 0 2 0 1 S",\n\t\t\t"2007 9999 2 8 0 2 0 0"\n\t\t],\n\t\t"Vanc": [\n\t\t\t"1918 1918 3 14 7 2 0 1 D",\n\t\t\t"1918 1918 9 27 7 2 0 0 S",\n\t\t\t"1942 1942 1 9 7 2 0 1 W",\n\t\t\t"1945 1945 7 14 7 23 1 1 P",\n\t\t\t"1945 1945 8 30 7 2 0 0 S",\n\t\t\t"1946 1986 3 0 8 2 0 1 D",\n\t\t\t"1946 1946 9 13 7 2 0 0 S",\n\t\t\t"1947 1961 8 0 8 2 0 0 S",\n\t\t\t"1962 2006 9 0 8 2 0 0 S"\n\t\t],\n\t\t"Vanuatu": [\n\t\t\t"1983 1983 8 25 7 0 0 1 S",\n\t\t\t"1984 1991 2 23 0 0 0 0",\n\t\t\t"1984 1984 9 23 7 0 0 1 S",\n\t\t\t"1985 1991 8 23 0 0 0 1 S",\n\t\t\t"1992 1993 0 23 0 0 0 0",\n\t\t\t"1992 1992 9 23 0 0 0 1 S"\n\t\t],\n\t\t"Vincennes": [\n\t\t\t"1946 1946 3 0 8 2 0 1 D",\n\t\t\t"1946 1946 8 0 8 2 0 0 S",\n\t\t\t"1953 1954 3 0 8 2 0 1 D",\n\t\t\t"1953 1959 8 0 8 2 0 0 S",\n\t\t\t"1955 1955 4 1 7 0 0 1 D",\n\t\t\t"1956 1963 3 0 8 2 0 1 D",\n\t\t\t"1960 1960 9 0 8 2 0 0 S",\n\t\t\t"1961 1961 8 0 8 2 0 0 S",\n\t\t\t"1962 1963 9 0 8 2 0 0 S"\n\t\t],\n\t\t"W-Eur": [\n\t\t\t"1977 1980 3 1 0 1 2 1 S",\n\t\t\t"1977 1977 8 0 8 1 2 0",\n\t\t\t"1978 1978 9 1 7 1 2 0",\n\t\t\t"1979 1995 8 0 8 1 2 0",\n\t\t\t"1981 9999 2 0 8 1 2 1 S",\n\t\t\t"1996 9999 9 0 8 1 2 0"\n\t\t],\n\t\t"WS": [\n\t\t\t"2012 9999 8 0 8 3 0 1 D",\n\t\t\t"2012 9999 3 1 0 4 0 0"\n\t\t],\n\t\t"Winn": [\n\t\t\t"1916 1916 3 23 7 0 0 1 D",\n\t\t\t"1916 1916 8 17 7 0 0 0 S",\n\t\t\t"1918 1918 3 14 7 2 0 1 D",\n\t\t\t"1918 1918 9 27 7 2 0 0 S",\n\t\t\t"1937 1937 4 16 7 2 0 1 D",\n\t\t\t"1937 1937 8 26 7 2 0 0 S",\n\t\t\t"1942 1942 1 9 7 2 0 1 W",\n\t\t\t"1945 1945 7 14 7 23 1 1 P",\n\t\t\t"1945 1945 8 0 8 2 0 0 S",\n\t\t\t"1946 1946 4 12 7 2 0 1 D",\n\t\t\t"1946 1946 9 13 7 2 0 0 S",\n\t\t\t"1947 1949 3 0 8 2 0 1 D",\n\t\t\t"1947 1949 8 0 8 2 0 0 S",\n\t\t\t"1950 1950 4 1 7 2 0 1 D",\n\t\t\t"1950 1950 8 30 7 2 0 0 S",\n\t\t\t"1951 1960 3 0 8 2 0 1 D",\n\t\t\t"1951 1958 8 0 8 2 0 0 S",\n\t\t\t"1959 1959 9 0 8 2 0 0 S",\n\t\t\t"1960 1960 8 0 8 2 0 0 S",\n\t\t\t"1963 1963 3 0 8 2 0 1 D",\n\t\t\t"1963 1963 8 22 7 2 0 0 S",\n\t\t\t"1966 1986 3 0 8 2 2 1 D",\n\t\t\t"1966 2005 9 0 8 2 2 0 S",\n\t\t\t"1987 2005 3 1 0 2 2 1 D"\n\t\t],\n\t\t"Zion": [\n\t\t\t"1940 1940 5 1 7 0 0 1 D",\n\t\t\t"1942 1944 10 1 7 0 0 0 S",\n\t\t\t"1943 1943 3 1 7 2 0 1 D",\n\t\t\t"1944 1944 3 1 7 0 0 1 D",\n\t\t\t"1945 1945 3 16 7 0 0 1 D",\n\t\t\t"1945 1945 10 1 7 2 0 0 S",\n\t\t\t"1946 1946 3 16 7 2 0 1 D",\n\t\t\t"1946 1946 10 1 7 0 0 0 S",\n\t\t\t"1948 1948 4 23 7 0 0 2 DD",\n\t\t\t"1948 1948 8 1 7 0 0 1 D",\n\t\t\t"1948 1949 10 1 7 2 0 0 S",\n\t\t\t"1949 1949 4 1 7 0 0 1 D",\n\t\t\t"1950 1950 3 16 7 0 0 1 D",\n\t\t\t"1950 1950 8 15 7 3 0 0 S",\n\t\t\t"1951 1951 3 1 7 0 0 1 D",\n\t\t\t"1951 1951 10 11 7 3 0 0 S",\n\t\t\t"1952 1952 3 20 7 2 0 1 D",\n\t\t\t"1952 1952 9 19 7 3 0 0 S",\n\t\t\t"1953 1953 3 12 7 2 0 1 D",\n\t\t\t"1953 1953 8 13 7 3 0 0 S",\n\t\t\t"1954 1954 5 13 7 0 0 1 D",\n\t\t\t"1954 1954 8 12 7 0 0 0 S",\n\t\t\t"1955 1955 5 11 7 2 0 1 D",\n\t\t\t"1955 1955 8 11 7 0 0 0 S",\n\t\t\t"1956 1956 5 3 7 0 0 1 D",\n\t\t\t"1956 1956 8 30 7 3 0 0 S",\n\t\t\t"1957 1957 3 29 7 2 0 1 D",\n\t\t\t"1957 1957 8 22 7 0 0 0 S",\n\t\t\t"1974 1974 6 7 7 0 0 1 D",\n\t\t\t"1974 1974 9 13 7 0 0 0 S",\n\t\t\t"1975 1975 3 20 7 0 0 1 D",\n\t\t\t"1975 1975 7 31 7 0 0 0 S",\n\t\t\t"1985 1985 3 14 7 0 0 1 D",\n\t\t\t"1985 1985 8 15 7 0 0 0 S",\n\t\t\t"1986 1986 4 18 7 0 0 1 D",\n\t\t\t"1986 1986 8 7 7 0 0 0 S",\n\t\t\t"1987 1987 3 15 7 0 0 1 D",\n\t\t\t"1987 1987 8 13 7 0 0 0 S",\n\t\t\t"1988 1988 3 9 7 0 0 1 D",\n\t\t\t"1988 1988 8 3 7 0 0 0 S",\n\t\t\t"1989 1989 3 30 7 0 0 1 D",\n\t\t\t"1989 1989 8 3 7 0 0 0 S",\n\t\t\t"1990 1990 2 25 7 0 0 1 D",\n\t\t\t"1990 1990 7 26 7 0 0 0 S",\n\t\t\t"1991 1991 2 24 7 0 0 1 D",\n\t\t\t"1991 1991 8 1 7 0 0 0 S",\n\t\t\t"1992 1992 2 29 7 0 0 1 D",\n\t\t\t"1992 1992 8 6 7 0 0 0 S",\n\t\t\t"1993 1993 3 2 7 0 0 1 D",\n\t\t\t"1993 1993 8 5 7 0 0 0 S",\n\t\t\t"1994 1994 3 1 7 0 0 1 D",\n\t\t\t"1994 1994 7 28 7 0 0 0 S",\n\t\t\t"1995 1995 2 31 7 0 0 1 D",\n\t\t\t"1995 1995 8 3 7 0 0 0 S",\n\t\t\t"1996 1996 2 15 7 0 0 1 D",\n\t\t\t"1996 1996 8 16 7 0 0 0 S",\n\t\t\t"1997 1997 2 21 7 0 0 1 D",\n\t\t\t"1997 1997 8 14 7 0 0 0 S",\n\t\t\t"1998 1998 2 20 7 0 0 1 D",\n\t\t\t"1998 1998 8 6 7 0 0 0 S",\n\t\t\t"1999 1999 3 2 7 2 0 1 D",\n\t\t\t"1999 1999 8 3 7 2 0 0 S",\n\t\t\t"2000 2000 3 14 7 2 0 1 D",\n\t\t\t"2000 2000 9 6 7 1 0 0 S",\n\t\t\t"2001 2001 3 9 7 1 0 1 D",\n\t\t\t"2001 2001 8 24 7 1 0 0 S",\n\t\t\t"2002 2002 2 29 7 1 0 1 D",\n\t\t\t"2002 2002 9 7 7 1 0 0 S",\n\t\t\t"2003 2003 2 28 7 1 0 1 D",\n\t\t\t"2003 2003 9 3 7 1 0 0 S",\n\t\t\t"2004 2004 3 7 7 1 0 1 D",\n\t\t\t"2004 2004 8 22 7 1 0 0 S",\n\t\t\t"2005 2005 3 1 7 2 0 1 D",\n\t\t\t"2005 2005 9 9 7 2 0 0 S",\n\t\t\t"2006 2010 2 26 5 2 0 1 D",\n\t\t\t"2006 2006 9 1 7 2 0 0 S",\n\t\t\t"2007 2007 8 16 7 2 0 0 S",\n\t\t\t"2008 2008 9 5 7 2 0 0 S",\n\t\t\t"2009 2009 8 27 7 2 0 0 S",\n\t\t\t"2010 2010 8 12 7 2 0 0 S",\n\t\t\t"2011 2011 3 1 7 2 0 1 D",\n\t\t\t"2011 2011 9 2 7 2 0 0 S",\n\t\t\t"2012 2012 2 26 5 2 0 1 D",\n\t\t\t"2012 2012 8 23 7 2 0 0 S",\n\t\t\t"2013 9999 2 23 5 2 0 1 D",\n\t\t\t"2013 2026 9 2 0 2 0 0 S",\n\t\t\t"2027 2027 9 3 1 2 0 0 S",\n\t\t\t"2028 9999 9 2 0 2 0 0 S"\n\t\t]\n\t},\n\t"zones": {\n\t\t"Africa/Abidjan": [\n\t\t\t"-0:16:8 - LMT 1912 -0:16:8",\n\t\t\t"0 - GMT"\n\t\t],\n\t\t"Africa/Accra": [\n\t\t\t"-0:0:52 - LMT 1918 -0:0:52",\n\t\t\t"0 Ghana %s"\n\t\t],\n\t\t"Africa/Addis_Ababa": [\n\t\t\t"2:34:48 - LMT 1870 2:34:48",\n\t\t\t"2:35:20 - ADMT 1936_4_5 2:35:20",\n\t\t\t"3 - EAT"\n\t\t],\n\t\t"Africa/Algiers": [\n\t\t\t"0:12:12 - LMT 1891_2_15_0_1 0:12:12",\n\t\t\t"0:9:21 - PMT 1911_2_11 0:9:21",\n\t\t\t"0 Algeria WE%sT 1940_1_25_2",\n\t\t\t"1 Algeria CE%sT 1946_9_7 1",\n\t\t\t"0 - WET 1956_0_29",\n\t\t\t"1 - CET 1963_3_14 1",\n\t\t\t"0 Algeria WE%sT 1977_9_21 1",\n\t\t\t"1 Algeria CE%sT 1979_9_26 1",\n\t\t\t"0 Algeria WE%sT 1981_4",\n\t\t\t"1 - CET"\n\t\t],\n\t\t"Africa/Asmara": [\n\t\t\t"2:35:32 - LMT 1870 2:35:32",\n\t\t\t"2:35:32 - AMT 1890 2:35:32",\n\t\t\t"2:35:20 - ADMT 1936_4_5 2:35:20",\n\t\t\t"3 - EAT"\n\t\t],\n\t\t"Africa/Bamako": [\n\t\t\t"-0:32 - LMT 1912 -0:32",\n\t\t\t"0 - GMT 1934_1_26",\n\t\t\t"-1 - WAT 1960_5_20 -1",\n\t\t\t"0 - GMT"\n\t\t],\n\t\t"Africa/Bangui": [\n\t\t\t"1:14:20 - LMT 1912 1:14:20",\n\t\t\t"1 - WAT"\n\t\t],\n\t\t"Africa/Banjul": [\n\t\t\t"-1:6:36 - LMT 1912 -1:6:36",\n\t\t\t"-1:6:36 - BMT 1935 -1:6:36",\n\t\t\t"-1 - WAT 1964 -1",\n\t\t\t"0 - GMT"\n\t\t],\n\t\t"Africa/Bissau": [\n\t\t\t"-1:2:20 - LMT 1911_4_26 -1:2:20",\n\t\t\t"-1 - WAT 1975 -1",\n\t\t\t"0 - GMT"\n\t\t],\n\t\t"Africa/Blantyre": [\n\t\t\t"2:20 - LMT 1903_2 2:20",\n\t\t\t"2 - CAT"\n\t\t],\n\t\t"Africa/Brazzaville": [\n\t\t\t"1:1:8 - LMT 1912 1:1:8",\n\t\t\t"1 - WAT"\n\t\t],\n\t\t"Africa/Bujumbura": [\n\t\t\t"1:57:28 - LMT 1890 1:57:28",\n\t\t\t"2 - CAT"\n\t\t],\n\t\t"Africa/Cairo": [\n\t\t\t"2:5:9 - LMT 1900_9 2:5:9",\n\t\t\t"2 Egypt EE%sT"\n\t\t],\n\t\t"Africa/Casablanca": [\n\t\t\t"-0:30:20 - LMT 1913_9_26 -0:30:20",\n\t\t\t"0 Morocco WE%sT 1984_2_16",\n\t\t\t"1 - CET 1986 1",\n\t\t\t"0 Morocco WE%sT"\n\t\t],\n\t\t"Africa/Ceuta": [\n\t\t\t"-0:21:16 - LMT 1901 -0:21:16",\n\t\t\t"0 - WET 1918_4_6_23",\n\t\t\t"1 - WEST 1918_9_7_23 1",\n\t\t\t"0 - WET 1924",\n\t\t\t"0 Spain WE%sT 1929",\n\t\t\t"0 SpainAfrica WE%sT 1984_2_16",\n\t\t\t"1 - CET 1986 1",\n\t\t\t"1 EU CE%sT"\n\t\t],\n\t\t"Africa/Conakry": [\n\t\t\t"-0:54:52 - LMT 1912 -0:54:52",\n\t\t\t"0 - GMT 1934_1_26",\n\t\t\t"-1 - WAT 1960 -1",\n\t\t\t"0 - GMT"\n\t\t],\n\t\t"Africa/Dakar": [\n\t\t\t"-1:9:44 - LMT 1912 -1:9:44",\n\t\t\t"-1 - WAT 1941_5 -1",\n\t\t\t"0 - GMT"\n\t\t],\n\t\t"Africa/Dar_es_Salaam": [\n\t\t\t"2:37:8 - LMT 1931 2:37:8",\n\t\t\t"3 - EAT 1948 3",\n\t\t\t"2:45 - BEAUT 1961 2:45",\n\t\t\t"3 - EAT"\n\t\t],\n\t\t"Africa/Djibouti": [\n\t\t\t"2:52:36 - LMT 1911_6 2:52:36",\n\t\t\t"3 - EAT"\n\t\t],\n\t\t"Africa/Douala": [\n\t\t\t"0:38:48 - LMT 1912 0:38:48",\n\t\t\t"1 - WAT"\n\t\t],\n\t\t"Africa/El_Aaiun": [\n\t\t\t"-0:52:48 - LMT 1934_0 -0:52:48",\n\t\t\t"-1 - WAT 1976_3_14 -1",\n\t\t\t"0 - WET"\n\t\t],\n\t\t"Africa/Freetown": [\n\t\t\t"-0:53 - LMT 1882 -0:53",\n\t\t\t"-0:53 - FMT 1913_5 -0:53",\n\t\t\t"-1 SL %s 1957 -1",\n\t\t\t"0 SL %s"\n\t\t],\n\t\t"Africa/Gaborone": [\n\t\t\t"1:43:40 - LMT 1885 1:43:40",\n\t\t\t"1:30 - SAST 1903_2 1:30",\n\t\t\t"2 - CAT 1943_8_19_2 2",\n\t\t\t"3 - CAST 1944_2_19_2 3",\n\t\t\t"2 - CAT"\n\t\t],\n\t\t"Africa/Harare": [\n\t\t\t"2:4:12 - LMT 1903_2 2:4:12",\n\t\t\t"2 - CAT"\n\t\t],\n\t\t"Africa/Johannesburg": [\n\t\t\t"1:52 - LMT 1892_1_8 1:52",\n\t\t\t"1:30 - SAST 1903_2 1:30",\n\t\t\t"2 SA SAST"\n\t\t],\n\t\t"Africa/Juba": [\n\t\t\t"2:6:24 - LMT 1931 2:6:24",\n\t\t\t"2 Sudan CA%sT 2000_0_15_12 2",\n\t\t\t"3 - EAT"\n\t\t],\n\t\t"Africa/Kampala": [\n\t\t\t"2:9:40 - LMT 1928_6 2:9:40",\n\t\t\t"3 - EAT 1930 3",\n\t\t\t"2:30 - BEAT 1948 2:30",\n\t\t\t"2:45 - BEAUT 1957 2:45",\n\t\t\t"3 - EAT"\n\t\t],\n\t\t"Africa/Khartoum": [\n\t\t\t"2:10:8 - LMT 1931 2:10:8",\n\t\t\t"2 Sudan CA%sT 2000_0_15_12 2",\n\t\t\t"3 - EAT"\n\t\t],\n\t\t"Africa/Kigali": [\n\t\t\t"2:0:16 - LMT 1935_5 2:0:16",\n\t\t\t"2 - CAT"\n\t\t],\n\t\t"Africa/Kinshasa": [\n\t\t\t"1:1:12 - LMT 1897_10_9 1:1:12",\n\t\t\t"1 - WAT"\n\t\t],\n\t\t"Africa/Lagos": [\n\t\t\t"0:13:36 - LMT 1919_8 0:13:36",\n\t\t\t"1 - WAT"\n\t\t],\n\t\t"Africa/Libreville": [\n\t\t\t"0:37:48 - LMT 1912 0:37:48",\n\t\t\t"1 - WAT"\n\t\t],\n\t\t"Africa/Lome": [\n\t\t\t"0:4:52 - LMT 1893 0:4:52",\n\t\t\t"0 - GMT"\n\t\t],\n\t\t"Africa/Luanda": [\n\t\t\t"0:52:56 - LMT 1892 0:52:56",\n\t\t\t"0:52:4 - AOT 1911_4_26 0:52:4",\n\t\t\t"1 - WAT"\n\t\t],\n\t\t"Africa/Lubumbashi": [\n\t\t\t"1:49:52 - LMT 1897_10_9 1:49:52",\n\t\t\t"2 - CAT"\n\t\t],\n\t\t"Africa/Lusaka": [\n\t\t\t"1:53:8 - LMT 1903_2 1:53:8",\n\t\t\t"2 - CAT"\n\t\t],\n\t\t"Africa/Malabo": [\n\t\t\t"0:35:8 - LMT 1912 0:35:8",\n\t\t\t"0 - GMT 1963_11_15",\n\t\t\t"1 - WAT"\n\t\t],\n\t\t"Africa/Maputo": [\n\t\t\t"2:10:20 - LMT 1903_2 2:10:20",\n\t\t\t"2 - CAT"\n\t\t],\n\t\t"Africa/Maseru": [\n\t\t\t"1:50 - LMT 1903_2 1:50",\n\t\t\t"2 - SAST 1943_8_19_2 2",\n\t\t\t"3 - SAST 1944_2_19_2 3",\n\t\t\t"2 - SAST"\n\t\t],\n\t\t"Africa/Mbabane": [\n\t\t\t"2:4:24 - LMT 1903_2 2:4:24",\n\t\t\t"2 - SAST"\n\t\t],\n\t\t"Africa/Mogadishu": [\n\t\t\t"3:1:28 - LMT 1893_10 3:1:28",\n\t\t\t"3 - EAT 1931 3",\n\t\t\t"2:30 - BEAT 1957 2:30",\n\t\t\t"3 - EAT"\n\t\t],\n\t\t"Africa/Monrovia": [\n\t\t\t"-0:43:8 - LMT 1882 -0:43:8",\n\t\t\t"-0:43:8 - MMT 1919_2 -0:43:8",\n\t\t\t"-0:44:30 - LRT 1972_4 -0:44:30",\n\t\t\t"0 - GMT"\n\t\t],\n\t\t"Africa/Nairobi": [\n\t\t\t"2:27:16 - LMT 1928_6 2:27:16",\n\t\t\t"3 - EAT 1930 3",\n\t\t\t"2:30 - BEAT 1940 2:30",\n\t\t\t"2:45 - BEAUT 1960 2:45",\n\t\t\t"3 - EAT"\n\t\t],\n\t\t"Africa/Ndjamena": [\n\t\t\t"1:0:12 - LMT 1912 1:0:12",\n\t\t\t"1 - WAT 1979_9_14 1",\n\t\t\t"2 - WAST 1980_2_8 2",\n\t\t\t"1 - WAT"\n\t\t],\n\t\t"Africa/Niamey": [\n\t\t\t"0:8:28 - LMT 1912 0:8:28",\n\t\t\t"-1 - WAT 1934_1_26 -1",\n\t\t\t"0 - GMT 1960",\n\t\t\t"1 - WAT"\n\t\t],\n\t\t"Africa/Nouakchott": [\n\t\t\t"-1:3:48 - LMT 1912 -1:3:48",\n\t\t\t"0 - GMT 1934_1_26",\n\t\t\t"-1 - WAT 1960_10_28 -1",\n\t\t\t"0 - GMT"\n\t\t],\n\t\t"Africa/Ouagadougou": [\n\t\t\t"-0:6:4 - LMT 1912 -0:6:4",\n\t\t\t"0 - GMT"\n\t\t],\n\t\t"Africa/Porto-Novo": [\n\t\t\t"0:10:28 - LMT 1912 0:10:28",\n\t\t\t"0 - GMT 1934_1_26",\n\t\t\t"1 - WAT"\n\t\t],\n\t\t"Africa/Sao_Tome": [\n\t\t\t"0:26:56 - LMT 1884 0:26:56",\n\t\t\t"-0:36:32 - LMT 1912 -0:36:32",\n\t\t\t"0 - GMT"\n\t\t],\n\t\t"Africa/Tripoli": [\n\t\t\t"0:52:44 - LMT 1920 0:52:44",\n\t\t\t"1 Libya CE%sT 1959 1",\n\t\t\t"2 - EET 1982 2",\n\t\t\t"1 Libya CE%sT 1990_4_4 1",\n\t\t\t"2 - EET 1996_8_30 2",\n\t\t\t"1 Libya CE%sT 1997_9_4 2",\n\t\t\t"2 - EET 2012_10_10_2 2",\n\t\t\t"1 Libya CE%sT"\n\t\t],\n\t\t"Africa/Tunis": [\n\t\t\t"0:40:44 - LMT 1881_4_12 0:40:44",\n\t\t\t"0:9:21 - PMT 1911_2_11 0:9:21",\n\t\t\t"1 Tunisia CE%sT"\n\t\t],\n\t\t"Africa/Windhoek": [\n\t\t\t"1:8:24 - LMT 1892_1_8 1:8:24",\n\t\t\t"1:30 - SWAT 1903_2 1:30",\n\t\t\t"2 - SAST 1942_8_20_2 2",\n\t\t\t"3 - SAST 1943_2_21_2 3",\n\t\t\t"2 - SAST 1990_2_21 2",\n\t\t\t"2 - CAT 1994_3_3 2",\n\t\t\t"1 Namibia WA%sT"\n\t\t],\n\t\t"America/Adak": [\n\t\t\t"12:13:21 - LMT 1867_9_18 12:13:21",\n\t\t\t"-11:46:38 - LMT 1900_7_20_12 -11:46:38",\n\t\t\t"-11 - NST 1942 -11",\n\t\t\t"-11 US N%sT 1946 -11",\n\t\t\t"-11 - NST 1967_3 -11",\n\t\t\t"-11 - BST 1969 -11",\n\t\t\t"-11 US B%sT 1983_9_30_2 -10",\n\t\t\t"-10 US AH%sT 1983_10_30 -10",\n\t\t\t"-10 US HA%sT"\n\t\t],\n\t\t"America/Anchorage": [\n\t\t\t"14:0:24 - LMT 1867_9_18 14:0:24",\n\t\t\t"-9:59:36 - LMT 1900_7_20_12 -9:59:36",\n\t\t\t"-10 - CAT 1942 -10",\n\t\t\t"-10 US CAT/CAWT 1945_7_14_23",\n\t\t\t"-10 US CAT/CAPT 1946 -10",\n\t\t\t"-10 - CAT 1967_3 -10",\n\t\t\t"-10 - AHST 1969 -10",\n\t\t\t"-10 US AH%sT 1983_9_30_2 -9",\n\t\t\t"-9 US Y%sT 1983_10_30 -9",\n\t\t\t"-9 US AK%sT"\n\t\t],\n\t\t"America/Anguilla": [\n\t\t\t"-4:12:16 - LMT 1912_2_2 -4:12:16",\n\t\t\t"-4 - AST"\n\t\t],\n\t\t"America/Antigua": [\n\t\t\t"-4:7:12 - LMT 1912_2_2 -4:7:12",\n\t\t\t"-5 - EST 1951 -5",\n\t\t\t"-4 - AST"\n\t\t],\n\t\t"America/Araguaina": [\n\t\t\t"-3:12:48 - LMT 1914 -3:12:48",\n\t\t\t"-3 Brazil BR%sT 1990_8_17 -3",\n\t\t\t"-3 - BRT 1995_8_14 -3",\n\t\t\t"-3 Brazil BR%sT 2003_8_24 -3",\n\t\t\t"-3 - BRT 2012_9_21 -3",\n\t\t\t"-3 Brazil BR%sT"\n\t\t],\n\t\t"America/Argentina/Buenos_Aires": [\n\t\t\t"-3:53:48 - LMT 1894_9_31 -3:53:48",\n\t\t\t"-4:16:48 - CMT 1920_4 -4:16:48",\n\t\t\t"-4 - ART 1930_11 -4",\n\t\t\t"-4 Arg AR%sT 1969_9_5 -4",\n\t\t\t"-3 Arg AR%sT 1999_9_3 -3",\n\t\t\t"-4 Arg AR%sT 2000_2_3 -3",\n\t\t\t"-3 Arg AR%sT"\n\t\t],\n\t\t"America/Argentina/Catamarca": [\n\t\t\t"-4:23:8 - LMT 1894_9_31 -4:23:8",\n\t\t\t"-4:16:48 - CMT 1920_4 -4:16:48",\n\t\t\t"-4 - ART 1930_11 -4",\n\t\t\t"-4 Arg AR%sT 1969_9_5 -4",\n\t\t\t"-3 Arg AR%sT 1991_2_3 -2",\n\t\t\t"-4 - WART 1991_9_20 -4",\n\t\t\t"-3 Arg AR%sT 1999_9_3 -3",\n\t\t\t"-4 Arg AR%sT 2000_2_3 -3",\n\t\t\t"-3 - ART 2004_5_1 -3",\n\t\t\t"-4 - WART 2004_5_20 -4",\n\t\t\t"-3 Arg AR%sT 2008_9_18 -3",\n\t\t\t"-3 - ART"\n\t\t],\n\t\t"America/Argentina/Cordoba": [\n\t\t\t"-4:16:48 - LMT 1894_9_31 -4:16:48",\n\t\t\t"-4:16:48 - CMT 1920_4 -4:16:48",\n\t\t\t"-4 - ART 1930_11 -4",\n\t\t\t"-4 Arg AR%sT 1969_9_5 -4",\n\t\t\t"-3 Arg AR%sT 1991_2_3 -2",\n\t\t\t"-4 - WART 1991_9_20 -4",\n\t\t\t"-3 Arg AR%sT 1999_9_3 -3",\n\t\t\t"-4 Arg AR%sT 2000_2_3 -3",\n\t\t\t"-3 Arg AR%sT"\n\t\t],\n\t\t"America/Argentina/Jujuy": [\n\t\t\t"-4:21:12 - LMT 1894_9_31 -4:21:12",\n\t\t\t"-4:16:48 - CMT 1920_4 -4:16:48",\n\t\t\t"-4 - ART 1930_11 -4",\n\t\t\t"-4 Arg AR%sT 1969_9_5 -4",\n\t\t\t"-3 Arg AR%sT 1990_2_4 -2",\n\t\t\t"-4 - WART 1990_9_28 -4",\n\t\t\t"-3 - WARST 1991_2_17 -3",\n\t\t\t"-4 - WART 1991_9_6 -4",\n\t\t\t"-2 - ARST 1992 -2",\n\t\t\t"-3 Arg AR%sT 1999_9_3 -3",\n\t\t\t"-4 Arg AR%sT 2000_2_3 -3",\n\t\t\t"-3 Arg AR%sT 2008_9_18 -3",\n\t\t\t"-3 - ART"\n\t\t],\n\t\t"America/Argentina/La_Rioja": [\n\t\t\t"-4:27:24 - LMT 1894_9_31 -4:27:24",\n\t\t\t"-4:16:48 - CMT 1920_4 -4:16:48",\n\t\t\t"-4 - ART 1930_11 -4",\n\t\t\t"-4 Arg AR%sT 1969_9_5 -4",\n\t\t\t"-3 Arg AR%sT 1991_2_1 -2",\n\t\t\t"-4 - WART 1991_4_7 -4",\n\t\t\t"-3 Arg AR%sT 1999_9_3 -3",\n\t\t\t"-4 Arg AR%sT 2000_2_3 -3",\n\t\t\t"-3 - ART 2004_5_1 -3",\n\t\t\t"-4 - WART 2004_5_20 -4",\n\t\t\t"-3 Arg AR%sT 2008_9_18 -3",\n\t\t\t"-3 - ART"\n\t\t],\n\t\t"America/Argentina/Mendoza": [\n\t\t\t"-4:35:16 - LMT 1894_9_31 -4:35:16",\n\t\t\t"-4:16:48 - CMT 1920_4 -4:16:48",\n\t\t\t"-4 - ART 1930_11 -4",\n\t\t\t"-4 Arg AR%sT 1969_9_5 -4",\n\t\t\t"-3 Arg AR%sT 1990_2_4 -2",\n\t\t\t"-4 - WART 1990_9_15 -4",\n\t\t\t"-3 - WARST 1991_2_1 -3",\n\t\t\t"-4 - WART 1991_9_15 -4",\n\t\t\t"-3 - WARST 1992_2_1 -3",\n\t\t\t"-4 - WART 1992_9_18 -4",\n\t\t\t"-3 Arg AR%sT 1999_9_3 -3",\n\t\t\t"-4 Arg AR%sT 2000_2_3 -3",\n\t\t\t"-3 - ART 2004_4_23 -3",\n\t\t\t"-4 - WART 2004_8_26 -4",\n\t\t\t"-3 Arg AR%sT 2008_9_18 -3",\n\t\t\t"-3 - ART"\n\t\t],\n\t\t"America/Argentina/Rio_Gallegos": [\n\t\t\t"-4:36:52 - LMT 1894_9_31 -4:36:52",\n\t\t\t"-4:16:48 - CMT 1920_4 -4:16:48",\n\t\t\t"-4 - ART 1930_11 -4",\n\t\t\t"-4 Arg AR%sT 1969_9_5 -4",\n\t\t\t"-3 Arg AR%sT 1999_9_3 -3",\n\t\t\t"-4 Arg AR%sT 2000_2_3 -3",\n\t\t\t"-3 - ART 2004_5_1 -3",\n\t\t\t"-4 - WART 2004_5_20 -4",\n\t\t\t"-3 Arg AR%sT 2008_9_18 -3",\n\t\t\t"-3 - ART"\n\t\t],\n\t\t"America/Argentina/Salta": [\n\t\t\t"-4:21:40 - LMT 1894_9_31 -4:21:40",\n\t\t\t"-4:16:48 - CMT 1920_4 -4:16:48",\n\t\t\t"-4 - ART 1930_11 -4",\n\t\t\t"-4 Arg AR%sT 1969_9_5 -4",\n\t\t\t"-3 Arg AR%sT 1991_2_3 -2",\n\t\t\t"-4 - WART 1991_9_20 -4",\n\t\t\t"-3 Arg AR%sT 1999_9_3 -3",\n\t\t\t"-4 Arg AR%sT 2000_2_3 -3",\n\t\t\t"-3 Arg AR%sT 2008_9_18 -3",\n\t\t\t"-3 - ART"\n\t\t],\n\t\t"America/Argentina/San_Juan": [\n\t\t\t"-4:34:4 - LMT 1894_9_31 -4:34:4",\n\t\t\t"-4:16:48 - CMT 1920_4 -4:16:48",\n\t\t\t"-4 - ART 1930_11 -4",\n\t\t\t"-4 Arg AR%sT 1969_9_5 -4",\n\t\t\t"-3 Arg AR%sT 1991_2_1 -2",\n\t\t\t"-4 - WART 1991_4_7 -4",\n\t\t\t"-3 Arg AR%sT 1999_9_3 -3",\n\t\t\t"-4 Arg AR%sT 2000_2_3 -3",\n\t\t\t"-3 - ART 2004_4_31 -3",\n\t\t\t"-4 - WART 2004_6_25 -4",\n\t\t\t"-3 Arg AR%sT 2008_9_18 -3",\n\t\t\t"-3 - ART"\n\t\t],\n\t\t"America/Argentina/San_Luis": [\n\t\t\t"-4:25:24 - LMT 1894_9_31 -4:25:24",\n\t\t\t"-4:16:48 - CMT 1920_4 -4:16:48",\n\t\t\t"-4 - ART 1930_11 -4",\n\t\t\t"-4 Arg AR%sT 1969_9_5 -4",\n\t\t\t"-3 Arg AR%sT 1990 -2",\n\t\t\t"-2 - ARST 1990_2_14 -2",\n\t\t\t"-4 - WART 1990_9_15 -4",\n\t\t\t"-3 - WARST 1991_2_1 -3",\n\t\t\t"-4 - WART 1991_5_1 -4",\n\t\t\t"-3 - ART 1999_9_3 -3",\n\t\t\t"-3 - WARST 2000_2_3 -3",\n\t\t\t"-3 - ART 2004_4_31 -3",\n\t\t\t"-4 - WART 2004_6_25 -4",\n\t\t\t"-3 Arg AR%sT 2008_0_21 -2",\n\t\t\t"-4 SanLuis WAR%sT"\n\t\t],\n\t\t"America/Argentina/Tucuman": [\n\t\t\t"-4:20:52 - LMT 1894_9_31 -4:20:52",\n\t\t\t"-4:16:48 - CMT 1920_4 -4:16:48",\n\t\t\t"-4 - ART 1930_11 -4",\n\t\t\t"-4 Arg AR%sT 1969_9_5 -4",\n\t\t\t"-3 Arg AR%sT 1991_2_3 -2",\n\t\t\t"-4 - WART 1991_9_20 -4",\n\t\t\t"-3 Arg AR%sT 1999_9_3 -3",\n\t\t\t"-4 Arg AR%sT 2000_2_3 -3",\n\t\t\t"-3 - ART 2004_5_1 -3",\n\t\t\t"-4 - WART 2004_5_13 -4",\n\t\t\t"-3 Arg AR%sT"\n\t\t],\n\t\t"America/Argentina/Ushuaia": [\n\t\t\t"-4:33:12 - LMT 1894_9_31 -4:33:12",\n\t\t\t"-4:16:48 - CMT 1920_4 -4:16:48",\n\t\t\t"-4 - ART 1930_11 -4",\n\t\t\t"-4 Arg AR%sT 1969_9_5 -4",\n\t\t\t"-3 Arg AR%sT 1999_9_3 -3",\n\t\t\t"-4 Arg AR%sT 2000_2_3 -3",\n\t\t\t"-3 - ART 2004_4_30 -3",\n\t\t\t"-4 - WART 2004_5_20 -4",\n\t\t\t"-3 Arg AR%sT 2008_9_18 -3",\n\t\t\t"-3 - ART"\n\t\t],\n\t\t"America/Aruba": [\n\t\t\t"-4:40:24 - LMT 1912_1_12 -4:40:24",\n\t\t\t"-4:30 - ANT 1965 -4:30",\n\t\t\t"-4 - AST"\n\t\t],\n\t\t"America/Asuncion": [\n\t\t\t"-3:50:40 - LMT 1890 -3:50:40",\n\t\t\t"-3:50:40 - AMT 1931_9_10 -3:50:40",\n\t\t\t"-4 - PYT 1972_9 -4",\n\t\t\t"-3 - PYT 1974_3 -3",\n\t\t\t"-4 Para PY%sT"\n\t\t],\n\t\t"America/Atikokan": [\n\t\t\t"-6:6:28 - LMT 1895 -6:6:28",\n\t\t\t"-6 Canada C%sT 1940_8_29 -6",\n\t\t\t"-5 - CDT 1942_1_9_2 -6",\n\t\t\t"-6 Canada C%sT 1945_8_30_2 -5",\n\t\t\t"-5 - EST"\n\t\t],\n\t\t"America/Bahia": [\n\t\t\t"-2:34:4 - LMT 1914 -2:34:4",\n\t\t\t"-3 Brazil BR%sT 2003_8_24 -3",\n\t\t\t"-3 - BRT 2011_9_16 -3",\n\t\t\t"-3 Brazil BR%sT 2012_9_21 -3",\n\t\t\t"-3 - BRT"\n\t\t],\n\t\t"America/Bahia_Banderas": [\n\t\t\t"-7:1 - LMT 1921_11_31_23_59 -7:1",\n\t\t\t"-7 - MST 1927_5_10_23 -7",\n\t\t\t"-6 - CST 1930_10_15 -6",\n\t\t\t"-7 - MST 1931_4_1_23 -7",\n\t\t\t"-6 - CST 1931_9 -6",\n\t\t\t"-7 - MST 1932_3_1 -7",\n\t\t\t"-6 - CST 1942_3_24 -6",\n\t\t\t"-7 - MST 1949_0_14 -7",\n\t\t\t"-8 - PST 1970 -8",\n\t\t\t"-7 Mexico M%sT 2010_3_4_2 -7",\n\t\t\t"-6 Mexico C%sT"\n\t\t],\n\t\t"America/Barbados": [\n\t\t\t"-3:58:29 - LMT 1924 -3:58:29",\n\t\t\t"-3:58:29 - BMT 1932 -3:58:29",\n\t\t\t"-4 Barb A%sT"\n\t\t],\n\t\t"America/Belem": [\n\t\t\t"-3:13:56 - LMT 1914 -3:13:56",\n\t\t\t"-3 Brazil BR%sT 1988_8_12 -3",\n\t\t\t"-3 - BRT"\n\t\t],\n\t\t"America/Belize": [\n\t\t\t"-5:52:48 - LMT 1912_3 -5:52:48",\n\t\t\t"-6 Belize C%sT"\n\t\t],\n\t\t"America/Blanc-Sablon": [\n\t\t\t"-3:48:28 - LMT 1884 -3:48:28",\n\t\t\t"-4 Canada A%sT 1970 -4",\n\t\t\t"-4 - AST"\n\t\t],\n\t\t"America/Boa_Vista": [\n\t\t\t"-4:2:40 - LMT 1914 -4:2:40",\n\t\t\t"-4 Brazil AM%sT 1988_8_12 -4",\n\t\t\t"-4 - AMT 1999_8_30 -4",\n\t\t\t"-4 Brazil AM%sT 2000_9_15 -3",\n\t\t\t"-4 - AMT"\n\t\t],\n\t\t"America/Bogota": [\n\t\t\t"-4:56:16 - LMT 1884_2_13 -4:56:16",\n\t\t\t"-4:56:16 - BMT 1914_10_23 -4:56:16",\n\t\t\t"-5 CO CO%sT"\n\t\t],\n\t\t"America/Boise": [\n\t\t\t"-7:44:49 - LMT 1883_10_18_12_15_11 -7:44:49",\n\t\t\t"-8 US P%sT 1923_4_13_2 -8",\n\t\t\t"-7 US M%sT 1974 -7",\n\t\t\t"-7 - MST 1974_1_3_2 -7",\n\t\t\t"-7 US M%sT"\n\t\t],\n\t\t"America/Cambridge_Bay": [\n\t\t\t"0 - zzz 1920",\n\t\t\t"-7 NT_YK M%sT 1999_9_31_2 -6",\n\t\t\t"-6 Canada C%sT 2000_9_29_2 -5",\n\t\t\t"-5 - EST 2000_10_5_0 -5",\n\t\t\t"-6 - CST 2001_3_1_3 -6",\n\t\t\t"-7 Canada M%sT"\n\t\t],\n\t\t"America/Campo_Grande": [\n\t\t\t"-3:38:28 - LMT 1914 -3:38:28",\n\t\t\t"-4 Brazil AM%sT"\n\t\t],\n\t\t"America/Cancun": [\n\t\t\t"-5:47:4 - LMT 1922_0_1_0_12_56 -5:47:4",\n\t\t\t"-6 - CST 1981_11_23 -6",\n\t\t\t"-5 Mexico E%sT 1998_7_2_2 -4",\n\t\t\t"-6 Mexico C%sT"\n\t\t],\n\t\t"America/Caracas": [\n\t\t\t"-4:27:44 - LMT 1890 -4:27:44",\n\t\t\t"-4:27:40 - CMT 1912_1_12 -4:27:40",\n\t\t\t"-4:30 - VET 1965 -4:30",\n\t\t\t"-4 - VET 2007_11_9_03 -4",\n\t\t\t"-4:30 - VET"\n\t\t],\n\t\t"America/Cayenne": [\n\t\t\t"-3:29:20 - LMT 1911_6 -3:29:20",\n\t\t\t"-4 - GFT 1967_9 -4",\n\t\t\t"-3 - GFT"\n\t\t],\n\t\t"America/Cayman": [\n\t\t\t"-5:25:32 - LMT 1890 -5:25:32",\n\t\t\t"-5:7:12 - KMT 1912_1 -5:7:12",\n\t\t\t"-5 - EST"\n\t\t],\n\t\t"America/Chicago": [\n\t\t\t"-5:50:36 - LMT 1883_10_18_12_9_24 -5:50:36",\n\t\t\t"-6 US C%sT 1920 -6",\n\t\t\t"-6 Chicago C%sT 1936_2_1_2 -6",\n\t\t\t"-5 - EST 1936_10_15_2 -5",\n\t\t\t"-6 Chicago C%sT 1942 -6",\n\t\t\t"-6 US C%sT 1946 -6",\n\t\t\t"-6 Chicago C%sT 1967 -6",\n\t\t\t"-6 US C%sT"\n\t\t],\n\t\t"America/Chihuahua": [\n\t\t\t"-7:4:20 - LMT 1921_11_31_23_55_40 -7:4:20",\n\t\t\t"-7 - MST 1927_5_10_23 -7",\n\t\t\t"-6 - CST 1930_10_15 -6",\n\t\t\t"-7 - MST 1931_4_1_23 -7",\n\t\t\t"-6 - CST 1931_9 -6",\n\t\t\t"-7 - MST 1932_3_1 -7",\n\t\t\t"-6 - CST 1996 -6",\n\t\t\t"-6 Mexico C%sT 1998 -6",\n\t\t\t"-6 - CST 1998_3_5_3 -6",\n\t\t\t"-7 Mexico M%sT"\n\t\t],\n\t\t"America/Costa_Rica": [\n\t\t\t"-5:36:13 - LMT 1890 -5:36:13",\n\t\t\t"-5:36:13 - SJMT 1921_0_15 -5:36:13",\n\t\t\t"-6 CR C%sT"\n\t\t],\n\t\t"America/Creston": [\n\t\t\t"-7:46:4 - LMT 1884 -7:46:4",\n\t\t\t"-7 - MST 1916_9_1 -7",\n\t\t\t"-8 - PST 1918_5_2 -8",\n\t\t\t"-7 - MST"\n\t\t],\n\t\t"America/Cuiaba": [\n\t\t\t"-3:44:20 - LMT 1914 -3:44:20",\n\t\t\t"-4 Brazil AM%sT 2003_8_24 -4",\n\t\t\t"-4 - AMT 2004_9_1 -4",\n\t\t\t"-4 Brazil AM%sT"\n\t\t],\n\t\t"America/Curacao": [\n\t\t\t"-4:35:47 - LMT 1912_1_12 -4:35:47",\n\t\t\t"-4:30 - ANT 1965 -4:30",\n\t\t\t"-4 - AST"\n\t\t],\n\t\t"America/Danmarkshavn": [\n\t\t\t"-1:14:40 - LMT 1916_6_28 -1:14:40",\n\t\t\t"-3 - WGT 1980_3_6_2 -3",\n\t\t\t"-3 EU WG%sT 1996 -3",\n\t\t\t"0 - GMT"\n\t\t],\n\t\t"America/Dawson": [\n\t\t\t"-9:17:40 - LMT 1900_7_20 -9:17:40",\n\t\t\t"-9 NT_YK Y%sT 1973_9_28_0 -9",\n\t\t\t"-8 NT_YK P%sT 1980 -8",\n\t\t\t"-8 Canada P%sT"\n\t\t],\n\t\t"America/Dawson_Creek": [\n\t\t\t"-8:0:56 - LMT 1884 -8:0:56",\n\t\t\t"-8 Canada P%sT 1947 -8",\n\t\t\t"-8 Vanc P%sT 1972_7_30_2 -7",\n\t\t\t"-7 - MST"\n\t\t],\n\t\t"America/Denver": [\n\t\t\t"-6:59:56 - LMT 1883_10_18_12_0_4 -6:59:56",\n\t\t\t"-7 US M%sT 1920 -7",\n\t\t\t"-7 Denver M%sT 1942 -7",\n\t\t\t"-7 US M%sT 1946 -7",\n\t\t\t"-7 Denver M%sT 1967 -7",\n\t\t\t"-7 US M%sT"\n\t\t],\n\t\t"America/Detroit": [\n\t\t\t"-5:32:11 - LMT 1905 -5:32:11",\n\t\t\t"-6 - CST 1915_4_15_2 -6",\n\t\t\t"-5 - EST 1942 -5",\n\t\t\t"-5 US E%sT 1946 -5",\n\t\t\t"-5 Detroit E%sT 1973 -5",\n\t\t\t"-5 US E%sT 1975 -5",\n\t\t\t"-5 - EST 1975_3_27_2 -5",\n\t\t\t"-5 US E%sT"\n\t\t],\n\t\t"America/Dominica": [\n\t\t\t"-4:5:36 - LMT 1911_6_1_0_1 -4:5:36",\n\t\t\t"-4 - AST"\n\t\t],\n\t\t"America/Edmonton": [\n\t\t\t"-7:33:52 - LMT 1906_8 -7:33:52",\n\t\t\t"-7 Edm M%sT 1987 -7",\n\t\t\t"-7 Canada M%sT"\n\t\t],\n\t\t"America/Eirunepe": [\n\t\t\t"-4:39:28 - LMT 1914 -4:39:28",\n\t\t\t"-5 Brazil AC%sT 1988_8_12 -5",\n\t\t\t"-5 - ACT 1993_8_28 -5",\n\t\t\t"-5 Brazil AC%sT 1994_8_22 -5",\n\t\t\t"-5 - ACT 2008_5_24_00 -5",\n\t\t\t"-4 - AMT"\n\t\t],\n\t\t"America/El_Salvador": [\n\t\t\t"-5:56:48 - LMT 1921 -5:56:48",\n\t\t\t"-6 Salv C%sT"\n\t\t],\n\t\t"America/Fortaleza": [\n\t\t\t"-2:34 - LMT 1914 -2:34",\n\t\t\t"-3 Brazil BR%sT 1990_8_17 -3",\n\t\t\t"-3 - BRT 1999_8_30 -3",\n\t\t\t"-3 Brazil BR%sT 2000_9_22 -2",\n\t\t\t"-3 - BRT 2001_8_13 -3",\n\t\t\t"-3 Brazil BR%sT 2002_9_1 -3",\n\t\t\t"-3 - BRT"\n\t\t],\n\t\t"America/Glace_Bay": [\n\t\t\t"-3:59:48 - LMT 1902_5_15 -3:59:48",\n\t\t\t"-4 Canada A%sT 1953 -4",\n\t\t\t"-4 Halifax A%sT 1954 -4",\n\t\t\t"-4 - AST 1972 -4",\n\t\t\t"-4 Halifax A%sT 1974 -4",\n\t\t\t"-4 Canada A%sT"\n\t\t],\n\t\t"America/Godthab": [\n\t\t\t"-3:26:56 - LMT 1916_6_28 -3:26:56",\n\t\t\t"-3 - WGT 1980_3_6_2 -3",\n\t\t\t"-3 EU WG%sT"\n\t\t],\n\t\t"America/Goose_Bay": [\n\t\t\t"-4:1:40 - LMT 1884 -4:1:40",\n\t\t\t"-3:30:52 - NST 1918 -3:30:52",\n\t\t\t"-3:30:52 Canada N%sT 1919 -3:30:52",\n\t\t\t"-3:30:52 - NST 1935_2_30 -3:30:52",\n\t\t\t"-3:30 - NST 1936 -3:30",\n\t\t\t"-3:30 StJohns N%sT 1942_4_11 -3:30",\n\t\t\t"-3:30 Canada N%sT 1946 -3:30",\n\t\t\t"-3:30 StJohns N%sT 1966_2_15_2 -3:30",\n\t\t\t"-4 StJohns A%sT 2011_10 -3",\n\t\t\t"-4 Canada A%sT"\n\t\t],\n\t\t"America/Grand_Turk": [\n\t\t\t"-4:44:32 - LMT 1890 -4:44:32",\n\t\t\t"-5:7:12 - KMT 1912_1 -5:7:12",\n\t\t\t"-5 TC E%sT"\n\t\t],\n\t\t"America/Grenada": [\n\t\t\t"-4:7 - LMT 1911_6 -4:7",\n\t\t\t"-4 - AST"\n\t\t],\n\t\t"America/Guadeloupe": [\n\t\t\t"-4:6:8 - LMT 1911_5_8 -4:6:8",\n\t\t\t"-4 - AST"\n\t\t],\n\t\t"America/Guatemala": [\n\t\t\t"-6:2:4 - LMT 1918_9_5 -6:2:4",\n\t\t\t"-6 Guat C%sT"\n\t\t],\n\t\t"America/Guayaquil": [\n\t\t\t"-5:19:20 - LMT 1890 -5:19:20",\n\t\t\t"-5:14 - QMT 1931 -5:14",\n\t\t\t"-5 - ECT"\n\t\t],\n\t\t"America/Guyana": [\n\t\t\t"-3:52:40 - LMT 1915_2 -3:52:40",\n\t\t\t"-3:45 - GBGT 1966_4_26 -3:45",\n\t\t\t"-3:45 - GYT 1975_6_31 -3:45",\n\t\t\t"-3 - GYT 1991 -3",\n\t\t\t"-4 - GYT"\n\t\t],\n\t\t"America/Halifax": [\n\t\t\t"-4:14:24 - LMT 1902_5_15 -4:14:24",\n\t\t\t"-4 Halifax A%sT 1918 -4",\n\t\t\t"-4 Canada A%sT 1919 -4",\n\t\t\t"-4 Halifax A%sT 1942_1_9_2 -4",\n\t\t\t"-4 Canada A%sT 1946 -4",\n\t\t\t"-4 Halifax A%sT 1974 -4",\n\t\t\t"-4 Canada A%sT"\n\t\t],\n\t\t"America/Havana": [\n\t\t\t"-5:29:28 - LMT 1890 -5:29:28",\n\t\t\t"-5:29:36 - HMT 1925_6_19_12 -5:29:36",\n\t\t\t"-5 Cuba C%sT"\n\t\t],\n\t\t"America/Hermosillo": [\n\t\t\t"-7:23:52 - LMT 1921_11_31_23_36_8 -7:23:52",\n\t\t\t"-7 - MST 1927_5_10_23 -7",\n\t\t\t"-6 - CST 1930_10_15 -6",\n\t\t\t"-7 - MST 1931_4_1_23 -7",\n\t\t\t"-6 - CST 1931_9 -6",\n\t\t\t"-7 - MST 1932_3_1 -7",\n\t\t\t"-6 - CST 1942_3_24 -6",\n\t\t\t"-7 - MST 1949_0_14 -7",\n\t\t\t"-8 - PST 1970 -8",\n\t\t\t"-7 Mexico M%sT 1999 -7",\n\t\t\t"-7 - MST"\n\t\t],\n\t\t"America/Indiana/Indianapolis": [\n\t\t\t"-5:44:38 - LMT 1883_10_18_12_15_22 -5:44:38",\n\t\t\t"-6 US C%sT 1920 -6",\n\t\t\t"-6 Indianapolis C%sT 1942 -6",\n\t\t\t"-6 US C%sT 1946 -6",\n\t\t\t"-6 Indianapolis C%sT 1955_3_24_2 -6",\n\t\t\t"-5 - EST 1957_8_29_2 -5",\n\t\t\t"-6 - CST 1958_3_27_2 -6",\n\t\t\t"-5 - EST 1969 -5",\n\t\t\t"-5 US E%sT 1971 -5",\n\t\t\t"-5 - EST 2006 -5",\n\t\t\t"-5 US E%sT"\n\t\t],\n\t\t"America/Indiana/Knox": [\n\t\t\t"-5:46:30 - LMT 1883_10_18_12_13_30 -5:46:30",\n\t\t\t"-6 US C%sT 1947 -6",\n\t\t\t"-6 Starke C%sT 1962_3_29_2 -6",\n\t\t\t"-5 - EST 1963_9_27_2 -5",\n\t\t\t"-6 US C%sT 1991_9_27_2 -5",\n\t\t\t"-5 - EST 2006_3_2_2 -5",\n\t\t\t"-6 US C%sT"\n\t\t],\n\t\t"America/Indiana/Marengo": [\n\t\t\t"-5:45:23 - LMT 1883_10_18_12_14_37 -5:45:23",\n\t\t\t"-6 US C%sT 1951 -6",\n\t\t\t"-6 Marengo C%sT 1961_3_30_2 -6",\n\t\t\t"-5 - EST 1969 -5",\n\t\t\t"-5 US E%sT 1974_0_6_2 -5",\n\t\t\t"-5 - CDT 1974_9_27_2 -5",\n\t\t\t"-5 US E%sT 1976 -5",\n\t\t\t"-5 - EST 2006 -5",\n\t\t\t"-5 US E%sT"\n\t\t],\n\t\t"America/Indiana/Petersburg": [\n\t\t\t"-5:49:7 - LMT 1883_10_18_12_10_53 -5:49:7",\n\t\t\t"-6 US C%sT 1955 -6",\n\t\t\t"-6 Pike C%sT 1965_3_25_2 -6",\n\t\t\t"-5 - EST 1966_9_30_2 -5",\n\t\t\t"-6 US C%sT 1977_9_30_2 -5",\n\t\t\t"-5 - EST 2006_3_2_2 -5",\n\t\t\t"-6 US C%sT 2007_10_4_2 -5",\n\t\t\t"-5 US E%sT"\n\t\t],\n\t\t"America/Indiana/Tell_City": [\n\t\t\t"-5:47:3 - LMT 1883_10_18_12_12_57 -5:47:3",\n\t\t\t"-6 US C%sT 1946 -6",\n\t\t\t"-6 Perry C%sT 1964_3_26_2 -6",\n\t\t\t"-5 - EST 1969 -5",\n\t\t\t"-5 US E%sT 1971 -5",\n\t\t\t"-5 - EST 2006_3_2_2 -5",\n\t\t\t"-6 US C%sT"\n\t\t],\n\t\t"America/Indiana/Vevay": [\n\t\t\t"-5:40:16 - LMT 1883_10_18_12_19_44 -5:40:16",\n\t\t\t"-6 US C%sT 1954_3_25_2 -6",\n\t\t\t"-5 - EST 1969 -5",\n\t\t\t"-5 US E%sT 1973 -5",\n\t\t\t"-5 - EST 2006 -5",\n\t\t\t"-5 US E%sT"\n\t\t],\n\t\t"America/Indiana/Vincennes": [\n\t\t\t"-5:50:7 - LMT 1883_10_18_12_9_53 -5:50:7",\n\t\t\t"-6 US C%sT 1946 -6",\n\t\t\t"-6 Vincennes C%sT 1964_3_26_2 -6",\n\t\t\t"-5 - EST 1969 -5",\n\t\t\t"-5 US E%sT 1971 -5",\n\t\t\t"-5 - EST 2006_3_2_2 -5",\n\t\t\t"-6 US C%sT 2007_10_4_2 -5",\n\t\t\t"-5 US E%sT"\n\t\t],\n\t\t"America/Indiana/Winamac": [\n\t\t\t"-5:46:25 - LMT 1883_10_18_12_13_35 -5:46:25",\n\t\t\t"-6 US C%sT 1946 -6",\n\t\t\t"-6 Pulaski C%sT 1961_3_30_2 -6",\n\t\t\t"-5 - EST 1969 -5",\n\t\t\t"-5 US E%sT 1971 -5",\n\t\t\t"-5 - EST 2006_3_2_2 -5",\n\t\t\t"-6 US C%sT 2007_2_11_2 -6",\n\t\t\t"-5 US E%sT"\n\t\t],\n\t\t"America/Inuvik": [\n\t\t\t"0 - zzz 1953",\n\t\t\t"-8 NT_YK P%sT 1979_3_29_2 -8",\n\t\t\t"-7 NT_YK M%sT 1980 -7",\n\t\t\t"-7 Canada M%sT"\n\t\t],\n\t\t"America/Iqaluit": [\n\t\t\t"0 - zzz 1942_7",\n\t\t\t"-5 NT_YK E%sT 1999_9_31_2 -4",\n\t\t\t"-6 Canada C%sT 2000_9_29_2 -5",\n\t\t\t"-5 Canada E%sT"\n\t\t],\n\t\t"America/Jamaica": [\n\t\t\t"-5:7:12 - LMT 1890 -5:7:12",\n\t\t\t"-5:7:12 - KMT 1912_1 -5:7:12",\n\t\t\t"-5 - EST 1974_3_28_2 -5",\n\t\t\t"-5 US E%sT 1984 -5",\n\t\t\t"-5 - EST"\n\t\t],\n\t\t"America/Juneau": [\n\t\t\t"15:2:19 - LMT 1867_9_18 15:2:19",\n\t\t\t"-8:57:41 - LMT 1900_7_20_12 -8:57:41",\n\t\t\t"-8 - PST 1942 -8",\n\t\t\t"-8 US P%sT 1946 -8",\n\t\t\t"-8 - PST 1969 -8",\n\t\t\t"-8 US P%sT 1980_3_27_2 -8",\n\t\t\t"-9 US Y%sT 1980_9_26_2 -8",\n\t\t\t"-8 US P%sT 1983_9_30_2 -7",\n\t\t\t"-9 US Y%sT 1983_10_30 -9",\n\t\t\t"-9 US AK%sT"\n\t\t],\n\t\t"America/Kentucky/Louisville": [\n\t\t\t"-5:43:2 - LMT 1883_10_18_12_16_58 -5:43:2",\n\t\t\t"-6 US C%sT 1921 -6",\n\t\t\t"-6 Louisville C%sT 1942 -6",\n\t\t\t"-6 US C%sT 1946 -6",\n\t\t\t"-6 Louisville C%sT 1961_6_23_2 -5",\n\t\t\t"-5 - EST 1968 -5",\n\t\t\t"-5 US E%sT 1974_0_6_2 -5",\n\t\t\t"-5 - CDT 1974_9_27_2 -5",\n\t\t\t"-5 US E%sT"\n\t\t],\n\t\t"America/Kentucky/Monticello": [\n\t\t\t"-5:39:24 - LMT 1883_10_18_12_20_36 -5:39:24",\n\t\t\t"-6 US C%sT 1946 -6",\n\t\t\t"-6 - CST 1968 -6",\n\t\t\t"-6 US C%sT 2000_9_29_2 -5",\n\t\t\t"-5 US E%sT"\n\t\t],\n\t\t"America/La_Paz": [\n\t\t\t"-4:32:36 - LMT 1890 -4:32:36",\n\t\t\t"-4:32:36 - CMT 1931_9_15 -4:32:36",\n\t\t\t"-3:32:36 - BOST 1932_2_21 -3:32:36",\n\t\t\t"-4 - BOT"\n\t\t],\n\t\t"America/Lima": [\n\t\t\t"-5:8:12 - LMT 1890 -5:8:12",\n\t\t\t"-5:8:36 - LMT 1908_6_28 -5:8:36",\n\t\t\t"-5 Peru PE%sT"\n\t\t],\n\t\t"America/Los_Angeles": [\n\t\t\t"-7:52:58 - LMT 1883_10_18_12_7_2 -7:52:58",\n\t\t\t"-8 US P%sT 1946 -8",\n\t\t\t"-8 CA P%sT 1967 -8",\n\t\t\t"-8 US P%sT"\n\t\t],\n\t\t"America/Maceio": [\n\t\t\t"-2:22:52 - LMT 1914 -2:22:52",\n\t\t\t"-3 Brazil BR%sT 1990_8_17 -3",\n\t\t\t"-3 - BRT 1995_9_13 -3",\n\t\t\t"-3 Brazil BR%sT 1996_8_4 -3",\n\t\t\t"-3 - BRT 1999_8_30 -3",\n\t\t\t"-3 Brazil BR%sT 2000_9_22 -2",\n\t\t\t"-3 - BRT 2001_8_13 -3",\n\t\t\t"-3 Brazil BR%sT 2002_9_1 -3",\n\t\t\t"-3 - BRT"\n\t\t],\n\t\t"America/Managua": [\n\t\t\t"-5:45:8 - LMT 1890 -5:45:8",\n\t\t\t"-5:45:12 - MMT 1934_5_23 -5:45:12",\n\t\t\t"-6 - CST 1973_4 -6",\n\t\t\t"-5 - EST 1975_1_16 -5",\n\t\t\t"-6 Nic C%sT 1992_0_1_4 -6",\n\t\t\t"-5 - EST 1992_8_24 -5",\n\t\t\t"-6 - CST 1993 -6",\n\t\t\t"-5 - EST 1997 -5",\n\t\t\t"-6 Nic C%sT"\n\t\t],\n\t\t"America/Manaus": [\n\t\t\t"-4:0:4 - LMT 1914 -4:0:4",\n\t\t\t"-4 Brazil AM%sT 1988_8_12 -4",\n\t\t\t"-4 - AMT 1993_8_28 -4",\n\t\t\t"-4 Brazil AM%sT 1994_8_22 -4",\n\t\t\t"-4 - AMT"\n\t\t],\n\t\t"America/Martinique": [\n\t\t\t"-4:4:20 - LMT 1890 -4:4:20",\n\t\t\t"-4:4:20 - FFMT 1911_4 -4:4:20",\n\t\t\t"-4 - AST 1980_3_6 -4",\n\t\t\t"-3 - ADT 1980_8_28 -3",\n\t\t\t"-4 - AST"\n\t\t],\n\t\t"America/Matamoros": [\n\t\t\t"-6:40 - LMT 1921_11_31_23_20 -6:40",\n\t\t\t"-6 - CST 1988 -6",\n\t\t\t"-6 US C%sT 1989 -6",\n\t\t\t"-6 Mexico C%sT 2010 -6",\n\t\t\t"-6 US C%sT"\n\t\t],\n\t\t"America/Mazatlan": [\n\t\t\t"-7:5:40 - LMT 1921_11_31_23_54_20 -7:5:40",\n\t\t\t"-7 - MST 1927_5_10_23 -7",\n\t\t\t"-6 - CST 1930_10_15 -6",\n\t\t\t"-7 - MST 1931_4_1_23 -7",\n\t\t\t"-6 - CST 1931_9 -6",\n\t\t\t"-7 - MST 1932_3_1 -7",\n\t\t\t"-6 - CST 1942_3_24 -6",\n\t\t\t"-7 - MST 1949_0_14 -7",\n\t\t\t"-8 - PST 1970 -8",\n\t\t\t"-7 Mexico M%sT"\n\t\t],\n\t\t"America/Menominee": [\n\t\t\t"-5:50:27 - LMT 1885_8_18_12 -5:50:27",\n\t\t\t"-6 US C%sT 1946 -6",\n\t\t\t"-6 Menominee C%sT 1969_3_27_2 -6",\n\t\t\t"-5 - EST 1973_3_29_2 -5",\n\t\t\t"-6 US C%sT"\n\t\t],\n\t\t"America/Merida": [\n\t\t\t"-5:58:28 - LMT 1922_0_1_0_1_32 -5:58:28",\n\t\t\t"-6 - CST 1981_11_23 -6",\n\t\t\t"-5 - EST 1982_11_2 -5",\n\t\t\t"-6 Mexico C%sT"\n\t\t],\n\t\t"America/Metlakatla": [\n\t\t\t"15:13:42 - LMT 1867_9_18 15:13:42",\n\t\t\t"-8:46:18 - LMT 1900_7_20_12 -8:46:18",\n\t\t\t"-8 - PST 1942 -8",\n\t\t\t"-8 US P%sT 1946 -8",\n\t\t\t"-8 - PST 1969 -8",\n\t\t\t"-8 US P%sT 1983_9_30_2 -7",\n\t\t\t"-8 - MeST"\n\t\t],\n\t\t"America/Mexico_City": [\n\t\t\t"-6:36:36 - LMT 1922_0_1_0_23_24 -6:36:36",\n\t\t\t"-7 - MST 1927_5_10_23 -7",\n\t\t\t"-6 - CST 1930_10_15 -6",\n\t\t\t"-7 - MST 1931_4_1_23 -7",\n\t\t\t"-6 - CST 1931_9 -6",\n\t\t\t"-7 - MST 1932_3_1 -7",\n\t\t\t"-6 Mexico C%sT 2001_8_30_02 -5",\n\t\t\t"-6 - CST 2002_1_20 -6",\n\t\t\t"-6 Mexico C%sT"\n\t\t],\n\t\t"America/Miquelon": [\n\t\t\t"-3:44:40 - LMT 1911_4_15 -3:44:40",\n\t\t\t"-4 - AST 1980_4 -4",\n\t\t\t"-3 - PMST 1987 -3",\n\t\t\t"-3 Canada PM%sT"\n\t\t],\n\t\t"America/Moncton": [\n\t\t\t"-4:19:8 - LMT 1883_11_9 -4:19:8",\n\t\t\t"-5 - EST 1902_5_15 -5",\n\t\t\t"-4 Canada A%sT 1933 -4",\n\t\t\t"-4 Moncton A%sT 1942 -4",\n\t\t\t"-4 Canada A%sT 1946 -4",\n\t\t\t"-4 Moncton A%sT 1973 -4",\n\t\t\t"-4 Canada A%sT 1993 -4",\n\t\t\t"-4 Moncton A%sT 2007 -4",\n\t\t\t"-4 Canada A%sT"\n\t\t],\n\t\t"America/Monterrey": [\n\t\t\t"-6:41:16 - LMT 1921_11_31_23_18_44 -6:41:16",\n\t\t\t"-6 - CST 1988 -6",\n\t\t\t"-6 US C%sT 1989 -6",\n\t\t\t"-6 Mexico C%sT"\n\t\t],\n\t\t"America/Montevideo": [\n\t\t\t"-3:44:44 - LMT 1898_5_28 -3:44:44",\n\t\t\t"-3:44:44 - MMT 1920_4_1 -3:44:44",\n\t\t\t"-3:30 Uruguay UY%sT 1942_11_14 -3:30",\n\t\t\t"-3 Uruguay UY%sT"\n\t\t],\n\t\t"America/Montreal": [\n\t\t\t"-4:54:16 - LMT 1884 -4:54:16",\n\t\t\t"-5 Mont E%sT 1918 -5",\n\t\t\t"-5 Canada E%sT 1919 -5",\n\t\t\t"-5 Mont E%sT 1942_1_9_2 -5",\n\t\t\t"-5 Canada E%sT 1946 -5",\n\t\t\t"-5 Mont E%sT 1974 -5",\n\t\t\t"-5 Canada E%sT"\n\t\t],\n\t\t"America/Montserrat": [\n\t\t\t"-4:8:52 - LMT 1911_6_1_0_1 -4:8:52",\n\t\t\t"-4 - AST"\n\t\t],\n\t\t"America/Nassau": [\n\t\t\t"-5:9:30 - LMT 1912_2_2 -5:9:30",\n\t\t\t"-5 Bahamas E%sT 1976 -5",\n\t\t\t"-5 US E%sT"\n\t\t],\n\t\t"America/New_York": [\n\t\t\t"-4:56:2 - LMT 1883_10_18_12_3_58 -4:56:2",\n\t\t\t"-5 US E%sT 1920 -5",\n\t\t\t"-5 NYC E%sT 1942 -5",\n\t\t\t"-5 US E%sT 1946 -5",\n\t\t\t"-5 NYC E%sT 1967 -5",\n\t\t\t"-5 US E%sT"\n\t\t],\n\t\t"America/Nipigon": [\n\t\t\t"-5:53:4 - LMT 1895 -5:53:4",\n\t\t\t"-5 Canada E%sT 1940_8_29 -5",\n\t\t\t"-4 - EDT 1942_1_9_2 -5",\n\t\t\t"-5 Canada E%sT"\n\t\t],\n\t\t"America/Nome": [\n\t\t\t"12:58:21 - LMT 1867_9_18 12:58:21",\n\t\t\t"-11:1:38 - LMT 1900_7_20_12 -11:1:38",\n\t\t\t"-11 - NST 1942 -11",\n\t\t\t"-11 US N%sT 1946 -11",\n\t\t\t"-11 - NST 1967_3 -11",\n\t\t\t"-11 - BST 1969 -11",\n\t\t\t"-11 US B%sT 1983_9_30_2 -10",\n\t\t\t"-9 US Y%sT 1983_10_30 -9",\n\t\t\t"-9 US AK%sT"\n\t\t],\n\t\t"America/Noronha": [\n\t\t\t"-2:9:40 - LMT 1914 -2:9:40",\n\t\t\t"-2 Brazil FN%sT 1990_8_17 -2",\n\t\t\t"-2 - FNT 1999_8_30 -2",\n\t\t\t"-2 Brazil FN%sT 2000_9_15 -1",\n\t\t\t"-2 - FNT 2001_8_13 -2",\n\t\t\t"-2 Brazil FN%sT 2002_9_1 -2",\n\t\t\t"-2 - FNT"\n\t\t],\n\t\t"America/North_Dakota/Beulah": [\n\t\t\t"-6:47:7 - LMT 1883_10_18_12_12_53 -6:47:7",\n\t\t\t"-7 US M%sT 2010_10_7_2 -6",\n\t\t\t"-6 US C%sT"\n\t\t],\n\t\t"America/North_Dakota/Center": [\n\t\t\t"-6:45:12 - LMT 1883_10_18_12_14_48 -6:45:12",\n\t\t\t"-7 US M%sT 1992_9_25_02 -6",\n\t\t\t"-6 US C%sT"\n\t\t],\n\t\t"America/North_Dakota/New_Salem": [\n\t\t\t"-6:45:39 - LMT 1883_10_18_12_14_21 -6:45:39",\n\t\t\t"-7 US M%sT 2003_9_26_02 -6",\n\t\t\t"-6 US C%sT"\n\t\t],\n\t\t"America/Ojinaga": [\n\t\t\t"-6:57:40 - LMT 1922_0_1_0_2_20 -6:57:40",\n\t\t\t"-7 - MST 1927_5_10_23 -7",\n\t\t\t"-6 - CST 1930_10_15 -6",\n\t\t\t"-7 - MST 1931_4_1_23 -7",\n\t\t\t"-6 - CST 1931_9 -6",\n\t\t\t"-7 - MST 1932_3_1 -7",\n\t\t\t"-6 - CST 1996 -6",\n\t\t\t"-6 Mexico C%sT 1998 -6",\n\t\t\t"-6 - CST 1998_3_5_3 -6",\n\t\t\t"-7 Mexico M%sT 2010 -7",\n\t\t\t"-7 US M%sT"\n\t\t],\n\t\t"America/Panama": [\n\t\t\t"-5:18:8 - LMT 1890 -5:18:8",\n\t\t\t"-5:19:36 - CMT 1908_3_22 -5:19:36",\n\t\t\t"-5 - EST"\n\t\t],\n\t\t"America/Pangnirtung": [\n\t\t\t"0 - zzz 1921",\n\t\t\t"-4 NT_YK A%sT 1995_3_2_2 -4",\n\t\t\t"-5 Canada E%sT 1999_9_31_2 -4",\n\t\t\t"-6 Canada C%sT 2000_9_29_2 -5",\n\t\t\t"-5 Canada E%sT"\n\t\t],\n\t\t"America/Paramaribo": [\n\t\t\t"-3:40:40 - LMT 1911 -3:40:40",\n\t\t\t"-3:40:52 - PMT 1935 -3:40:52",\n\t\t\t"-3:40:36 - PMT 1945_9 -3:40:36",\n\t\t\t"-3:30 - NEGT 1975_10_20 -3:30",\n\t\t\t"-3:30 - SRT 1984_9 -3:30",\n\t\t\t"-3 - SRT"\n\t\t],\n\t\t"America/Phoenix": [\n\t\t\t"-7:28:18 - LMT 1883_10_18_11_31_42 -7:28:18",\n\t\t\t"-7 US M%sT 1944_0_1_00_1 -6",\n\t\t\t"-7 - MST 1944_3_1_00_1 -7",\n\t\t\t"-7 US M%sT 1944_9_1_00_1 -6",\n\t\t\t"-7 - MST 1967 -7",\n\t\t\t"-7 US M%sT 1968_2_21 -7",\n\t\t\t"-7 - MST"\n\t\t],\n\t\t"America/Port-au-Prince": [\n\t\t\t"-4:49:20 - LMT 1890 -4:49:20",\n\t\t\t"-4:49 - PPMT 1917_0_24_12 -4:49",\n\t\t\t"-5 Haiti E%sT"\n\t\t],\n\t\t"America/Port_of_Spain": [\n\t\t\t"-4:6:4 - LMT 1912_2_2 -4:6:4",\n\t\t\t"-4 - AST"\n\t\t],\n\t\t"America/Porto_Velho": [\n\t\t\t"-4:15:36 - LMT 1914 -4:15:36",\n\t\t\t"-4 Brazil AM%sT 1988_8_12 -4",\n\t\t\t"-4 - AMT"\n\t\t],\n\t\t"America/Puerto_Rico": [\n\t\t\t"-4:24:25 - LMT 1899_2_28_12 -4:24:25",\n\t\t\t"-4 - AST 1942_4_3 -4",\n\t\t\t"-4 US A%sT 1946 -4",\n\t\t\t"-4 - AST"\n\t\t],\n\t\t"America/Rainy_River": [\n\t\t\t"-6:18:16 - LMT 1895 -6:18:16",\n\t\t\t"-6 Canada C%sT 1940_8_29 -6",\n\t\t\t"-5 - CDT 1942_1_9_2 -6",\n\t\t\t"-6 Canada C%sT"\n\t\t],\n\t\t"America/Rankin_Inlet": [\n\t\t\t"0 - zzz 1957",\n\t\t\t"-6 NT_YK C%sT 2000_9_29_2 -5",\n\t\t\t"-5 - EST 2001_3_1_3 -5",\n\t\t\t"-6 Canada C%sT"\n\t\t],\n\t\t"America/Recife": [\n\t\t\t"-2:19:36 - LMT 1914 -2:19:36",\n\t\t\t"-3 Brazil BR%sT 1990_8_17 -3",\n\t\t\t"-3 - BRT 1999_8_30 -3",\n\t\t\t"-3 Brazil BR%sT 2000_9_15 -2",\n\t\t\t"-3 - BRT 2001_8_13 -3",\n\t\t\t"-3 Brazil BR%sT 2002_9_1 -3",\n\t\t\t"-3 - BRT"\n\t\t],\n\t\t"America/Regina": [\n\t\t\t"-6:58:36 - LMT 1905_8 -6:58:36",\n\t\t\t"-7 Regina M%sT 1960_3_24_2 -7",\n\t\t\t"-6 - CST"\n\t\t],\n\t\t"America/Resolute": [\n\t\t\t"0 - zzz 1947_7_31",\n\t\t\t"-6 NT_YK C%sT 2000_9_29_2 -5",\n\t\t\t"-5 - EST 2001_3_1_3 -5",\n\t\t\t"-6 Canada C%sT 2006_9_29_2 -5",\n\t\t\t"-5 - EST 2007_2_11_3 -5",\n\t\t\t"-6 Canada C%sT"\n\t\t],\n\t\t"America/Rio_Branco": [\n\t\t\t"-4:31:12 - LMT 1914 -4:31:12",\n\t\t\t"-5 Brazil AC%sT 1988_8_12 -5",\n\t\t\t"-5 - ACT 2008_5_24_00 -5",\n\t\t\t"-4 - AMT"\n\t\t],\n\t\t"America/Santa_Isabel": [\n\t\t\t"-7:39:28 - LMT 1922_0_1_0_20_32 -7:39:28",\n\t\t\t"-7 - MST 1924 -7",\n\t\t\t"-8 - PST 1927_5_10_23 -8",\n\t\t\t"-7 - MST 1930_10_15 -7",\n\t\t\t"-8 - PST 1931_3_1 -8",\n\t\t\t"-7 - PDT 1931_8_30 -7",\n\t\t\t"-8 - PST 1942_3_24 -8",\n\t\t\t"-7 - PWT 1945_7_14_23",\n\t\t\t"-7 - PPT 1945_10_12 -7",\n\t\t\t"-8 - PST 1948_3_5 -8",\n\t\t\t"-7 - PDT 1949_0_14 -7",\n\t\t\t"-8 - PST 1954 -8",\n\t\t\t"-8 CA P%sT 1961 -8",\n\t\t\t"-8 - PST 1976 -8",\n\t\t\t"-8 US P%sT 1996 -8",\n\t\t\t"-8 Mexico P%sT 2001 -8",\n\t\t\t"-8 US P%sT 2002_1_20 -8",\n\t\t\t"-8 Mexico P%sT"\n\t\t],\n\t\t"America/Santarem": [\n\t\t\t"-3:38:48 - LMT 1914 -3:38:48",\n\t\t\t"-4 Brazil AM%sT 1988_8_12 -4",\n\t\t\t"-4 - AMT 2008_5_24_00 -4",\n\t\t\t"-3 - BRT"\n\t\t],\n\t\t"America/Santiago": [\n\t\t\t"-4:42:46 - LMT 1890 -4:42:46",\n\t\t\t"-4:42:46 - SMT 1910 -4:42:46",\n\t\t\t"-5 - CLT 1916_6_1 -5",\n\t\t\t"-4:42:46 - SMT 1918_8_1 -4:42:46",\n\t\t\t"-4 - CLT 1919_6_1 -4",\n\t\t\t"-4:42:46 - SMT 1927_8_1 -4:42:46",\n\t\t\t"-5 Chile CL%sT 1947_4_22 -5",\n\t\t\t"-4 Chile CL%sT"\n\t\t],\n\t\t"America/Santo_Domingo": [\n\t\t\t"-4:39:36 - LMT 1890 -4:39:36",\n\t\t\t"-4:40 - SDMT 1933_3_1_12 -4:40",\n\t\t\t"-5 DR E%sT 1974_9_27 -5",\n\t\t\t"-4 - AST 2000_9_29_02 -4",\n\t\t\t"-5 US E%sT 2000_11_3_01 -5",\n\t\t\t"-4 - AST"\n\t\t],\n\t\t"America/Sao_Paulo": [\n\t\t\t"-3:6:28 - LMT 1914 -3:6:28",\n\t\t\t"-3 Brazil BR%sT 1963_9_23_00 -3",\n\t\t\t"-2 - BRST 1964 -2",\n\t\t\t"-3 Brazil BR%sT"\n\t\t],\n\t\t"America/Scoresbysund": [\n\t\t\t"-1:27:52 - LMT 1916_6_28 -1:27:52",\n\t\t\t"-2 - CGT 1980_3_6_2 -2",\n\t\t\t"-2 C-Eur CG%sT 1981_2_29 -2",\n\t\t\t"-1 EU EG%sT"\n\t\t],\n\t\t"America/Sitka": [\n\t\t\t"14:58:47 - LMT 1867_9_18 14:58:47",\n\t\t\t"-9:1:13 - LMT 1900_7_20_12 -9:1:13",\n\t\t\t"-8 - PST 1942 -8",\n\t\t\t"-8 US P%sT 1946 -8",\n\t\t\t"-8 - PST 1969 -8",\n\t\t\t"-8 US P%sT 1983_9_30_2 -7",\n\t\t\t"-9 US Y%sT 1983_10_30 -9",\n\t\t\t"-9 US AK%sT"\n\t\t],\n\t\t"America/St_Johns": [\n\t\t\t"-3:30:52 - LMT 1884 -3:30:52",\n\t\t\t"-3:30:52 StJohns N%sT 1918 -3:30:52",\n\t\t\t"-3:30:52 Canada N%sT 1919 -3:30:52",\n\t\t\t"-3:30:52 StJohns N%sT 1935_2_30 -3:30:52",\n\t\t\t"-3:30 StJohns N%sT 1942_4_11 -3:30",\n\t\t\t"-3:30 Canada N%sT 1946 -3:30",\n\t\t\t"-3:30 StJohns N%sT 2011_10 -2:30",\n\t\t\t"-3:30 Canada N%sT"\n\t\t],\n\t\t"America/St_Kitts": [\n\t\t\t"-4:10:52 - LMT 1912_2_2 -4:10:52",\n\t\t\t"-4 - AST"\n\t\t],\n\t\t"America/St_Lucia": [\n\t\t\t"-4:4 - LMT 1890 -4:4",\n\t\t\t"-4:4 - CMT 1912 -4:4",\n\t\t\t"-4 - AST"\n\t\t],\n\t\t"America/St_Thomas": [\n\t\t\t"-4:19:44 - LMT 1911_6 -4:19:44",\n\t\t\t"-4 - AST"\n\t\t],\n\t\t"America/St_Vincent": [\n\t\t\t"-4:4:56 - LMT 1890 -4:4:56",\n\t\t\t"-4:4:56 - KMT 1912 -4:4:56",\n\t\t\t"-4 - AST"\n\t\t],\n\t\t"America/Swift_Current": [\n\t\t\t"-7:11:20 - LMT 1905_8 -7:11:20",\n\t\t\t"-7 Canada M%sT 1946_3_28_2 -7",\n\t\t\t"-7 Regina M%sT 1950 -7",\n\t\t\t"-7 Swift M%sT 1972_3_30_2 -7",\n\t\t\t"-6 - CST"\n\t\t],\n\t\t"America/Tegucigalpa": [\n\t\t\t"-5:48:52 - LMT 1921_3 -5:48:52",\n\t\t\t"-6 Hond C%sT"\n\t\t],\n\t\t"America/Thule": [\n\t\t\t"-4:35:8 - LMT 1916_6_28 -4:35:8",\n\t\t\t"-4 Thule A%sT"\n\t\t],\n\t\t"America/Thunder_Bay": [\n\t\t\t"-5:57 - LMT 1895 -5:57",\n\t\t\t"-6 - CST 1910 -6",\n\t\t\t"-5 - EST 1942 -5",\n\t\t\t"-5 Canada E%sT 1970 -5",\n\t\t\t"-5 Mont E%sT 1973 -5",\n\t\t\t"-5 - EST 1974 -5",\n\t\t\t"-5 Canada E%sT"\n\t\t],\n\t\t"America/Tijuana": [\n\t\t\t"-7:48:4 - LMT 1922_0_1_0_11_56 -7:48:4",\n\t\t\t"-7 - MST 1924 -7",\n\t\t\t"-8 - PST 1927_5_10_23 -8",\n\t\t\t"-7 - MST 1930_10_15 -7",\n\t\t\t"-8 - PST 1931_3_1 -8",\n\t\t\t"-7 - PDT 1931_8_30 -7",\n\t\t\t"-8 - PST 1942_3_24 -8",\n\t\t\t"-7 - PWT 1945_7_14_23",\n\t\t\t"-7 - PPT 1945_10_12 -7",\n\t\t\t"-8 - PST 1948_3_5 -8",\n\t\t\t"-7 - PDT 1949_0_14 -7",\n\t\t\t"-8 - PST 1954 -8",\n\t\t\t"-8 CA P%sT 1961 -8",\n\t\t\t"-8 - PST 1976 -8",\n\t\t\t"-8 US P%sT 1996 -8",\n\t\t\t"-8 Mexico P%sT 2001 -8",\n\t\t\t"-8 US P%sT 2002_1_20 -8",\n\t\t\t"-8 Mexico P%sT 2010 -8",\n\t\t\t"-8 US P%sT"\n\t\t],\n\t\t"America/Toronto": [\n\t\t\t"-5:17:32 - LMT 1895 -5:17:32",\n\t\t\t"-5 Canada E%sT 1919 -5",\n\t\t\t"-5 Toronto E%sT 1942_1_9_2 -5",\n\t\t\t"-5 Canada E%sT 1946 -5",\n\t\t\t"-5 Toronto E%sT 1974 -5",\n\t\t\t"-5 Canada E%sT"\n\t\t],\n\t\t"America/Tortola": [\n\t\t\t"-4:18:28 - LMT 1911_6 -4:18:28",\n\t\t\t"-4 - AST"\n\t\t],\n\t\t"America/Vancouver": [\n\t\t\t"-8:12:28 - LMT 1884 -8:12:28",\n\t\t\t"-8 Vanc P%sT 1987 -8",\n\t\t\t"-8 Canada P%sT"\n\t\t],\n\t\t"America/Whitehorse": [\n\t\t\t"-9:0:12 - LMT 1900_7_20 -9:0:12",\n\t\t\t"-9 NT_YK Y%sT 1966_6_1_2 -9",\n\t\t\t"-8 NT_YK P%sT 1980 -8",\n\t\t\t"-8 Canada P%sT"\n\t\t],\n\t\t"America/Winnipeg": [\n\t\t\t"-6:28:36 - LMT 1887_6_16 -6:28:36",\n\t\t\t"-6 Winn C%sT 2006 -6",\n\t\t\t"-6 Canada C%sT"\n\t\t],\n\t\t"America/Yakutat": [\n\t\t\t"14:41:5 - LMT 1867_9_18 14:41:5",\n\t\t\t"-9:18:55 - LMT 1900_7_20_12 -9:18:55",\n\t\t\t"-9 - YST 1942 -9",\n\t\t\t"-9 US Y%sT 1946 -9",\n\t\t\t"-9 - YST 1969 -9",\n\t\t\t"-9 US Y%sT 1983_10_30 -9",\n\t\t\t"-9 US AK%sT"\n\t\t],\n\t\t"America/Yellowknife": [\n\t\t\t"0 - zzz 1935",\n\t\t\t"-7 NT_YK M%sT 1980 -7",\n\t\t\t"-7 Canada M%sT"\n\t\t],\n\t\t"Antarctica/Casey": [\n\t\t\t"0 - zzz 1969",\n\t\t\t"8 - WST 2009_9_18_2 8",\n\t\t\t"11 - CAST 2010_2_5_2 11",\n\t\t\t"8 - WST 2011_9_28_2 8",\n\t\t\t"11 - CAST 2012_1_21_17",\n\t\t\t"8 - WST"\n\t\t],\n\t\t"Antarctica/Davis": [\n\t\t\t"0 - zzz 1957_0_13",\n\t\t\t"7 - DAVT 1964_10 7",\n\t\t\t"0 - zzz 1969_1",\n\t\t\t"7 - DAVT 2009_9_18_2 7",\n\t\t\t"5 - DAVT 2010_2_10_20",\n\t\t\t"7 - DAVT 2011_9_28_2 7",\n\t\t\t"5 - DAVT 2012_1_21_20",\n\t\t\t"7 - DAVT"\n\t\t],\n\t\t"Antarctica/DumontDUrville": [\n\t\t\t"0 - zzz 1947",\n\t\t\t"10 - PMT 1952_0_14 10",\n\t\t\t"0 - zzz 1956_10",\n\t\t\t"10 - DDUT"\n\t\t],\n\t\t"Antarctica/Macquarie": [\n\t\t\t"0 - zzz 1899_10",\n\t\t\t"10 - EST 1916_9_1_2 10",\n\t\t\t"11 - EST 1917_1 11",\n\t\t\t"10 Aus EST 1919_3 10",\n\t\t\t"0 - zzz 1948_2_25",\n\t\t\t"10 Aus EST 1967 10",\n\t\t\t"10 AT EST 2010_3_4_3 11",\n\t\t\t"11 - MIST"\n\t\t],\n\t\t"Antarctica/Mawson": [\n\t\t\t"0 - zzz 1954_1_13",\n\t\t\t"6 - MAWT 2009_9_18_2 6",\n\t\t\t"5 - MAWT"\n\t\t],\n\t\t"Antarctica/McMurdo": [\n\t\t\t"0 - zzz 1956",\n\t\t\t"12 NZAQ NZ%sT"\n\t\t],\n\t\t"Antarctica/Palmer": [\n\t\t\t"0 - zzz 1965",\n\t\t\t"-4 ArgAQ AR%sT 1969_9_5 -4",\n\t\t\t"-3 ArgAQ AR%sT 1982_4 -3",\n\t\t\t"-4 ChileAQ CL%sT"\n\t\t],\n\t\t"Antarctica/Rothera": [\n\t\t\t"0 - zzz 1976_11_1",\n\t\t\t"-3 - ROTT"\n\t\t],\n\t\t"Antarctica/Syowa": [\n\t\t\t"0 - zzz 1957_0_29",\n\t\t\t"3 - SYOT"\n\t\t],\n\t\t"Antarctica/Vostok": [\n\t\t\t"0 - zzz 1957_11_16",\n\t\t\t"6 - VOST"\n\t\t],\n\t\t"Asia/Aden": [\n\t\t\t"2:59:54 - LMT 1950 2:59:54",\n\t\t\t"3 - AST"\n\t\t],\n\t\t"Asia/Almaty": [\n\t\t\t"5:7:48 - LMT 1924_4_2 5:7:48",\n\t\t\t"5 - ALMT 1930_5_21 5",\n\t\t\t"6 RussiaAsia ALM%sT 1991 6",\n\t\t\t"6 - ALMT 1992 6",\n\t\t\t"6 RussiaAsia ALM%sT 2005_2_15 6",\n\t\t\t"6 - ALMT"\n\t\t],\n\t\t"Asia/Amman": [\n\t\t\t"2:23:44 - LMT 1931 2:23:44",\n\t\t\t"2 Jordan EE%sT"\n\t\t],\n\t\t"Asia/Anadyr": [\n\t\t\t"11:49:56 - LMT 1924_4_2 11:49:56",\n\t\t\t"12 - ANAT 1930_5_21 12",\n\t\t\t"13 Russia ANA%sT 1982_3_1_0 13",\n\t\t\t"12 Russia ANA%sT 1991_2_31_2 12",\n\t\t\t"11 Russia ANA%sT 1992_0_19_2 11",\n\t\t\t"12 Russia ANA%sT 2010_2_28_2 12",\n\t\t\t"11 Russia ANA%sT 2011_2_27_2 11",\n\t\t\t"12 - ANAT"\n\t\t],\n\t\t"Asia/Aqtau": [\n\t\t\t"3:21:4 - LMT 1924_4_2 3:21:4",\n\t\t\t"4 - FORT 1930_5_21 4",\n\t\t\t"5 - FORT 1963 5",\n\t\t\t"5 - SHET 1981_9_1 5",\n\t\t\t"6 - SHET 1982_3_1 6",\n\t\t\t"5 RussiaAsia SHE%sT 1991 5",\n\t\t\t"5 - SHET 1991_11_16 5",\n\t\t\t"5 RussiaAsia AQT%sT 1995_2_26_2 5",\n\t\t\t"4 RussiaAsia AQT%sT 2005_2_15 4",\n\t\t\t"5 - AQTT"\n\t\t],\n\t\t"Asia/Aqtobe": [\n\t\t\t"3:48:40 - LMT 1924_4_2 3:48:40",\n\t\t\t"4 - AKTT 1930_5_21 4",\n\t\t\t"5 - AKTT 1981_3_1 5",\n\t\t\t"6 - AKTST 1981_9_1 6",\n\t\t\t"6 - AKTT 1982_3_1 6",\n\t\t\t"5 RussiaAsia AKT%sT 1991 5",\n\t\t\t"5 - AKTT 1991_11_16 5",\n\t\t\t"5 RussiaAsia AQT%sT 2005_2_15 5",\n\t\t\t"5 - AQTT"\n\t\t],\n\t\t"Asia/Ashgabat": [\n\t\t\t"3:53:32 - LMT 1924_4_2 3:53:32",\n\t\t\t"4 - ASHT 1930_5_21 4",\n\t\t\t"5 RussiaAsia ASH%sT 1991_2_31_2 5",\n\t\t\t"4 RussiaAsia ASH%sT 1991_9_27 4",\n\t\t\t"4 RussiaAsia TM%sT 1992_0_19_2 4",\n\t\t\t"5 - TMT"\n\t\t],\n\t\t"Asia/Baghdad": [\n\t\t\t"2:57:40 - LMT 1890 2:57:40",\n\t\t\t"2:57:36 - BMT 1918 2:57:36",\n\t\t\t"3 - AST 1982_4 3",\n\t\t\t"3 Iraq A%sT"\n\t\t],\n\t\t"Asia/Bahrain": [\n\t\t\t"3:22:20 - LMT 1920 3:22:20",\n\t\t\t"4 - GST 1972_5 4",\n\t\t\t"3 - AST"\n\t\t],\n\t\t"Asia/Baku": [\n\t\t\t"3:19:24 - LMT 1924_4_2 3:19:24",\n\t\t\t"3 - BAKT 1957_2 3",\n\t\t\t"4 RussiaAsia BAK%sT 1991_2_31_2 4",\n\t\t\t"4 - BAKST 1991_7_30 4",\n\t\t\t"3 RussiaAsia AZ%sT 1992_8_26_23 4",\n\t\t\t"4 - AZT 1996 4",\n\t\t\t"4 EUAsia AZ%sT 1997 4",\n\t\t\t"4 Azer AZ%sT"\n\t\t],\n\t\t"Asia/Bangkok": [\n\t\t\t"6:42:4 - LMT 1880 6:42:4",\n\t\t\t"6:42:4 - BMT 1920_3 6:42:4",\n\t\t\t"7 - ICT"\n\t\t],\n\t\t"Asia/Beirut": [\n\t\t\t"2:22 - LMT 1880 2:22",\n\t\t\t"2 Lebanon EE%sT"\n\t\t],\n\t\t"Asia/Bishkek": [\n\t\t\t"4:58:24 - LMT 1924_4_2 4:58:24",\n\t\t\t"5 - FRUT 1930_5_21 5",\n\t\t\t"6 RussiaAsia FRU%sT 1991_2_31_2 6",\n\t\t\t"6 - FRUST 1991_7_31_2 6",\n\t\t\t"5 Kyrgyz KG%sT 2005_7_12 6",\n\t\t\t"6 - KGT"\n\t\t],\n\t\t"Asia/Brunei": [\n\t\t\t"7:39:40 - LMT 1926_2 7:39:40",\n\t\t\t"7:30 - BNT 1933 7:30",\n\t\t\t"8 - BNT"\n\t\t],\n\t\t"Asia/Choibalsan": [\n\t\t\t"7:38 - LMT 1905_7 7:38",\n\t\t\t"7 - ULAT 1978 7",\n\t\t\t"8 - ULAT 1983_3 8",\n\t\t\t"9 Mongol CHO%sT 2008_2_31 9",\n\t\t\t"8 Mongol CHO%sT"\n\t\t],\n\t\t"Asia/Chongqing": [\n\t\t\t"7:6:20 - LMT 1928 7:6:20",\n\t\t\t"7 - LONT 1980_4 7",\n\t\t\t"8 PRC C%sT"\n\t\t],\n\t\t"Asia/Colombo": [\n\t\t\t"5:19:24 - LMT 1880 5:19:24",\n\t\t\t"5:19:32 - MMT 1906 5:19:32",\n\t\t\t"5:30 - IST 1942_0_5 5:30",\n\t\t\t"6 - IHST 1942_8 6",\n\t\t\t"6:30 - IST 1945_9_16_2 6:30",\n\t\t\t"5:30 - IST 1996_4_25_0 5:30",\n\t\t\t"6:30 - LKT 1996_9_26_0_30 6:30",\n\t\t\t"6 - LKT 2006_3_15_0_30 6",\n\t\t\t"5:30 - IST"\n\t\t],\n\t\t"Asia/Damascus": [\n\t\t\t"2:25:12 - LMT 1920 2:25:12",\n\t\t\t"2 Syria EE%sT"\n\t\t],\n\t\t"Asia/Dhaka": [\n\t\t\t"6:1:40 - LMT 1890 6:1:40",\n\t\t\t"5:53:20 - HMT 1941_9 5:53:20",\n\t\t\t"6:30 - BURT 1942_4_15 6:30",\n\t\t\t"5:30 - IST 1942_8 5:30",\n\t\t\t"6:30 - BURT 1951_8_30 6:30",\n\t\t\t"6 - DACT 1971_2_26 6",\n\t\t\t"6 - BDT 2009 6",\n\t\t\t"6 Dhaka BD%sT"\n\t\t],\n\t\t"Asia/Dili": [\n\t\t\t"8:22:20 - LMT 1912 8:22:20",\n\t\t\t"8 - TLT 1942_1_21_23 8",\n\t\t\t"9 - JST 1945_8_23 9",\n\t\t\t"9 - TLT 1976_4_3 9",\n\t\t\t"8 - CIT 2000_8_17_00 8",\n\t\t\t"9 - TLT"\n\t\t],\n\t\t"Asia/Dubai": [\n\t\t\t"3:41:12 - LMT 1920 3:41:12",\n\t\t\t"4 - GST"\n\t\t],\n\t\t"Asia/Dushanbe": [\n\t\t\t"4:35:12 - LMT 1924_4_2 4:35:12",\n\t\t\t"5 - DUST 1930_5_21 5",\n\t\t\t"6 RussiaAsia DUS%sT 1991_2_31_2 6",\n\t\t\t"6 - DUSST 1991_8_9_2 5",\n\t\t\t"5 - TJT"\n\t\t],\n\t\t"Asia/Gaza": [\n\t\t\t"2:17:52 - LMT 1900_9 2:17:52",\n\t\t\t"2 Zion EET 1948_4_15 2",\n\t\t\t"2 EgyptAsia EE%sT 1967_5_5 3",\n\t\t\t"2 Zion I%sT 1996 2",\n\t\t\t"2 Jordan EE%sT 1999 2",\n\t\t\t"2 Palestine EE%sT 2008_7_29_0 3",\n\t\t\t"2 - EET 2008_8 2",\n\t\t\t"2 Palestine EE%sT 2010 2",\n\t\t\t"2 - EET 2010_2_27_0_1 2",\n\t\t\t"2 Palestine EE%sT 2011_7_1 3",\n\t\t\t"2 - EET 2012 2",\n\t\t\t"2 Palestine EE%sT"\n\t\t],\n\t\t"Asia/Harbin": [\n\t\t\t"8:26:44 - LMT 1928 8:26:44",\n\t\t\t"8:30 - CHAT 1932_2 8:30",\n\t\t\t"8 - CST 1940 8",\n\t\t\t"9 - CHAT 1966_4 9",\n\t\t\t"8:30 - CHAT 1980_4 8:30",\n\t\t\t"8 PRC C%sT"\n\t\t],\n\t\t"Asia/Hebron": [\n\t\t\t"2:20:23 - LMT 1900_9 2:20:23",\n\t\t\t"2 Zion EET 1948_4_15 2",\n\t\t\t"2 EgyptAsia EE%sT 1967_5_5 3",\n\t\t\t"2 Zion I%sT 1996 2",\n\t\t\t"2 Jordan EE%sT 1999 2",\n\t\t\t"2 Palestine EE%sT"\n\t\t],\n\t\t"Asia/Ho_Chi_Minh": [\n\t\t\t"7:6:40 - LMT 1906_5_9 7:6:40",\n\t\t\t"7:6:20 - SMT 1911_2_11_0_1 7:6:20",\n\t\t\t"7 - ICT 1912_4 7",\n\t\t\t"8 - ICT 1931_4 8",\n\t\t\t"7 - ICT"\n\t\t],\n\t\t"Asia/Hong_Kong": [\n\t\t\t"7:36:42 - LMT 1904_9_30 7:36:42",\n\t\t\t"8 HK HK%sT 1941_11_25 8",\n\t\t\t"9 - JST 1945_8_15 9",\n\t\t\t"8 HK HK%sT"\n\t\t],\n\t\t"Asia/Hovd": [\n\t\t\t"6:6:36 - LMT 1905_7 6:6:36",\n\t\t\t"6 - HOVT 1978 6",\n\t\t\t"7 Mongol HOV%sT"\n\t\t],\n\t\t"Asia/Irkutsk": [\n\t\t\t"6:57:20 - LMT 1880 6:57:20",\n\t\t\t"6:57:20 - IMT 1920_0_25 6:57:20",\n\t\t\t"7 - IRKT 1930_5_21 7",\n\t\t\t"8 Russia IRK%sT 1991_2_31_2 8",\n\t\t\t"7 Russia IRK%sT 1992_0_19_2 7",\n\t\t\t"8 Russia IRK%sT 2011_2_27_2 8",\n\t\t\t"9 - IRKT"\n\t\t],\n\t\t"Asia/Jakarta": [\n\t\t\t"7:7:12 - LMT 1867_7_10 7:7:12",\n\t\t\t"7:7:12 - JMT 1923_11_31_23_47_12 7:7:12",\n\t\t\t"7:20 - JAVT 1932_10 7:20",\n\t\t\t"7:30 - WIT 1942_2_23 7:30",\n\t\t\t"9 - JST 1945_8_23 9",\n\t\t\t"7:30 - WIT 1948_4 7:30",\n\t\t\t"8 - WIT 1950_4 8",\n\t\t\t"7:30 - WIT 1964 7:30",\n\t\t\t"7 - WIT"\n\t\t],\n\t\t"Asia/Jayapura": [\n\t\t\t"9:22:48 - LMT 1932_10 9:22:48",\n\t\t\t"9 - EIT 1944_8_1 9",\n\t\t\t"9:30 - CST 1964 9:30",\n\t\t\t"9 - EIT"\n\t\t],\n\t\t"Asia/Jerusalem": [\n\t\t\t"2:20:56 - LMT 1880 2:20:56",\n\t\t\t"2:20:40 - JMT 1918 2:20:40",\n\t\t\t"2 Zion I%sT"\n\t\t],\n\t\t"Asia/Kabul": [\n\t\t\t"4:36:48 - LMT 1890 4:36:48",\n\t\t\t"4 - AFT 1945 4",\n\t\t\t"4:30 - AFT"\n\t\t],\n\t\t"Asia/Kamchatka": [\n\t\t\t"10:34:36 - LMT 1922_10_10 10:34:36",\n\t\t\t"11 - PETT 1930_5_21 11",\n\t\t\t"12 Russia PET%sT 1991_2_31_2 12",\n\t\t\t"11 Russia PET%sT 1992_0_19_2 11",\n\t\t\t"12 Russia PET%sT 2010_2_28_2 12",\n\t\t\t"11 Russia PET%sT 2011_2_27_2 11",\n\t\t\t"12 - PETT"\n\t\t],\n\t\t"Asia/Karachi": [\n\t\t\t"4:28:12 - LMT 1907 4:28:12",\n\t\t\t"5:30 - IST 1942_8 5:30",\n\t\t\t"6:30 - IST 1945_9_15 6:30",\n\t\t\t"5:30 - IST 1951_8_30 5:30",\n\t\t\t"5 - KART 1971_2_26 5",\n\t\t\t"5 Pakistan PK%sT"\n\t\t],\n\t\t"Asia/Kashgar": [\n\t\t\t"5:3:56 - LMT 1928 5:3:56",\n\t\t\t"5:30 - KAST 1940 5:30",\n\t\t\t"5 - KAST 1980_4 5",\n\t\t\t"8 PRC C%sT"\n\t\t],\n\t\t"Asia/Kathmandu": [\n\t\t\t"5:41:16 - LMT 1920 5:41:16",\n\t\t\t"5:30 - IST 1986 5:30",\n\t\t\t"5:45 - NPT"\n\t\t],\n\t\t"Asia/Khandyga": [\n\t\t\t"9:2:13 - LMT 1919_11_15 9:2:13",\n\t\t\t"8 - YAKT 1930_5_21 8",\n\t\t\t"9 Russia YAK%sT 1991_2_31_2 9",\n\t\t\t"8 Russia YAK%sT 1992_0_19_2 8",\n\t\t\t"9 Russia YAK%sT 2004 9",\n\t\t\t"10 Russia VLA%sT 2011_2_27_2 10",\n\t\t\t"11 - VLAT 2011_8_13_0 11",\n\t\t\t"10 - YAKT"\n\t\t],\n\t\t"Asia/Kolkata": [\n\t\t\t"5:53:28 - LMT 1880 5:53:28",\n\t\t\t"5:53:20 - HMT 1941_9 5:53:20",\n\t\t\t"6:30 - BURT 1942_4_15 6:30",\n\t\t\t"5:30 - IST 1942_8 5:30",\n\t\t\t"6:30 - IST 1945_9_15 6:30",\n\t\t\t"5:30 - IST"\n\t\t],\n\t\t"Asia/Krasnoyarsk": [\n\t\t\t"6:11:20 - LMT 1920_0_6 6:11:20",\n\t\t\t"6 - KRAT 1930_5_21 6",\n\t\t\t"7 Russia KRA%sT 1991_2_31_2 7",\n\t\t\t"6 Russia KRA%sT 1992_0_19_2 6",\n\t\t\t"7 Russia KRA%sT 2011_2_27_2 7",\n\t\t\t"8 - KRAT"\n\t\t],\n\t\t"Asia/Kuala_Lumpur": [\n\t\t\t"6:46:46 - LMT 1901_0_1 6:46:46",\n\t\t\t"6:55:25 - SMT 1905_5_1 6:55:25",\n\t\t\t"7 - MALT 1933_0_1 7",\n\t\t\t"7:20 - MALST 1936_0_1 7:20",\n\t\t\t"7:20 - MALT 1941_8_1 7:20",\n\t\t\t"7:30 - MALT 1942_1_16 7:30",\n\t\t\t"9 - JST 1945_8_12 9",\n\t\t\t"7:30 - MALT 1982_0_1 7:30",\n\t\t\t"8 - MYT"\n\t\t],\n\t\t"Asia/Kuching": [\n\t\t\t"7:21:20 - LMT 1926_2 7:21:20",\n\t\t\t"7:30 - BORT 1933 7:30",\n\t\t\t"8 NBorneo BOR%sT 1942_1_16 8",\n\t\t\t"9 - JST 1945_8_12 9",\n\t\t\t"8 - BORT 1982_0_1 8",\n\t\t\t"8 - MYT"\n\t\t],\n\t\t"Asia/Kuwait": [\n\t\t\t"3:11:56 - LMT 1950 3:11:56",\n\t\t\t"3 - AST"\n\t\t],\n\t\t"Asia/Macau": [\n\t\t\t"7:34:20 - LMT 1912 7:34:20",\n\t\t\t"8 Macau MO%sT 1999_11_20 8",\n\t\t\t"8 PRC C%sT"\n\t\t],\n\t\t"Asia/Magadan": [\n\t\t\t"10:3:12 - LMT 1924_4_2 10:3:12",\n\t\t\t"10 - MAGT 1930_5_21 10",\n\t\t\t"11 Russia MAG%sT 1991_2_31_2 11",\n\t\t\t"10 Russia MAG%sT 1992_0_19_2 10",\n\t\t\t"11 Russia MAG%sT 2011_2_27_2 11",\n\t\t\t"12 - MAGT"\n\t\t],\n\t\t"Asia/Makassar": [\n\t\t\t"7:57:36 - LMT 1920 7:57:36",\n\t\t\t"7:57:36 - MMT 1932_10 7:57:36",\n\t\t\t"8 - CIT 1942_1_9 8",\n\t\t\t"9 - JST 1945_8_23 9",\n\t\t\t"8 - CIT"\n\t\t],\n\t\t"Asia/Manila": [\n\t\t\t"-15:56 - LMT 1844_11_31 -15:56",\n\t\t\t"8:4 - LMT 1899_4_11 8:4",\n\t\t\t"8 Phil PH%sT 1942_4 8",\n\t\t\t"9 - JST 1944_10 9",\n\t\t\t"8 Phil PH%sT"\n\t\t],\n\t\t"Asia/Muscat": [\n\t\t\t"3:54:24 - LMT 1920 3:54:24",\n\t\t\t"4 - GST"\n\t\t],\n\t\t"Asia/Nicosia": [\n\t\t\t"2:13:28 - LMT 1921_10_14 2:13:28",\n\t\t\t"2 Cyprus EE%sT 1998_8 3",\n\t\t\t"2 EUAsia EE%sT"\n\t\t],\n\t\t"Asia/Novokuznetsk": [\n\t\t\t"5:48:48 - NMT 1920_0_6 5:48:48",\n\t\t\t"6 - KRAT 1930_5_21 6",\n\t\t\t"7 Russia KRA%sT 1991_2_31_2 7",\n\t\t\t"6 Russia KRA%sT 1992_0_19_2 6",\n\t\t\t"7 Russia KRA%sT 2010_2_28_2 7",\n\t\t\t"6 Russia NOV%sT 2011_2_27_2 6",\n\t\t\t"7 - NOVT"\n\t\t],\n\t\t"Asia/Novosibirsk": [\n\t\t\t"5:31:40 - LMT 1919_11_14_6 5:31:40",\n\t\t\t"6 - NOVT 1930_5_21 6",\n\t\t\t"7 Russia NOV%sT 1991_2_31_2 7",\n\t\t\t"6 Russia NOV%sT 1992_0_19_2 6",\n\t\t\t"7 Russia NOV%sT 1993_4_23 8",\n\t\t\t"6 Russia NOV%sT 2011_2_27_2 6",\n\t\t\t"7 - NOVT"\n\t\t],\n\t\t"Asia/Omsk": [\n\t\t\t"4:53:36 - LMT 1919_10_14 4:53:36",\n\t\t\t"5 - OMST 1930_5_21 5",\n\t\t\t"6 Russia OMS%sT 1991_2_31_2 6",\n\t\t\t"5 Russia OMS%sT 1992_0_19_2 5",\n\t\t\t"6 Russia OMS%sT 2011_2_27_2 6",\n\t\t\t"7 - OMST"\n\t\t],\n\t\t"Asia/Oral": [\n\t\t\t"3:25:24 - LMT 1924_4_2 3:25:24",\n\t\t\t"4 - URAT 1930_5_21 4",\n\t\t\t"5 - URAT 1981_3_1 5",\n\t\t\t"6 - URAST 1981_9_1 6",\n\t\t\t"6 - URAT 1982_3_1 6",\n\t\t\t"5 RussiaAsia URA%sT 1989_2_26_2 5",\n\t\t\t"4 RussiaAsia URA%sT 1991 4",\n\t\t\t"4 - URAT 1991_11_16 4",\n\t\t\t"4 RussiaAsia ORA%sT 2005_2_15 4",\n\t\t\t"5 - ORAT"\n\t\t],\n\t\t"Asia/Phnom_Penh": [\n\t\t\t"6:59:40 - LMT 1906_5_9 6:59:40",\n\t\t\t"7:6:20 - SMT 1911_2_11_0_1 7:6:20",\n\t\t\t"7 - ICT 1912_4 7",\n\t\t\t"8 - ICT 1931_4 8",\n\t\t\t"7 - ICT"\n\t\t],\n\t\t"Asia/Pontianak": [\n\t\t\t"7:17:20 - LMT 1908_4 7:17:20",\n\t\t\t"7:17:20 - PMT 1932_10 7:17:20",\n\t\t\t"7:30 - WIT 1942_0_29 7:30",\n\t\t\t"9 - JST 1945_8_23 9",\n\t\t\t"7:30 - WIT 1948_4 7:30",\n\t\t\t"8 - WIT 1950_4 8",\n\t\t\t"7:30 - WIT 1964 7:30",\n\t\t\t"8 - CIT 1988_0_1 8",\n\t\t\t"7 - WIT"\n\t\t],\n\t\t"Asia/Pyongyang": [\n\t\t\t"8:23 - LMT 1890 8:23",\n\t\t\t"8:30 - KST 1904_11 8:30",\n\t\t\t"9 - KST 1928 9",\n\t\t\t"8:30 - KST 1932 8:30",\n\t\t\t"9 - KST 1954_2_21 9",\n\t\t\t"8 - KST 1961_7_10 8",\n\t\t\t"9 - KST"\n\t\t],\n\t\t"Asia/Qatar": [\n\t\t\t"3:26:8 - LMT 1920 3:26:8",\n\t\t\t"4 - GST 1972_5 4",\n\t\t\t"3 - AST"\n\t\t],\n\t\t"Asia/Qyzylorda": [\n\t\t\t"4:21:52 - LMT 1924_4_2 4:21:52",\n\t\t\t"4 - KIZT 1930_5_21 4",\n\t\t\t"5 - KIZT 1981_3_1 5",\n\t\t\t"6 - KIZST 1981_9_1 6",\n\t\t\t"6 - KIZT 1982_3_1 6",\n\t\t\t"5 RussiaAsia KIZ%sT 1991 5",\n\t\t\t"5 - KIZT 1991_11_16 5",\n\t\t\t"5 - QYZT 1992_0_19_2 5",\n\t\t\t"6 RussiaAsia QYZ%sT 2005_2_15 6",\n\t\t\t"6 - QYZT"\n\t\t],\n\t\t"Asia/Rangoon": [\n\t\t\t"6:24:40 - LMT 1880 6:24:40",\n\t\t\t"6:24:40 - RMT 1920 6:24:40",\n\t\t\t"6:30 - BURT 1942_4 6:30",\n\t\t\t"9 - JST 1945_4_3 9",\n\t\t\t"6:30 - MMT"\n\t\t],\n\t\t"Asia/Riyadh": [\n\t\t\t"3:6:52 - LMT 1950 3:6:52",\n\t\t\t"3 - AST"\n\t\t],\n\t\t"Asia/Sakhalin": [\n\t\t\t"9:30:48 - LMT 1905_7_23 9:30:48",\n\t\t\t"9 - CJT 1938 9",\n\t\t\t"9 - JST 1945_7_25 9",\n\t\t\t"11 Russia SAK%sT 1991_2_31_2 11",\n\t\t\t"10 Russia SAK%sT 1992_0_19_2 10",\n\t\t\t"11 Russia SAK%sT 1997_2_30_2 11",\n\t\t\t"10 Russia SAK%sT 2011_2_27_2 10",\n\t\t\t"11 - SAKT"\n\t\t],\n\t\t"Asia/Samarkand": [\n\t\t\t"4:27:12 - LMT 1924_4_2 4:27:12",\n\t\t\t"4 - SAMT 1930_5_21 4",\n\t\t\t"5 - SAMT 1981_3_1 5",\n\t\t\t"6 - SAMST 1981_9_1 6",\n\t\t\t"6 - TAST 1982_3_1 6",\n\t\t\t"5 RussiaAsia SAM%sT 1991_8_1 6",\n\t\t\t"5 RussiaAsia UZ%sT 1992 5",\n\t\t\t"5 - UZT"\n\t\t],\n\t\t"Asia/Seoul": [\n\t\t\t"8:27:52 - LMT 1890 8:27:52",\n\t\t\t"8:30 - KST 1904_11 8:30",\n\t\t\t"9 - KST 1928 9",\n\t\t\t"8:30 - KST 1932 8:30",\n\t\t\t"9 - KST 1954_2_21 9",\n\t\t\t"8 ROK K%sT 1961_7_10 8",\n\t\t\t"8:30 - KST 1968_9 8:30",\n\t\t\t"9 ROK K%sT"\n\t\t],\n\t\t"Asia/Shanghai": [\n\t\t\t"8:5:57 - LMT 1928 8:5:57",\n\t\t\t"8 Shang C%sT 1949 8",\n\t\t\t"8 PRC C%sT"\n\t\t],\n\t\t"Asia/Singapore": [\n\t\t\t"6:55:25 - LMT 1901_0_1 6:55:25",\n\t\t\t"6:55:25 - SMT 1905_5_1 6:55:25",\n\t\t\t"7 - MALT 1933_0_1 7",\n\t\t\t"7:20 - MALST 1936_0_1 7:20",\n\t\t\t"7:20 - MALT 1941_8_1 7:20",\n\t\t\t"7:30 - MALT 1942_1_16 7:30",\n\t\t\t"9 - JST 1945_8_12 9",\n\t\t\t"7:30 - MALT 1965_7_9 7:30",\n\t\t\t"7:30 - SGT 1982_0_1 7:30",\n\t\t\t"8 - SGT"\n\t\t],\n\t\t"Asia/Taipei": [\n\t\t\t"8:6 - LMT 1896 8:6",\n\t\t\t"8 Taiwan C%sT"\n\t\t],\n\t\t"Asia/Tashkent": [\n\t\t\t"4:37:12 - LMT 1924_4_2 4:37:12",\n\t\t\t"5 - TAST 1930_5_21 5",\n\t\t\t"6 RussiaAsia TAS%sT 1991_2_31_2 6",\n\t\t\t"5 RussiaAsia TAS%sT 1991_8_1 6",\n\t\t\t"5 RussiaAsia UZ%sT 1992 5",\n\t\t\t"5 - UZT"\n\t\t],\n\t\t"Asia/Tbilisi": [\n\t\t\t"2:59:16 - LMT 1880 2:59:16",\n\t\t\t"2:59:16 - TBMT 1924_4_2 2:59:16",\n\t\t\t"3 - TBIT 1957_2 3",\n\t\t\t"4 RussiaAsia TBI%sT 1991_2_31_2 4",\n\t\t\t"4 - TBIST 1991_3_9 4",\n\t\t\t"3 RussiaAsia GE%sT 1992 3",\n\t\t\t"3 E-EurAsia GE%sT 1994_8_25 4",\n\t\t\t"4 E-EurAsia GE%sT 1996_9_27 5",\n\t\t\t"5 - GEST 1997_2_30 5",\n\t\t\t"4 E-EurAsia GE%sT 2004_5_27 5",\n\t\t\t"3 RussiaAsia GE%sT 2005_2_27_2 3",\n\t\t\t"4 - GET"\n\t\t],\n\t\t"Asia/Tehran": [\n\t\t\t"3:25:44 - LMT 1916 3:25:44",\n\t\t\t"3:25:44 - TMT 1946 3:25:44",\n\t\t\t"3:30 - IRST 1977_10 3:30",\n\t\t\t"4 Iran IR%sT 1979 4",\n\t\t\t"3:30 Iran IR%sT"\n\t\t],\n\t\t"Asia/Thimphu": [\n\t\t\t"5:58:36 - LMT 1947_7_15 5:58:36",\n\t\t\t"5:30 - IST 1987_9 5:30",\n\t\t\t"6 - BTT"\n\t\t],\n\t\t"Asia/Tokyo": [\n\t\t\t"9:18:59 - LMT 1887_11_31_15",\n\t\t\t"9 - JST 1896 9",\n\t\t\t"9 - CJT 1938 9",\n\t\t\t"9 Japan J%sT"\n\t\t],\n\t\t"Asia/Ulaanbaatar": [\n\t\t\t"7:7:32 - LMT 1905_7 7:7:32",\n\t\t\t"7 - ULAT 1978 7",\n\t\t\t"8 Mongol ULA%sT"\n\t\t],\n\t\t"Asia/Urumqi": [\n\t\t\t"5:50:20 - LMT 1928 5:50:20",\n\t\t\t"6 - URUT 1980_4 6",\n\t\t\t"8 PRC C%sT"\n\t\t],\n\t\t"Asia/Ust-Nera": [\n\t\t\t"9:32:54 - LMT 1919_11_15 9:32:54",\n\t\t\t"8 - YAKT 1930_5_21 8",\n\t\t\t"9 Russia YAKT 1981_3_1 9",\n\t\t\t"11 Russia MAG%sT 1991_2_31_2 11",\n\t\t\t"10 Russia MAG%sT 1992_0_19_2 10",\n\t\t\t"11 Russia MAG%sT 2011_2_27_2 11",\n\t\t\t"12 - MAGT 2011_8_13_0 12",\n\t\t\t"11 - VLAT"\n\t\t],\n\t\t"Asia/Vientiane": [\n\t\t\t"6:50:24 - LMT 1906_5_9 6:50:24",\n\t\t\t"7:6:20 - SMT 1911_2_11_0_1 7:6:20",\n\t\t\t"7 - ICT 1912_4 7",\n\t\t\t"8 - ICT 1931_4 8",\n\t\t\t"7 - ICT"\n\t\t],\n\t\t"Asia/Vladivostok": [\n\t\t\t"8:47:44 - LMT 1922_10_15 8:47:44",\n\t\t\t"9 - VLAT 1930_5_21 9",\n\t\t\t"10 Russia VLA%sT 1991_2_31_2 10",\n\t\t\t"9 Russia VLA%sST 1992_0_19_2 9",\n\t\t\t"10 Russia VLA%sT 2011_2_27_2 10",\n\t\t\t"11 - VLAT"\n\t\t],\n\t\t"Asia/Yakutsk": [\n\t\t\t"8:38:40 - LMT 1919_11_15 8:38:40",\n\t\t\t"8 - YAKT 1930_5_21 8",\n\t\t\t"9 Russia YAK%sT 1991_2_31_2 9",\n\t\t\t"8 Russia YAK%sT 1992_0_19_2 8",\n\t\t\t"9 Russia YAK%sT 2011_2_27_2 9",\n\t\t\t"10 - YAKT"\n\t\t],\n\t\t"Asia/Yekaterinburg": [\n\t\t\t"4:2:24 - LMT 1919_6_15_4 4:2:24",\n\t\t\t"4 - SVET 1930_5_21 4",\n\t\t\t"5 Russia SVE%sT 1991_2_31_2 5",\n\t\t\t"4 Russia SVE%sT 1992_0_19_2 4",\n\t\t\t"5 Russia YEK%sT 2011_2_27_2 5",\n\t\t\t"6 - YEKT"\n\t\t],\n\t\t"Asia/Yerevan": [\n\t\t\t"2:58 - LMT 1924_4_2 2:58",\n\t\t\t"3 - YERT 1957_2 3",\n\t\t\t"4 RussiaAsia YER%sT 1991_2_31_2 4",\n\t\t\t"4 - YERST 1991_8_23 4",\n\t\t\t"3 RussiaAsia AM%sT 1995_8_24_2 3",\n\t\t\t"4 - AMT 1997 4",\n\t\t\t"4 RussiaAsia AM%sT 2012_2_25_2 4",\n\t\t\t"4 - AMT"\n\t\t],\n\t\t"Atlantic/Azores": [\n\t\t\t"-1:42:40 - LMT 1884 -1:42:40",\n\t\t\t"-1:54:32 - HMT 1911_4_24 -1:54:32",\n\t\t\t"-2 Port AZO%sT 1966_3_3_2 -2",\n\t\t\t"-1 Port AZO%sT 1983_8_25_1 -1",\n\t\t\t"-1 W-Eur AZO%sT 1992_8_27_1 -1",\n\t\t\t"0 EU WE%sT 1993_2_28_1",\n\t\t\t"-1 EU AZO%sT"\n\t\t],\n\t\t"Atlantic/Bermuda": [\n\t\t\t"-4:19:18 - LMT 1930_0_1_2 -4:19:18",\n\t\t\t"-4 - AST 1974_3_28_2 -4",\n\t\t\t"-4 Bahamas A%sT 1976 -4",\n\t\t\t"-4 US A%sT"\n\t\t],\n\t\t"Atlantic/Canary": [\n\t\t\t"-1:1:36 - LMT 1922_2 -1:1:36",\n\t\t\t"-1 - CANT 1946_8_30_1 -1",\n\t\t\t"0 - WET 1980_3_6_0",\n\t\t\t"1 - WEST 1980_8_28_0",\n\t\t\t"0 EU WE%sT"\n\t\t],\n\t\t"Atlantic/Cape_Verde": [\n\t\t\t"-1:34:4 - LMT 1907 -1:34:4",\n\t\t\t"-2 - CVT 1942_8 -2",\n\t\t\t"-1 - CVST 1945_9_15 -1",\n\t\t\t"-2 - CVT 1975_10_25_2 -2",\n\t\t\t"-1 - CVT"\n\t\t],\n\t\t"Atlantic/Faroe": [\n\t\t\t"-0:27:4 - LMT 1908_0_11 -0:27:4",\n\t\t\t"0 - WET 1981",\n\t\t\t"0 EU WE%sT"\n\t\t],\n\t\t"Atlantic/Madeira": [\n\t\t\t"-1:7:36 - LMT 1884 -1:7:36",\n\t\t\t"-1:7:36 - FMT 1911_4_24 -1:7:36",\n\t\t\t"-1 Port MAD%sT 1966_3_3_2 -1",\n\t\t\t"0 Port WE%sT 1983_8_25_1",\n\t\t\t"0 EU WE%sT"\n\t\t],\n\t\t"Atlantic/Reykjavik": [\n\t\t\t"-1:27:24 - LMT 1837 -1:27:24",\n\t\t\t"-1:27:48 - RMT 1908 -1:27:48",\n\t\t\t"-1 Iceland IS%sT 1968_3_7_1 -1",\n\t\t\t"0 - GMT"\n\t\t],\n\t\t"Atlantic/South_Georgia": [\n\t\t\t"-2:26:8 - LMT 1890 -2:26:8",\n\t\t\t"-2 - GST"\n\t\t],\n\t\t"Atlantic/St_Helena": [\n\t\t\t"-0:22:48 - LMT 1890 -0:22:48",\n\t\t\t"-0:22:48 - JMT 1951 -0:22:48",\n\t\t\t"0 - GMT"\n\t\t],\n\t\t"Atlantic/Stanley": [\n\t\t\t"-3:51:24 - LMT 1890 -3:51:24",\n\t\t\t"-3:51:24 - SMT 1912_2_12 -3:51:24",\n\t\t\t"-4 Falk FK%sT 1983_4 -4",\n\t\t\t"-3 Falk FK%sT 1985_8_15 -3",\n\t\t\t"-4 Falk FK%sT 2010_8_5_02 -4",\n\t\t\t"-3 - FKST"\n\t\t],\n\t\t"Australia/Adelaide": [\n\t\t\t"9:14:20 - LMT 1895_1 9:14:20",\n\t\t\t"9 - CST 1899_4 9",\n\t\t\t"9:30 Aus CST 1971 9:30",\n\t\t\t"9:30 AS CST"\n\t\t],\n\t\t"Australia/Brisbane": [\n\t\t\t"10:12:8 - LMT 1895 10:12:8",\n\t\t\t"10 Aus EST 1971 10",\n\t\t\t"10 AQ EST"\n\t\t],\n\t\t"Australia/Broken_Hill": [\n\t\t\t"9:25:48 - LMT 1895_1 9:25:48",\n\t\t\t"10 - EST 1896_7_23 10",\n\t\t\t"9 - CST 1899_4 9",\n\t\t\t"9:30 Aus CST 1971 9:30",\n\t\t\t"9:30 AN CST 2000 10:30",\n\t\t\t"9:30 AS CST"\n\t\t],\n\t\t"Australia/Currie": [\n\t\t\t"9:35:28 - LMT 1895_8 9:35:28",\n\t\t\t"10 - EST 1916_9_1_2 10",\n\t\t\t"11 - EST 1917_1 11",\n\t\t\t"10 Aus EST 1971_6 10",\n\t\t\t"10 AT EST"\n\t\t],\n\t\t"Australia/Darwin": [\n\t\t\t"8:43:20 - LMT 1895_1 8:43:20",\n\t\t\t"9 - CST 1899_4 9",\n\t\t\t"9:30 Aus CST"\n\t\t],\n\t\t"Australia/Eucla": [\n\t\t\t"8:35:28 - LMT 1895_11 8:35:28",\n\t\t\t"8:45 Aus CWST 1943_6 8:45",\n\t\t\t"8:45 AW CWST"\n\t\t],\n\t\t"Australia/Hobart": [\n\t\t\t"9:49:16 - LMT 1895_8 9:49:16",\n\t\t\t"10 - EST 1916_9_1_2 10",\n\t\t\t"11 - EST 1917_1 11",\n\t\t\t"10 Aus EST 1967 10",\n\t\t\t"10 AT EST"\n\t\t],\n\t\t"Australia/Lindeman": [\n\t\t\t"9:55:56 - LMT 1895 9:55:56",\n\t\t\t"10 Aus EST 1971 10",\n\t\t\t"10 AQ EST 1992_6 10",\n\t\t\t"10 Holiday EST"\n\t\t],\n\t\t"Australia/Lord_Howe": [\n\t\t\t"10:36:20 - LMT 1895_1 10:36:20",\n\t\t\t"10 - EST 1981_2 10",\n\t\t\t"10:30 LH LHST"\n\t\t],\n\t\t"Australia/Melbourne": [\n\t\t\t"9:39:52 - LMT 1895_1 9:39:52",\n\t\t\t"10 Aus EST 1971 10",\n\t\t\t"10 AV EST"\n\t\t],\n\t\t"Australia/Perth": [\n\t\t\t"7:43:24 - LMT 1895_11 7:43:24",\n\t\t\t"8 Aus WST 1943_6 8",\n\t\t\t"8 AW WST"\n\t\t],\n\t\t"Australia/Sydney": [\n\t\t\t"10:4:52 - LMT 1895_1 10:4:52",\n\t\t\t"10 Aus EST 1971 10",\n\t\t\t"10 AN EST"\n\t\t],\n\t\t"CET": [\n\t\t\t"1 C-Eur CE%sT"\n\t\t],\n\t\t"CST6CDT": [\n\t\t\t"-6 US C%sT"\n\t\t],\n\t\t"EET": [\n\t\t\t"2 EU EE%sT"\n\t\t],\n\t\t"EST": [\n\t\t\t"-5 - EST"\n\t\t],\n\t\t"EST5EDT": [\n\t\t\t"-5 US E%sT"\n\t\t],\n\t\t"Etc/GMT": [\n\t\t\t"0 - GMT"\n\t\t],\n\t\t"Etc/GMT+1": [\n\t\t\t"-1 - GMT+1"\n\t\t],\n\t\t"Etc/GMT+10": [\n\t\t\t"-10 - GMT+10"\n\t\t],\n\t\t"Etc/GMT+11": [\n\t\t\t"-11 - GMT+11"\n\t\t],\n\t\t"Etc/GMT+12": [\n\t\t\t"-12 - GMT+12"\n\t\t],\n\t\t"Etc/GMT+2": [\n\t\t\t"-2 - GMT+2"\n\t\t],\n\t\t"Etc/GMT+3": [\n\t\t\t"-3 - GMT+3"\n\t\t],\n\t\t"Etc/GMT+4": [\n\t\t\t"-4 - GMT+4"\n\t\t],\n\t\t"Etc/GMT+5": [\n\t\t\t"-5 - GMT+5"\n\t\t],\n\t\t"Etc/GMT+6": [\n\t\t\t"-6 - GMT+6"\n\t\t],\n\t\t"Etc/GMT+7": [\n\t\t\t"-7 - GMT+7"\n\t\t],\n\t\t"Etc/GMT+8": [\n\t\t\t"-8 - GMT+8"\n\t\t],\n\t\t"Etc/GMT+9": [\n\t\t\t"-9 - GMT+9"\n\t\t],\n\t\t"Etc/GMT-1": [\n\t\t\t"1 - GMT-1"\n\t\t],\n\t\t"Etc/GMT-10": [\n\t\t\t"10 - GMT-10"\n\t\t],\n\t\t"Etc/GMT-11": [\n\t\t\t"11 - GMT-11"\n\t\t],\n\t\t"Etc/GMT-12": [\n\t\t\t"12 - GMT-12"\n\t\t],\n\t\t"Etc/GMT-13": [\n\t\t\t"13 - GMT-13"\n\t\t],\n\t\t"Etc/GMT-14": [\n\t\t\t"14 - GMT-14"\n\t\t],\n\t\t"Etc/GMT-2": [\n\t\t\t"2 - GMT-2"\n\t\t],\n\t\t"Etc/GMT-3": [\n\t\t\t"3 - GMT-3"\n\t\t],\n\t\t"Etc/GMT-4": [\n\t\t\t"4 - GMT-4"\n\t\t],\n\t\t"Etc/GMT-5": [\n\t\t\t"5 - GMT-5"\n\t\t],\n\t\t"Etc/GMT-6": [\n\t\t\t"6 - GMT-6"\n\t\t],\n\t\t"Etc/GMT-7": [\n\t\t\t"7 - GMT-7"\n\t\t],\n\t\t"Etc/GMT-8": [\n\t\t\t"8 - GMT-8"\n\t\t],\n\t\t"Etc/GMT-9": [\n\t\t\t"9 - GMT-9"\n\t\t],\n\t\t"Etc/UCT": [\n\t\t\t"0 - UCT"\n\t\t],\n\t\t"Etc/UTC": [\n\t\t\t"0 - UTC"\n\t\t],\n\t\t"Europe/Amsterdam": [\n\t\t\t"0:19:32 - LMT 1835 0:19:32",\n\t\t\t"0:19:32 Neth %s 1937_6_1 1:19:32",\n\t\t\t"0:20 Neth NE%sT 1940_4_16_0 0:20",\n\t\t\t"1 C-Eur CE%sT 1945_3_2_2 1",\n\t\t\t"1 Neth CE%sT 1977 1",\n\t\t\t"1 EU CE%sT"\n\t\t],\n\t\t"Europe/Andorra": [\n\t\t\t"0:6:4 - LMT 1901 0:6:4",\n\t\t\t"0 - WET 1946_8_30",\n\t\t\t"1 - CET 1985_2_31_2 1",\n\t\t\t"1 EU CE%sT"\n\t\t],\n\t\t"Europe/Athens": [\n\t\t\t"1:34:52 - LMT 1895_8_14 1:34:52",\n\t\t\t"1:34:52 - AMT 1916_6_28_0_1 1:34:52",\n\t\t\t"2 Greece EE%sT 1941_3_30 3",\n\t\t\t"1 Greece CE%sT 1944_3_4 1",\n\t\t\t"2 Greece EE%sT 1981 2",\n\t\t\t"2 EU EE%sT"\n\t\t],\n\t\t"Europe/Belgrade": [\n\t\t\t"1:22 - LMT 1884 1:22",\n\t\t\t"1 - CET 1941_3_18_23 1",\n\t\t\t"1 C-Eur CE%sT 1945 1",\n\t\t\t"1 - CET 1945_4_8_2 1",\n\t\t\t"2 - CEST 1945_8_16_2 1",\n\t\t\t"1 - CET 1982_10_27 1",\n\t\t\t"1 EU CE%sT"\n\t\t],\n\t\t"Europe/Berlin": [\n\t\t\t"0:53:28 - LMT 1893_3 0:53:28",\n\t\t\t"1 C-Eur CE%sT 1945_4_24_2 2",\n\t\t\t"1 SovietZone CE%sT 1946 1",\n\t\t\t"1 Germany CE%sT 1980 1",\n\t\t\t"1 EU CE%sT"\n\t\t],\n\t\t"Europe/Brussels": [\n\t\t\t"0:17:30 - LMT 1880 0:17:30",\n\t\t\t"0:17:30 - BMT 1892_4_1_12 0:17:30",\n\t\t\t"0 - WET 1914_10_8",\n\t\t\t"1 - CET 1916_4_1_0 1",\n\t\t\t"1 C-Eur CE%sT 1918_10_11_11",\n\t\t\t"0 Belgium WE%sT 1940_4_20_2",\n\t\t\t"1 C-Eur CE%sT 1944_8_3 2",\n\t\t\t"1 Belgium CE%sT 1977 1",\n\t\t\t"1 EU CE%sT"\n\t\t],\n\t\t"Europe/Bucharest": [\n\t\t\t"1:44:24 - LMT 1891_9 1:44:24",\n\t\t\t"1:44:24 - BMT 1931_6_24 1:44:24",\n\t\t\t"2 Romania EE%sT 1981_2_29_2 2",\n\t\t\t"2 C-Eur EE%sT 1991 2",\n\t\t\t"2 Romania EE%sT 1994 2",\n\t\t\t"2 E-Eur EE%sT 1997 2",\n\t\t\t"2 EU EE%sT"\n\t\t],\n\t\t"Europe/Budapest": [\n\t\t\t"1:16:20 - LMT 1890_9 1:16:20",\n\t\t\t"1 C-Eur CE%sT 1918 1",\n\t\t\t"1 Hungary CE%sT 1941_3_6_2 1",\n\t\t\t"1 C-Eur CE%sT 1945 1",\n\t\t\t"1 Hungary CE%sT 1980_8_28_2 1",\n\t\t\t"1 EU CE%sT"\n\t\t],\n\t\t"Europe/Chisinau": [\n\t\t\t"1:55:20 - LMT 1880 1:55:20",\n\t\t\t"1:55 - CMT 1918_1_15 1:55",\n\t\t\t"1:44:24 - BMT 1931_6_24 1:44:24",\n\t\t\t"2 Romania EE%sT 1940_7_15 2",\n\t\t\t"3 - EEST 1941_6_17 3",\n\t\t\t"1 C-Eur CE%sT 1944_7_24 2",\n\t\t\t"3 Russia MSK/MSD 1990 3",\n\t\t\t"3 - MSK 1990_4_6 3",\n\t\t\t"2 - EET 1991 2",\n\t\t\t"2 Russia EE%sT 1992 2",\n\t\t\t"2 E-Eur EE%sT 1997 2",\n\t\t\t"2 EU EE%sT"\n\t\t],\n\t\t"Europe/Copenhagen": [\n\t\t\t"0:50:20 - LMT 1890 0:50:20",\n\t\t\t"0:50:20 - CMT 1894_0_1 0:50:20",\n\t\t\t"1 Denmark CE%sT 1942_10_2_2 1",\n\t\t\t"1 C-Eur CE%sT 1945_3_2_2 1",\n\t\t\t"1 Denmark CE%sT 1980 1",\n\t\t\t"1 EU CE%sT"\n\t\t],\n\t\t"Europe/Dublin": [\n\t\t\t"-0:25 - LMT 1880_7_2 -0:25",\n\t\t\t"-0:25:21 - DMT 1916_4_21_2 -0:25:21",\n\t\t\t"0:34:39 - IST 1916_9_1_2 -0:25:21",\n\t\t\t"0 GB-Eire %s 1921_11_6",\n\t\t\t"0 GB-Eire GMT/IST 1940_1_25_2",\n\t\t\t"1 - IST 1946_9_6_2 1",\n\t\t\t"0 - GMT 1947_2_16_2",\n\t\t\t"1 - IST 1947_10_2_2 1",\n\t\t\t"0 - GMT 1948_3_18_2",\n\t\t\t"0 GB-Eire GMT/IST 1968_9_27 1",\n\t\t\t"1 - IST 1971_9_31_2",\n\t\t\t"0 GB-Eire GMT/IST 1996",\n\t\t\t"0 EU GMT/IST"\n\t\t],\n\t\t"Europe/Gibraltar": [\n\t\t\t"-0:21:24 - LMT 1880_7_2_0 -0:21:24",\n\t\t\t"0 GB-Eire %s 1957_3_14_2",\n\t\t\t"1 - CET 1982 1",\n\t\t\t"1 EU CE%sT"\n\t\t],\n\t\t"Europe/Helsinki": [\n\t\t\t"1:39:52 - LMT 1878_4_31 1:39:52",\n\t\t\t"1:39:52 - HMT 1921_4 1:39:52",\n\t\t\t"2 Finland EE%sT 1983 2",\n\t\t\t"2 EU EE%sT"\n\t\t],\n\t\t"Europe/Istanbul": [\n\t\t\t"1:55:52 - LMT 1880 1:55:52",\n\t\t\t"1:56:56 - IMT 1910_9 1:56:56",\n\t\t\t"2 Turkey EE%sT 1978_9_15 3",\n\t\t\t"3 Turkey TR%sT 1985_3_20 3",\n\t\t\t"2 Turkey EE%sT 2007 2",\n\t\t\t"2 EU EE%sT 2011_2_27_1",\n\t\t\t"2 - EET 2011_2_28_1",\n\t\t\t"2 EU EE%sT"\n\t\t],\n\t\t"Europe/Kaliningrad": [\n\t\t\t"1:22 - LMT 1893_3 1:22",\n\t\t\t"1 C-Eur CE%sT 1945 1",\n\t\t\t"2 Poland CE%sT 1946 2",\n\t\t\t"3 Russia MSK/MSD 1991_2_31_2 3",\n\t\t\t"2 Russia EE%sT 2011_2_27_2 2",\n\t\t\t"3 - FET"\n\t\t],\n\t\t"Europe/Kiev": [\n\t\t\t"2:2:4 - LMT 1880 2:2:4",\n\t\t\t"2:2:4 - KMT 1924_4_2 2:2:4",\n\t\t\t"2 - EET 1930_5_21 2",\n\t\t\t"3 - MSK 1941_8_20 3",\n\t\t\t"1 C-Eur CE%sT 1943_10_6 1",\n\t\t\t"3 Russia MSK/MSD 1990 3",\n\t\t\t"3 - MSK 1990_6_1_2 3",\n\t\t\t"2 - EET 1992 2",\n\t\t\t"2 E-Eur EE%sT 1995 2",\n\t\t\t"2 EU EE%sT"\n\t\t],\n\t\t"Europe/Lisbon": [\n\t\t\t"-0:36:32 - LMT 1884 -0:36:32",\n\t\t\t"-0:36:32 - LMT 1912_0_1 -0:36:32",\n\t\t\t"0 Port WE%sT 1966_3_3_2",\n\t\t\t"1 - CET 1976_8_26_1 1",\n\t\t\t"0 Port WE%sT 1983_8_25_1",\n\t\t\t"0 W-Eur WE%sT 1992_8_27_1",\n\t\t\t"1 EU CE%sT 1996_2_31_1",\n\t\t\t"0 EU WE%sT"\n\t\t],\n\t\t"Europe/London": [\n\t\t\t"-0:1:15 - LMT 1847_11_1_0 -0:1:15",\n\t\t\t"0 GB-Eire %s 1968_9_27 1",\n\t\t\t"1 - BST 1971_9_31_2",\n\t\t\t"0 GB-Eire %s 1996",\n\t\t\t"0 EU GMT/BST"\n\t\t],\n\t\t"Europe/Luxembourg": [\n\t\t\t"0:24:36 - LMT 1904_5 0:24:36",\n\t\t\t"1 Lux CE%sT 1918_10_25 1",\n\t\t\t"0 Lux WE%sT 1929_9_6_2",\n\t\t\t"0 Belgium WE%sT 1940_4_14_3 1",\n\t\t\t"1 C-Eur WE%sT 1944_8_18_3 2",\n\t\t\t"1 Belgium CE%sT 1977 1",\n\t\t\t"1 EU CE%sT"\n\t\t],\n\t\t"Europe/Madrid": [\n\t\t\t"-0:14:44 - LMT 1901_0_1_0 -0:14:44",\n\t\t\t"0 Spain WE%sT 1946_8_30 2",\n\t\t\t"1 Spain CE%sT 1979 1",\n\t\t\t"1 EU CE%sT"\n\t\t],\n\t\t"Europe/Malta": [\n\t\t\t"0:58:4 - LMT 1893_10_2_0 0:58:4",\n\t\t\t"1 Italy CE%sT 1942_10_2_2 1",\n\t\t\t"1 C-Eur CE%sT 1945_3_2_2 1",\n\t\t\t"1 Italy CE%sT 1973_2_31 1",\n\t\t\t"1 Malta CE%sT 1981 1",\n\t\t\t"1 EU CE%sT"\n\t\t],\n\t\t"Europe/Minsk": [\n\t\t\t"1:50:16 - LMT 1880 1:50:16",\n\t\t\t"1:50 - MMT 1924_4_2 1:50",\n\t\t\t"2 - EET 1930_5_21 2",\n\t\t\t"3 - MSK 1941_5_28 3",\n\t\t\t"1 C-Eur CE%sT 1944_6_3 2",\n\t\t\t"3 Russia MSK/MSD 1990 3",\n\t\t\t"3 - MSK 1991_2_31_2 3",\n\t\t\t"3 - EEST 1991_8_29_2 2",\n\t\t\t"2 - EET 1992_2_29_0 2",\n\t\t\t"3 - EEST 1992_8_27_0 2",\n\t\t\t"2 Russia EE%sT 2011_2_27_2 2",\n\t\t\t"3 - FET"\n\t\t],\n\t\t"Europe/Monaco": [\n\t\t\t"0:29:32 - LMT 1891_2_15 0:29:32",\n\t\t\t"0:9:21 - PMT 1911_2_11 0:9:21",\n\t\t\t"0 France WE%sT 1945_8_16_3 2",\n\t\t\t"1 France CE%sT 1977 1",\n\t\t\t"1 EU CE%sT"\n\t\t],\n\t\t"Europe/Moscow": [\n\t\t\t"2:30:20 - LMT 1880 2:30:20",\n\t\t\t"2:30 - MMT 1916_6_3 2:30",\n\t\t\t"2:30:48 Russia %s 1919_6_1_2 4:30:48",\n\t\t\t"3 Russia MSK/MSD 1922_9 3",\n\t\t\t"2 - EET 1930_5_21 2",\n\t\t\t"3 Russia MSK/MSD 1991_2_31_2 3",\n\t\t\t"2 Russia EE%sT 1992_0_19_2 2",\n\t\t\t"3 Russia MSK/MSD 2011_2_27_2 3",\n\t\t\t"4 - MSK"\n\t\t],\n\t\t"Europe/Oslo": [\n\t\t\t"0:43 - LMT 1895_0_1 0:43",\n\t\t\t"1 Norway CE%sT 1940_7_10_23 1",\n\t\t\t"1 C-Eur CE%sT 1945_3_2_2 1",\n\t\t\t"1 Norway CE%sT 1980 1",\n\t\t\t"1 EU CE%sT"\n\t\t],\n\t\t"Europe/Paris": [\n\t\t\t"0:9:21 - LMT 1891_2_15_0_1 0:9:21",\n\t\t\t"0:9:21 - PMT 1911_2_11_0_1 0:9:21",\n\t\t\t"0 France WE%sT 1940_5_14_23 1",\n\t\t\t"1 C-Eur CE%sT 1944_7_25 2",\n\t\t\t"0 France WE%sT 1945_8_16_3 2",\n\t\t\t"1 France CE%sT 1977 1",\n\t\t\t"1 EU CE%sT"\n\t\t],\n\t\t"Europe/Prague": [\n\t\t\t"0:57:44 - LMT 1850 0:57:44",\n\t\t\t"0:57:44 - PMT 1891_9 0:57:44",\n\t\t\t"1 C-Eur CE%sT 1944_8_17_2 1",\n\t\t\t"1 Czech CE%sT 1979 1",\n\t\t\t"1 EU CE%sT"\n\t\t],\n\t\t"Europe/Riga": [\n\t\t\t"1:36:24 - LMT 1880 1:36:24",\n\t\t\t"1:36:24 - RMT 1918_3_15_2 1:36:24",\n\t\t\t"2:36:24 - LST 1918_8_16_3 2:36:24",\n\t\t\t"1:36:24 - RMT 1919_3_1_2 1:36:24",\n\t\t\t"2:36:24 - LST 1919_4_22_3 2:36:24",\n\t\t\t"1:36:24 - RMT 1926_4_11 1:36:24",\n\t\t\t"2 - EET 1940_7_5 2",\n\t\t\t"3 - MSK 1941_6 3",\n\t\t\t"1 C-Eur CE%sT 1944_9_13 1",\n\t\t\t"3 Russia MSK/MSD 1989_2_26_2 3",\n\t\t\t"3 - EEST 1989_8_24_2 2",\n\t\t\t"2 Latvia EE%sT 1997_0_21 2",\n\t\t\t"2 EU EE%sT 2000_1_29 2",\n\t\t\t"2 - EET 2001_0_2 2",\n\t\t\t"2 EU EE%sT"\n\t\t],\n\t\t"Europe/Rome": [\n\t\t\t"0:49:56 - LMT 1866_8_22 0:49:56",\n\t\t\t"0:49:56 - RMT 1893_10_1_0 0:49:56",\n\t\t\t"1 Italy CE%sT 1942_10_2_2 1",\n\t\t\t"1 C-Eur CE%sT 1944_6 2",\n\t\t\t"1 Italy CE%sT 1980 1",\n\t\t\t"1 EU CE%sT"\n\t\t],\n\t\t"Europe/Samara": [\n\t\t\t"3:20:36 - LMT 1919_6_1_2 3:20:36",\n\t\t\t"3 - SAMT 1930_5_21 3",\n\t\t\t"4 - SAMT 1935_0_27 4",\n\t\t\t"4 Russia KUY%sT 1989_2_26_2 4",\n\t\t\t"3 Russia KUY%sT 1991_2_31_2 3",\n\t\t\t"2 Russia KUY%sT 1991_8_29_2 2",\n\t\t\t"3 - KUYT 1991_9_20_3 3",\n\t\t\t"4 Russia SAM%sT 2010_2_28_2 4",\n\t\t\t"3 Russia SAM%sT 2011_2_27_2 3",\n\t\t\t"4 - SAMT"\n\t\t],\n\t\t"Europe/Simferopol": [\n\t\t\t"2:16:24 - LMT 1880 2:16:24",\n\t\t\t"2:16 - SMT 1924_4_2 2:16",\n\t\t\t"2 - EET 1930_5_21 2",\n\t\t\t"3 - MSK 1941_10 3",\n\t\t\t"1 C-Eur CE%sT 1944_3_13 2",\n\t\t\t"3 Russia MSK/MSD 1990 3",\n\t\t\t"3 - MSK 1990_6_1_2 3",\n\t\t\t"2 - EET 1992 2",\n\t\t\t"2 E-Eur EE%sT 1994_4 3",\n\t\t\t"3 E-Eur MSK/MSD 1996_2_31_3 3",\n\t\t\t"4 - MSD 1996_9_27_3 3",\n\t\t\t"3 Russia MSK/MSD 1997 3",\n\t\t\t"3 - MSK 1997_2_30_1",\n\t\t\t"2 EU EE%sT"\n\t\t],\n\t\t"Europe/Sofia": [\n\t\t\t"1:33:16 - LMT 1880 1:33:16",\n\t\t\t"1:56:56 - IMT 1894_10_30 1:56:56",\n\t\t\t"2 - EET 1942_10_2_3 2",\n\t\t\t"1 C-Eur CE%sT 1945 1",\n\t\t\t"1 - CET 1945_3_2_3 1",\n\t\t\t"2 - EET 1979_2_31_23 2",\n\t\t\t"2 Bulg EE%sT 1982_8_26_2 3",\n\t\t\t"2 C-Eur EE%sT 1991 2",\n\t\t\t"2 E-Eur EE%sT 1997 2",\n\t\t\t"2 EU EE%sT"\n\t\t],\n\t\t"Europe/Stockholm": [\n\t\t\t"1:12:12 - LMT 1879_0_1 1:12:12",\n\t\t\t"1:0:14 - SET 1900_0_1 1:0:14",\n\t\t\t"1 - CET 1916_4_14_23 1",\n\t\t\t"2 - CEST 1916_9_1_01 2",\n\t\t\t"1 - CET 1980 1",\n\t\t\t"1 EU CE%sT"\n\t\t],\n\t\t"Europe/Tallinn": [\n\t\t\t"1:39 - LMT 1880 1:39",\n\t\t\t"1:39 - TMT 1918_1 1:39",\n\t\t\t"1 C-Eur CE%sT 1919_6 1",\n\t\t\t"1:39 - TMT 1921_4 1:39",\n\t\t\t"2 - EET 1940_7_6 2",\n\t\t\t"3 - MSK 1941_8_15 3",\n\t\t\t"1 C-Eur CE%sT 1944_8_22 2",\n\t\t\t"3 Russia MSK/MSD 1989_2_26_2 3",\n\t\t\t"3 - EEST 1989_8_24_2 2",\n\t\t\t"2 C-Eur EE%sT 1998_8_22 3",\n\t\t\t"2 EU EE%sT 1999_10_1 3",\n\t\t\t"2 - EET 2002_1_21 2",\n\t\t\t"2 EU EE%sT"\n\t\t],\n\t\t"Europe/Tirane": [\n\t\t\t"1:19:20 - LMT 1914 1:19:20",\n\t\t\t"1 - CET 1940_5_16 1",\n\t\t\t"1 Albania CE%sT 1984_6 2",\n\t\t\t"1 EU CE%sT"\n\t\t],\n\t\t"Europe/Uzhgorod": [\n\t\t\t"1:29:12 - LMT 1890_9 1:29:12",\n\t\t\t"1 - CET 1940 1",\n\t\t\t"1 C-Eur CE%sT 1944_9 2",\n\t\t\t"2 - CEST 1944_9_26 2",\n\t\t\t"1 - CET 1945_5_29 1",\n\t\t\t"3 Russia MSK/MSD 1990 3",\n\t\t\t"3 - MSK 1990_6_1_2 3",\n\t\t\t"1 - CET 1991_2_31_3 1",\n\t\t\t"2 - EET 1992 2",\n\t\t\t"2 E-Eur EE%sT 1995 2",\n\t\t\t"2 EU EE%sT"\n\t\t],\n\t\t"Europe/Vaduz": [\n\t\t\t"0:38:4 - LMT 1894_5 0:38:4",\n\t\t\t"1 - CET 1981 1",\n\t\t\t"1 EU CE%sT"\n\t\t],\n\t\t"Europe/Vienna": [\n\t\t\t"1:5:21 - LMT 1893_3 1:5:21",\n\t\t\t"1 C-Eur CE%sT 1920 1",\n\t\t\t"1 Austria CE%sT 1940_3_1_2 1",\n\t\t\t"1 C-Eur CE%sT 1945_3_2_2 1",\n\t\t\t"2 - CEST 1945_3_12_2 1",\n\t\t\t"1 - CET 1946 1",\n\t\t\t"1 Austria CE%sT 1981 1",\n\t\t\t"1 EU CE%sT"\n\t\t],\n\t\t"Europe/Vilnius": [\n\t\t\t"1:41:16 - LMT 1880 1:41:16",\n\t\t\t"1:24 - WMT 1917 1:24",\n\t\t\t"1:35:36 - KMT 1919_9_10 1:35:36",\n\t\t\t"1 - CET 1920_6_12 1",\n\t\t\t"2 - EET 1920_9_9 2",\n\t\t\t"1 - CET 1940_7_3 1",\n\t\t\t"3 - MSK 1941_5_24 3",\n\t\t\t"1 C-Eur CE%sT 1944_7 2",\n\t\t\t"3 Russia MSK/MSD 1991_2_31_2 3",\n\t\t\t"3 - EEST 1991_8_29_2 2",\n\t\t\t"2 C-Eur EE%sT 1998 2",\n\t\t\t"2 - EET 1998_2_29_1",\n\t\t\t"1 EU CE%sT 1999_9_31_1",\n\t\t\t"2 - EET 2003_0_1 2",\n\t\t\t"2 EU EE%sT"\n\t\t],\n\t\t"Europe/Volgograd": [\n\t\t\t"2:57:40 - LMT 1920_0_3 2:57:40",\n\t\t\t"3 - TSAT 1925_3_6 3",\n\t\t\t"3 - STAT 1930_5_21 3",\n\t\t\t"4 - STAT 1961_10_11 4",\n\t\t\t"4 Russia VOL%sT 1989_2_26_2 4",\n\t\t\t"3 Russia VOL%sT 1991_2_31_2 3",\n\t\t\t"4 - VOLT 1992_2_29_2 4",\n\t\t\t"3 Russia VOL%sT 2011_2_27_2 3",\n\t\t\t"4 - VOLT"\n\t\t],\n\t\t"Europe/Warsaw": [\n\t\t\t"1:24 - LMT 1880 1:24",\n\t\t\t"1:24 - WMT 1915_7_5 1:24",\n\t\t\t"1 C-Eur CE%sT 1918_8_16_3 2",\n\t\t\t"2 Poland EE%sT 1922_5 2",\n\t\t\t"1 Poland CE%sT 1940_5_23_2 1",\n\t\t\t"1 C-Eur CE%sT 1944_9 2",\n\t\t\t"1 Poland CE%sT 1977 1",\n\t\t\t"1 W-Eur CE%sT 1988 1",\n\t\t\t"1 EU CE%sT"\n\t\t],\n\t\t"Europe/Zaporozhye": [\n\t\t\t"2:20:40 - LMT 1880 2:20:40",\n\t\t\t"2:20 - CUT 1924_4_2 2:20",\n\t\t\t"2 - EET 1930_5_21 2",\n\t\t\t"3 - MSK 1941_7_25 3",\n\t\t\t"1 C-Eur CE%sT 1943_9_25 1",\n\t\t\t"3 Russia MSK/MSD 1991_2_31_2 3",\n\t\t\t"2 E-Eur EE%sT 1995 2",\n\t\t\t"2 EU EE%sT"\n\t\t],\n\t\t"Europe/Zurich": [\n\t\t\t"0:34:8 - LMT 1848_8_12 0:34:8",\n\t\t\t"0:29:44 - BMT 1894_5 0:29:44",\n\t\t\t"1 Swiss CE%sT 1981 1",\n\t\t\t"1 EU CE%sT"\n\t\t],\n\t\t"HST": [\n\t\t\t"-10 - HST"\n\t\t],\n\t\t"Indian/Antananarivo": [\n\t\t\t"3:10:4 - LMT 1911_6 3:10:4",\n\t\t\t"3 - EAT 1954_1_27_23 3",\n\t\t\t"4 - EAST 1954_4_29_23 3",\n\t\t\t"3 - EAT"\n\t\t],\n\t\t"Indian/Chagos": [\n\t\t\t"4:49:40 - LMT 1907 4:49:40",\n\t\t\t"5 - IOT 1996 5",\n\t\t\t"6 - IOT"\n\t\t],\n\t\t"Indian/Christmas": [\n\t\t\t"7:2:52 - LMT 1895_1 7:2:52",\n\t\t\t"7 - CXT"\n\t\t],\n\t\t"Indian/Cocos": [\n\t\t\t"6:27:40 - LMT 1900 6:27:40",\n\t\t\t"6:30 - CCT"\n\t\t],\n\t\t"Indian/Comoro": [\n\t\t\t"2:53:4 - LMT 1911_6 2:53:4",\n\t\t\t"3 - EAT"\n\t\t],\n\t\t"Indian/Kerguelen": [\n\t\t\t"0 - zzz 1950",\n\t\t\t"5 - TFT"\n\t\t],\n\t\t"Indian/Mahe": [\n\t\t\t"3:41:48 - LMT 1906_5 3:41:48",\n\t\t\t"4 - SCT"\n\t\t],\n\t\t"Indian/Maldives": [\n\t\t\t"4:54 - LMT 1880 4:54",\n\t\t\t"4:54 - MMT 1960 4:54",\n\t\t\t"5 - MVT"\n\t\t],\n\t\t"Indian/Mauritius": [\n\t\t\t"3:50 - LMT 1907 3:50",\n\t\t\t"4 Mauritius MU%sT"\n\t\t],\n\t\t"Indian/Mayotte": [\n\t\t\t"3:0:56 - LMT 1911_6 3:0:56",\n\t\t\t"3 - EAT"\n\t\t],\n\t\t"Indian/Reunion": [\n\t\t\t"3:41:52 - LMT 1911_5 3:41:52",\n\t\t\t"4 - RET"\n\t\t],\n\t\t"MET": [\n\t\t\t"1 C-Eur ME%sT"\n\t\t],\n\t\t"MST": [\n\t\t\t"-7 - MST"\n\t\t],\n\t\t"MST7MDT": [\n\t\t\t"-7 US M%sT"\n\t\t],\n\t\t"PST8PDT": [\n\t\t\t"-8 US P%sT"\n\t\t],\n\t\t"Pacific/Apia": [\n\t\t\t"12:33:4 - LMT 1879_6_5 12:33:4",\n\t\t\t"-11:26:56 - LMT 1911 -11:26:56",\n\t\t\t"-11:30 - SAMT 1950 -11:30",\n\t\t\t"-11 - WST 2010_8_26 -11",\n\t\t\t"-10 - WSDT 2011_3_2_4 -10",\n\t\t\t"-11 - WST 2011_8_24_3 -11",\n\t\t\t"-10 - WSDT 2011_11_30 -10",\n\t\t\t"14 - WSDT 2012_3_1_4 14",\n\t\t\t"13 WS WS%sT"\n\t\t],\n\t\t"Pacific/Auckland": [\n\t\t\t"11:39:4 - LMT 1868_10_2 11:39:4",\n\t\t\t"11:30 NZ NZ%sT 1946_0_1 12",\n\t\t\t"12 NZ NZ%sT"\n\t\t],\n\t\t"Pacific/Chatham": [\n\t\t\t"12:13:48 - LMT 1957_0_1 12:13:48",\n\t\t\t"12:45 Chatham CHA%sT"\n\t\t],\n\t\t"Pacific/Chuuk": [\n\t\t\t"10:7:8 - LMT 1901 10:7:8",\n\t\t\t"10 - CHUT"\n\t\t],\n\t\t"Pacific/Easter": [\n\t\t\t"-7:17:44 - LMT 1890 -7:17:44",\n\t\t\t"-7:17:28 - EMT 1932_8 -7:17:28",\n\t\t\t"-7 Chile EAS%sT 1982_2_13_21 -6",\n\t\t\t"-6 Chile EAS%sT"\n\t\t],\n\t\t"Pacific/Efate": [\n\t\t\t"11:13:16 - LMT 1912_0_13 11:13:16",\n\t\t\t"11 Vanuatu VU%sT"\n\t\t],\n\t\t"Pacific/Enderbury": [\n\t\t\t"-11:24:20 - LMT 1901 -11:24:20",\n\t\t\t"-12 - PHOT 1979_9 -12",\n\t\t\t"-11 - PHOT 1995 -11",\n\t\t\t"13 - PHOT"\n\t\t],\n\t\t"Pacific/Fakaofo": [\n\t\t\t"-11:24:56 - LMT 1901 -11:24:56",\n\t\t\t"-11 - TKT 2011_11_30 -11",\n\t\t\t"13 - TKT"\n\t\t],\n\t\t"Pacific/Fiji": [\n\t\t\t"11:55:44 - LMT 1915_9_26 11:55:44",\n\t\t\t"12 Fiji FJ%sT"\n\t\t],\n\t\t"Pacific/Funafuti": [\n\t\t\t"11:56:52 - LMT 1901 11:56:52",\n\t\t\t"12 - TVT"\n\t\t],\n\t\t"Pacific/Galapagos": [\n\t\t\t"-5:58:24 - LMT 1931 -5:58:24",\n\t\t\t"-5 - ECT 1986 -5",\n\t\t\t"-6 - GALT"\n\t\t],\n\t\t"Pacific/Gambier": [\n\t\t\t"-8:59:48 - LMT 1912_9 -8:59:48",\n\t\t\t"-9 - GAMT"\n\t\t],\n\t\t"Pacific/Guadalcanal": [\n\t\t\t"10:39:48 - LMT 1912_9 10:39:48",\n\t\t\t"11 - SBT"\n\t\t],\n\t\t"Pacific/Guam": [\n\t\t\t"-14:21 - LMT 1844_11_31 -14:21",\n\t\t\t"9:39 - LMT 1901 9:39",\n\t\t\t"10 - GST 2000_11_23 10",\n\t\t\t"10 - ChST"\n\t\t],\n\t\t"Pacific/Honolulu": [\n\t\t\t"-10:31:26 - LMT 1896_0_13_12 -10:31:26",\n\t\t\t"-10:30 - HST 1933_3_30_2 -10:30",\n\t\t\t"-9:30 - HDT 1933_4_21_12 -9:30",\n\t\t\t"-10:30 - HST 1942_1_09_2 -10:30",\n\t\t\t"-9:30 - HDT 1945_8_30_2 -9:30",\n\t\t\t"-10:30 - HST 1947_5_8_2 -10:30",\n\t\t\t"-10 - HST"\n\t\t],\n\t\t"Pacific/Johnston": [\n\t\t\t"-10 - HST"\n\t\t],\n\t\t"Pacific/Kiritimati": [\n\t\t\t"-10:29:20 - LMT 1901 -10:29:20",\n\t\t\t"-10:40 - LINT 1979_9 -10:40",\n\t\t\t"-10 - LINT 1995 -10",\n\t\t\t"14 - LINT"\n\t\t],\n\t\t"Pacific/Kosrae": [\n\t\t\t"10:51:56 - LMT 1901 10:51:56",\n\t\t\t"11 - KOST 1969_9 11",\n\t\t\t"12 - KOST 1999 12",\n\t\t\t"11 - KOST"\n\t\t],\n\t\t"Pacific/Kwajalein": [\n\t\t\t"11:9:20 - LMT 1901 11:9:20",\n\t\t\t"11 - MHT 1969_9 11",\n\t\t\t"-12 - KWAT 1993_7_20 -12",\n\t\t\t"12 - MHT"\n\t\t],\n\t\t"Pacific/Majuro": [\n\t\t\t"11:24:48 - LMT 1901 11:24:48",\n\t\t\t"11 - MHT 1969_9 11",\n\t\t\t"12 - MHT"\n\t\t],\n\t\t"Pacific/Marquesas": [\n\t\t\t"-9:18 - LMT 1912_9 -9:18",\n\t\t\t"-9:30 - MART"\n\t\t],\n\t\t"Pacific/Midway": [\n\t\t\t"-11:49:28 - LMT 1901 -11:49:28",\n\t\t\t"-11 - NST 1956_5_3 -11",\n\t\t\t"-10 - NDT 1956_8_2 -10",\n\t\t\t"-11 - NST 1967_3 -11",\n\t\t\t"-11 - BST 1983_10_30 -11",\n\t\t\t"-11 - SST"\n\t\t],\n\t\t"Pacific/Nauru": [\n\t\t\t"11:7:40 - LMT 1921_0_15 11:7:40",\n\t\t\t"11:30 - NRT 1942_2_15 11:30",\n\t\t\t"9 - JST 1944_7_15 9",\n\t\t\t"11:30 - NRT 1979_4 11:30",\n\t\t\t"12 - NRT"\n\t\t],\n\t\t"Pacific/Niue": [\n\t\t\t"-11:19:40 - LMT 1901 -11:19:40",\n\t\t\t"-11:20 - NUT 1951 -11:20",\n\t\t\t"-11:30 - NUT 1978_9_1 -11:30",\n\t\t\t"-11 - NUT"\n\t\t],\n\t\t"Pacific/Norfolk": [\n\t\t\t"11:11:52 - LMT 1901 11:11:52",\n\t\t\t"11:12 - NMT 1951 11:12",\n\t\t\t"11:30 - NFT"\n\t\t],\n\t\t"Pacific/Noumea": [\n\t\t\t"11:5:48 - LMT 1912_0_13 11:5:48",\n\t\t\t"11 NC NC%sT"\n\t\t],\n\t\t"Pacific/Pago_Pago": [\n\t\t\t"12:37:12 - LMT 1879_6_5 12:37:12",\n\t\t\t"-11:22:48 - LMT 1911 -11:22:48",\n\t\t\t"-11:30 - SAMT 1950 -11:30",\n\t\t\t"-11 - NST 1967_3 -11",\n\t\t\t"-11 - BST 1983_10_30 -11",\n\t\t\t"-11 - SST"\n\t\t],\n\t\t"Pacific/Palau": [\n\t\t\t"8:57:56 - LMT 1901 8:57:56",\n\t\t\t"9 - PWT"\n\t\t],\n\t\t"Pacific/Pitcairn": [\n\t\t\t"-8:40:20 - LMT 1901 -8:40:20",\n\t\t\t"-8:30 - PNT 1998_3_27_00 -8:30",\n\t\t\t"-8 - PST"\n\t\t],\n\t\t"Pacific/Pohnpei": [\n\t\t\t"10:32:52 - LMT 1901 10:32:52",\n\t\t\t"11 - PONT"\n\t\t],\n\t\t"Pacific/Port_Moresby": [\n\t\t\t"9:48:40 - LMT 1880 9:48:40",\n\t\t\t"9:48:32 - PMMT 1895 9:48:32",\n\t\t\t"10 - PGT"\n\t\t],\n\t\t"Pacific/Rarotonga": [\n\t\t\t"-10:39:4 - LMT 1901 -10:39:4",\n\t\t\t"-10:30 - CKT 1978_10_12 -10:30",\n\t\t\t"-10 Cook CK%sT"\n\t\t],\n\t\t"Pacific/Saipan": [\n\t\t\t"-14:17 - LMT 1844_11_31 -14:17",\n\t\t\t"9:43 - LMT 1901 9:43",\n\t\t\t"9 - MPT 1969_9 9",\n\t\t\t"10 - MPT 2000_11_23 10",\n\t\t\t"10 - ChST"\n\t\t],\n\t\t"Pacific/Tahiti": [\n\t\t\t"-9:58:16 - LMT 1912_9 -9:58:16",\n\t\t\t"-10 - TAHT"\n\t\t],\n\t\t"Pacific/Tarawa": [\n\t\t\t"11:32:4 - LMT 1901 11:32:4",\n\t\t\t"12 - GILT"\n\t\t],\n\t\t"Pacific/Tongatapu": [\n\t\t\t"12:19:20 - LMT 1901 12:19:20",\n\t\t\t"12:20 - TOT 1941 12:20",\n\t\t\t"13 - TOT 1999 13",\n\t\t\t"13 Tonga TO%sT"\n\t\t],\n\t\t"Pacific/Wake": [\n\t\t\t"11:6:28 - LMT 1901 11:6:28",\n\t\t\t"12 - WAKT"\n\t\t],\n\t\t"Pacific/Wallis": [\n\t\t\t"12:15:20 - LMT 1901 12:15:20",\n\t\t\t"12 - WFT"\n\t\t],\n\t\t"WET": [\n\t\t\t"0 EU WE%sT"\n\t\t]\n\t}\n}';});
 
 // scripts/config.es6
 define(
-  'config',["moment-timezone","text!moment-timezone.json","exports"],
-  function(__dependency1__, __dependency2__, __exports__) {
+  'config',["jquery","backbone","text!build","moment-timezone","text!moment-timezone-config","exports"],
+  function(__dependency1__, __dependency2__, __dependency3__, __dependency4__, __dependency5__, __exports__) {
     
-    var moment = __dependency1__["default"] || __dependency1__;
-    var timezones = __dependency2__["default"] || __dependency2__;
+    var $ = __dependency1__["default"] || __dependency1__;
+    var Backbone = __dependency2__["default"] || __dependency2__;
+    var buildJson = __dependency3__["default"] || __dependency3__;
+    var moment = __dependency4__["default"] || __dependency4__;
+    var momentTimezonesConfigJson = __dependency5__["default"] || __dependency5__;
 
-    moment.tz.add(JSON.parse(timezones));
+    Backbone.$ = $;
+
+    moment.tz.add(JSON.parse(momentTimezonesConfigJson));
 
     var defaults = {
-      api: {cors: false}
+      api: {cors: false},
+      build: JSON.parse(buildJson)
     };
 
     __exports__["default"] = defaults;
   });
-
-//     Underscore.js 1.5.2
-//     http://underscorejs.org
-//     (c) 2009-2013 Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
-//     Underscore may be freely distributed under the MIT license.
-
-(function() {
-
-  // Baseline setup
-  // --------------
-
-  // Establish the root object, `window` in the browser, or `exports` on the server.
-  var root = this;
-
-  // Save the previous value of the `_` variable.
-  var previousUnderscore = root._;
-
-  // Establish the object that gets returned to break out of a loop iteration.
-  var breaker = {};
-
-  // Save bytes in the minified (but not gzipped) version:
-  var ArrayProto = Array.prototype, ObjProto = Object.prototype, FuncProto = Function.prototype;
-
-  // Create quick reference variables for speed access to core prototypes.
-  var
-    push             = ArrayProto.push,
-    slice            = ArrayProto.slice,
-    concat           = ArrayProto.concat,
-    toString         = ObjProto.toString,
-    hasOwnProperty   = ObjProto.hasOwnProperty;
-
-  // All **ECMAScript 5** native function implementations that we hope to use
-  // are declared here.
-  var
-    nativeForEach      = ArrayProto.forEach,
-    nativeMap          = ArrayProto.map,
-    nativeReduce       = ArrayProto.reduce,
-    nativeReduceRight  = ArrayProto.reduceRight,
-    nativeFilter       = ArrayProto.filter,
-    nativeEvery        = ArrayProto.every,
-    nativeSome         = ArrayProto.some,
-    nativeIndexOf      = ArrayProto.indexOf,
-    nativeLastIndexOf  = ArrayProto.lastIndexOf,
-    nativeIsArray      = Array.isArray,
-    nativeKeys         = Object.keys,
-    nativeBind         = FuncProto.bind;
-
-  // Create a safe reference to the Underscore object for use below.
-  var _ = function(obj) {
-    if (obj instanceof _) return obj;
-    if (!(this instanceof _)) return new _(obj);
-    this._wrapped = obj;
-  };
-
-  // Export the Underscore object for **Node.js**, with
-  // backwards-compatibility for the old `require()` API. If we're in
-  // the browser, add `_` as a global object via a string identifier,
-  // for Closure Compiler "advanced" mode.
-  if (typeof exports !== 'undefined') {
-    if (typeof module !== 'undefined' && module.exports) {
-      exports = module.exports = _;
-    }
-    exports._ = _;
-  } else {
-    root._ = _;
-  }
-
-  // Current version.
-  _.VERSION = '1.5.2';
-
-  // Collection Functions
-  // --------------------
-
-  // The cornerstone, an `each` implementation, aka `forEach`.
-  // Handles objects with the built-in `forEach`, arrays, and raw objects.
-  // Delegates to **ECMAScript 5**'s native `forEach` if available.
-  var each = _.each = _.forEach = function(obj, iterator, context) {
-    if (obj == null) return;
-    if (nativeForEach && obj.forEach === nativeForEach) {
-      obj.forEach(iterator, context);
-    } else if (obj.length === +obj.length) {
-      for (var i = 0, length = obj.length; i < length; i++) {
-        if (iterator.call(context, obj[i], i, obj) === breaker) return;
-      }
-    } else {
-      var keys = _.keys(obj);
-      for (var i = 0, length = keys.length; i < length; i++) {
-        if (iterator.call(context, obj[keys[i]], keys[i], obj) === breaker) return;
-      }
-    }
-  };
-
-  // Return the results of applying the iterator to each element.
-  // Delegates to **ECMAScript 5**'s native `map` if available.
-  _.map = _.collect = function(obj, iterator, context) {
-    var results = [];
-    if (obj == null) return results;
-    if (nativeMap && obj.map === nativeMap) return obj.map(iterator, context);
-    each(obj, function(value, index, list) {
-      results.push(iterator.call(context, value, index, list));
-    });
-    return results;
-  };
-
-  var reduceError = 'Reduce of empty array with no initial value';
-
-  // **Reduce** builds up a single result from a list of values, aka `inject`,
-  // or `foldl`. Delegates to **ECMAScript 5**'s native `reduce` if available.
-  _.reduce = _.foldl = _.inject = function(obj, iterator, memo, context) {
-    var initial = arguments.length > 2;
-    if (obj == null) obj = [];
-    if (nativeReduce && obj.reduce === nativeReduce) {
-      if (context) iterator = _.bind(iterator, context);
-      return initial ? obj.reduce(iterator, memo) : obj.reduce(iterator);
-    }
-    each(obj, function(value, index, list) {
-      if (!initial) {
-        memo = value;
-        initial = true;
-      } else {
-        memo = iterator.call(context, memo, value, index, list);
-      }
-    });
-    if (!initial) throw new TypeError(reduceError);
-    return memo;
-  };
-
-  // The right-associative version of reduce, also known as `foldr`.
-  // Delegates to **ECMAScript 5**'s native `reduceRight` if available.
-  _.reduceRight = _.foldr = function(obj, iterator, memo, context) {
-    var initial = arguments.length > 2;
-    if (obj == null) obj = [];
-    if (nativeReduceRight && obj.reduceRight === nativeReduceRight) {
-      if (context) iterator = _.bind(iterator, context);
-      return initial ? obj.reduceRight(iterator, memo) : obj.reduceRight(iterator);
-    }
-    var length = obj.length;
-    if (length !== +length) {
-      var keys = _.keys(obj);
-      length = keys.length;
-    }
-    each(obj, function(value, index, list) {
-      index = keys ? keys[--length] : --length;
-      if (!initial) {
-        memo = obj[index];
-        initial = true;
-      } else {
-        memo = iterator.call(context, memo, obj[index], index, list);
-      }
-    });
-    if (!initial) throw new TypeError(reduceError);
-    return memo;
-  };
-
-  // Return the first value which passes a truth test. Aliased as `detect`.
-  _.find = _.detect = function(obj, iterator, context) {
-    var result;
-    any(obj, function(value, index, list) {
-      if (iterator.call(context, value, index, list)) {
-        result = value;
-        return true;
-      }
-    });
-    return result;
-  };
-
-  // Return all the elements that pass a truth test.
-  // Delegates to **ECMAScript 5**'s native `filter` if available.
-  // Aliased as `select`.
-  _.filter = _.select = function(obj, iterator, context) {
-    var results = [];
-    if (obj == null) return results;
-    if (nativeFilter && obj.filter === nativeFilter) return obj.filter(iterator, context);
-    each(obj, function(value, index, list) {
-      if (iterator.call(context, value, index, list)) results.push(value);
-    });
-    return results;
-  };
-
-  // Return all the elements for which a truth test fails.
-  _.reject = function(obj, iterator, context) {
-    return _.filter(obj, function(value, index, list) {
-      return !iterator.call(context, value, index, list);
-    }, context);
-  };
-
-  // Determine whether all of the elements match a truth test.
-  // Delegates to **ECMAScript 5**'s native `every` if available.
-  // Aliased as `all`.
-  _.every = _.all = function(obj, iterator, context) {
-    iterator || (iterator = _.identity);
-    var result = true;
-    if (obj == null) return result;
-    if (nativeEvery && obj.every === nativeEvery) return obj.every(iterator, context);
-    each(obj, function(value, index, list) {
-      if (!(result = result && iterator.call(context, value, index, list))) return breaker;
-    });
-    return !!result;
-  };
-
-  // Determine if at least one element in the object matches a truth test.
-  // Delegates to **ECMAScript 5**'s native `some` if available.
-  // Aliased as `any`.
-  var any = _.some = _.any = function(obj, iterator, context) {
-    iterator || (iterator = _.identity);
-    var result = false;
-    if (obj == null) return result;
-    if (nativeSome && obj.some === nativeSome) return obj.some(iterator, context);
-    each(obj, function(value, index, list) {
-      if (result || (result = iterator.call(context, value, index, list))) return breaker;
-    });
-    return !!result;
-  };
-
-  // Determine if the array or object contains a given value (using `===`).
-  // Aliased as `include`.
-  _.contains = _.include = function(obj, target) {
-    if (obj == null) return false;
-    if (nativeIndexOf && obj.indexOf === nativeIndexOf) return obj.indexOf(target) != -1;
-    return any(obj, function(value) {
-      return value === target;
-    });
-  };
-
-  // Invoke a method (with arguments) on every item in a collection.
-  _.invoke = function(obj, method) {
-    var args = slice.call(arguments, 2);
-    var isFunc = _.isFunction(method);
-    return _.map(obj, function(value) {
-      return (isFunc ? method : value[method]).apply(value, args);
-    });
-  };
-
-  // Convenience version of a common use case of `map`: fetching a property.
-  _.pluck = function(obj, key) {
-    return _.map(obj, function(value){ return value[key]; });
-  };
-
-  // Convenience version of a common use case of `filter`: selecting only objects
-  // containing specific `key:value` pairs.
-  _.where = function(obj, attrs, first) {
-    if (_.isEmpty(attrs)) return first ? void 0 : [];
-    return _[first ? 'find' : 'filter'](obj, function(value) {
-      for (var key in attrs) {
-        if (attrs[key] !== value[key]) return false;
-      }
-      return true;
-    });
-  };
-
-  // Convenience version of a common use case of `find`: getting the first object
-  // containing specific `key:value` pairs.
-  _.findWhere = function(obj, attrs) {
-    return _.where(obj, attrs, true);
-  };
-
-  // Return the maximum element or (element-based computation).
-  // Can't optimize arrays of integers longer than 65,535 elements.
-  // See [WebKit Bug 80797](https://bugs.webkit.org/show_bug.cgi?id=80797)
-  _.max = function(obj, iterator, context) {
-    if (!iterator && _.isArray(obj) && obj[0] === +obj[0] && obj.length < 65535) {
-      return Math.max.apply(Math, obj);
-    }
-    if (!iterator && _.isEmpty(obj)) return -Infinity;
-    var result = {computed : -Infinity, value: -Infinity};
-    each(obj, function(value, index, list) {
-      var computed = iterator ? iterator.call(context, value, index, list) : value;
-      computed > result.computed && (result = {value : value, computed : computed});
-    });
-    return result.value;
-  };
-
-  // Return the minimum element (or element-based computation).
-  _.min = function(obj, iterator, context) {
-    if (!iterator && _.isArray(obj) && obj[0] === +obj[0] && obj.length < 65535) {
-      return Math.min.apply(Math, obj);
-    }
-    if (!iterator && _.isEmpty(obj)) return Infinity;
-    var result = {computed : Infinity, value: Infinity};
-    each(obj, function(value, index, list) {
-      var computed = iterator ? iterator.call(context, value, index, list) : value;
-      computed < result.computed && (result = {value : value, computed : computed});
-    });
-    return result.value;
-  };
-
-  // Shuffle an array, using the modern version of the 
-  // [Fisher-Yates shuffle](http://en.wikipedia.org/wiki/Fisher–Yates_shuffle).
-  _.shuffle = function(obj) {
-    var rand;
-    var index = 0;
-    var shuffled = [];
-    each(obj, function(value) {
-      rand = _.random(index++);
-      shuffled[index - 1] = shuffled[rand];
-      shuffled[rand] = value;
-    });
-    return shuffled;
-  };
-
-  // Sample **n** random values from an array.
-  // If **n** is not specified, returns a single random element from the array.
-  // The internal `guard` argument allows it to work with `map`.
-  _.sample = function(obj, n, guard) {
-    if (arguments.length < 2 || guard) {
-      return obj[_.random(obj.length - 1)];
-    }
-    return _.shuffle(obj).slice(0, Math.max(0, n));
-  };
-
-  // An internal function to generate lookup iterators.
-  var lookupIterator = function(value) {
-    return _.isFunction(value) ? value : function(obj){ return obj[value]; };
-  };
-
-  // Sort the object's values by a criterion produced by an iterator.
-  _.sortBy = function(obj, value, context) {
-    var iterator = lookupIterator(value);
-    return _.pluck(_.map(obj, function(value, index, list) {
-      return {
-        value: value,
-        index: index,
-        criteria: iterator.call(context, value, index, list)
-      };
-    }).sort(function(left, right) {
-      var a = left.criteria;
-      var b = right.criteria;
-      if (a !== b) {
-        if (a > b || a === void 0) return 1;
-        if (a < b || b === void 0) return -1;
-      }
-      return left.index - right.index;
-    }), 'value');
-  };
-
-  // An internal function used for aggregate "group by" operations.
-  var group = function(behavior) {
-    return function(obj, value, context) {
-      var result = {};
-      var iterator = value == null ? _.identity : lookupIterator(value);
-      each(obj, function(value, index) {
-        var key = iterator.call(context, value, index, obj);
-        behavior(result, key, value);
-      });
-      return result;
-    };
-  };
-
-  // Groups the object's values by a criterion. Pass either a string attribute
-  // to group by, or a function that returns the criterion.
-  _.groupBy = group(function(result, key, value) {
-    (_.has(result, key) ? result[key] : (result[key] = [])).push(value);
-  });
-
-  // Indexes the object's values by a criterion, similar to `groupBy`, but for
-  // when you know that your index values will be unique.
-  _.indexBy = group(function(result, key, value) {
-    result[key] = value;
-  });
-
-  // Counts instances of an object that group by a certain criterion. Pass
-  // either a string attribute to count by, or a function that returns the
-  // criterion.
-  _.countBy = group(function(result, key) {
-    _.has(result, key) ? result[key]++ : result[key] = 1;
-  });
-
-  // Use a comparator function to figure out the smallest index at which
-  // an object should be inserted so as to maintain order. Uses binary search.
-  _.sortedIndex = function(array, obj, iterator, context) {
-    iterator = iterator == null ? _.identity : lookupIterator(iterator);
-    var value = iterator.call(context, obj);
-    var low = 0, high = array.length;
-    while (low < high) {
-      var mid = (low + high) >>> 1;
-      iterator.call(context, array[mid]) < value ? low = mid + 1 : high = mid;
-    }
-    return low;
-  };
-
-  // Safely create a real, live array from anything iterable.
-  _.toArray = function(obj) {
-    if (!obj) return [];
-    if (_.isArray(obj)) return slice.call(obj);
-    if (obj.length === +obj.length) return _.map(obj, _.identity);
-    return _.values(obj);
-  };
-
-  // Return the number of elements in an object.
-  _.size = function(obj) {
-    if (obj == null) return 0;
-    return (obj.length === +obj.length) ? obj.length : _.keys(obj).length;
-  };
-
-  // Array Functions
-  // ---------------
-
-  // Get the first element of an array. Passing **n** will return the first N
-  // values in the array. Aliased as `head` and `take`. The **guard** check
-  // allows it to work with `_.map`.
-  _.first = _.head = _.take = function(array, n, guard) {
-    if (array == null) return void 0;
-    return (n == null) || guard ? array[0] : slice.call(array, 0, n);
-  };
-
-  // Returns everything but the last entry of the array. Especially useful on
-  // the arguments object. Passing **n** will return all the values in
-  // the array, excluding the last N. The **guard** check allows it to work with
-  // `_.map`.
-  _.initial = function(array, n, guard) {
-    return slice.call(array, 0, array.length - ((n == null) || guard ? 1 : n));
-  };
-
-  // Get the last element of an array. Passing **n** will return the last N
-  // values in the array. The **guard** check allows it to work with `_.map`.
-  _.last = function(array, n, guard) {
-    if (array == null) return void 0;
-    if ((n == null) || guard) {
-      return array[array.length - 1];
-    } else {
-      return slice.call(array, Math.max(array.length - n, 0));
-    }
-  };
-
-  // Returns everything but the first entry of the array. Aliased as `tail` and `drop`.
-  // Especially useful on the arguments object. Passing an **n** will return
-  // the rest N values in the array. The **guard**
-  // check allows it to work with `_.map`.
-  _.rest = _.tail = _.drop = function(array, n, guard) {
-    return slice.call(array, (n == null) || guard ? 1 : n);
-  };
-
-  // Trim out all falsy values from an array.
-  _.compact = function(array) {
-    return _.filter(array, _.identity);
-  };
-
-  // Internal implementation of a recursive `flatten` function.
-  var flatten = function(input, shallow, output) {
-    if (shallow && _.every(input, _.isArray)) {
-      return concat.apply(output, input);
-    }
-    each(input, function(value) {
-      if (_.isArray(value) || _.isArguments(value)) {
-        shallow ? push.apply(output, value) : flatten(value, shallow, output);
-      } else {
-        output.push(value);
-      }
-    });
-    return output;
-  };
-
-  // Flatten out an array, either recursively (by default), or just one level.
-  _.flatten = function(array, shallow) {
-    return flatten(array, shallow, []);
-  };
-
-  // Return a version of the array that does not contain the specified value(s).
-  _.without = function(array) {
-    return _.difference(array, slice.call(arguments, 1));
-  };
-
-  // Produce a duplicate-free version of the array. If the array has already
-  // been sorted, you have the option of using a faster algorithm.
-  // Aliased as `unique`.
-  _.uniq = _.unique = function(array, isSorted, iterator, context) {
-    if (_.isFunction(isSorted)) {
-      context = iterator;
-      iterator = isSorted;
-      isSorted = false;
-    }
-    var initial = iterator ? _.map(array, iterator, context) : array;
-    var results = [];
-    var seen = [];
-    each(initial, function(value, index) {
-      if (isSorted ? (!index || seen[seen.length - 1] !== value) : !_.contains(seen, value)) {
-        seen.push(value);
-        results.push(array[index]);
-      }
-    });
-    return results;
-  };
-
-  // Produce an array that contains the union: each distinct element from all of
-  // the passed-in arrays.
-  _.union = function() {
-    return _.uniq(_.flatten(arguments, true));
-  };
-
-  // Produce an array that contains every item shared between all the
-  // passed-in arrays.
-  _.intersection = function(array) {
-    var rest = slice.call(arguments, 1);
-    return _.filter(_.uniq(array), function(item) {
-      return _.every(rest, function(other) {
-        return _.indexOf(other, item) >= 0;
-      });
-    });
-  };
-
-  // Take the difference between one array and a number of other arrays.
-  // Only the elements present in just the first array will remain.
-  _.difference = function(array) {
-    var rest = concat.apply(ArrayProto, slice.call(arguments, 1));
-    return _.filter(array, function(value){ return !_.contains(rest, value); });
-  };
-
-  // Zip together multiple lists into a single array -- elements that share
-  // an index go together.
-  _.zip = function() {
-    var length = _.max(_.pluck(arguments, "length").concat(0));
-    var results = new Array(length);
-    for (var i = 0; i < length; i++) {
-      results[i] = _.pluck(arguments, '' + i);
-    }
-    return results;
-  };
-
-  // Converts lists into objects. Pass either a single array of `[key, value]`
-  // pairs, or two parallel arrays of the same length -- one of keys, and one of
-  // the corresponding values.
-  _.object = function(list, values) {
-    if (list == null) return {};
-    var result = {};
-    for (var i = 0, length = list.length; i < length; i++) {
-      if (values) {
-        result[list[i]] = values[i];
-      } else {
-        result[list[i][0]] = list[i][1];
-      }
-    }
-    return result;
-  };
-
-  // If the browser doesn't supply us with indexOf (I'm looking at you, **MSIE**),
-  // we need this function. Return the position of the first occurrence of an
-  // item in an array, or -1 if the item is not included in the array.
-  // Delegates to **ECMAScript 5**'s native `indexOf` if available.
-  // If the array is large and already in sort order, pass `true`
-  // for **isSorted** to use binary search.
-  _.indexOf = function(array, item, isSorted) {
-    if (array == null) return -1;
-    var i = 0, length = array.length;
-    if (isSorted) {
-      if (typeof isSorted == 'number') {
-        i = (isSorted < 0 ? Math.max(0, length + isSorted) : isSorted);
-      } else {
-        i = _.sortedIndex(array, item);
-        return array[i] === item ? i : -1;
-      }
-    }
-    if (nativeIndexOf && array.indexOf === nativeIndexOf) return array.indexOf(item, isSorted);
-    for (; i < length; i++) if (array[i] === item) return i;
-    return -1;
-  };
-
-  // Delegates to **ECMAScript 5**'s native `lastIndexOf` if available.
-  _.lastIndexOf = function(array, item, from) {
-    if (array == null) return -1;
-    var hasIndex = from != null;
-    if (nativeLastIndexOf && array.lastIndexOf === nativeLastIndexOf) {
-      return hasIndex ? array.lastIndexOf(item, from) : array.lastIndexOf(item);
-    }
-    var i = (hasIndex ? from : array.length);
-    while (i--) if (array[i] === item) return i;
-    return -1;
-  };
-
-  // Generate an integer Array containing an arithmetic progression. A port of
-  // the native Python `range()` function. See
-  // [the Python documentation](http://docs.python.org/library/functions.html#range).
-  _.range = function(start, stop, step) {
-    if (arguments.length <= 1) {
-      stop = start || 0;
-      start = 0;
-    }
-    step = arguments[2] || 1;
-
-    var length = Math.max(Math.ceil((stop - start) / step), 0);
-    var idx = 0;
-    var range = new Array(length);
-
-    while(idx < length) {
-      range[idx++] = start;
-      start += step;
-    }
-
-    return range;
-  };
-
-  // Function (ahem) Functions
-  // ------------------
-
-  // Reusable constructor function for prototype setting.
-  var ctor = function(){};
-
-  // Create a function bound to a given object (assigning `this`, and arguments,
-  // optionally). Delegates to **ECMAScript 5**'s native `Function.bind` if
-  // available.
-  _.bind = function(func, context) {
-    var args, bound;
-    if (nativeBind && func.bind === nativeBind) return nativeBind.apply(func, slice.call(arguments, 1));
-    if (!_.isFunction(func)) throw new TypeError;
-    args = slice.call(arguments, 2);
-    return bound = function() {
-      if (!(this instanceof bound)) return func.apply(context, args.concat(slice.call(arguments)));
-      ctor.prototype = func.prototype;
-      var self = new ctor;
-      ctor.prototype = null;
-      var result = func.apply(self, args.concat(slice.call(arguments)));
-      if (Object(result) === result) return result;
-      return self;
-    };
-  };
-
-  // Partially apply a function by creating a version that has had some of its
-  // arguments pre-filled, without changing its dynamic `this` context.
-  _.partial = function(func) {
-    var args = slice.call(arguments, 1);
-    return function() {
-      return func.apply(this, args.concat(slice.call(arguments)));
-    };
-  };
-
-  // Bind all of an object's methods to that object. Useful for ensuring that
-  // all callbacks defined on an object belong to it.
-  _.bindAll = function(obj) {
-    var funcs = slice.call(arguments, 1);
-    if (funcs.length === 0) throw new Error("bindAll must be passed function names");
-    each(funcs, function(f) { obj[f] = _.bind(obj[f], obj); });
-    return obj;
-  };
-
-  // Memoize an expensive function by storing its results.
-  _.memoize = function(func, hasher) {
-    var memo = {};
-    hasher || (hasher = _.identity);
-    return function() {
-      var key = hasher.apply(this, arguments);
-      return _.has(memo, key) ? memo[key] : (memo[key] = func.apply(this, arguments));
-    };
-  };
-
-  // Delays a function for the given number of milliseconds, and then calls
-  // it with the arguments supplied.
-  _.delay = function(func, wait) {
-    var args = slice.call(arguments, 2);
-    return setTimeout(function(){ return func.apply(null, args); }, wait);
-  };
-
-  // Defers a function, scheduling it to run after the current call stack has
-  // cleared.
-  _.defer = function(func) {
-    return _.delay.apply(_, [func, 1].concat(slice.call(arguments, 1)));
-  };
-
-  // Returns a function, that, when invoked, will only be triggered at most once
-  // during a given window of time. Normally, the throttled function will run
-  // as much as it can, without ever going more than once per `wait` duration;
-  // but if you'd like to disable the execution on the leading edge, pass
-  // `{leading: false}`. To disable execution on the trailing edge, ditto.
-  _.throttle = function(func, wait, options) {
-    var context, args, result;
-    var timeout = null;
-    var previous = 0;
-    options || (options = {});
-    var later = function() {
-      previous = options.leading === false ? 0 : new Date;
-      timeout = null;
-      result = func.apply(context, args);
-    };
-    return function() {
-      var now = new Date;
-      if (!previous && options.leading === false) previous = now;
-      var remaining = wait - (now - previous);
-      context = this;
-      args = arguments;
-      if (remaining <= 0) {
-        clearTimeout(timeout);
-        timeout = null;
-        previous = now;
-        result = func.apply(context, args);
-      } else if (!timeout && options.trailing !== false) {
-        timeout = setTimeout(later, remaining);
-      }
-      return result;
-    };
-  };
-
-  // Returns a function, that, as long as it continues to be invoked, will not
-  // be triggered. The function will be called after it stops being called for
-  // N milliseconds. If `immediate` is passed, trigger the function on the
-  // leading edge, instead of the trailing.
-  _.debounce = function(func, wait, immediate) {
-    var timeout, args, context, timestamp, result;
-    return function() {
-      context = this;
-      args = arguments;
-      timestamp = new Date();
-      var later = function() {
-        var last = (new Date()) - timestamp;
-        if (last < wait) {
-          timeout = setTimeout(later, wait - last);
-        } else {
-          timeout = null;
-          if (!immediate) result = func.apply(context, args);
-        }
-      };
-      var callNow = immediate && !timeout;
-      if (!timeout) {
-        timeout = setTimeout(later, wait);
-      }
-      if (callNow) result = func.apply(context, args);
-      return result;
-    };
-  };
-
-  // Returns a function that will be executed at most one time, no matter how
-  // often you call it. Useful for lazy initialization.
-  _.once = function(func) {
-    var ran = false, memo;
-    return function() {
-      if (ran) return memo;
-      ran = true;
-      memo = func.apply(this, arguments);
-      func = null;
-      return memo;
-    };
-  };
-
-  // Returns the first function passed as an argument to the second,
-  // allowing you to adjust arguments, run code before and after, and
-  // conditionally execute the original function.
-  _.wrap = function(func, wrapper) {
-    return function() {
-      var args = [func];
-      push.apply(args, arguments);
-      return wrapper.apply(this, args);
-    };
-  };
-
-  // Returns a function that is the composition of a list of functions, each
-  // consuming the return value of the function that follows.
-  _.compose = function() {
-    var funcs = arguments;
-    return function() {
-      var args = arguments;
-      for (var i = funcs.length - 1; i >= 0; i--) {
-        args = [funcs[i].apply(this, args)];
-      }
-      return args[0];
-    };
-  };
-
-  // Returns a function that will only be executed after being called N times.
-  _.after = function(times, func) {
-    return function() {
-      if (--times < 1) {
-        return func.apply(this, arguments);
-      }
-    };
-  };
-
-  // Object Functions
-  // ----------------
-
-  // Retrieve the names of an object's properties.
-  // Delegates to **ECMAScript 5**'s native `Object.keys`
-  _.keys = nativeKeys || function(obj) {
-    if (obj !== Object(obj)) throw new TypeError('Invalid object');
-    var keys = [];
-    for (var key in obj) if (_.has(obj, key)) keys.push(key);
-    return keys;
-  };
-
-  // Retrieve the values of an object's properties.
-  _.values = function(obj) {
-    var keys = _.keys(obj);
-    var length = keys.length;
-    var values = new Array(length);
-    for (var i = 0; i < length; i++) {
-      values[i] = obj[keys[i]];
-    }
-    return values;
-  };
-
-  // Convert an object into a list of `[key, value]` pairs.
-  _.pairs = function(obj) {
-    var keys = _.keys(obj);
-    var length = keys.length;
-    var pairs = new Array(length);
-    for (var i = 0; i < length; i++) {
-      pairs[i] = [keys[i], obj[keys[i]]];
-    }
-    return pairs;
-  };
-
-  // Invert the keys and values of an object. The values must be serializable.
-  _.invert = function(obj) {
-    var result = {};
-    var keys = _.keys(obj);
-    for (var i = 0, length = keys.length; i < length; i++) {
-      result[obj[keys[i]]] = keys[i];
-    }
-    return result;
-  };
-
-  // Return a sorted list of the function names available on the object.
-  // Aliased as `methods`
-  _.functions = _.methods = function(obj) {
-    var names = [];
-    for (var key in obj) {
-      if (_.isFunction(obj[key])) names.push(key);
-    }
-    return names.sort();
-  };
-
-  // Extend a given object with all the properties in passed-in object(s).
-  _.extend = function(obj) {
-    each(slice.call(arguments, 1), function(source) {
-      if (source) {
-        for (var prop in source) {
-          obj[prop] = source[prop];
-        }
-      }
-    });
-    return obj;
-  };
-
-  // Return a copy of the object only containing the whitelisted properties.
-  _.pick = function(obj) {
-    var copy = {};
-    var keys = concat.apply(ArrayProto, slice.call(arguments, 1));
-    each(keys, function(key) {
-      if (key in obj) copy[key] = obj[key];
-    });
-    return copy;
-  };
-
-   // Return a copy of the object without the blacklisted properties.
-  _.omit = function(obj) {
-    var copy = {};
-    var keys = concat.apply(ArrayProto, slice.call(arguments, 1));
-    for (var key in obj) {
-      if (!_.contains(keys, key)) copy[key] = obj[key];
-    }
-    return copy;
-  };
-
-  // Fill in a given object with default properties.
-  _.defaults = function(obj) {
-    each(slice.call(arguments, 1), function(source) {
-      if (source) {
-        for (var prop in source) {
-          if (obj[prop] === void 0) obj[prop] = source[prop];
-        }
-      }
-    });
-    return obj;
-  };
-
-  // Create a (shallow-cloned) duplicate of an object.
-  _.clone = function(obj) {
-    if (!_.isObject(obj)) return obj;
-    return _.isArray(obj) ? obj.slice() : _.extend({}, obj);
-  };
-
-  // Invokes interceptor with the obj, and then returns obj.
-  // The primary purpose of this method is to "tap into" a method chain, in
-  // order to perform operations on intermediate results within the chain.
-  _.tap = function(obj, interceptor) {
-    interceptor(obj);
-    return obj;
-  };
-
-  // Internal recursive comparison function for `isEqual`.
-  var eq = function(a, b, aStack, bStack) {
-    // Identical objects are equal. `0 === -0`, but they aren't identical.
-    // See the [Harmony `egal` proposal](http://wiki.ecmascript.org/doku.php?id=harmony:egal).
-    if (a === b) return a !== 0 || 1 / a == 1 / b;
-    // A strict comparison is necessary because `null == undefined`.
-    if (a == null || b == null) return a === b;
-    // Unwrap any wrapped objects.
-    if (a instanceof _) a = a._wrapped;
-    if (b instanceof _) b = b._wrapped;
-    // Compare `[[Class]]` names.
-    var className = toString.call(a);
-    if (className != toString.call(b)) return false;
-    switch (className) {
-      // Strings, numbers, dates, and booleans are compared by value.
-      case '[object String]':
-        // Primitives and their corresponding object wrappers are equivalent; thus, `"5"` is
-        // equivalent to `new String("5")`.
-        return a == String(b);
-      case '[object Number]':
-        // `NaN`s are equivalent, but non-reflexive. An `egal` comparison is performed for
-        // other numeric values.
-        return a != +a ? b != +b : (a == 0 ? 1 / a == 1 / b : a == +b);
-      case '[object Date]':
-      case '[object Boolean]':
-        // Coerce dates and booleans to numeric primitive values. Dates are compared by their
-        // millisecond representations. Note that invalid dates with millisecond representations
-        // of `NaN` are not equivalent.
-        return +a == +b;
-      // RegExps are compared by their source patterns and flags.
-      case '[object RegExp]':
-        return a.source == b.source &&
-               a.global == b.global &&
-               a.multiline == b.multiline &&
-               a.ignoreCase == b.ignoreCase;
-    }
-    if (typeof a != 'object' || typeof b != 'object') return false;
-    // Assume equality for cyclic structures. The algorithm for detecting cyclic
-    // structures is adapted from ES 5.1 section 15.12.3, abstract operation `JO`.
-    var length = aStack.length;
-    while (length--) {
-      // Linear search. Performance is inversely proportional to the number of
-      // unique nested structures.
-      if (aStack[length] == a) return bStack[length] == b;
-    }
-    // Objects with different constructors are not equivalent, but `Object`s
-    // from different frames are.
-    var aCtor = a.constructor, bCtor = b.constructor;
-    if (aCtor !== bCtor && !(_.isFunction(aCtor) && (aCtor instanceof aCtor) &&
-                             _.isFunction(bCtor) && (bCtor instanceof bCtor))) {
-      return false;
-    }
-    // Add the first object to the stack of traversed objects.
-    aStack.push(a);
-    bStack.push(b);
-    var size = 0, result = true;
-    // Recursively compare objects and arrays.
-    if (className == '[object Array]') {
-      // Compare array lengths to determine if a deep comparison is necessary.
-      size = a.length;
-      result = size == b.length;
-      if (result) {
-        // Deep compare the contents, ignoring non-numeric properties.
-        while (size--) {
-          if (!(result = eq(a[size], b[size], aStack, bStack))) break;
-        }
-      }
-    } else {
-      // Deep compare objects.
-      for (var key in a) {
-        if (_.has(a, key)) {
-          // Count the expected number of properties.
-          size++;
-          // Deep compare each member.
-          if (!(result = _.has(b, key) && eq(a[key], b[key], aStack, bStack))) break;
-        }
-      }
-      // Ensure that both objects contain the same number of properties.
-      if (result) {
-        for (key in b) {
-          if (_.has(b, key) && !(size--)) break;
-        }
-        result = !size;
-      }
-    }
-    // Remove the first object from the stack of traversed objects.
-    aStack.pop();
-    bStack.pop();
-    return result;
-  };
-
-  // Perform a deep comparison to check if two objects are equal.
-  _.isEqual = function(a, b) {
-    return eq(a, b, [], []);
-  };
-
-  // Is a given array, string, or object empty?
-  // An "empty" object has no enumerable own-properties.
-  _.isEmpty = function(obj) {
-    if (obj == null) return true;
-    if (_.isArray(obj) || _.isString(obj)) return obj.length === 0;
-    for (var key in obj) if (_.has(obj, key)) return false;
-    return true;
-  };
-
-  // Is a given value a DOM element?
-  _.isElement = function(obj) {
-    return !!(obj && obj.nodeType === 1);
-  };
-
-  // Is a given value an array?
-  // Delegates to ECMA5's native Array.isArray
-  _.isArray = nativeIsArray || function(obj) {
-    return toString.call(obj) == '[object Array]';
-  };
-
-  // Is a given variable an object?
-  _.isObject = function(obj) {
-    return obj === Object(obj);
-  };
-
-  // Add some isType methods: isArguments, isFunction, isString, isNumber, isDate, isRegExp.
-  each(['Arguments', 'Function', 'String', 'Number', 'Date', 'RegExp'], function(name) {
-    _['is' + name] = function(obj) {
-      return toString.call(obj) == '[object ' + name + ']';
-    };
-  });
-
-  // Define a fallback version of the method in browsers (ahem, IE), where
-  // there isn't any inspectable "Arguments" type.
-  if (!_.isArguments(arguments)) {
-    _.isArguments = function(obj) {
-      return !!(obj && _.has(obj, 'callee'));
-    };
-  }
-
-  // Optimize `isFunction` if appropriate.
-  if (typeof (/./) !== 'function') {
-    _.isFunction = function(obj) {
-      return typeof obj === 'function';
-    };
-  }
-
-  // Is a given object a finite number?
-  _.isFinite = function(obj) {
-    return isFinite(obj) && !isNaN(parseFloat(obj));
-  };
-
-  // Is the given value `NaN`? (NaN is the only number which does not equal itself).
-  _.isNaN = function(obj) {
-    return _.isNumber(obj) && obj != +obj;
-  };
-
-  // Is a given value a boolean?
-  _.isBoolean = function(obj) {
-    return obj === true || obj === false || toString.call(obj) == '[object Boolean]';
-  };
-
-  // Is a given value equal to null?
-  _.isNull = function(obj) {
-    return obj === null;
-  };
-
-  // Is a given variable undefined?
-  _.isUndefined = function(obj) {
-    return obj === void 0;
-  };
-
-  // Shortcut function for checking if an object has a given property directly
-  // on itself (in other words, not on a prototype).
-  _.has = function(obj, key) {
-    return hasOwnProperty.call(obj, key);
-  };
-
-  // Utility Functions
-  // -----------------
-
-  // Run Underscore.js in *noConflict* mode, returning the `_` variable to its
-  // previous owner. Returns a reference to the Underscore object.
-  _.noConflict = function() {
-    root._ = previousUnderscore;
-    return this;
-  };
-
-  // Keep the identity function around for default iterators.
-  _.identity = function(value) {
-    return value;
-  };
-
-  // Run a function **n** times.
-  _.times = function(n, iterator, context) {
-    var accum = Array(Math.max(0, n));
-    for (var i = 0; i < n; i++) accum[i] = iterator.call(context, i);
-    return accum;
-  };
-
-  // Return a random integer between min and max (inclusive).
-  _.random = function(min, max) {
-    if (max == null) {
-      max = min;
-      min = 0;
-    }
-    return min + Math.floor(Math.random() * (max - min + 1));
-  };
-
-  // List of HTML entities for escaping.
-  var entityMap = {
-    escape: {
-      '&': '&amp;',
-      '<': '&lt;',
-      '>': '&gt;',
-      '"': '&quot;',
-      "'": '&#x27;'
-    }
-  };
-  entityMap.unescape = _.invert(entityMap.escape);
-
-  // Regexes containing the keys and values listed immediately above.
-  var entityRegexes = {
-    escape:   new RegExp('[' + _.keys(entityMap.escape).join('') + ']', 'g'),
-    unescape: new RegExp('(' + _.keys(entityMap.unescape).join('|') + ')', 'g')
-  };
-
-  // Functions for escaping and unescaping strings to/from HTML interpolation.
-  _.each(['escape', 'unescape'], function(method) {
-    _[method] = function(string) {
-      if (string == null) return '';
-      return ('' + string).replace(entityRegexes[method], function(match) {
-        return entityMap[method][match];
-      });
-    };
-  });
-
-  // If the value of the named `property` is a function then invoke it with the
-  // `object` as context; otherwise, return it.
-  _.result = function(object, property) {
-    if (object == null) return void 0;
-    var value = object[property];
-    return _.isFunction(value) ? value.call(object) : value;
-  };
-
-  // Add your own custom functions to the Underscore object.
-  _.mixin = function(obj) {
-    each(_.functions(obj), function(name) {
-      var func = _[name] = obj[name];
-      _.prototype[name] = function() {
-        var args = [this._wrapped];
-        push.apply(args, arguments);
-        return result.call(this, func.apply(_, args));
-      };
-    });
-  };
-
-  // Generate a unique integer id (unique within the entire client session).
-  // Useful for temporary DOM ids.
-  var idCounter = 0;
-  _.uniqueId = function(prefix) {
-    var id = ++idCounter + '';
-    return prefix ? prefix + id : id;
-  };
-
-  // By default, Underscore uses ERB-style template delimiters, change the
-  // following template settings to use alternative delimiters.
-  _.templateSettings = {
-    evaluate    : /<%([\s\S]+?)%>/g,
-    interpolate : /<%=([\s\S]+?)%>/g,
-    escape      : /<%-([\s\S]+?)%>/g
-  };
-
-  // When customizing `templateSettings`, if you don't want to define an
-  // interpolation, evaluation or escaping regex, we need one that is
-  // guaranteed not to match.
-  var noMatch = /(.)^/;
-
-  // Certain characters need to be escaped so that they can be put into a
-  // string literal.
-  var escapes = {
-    "'":      "'",
-    '\\':     '\\',
-    '\r':     'r',
-    '\n':     'n',
-    '\t':     't',
-    '\u2028': 'u2028',
-    '\u2029': 'u2029'
-  };
-
-  var escaper = /\\|'|\r|\n|\t|\u2028|\u2029/g;
-
-  // JavaScript micro-templating, similar to John Resig's implementation.
-  // Underscore templating handles arbitrary delimiters, preserves whitespace,
-  // and correctly escapes quotes within interpolated code.
-  _.template = function(text, data, settings) {
-    var render;
-    settings = _.defaults({}, settings, _.templateSettings);
-
-    // Combine delimiters into one regular expression via alternation.
-    var matcher = new RegExp([
-      (settings.escape || noMatch).source,
-      (settings.interpolate || noMatch).source,
-      (settings.evaluate || noMatch).source
-    ].join('|') + '|$', 'g');
-
-    // Compile the template source, escaping string literals appropriately.
-    var index = 0;
-    var source = "__p+='";
-    text.replace(matcher, function(match, escape, interpolate, evaluate, offset) {
-      source += text.slice(index, offset)
-        .replace(escaper, function(match) { return '\\' + escapes[match]; });
-
-      if (escape) {
-        source += "'+\n((__t=(" + escape + "))==null?'':_.escape(__t))+\n'";
-      }
-      if (interpolate) {
-        source += "'+\n((__t=(" + interpolate + "))==null?'':__t)+\n'";
-      }
-      if (evaluate) {
-        source += "';\n" + evaluate + "\n__p+='";
-      }
-      index = offset + match.length;
-      return match;
-    });
-    source += "';\n";
-
-    // If a variable is not specified, place data values in local scope.
-    if (!settings.variable) source = 'with(obj||{}){\n' + source + '}\n';
-
-    source = "var __t,__p='',__j=Array.prototype.join," +
-      "print=function(){__p+=__j.call(arguments,'');};\n" +
-      source + "return __p;\n";
-
-    try {
-      render = new Function(settings.variable || 'obj', '_', source);
-    } catch (e) {
-      e.source = source;
-      throw e;
-    }
-
-    if (data) return render(data, _);
-    var template = function(data) {
-      return render.call(this, data, _);
-    };
-
-    // Provide the compiled function source as a convenience for precompilation.
-    template.source = 'function(' + (settings.variable || 'obj') + '){\n' + source + '}';
-
-    return template;
-  };
-
-  // Add a "chain" function, which will delegate to the wrapper.
-  _.chain = function(obj) {
-    return _(obj).chain();
-  };
-
-  // OOP
-  // ---------------
-  // If Underscore is called as a function, it returns a wrapped object that
-  // can be used OO-style. This wrapper holds altered versions of all the
-  // underscore functions. Wrapped objects may be chained.
-
-  // Helper function to continue chaining intermediate results.
-  var result = function(obj) {
-    return this._chain ? _(obj).chain() : obj;
-  };
-
-  // Add all of the Underscore functions to the wrapper object.
-  _.mixin(_);
-
-  // Add all mutator Array functions to the wrapper.
-  each(['pop', 'push', 'reverse', 'shift', 'sort', 'splice', 'unshift'], function(name) {
-    var method = ArrayProto[name];
-    _.prototype[name] = function() {
-      var obj = this._wrapped;
-      method.apply(obj, arguments);
-      if ((name == 'shift' || name == 'splice') && obj.length === 0) delete obj[0];
-      return result.call(this, obj);
-    };
-  });
-
-  // Add all accessor Array functions to the wrapper.
-  each(['concat', 'join', 'slice'], function(name) {
-    var method = ArrayProto[name];
-    _.prototype[name] = function() {
-      return result.call(this, method.apply(this._wrapped, arguments));
-    };
-  });
-
-  _.extend(_.prototype, {
-
-    // Start chaining a wrapped Underscore object.
-    chain: function() {
-      this._chain = true;
-      return this;
-    },
-
-    // Extracts the result from a wrapped and chained object.
-    value: function() {
-      return this._wrapped;
-    }
-
-  });
-
-}).call(this);
-
-define("underscore", (function (global) {
-    return function () {
-        var ret, fn;
-        return ret || global._;
-    };
-}(this)));
 
 (function (root, factory) {
   if (typeof define === 'function' && define.amd) {
@@ -15908,12 +17136,12 @@ define("jstz", (function (global) {
 
 // scripts/app.es6
 define(
-  'app',["jquery","config","underscore","dpr","elementQuery","herit","jstz","moment","olay","orgsync-javascript-api","exports"],
+  'app',["jquery","underscore","config","dpr","elementQuery","herit","jstz","moment","olay","orgsync-javascript-api","exports"],
   function(__dependency1__, __dependency2__, __dependency3__, __dependency4__, __dependency5__, __dependency6__, __dependency7__, __dependency8__, __dependency9__, __dependency10__, __exports__) {
     
     var $ = __dependency1__["default"] || __dependency1__;
-    var config = __dependency2__["default"] || __dependency2__;
-    var _ = __dependency3__["default"] || __dependency3__;
+    var _ = __dependency2__["default"] || __dependency2__;
+    var config = __dependency3__["default"] || __dependency3__;
     var dpr = __dependency4__["default"] || __dependency4__;
     var elementQuery = __dependency5__["default"] || __dependency5__;
     var herit = __dependency6__["default"] || __dependency6__;
@@ -15921,34 +17149,6 @@ define(
     var moment = __dependency8__["default"] || __dependency8__;
     var Olay = __dependency9__["default"] || __dependency9__;
     var OrgSyncApi = __dependency10__["default"] || __dependency10__;
-
-    // Define our global namespace.
-    var app = {
-      api: new OrgSyncApi(config.api),
-
-      // Views will add themselves to this map with their corresponding selectors.
-      // i.e. {'.js-osw-index-portals': app.IndexPortalsView}
-      selectorViewMap: {},
-
-      // In the ready function, run through the selectorViewMap and initialize
-      // views accordingly.
-      ready: function () {
-        $('html').addClass('dpr-' + dpr());
-        _.each(app.selectorViewMap, function (view, selector) {
-          $(selector).each(function () { new view({el: this}); });
-        });
-      },
-
-      // Only calculate the current timezone name once.
-      tz: jstz.determine().name(),
-      
-      Olay: herit(Olay, {
-        constructor: function () {
-          Olay.apply(this, arguments);
-          this.$content.addClass('orgsync-widget');
-        }
-      })
-    };
 
     // requestAnimationFrame shim.
     _.each(['webkit', 'moz'], function (vendor) {
@@ -16001,1599 +17201,36 @@ define(
       if (Math.abs(delta) <= 60) date.subtract('minutes', delta);
     };
 
-    $(app.ready);
+    // Views will add themselves to this map with their corresponding selectors.
+    // i.e. {'.js-osw-index-portals': app.IndexPortalsView}
+    var selectorViewMap = {};
 
-    __exports__["default"] = app;
-  });
-
-//     Backbone.js 1.1.0
-
-//     (c) 2010-2011 Jeremy Ashkenas, DocumentCloud Inc.
-//     (c) 2011-2013 Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
-//     Backbone may be freely distributed under the MIT license.
-//     For all details and documentation:
-//     http://backbonejs.org
-
-(function(){
-
-  // Initial Setup
-  // -------------
-
-  // Save a reference to the global object (`window` in the browser, `exports`
-  // on the server).
-  var root = this;
-
-  // Save the previous value of the `Backbone` variable, so that it can be
-  // restored later on, if `noConflict` is used.
-  var previousBackbone = root.Backbone;
-
-  // Create local references to array methods we'll want to use later.
-  var array = [];
-  var push = array.push;
-  var slice = array.slice;
-  var splice = array.splice;
-
-  // The top-level namespace. All public Backbone classes and modules will
-  // be attached to this. Exported for both the browser and the server.
-  var Backbone;
-  if (typeof exports !== 'undefined') {
-    Backbone = exports;
-  } else {
-    Backbone = root.Backbone = {};
-  }
-
-  // Current version of the library. Keep in sync with `package.json`.
-  Backbone.VERSION = '1.1.0';
-
-  // Require Underscore, if we're on the server, and it's not already present.
-  var _ = root._;
-  if (!_ && (typeof require !== 'undefined')) _ = require('underscore');
-
-  // For Backbone's purposes, jQuery, Zepto, Ender, or My Library (kidding) owns
-  // the `$` variable.
-  Backbone.$ = root.jQuery || root.Zepto || root.ender || root.$;
-
-  // Runs Backbone.js in *noConflict* mode, returning the `Backbone` variable
-  // to its previous owner. Returns a reference to this Backbone object.
-  Backbone.noConflict = function() {
-    root.Backbone = previousBackbone;
-    return this;
-  };
-
-  // Turn on `emulateHTTP` to support legacy HTTP servers. Setting this option
-  // will fake `"PATCH"`, `"PUT"` and `"DELETE"` requests via the `_method` parameter and
-  // set a `X-Http-Method-Override` header.
-  Backbone.emulateHTTP = false;
-
-  // Turn on `emulateJSON` to support legacy servers that can't deal with direct
-  // `application/json` requests ... will encode the body as
-  // `application/x-www-form-urlencoded` instead and will send the model in a
-  // form param named `model`.
-  Backbone.emulateJSON = false;
-
-  // Backbone.Events
-  // ---------------
-
-  // A module that can be mixed in to *any object* in order to provide it with
-  // custom events. You may bind with `on` or remove with `off` callback
-  // functions to an event; `trigger`-ing an event fires all callbacks in
-  // succession.
-  //
-  //     var object = {};
-  //     _.extend(object, Backbone.Events);
-  //     object.on('expand', function(){ alert('expanded'); });
-  //     object.trigger('expand');
-  //
-  var Events = Backbone.Events = {
-
-    // Bind an event to a `callback` function. Passing `"all"` will bind
-    // the callback to all events fired.
-    on: function(name, callback, context) {
-      if (!eventsApi(this, 'on', name, [callback, context]) || !callback) return this;
-      this._events || (this._events = {});
-      var events = this._events[name] || (this._events[name] = []);
-      events.push({callback: callback, context: context, ctx: context || this});
-      return this;
-    },
-
-    // Bind an event to only be triggered a single time. After the first time
-    // the callback is invoked, it will be removed.
-    once: function(name, callback, context) {
-      if (!eventsApi(this, 'once', name, [callback, context]) || !callback) return this;
-      var self = this;
-      var once = _.once(function() {
-        self.off(name, once);
-        callback.apply(this, arguments);
+    var scan = function () {
+      $('html').addClass('dpr-' + dpr());
+      _.each(selectorViewMap, function (view, selector) {
+        $(selector).each(function () { new view({el: this}); });
       });
-      once._callback = callback;
-      return this.on(name, once, context);
-    },
-
-    // Remove one or many callbacks. If `context` is null, removes all
-    // callbacks with that function. If `callback` is null, removes all
-    // callbacks for the event. If `name` is null, removes all bound
-    // callbacks for all events.
-    off: function(name, callback, context) {
-      var retain, ev, events, names, i, l, j, k;
-      if (!this._events || !eventsApi(this, 'off', name, [callback, context])) return this;
-      if (!name && !callback && !context) {
-        this._events = {};
-        return this;
-      }
-      names = name ? [name] : _.keys(this._events);
-      for (i = 0, l = names.length; i < l; i++) {
-        name = names[i];
-        if (events = this._events[name]) {
-          this._events[name] = retain = [];
-          if (callback || context) {
-            for (j = 0, k = events.length; j < k; j++) {
-              ev = events[j];
-              if ((callback && callback !== ev.callback && callback !== ev.callback._callback) ||
-                  (context && context !== ev.context)) {
-                retain.push(ev);
-              }
-            }
-          }
-          if (!retain.length) delete this._events[name];
-        }
-      }
-
-      return this;
-    },
-
-    // Trigger one or many events, firing all bound callbacks. Callbacks are
-    // passed the same arguments as `trigger` is, apart from the event name
-    // (unless you're listening on `"all"`, which will cause your callback to
-    // receive the true name of the event as the first argument).
-    trigger: function(name) {
-      if (!this._events) return this;
-      var args = slice.call(arguments, 1);
-      if (!eventsApi(this, 'trigger', name, args)) return this;
-      var events = this._events[name];
-      var allEvents = this._events.all;
-      if (events) triggerEvents(events, args);
-      if (allEvents) triggerEvents(allEvents, arguments);
-      return this;
-    },
-
-    // Tell this object to stop listening to either specific events ... or
-    // to every object it's currently listening to.
-    stopListening: function(obj, name, callback) {
-      var listeningTo = this._listeningTo;
-      if (!listeningTo) return this;
-      var remove = !name && !callback;
-      if (!callback && typeof name === 'object') callback = this;
-      if (obj) (listeningTo = {})[obj._listenId] = obj;
-      for (var id in listeningTo) {
-        obj = listeningTo[id];
-        obj.off(name, callback, this);
-        if (remove || _.isEmpty(obj._events)) delete this._listeningTo[id];
-      }
-      return this;
-    }
-
-  };
-
-  // Regular expression used to split event strings.
-  var eventSplitter = /\s+/;
-
-  // Implement fancy features of the Events API such as multiple event
-  // names `"change blur"` and jQuery-style event maps `{change: action}`
-  // in terms of the existing API.
-  var eventsApi = function(obj, action, name, rest) {
-    if (!name) return true;
-
-    // Handle event maps.
-    if (typeof name === 'object') {
-      for (var key in name) {
-        obj[action].apply(obj, [key, name[key]].concat(rest));
-      }
-      return false;
-    }
-
-    // Handle space separated event names.
-    if (eventSplitter.test(name)) {
-      var names = name.split(eventSplitter);
-      for (var i = 0, l = names.length; i < l; i++) {
-        obj[action].apply(obj, [names[i]].concat(rest));
-      }
-      return false;
-    }
-
-    return true;
-  };
-
-  // A difficult-to-believe, but optimized internal dispatch function for
-  // triggering events. Tries to keep the usual cases speedy (most internal
-  // Backbone events have 3 arguments).
-  var triggerEvents = function(events, args) {
-    var ev, i = -1, l = events.length, a1 = args[0], a2 = args[1], a3 = args[2];
-    switch (args.length) {
-      case 0: while (++i < l) (ev = events[i]).callback.call(ev.ctx); return;
-      case 1: while (++i < l) (ev = events[i]).callback.call(ev.ctx, a1); return;
-      case 2: while (++i < l) (ev = events[i]).callback.call(ev.ctx, a1, a2); return;
-      case 3: while (++i < l) (ev = events[i]).callback.call(ev.ctx, a1, a2, a3); return;
-      default: while (++i < l) (ev = events[i]).callback.apply(ev.ctx, args);
-    }
-  };
-
-  var listenMethods = {listenTo: 'on', listenToOnce: 'once'};
-
-  // Inversion-of-control versions of `on` and `once`. Tell *this* object to
-  // listen to an event in another object ... keeping track of what it's
-  // listening to.
-  _.each(listenMethods, function(implementation, method) {
-    Events[method] = function(obj, name, callback) {
-      var listeningTo = this._listeningTo || (this._listeningTo = {});
-      var id = obj._listenId || (obj._listenId = _.uniqueId('l'));
-      listeningTo[id] = obj;
-      if (!callback && typeof name === 'object') callback = this;
-      obj[implementation](name, callback, this);
-      return this;
+      elementQuery();
     };
-  });
 
-  // Aliases for backwards compatibility.
-  Events.bind   = Events.on;
-  Events.unbind = Events.off;
+    $(scan);
 
-  // Allow the `Backbone` object to serve as a global event bus, for folks who
-  // want global "pubsub" in a convenient place.
-  _.extend(Backbone, Events);
+    var OriginalOlay = Olay;
 
-  // Backbone.Model
-  // --------------
-
-  // Backbone **Models** are the basic data object in the framework --
-  // frequently representing a row in a table in a database on your server.
-  // A discrete chunk of data and a bunch of useful, related methods for
-  // performing computations and transformations on that data.
-
-  // Create a new model with the specified attributes. A client id (`cid`)
-  // is automatically generated and assigned for you.
-  var Model = Backbone.Model = function(attributes, options) {
-    var attrs = attributes || {};
-    options || (options = {});
-    this.cid = _.uniqueId('c');
-    this.attributes = {};
-    if (options.collection) this.collection = options.collection;
-    if (options.parse) attrs = this.parse(attrs, options) || {};
-    attrs = _.defaults({}, attrs, _.result(this, 'defaults'));
-    this.set(attrs, options);
-    this.changed = {};
-    this.initialize.apply(this, arguments);
-  };
-
-  // Attach all inheritable methods to the Model prototype.
-  _.extend(Model.prototype, Events, {
-
-    // A hash of attributes whose current and previous value differ.
-    changed: null,
-
-    // The value returned during the last failed validation.
-    validationError: null,
-
-    // The default name for the JSON `id` attribute is `"id"`. MongoDB and
-    // CouchDB users may want to set this to `"_id"`.
-    idAttribute: 'id',
-
-    // Initialize is an empty function by default. Override it with your own
-    // initialization logic.
-    initialize: function(){},
-
-    // Return a copy of the model's `attributes` object.
-    toJSON: function(options) {
-      return _.clone(this.attributes);
-    },
-
-    // Proxy `Backbone.sync` by default -- but override this if you need
-    // custom syncing semantics for *this* particular model.
-    sync: function() {
-      return Backbone.sync.apply(this, arguments);
-    },
-
-    // Get the value of an attribute.
-    get: function(attr) {
-      return this.attributes[attr];
-    },
-
-    // Get the HTML-escaped value of an attribute.
-    escape: function(attr) {
-      return _.escape(this.get(attr));
-    },
-
-    // Returns `true` if the attribute contains a value that is not null
-    // or undefined.
-    has: function(attr) {
-      return this.get(attr) != null;
-    },
-
-    // Set a hash of model attributes on the object, firing `"change"`. This is
-    // the core primitive operation of a model, updating the data and notifying
-    // anyone who needs to know about the change in state. The heart of the beast.
-    set: function(key, val, options) {
-      var attr, attrs, unset, changes, silent, changing, prev, current;
-      if (key == null) return this;
-
-      // Handle both `"key", value` and `{key: value}` -style arguments.
-      if (typeof key === 'object') {
-        attrs = key;
-        options = val;
-      } else {
-        (attrs = {})[key] = val;
+    __exports__.selectorViewMap = selectorViewMap;
+    __exports__.scan = scan;
+    var api = new OrgSyncApi(config.api);
+    __exports__.api = api;var Olay = herit(OriginalOlay, {
+      constructor: function () {
+        OriginalOlay.apply(this, arguments);
+        this.$content.addClass('orgsync-widget');
       }
-
-      options || (options = {});
-
-      // Run validation.
-      if (!this._validate(attrs, options)) return false;
-
-      // Extract attributes and options.
-      unset           = options.unset;
-      silent          = options.silent;
-      changes         = [];
-      changing        = this._changing;
-      this._changing  = true;
-
-      if (!changing) {
-        this._previousAttributes = _.clone(this.attributes);
-        this.changed = {};
-      }
-      current = this.attributes, prev = this._previousAttributes;
-
-      // Check for changes of `id`.
-      if (this.idAttribute in attrs) this.id = attrs[this.idAttribute];
-
-      // For each `set` attribute, update or delete the current value.
-      for (attr in attrs) {
-        val = attrs[attr];
-        if (!_.isEqual(current[attr], val)) changes.push(attr);
-        if (!_.isEqual(prev[attr], val)) {
-          this.changed[attr] = val;
-        } else {
-          delete this.changed[attr];
-        }
-        unset ? delete current[attr] : current[attr] = val;
-      }
-
-      // Trigger all relevant attribute changes.
-      if (!silent) {
-        if (changes.length) this._pending = true;
-        for (var i = 0, l = changes.length; i < l; i++) {
-          this.trigger('change:' + changes[i], this, current[changes[i]], options);
-        }
-      }
-
-      // You might be wondering why there's a `while` loop here. Changes can
-      // be recursively nested within `"change"` events.
-      if (changing) return this;
-      if (!silent) {
-        while (this._pending) {
-          this._pending = false;
-          this.trigger('change', this, options);
-        }
-      }
-      this._pending = false;
-      this._changing = false;
-      return this;
-    },
-
-    // Remove an attribute from the model, firing `"change"`. `unset` is a noop
-    // if the attribute doesn't exist.
-    unset: function(attr, options) {
-      return this.set(attr, void 0, _.extend({}, options, {unset: true}));
-    },
-
-    // Clear all attributes on the model, firing `"change"`.
-    clear: function(options) {
-      var attrs = {};
-      for (var key in this.attributes) attrs[key] = void 0;
-      return this.set(attrs, _.extend({}, options, {unset: true}));
-    },
-
-    // Determine if the model has changed since the last `"change"` event.
-    // If you specify an attribute name, determine if that attribute has changed.
-    hasChanged: function(attr) {
-      if (attr == null) return !_.isEmpty(this.changed);
-      return _.has(this.changed, attr);
-    },
-
-    // Return an object containing all the attributes that have changed, or
-    // false if there are no changed attributes. Useful for determining what
-    // parts of a view need to be updated and/or what attributes need to be
-    // persisted to the server. Unset attributes will be set to undefined.
-    // You can also pass an attributes object to diff against the model,
-    // determining if there *would be* a change.
-    changedAttributes: function(diff) {
-      if (!diff) return this.hasChanged() ? _.clone(this.changed) : false;
-      var val, changed = false;
-      var old = this._changing ? this._previousAttributes : this.attributes;
-      for (var attr in diff) {
-        if (_.isEqual(old[attr], (val = diff[attr]))) continue;
-        (changed || (changed = {}))[attr] = val;
-      }
-      return changed;
-    },
-
-    // Get the previous value of an attribute, recorded at the time the last
-    // `"change"` event was fired.
-    previous: function(attr) {
-      if (attr == null || !this._previousAttributes) return null;
-      return this._previousAttributes[attr];
-    },
-
-    // Get all of the attributes of the model at the time of the previous
-    // `"change"` event.
-    previousAttributes: function() {
-      return _.clone(this._previousAttributes);
-    },
-
-    // Fetch the model from the server. If the server's representation of the
-    // model differs from its current attributes, they will be overridden,
-    // triggering a `"change"` event.
-    fetch: function(options) {
-      options = options ? _.clone(options) : {};
-      if (options.parse === void 0) options.parse = true;
-      var model = this;
-      var success = options.success;
-      options.success = function(resp) {
-        if (!model.set(model.parse(resp, options), options)) return false;
-        if (success) success(model, resp, options);
-        model.trigger('sync', model, resp, options);
-      };
-      wrapError(this, options);
-      return this.sync('read', this, options);
-    },
-
-    // Set a hash of model attributes, and sync the model to the server.
-    // If the server returns an attributes hash that differs, the model's
-    // state will be `set` again.
-    save: function(key, val, options) {
-      var attrs, method, xhr, attributes = this.attributes;
-
-      // Handle both `"key", value` and `{key: value}` -style arguments.
-      if (key == null || typeof key === 'object') {
-        attrs = key;
-        options = val;
-      } else {
-        (attrs = {})[key] = val;
-      }
-
-      options = _.extend({validate: true}, options);
-
-      // If we're not waiting and attributes exist, save acts as
-      // `set(attr).save(null, opts)` with validation. Otherwise, check if
-      // the model will be valid when the attributes, if any, are set.
-      if (attrs && !options.wait) {
-        if (!this.set(attrs, options)) return false;
-      } else {
-        if (!this._validate(attrs, options)) return false;
-      }
-
-      // Set temporary attributes if `{wait: true}`.
-      if (attrs && options.wait) {
-        this.attributes = _.extend({}, attributes, attrs);
-      }
-
-      // After a successful server-side save, the client is (optionally)
-      // updated with the server-side state.
-      if (options.parse === void 0) options.parse = true;
-      var model = this;
-      var success = options.success;
-      options.success = function(resp) {
-        // Ensure attributes are restored during synchronous saves.
-        model.attributes = attributes;
-        var serverAttrs = model.parse(resp, options);
-        if (options.wait) serverAttrs = _.extend(attrs || {}, serverAttrs);
-        if (_.isObject(serverAttrs) && !model.set(serverAttrs, options)) {
-          return false;
-        }
-        if (success) success(model, resp, options);
-        model.trigger('sync', model, resp, options);
-      };
-      wrapError(this, options);
-
-      method = this.isNew() ? 'create' : (options.patch ? 'patch' : 'update');
-      if (method === 'patch') options.attrs = attrs;
-      xhr = this.sync(method, this, options);
-
-      // Restore attributes.
-      if (attrs && options.wait) this.attributes = attributes;
-
-      return xhr;
-    },
-
-    // Destroy this model on the server if it was already persisted.
-    // Optimistically removes the model from its collection, if it has one.
-    // If `wait: true` is passed, waits for the server to respond before removal.
-    destroy: function(options) {
-      options = options ? _.clone(options) : {};
-      var model = this;
-      var success = options.success;
-
-      var destroy = function() {
-        model.trigger('destroy', model, model.collection, options);
-      };
-
-      options.success = function(resp) {
-        if (options.wait || model.isNew()) destroy();
-        if (success) success(model, resp, options);
-        if (!model.isNew()) model.trigger('sync', model, resp, options);
-      };
-
-      if (this.isNew()) {
-        options.success();
-        return false;
-      }
-      wrapError(this, options);
-
-      var xhr = this.sync('delete', this, options);
-      if (!options.wait) destroy();
-      return xhr;
-    },
-
-    // Default URL for the model's representation on the server -- if you're
-    // using Backbone's restful methods, override this to change the endpoint
-    // that will be called.
-    url: function() {
-      var base = _.result(this, 'urlRoot') || _.result(this.collection, 'url') || urlError();
-      if (this.isNew()) return base;
-      return base + (base.charAt(base.length - 1) === '/' ? '' : '/') + encodeURIComponent(this.id);
-    },
-
-    // **parse** converts a response into the hash of attributes to be `set` on
-    // the model. The default implementation is just to pass the response along.
-    parse: function(resp, options) {
-      return resp;
-    },
-
-    // Create a new model with identical attributes to this one.
-    clone: function() {
-      return new this.constructor(this.attributes);
-    },
-
-    // A model is new if it has never been saved to the server, and lacks an id.
-    isNew: function() {
-      return this.id == null;
-    },
-
-    // Check if the model is currently in a valid state.
-    isValid: function(options) {
-      return this._validate({}, _.extend(options || {}, { validate: true }));
-    },
-
-    // Run validation against the next complete set of model attributes,
-    // returning `true` if all is well. Otherwise, fire an `"invalid"` event.
-    _validate: function(attrs, options) {
-      if (!options.validate || !this.validate) return true;
-      attrs = _.extend({}, this.attributes, attrs);
-      var error = this.validationError = this.validate(attrs, options) || null;
-      if (!error) return true;
-      this.trigger('invalid', this, error, _.extend(options, {validationError: error}));
-      return false;
-    }
-
-  });
-
-  // Underscore methods that we want to implement on the Model.
-  var modelMethods = ['keys', 'values', 'pairs', 'invert', 'pick', 'omit'];
-
-  // Mix in each Underscore method as a proxy to `Model#attributes`.
-  _.each(modelMethods, function(method) {
-    Model.prototype[method] = function() {
-      var args = slice.call(arguments);
-      args.unshift(this.attributes);
-      return _[method].apply(_, args);
-    };
-  });
-
-  // Backbone.Collection
-  // -------------------
-
-  // If models tend to represent a single row of data, a Backbone Collection is
-  // more analagous to a table full of data ... or a small slice or page of that
-  // table, or a collection of rows that belong together for a particular reason
-  // -- all of the messages in this particular folder, all of the documents
-  // belonging to this particular author, and so on. Collections maintain
-  // indexes of their models, both in order, and for lookup by `id`.
-
-  // Create a new **Collection**, perhaps to contain a specific type of `model`.
-  // If a `comparator` is specified, the Collection will maintain
-  // its models in sort order, as they're added and removed.
-  var Collection = Backbone.Collection = function(models, options) {
-    options || (options = {});
-    if (options.model) this.model = options.model;
-    if (options.comparator !== void 0) this.comparator = options.comparator;
-    this._reset();
-    this.initialize.apply(this, arguments);
-    if (models) this.reset(models, _.extend({silent: true}, options));
-  };
-
-  // Default options for `Collection#set`.
-  var setOptions = {add: true, remove: true, merge: true};
-  var addOptions = {add: true, remove: false};
-
-  // Define the Collection's inheritable methods.
-  _.extend(Collection.prototype, Events, {
-
-    // The default model for a collection is just a **Backbone.Model**.
-    // This should be overridden in most cases.
-    model: Model,
-
-    // Initialize is an empty function by default. Override it with your own
-    // initialization logic.
-    initialize: function(){},
-
-    // The JSON representation of a Collection is an array of the
-    // models' attributes.
-    toJSON: function(options) {
-      return this.map(function(model){ return model.toJSON(options); });
-    },
-
-    // Proxy `Backbone.sync` by default.
-    sync: function() {
-      return Backbone.sync.apply(this, arguments);
-    },
-
-    // Add a model, or list of models to the set.
-    add: function(models, options) {
-      return this.set(models, _.extend({merge: false}, options, addOptions));
-    },
-
-    // Remove a model, or a list of models from the set.
-    remove: function(models, options) {
-      var singular = !_.isArray(models);
-      models = singular ? [models] : _.clone(models);
-      options || (options = {});
-      var i, l, index, model;
-      for (i = 0, l = models.length; i < l; i++) {
-        model = models[i] = this.get(models[i]);
-        if (!model) continue;
-        delete this._byId[model.id];
-        delete this._byId[model.cid];
-        index = this.indexOf(model);
-        this.models.splice(index, 1);
-        this.length--;
-        if (!options.silent) {
-          options.index = index;
-          model.trigger('remove', model, this, options);
-        }
-        this._removeReference(model);
-      }
-      return singular ? models[0] : models;
-    },
-
-    // Update a collection by `set`-ing a new list of models, adding new ones,
-    // removing models that are no longer present, and merging models that
-    // already exist in the collection, as necessary. Similar to **Model#set**,
-    // the core operation for updating the data contained by the collection.
-    set: function(models, options) {
-      options = _.defaults({}, options, setOptions);
-      if (options.parse) models = this.parse(models, options);
-      var singular = !_.isArray(models);
-      models = singular ? (models ? [models] : []) : _.clone(models);
-      var i, l, id, model, attrs, existing, sort;
-      var at = options.at;
-      var targetModel = this.model;
-      var sortable = this.comparator && (at == null) && options.sort !== false;
-      var sortAttr = _.isString(this.comparator) ? this.comparator : null;
-      var toAdd = [], toRemove = [], modelMap = {};
-      var add = options.add, merge = options.merge, remove = options.remove;
-      var order = !sortable && add && remove ? [] : false;
-
-      // Turn bare objects into model references, and prevent invalid models
-      // from being added.
-      for (i = 0, l = models.length; i < l; i++) {
-        attrs = models[i];
-        if (attrs instanceof Model) {
-          id = model = attrs;
-        } else {
-          id = attrs[targetModel.prototype.idAttribute];
-        }
-
-        // If a duplicate is found, prevent it from being added and
-        // optionally merge it into the existing model.
-        if (existing = this.get(id)) {
-          if (remove) modelMap[existing.cid] = true;
-          if (merge) {
-            attrs = attrs === model ? model.attributes : attrs;
-            if (options.parse) attrs = existing.parse(attrs, options);
-            existing.set(attrs, options);
-            if (sortable && !sort && existing.hasChanged(sortAttr)) sort = true;
-          }
-          models[i] = existing;
-
-        // If this is a new, valid model, push it to the `toAdd` list.
-        } else if (add) {
-          model = models[i] = this._prepareModel(attrs, options);
-          if (!model) continue;
-          toAdd.push(model);
-
-          // Listen to added models' events, and index models for lookup by
-          // `id` and by `cid`.
-          model.on('all', this._onModelEvent, this);
-          this._byId[model.cid] = model;
-          if (model.id != null) this._byId[model.id] = model;
-        }
-        if (order) order.push(existing || model);
-      }
-
-      // Remove nonexistent models if appropriate.
-      if (remove) {
-        for (i = 0, l = this.length; i < l; ++i) {
-          if (!modelMap[(model = this.models[i]).cid]) toRemove.push(model);
-        }
-        if (toRemove.length) this.remove(toRemove, options);
-      }
-
-      // See if sorting is needed, update `length` and splice in new models.
-      if (toAdd.length || (order && order.length)) {
-        if (sortable) sort = true;
-        this.length += toAdd.length;
-        if (at != null) {
-          for (i = 0, l = toAdd.length; i < l; i++) {
-            this.models.splice(at + i, 0, toAdd[i]);
-          }
-        } else {
-          if (order) this.models.length = 0;
-          var orderedModels = order || toAdd;
-          for (i = 0, l = orderedModels.length; i < l; i++) {
-            this.models.push(orderedModels[i]);
-          }
-        }
-      }
-
-      // Silently sort the collection if appropriate.
-      if (sort) this.sort({silent: true});
-
-      // Unless silenced, it's time to fire all appropriate add/sort events.
-      if (!options.silent) {
-        for (i = 0, l = toAdd.length; i < l; i++) {
-          (model = toAdd[i]).trigger('add', model, this, options);
-        }
-        if (sort || (order && order.length)) this.trigger('sort', this, options);
-      }
-      
-      // Return the added (or merged) model (or models).
-      return singular ? models[0] : models;
-    },
-
-    // When you have more items than you want to add or remove individually,
-    // you can reset the entire set with a new list of models, without firing
-    // any granular `add` or `remove` events. Fires `reset` when finished.
-    // Useful for bulk operations and optimizations.
-    reset: function(models, options) {
-      options || (options = {});
-      for (var i = 0, l = this.models.length; i < l; i++) {
-        this._removeReference(this.models[i]);
-      }
-      options.previousModels = this.models;
-      this._reset();
-      models = this.add(models, _.extend({silent: true}, options));
-      if (!options.silent) this.trigger('reset', this, options);
-      return models;
-    },
-
-    // Add a model to the end of the collection.
-    push: function(model, options) {
-      return this.add(model, _.extend({at: this.length}, options));
-    },
-
-    // Remove a model from the end of the collection.
-    pop: function(options) {
-      var model = this.at(this.length - 1);
-      this.remove(model, options);
-      return model;
-    },
-
-    // Add a model to the beginning of the collection.
-    unshift: function(model, options) {
-      return this.add(model, _.extend({at: 0}, options));
-    },
-
-    // Remove a model from the beginning of the collection.
-    shift: function(options) {
-      var model = this.at(0);
-      this.remove(model, options);
-      return model;
-    },
-
-    // Slice out a sub-array of models from the collection.
-    slice: function() {
-      return slice.apply(this.models, arguments);
-    },
-
-    // Get a model from the set by id.
-    get: function(obj) {
-      if (obj == null) return void 0;
-      return this._byId[obj.id] || this._byId[obj.cid] || this._byId[obj];
-    },
-
-    // Get the model at the given index.
-    at: function(index) {
-      return this.models[index];
-    },
-
-    // Return models with matching attributes. Useful for simple cases of
-    // `filter`.
-    where: function(attrs, first) {
-      if (_.isEmpty(attrs)) return first ? void 0 : [];
-      return this[first ? 'find' : 'filter'](function(model) {
-        for (var key in attrs) {
-          if (attrs[key] !== model.get(key)) return false;
-        }
-        return true;
-      });
-    },
-
-    // Return the first model with matching attributes. Useful for simple cases
-    // of `find`.
-    findWhere: function(attrs) {
-      return this.where(attrs, true);
-    },
-
-    // Force the collection to re-sort itself. You don't need to call this under
-    // normal circumstances, as the set will maintain sort order as each item
-    // is added.
-    sort: function(options) {
-      if (!this.comparator) throw new Error('Cannot sort a set without a comparator');
-      options || (options = {});
-
-      // Run sort based on type of `comparator`.
-      if (_.isString(this.comparator) || this.comparator.length === 1) {
-        this.models = this.sortBy(this.comparator, this);
-      } else {
-        this.models.sort(_.bind(this.comparator, this));
-      }
-
-      if (!options.silent) this.trigger('sort', this, options);
-      return this;
-    },
-
-    // Pluck an attribute from each model in the collection.
-    pluck: function(attr) {
-      return _.invoke(this.models, 'get', attr);
-    },
-
-    // Fetch the default set of models for this collection, resetting the
-    // collection when they arrive. If `reset: true` is passed, the response
-    // data will be passed through the `reset` method instead of `set`.
-    fetch: function(options) {
-      options = options ? _.clone(options) : {};
-      if (options.parse === void 0) options.parse = true;
-      var success = options.success;
-      var collection = this;
-      options.success = function(resp) {
-        var method = options.reset ? 'reset' : 'set';
-        collection[method](resp, options);
-        if (success) success(collection, resp, options);
-        collection.trigger('sync', collection, resp, options);
-      };
-      wrapError(this, options);
-      return this.sync('read', this, options);
-    },
-
-    // Create a new instance of a model in this collection. Add the model to the
-    // collection immediately, unless `wait: true` is passed, in which case we
-    // wait for the server to agree.
-    create: function(model, options) {
-      options = options ? _.clone(options) : {};
-      if (!(model = this._prepareModel(model, options))) return false;
-      if (!options.wait) this.add(model, options);
-      var collection = this;
-      var success = options.success;
-      options.success = function(model, resp, options) {
-        if (options.wait) collection.add(model, options);
-        if (success) success(model, resp, options);
-      };
-      model.save(null, options);
-      return model;
-    },
-
-    // **parse** converts a response into a list of models to be added to the
-    // collection. The default implementation is just to pass it through.
-    parse: function(resp, options) {
-      return resp;
-    },
-
-    // Create a new collection with an identical list of models as this one.
-    clone: function() {
-      return new this.constructor(this.models);
-    },
-
-    // Private method to reset all internal state. Called when the collection
-    // is first initialized or reset.
-    _reset: function() {
-      this.length = 0;
-      this.models = [];
-      this._byId  = {};
-    },
-
-    // Prepare a hash of attributes (or other model) to be added to this
-    // collection.
-    _prepareModel: function(attrs, options) {
-      if (attrs instanceof Model) {
-        if (!attrs.collection) attrs.collection = this;
-        return attrs;
-      }
-      options = options ? _.clone(options) : {};
-      options.collection = this;
-      var model = new this.model(attrs, options);
-      if (!model.validationError) return model;
-      this.trigger('invalid', this, model.validationError, options);
-      return false;
-    },
-
-    // Internal method to sever a model's ties to a collection.
-    _removeReference: function(model) {
-      if (this === model.collection) delete model.collection;
-      model.off('all', this._onModelEvent, this);
-    },
-
-    // Internal method called every time a model in the set fires an event.
-    // Sets need to update their indexes when models change ids. All other
-    // events simply proxy through. "add" and "remove" events that originate
-    // in other collections are ignored.
-    _onModelEvent: function(event, model, collection, options) {
-      if ((event === 'add' || event === 'remove') && collection !== this) return;
-      if (event === 'destroy') this.remove(model, options);
-      if (model && event === 'change:' + model.idAttribute) {
-        delete this._byId[model.previous(model.idAttribute)];
-        if (model.id != null) this._byId[model.id] = model;
-      }
-      this.trigger.apply(this, arguments);
-    }
-
-  });
-
-  // Underscore methods that we want to implement on the Collection.
-  // 90% of the core usefulness of Backbone Collections is actually implemented
-  // right here:
-  var methods = ['forEach', 'each', 'map', 'collect', 'reduce', 'foldl',
-    'inject', 'reduceRight', 'foldr', 'find', 'detect', 'filter', 'select',
-    'reject', 'every', 'all', 'some', 'any', 'include', 'contains', 'invoke',
-    'max', 'min', 'toArray', 'size', 'first', 'head', 'take', 'initial', 'rest',
-    'tail', 'drop', 'last', 'without', 'difference', 'indexOf', 'shuffle',
-    'lastIndexOf', 'isEmpty', 'chain'];
-
-  // Mix in each Underscore method as a proxy to `Collection#models`.
-  _.each(methods, function(method) {
-    Collection.prototype[method] = function() {
-      var args = slice.call(arguments);
-      args.unshift(this.models);
-      return _[method].apply(_, args);
-    };
-  });
-
-  // Underscore methods that take a property name as an argument.
-  var attributeMethods = ['groupBy', 'countBy', 'sortBy'];
-
-  // Use attributes instead of properties.
-  _.each(attributeMethods, function(method) {
-    Collection.prototype[method] = function(value, context) {
-      var iterator = _.isFunction(value) ? value : function(model) {
-        return model.get(value);
-      };
-      return _[method](this.models, iterator, context);
-    };
-  });
-
-  // Backbone.View
-  // -------------
-
-  // Backbone Views are almost more convention than they are actual code. A View
-  // is simply a JavaScript object that represents a logical chunk of UI in the
-  // DOM. This might be a single item, an entire list, a sidebar or panel, or
-  // even the surrounding frame which wraps your whole app. Defining a chunk of
-  // UI as a **View** allows you to define your DOM events declaratively, without
-  // having to worry about render order ... and makes it easy for the view to
-  // react to specific changes in the state of your models.
-
-  // Creating a Backbone.View creates its initial element outside of the DOM,
-  // if an existing element is not provided...
-  var View = Backbone.View = function(options) {
-    this.cid = _.uniqueId('view');
-    options || (options = {});
-    _.extend(this, _.pick(options, viewOptions));
-    this._ensureElement();
-    this.initialize.apply(this, arguments);
-    this.delegateEvents();
-  };
-
-  // Cached regex to split keys for `delegate`.
-  var delegateEventSplitter = /^(\S+)\s*(.*)$/;
-
-  // List of view options to be merged as properties.
-  var viewOptions = ['model', 'collection', 'el', 'id', 'attributes', 'className', 'tagName', 'events'];
-
-  // Set up all inheritable **Backbone.View** properties and methods.
-  _.extend(View.prototype, Events, {
-
-    // The default `tagName` of a View's element is `"div"`.
-    tagName: 'div',
-
-    // jQuery delegate for element lookup, scoped to DOM elements within the
-    // current view. This should be preferred to global lookups where possible.
-    $: function(selector) {
-      return this.$el.find(selector);
-    },
-
-    // Initialize is an empty function by default. Override it with your own
-    // initialization logic.
-    initialize: function(){},
-
-    // **render** is the core function that your view should override, in order
-    // to populate its element (`this.el`), with the appropriate HTML. The
-    // convention is for **render** to always return `this`.
-    render: function() {
-      return this;
-    },
-
-    // Remove this view by taking the element out of the DOM, and removing any
-    // applicable Backbone.Events listeners.
-    remove: function() {
-      this.$el.remove();
-      this.stopListening();
-      return this;
-    },
-
-    // Change the view's element (`this.el` property), including event
-    // re-delegation.
-    setElement: function(element, delegate) {
-      if (this.$el) this.undelegateEvents();
-      this.$el = element instanceof Backbone.$ ? element : Backbone.$(element);
-      this.el = this.$el[0];
-      if (delegate !== false) this.delegateEvents();
-      return this;
-    },
-
-    // Set callbacks, where `this.events` is a hash of
-    //
-    // *{"event selector": "callback"}*
-    //
-    //     {
-    //       'mousedown .title':  'edit',
-    //       'click .button':     'save',
-    //       'click .open':       function(e) { ... }
-    //     }
-    //
-    // pairs. Callbacks will be bound to the view, with `this` set properly.
-    // Uses event delegation for efficiency.
-    // Omitting the selector binds the event to `this.el`.
-    // This only works for delegate-able events: not `focus`, `blur`, and
-    // not `change`, `submit`, and `reset` in Internet Explorer.
-    delegateEvents: function(events) {
-      if (!(events || (events = _.result(this, 'events')))) return this;
-      this.undelegateEvents();
-      for (var key in events) {
-        var method = events[key];
-        if (!_.isFunction(method)) method = this[events[key]];
-        if (!method) continue;
-
-        var match = key.match(delegateEventSplitter);
-        var eventName = match[1], selector = match[2];
-        method = _.bind(method, this);
-        eventName += '.delegateEvents' + this.cid;
-        if (selector === '') {
-          this.$el.on(eventName, method);
-        } else {
-          this.$el.on(eventName, selector, method);
-        }
-      }
-      return this;
-    },
-
-    // Clears all callbacks previously bound to the view with `delegateEvents`.
-    // You usually don't need to use this, but may wish to if you have multiple
-    // Backbone views attached to the same DOM element.
-    undelegateEvents: function() {
-      this.$el.off('.delegateEvents' + this.cid);
-      return this;
-    },
-
-    // Ensure that the View has a DOM element to render into.
-    // If `this.el` is a string, pass it through `$()`, take the first
-    // matching element, and re-assign it to `el`. Otherwise, create
-    // an element from the `id`, `className` and `tagName` properties.
-    _ensureElement: function() {
-      if (!this.el) {
-        var attrs = _.extend({}, _.result(this, 'attributes'));
-        if (this.id) attrs.id = _.result(this, 'id');
-        if (this.className) attrs['class'] = _.result(this, 'className');
-        var $el = Backbone.$('<' + _.result(this, 'tagName') + '>').attr(attrs);
-        this.setElement($el, false);
-      } else {
-        this.setElement(_.result(this, 'el'), false);
-      }
-    }
-
-  });
-
-  // Backbone.sync
-  // -------------
-
-  // Override this function to change the manner in which Backbone persists
-  // models to the server. You will be passed the type of request, and the
-  // model in question. By default, makes a RESTful Ajax request
-  // to the model's `url()`. Some possible customizations could be:
-  //
-  // * Use `setTimeout` to batch rapid-fire updates into a single request.
-  // * Send up the models as XML instead of JSON.
-  // * Persist models via WebSockets instead of Ajax.
-  //
-  // Turn on `Backbone.emulateHTTP` in order to send `PUT` and `DELETE` requests
-  // as `POST`, with a `_method` parameter containing the true HTTP method,
-  // as well as all requests with the body as `application/x-www-form-urlencoded`
-  // instead of `application/json` with the model in a param named `model`.
-  // Useful when interfacing with server-side languages like **PHP** that make
-  // it difficult to read the body of `PUT` requests.
-  Backbone.sync = function(method, model, options) {
-    var type = methodMap[method];
-
-    // Default options, unless specified.
-    _.defaults(options || (options = {}), {
-      emulateHTTP: Backbone.emulateHTTP,
-      emulateJSON: Backbone.emulateJSON
     });
-
-    // Default JSON-request options.
-    var params = {type: type, dataType: 'json'};
-
-    // Ensure that we have a URL.
-    if (!options.url) {
-      params.url = _.result(model, 'url') || urlError();
-    }
-
-    // Ensure that we have the appropriate request data.
-    if (options.data == null && model && (method === 'create' || method === 'update' || method === 'patch')) {
-      params.contentType = 'application/json';
-      params.data = JSON.stringify(options.attrs || model.toJSON(options));
-    }
-
-    // For older servers, emulate JSON by encoding the request into an HTML-form.
-    if (options.emulateJSON) {
-      params.contentType = 'application/x-www-form-urlencoded';
-      params.data = params.data ? {model: params.data} : {};
-    }
-
-    // For older servers, emulate HTTP by mimicking the HTTP method with `_method`
-    // And an `X-HTTP-Method-Override` header.
-    if (options.emulateHTTP && (type === 'PUT' || type === 'DELETE' || type === 'PATCH')) {
-      params.type = 'POST';
-      if (options.emulateJSON) params.data._method = type;
-      var beforeSend = options.beforeSend;
-      options.beforeSend = function(xhr) {
-        xhr.setRequestHeader('X-HTTP-Method-Override', type);
-        if (beforeSend) return beforeSend.apply(this, arguments);
-      };
-    }
-
-    // Don't process data on a non-GET request.
-    if (params.type !== 'GET' && !options.emulateJSON) {
-      params.processData = false;
-    }
-
-    // If we're sending a `PATCH` request, and we're in an old Internet Explorer
-    // that still has ActiveX enabled by default, override jQuery to use that
-    // for XHR instead. Remove this line when jQuery supports `PATCH` on IE8.
-    if (params.type === 'PATCH' && noXhrPatch) {
-      params.xhr = function() {
-        return new ActiveXObject("Microsoft.XMLHTTP");
-      };
-    }
-
-    // Make the request, allowing the user to override any Ajax options.
-    var xhr = options.xhr = Backbone.ajax(_.extend(params, options));
-    model.trigger('request', model, xhr, options);
-    return xhr;
-  };
-
-  var noXhrPatch = typeof window !== 'undefined' && !!window.ActiveXObject && !(window.XMLHttpRequest && (new XMLHttpRequest).dispatchEvent);
-
-  // Map from CRUD to HTTP for our default `Backbone.sync` implementation.
-  var methodMap = {
-    'create': 'POST',
-    'update': 'PUT',
-    'patch':  'PATCH',
-    'delete': 'DELETE',
-    'read':   'GET'
-  };
-
-  // Set the default implementation of `Backbone.ajax` to proxy through to `$`.
-  // Override this if you'd like to use a different library.
-  Backbone.ajax = function() {
-    return Backbone.$.ajax.apply(Backbone.$, arguments);
-  };
-
-  // Backbone.Router
-  // ---------------
-
-  // Routers map faux-URLs to actions, and fire events when routes are
-  // matched. Creating a new one sets its `routes` hash, if not set statically.
-  var Router = Backbone.Router = function(options) {
-    options || (options = {});
-    if (options.routes) this.routes = options.routes;
-    this._bindRoutes();
-    this.initialize.apply(this, arguments);
-  };
-
-  // Cached regular expressions for matching named param parts and splatted
-  // parts of route strings.
-  var optionalParam = /\((.*?)\)/g;
-  var namedParam    = /(\(\?)?:\w+/g;
-  var splatParam    = /\*\w+/g;
-  var escapeRegExp  = /[\-{}\[\]+?.,\\\^$|#\s]/g;
-
-  // Set up all inheritable **Backbone.Router** properties and methods.
-  _.extend(Router.prototype, Events, {
-
-    // Initialize is an empty function by default. Override it with your own
-    // initialization logic.
-    initialize: function(){},
-
-    // Manually bind a single named route to a callback. For example:
-    //
-    //     this.route('search/:query/p:num', 'search', function(query, num) {
-    //       ...
-    //     });
-    //
-    route: function(route, name, callback) {
-      if (!_.isRegExp(route)) route = this._routeToRegExp(route);
-      if (_.isFunction(name)) {
-        callback = name;
-        name = '';
-      }
-      if (!callback) callback = this[name];
-      var router = this;
-      Backbone.history.route(route, function(fragment) {
-        var args = router._extractParameters(route, fragment);
-        callback && callback.apply(router, args);
-        router.trigger.apply(router, ['route:' + name].concat(args));
-        router.trigger('route', name, args);
-        Backbone.history.trigger('route', router, name, args);
-      });
-      return this;
-    },
-
-    // Simple proxy to `Backbone.history` to save a fragment into the history.
-    navigate: function(fragment, options) {
-      Backbone.history.navigate(fragment, options);
-      return this;
-    },
-
-    // Bind all defined routes to `Backbone.history`. We have to reverse the
-    // order of the routes here to support behavior where the most general
-    // routes can be defined at the bottom of the route map.
-    _bindRoutes: function() {
-      if (!this.routes) return;
-      this.routes = _.result(this, 'routes');
-      var route, routes = _.keys(this.routes);
-      while ((route = routes.pop()) != null) {
-        this.route(route, this.routes[route]);
-      }
-    },
-
-    // Convert a route string into a regular expression, suitable for matching
-    // against the current location hash.
-    _routeToRegExp: function(route) {
-      route = route.replace(escapeRegExp, '\\$&')
-                   .replace(optionalParam, '(?:$1)?')
-                   .replace(namedParam, function(match, optional) {
-                     return optional ? match : '([^\/]+)';
-                   })
-                   .replace(splatParam, '(.*?)');
-      return new RegExp('^' + route + '$');
-    },
-
-    // Given a route, and a URL fragment that it matches, return the array of
-    // extracted decoded parameters. Empty or unmatched parameters will be
-    // treated as `null` to normalize cross-browser behavior.
-    _extractParameters: function(route, fragment) {
-      var params = route.exec(fragment).slice(1);
-      return _.map(params, function(param) {
-        return param ? decodeURIComponent(param) : null;
-      });
-    }
-
+    __exports__.Olay = Olay;var tz = jstz.determine().name();
+    __exports__.tz = tz;
+    // Require each widget designated in the build.
+    _.each(config.build.include, require);
   });
-
-  // Backbone.History
-  // ----------------
-
-  // Handles cross-browser history management, based on either
-  // [pushState](http://diveintohtml5.info/history.html) and real URLs, or
-  // [onhashchange](https://developer.mozilla.org/en-US/docs/DOM/window.onhashchange)
-  // and URL fragments. If the browser supports neither (old IE, natch),
-  // falls back to polling.
-  var History = Backbone.History = function() {
-    this.handlers = [];
-    _.bindAll(this, 'checkUrl');
-
-    // Ensure that `History` can be used outside of the browser.
-    if (typeof window !== 'undefined') {
-      this.location = window.location;
-      this.history = window.history;
-    }
-  };
-
-  // Cached regex for stripping a leading hash/slash and trailing space.
-  var routeStripper = /^[#\/]|\s+$/g;
-
-  // Cached regex for stripping leading and trailing slashes.
-  var rootStripper = /^\/+|\/+$/g;
-
-  // Cached regex for detecting MSIE.
-  var isExplorer = /msie [\w.]+/;
-
-  // Cached regex for removing a trailing slash.
-  var trailingSlash = /\/$/;
-
-  // Cached regex for stripping urls of hash and query.
-  var pathStripper = /[?#].*$/;
-
-  // Has the history handling already been started?
-  History.started = false;
-
-  // Set up all inheritable **Backbone.History** properties and methods.
-  _.extend(History.prototype, Events, {
-
-    // The default interval to poll for hash changes, if necessary, is
-    // twenty times a second.
-    interval: 50,
-
-    // Gets the true hash value. Cannot use location.hash directly due to bug
-    // in Firefox where location.hash will always be decoded.
-    getHash: function(window) {
-      var match = (window || this).location.href.match(/#(.*)$/);
-      return match ? match[1] : '';
-    },
-
-    // Get the cross-browser normalized URL fragment, either from the URL,
-    // the hash, or the override.
-    getFragment: function(fragment, forcePushState) {
-      if (fragment == null) {
-        if (this._hasPushState || !this._wantsHashChange || forcePushState) {
-          fragment = this.location.pathname;
-          var root = this.root.replace(trailingSlash, '');
-          if (!fragment.indexOf(root)) fragment = fragment.slice(root.length);
-        } else {
-          fragment = this.getHash();
-        }
-      }
-      return fragment.replace(routeStripper, '');
-    },
-
-    // Start the hash change handling, returning `true` if the current URL matches
-    // an existing route, and `false` otherwise.
-    start: function(options) {
-      if (History.started) throw new Error("Backbone.history has already been started");
-      History.started = true;
-
-      // Figure out the initial configuration. Do we need an iframe?
-      // Is pushState desired ... is it available?
-      this.options          = _.extend({root: '/'}, this.options, options);
-      this.root             = this.options.root;
-      this._wantsHashChange = this.options.hashChange !== false;
-      this._wantsPushState  = !!this.options.pushState;
-      this._hasPushState    = !!(this.options.pushState && this.history && this.history.pushState);
-      var fragment          = this.getFragment();
-      var docMode           = document.documentMode;
-      var oldIE             = (isExplorer.exec(navigator.userAgent.toLowerCase()) && (!docMode || docMode <= 7));
-
-      // Normalize root to always include a leading and trailing slash.
-      this.root = ('/' + this.root + '/').replace(rootStripper, '/');
-
-      if (oldIE && this._wantsHashChange) {
-        this.iframe = Backbone.$('<iframe src="javascript:0" tabindex="-1" />').hide().appendTo('body')[0].contentWindow;
-        this.navigate(fragment);
-      }
-
-      // Depending on whether we're using pushState or hashes, and whether
-      // 'onhashchange' is supported, determine how we check the URL state.
-      if (this._hasPushState) {
-        Backbone.$(window).on('popstate', this.checkUrl);
-      } else if (this._wantsHashChange && ('onhashchange' in window) && !oldIE) {
-        Backbone.$(window).on('hashchange', this.checkUrl);
-      } else if (this._wantsHashChange) {
-        this._checkUrlInterval = setInterval(this.checkUrl, this.interval);
-      }
-
-      // Determine if we need to change the base url, for a pushState link
-      // opened by a non-pushState browser.
-      this.fragment = fragment;
-      var loc = this.location;
-      var atRoot = loc.pathname.replace(/[^\/]$/, '$&/') === this.root;
-
-      // Transition from hashChange to pushState or vice versa if both are
-      // requested.
-      if (this._wantsHashChange && this._wantsPushState) {
-
-        // If we've started off with a route from a `pushState`-enabled
-        // browser, but we're currently in a browser that doesn't support it...
-        if (!this._hasPushState && !atRoot) {
-          this.fragment = this.getFragment(null, true);
-          this.location.replace(this.root + this.location.search + '#' + this.fragment);
-          // Return immediately as browser will do redirect to new url
-          return true;
-
-        // Or if we've started out with a hash-based route, but we're currently
-        // in a browser where it could be `pushState`-based instead...
-        } else if (this._hasPushState && atRoot && loc.hash) {
-          this.fragment = this.getHash().replace(routeStripper, '');
-          this.history.replaceState({}, document.title, this.root + this.fragment + loc.search);
-        }
-
-      }
-
-      if (!this.options.silent) return this.loadUrl();
-    },
-
-    // Disable Backbone.history, perhaps temporarily. Not useful in a real app,
-    // but possibly useful for unit testing Routers.
-    stop: function() {
-      Backbone.$(window).off('popstate', this.checkUrl).off('hashchange', this.checkUrl);
-      clearInterval(this._checkUrlInterval);
-      History.started = false;
-    },
-
-    // Add a route to be tested when the fragment changes. Routes added later
-    // may override previous routes.
-    route: function(route, callback) {
-      this.handlers.unshift({route: route, callback: callback});
-    },
-
-    // Checks the current URL to see if it has changed, and if it has,
-    // calls `loadUrl`, normalizing across the hidden iframe.
-    checkUrl: function(e) {
-      var current = this.getFragment();
-      if (current === this.fragment && this.iframe) {
-        current = this.getFragment(this.getHash(this.iframe));
-      }
-      if (current === this.fragment) return false;
-      if (this.iframe) this.navigate(current);
-      this.loadUrl();
-    },
-
-    // Attempt to load the current URL fragment. If a route succeeds with a
-    // match, returns `true`. If no defined routes matches the fragment,
-    // returns `false`.
-    loadUrl: function(fragment) {
-      fragment = this.fragment = this.getFragment(fragment);
-      return _.any(this.handlers, function(handler) {
-        if (handler.route.test(fragment)) {
-          handler.callback(fragment);
-          return true;
-        }
-      });
-    },
-
-    // Save a fragment into the hash history, or replace the URL state if the
-    // 'replace' option is passed. You are responsible for properly URL-encoding
-    // the fragment in advance.
-    //
-    // The options object can contain `trigger: true` if you wish to have the
-    // route callback be fired (not usually desirable), or `replace: true`, if
-    // you wish to modify the current URL without adding an entry to the history.
-    navigate: function(fragment, options) {
-      if (!History.started) return false;
-      if (!options || options === true) options = {trigger: !!options};
-
-      var url = this.root + (fragment = this.getFragment(fragment || ''));
-
-      // Strip the fragment of the query and hash for matching.
-      fragment = fragment.replace(pathStripper, '');
-
-      if (this.fragment === fragment) return;
-      this.fragment = fragment;
-
-      // Don't include a trailing slash on the root.
-      if (fragment === '' && url !== '/') url = url.slice(0, -1);
-
-      // If pushState is available, we use it to set the fragment as a real URL.
-      if (this._hasPushState) {
-        this.history[options.replace ? 'replaceState' : 'pushState']({}, document.title, url);
-
-      // If hash changes haven't been explicitly disabled, update the hash
-      // fragment to store history.
-      } else if (this._wantsHashChange) {
-        this._updateHash(this.location, fragment, options.replace);
-        if (this.iframe && (fragment !== this.getFragment(this.getHash(this.iframe)))) {
-          // Opening and closing the iframe tricks IE7 and earlier to push a
-          // history entry on hash-tag change.  When replace is true, we don't
-          // want this.
-          if(!options.replace) this.iframe.document.open().close();
-          this._updateHash(this.iframe.location, fragment, options.replace);
-        }
-
-      // If you've told us that you explicitly don't want fallback hashchange-
-      // based history, then `navigate` becomes a page refresh.
-      } else {
-        return this.location.assign(url);
-      }
-      if (options.trigger) return this.loadUrl(fragment);
-    },
-
-    // Update the hash location, either replacing the current entry, or adding
-    // a new one to the browser history.
-    _updateHash: function(location, fragment, replace) {
-      if (replace) {
-        var href = location.href.replace(/(javascript:|#).*$/, '');
-        location.replace(href + '#' + fragment);
-      } else {
-        // Some browsers require that `hash` contains a leading #.
-        location.hash = '#' + fragment;
-      }
-    }
-
-  });
-
-  // Create the default Backbone.history.
-  Backbone.history = new History;
-
-  // Helpers
-  // -------
-
-  // Helper function to correctly set up the prototype chain, for subclasses.
-  // Similar to `goog.inherits`, but uses a hash of prototype properties and
-  // class properties to be extended.
-  var extend = function(protoProps, staticProps) {
-    var parent = this;
-    var child;
-
-    // The constructor function for the new subclass is either defined by you
-    // (the "constructor" property in your `extend` definition), or defaulted
-    // by us to simply call the parent's constructor.
-    if (protoProps && _.has(protoProps, 'constructor')) {
-      child = protoProps.constructor;
-    } else {
-      child = function(){ return parent.apply(this, arguments); };
-    }
-
-    // Add static properties to the constructor function, if supplied.
-    _.extend(child, parent, staticProps);
-
-    // Set the prototype chain to inherit from `parent`, without calling
-    // `parent`'s constructor function.
-    var Surrogate = function(){ this.constructor = child; };
-    Surrogate.prototype = parent.prototype;
-    child.prototype = new Surrogate;
-
-    // Add prototype properties (instance properties) to the subclass,
-    // if supplied.
-    if (protoProps) _.extend(child.prototype, protoProps);
-
-    // Set a convenience property in case the parent's prototype is needed
-    // later.
-    child.__super__ = parent.prototype;
-
-    return child;
-  };
-
-  // Set up inheritance for the model, collection, router, view and history.
-  Model.extend = Collection.extend = Router.extend = View.extend = History.extend = extend;
-
-  // Throw an error when a URL is needed, and none is supplied.
-  var urlError = function() {
-    throw new Error('A "url" property or function must be specified');
-  };
-
-  // Wrap an optional error callback with a fallback error event.
-  var wrapError = function(model, options) {
-    var error = options.error;
-    options.error = function(resp) {
-      if (error) error(model, resp, options);
-      model.trigger('error', model, resp, options);
-    };
-  };
-
-}).call(this);
-
-define("backbone", ["underscore","jquery"], (function (global) {
-    return function () {
-        var ret, fn;
-        return ret || global.Backbone;
-    };
-}(this)));
 
 // scripts/views/base.es6
 define(
@@ -17800,6 +17437,597 @@ define(
       }
     });
   });
+
+/*!
+ * mustache.js - Logic-less {{mustache}} templates with JavaScript
+ * http://github.com/janl/mustache.js
+ */
+
+/*global define: false*/
+
+(function (root, factory) {
+  if (typeof exports === "object" && exports) {
+    factory(exports); // CommonJS
+  } else {
+    var mustache = {};
+    factory(mustache);
+    if (typeof define === "function" && define.amd) {
+      define('mustache',mustache); // AMD
+    } else {
+      root.Mustache = mustache; // <script>
+    }
+  }
+}(this, function (mustache) {
+
+  var whiteRe = /\s*/;
+  var spaceRe = /\s+/;
+  var nonSpaceRe = /\S/;
+  var eqRe = /\s*=/;
+  var curlyRe = /\s*\}/;
+  var tagRe = /#|\^|\/|>|\{|&|=|!/;
+
+  // Workaround for https://issues.apache.org/jira/browse/COUCHDB-577
+  // See https://github.com/janl/mustache.js/issues/189
+  var RegExp_test = RegExp.prototype.test;
+  function testRegExp(re, string) {
+    return RegExp_test.call(re, string);
+  }
+
+  function isWhitespace(string) {
+    return !testRegExp(nonSpaceRe, string);
+  }
+
+  var Object_toString = Object.prototype.toString;
+  var isArray = Array.isArray || function (object) {
+    return Object_toString.call(object) === '[object Array]';
+  };
+
+  function isFunction(object) {
+    return typeof object === 'function';
+  }
+
+  function escapeRegExp(string) {
+    return string.replace(/[\-\[\]{}()*+?.,\\\^$|#\s]/g, "\\$&");
+  }
+
+  var entityMap = {
+    "&": "&amp;",
+    "<": "&lt;",
+    ">": "&gt;",
+    '"': '&quot;',
+    "'": '&#39;',
+    "/": '&#x2F;'
+  };
+
+  function escapeHtml(string) {
+    return String(string).replace(/[&<>"'\/]/g, function (s) {
+      return entityMap[s];
+    });
+  }
+
+  function escapeTags(tags) {
+    if (!isArray(tags) || tags.length !== 2) {
+      throw new Error('Invalid tags: ' + tags);
+    }
+
+    return [
+      new RegExp(escapeRegExp(tags[0]) + "\\s*"),
+      new RegExp("\\s*" + escapeRegExp(tags[1]))
+    ];
+  }
+
+  /**
+   * Breaks up the given `template` string into a tree of tokens. If the `tags`
+   * argument is given here it must be an array with two string values: the
+   * opening and closing tags used in the template (e.g. [ "<%", "%>" ]). Of
+   * course, the default is to use mustaches (i.e. mustache.tags).
+   *
+   * A token is an array with at least 4 elements. The first element is the
+   * mustache symbol that was used inside the tag, e.g. "#" or "&". If the tag
+   * did not contain a symbol (i.e. {{myValue}}) this element is "name". For
+   * all template text that appears outside a symbol this element is "text".
+   *
+   * The second element of a token is its "value". For mustache tags this is
+   * whatever else was inside the tag besides the opening symbol. For text tokens
+   * this is the text itself.
+   *
+   * The third and fourth elements of the token are the start and end indices
+   * in the original template of the token, respectively.
+   *
+   * Tokens that are the root node of a subtree contain two more elements: an
+   * array of tokens in the subtree and the index in the original template at which
+   * the closing tag for that section begins.
+   */
+  function parseTemplate(template, tags) {
+    tags = tags || mustache.tags;
+    template = template || '';
+
+    if (typeof tags === 'string') {
+      tags = tags.split(spaceRe);
+    }
+
+    var tagRes = escapeTags(tags);
+    var scanner = new Scanner(template);
+
+    var sections = [];     // Stack to hold section tokens
+    var tokens = [];       // Buffer to hold the tokens
+    var spaces = [];       // Indices of whitespace tokens on the current line
+    var hasTag = false;    // Is there a {{tag}} on the current line?
+    var nonSpace = false;  // Is there a non-space char on the current line?
+
+    // Strips all whitespace tokens array for the current line
+    // if there was a {{#tag}} on it and otherwise only space.
+    function stripSpace() {
+      if (hasTag && !nonSpace) {
+        while (spaces.length) {
+          delete tokens[spaces.pop()];
+        }
+      } else {
+        spaces = [];
+      }
+
+      hasTag = false;
+      nonSpace = false;
+    }
+
+    var start, type, value, chr, token, openSection;
+    while (!scanner.eos()) {
+      start = scanner.pos;
+
+      // Match any text between tags.
+      value = scanner.scanUntil(tagRes[0]);
+      if (value) {
+        for (var i = 0, len = value.length; i < len; ++i) {
+          chr = value.charAt(i);
+
+          if (isWhitespace(chr)) {
+            spaces.push(tokens.length);
+          } else {
+            nonSpace = true;
+          }
+
+          tokens.push(['text', chr, start, start + 1]);
+          start += 1;
+
+          // Check for whitespace on the current line.
+          if (chr === '\n') {
+            stripSpace();
+          }
+        }
+      }
+
+      // Match the opening tag.
+      if (!scanner.scan(tagRes[0])) break;
+      hasTag = true;
+
+      // Get the tag type.
+      type = scanner.scan(tagRe) || 'name';
+      scanner.scan(whiteRe);
+
+      // Get the tag value.
+      if (type === '=') {
+        value = scanner.scanUntil(eqRe);
+        scanner.scan(eqRe);
+        scanner.scanUntil(tagRes[1]);
+      } else if (type === '{') {
+        value = scanner.scanUntil(new RegExp('\\s*' + escapeRegExp('}' + tags[1])));
+        scanner.scan(curlyRe);
+        scanner.scanUntil(tagRes[1]);
+        type = '&';
+      } else {
+        value = scanner.scanUntil(tagRes[1]);
+      }
+
+      // Match the closing tag.
+      if (!scanner.scan(tagRes[1])) {
+        throw new Error('Unclosed tag at ' + scanner.pos);
+      }
+
+      token = [ type, value, start, scanner.pos ];
+      tokens.push(token);
+
+      if (type === '#' || type === '^') {
+        sections.push(token);
+      } else if (type === '/') {
+        // Check section nesting.
+        openSection = sections.pop();
+
+        if (!openSection) {
+          throw new Error('Unopened section "' + value + '" at ' + start);
+        }
+        if (openSection[1] !== value) {
+          throw new Error('Unclosed section "' + openSection[1] + '" at ' + start);
+        }
+      } else if (type === 'name' || type === '{' || type === '&') {
+        nonSpace = true;
+      } else if (type === '=') {
+        // Set the tags for the next time around.
+        tagRes = escapeTags(tags = value.split(spaceRe));
+      }
+    }
+
+    // Make sure there are no open sections when we're done.
+    openSection = sections.pop();
+    if (openSection) {
+      throw new Error('Unclosed section "' + openSection[1] + '" at ' + scanner.pos);
+    }
+
+    return nestTokens(squashTokens(tokens));
+  }
+
+  /**
+   * Combines the values of consecutive text tokens in the given `tokens` array
+   * to a single token.
+   */
+  function squashTokens(tokens) {
+    var squashedTokens = [];
+
+    var token, lastToken;
+    for (var i = 0, len = tokens.length; i < len; ++i) {
+      token = tokens[i];
+
+      if (token) {
+        if (token[0] === 'text' && lastToken && lastToken[0] === 'text') {
+          lastToken[1] += token[1];
+          lastToken[3] = token[3];
+        } else {
+          squashedTokens.push(token);
+          lastToken = token;
+        }
+      }
+    }
+
+    return squashedTokens;
+  }
+
+  /**
+   * Forms the given array of `tokens` into a nested tree structure where
+   * tokens that represent a section have two additional items: 1) an array of
+   * all tokens that appear in that section and 2) the index in the original
+   * template that represents the end of that section.
+   */
+  function nestTokens(tokens) {
+    var nestedTokens = [];
+    var collector = nestedTokens;
+    var sections = [];
+
+    var token, section;
+    for (var i = 0, len = tokens.length; i < len; ++i) {
+      token = tokens[i];
+
+      switch (token[0]) {
+      case '#':
+      case '^':
+        collector.push(token);
+        sections.push(token);
+        collector = token[4] = [];
+        break;
+      case '/':
+        section = sections.pop();
+        section[5] = token[2];
+        collector = sections.length > 0 ? sections[sections.length - 1][4] : nestedTokens;
+        break;
+      default:
+        collector.push(token);
+      }
+    }
+
+    return nestedTokens;
+  }
+
+  /**
+   * A simple string scanner that is used by the template parser to find
+   * tokens in template strings.
+   */
+  function Scanner(string) {
+    this.string = string;
+    this.tail = string;
+    this.pos = 0;
+  }
+
+  /**
+   * Returns `true` if the tail is empty (end of string).
+   */
+  Scanner.prototype.eos = function () {
+    return this.tail === "";
+  };
+
+  /**
+   * Tries to match the given regular expression at the current position.
+   * Returns the matched text if it can match, the empty string otherwise.
+   */
+  Scanner.prototype.scan = function (re) {
+    var match = this.tail.match(re);
+
+    if (match && match.index === 0) {
+      var string = match[0];
+      this.tail = this.tail.substring(string.length);
+      this.pos += string.length;
+      return string;
+    }
+
+    return "";
+  };
+
+  /**
+   * Skips all text until the given regular expression can be matched. Returns
+   * the skipped string, which is the entire tail if no match can be made.
+   */
+  Scanner.prototype.scanUntil = function (re) {
+    var index = this.tail.search(re), match;
+
+    switch (index) {
+    case -1:
+      match = this.tail;
+      this.tail = "";
+      break;
+    case 0:
+      match = "";
+      break;
+    default:
+      match = this.tail.substring(0, index);
+      this.tail = this.tail.substring(index);
+    }
+
+    this.pos += match.length;
+
+    return match;
+  };
+
+  /**
+   * Represents a rendering context by wrapping a view object and
+   * maintaining a reference to the parent context.
+   */
+  function Context(view, parentContext) {
+    this.view = view == null ? {} : view;
+    this.cache = { '.': this.view };
+    this.parent = parentContext;
+  }
+
+  /**
+   * Creates a new context using the given view with this context
+   * as the parent.
+   */
+  Context.prototype.push = function (view) {
+    return new Context(view, this);
+  };
+
+  /**
+   * Returns the value of the given name in this context, traversing
+   * up the context hierarchy if the value is absent in this context's view.
+   */
+  Context.prototype.lookup = function (name) {
+    var value;
+    if (name in this.cache) {
+      value = this.cache[name];
+    } else {
+      var context = this;
+
+      while (context) {
+        if (name.indexOf('.') > 0) {
+          value = context.view;
+
+          var names = name.split('.'), i = 0;
+          while (value != null && i < names.length) {
+            value = value[names[i++]];
+          }
+        } else {
+          value = context.view[name];
+        }
+
+        if (value != null) break;
+
+        context = context.parent;
+      }
+
+      this.cache[name] = value;
+    }
+
+    if (isFunction(value)) {
+      value = value.call(this.view);
+    }
+
+    return value;
+  };
+
+  /**
+   * A Writer knows how to take a stream of tokens and render them to a
+   * string, given a context. It also maintains a cache of templates to
+   * avoid the need to parse the same template twice.
+   */
+  function Writer() {
+    this.cache = {};
+  }
+
+  /**
+   * Clears all cached templates in this writer.
+   */
+  Writer.prototype.clearCache = function () {
+    this.cache = {};
+  };
+
+  /**
+   * Parses and caches the given `template` and returns the array of tokens
+   * that is generated from the parse.
+   */
+  Writer.prototype.parse = function (template, tags) {
+    var cache = this.cache;
+    var tokens = cache[template];
+
+    if (tokens == null) {
+      tokens = cache[template] = parseTemplate(template, tags);
+    }
+
+    return tokens;
+  };
+
+  /**
+   * High-level method that is used to render the given `template` with
+   * the given `view`.
+   *
+   * The optional `partials` argument may be an object that contains the
+   * names and templates of partials that are used in the template. It may
+   * also be a function that is used to load partial templates on the fly
+   * that takes a single argument: the name of the partial.
+   */
+  Writer.prototype.render = function (template, view, partials) {
+    var tokens = this.parse(template);
+    var context = (view instanceof Context) ? view : new Context(view);
+    return this.renderTokens(tokens, context, partials, template);
+  };
+
+  /**
+   * Low-level method that renders the given array of `tokens` using
+   * the given `context` and `partials`.
+   *
+   * Note: The `originalTemplate` is only ever used to extract the portion
+   * of the original template that was contained in a higher-order section.
+   * If the template doesn't use higher-order sections, this argument may
+   * be omitted.
+   */
+  Writer.prototype.renderTokens = function (tokens, context, partials, originalTemplate) {
+    var buffer = '';
+
+    // This function is used to render an arbitrary template
+    // in the current context by higher-order sections.
+    var self = this;
+    function subRender(template) {
+      return self.render(template, context, partials);
+    }
+
+    var token, value;
+    for (var i = 0, len = tokens.length; i < len; ++i) {
+      token = tokens[i];
+
+      switch (token[0]) {
+      case '#':
+        value = context.lookup(token[1]);
+        if (!value) continue;
+
+        if (isArray(value)) {
+          for (var j = 0, jlen = value.length; j < jlen; ++j) {
+            buffer += this.renderTokens(token[4], context.push(value[j]), partials, originalTemplate);
+          }
+        } else if (typeof value === 'object' || typeof value === 'string') {
+          buffer += this.renderTokens(token[4], context.push(value), partials, originalTemplate);
+        } else if (isFunction(value)) {
+          if (typeof originalTemplate !== 'string') {
+            throw new Error('Cannot use higher-order sections without the original template');
+          }
+
+          // Extract the portion of the original template that the section contains.
+          value = value.call(context.view, originalTemplate.slice(token[3], token[5]), subRender);
+
+          if (value != null) buffer += value;
+        } else {
+          buffer += this.renderTokens(token[4], context, partials, originalTemplate);
+        }
+
+        break;
+      case '^':
+        value = context.lookup(token[1]);
+
+        // Use JavaScript's definition of falsy. Include empty arrays.
+        // See https://github.com/janl/mustache.js/issues/186
+        if (!value || (isArray(value) && value.length === 0)) {
+          buffer += this.renderTokens(token[4], context, partials, originalTemplate);
+        }
+
+        break;
+      case '>':
+        if (!partials) continue;
+        value = isFunction(partials) ? partials(token[1]) : partials[token[1]];
+        if (value != null) buffer += this.renderTokens(this.parse(value), context, partials, value);
+        break;
+      case '&':
+        value = context.lookup(token[1]);
+        if (value != null) buffer += value;
+        break;
+      case 'name':
+        value = context.lookup(token[1]);
+        if (value != null) buffer += mustache.escape(value);
+        break;
+      case 'text':
+        buffer += token[1];
+        break;
+      }
+    }
+
+    return buffer;
+  };
+
+  mustache.name = "mustache.js";
+  mustache.version = "0.8.1";
+  mustache.tags = [ "{{", "}}" ];
+
+  // All high-level mustache.* functions use this writer.
+  var defaultWriter = new Writer();
+
+  /**
+   * Clears all cached templates in the default writer.
+   */
+  mustache.clearCache = function () {
+    return defaultWriter.clearCache();
+  };
+
+  /**
+   * Parses and caches the given template in the default writer and returns the
+   * array of tokens it contains. Doing this ahead of time avoids the need to
+   * parse templates on the fly as they are rendered.
+   */
+  mustache.parse = function (template, tags) {
+    return defaultWriter.parse(template, tags);
+  };
+
+  /**
+   * Renders the `template` with the given `view` and `partials` using the
+   * default writer.
+   */
+  mustache.render = function (template, view, partials) {
+    return defaultWriter.render(template, view, partials);
+  };
+
+  // This is here for backwards compatibility with 0.4.x.
+  mustache.to_html = function (template, view, partials, send) {
+    var result = mustache.render(template, view, partials);
+
+    if (isFunction(send)) {
+      send(result);
+    } else {
+      return result;
+    }
+  };
+
+  // Export the escaping function so that the user may override it.
+  // See https://github.com/janl/mustache.js/issues/244
+  mustache.escape = escapeHtml;
+
+  // Export these mainly for testing, but also for advanced usage.
+  mustache.Scanner = Scanner;
+  mustache.Context = Context;
+  mustache.Writer = Writer;
+
+}));
+
+// scripts/jst/photos/index/index.mustache
+(function (root, factory) {
+  if (typeof define === 'function' && define.amd) {
+    define('jst/photos/index/index',['mustache', 'underscore'], factory);
+  } else if (typeof exports !== 'undefined') {
+    module.exports = factory(require('mustache'), require('underscore'));
+  } else {
+    (root.JST || (root.JST = {}))['scripts/jst/photos/index/index'] = factory(root['Mustache'], root['_']);
+  }
+})(this, function (Mustache, _) {
+  return ((function () {
+  var source = "<div class='info'>\n  <h1>{{name}}</h1>\n  <h2>{{count}}</h2>\n</div>\n<ol class='js-list list' aria-live='assertive'></ol>\n";
+  var fn = function (data, partials) {
+    return Mustache.render(source, data, partials);
+  };
+  fn.source = source;
+  return fn;
+})());
+});
 
 /*global setImmediate: false, setTimeout: false, console: false */
 (function () {
@@ -18912,22 +19140,21 @@ define(
   return {Model: Model, Collection: Backbone.Collection.extend({model: Model})};
 });
 
-// scripts/models/base.es6
+// scripts/entities/base.es6
 define(
-  'models/base',["underscore","async","app","backbone-relations","require","exports"],
-  function(__dependency1__, __dependency2__, __dependency3__, __dependency4__, __dependency5__, __exports__) {
+  'entities/base',["underscore","async","app","backbone-relations","exports"],
+  function(__dependency1__, __dependency2__, __dependency3__, __dependency4__, __exports__) {
     
     var _ = __dependency1__["default"] || __dependency1__;
     var async = __dependency2__["default"] || __dependency2__;
     var api = __dependency3__.api;
-    var Model = __dependency4__.Model;
-    var Collection = __dependency4__.Collection;
-    var require = __dependency5__["default"] || __dependency5__;
 
-    var BaseModel = Model.extend({
+    var BackboneRelations = __dependency4__;
+
+    var Model = BackboneRelations.Model.extend({
       constructor: function () {
         this.constructor.relations();
-        Model.apply(this, arguments);
+        BackboneRelations.Model.apply(this, arguments);
       },
 
       sync: function (method, model, options) {
@@ -18946,16 +19173,10 @@ define(
       relations: function () {
         if (this._relations) return this._relations;
         var relations = _.result(this.prototype, 'relations');
-        if (!relations) return this._relations = {};
-        if (_.isFunction(this.prototype.relations)) {
-          return this._relations = this.prototype.relations = relations;
-        }
         relations = _.reduce(relations, function (rels, rel, key) {
-          var Model = require('models/' + (rel.hasOne || rel.hasMany));
-          if (rel.hasOne) rel.hasOne = Model;
-          if (rel.hasMany) rel.hasMany = Model.Collection;
           if (!rel.via) {
-            var complement = Model.prototype.relations;
+            var complement =
+              (rel.hasOne || rel.hasMany.prototype.model).prototype.relations;
             var hasOne = !rel.hasOne;
             var fk = rel.fk;
             rel.reverse = _.reduce(complement, function (reverse, rel, key) {
@@ -18970,8 +19191,8 @@ define(
       }
     });
 
-    var BaseCollection = Collection.extend({
-      model: BaseModel,
+    var Collection = BackboneRelations.Collection.extend({
+      model: Model,
 
       sync: Model.prototype.sync,
 
@@ -19012,55 +19233,433 @@ define(
       }
     });
 
-    var Model = BaseModel;
-    __exports__.Model = Model;var Collection = BaseCollection;
+    __exports__.Model = Model;
     __exports__.Collection = Collection;
   });
 
-// scripts/models/community.es6
+// scripts/entities/category.es6
 define(
-  'models/community',["models/base","exports"],
+  'entities/category',["entities/base","entities/portal","exports"],
+  function(__dependency1__, __dependency2__, __exports__) {
+    
+    var Base = __dependency1__;
+    var Portal = __dependency2__;
+
+    var Model = Base.Model.extend({
+      relations: function () {
+        return {
+          portals: {hasMany: Portal.Collection, fk: 'category_id'}
+        };
+      }
+    });
+
+    var Collection = Base.Collection.extend({
+      model: Model,
+
+      comparator: 'name'
+    });
+
+    __exports__.Model = Model;
+    __exports__.Collection = Collection;
+  });
+
+// scripts/entities/account.es6
+define(
+  'entities/account',["entities/base","exports"],
   function(__dependency1__, __exports__) {
+    
+    var Base = __dependency1__;
+
+    var Model = Base.Model.extend({});
+
+    var Collection = Base.Collection.extend({
+      model: Model
+    });
+
+    __exports__.Model = Model;
+    __exports__.Collection = Collection;
+  });
+
+// scripts/entities/comment.es6
+define(
+  'entities/comment',["entities/base","moment","entities/account","exports"],
+  function(__dependency1__, __dependency2__, __dependency3__, __exports__) {
     
     var Model = __dependency1__.Model;
     var Collection = __dependency1__.Collection;
+    var moment = __dependency2__["default"] || __dependency2__;
 
-    var Community = Model.extend({
-      relations: {
-        portals: {hasMany: 'portal', fk: 'community_id'},
-        umbrellas: {hasMany: 'portal', fk: 'community_id'},
-        categories: {hasMany: 'category', fk: 'community_id'},
-        events: {hasMany: 'event', via: 'portals', fk: 'portal_id'}
+    var Base = __dependency1__;
+    var Account = __dependency3__;
+
+    var Model = Base.Model.extend({
+      relations: function () {
+        return {
+          creator: {hasOne: Account.Model, fk: 'creator_id'}
+        };
       },
-      
-      urlRoot: '/communities'
+
+      time: function () {
+        return moment(this.get('created_at')).fromNow();
+      },
     });
 
-    Community.Collection = Collection.extend({
-      model: Community,
-
-      url: '/communities'
+    var Collection = Base.Collection.extend({
+      model: Model
     });
 
-    __exports__["default"] = Community;
+    __exports__.Model = Model;
+    __exports__.Collection = Collection;
   });
 
-// scripts/models/portal.es6
+// scripts/entities/news-post.es6
 define(
-  'models/portal',["underscore","models/base","exports"],
-  function(__dependency1__, __dependency2__, __exports__) {
+  'entities/news-post',["jquery","moment","entities/base","entities/portal","entities/account","entities/comment","exports"],
+  function(__dependency1__, __dependency2__, __dependency3__, __dependency4__, __dependency5__, __dependency6__, __exports__) {
+    
+    var $ = __dependency1__["default"] || __dependency1__;
+    var moment = __dependency2__["default"] || __dependency2__;
+
+    var Base = __dependency3__;
+    var Portal = __dependency4__;
+    var Account = __dependency5__;
+    var Comment = __dependency6__;
+
+    var Model = Base.Model.extend({
+      relations: function () {
+        return {
+          portal: {hasOne: Portal.Model, fk: 'portal_id'},
+          creator: {hasOne: Account.Model, fk: 'creator_id'},
+          comments: {hasMany: Comment.Collection, fk: 'news_post_id'}
+        };
+      },
+
+      orgsyncUrl: function () {
+        return 'https://orgsync.com/' + this.get('portal').id + '/news_posts/' +
+          this.id;
+      },
+
+      time: function () {
+        return moment(this.get('created_at')).fromNow();
+      },
+
+      strippedBody: function () {
+        return $($.parseHTML(this.get('body'))).text();
+      },
+
+      truncatedBody: function (length) {
+        var body = this.strippedBody();
+        var ellipsis = '...';
+        var max = length - ellipsis.length;
+        if (!length || body.length <= max) return body;
+        return body.substring(0, max).replace(/[\s,.;]+\S*$/, '') + ellipsis;
+      }
+    });
+
+    var Collection = Base.Collection.extend({
+      model: Model
+    });
+
+    __exports__.Model = Model;
+    __exports__.Collection = Collection;
+  });
+
+// scripts/entities/day.es6
+define(
+  'entities/day',["moment","app","entities/base","entities/day","entities/event-date","entities/event","exports"],
+  function(__dependency1__, __dependency2__, __dependency3__, __dependency4__, __dependency5__, __dependency6__, __exports__) {
+    
+    var moment = __dependency1__["default"] || __dependency1__;
+    var tz = __dependency2__.tz;
+
+    var Base = __dependency3__;
+    var Day = __dependency4__;
+    var EventDate = __dependency5__;
+    var Event = __dependency6__;
+
+    var Model = Base.Model.extend({
+      relations: function () {
+        return {
+          eventDates: {hasMany: EventDate.Collection, fk: 'day_id'},
+          events: {
+            hasMany: Event.Collection,
+            via: 'eventDates#event',
+            fk: 'event_id'
+          }
+        };
+      },
+
+      defaults: {
+        tz: tz,
+        visible: true,
+        fetched: 0
+      },
+
+      initialize: function () {
+        this.listenTo(this.get('eventDates'), {
+          add: function (eventDate) {
+            this.setVisible();
+            this.listenTo(eventDate, 'change:visible', this.setVisible);
+          },
+          remove: function (eventDate) {
+            this.setVisible();
+            this.stopListening(eventDate, 'change:visible', this.setVisible);
+          }
+        });
+      },
+
+      date: function () {
+        return this._date || (this._date = moment.tz(this.id, this.get('tz')));
+      },
+
+      setVisible: function () {
+        this.set('visible', this.get('eventDates').any(function (eventDate) {
+          return !eventDate.get('filler') && eventDate.get('visible');
+        }));
+      }
+    }, {
+      id: function (date) { return date.format('YYYY-MM-DD'); }
+    });
+
+    var Collection = Base.Collection.extend({
+      model: Model,
+
+      comparator: 'id',
+
+      tz: tz,
+
+      addEvents: function (events) {
+        events.each(this.addEvent, this);
+      },
+
+      addEvent: function (event) {
+        this.addEventDates(event.get('dates'), this);
+      },
+
+      addEventDates: function (eventDates) {
+        eventDates.each(this.addEventDate, this);
+      },
+
+      addEventDate: function (eventDate) {
+        var tz = this.tz;
+        eventDate.set('tz', tz);
+        var start = eventDate.start().clone().startOf('day');
+        var end = eventDate.end();
+        do {
+          var id = Day.Model.id(start);
+          var day = this.get(id);
+          if (!day) this.add((day = new Day.Model({id: id})).set('tz', tz));
+          day.get('eventDates').add(eventDate);
+        } while (start.add('days', 1).isBefore(end));
+      },
+
+      fill: function (from, to, fetched) {
+
+        // Hold days to be added in an array before actually adding them. This
+        // saves the extra computation that is needed in Backbone's
+        // Collection#set.
+        var days = [];
+        var tz = this.tz;
+
+        // Fill in all gaps between the from and to days.
+        from = from.clone();
+        do {
+          var id = Day.Model.id(from);
+          var day = this.get(id);
+          if (day) {
+            if (fetched && from.isBefore(to)) day.set('fetched', Infinity);
+            continue;
+          }
+          days.push({id: id, tz: tz, fetched: fetched ? Infinity : 0});
+        } while (!from.add('day', 1).isAfter(to));
+
+        // Finally, add the new days.
+        this.add(days);
+      }
+    });
+
+    __exports__.Model = Model;
+    __exports__.Collection = Collection;
+  });
+
+// scripts/entities/event-date.es6
+define(
+  'entities/event-date',["underscore","moment","app","entities/base","entities/day","entities/event","exports"],
+  function(__dependency1__, __dependency2__, __dependency3__, __dependency4__, __dependency5__, __dependency6__, __exports__) {
     
     var _ = __dependency1__["default"] || __dependency1__;
-    var Model = __dependency2__.Model;
-    var Collection = __dependency2__.Collection;
+    var moment = __dependency2__["default"] || __dependency2__;
+    var tz = __dependency3__.tz;
 
-    var Portal = Model.extend({
-      relations: {
-        umbrella: {hasOne: 'Portal', fk: 'umbrella_id'},
-        category: {hasOne: 'Category', fk: 'category_id'},
-        albums: {hasMany: 'Album', fk: 'portal_id'},
-        newsPosts: {hasMany: 'NewsPost', fk: 'portal_id', urlRoot: '/news'},
-        events: {hasMany: 'Event', fk: 'portal_id'}
+    var Base = __dependency4__;
+    var Day = __dependency5__;
+    var Event = __dependency6__;
+
+    var Model = Base.Model.extend({
+      relations: function () {
+        return {
+          event: {hasOne: Event.Model, fk: 'event_id'}
+        };
+      },
+
+      defaults: {
+        tz: tz,
+        visible: true
+      },
+
+      initialize: function () {
+
+        // When the timezone changes, we need to destroy the cached starts and
+        // ends moment instances so they can be regenerated with their new time.
+        this.on('change:tz', function () {
+          delete this._starts_at;
+          delete this._ends_at;
+        });
+      },
+
+      start: function () { return this.normalize('starts_at'); },
+
+      end: function () { return this.normalize('ends_at'); },
+
+      normalize: function (which) {
+        var key = '_' + which;
+        if (this[key]) return this[key];
+        var date = moment(this.get(which));
+        var tz = this.get('tz');
+        if (!this.get('event').get('is_all_day')) return date.tz(tz);
+
+        // HACK: Until event occurrences is out, this is necessary for any
+        // duration calculation to work as all day events return the same
+        // starts_at and ends_at. This can be removed in the future (hopefully).
+        if (which === 'ends_at') date.add('days', 1);
+
+        // All day events should always be midnight to midnight in the timezone
+        // they are being viewed in, regardless of the time zone they were created
+        // in.
+        return this[key] = moment.tz(Day.Model.id(date), tz);
+      },
+
+      isMultiDay: function () {
+        var startDay = this.start().clone().startOf('day');
+        return startDay.add('days', 1).isBefore(this.end());
+      },
+
+      matchesEventFilters: function (eventFilters) {
+        if (!eventFilters.length) return true;
+        return _.any(this.get('filters'), function (eventFilterId) {
+          var eventFilter = eventFilters.get(eventFilterId);
+          return eventFilter && eventFilter.get('enabled');
+        });
+      },
+
+      orgsyncUrl: function () {
+        return this.get('event').orgsyncUrl() + '/occurrences/' + this.id;
+      },
+
+      isGoing: function () {
+        var rsvp = this.get('rsvp');
+        return rsvp === 'Attending' || rsvp === 'Added by Admin';
+      }
+    });
+
+    var Collection = Base.Collection.extend({
+      model: Model,
+
+      comparator: function (eventDate) { return eventDate.start(); }
+    });
+
+    __exports__.Model = Model;
+    __exports__.Collection = Collection;
+  });
+
+// scripts/entities/event.es6
+define(
+  'entities/event',["underscore","entities/base","entities/portal","entities/account","entities/event-date","entities/comment","exports"],
+  function(__dependency1__, __dependency2__, __dependency3__, __dependency4__, __dependency5__, __dependency6__, __exports__) {
+    
+    var _ = __dependency1__["default"] || __dependency1__;
+
+    var Base = __dependency2__;
+    var Portal = __dependency3__;
+    var Account = __dependency4__;
+    var EventDate = __dependency5__;
+    var Comment = __dependency6__;
+
+    var Model = Base.Model.extend({
+      relations: function () {
+        return {
+          portal: {hasOne: Portal.Model, fk: 'portal_id'},
+          creator: {hasOne: Account.Model, fk: 'creator_id'},
+          dates: {hasMany: EventDate.Collection, fk: 'event_id'},
+          comments: {hasMany: Comment.Collection, fk: 'event_id'}
+        };
+      },
+
+      parse: function (data) {
+        data.dates = this.get('dates').models.concat(data.dates);
+        return data;
+      },
+
+      orgsyncUrl: function () {
+        return 'https://orgsync.com/' + this.get('portal').id + '/events/' +
+          this.id;
+      },
+
+      searchableWords: function () {
+        if (this._searchableWords) return this._searchableWords;
+        return this._searchableWords = _.str.words(_.values(
+          this.pick('title', 'description', 'location')
+        ).join(' ').toLowerCase());
+      },
+
+      matchesQuery: function (query) {
+        if (!query) return true;
+        var words = _.str.words(query.toLowerCase());
+        var searchableWords = this.searchableWords();
+        return _.every(words, function (wordA) {
+          return _.any(searchableWords, function (wordB) {
+            return _.str.startsWith(wordB, wordA);
+          });
+        });
+      }
+    });
+
+    var Collection = Base.Collection.extend({
+      model: Model,
+
+      comparator: 'name'
+    });
+
+    __exports__.Model = Model;
+    __exports__.Collection = Collection;
+  });
+
+// scripts/entities/portal.es6
+define(
+  'entities/portal',["underscore","entities/base","entities/album","entities/category","entities/news-post","entities/event","exports"],
+  function(__dependency1__, __dependency2__, __dependency3__, __dependency4__, __dependency5__, __dependency6__, __exports__) {
+    
+    var _ = __dependency1__["default"] || __dependency1__;
+
+    var Base = __dependency2__;
+    var Album = __dependency3__;
+    var Category = __dependency4__;
+    var NewsPost = __dependency5__;
+    var Event = __dependency6__;
+
+    var Model = Base.Model.extend({
+      relations: function () {
+        return {
+          umbrella: {hasOne: Model, fk: 'umbrella_id'},
+          category: {hasOne: Category.Model, fk: 'category_id'},
+          albums: {hasMany: Album.Collection, fk: 'portal_id'},
+          newsPosts: {
+            hasMany: NewsPost.Collection,
+            fk: 'portal_id',
+            urlRoot: '/news'
+          },
+          events: {hasMany: Event.Collection, fk: 'portal_id'}
+        };
       },
 
       defaultPicture: 'https://orgsync.com/assets/no_org_profile_150.png',
@@ -19103,8 +19702,8 @@ define(
       }
     });
 
-    Portal.Collection = Collection.extend({
-      model: Portal,
+    var Collection = Base.Collection.extend({
+      model: Model,
 
       url: '/portals',
 
@@ -19118,7 +19717,4544 @@ define(
       }
     });
 
-    __exports__["default"] = Portal;
+    __exports__.Model = Model;
+    __exports__.Collection = Collection;
+  });
+
+// scripts/entities/photo.es6
+define(
+  'entities/photo',["entities/base","entities/album","entities/comment","exports"],
+  function(__dependency1__, __dependency2__, __dependency3__, __exports__) {
+    
+    var Base = __dependency1__;
+    var Album = __dependency2__;
+    var Comment = __dependency3__;
+
+    var Model = Base.Model.extend({
+      relations: function () {
+        return {
+          album: {hasOne: Album.Model, fk: 'album_id'},
+          comments: {hasMany: Comment.Collection, fk: 'photo_id'}
+        };
+      },
+
+      orgsyncUrl: function () {
+        return this.get('album').orgsyncUrl() + '/photo/' + this.id;
+      }
+    });
+
+    var Collection = Base.Collection.extend({
+      model: Model
+    });
+
+    __exports__.Model = Model;
+    __exports__.Collection = Collection;
+  });
+
+// scripts/entities/album.es6
+define(
+  'entities/album',["entities/base","entities/portal","entities/photo","exports"],
+  function(__dependency1__, __dependency2__, __dependency3__, __exports__) {
+    
+    var Base = __dependency1__;
+    var Portal = __dependency2__;
+    var Photo = __dependency3__;
+
+    var Model = Base.Model.extend({
+      relations: function () {
+        return {
+          portal: {hasOne: Portal.Model, fk: 'portal_id'},
+          photos: {hasMany: Photo.Collection, fk: 'album_id'}
+        };
+      },
+
+      orgsyncUrl: function () {
+        return 'https://orgsync.com/' + this.get('portal').id +
+          '/photos/albums/' + this.id;
+      }
+    });
+
+    var Collection = Base.Collection.extend({
+      model: Model
+    });
+      
+    __exports__.Model = Model;
+    __exports__.Collection = Collection;
+  });
+
+// scripts/jst/photos/show.mustache
+(function (root, factory) {
+  if (typeof define === 'function' && define.amd) {
+    define('jst/photos/show',['mustache', 'underscore'], factory);
+  } else if (typeof exports !== 'undefined') {
+    module.exports = factory(require('mustache'), require('underscore'));
+  } else {
+    (root.JST || (root.JST = {}))['scripts/jst/photos/show'] = factory(root['Mustache'], root['_']);
+  }
+})(this, function (Mustache, _) {
+  return ((function () {
+  var source = "<img src='{{image}}'>\n<div class='description{{^description}} js-none{{/description}}'>\n  {{description}}\n</div>\n<ol class='js-comments comments'></ol>\n<a href='{{url}}' class='comment-on-orgsync'>Comment on OrgSync</a>\n";
+  var fn = function (data, partials) {
+    return Mustache.render(source, data, partials);
+  };
+  fn.source = source;
+  return fn;
+})());
+});
+
+// scripts/jst/comments/show.mustache
+(function (root, factory) {
+  if (typeof define === 'function' && define.amd) {
+    define('jst/comments/show',['mustache', 'underscore'], factory);
+  } else if (typeof exports !== 'undefined') {
+    module.exports = factory(require('mustache'), require('underscore'));
+  } else {
+    (root.JST || (root.JST = {}))['scripts/jst/comments/show'] = factory(root['Mustache'], root['_']);
+  }
+})(this, function (Mustache, _) {
+  return ((function () {
+  var source = "<div class='picture'>{{#avatar}}<img src='{{avatar}}'>{{/avatar}}</div>\n<div class='info'>\n  <div class='name'>{{name}}</div>\n  <div class='time'>{{time}}</div>\n  <div class='content'>{{content}}</div>\n</div>\n";
+  var fn = function (data, partials) {
+    return Mustache.render(source, data, partials);
+  };
+  fn.source = source;
+  return fn;
+})());
+});
+
+// scripts/views/comments/show.es6
+define(
+  'views/comments/show',["views/base","jst/comments/show","exports"],
+  function(__dependency1__, __dependency2__, __exports__) {
+    
+    var BaseView = __dependency1__["default"] || __dependency1__;
+    var CommentsShowTemplate = __dependency2__["default"] || __dependency2__;
+
+    __exports__["default"] = BaseView.extend({
+      template: CommentsShowTemplate,
+
+      classes: [
+        'orgsync-widget',
+        'js-osw-comments-show',
+        'osw-comments-show'
+      ],
+
+      toTemplate: function () {
+        var model = this.model;
+        var creator = model.get('creator');
+        return {
+          avatar: creator.get('picture_url'),
+          name: creator.get('display_name'),
+          time: model.time(),
+          content: model.get('content')
+        };
+      }
+    });
+  });
+
+// scripts/views/photos/show.es6
+define(
+  'views/photos/show',["views/base","jst/photos/show","views/infinite-list","views/comments/show","exports"],
+  function(__dependency1__, __dependency2__, __dependency3__, __dependency4__, __exports__) {
+    
+    var BaseView = __dependency1__["default"] || __dependency1__;
+    var PhotosShowTemplate = __dependency2__["default"] || __dependency2__;
+    var InfiniteListView = __dependency3__["default"] || __dependency3__;
+    var CommentsShowView = __dependency4__["default"] || __dependency4__;
+
+    __exports__["default"] = BaseView.extend({
+      template: PhotosShowTemplate,
+
+      events: {
+        'click img': 'next',
+      },
+
+      options: ['action'],
+
+      classes: [
+        'orgsync-widget',
+        'js-osw-photos-show',
+        'osw-photos-show'
+      ],
+
+      toTemplate: function () {
+        var model = this.model;
+        return {
+          image: model.get('full_url'),
+          description: model.get('description'),
+          url: model.orgsyncUrl()
+        };
+      },
+
+      initialize: function () {
+        BaseView.prototype.initialize.apply(this, arguments);
+        this.comments = this.model.get('comments');
+        this.comments.url = this.model.get('links').comments;
+        this.comments.fetch();
+      },
+
+      render: function () {
+        BaseView.prototype.render.apply(this, arguments);
+        this.views.commentsList = new InfiniteListView({
+          el: this.$('.js-comments'),
+          collection: this.comments,
+          modelView: CommentsShowView,
+          modelViewOptions: {tagName: 'li'}
+        });
+        return this;
+      },
+
+      next: function () {
+        if (this.action === 'redirect') return;
+        this.model.set('selected', false);
+        var photos = this.model.collection;
+        if (!photos) return;
+        var i = (photos.indexOf(this.model) + 1) % photos.length;
+        photos.at(i).set('selected', true);
+      }
+    });
+  });
+
+// scripts/jst/photos/index/list-item.mustache
+(function (root, factory) {
+  if (typeof define === 'function' && define.amd) {
+    define('jst/photos/index/list-item',['mustache', 'underscore'], factory);
+  } else if (typeof exports !== 'undefined') {
+    module.exports = factory(require('mustache'), require('underscore'));
+  } else {
+    (root.JST || (root.JST = {}))['scripts/jst/photos/index/list-item'] = factory(root['Mustache'], root['_']);
+  }
+})(this, function (Mustache, _) {
+  return ((function () {
+  var source = "<a href='{{url}}' tabindex='1'>\n  <div class='image-container'><img src='{{image}}'></div>\n  <div\n    class='\n      comment-count\n      {{^count}}none{{/count}}\n      {{#isPlural}}plural{{/isPlural}}\n    '\n  >\n    {{count}}\n  </div>\n</a>\n";
+  var fn = function (data, partials) {
+    return Mustache.render(source, data, partials);
+  };
+  fn.source = source;
+  return fn;
+})());
+});
+
+// scripts/views/photos/index/list-item.es6
+define(
+  'views/photos/index/list-item',["jquery","app","views/base","views/photos/show","jst/photos/index/list-item","exports"],
+  function(__dependency1__, __dependency2__, __dependency3__, __dependency4__, __dependency5__, __exports__) {
+    
+    var $ = __dependency1__["default"] || __dependency1__;
+    var Olay = __dependency2__.Olay;
+    var BaseView = __dependency3__["default"] || __dependency3__;
+    var PhotosShowView = __dependency4__["default"] || __dependency4__;
+    var PhotosIndexListItemTemplate = __dependency5__["default"] || __dependency5__;
+
+    __exports__["default"] = BaseView.extend({
+      tagName: 'li',
+
+      className: 'js-list-item list-item',
+
+      template: PhotosIndexListItemTemplate,
+
+      events: {
+        click: 'select'
+      },
+
+      listeners: {
+        model: {'change:selected': 'toggleOlay'}
+      },
+
+      options: ['action'],
+
+      toTemplate: function () {
+        var model = this.model;
+        var count = model.get('comments_count');
+        return {
+          url: model.orgsyncUrl(),
+          image: model.get('thumbnail_url'),
+          count: count,
+          isPlural: count !== 1
+        };
+      },
+
+      select: function () {
+        if (this.action === 'redirect') return;
+        this.collection.each(function (photo) {
+          photo.set('selected', photo === this.model);
+        }, this);
+        return false;
+      },
+
+      toggleOlay: function () {
+        var photo = this.model;
+        var selected = photo.get('selected');
+        if (selected || this.olay) {
+          if (!this.olay) {
+            (this.views.photosShow = new PhotosShowView({
+              model: photo,
+              action: this.action
+            })).render().$el
+              .on('olay:show', function () {
+                $(this).closest('.js-olay-container').scrollTop(0);
+              })
+              .on('olay:hide', function () { photo.set('selected', false); });
+            (this.olay = new Olay(this.views.photosShow.$el, {preserve: true}))
+              .$container.addClass('osw-photos-show-olay');
+          }
+          this.olay[selected ? 'show' : 'hide']();
+        }
+      },
+
+      remove: function () {
+        if (this.olay) this.olay.destroy();
+        return BaseView.prototype.remove.apply(this, arguments);
+      }
+    });
+  });
+
+// scripts/views/photos/index/index.es6
+define(
+  'views/photos/index/index',["jquery","underscore","views/base","app","jst/photos/index/index","entities/album","views/infinite-list","views/photos/index/list-item","exports"],
+  function(__dependency1__, __dependency2__, __dependency3__, __dependency4__, __dependency5__, __dependency6__, __dependency7__, __dependency8__, __exports__) {
+    
+    var $ = __dependency1__["default"] || __dependency1__;
+    var _ = __dependency2__["default"] || __dependency2__;
+    var BaseView = __dependency3__["default"] || __dependency3__;
+    var selectorViewMap = __dependency4__.selectorViewMap;
+    var PhotosIndexView = __dependency5__["default"] || __dependency5__;
+    var Album = __dependency6__["default"] || __dependency6__;
+    var InfiniteListView = __dependency7__["default"] || __dependency7__;
+    var PhotosIndexListItemView = __dependency8__["default"] || __dependency8__;
+
+    var dirMap = {'37': -1, '39': 1};
+
+    __exports__["default"] = selectorViewMap['.js-osw-photos-index'] =
+    BaseView.extend({
+      template: PhotosIndexView,
+
+      options: ['album', 'albumId', 'action'],
+
+      classes: [
+        'orgsync-widget',
+        'js-osw-photos-index',
+        'osw-photos-index'
+      ],
+
+      toTemplate: function () {
+        return {
+          name: this.album.get('name'),
+          count: this.album.get('photo_count')
+        };
+      },
+
+      initialize: function () {
+        BaseView.prototype.initialize.apply(this, arguments);
+        if (!this.album) this.album = new Album.Model({id: this.albumId});
+        this.photos = this.album.get('photos');
+        this.$el.append($('<div>').addClass('js-loading'));
+        this.photos.pagedFetch({
+          success: _.bind(this.render, this),
+          error: _.bind(this.$el.text, this.$el, 'Load failed...')
+        });
+        _.bindAll(this, 'onKeyDown');
+        $(document).on('keydown', this.onKeyDown);
+      },
+
+      render: function () {
+        BaseView.prototype.render.apply(this, arguments);
+        this.renderPhotoList();
+        return this;
+      },
+
+      renderPhotoList: function () {
+        this.views.photosList = new InfiniteListView({
+          el: this.$('.js-list'),
+          modelView: PhotosIndexListItemView,
+          modelViewOptions: {action: this.action},
+          collection: this.photos
+        });
+      },
+
+      onKeyDown: function (ev) { this.dir(dirMap[ev.which]); },
+
+      dir: function (dir) {
+        var selected = this.photos.findWhere({selected: true});
+        if (!dir || !selected || !this.album.get('selected')) return;
+        selected.set('selected', false);
+        var l = this.photos.length;
+        var i = (l + this.photos.indexOf(selected) + dir) % l;
+        var photosList = this.views.photosList;
+        while (i >= photosList.collection.length) photosList.nextPage(true);
+        this.photos.at(i).set('selected', true);
+      },
+
+      remove: function () {
+        $(document).off('keydown', this.onKeyDown);
+        return BaseView.prototype.remove.apply(this, arguments);
+      }
+    });
+  });
+
+// scripts/jst/albums/index/list-item.mustache
+(function (root, factory) {
+  if (typeof define === 'function' && define.amd) {
+    define('jst/albums/index/list-item',['mustache', 'underscore'], factory);
+  } else if (typeof exports !== 'undefined') {
+    module.exports = factory(require('mustache'), require('underscore'));
+  } else {
+    (root.JST || (root.JST = {}))['scripts/jst/albums/index/list-item'] = factory(root['Mustache'], root['_']);
+  }
+})(this, function (Mustache, _) {
+  return ((function () {
+  var source = "<a href='{{url}}' tabindex='1'>\n  <div class='image-container'><img src='{{avatar}}'></div>\n  <div class='name'>{{name}}</div>\n  <div class='count'>{{count}}</div>\n</a>\n";
+  var fn = function (data, partials) {
+    return Mustache.render(source, data, partials);
+  };
+  fn.source = source;
+  return fn;
+})());
+});
+
+// scripts/views/albums/index/list-item.es6
+define(
+  'views/albums/index/list-item',["jquery","underscore","elementQuery","app","views/base","views/photos/index/index","jst/albums/index/list-item","exports"],
+  function(__dependency1__, __dependency2__, __dependency3__, __dependency4__, __dependency5__, __dependency6__, __dependency7__, __exports__) {
+    
+    var $ = __dependency1__["default"] || __dependency1__;
+    var _ = __dependency2__["default"] || __dependency2__;
+    var elementQuery = __dependency3__["default"] || __dependency3__;
+    var Olay = __dependency4__.Olay;
+    var BaseView = __dependency5__["default"] || __dependency5__;
+    var PhotosIndexView = __dependency6__["default"] || __dependency6__;
+    var AlbumsIndexListItemTemplate = __dependency7__["default"] || __dependency7__;
+
+    __exports__["default"] = BaseView.extend({
+      tagName: 'li',
+
+      className: 'js-list-item list-item',
+
+      template: AlbumsIndexListItemTemplate,
+
+      events: {
+        click: 'select'
+      },
+
+      listeners: {
+        model: {'change:selected': 'toggleOlay'}
+      },
+
+      options: ['portalId', 'action'],
+      
+      toTemplate: function () {
+        var model = this.model;
+        return {
+          url: model.orgsyncUrl(),
+          avatar: model.get('cover_photo'),
+          name: model.get('name'),
+          count: model.get('photo_count')
+        };
+      },
+      
+      render: function () {
+        BaseView.prototype.render.apply(this, arguments);
+        var $img = this.$('.image-container')
+          .wrap($('<div>').addClass('js-stack-container'));
+        $img.before(_.times(3, _.bind($img.clone, $img)));
+        return this;
+      },
+      
+      select: function () {
+        if (this.action === 'redirect') return;
+        this.collection.each(function (album) {
+          album.set('selected', album === this.model);
+        }, this);
+        return false;
+      },
+
+      toggleOlay: function () {
+        var album = this.model;
+        var selected = album.get('selected');
+        if (selected || this.olay) {
+          if (!this.olay) {
+            (this.views.photosIndex = new PhotosIndexView({album: album})).$el
+              .addClass('js-olay-hide')
+              .on('olay:show', function () {
+                $(this).closest('.js-olay-container').scrollTop(0);
+                _.defer(elementQuery);
+              })
+              .on('olay:hide', function () { album.set('selected', false); });
+            (this.olay = new Olay(this.views.photosIndex.$el, {preserve: true}))
+              .$container.addClass('osw-photos-index-olay');
+          }
+          this.olay[selected ? 'show' : 'hide']();
+        }
+      },
+
+      remove: function () {
+        if (this.olay) this.olay.destroy();
+        return BaseView.prototype.remove.apply(this, arguments);
+      }
+    });
+  });
+
+// scripts/jst/albums/index/index.mustache
+(function (root, factory) {
+  if (typeof define === 'function' && define.amd) {
+    define('jst/albums/index/index',['mustache', 'underscore'], factory);
+  } else if (typeof exports !== 'undefined') {
+    module.exports = factory(require('mustache'), require('underscore'));
+  } else {
+    (root.JST || (root.JST = {}))['scripts/jst/albums/index/index'] = factory(root['Mustache'], root['_']);
+  }
+})(this, function (Mustache, _) {
+  return ((function () {
+  var source = "<ol class='js-list list' aria-live='assertive'></ol>\n";
+  var fn = function (data, partials) {
+    return Mustache.render(source, data, partials);
+  };
+  fn.source = source;
+  return fn;
+})());
+});
+
+// scripts/views/albums/index/index.es6
+define(
+  'views/albums/index/index',["jquery","underscore","app","views/base","views/infinite-list","views/albums/index/list-item","jst/albums/index/index","entities/portal","exports"],
+  function(__dependency1__, __dependency2__, __dependency3__, __dependency4__, __dependency5__, __dependency6__, __dependency7__, __dependency8__, __exports__) {
+    
+    var $ = __dependency1__["default"] || __dependency1__;
+    var _ = __dependency2__["default"] || __dependency2__;
+    var selectorViewMap = __dependency3__.selectorViewMap;
+    var BaseView = __dependency4__["default"] || __dependency4__;
+    var InfiniteListView = __dependency5__["default"] || __dependency5__;
+    var AlbumsIndexListItemView = __dependency6__["default"] || __dependency6__;
+    var AlbumsIndexTemplate = __dependency7__["default"] || __dependency7__;
+
+    var Portal = __dependency8__;
+
+    var dirMap = {'37': -1, '39': 1};
+
+    __exports__["default"] = selectorViewMap['.js-osw-albums-index'] =
+    BaseView.extend({
+      template: AlbumsIndexTemplate,
+
+      options: ['portalId', 'action'],
+
+      classes: [
+        'orgsync-widget',
+        'js-osw-albums-index',
+        'osw-albums-index'
+      ],
+
+      initialize: function () {
+        BaseView.prototype.initialize.apply(this, arguments);
+        this.portal = new Portal.Model({id: this.portalId});
+        this.albums = this.portal.get('albums');
+        this.$el.append($('<div>').addClass('js-loading'));
+        this.albums.pagedFetch({
+          success: _.bind(this.render, this),
+          error: _.bind(this.$el.text, this.$el, 'Load failed...')
+        });
+        _.bindAll(this, 'onKeyDown');
+        $(document).on('keydown', this.onKeyDown);
+      },
+
+      render: function () {
+        BaseView.prototype.render.apply(this, arguments);
+        this.renderAlbumList();
+        return this;
+      },
+
+      renderAlbumList: function () {
+        this.views.albumsList = new InfiniteListView({
+          el: this.$('.js-list'),
+          modelView: AlbumsIndexListItemView,
+          modelViewOptions: {action: this.action},
+          collection: this.albums
+        });
+      },
+
+      onKeyDown: function (ev) { this.dir(dirMap[ev.which]); },
+
+      dir: function (dir) {
+        var selected = this.albums.findWhere({selected: true});
+        if (!dir || !selected) return;
+        if (selected.get('photos').findWhere({selected: true})) return;
+        selected.set('selected', false);
+        var l = this.albums.length;
+        var i = (l + this.albums.indexOf(selected) + dir) % l;
+        var albumsList = this.views.albumsList;
+        while (i >= albumsList.collection.length) albumsList.nextPage(true);
+        this.albums.at(i).set('selected', true);
+      },
+
+      remove: function () {
+        $(document).off('keydown', this.onKeyDown);
+        return BaseView.prototype.remove.apply(this, arguments);
+      }
+    });
+  });
+
+/*
+Copyright 2012 Igor Vaynberg
+
+Version: 3.4.5 Timestamp: Mon Nov  4 08:22:42 PST 2013
+
+This software is licensed under the Apache License, Version 2.0 (the "Apache License") or the GNU
+General Public License version 2 (the "GPL License"). You may choose either license to govern your
+use of this software only upon the condition that you accept all of the terms of either the Apache
+License or the GPL License.
+
+You may obtain a copy of the Apache License and the GPL License at:
+
+    http://www.apache.org/licenses/LICENSE-2.0
+    http://www.gnu.org/licenses/gpl-2.0.html
+
+Unless required by applicable law or agreed to in writing, software distributed under the
+Apache License or the GPL Licesnse is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
+CONDITIONS OF ANY KIND, either express or implied. See the Apache License and the GPL License for
+the specific language governing permissions and limitations under the Apache License and the GPL License.
+*/
+(function ($) {
+    if(typeof $.fn.each2 == "undefined") {
+        $.extend($.fn, {
+            /*
+            * 4-10 times faster .each replacement
+            * use it carefully, as it overrides jQuery context of element on each iteration
+            */
+            each2 : function (c) {
+                var j = $([0]), i = -1, l = this.length;
+                while (
+                    ++i < l
+                    && (j.context = j[0] = this[i])
+                    && c.call(j[0], i, j) !== false //"this"=DOM, i=index, j=jQuery object
+                );
+                return this;
+            }
+        });
+    }
+})(jQuery);
+
+(function ($, undefined) {
+    
+    /*global document, window, jQuery, console */
+
+    if (window.Select2 !== undefined) {
+        return;
+    }
+
+    var KEY, AbstractSelect2, SingleSelect2, MultiSelect2, nextUid, sizer,
+        lastMousePosition={x:0,y:0}, $document, scrollBarDimensions,
+
+    KEY = {
+        TAB: 9,
+        ENTER: 13,
+        ESC: 27,
+        SPACE: 32,
+        LEFT: 37,
+        UP: 38,
+        RIGHT: 39,
+        DOWN: 40,
+        SHIFT: 16,
+        CTRL: 17,
+        ALT: 18,
+        PAGE_UP: 33,
+        PAGE_DOWN: 34,
+        HOME: 36,
+        END: 35,
+        BACKSPACE: 8,
+        DELETE: 46,
+        isArrow: function (k) {
+            k = k.which ? k.which : k;
+            switch (k) {
+            case KEY.LEFT:
+            case KEY.RIGHT:
+            case KEY.UP:
+            case KEY.DOWN:
+                return true;
+            }
+            return false;
+        },
+        isControl: function (e) {
+            var k = e.which;
+            switch (k) {
+            case KEY.SHIFT:
+            case KEY.CTRL:
+            case KEY.ALT:
+                return true;
+            }
+
+            if (e.metaKey) return true;
+
+            return false;
+        },
+        isFunctionKey: function (k) {
+            k = k.which ? k.which : k;
+            return k >= 112 && k <= 123;
+        }
+    },
+    MEASURE_SCROLLBAR_TEMPLATE = "<div class='select2-measure-scrollbar'></div>",
+
+    DIACRITICS = {"\u24B6":"A","\uFF21":"A","\u00C0":"A","\u00C1":"A","\u00C2":"A","\u1EA6":"A","\u1EA4":"A","\u1EAA":"A","\u1EA8":"A","\u00C3":"A","\u0100":"A","\u0102":"A","\u1EB0":"A","\u1EAE":"A","\u1EB4":"A","\u1EB2":"A","\u0226":"A","\u01E0":"A","\u00C4":"A","\u01DE":"A","\u1EA2":"A","\u00C5":"A","\u01FA":"A","\u01CD":"A","\u0200":"A","\u0202":"A","\u1EA0":"A","\u1EAC":"A","\u1EB6":"A","\u1E00":"A","\u0104":"A","\u023A":"A","\u2C6F":"A","\uA732":"AA","\u00C6":"AE","\u01FC":"AE","\u01E2":"AE","\uA734":"AO","\uA736":"AU","\uA738":"AV","\uA73A":"AV","\uA73C":"AY","\u24B7":"B","\uFF22":"B","\u1E02":"B","\u1E04":"B","\u1E06":"B","\u0243":"B","\u0182":"B","\u0181":"B","\u24B8":"C","\uFF23":"C","\u0106":"C","\u0108":"C","\u010A":"C","\u010C":"C","\u00C7":"C","\u1E08":"C","\u0187":"C","\u023B":"C","\uA73E":"C","\u24B9":"D","\uFF24":"D","\u1E0A":"D","\u010E":"D","\u1E0C":"D","\u1E10":"D","\u1E12":"D","\u1E0E":"D","\u0110":"D","\u018B":"D","\u018A":"D","\u0189":"D","\uA779":"D","\u01F1":"DZ","\u01C4":"DZ","\u01F2":"Dz","\u01C5":"Dz","\u24BA":"E","\uFF25":"E","\u00C8":"E","\u00C9":"E","\u00CA":"E","\u1EC0":"E","\u1EBE":"E","\u1EC4":"E","\u1EC2":"E","\u1EBC":"E","\u0112":"E","\u1E14":"E","\u1E16":"E","\u0114":"E","\u0116":"E","\u00CB":"E","\u1EBA":"E","\u011A":"E","\u0204":"E","\u0206":"E","\u1EB8":"E","\u1EC6":"E","\u0228":"E","\u1E1C":"E","\u0118":"E","\u1E18":"E","\u1E1A":"E","\u0190":"E","\u018E":"E","\u24BB":"F","\uFF26":"F","\u1E1E":"F","\u0191":"F","\uA77B":"F","\u24BC":"G","\uFF27":"G","\u01F4":"G","\u011C":"G","\u1E20":"G","\u011E":"G","\u0120":"G","\u01E6":"G","\u0122":"G","\u01E4":"G","\u0193":"G","\uA7A0":"G","\uA77D":"G","\uA77E":"G","\u24BD":"H","\uFF28":"H","\u0124":"H","\u1E22":"H","\u1E26":"H","\u021E":"H","\u1E24":"H","\u1E28":"H","\u1E2A":"H","\u0126":"H","\u2C67":"H","\u2C75":"H","\uA78D":"H","\u24BE":"I","\uFF29":"I","\u00CC":"I","\u00CD":"I","\u00CE":"I","\u0128":"I","\u012A":"I","\u012C":"I","\u0130":"I","\u00CF":"I","\u1E2E":"I","\u1EC8":"I","\u01CF":"I","\u0208":"I","\u020A":"I","\u1ECA":"I","\u012E":"I","\u1E2C":"I","\u0197":"I","\u24BF":"J","\uFF2A":"J","\u0134":"J","\u0248":"J","\u24C0":"K","\uFF2B":"K","\u1E30":"K","\u01E8":"K","\u1E32":"K","\u0136":"K","\u1E34":"K","\u0198":"K","\u2C69":"K","\uA740":"K","\uA742":"K","\uA744":"K","\uA7A2":"K","\u24C1":"L","\uFF2C":"L","\u013F":"L","\u0139":"L","\u013D":"L","\u1E36":"L","\u1E38":"L","\u013B":"L","\u1E3C":"L","\u1E3A":"L","\u0141":"L","\u023D":"L","\u2C62":"L","\u2C60":"L","\uA748":"L","\uA746":"L","\uA780":"L","\u01C7":"LJ","\u01C8":"Lj","\u24C2":"M","\uFF2D":"M","\u1E3E":"M","\u1E40":"M","\u1E42":"M","\u2C6E":"M","\u019C":"M","\u24C3":"N","\uFF2E":"N","\u01F8":"N","\u0143":"N","\u00D1":"N","\u1E44":"N","\u0147":"N","\u1E46":"N","\u0145":"N","\u1E4A":"N","\u1E48":"N","\u0220":"N","\u019D":"N","\uA790":"N","\uA7A4":"N","\u01CA":"NJ","\u01CB":"Nj","\u24C4":"O","\uFF2F":"O","\u00D2":"O","\u00D3":"O","\u00D4":"O","\u1ED2":"O","\u1ED0":"O","\u1ED6":"O","\u1ED4":"O","\u00D5":"O","\u1E4C":"O","\u022C":"O","\u1E4E":"O","\u014C":"O","\u1E50":"O","\u1E52":"O","\u014E":"O","\u022E":"O","\u0230":"O","\u00D6":"O","\u022A":"O","\u1ECE":"O","\u0150":"O","\u01D1":"O","\u020C":"O","\u020E":"O","\u01A0":"O","\u1EDC":"O","\u1EDA":"O","\u1EE0":"O","\u1EDE":"O","\u1EE2":"O","\u1ECC":"O","\u1ED8":"O","\u01EA":"O","\u01EC":"O","\u00D8":"O","\u01FE":"O","\u0186":"O","\u019F":"O","\uA74A":"O","\uA74C":"O","\u01A2":"OI","\uA74E":"OO","\u0222":"OU","\u24C5":"P","\uFF30":"P","\u1E54":"P","\u1E56":"P","\u01A4":"P","\u2C63":"P","\uA750":"P","\uA752":"P","\uA754":"P","\u24C6":"Q","\uFF31":"Q","\uA756":"Q","\uA758":"Q","\u024A":"Q","\u24C7":"R","\uFF32":"R","\u0154":"R","\u1E58":"R","\u0158":"R","\u0210":"R","\u0212":"R","\u1E5A":"R","\u1E5C":"R","\u0156":"R","\u1E5E":"R","\u024C":"R","\u2C64":"R","\uA75A":"R","\uA7A6":"R","\uA782":"R","\u24C8":"S","\uFF33":"S","\u1E9E":"S","\u015A":"S","\u1E64":"S","\u015C":"S","\u1E60":"S","\u0160":"S","\u1E66":"S","\u1E62":"S","\u1E68":"S","\u0218":"S","\u015E":"S","\u2C7E":"S","\uA7A8":"S","\uA784":"S","\u24C9":"T","\uFF34":"T","\u1E6A":"T","\u0164":"T","\u1E6C":"T","\u021A":"T","\u0162":"T","\u1E70":"T","\u1E6E":"T","\u0166":"T","\u01AC":"T","\u01AE":"T","\u023E":"T","\uA786":"T","\uA728":"TZ","\u24CA":"U","\uFF35":"U","\u00D9":"U","\u00DA":"U","\u00DB":"U","\u0168":"U","\u1E78":"U","\u016A":"U","\u1E7A":"U","\u016C":"U","\u00DC":"U","\u01DB":"U","\u01D7":"U","\u01D5":"U","\u01D9":"U","\u1EE6":"U","\u016E":"U","\u0170":"U","\u01D3":"U","\u0214":"U","\u0216":"U","\u01AF":"U","\u1EEA":"U","\u1EE8":"U","\u1EEE":"U","\u1EEC":"U","\u1EF0":"U","\u1EE4":"U","\u1E72":"U","\u0172":"U","\u1E76":"U","\u1E74":"U","\u0244":"U","\u24CB":"V","\uFF36":"V","\u1E7C":"V","\u1E7E":"V","\u01B2":"V","\uA75E":"V","\u0245":"V","\uA760":"VY","\u24CC":"W","\uFF37":"W","\u1E80":"W","\u1E82":"W","\u0174":"W","\u1E86":"W","\u1E84":"W","\u1E88":"W","\u2C72":"W","\u24CD":"X","\uFF38":"X","\u1E8A":"X","\u1E8C":"X","\u24CE":"Y","\uFF39":"Y","\u1EF2":"Y","\u00DD":"Y","\u0176":"Y","\u1EF8":"Y","\u0232":"Y","\u1E8E":"Y","\u0178":"Y","\u1EF6":"Y","\u1EF4":"Y","\u01B3":"Y","\u024E":"Y","\u1EFE":"Y","\u24CF":"Z","\uFF3A":"Z","\u0179":"Z","\u1E90":"Z","\u017B":"Z","\u017D":"Z","\u1E92":"Z","\u1E94":"Z","\u01B5":"Z","\u0224":"Z","\u2C7F":"Z","\u2C6B":"Z","\uA762":"Z","\u24D0":"a","\uFF41":"a","\u1E9A":"a","\u00E0":"a","\u00E1":"a","\u00E2":"a","\u1EA7":"a","\u1EA5":"a","\u1EAB":"a","\u1EA9":"a","\u00E3":"a","\u0101":"a","\u0103":"a","\u1EB1":"a","\u1EAF":"a","\u1EB5":"a","\u1EB3":"a","\u0227":"a","\u01E1":"a","\u00E4":"a","\u01DF":"a","\u1EA3":"a","\u00E5":"a","\u01FB":"a","\u01CE":"a","\u0201":"a","\u0203":"a","\u1EA1":"a","\u1EAD":"a","\u1EB7":"a","\u1E01":"a","\u0105":"a","\u2C65":"a","\u0250":"a","\uA733":"aa","\u00E6":"ae","\u01FD":"ae","\u01E3":"ae","\uA735":"ao","\uA737":"au","\uA739":"av","\uA73B":"av","\uA73D":"ay","\u24D1":"b","\uFF42":"b","\u1E03":"b","\u1E05":"b","\u1E07":"b","\u0180":"b","\u0183":"b","\u0253":"b","\u24D2":"c","\uFF43":"c","\u0107":"c","\u0109":"c","\u010B":"c","\u010D":"c","\u00E7":"c","\u1E09":"c","\u0188":"c","\u023C":"c","\uA73F":"c","\u2184":"c","\u24D3":"d","\uFF44":"d","\u1E0B":"d","\u010F":"d","\u1E0D":"d","\u1E11":"d","\u1E13":"d","\u1E0F":"d","\u0111":"d","\u018C":"d","\u0256":"d","\u0257":"d","\uA77A":"d","\u01F3":"dz","\u01C6":"dz","\u24D4":"e","\uFF45":"e","\u00E8":"e","\u00E9":"e","\u00EA":"e","\u1EC1":"e","\u1EBF":"e","\u1EC5":"e","\u1EC3":"e","\u1EBD":"e","\u0113":"e","\u1E15":"e","\u1E17":"e","\u0115":"e","\u0117":"e","\u00EB":"e","\u1EBB":"e","\u011B":"e","\u0205":"e","\u0207":"e","\u1EB9":"e","\u1EC7":"e","\u0229":"e","\u1E1D":"e","\u0119":"e","\u1E19":"e","\u1E1B":"e","\u0247":"e","\u025B":"e","\u01DD":"e","\u24D5":"f","\uFF46":"f","\u1E1F":"f","\u0192":"f","\uA77C":"f","\u24D6":"g","\uFF47":"g","\u01F5":"g","\u011D":"g","\u1E21":"g","\u011F":"g","\u0121":"g","\u01E7":"g","\u0123":"g","\u01E5":"g","\u0260":"g","\uA7A1":"g","\u1D79":"g","\uA77F":"g","\u24D7":"h","\uFF48":"h","\u0125":"h","\u1E23":"h","\u1E27":"h","\u021F":"h","\u1E25":"h","\u1E29":"h","\u1E2B":"h","\u1E96":"h","\u0127":"h","\u2C68":"h","\u2C76":"h","\u0265":"h","\u0195":"hv","\u24D8":"i","\uFF49":"i","\u00EC":"i","\u00ED":"i","\u00EE":"i","\u0129":"i","\u012B":"i","\u012D":"i","\u00EF":"i","\u1E2F":"i","\u1EC9":"i","\u01D0":"i","\u0209":"i","\u020B":"i","\u1ECB":"i","\u012F":"i","\u1E2D":"i","\u0268":"i","\u0131":"i","\u24D9":"j","\uFF4A":"j","\u0135":"j","\u01F0":"j","\u0249":"j","\u24DA":"k","\uFF4B":"k","\u1E31":"k","\u01E9":"k","\u1E33":"k","\u0137":"k","\u1E35":"k","\u0199":"k","\u2C6A":"k","\uA741":"k","\uA743":"k","\uA745":"k","\uA7A3":"k","\u24DB":"l","\uFF4C":"l","\u0140":"l","\u013A":"l","\u013E":"l","\u1E37":"l","\u1E39":"l","\u013C":"l","\u1E3D":"l","\u1E3B":"l","\u017F":"l","\u0142":"l","\u019A":"l","\u026B":"l","\u2C61":"l","\uA749":"l","\uA781":"l","\uA747":"l","\u01C9":"lj","\u24DC":"m","\uFF4D":"m","\u1E3F":"m","\u1E41":"m","\u1E43":"m","\u0271":"m","\u026F":"m","\u24DD":"n","\uFF4E":"n","\u01F9":"n","\u0144":"n","\u00F1":"n","\u1E45":"n","\u0148":"n","\u1E47":"n","\u0146":"n","\u1E4B":"n","\u1E49":"n","\u019E":"n","\u0272":"n","\u0149":"n","\uA791":"n","\uA7A5":"n","\u01CC":"nj","\u24DE":"o","\uFF4F":"o","\u00F2":"o","\u00F3":"o","\u00F4":"o","\u1ED3":"o","\u1ED1":"o","\u1ED7":"o","\u1ED5":"o","\u00F5":"o","\u1E4D":"o","\u022D":"o","\u1E4F":"o","\u014D":"o","\u1E51":"o","\u1E53":"o","\u014F":"o","\u022F":"o","\u0231":"o","\u00F6":"o","\u022B":"o","\u1ECF":"o","\u0151":"o","\u01D2":"o","\u020D":"o","\u020F":"o","\u01A1":"o","\u1EDD":"o","\u1EDB":"o","\u1EE1":"o","\u1EDF":"o","\u1EE3":"o","\u1ECD":"o","\u1ED9":"o","\u01EB":"o","\u01ED":"o","\u00F8":"o","\u01FF":"o","\u0254":"o","\uA74B":"o","\uA74D":"o","\u0275":"o","\u01A3":"oi","\u0223":"ou","\uA74F":"oo","\u24DF":"p","\uFF50":"p","\u1E55":"p","\u1E57":"p","\u01A5":"p","\u1D7D":"p","\uA751":"p","\uA753":"p","\uA755":"p","\u24E0":"q","\uFF51":"q","\u024B":"q","\uA757":"q","\uA759":"q","\u24E1":"r","\uFF52":"r","\u0155":"r","\u1E59":"r","\u0159":"r","\u0211":"r","\u0213":"r","\u1E5B":"r","\u1E5D":"r","\u0157":"r","\u1E5F":"r","\u024D":"r","\u027D":"r","\uA75B":"r","\uA7A7":"r","\uA783":"r","\u24E2":"s","\uFF53":"s","\u00DF":"s","\u015B":"s","\u1E65":"s","\u015D":"s","\u1E61":"s","\u0161":"s","\u1E67":"s","\u1E63":"s","\u1E69":"s","\u0219":"s","\u015F":"s","\u023F":"s","\uA7A9":"s","\uA785":"s","\u1E9B":"s","\u24E3":"t","\uFF54":"t","\u1E6B":"t","\u1E97":"t","\u0165":"t","\u1E6D":"t","\u021B":"t","\u0163":"t","\u1E71":"t","\u1E6F":"t","\u0167":"t","\u01AD":"t","\u0288":"t","\u2C66":"t","\uA787":"t","\uA729":"tz","\u24E4":"u","\uFF55":"u","\u00F9":"u","\u00FA":"u","\u00FB":"u","\u0169":"u","\u1E79":"u","\u016B":"u","\u1E7B":"u","\u016D":"u","\u00FC":"u","\u01DC":"u","\u01D8":"u","\u01D6":"u","\u01DA":"u","\u1EE7":"u","\u016F":"u","\u0171":"u","\u01D4":"u","\u0215":"u","\u0217":"u","\u01B0":"u","\u1EEB":"u","\u1EE9":"u","\u1EEF":"u","\u1EED":"u","\u1EF1":"u","\u1EE5":"u","\u1E73":"u","\u0173":"u","\u1E77":"u","\u1E75":"u","\u0289":"u","\u24E5":"v","\uFF56":"v","\u1E7D":"v","\u1E7F":"v","\u028B":"v","\uA75F":"v","\u028C":"v","\uA761":"vy","\u24E6":"w","\uFF57":"w","\u1E81":"w","\u1E83":"w","\u0175":"w","\u1E87":"w","\u1E85":"w","\u1E98":"w","\u1E89":"w","\u2C73":"w","\u24E7":"x","\uFF58":"x","\u1E8B":"x","\u1E8D":"x","\u24E8":"y","\uFF59":"y","\u1EF3":"y","\u00FD":"y","\u0177":"y","\u1EF9":"y","\u0233":"y","\u1E8F":"y","\u00FF":"y","\u1EF7":"y","\u1E99":"y","\u1EF5":"y","\u01B4":"y","\u024F":"y","\u1EFF":"y","\u24E9":"z","\uFF5A":"z","\u017A":"z","\u1E91":"z","\u017C":"z","\u017E":"z","\u1E93":"z","\u1E95":"z","\u01B6":"z","\u0225":"z","\u0240":"z","\u2C6C":"z","\uA763":"z"};
+
+    $document = $(document);
+
+    nextUid=(function() { var counter=1; return function() { return counter++; }; }());
+
+
+    function stripDiacritics(str) {
+        var ret, i, l, c;
+
+        if (!str || str.length < 1) return str;
+
+        ret = "";
+        for (i = 0, l = str.length; i < l; i++) {
+            c = str.charAt(i);
+            ret += DIACRITICS[c] || c;
+        }
+        return ret;
+    }
+
+    function indexOf(value, array) {
+        var i = 0, l = array.length;
+        for (; i < l; i = i + 1) {
+            if (equal(value, array[i])) return i;
+        }
+        return -1;
+    }
+
+    function measureScrollbar () {
+        var $template = $( MEASURE_SCROLLBAR_TEMPLATE );
+        $template.appendTo('body');
+
+        var dim = {
+            width: $template.width() - $template[0].clientWidth,
+            height: $template.height() - $template[0].clientHeight
+        };
+        $template.remove();
+
+        return dim;
+    }
+
+    /**
+     * Compares equality of a and b
+     * @param a
+     * @param b
+     */
+    function equal(a, b) {
+        if (a === b) return true;
+        if (a === undefined || b === undefined) return false;
+        if (a === null || b === null) return false;
+        // Check whether 'a' or 'b' is a string (primitive or object).
+        // The concatenation of an empty string (+'') converts its argument to a string's primitive.
+        if (a.constructor === String) return a+'' === b+''; // a+'' - in case 'a' is a String object
+        if (b.constructor === String) return b+'' === a+''; // b+'' - in case 'b' is a String object
+        return false;
+    }
+
+    /**
+     * Splits the string into an array of values, trimming each value. An empty array is returned for nulls or empty
+     * strings
+     * @param string
+     * @param separator
+     */
+    function splitVal(string, separator) {
+        var val, i, l;
+        if (string === null || string.length < 1) return [];
+        val = string.split(separator);
+        for (i = 0, l = val.length; i < l; i = i + 1) val[i] = $.trim(val[i]);
+        return val;
+    }
+
+    function getSideBorderPadding(element) {
+        return element.outerWidth(false) - element.width();
+    }
+
+    function installKeyUpChangeEvent(element) {
+        var key="keyup-change-value";
+        element.on("keydown", function () {
+            if ($.data(element, key) === undefined) {
+                $.data(element, key, element.val());
+            }
+        });
+        element.on("keyup", function () {
+            var val= $.data(element, key);
+            if (val !== undefined && element.val() !== val) {
+                $.removeData(element, key);
+                element.trigger("keyup-change");
+            }
+        });
+    }
+
+    $document.on("mousemove", function (e) {
+        lastMousePosition.x = e.pageX;
+        lastMousePosition.y = e.pageY;
+    });
+
+    /**
+     * filters mouse events so an event is fired only if the mouse moved.
+     *
+     * filters out mouse events that occur when mouse is stationary but
+     * the elements under the pointer are scrolled.
+     */
+    function installFilteredMouseMove(element) {
+        element.on("mousemove", function (e) {
+            var lastpos = lastMousePosition;
+            if (lastpos === undefined || lastpos.x !== e.pageX || lastpos.y !== e.pageY) {
+                $(e.target).trigger("mousemove-filtered", e);
+            }
+        });
+    }
+
+    /**
+     * Debounces a function. Returns a function that calls the original fn function only if no invocations have been made
+     * within the last quietMillis milliseconds.
+     *
+     * @param quietMillis number of milliseconds to wait before invoking fn
+     * @param fn function to be debounced
+     * @param ctx object to be used as this reference within fn
+     * @return debounced version of fn
+     */
+    function debounce(quietMillis, fn, ctx) {
+        ctx = ctx || undefined;
+        var timeout;
+        return function () {
+            var args = arguments;
+            window.clearTimeout(timeout);
+            timeout = window.setTimeout(function() {
+                fn.apply(ctx, args);
+            }, quietMillis);
+        };
+    }
+
+    /**
+     * A simple implementation of a thunk
+     * @param formula function used to lazily initialize the thunk
+     * @return {Function}
+     */
+    function thunk(formula) {
+        var evaluated = false,
+            value;
+        return function() {
+            if (evaluated === false) { value = formula(); evaluated = true; }
+            return value;
+        };
+    };
+
+    function installDebouncedScroll(threshold, element) {
+        var notify = debounce(threshold, function (e) { element.trigger("scroll-debounced", e);});
+        element.on("scroll", function (e) {
+            if (indexOf(e.target, element.get()) >= 0) notify(e);
+        });
+    }
+
+    function focus($el) {
+        if ($el[0] === document.activeElement) return;
+
+        /* set the focus in a 0 timeout - that way the focus is set after the processing
+            of the current event has finished - which seems like the only reliable way
+            to set focus */
+        window.setTimeout(function() {
+            var el=$el[0], pos=$el.val().length, range;
+
+            $el.focus();
+
+            /* make sure el received focus so we do not error out when trying to manipulate the caret.
+                sometimes modals or others listeners may steal it after its set */
+            if ($el.is(":visible") && el === document.activeElement) {
+
+                /* after the focus is set move the caret to the end, necessary when we val()
+                    just before setting focus */
+                if(el.setSelectionRange)
+                {
+                    el.setSelectionRange(pos, pos);
+                }
+                else if (el.createTextRange) {
+                    range = el.createTextRange();
+                    range.collapse(false);
+                    range.select();
+                }
+            }
+        }, 0);
+    }
+
+    function getCursorInfo(el) {
+        el = $(el)[0];
+        var offset = 0;
+        var length = 0;
+        if ('selectionStart' in el) {
+            offset = el.selectionStart;
+            length = el.selectionEnd - offset;
+        } else if ('selection' in document) {
+            el.focus();
+            var sel = document.selection.createRange();
+            length = document.selection.createRange().text.length;
+            sel.moveStart('character', -el.value.length);
+            offset = sel.text.length - length;
+        }
+        return { offset: offset, length: length };
+    }
+
+    function killEvent(event) {
+        event.preventDefault();
+        event.stopPropagation();
+    }
+    function killEventImmediately(event) {
+        event.preventDefault();
+        event.stopImmediatePropagation();
+    }
+
+    function measureTextWidth(e) {
+        if (!sizer){
+            var style = e[0].currentStyle || window.getComputedStyle(e[0], null);
+            sizer = $(document.createElement("div")).css({
+                position: "absolute",
+                left: "-10000px",
+                top: "-10000px",
+                display: "none",
+                fontSize: style.fontSize,
+                fontFamily: style.fontFamily,
+                fontStyle: style.fontStyle,
+                fontWeight: style.fontWeight,
+                letterSpacing: style.letterSpacing,
+                textTransform: style.textTransform,
+                whiteSpace: "nowrap"
+            });
+            sizer.attr("class","select2-sizer");
+            $("body").append(sizer);
+        }
+        sizer.text(e.val());
+        return sizer.width();
+    }
+
+    function syncCssClasses(dest, src, adapter) {
+        var classes, replacements = [], adapted;
+
+        classes = dest.attr("class");
+        if (classes) {
+            classes = '' + classes; // for IE which returns object
+            $(classes.split(" ")).each2(function() {
+                if (this.indexOf("select2-") === 0) {
+                    replacements.push(this);
+                }
+            });
+        }
+        classes = src.attr("class");
+        if (classes) {
+            classes = '' + classes; // for IE which returns object
+            $(classes.split(" ")).each2(function() {
+                if (this.indexOf("select2-") !== 0) {
+                    adapted = adapter(this);
+                    if (adapted) {
+                        replacements.push(adapted);
+                    }
+                }
+            });
+        }
+        dest.attr("class", replacements.join(" "));
+    }
+
+
+    function markMatch(text, term, markup, escapeMarkup) {
+        var match=stripDiacritics(text.toUpperCase()).indexOf(stripDiacritics(term.toUpperCase())),
+            tl=term.length;
+
+        if (match<0) {
+            markup.push(escapeMarkup(text));
+            return;
+        }
+
+        markup.push(escapeMarkup(text.substring(0, match)));
+        markup.push("<span class='select2-match'>");
+        markup.push(escapeMarkup(text.substring(match, match + tl)));
+        markup.push("</span>");
+        markup.push(escapeMarkup(text.substring(match + tl, text.length)));
+    }
+
+    function defaultEscapeMarkup(markup) {
+        var replace_map = {
+            '\\': '&#92;',
+            '&': '&amp;',
+            '<': '&lt;',
+            '>': '&gt;',
+            '"': '&quot;',
+            "'": '&#39;',
+            "/": '&#47;'
+        };
+
+        return String(markup).replace(/[&<>"'\/\\]/g, function (match) {
+            return replace_map[match];
+        });
+    }
+
+    /**
+     * Produces an ajax-based query function
+     *
+     * @param options object containing configuration paramters
+     * @param options.params parameter map for the transport ajax call, can contain such options as cache, jsonpCallback, etc. see $.ajax
+     * @param options.transport function that will be used to execute the ajax request. must be compatible with parameters supported by $.ajax
+     * @param options.url url for the data
+     * @param options.data a function(searchTerm, pageNumber, context) that should return an object containing query string parameters for the above url.
+     * @param options.dataType request data type: ajax, jsonp, other datatatypes supported by jQuery's $.ajax function or the transport function if specified
+     * @param options.quietMillis (optional) milliseconds to wait before making the ajaxRequest, helps debounce the ajax function if invoked too often
+     * @param options.results a function(remoteData, pageNumber) that converts data returned form the remote request to the format expected by Select2.
+     *      The expected format is an object containing the following keys:
+     *      results array of objects that will be used as choices
+     *      more (optional) boolean indicating whether there are more results available
+     *      Example: {results:[{id:1, text:'Red'},{id:2, text:'Blue'}], more:true}
+     */
+    function ajax(options) {
+        var timeout, // current scheduled but not yet executed request
+            handler = null,
+            quietMillis = options.quietMillis || 100,
+            ajaxUrl = options.url,
+            self = this;
+
+        return function (query) {
+            window.clearTimeout(timeout);
+            timeout = window.setTimeout(function () {
+                var data = options.data, // ajax data function
+                    url = ajaxUrl, // ajax url string or function
+                    transport = options.transport || $.fn.select2.ajaxDefaults.transport,
+                    // deprecated - to be removed in 4.0  - use params instead
+                    deprecated = {
+                        type: options.type || 'GET', // set type of request (GET or POST)
+                        cache: options.cache || false,
+                        jsonpCallback: options.jsonpCallback||undefined,
+                        dataType: options.dataType||"json"
+                    },
+                    params = $.extend({}, $.fn.select2.ajaxDefaults.params, deprecated);
+
+                data = data ? data.call(self, query.term, query.page, query.context) : null;
+                url = (typeof url === 'function') ? url.call(self, query.term, query.page, query.context) : url;
+
+                if (handler) { handler.abort(); }
+
+                if (options.params) {
+                    if ($.isFunction(options.params)) {
+                        $.extend(params, options.params.call(self));
+                    } else {
+                        $.extend(params, options.params);
+                    }
+                }
+
+                $.extend(params, {
+                    url: url,
+                    dataType: options.dataType,
+                    data: data,
+                    success: function (data) {
+                        // TODO - replace query.page with query so users have access to term, page, etc.
+                        var results = options.results(data, query.page);
+                        query.callback(results);
+                    }
+                });
+                handler = transport.call(self, params);
+            }, quietMillis);
+        };
+    }
+
+    /**
+     * Produces a query function that works with a local array
+     *
+     * @param options object containing configuration parameters. The options parameter can either be an array or an
+     * object.
+     *
+     * If the array form is used it is assumed that it contains objects with 'id' and 'text' keys.
+     *
+     * If the object form is used ti is assumed that it contains 'data' and 'text' keys. The 'data' key should contain
+     * an array of objects that will be used as choices. These objects must contain at least an 'id' key. The 'text'
+     * key can either be a String in which case it is expected that each element in the 'data' array has a key with the
+     * value of 'text' which will be used to match choices. Alternatively, text can be a function(item) that can extract
+     * the text.
+     */
+    function local(options) {
+        var data = options, // data elements
+            dataText,
+            tmp,
+            text = function (item) { return ""+item.text; }; // function used to retrieve the text portion of a data item that is matched against the search
+
+         if ($.isArray(data)) {
+            tmp = data;
+            data = { results: tmp };
+        }
+
+         if ($.isFunction(data) === false) {
+            tmp = data;
+            data = function() { return tmp; };
+        }
+
+        var dataItem = data();
+        if (dataItem.text) {
+            text = dataItem.text;
+            // if text is not a function we assume it to be a key name
+            if (!$.isFunction(text)) {
+                dataText = dataItem.text; // we need to store this in a separate variable because in the next step data gets reset and data.text is no longer available
+                text = function (item) { return item[dataText]; };
+            }
+        }
+
+        return function (query) {
+            var t = query.term, filtered = { results: [] }, process;
+            if (t === "") {
+                query.callback(data());
+                return;
+            }
+
+            process = function(datum, collection) {
+                var group, attr;
+                datum = datum[0];
+                if (datum.children) {
+                    group = {};
+                    for (attr in datum) {
+                        if (datum.hasOwnProperty(attr)) group[attr]=datum[attr];
+                    }
+                    group.children=[];
+                    $(datum.children).each2(function(i, childDatum) { process(childDatum, group.children); });
+                    if (group.children.length || query.matcher(t, text(group), datum)) {
+                        collection.push(group);
+                    }
+                } else {
+                    if (query.matcher(t, text(datum), datum)) {
+                        collection.push(datum);
+                    }
+                }
+            };
+
+            $(data().results).each2(function(i, datum) { process(datum, filtered.results); });
+            query.callback(filtered);
+        };
+    }
+
+    // TODO javadoc
+    function tags(data) {
+        var isFunc = $.isFunction(data);
+        return function (query) {
+            var t = query.term, filtered = {results: []};
+            $(isFunc ? data() : data).each(function () {
+                var isObject = this.text !== undefined,
+                    text = isObject ? this.text : this;
+                if (t === "" || query.matcher(t, text)) {
+                    filtered.results.push(isObject ? this : {id: this, text: this});
+                }
+            });
+            query.callback(filtered);
+        };
+    }
+
+    /**
+     * Checks if the formatter function should be used.
+     *
+     * Throws an error if it is not a function. Returns true if it should be used,
+     * false if no formatting should be performed.
+     *
+     * @param formatter
+     */
+    function checkFormatter(formatter, formatterName) {
+        if ($.isFunction(formatter)) return true;
+        if (!formatter) return false;
+        throw new Error(formatterName +" must be a function or a falsy value");
+    }
+
+    function evaluate(val) {
+        return $.isFunction(val) ? val() : val;
+    }
+
+    function countResults(results) {
+        var count = 0;
+        $.each(results, function(i, item) {
+            if (item.children) {
+                count += countResults(item.children);
+            } else {
+                count++;
+            }
+        });
+        return count;
+    }
+
+    /**
+     * Default tokenizer. This function uses breaks the input on substring match of any string from the
+     * opts.tokenSeparators array and uses opts.createSearchChoice to create the choice object. Both of those
+     * two options have to be defined in order for the tokenizer to work.
+     *
+     * @param input text user has typed so far or pasted into the search field
+     * @param selection currently selected choices
+     * @param selectCallback function(choice) callback tho add the choice to selection
+     * @param opts select2's opts
+     * @return undefined/null to leave the current input unchanged, or a string to change the input to the returned value
+     */
+    function defaultTokenizer(input, selection, selectCallback, opts) {
+        var original = input, // store the original so we can compare and know if we need to tell the search to update its text
+            dupe = false, // check for whether a token we extracted represents a duplicate selected choice
+            token, // token
+            index, // position at which the separator was found
+            i, l, // looping variables
+            separator; // the matched separator
+
+        if (!opts.createSearchChoice || !opts.tokenSeparators || opts.tokenSeparators.length < 1) return undefined;
+
+        while (true) {
+            index = -1;
+
+            for (i = 0, l = opts.tokenSeparators.length; i < l; i++) {
+                separator = opts.tokenSeparators[i];
+                index = input.indexOf(separator);
+                if (index >= 0) break;
+            }
+
+            if (index < 0) break; // did not find any token separator in the input string, bail
+
+            token = input.substring(0, index);
+            input = input.substring(index + separator.length);
+
+            if (token.length > 0) {
+                token = opts.createSearchChoice.call(this, token, selection);
+                if (token !== undefined && token !== null && opts.id(token) !== undefined && opts.id(token) !== null) {
+                    dupe = false;
+                    for (i = 0, l = selection.length; i < l; i++) {
+                        if (equal(opts.id(token), opts.id(selection[i]))) {
+                            dupe = true; break;
+                        }
+                    }
+
+                    if (!dupe) selectCallback(token);
+                }
+            }
+        }
+
+        if (original!==input) return input;
+    }
+
+    /**
+     * Creates a new class
+     *
+     * @param superClass
+     * @param methods
+     */
+    function clazz(SuperClass, methods) {
+        var constructor = function () {};
+        constructor.prototype = new SuperClass;
+        constructor.prototype.constructor = constructor;
+        constructor.prototype.parent = SuperClass.prototype;
+        constructor.prototype = $.extend(constructor.prototype, methods);
+        return constructor;
+    }
+
+    AbstractSelect2 = clazz(Object, {
+
+        // abstract
+        bind: function (func) {
+            var self = this;
+            return function () {
+                func.apply(self, arguments);
+            };
+        },
+
+        // abstract
+        init: function (opts) {
+            var results, search, resultsSelector = ".select2-results";
+
+            // prepare options
+            this.opts = opts = this.prepareOpts(opts);
+
+            this.id=opts.id;
+
+            // destroy if called on an existing component
+            if (opts.element.data("select2") !== undefined &&
+                opts.element.data("select2") !== null) {
+                opts.element.data("select2").destroy();
+            }
+
+            this.container = this.createContainer();
+
+            this.containerId="s2id_"+(opts.element.attr("id") || "autogen"+nextUid());
+            this.containerSelector="#"+this.containerId.replace(/([;&,\.\+\*\~':"\!\^#$%@\[\]\(\)=>\|])/g, '\\$1');
+            this.container.attr("id", this.containerId);
+
+            // cache the body so future lookups are cheap
+            this.body = thunk(function() { return opts.element.closest("body"); });
+
+            syncCssClasses(this.container, this.opts.element, this.opts.adaptContainerCssClass);
+
+            this.container.attr("style", opts.element.attr("style"));
+            this.container.css(evaluate(opts.containerCss));
+            this.container.addClass(evaluate(opts.containerCssClass));
+
+            this.elementTabIndex = this.opts.element.attr("tabindex");
+
+            // swap container for the element
+            this.opts.element
+                .data("select2", this)
+                .attr("tabindex", "-1")
+                .before(this.container)
+                .on("click.select2", killEvent); // do not leak click events
+
+            this.container.data("select2", this);
+
+            this.dropdown = this.container.find(".select2-drop");
+
+            syncCssClasses(this.dropdown, this.opts.element, this.opts.adaptDropdownCssClass);
+
+            this.dropdown.addClass(evaluate(opts.dropdownCssClass));
+            this.dropdown.data("select2", this);
+            this.dropdown.on("click", killEvent);
+
+            this.results = results = this.container.find(resultsSelector);
+            this.search = search = this.container.find("input.select2-input");
+
+            this.queryCount = 0;
+            this.resultsPage = 0;
+            this.context = null;
+
+            // initialize the container
+            this.initContainer();
+
+            this.container.on("click", killEvent);
+
+            installFilteredMouseMove(this.results);
+            this.dropdown.on("mousemove-filtered touchstart touchmove touchend", resultsSelector, this.bind(this.highlightUnderEvent));
+
+            installDebouncedScroll(80, this.results);
+            this.dropdown.on("scroll-debounced", resultsSelector, this.bind(this.loadMoreIfNeeded));
+
+            // do not propagate change event from the search field out of the component
+            $(this.container).on("change", ".select2-input", function(e) {e.stopPropagation();});
+            $(this.dropdown).on("change", ".select2-input", function(e) {e.stopPropagation();});
+
+            // if jquery.mousewheel plugin is installed we can prevent out-of-bounds scrolling of results via mousewheel
+            if ($.fn.mousewheel) {
+                results.mousewheel(function (e, delta, deltaX, deltaY) {
+                    var top = results.scrollTop();
+                    if (deltaY > 0 && top - deltaY <= 0) {
+                        results.scrollTop(0);
+                        killEvent(e);
+                    } else if (deltaY < 0 && results.get(0).scrollHeight - results.scrollTop() + deltaY <= results.height()) {
+                        results.scrollTop(results.get(0).scrollHeight - results.height());
+                        killEvent(e);
+                    }
+                });
+            }
+
+            installKeyUpChangeEvent(search);
+            search.on("keyup-change input paste", this.bind(this.updateResults));
+            search.on("focus", function () { search.addClass("select2-focused"); });
+            search.on("blur", function () { search.removeClass("select2-focused");});
+
+            this.dropdown.on("mouseup", resultsSelector, this.bind(function (e) {
+                if ($(e.target).closest(".select2-result-selectable").length > 0) {
+                    this.highlightUnderEvent(e);
+                    this.selectHighlighted(e);
+                }
+            }));
+
+            // trap all mouse events from leaving the dropdown. sometimes there may be a modal that is listening
+            // for mouse events outside of itself so it can close itself. since the dropdown is now outside the select2's
+            // dom it will trigger the popup close, which is not what we want
+            this.dropdown.on("click mouseup mousedown", function (e) { e.stopPropagation(); });
+
+            if ($.isFunction(this.opts.initSelection)) {
+                // initialize selection based on the current value of the source element
+                this.initSelection();
+
+                // if the user has provided a function that can set selection based on the value of the source element
+                // we monitor the change event on the element and trigger it, allowing for two way synchronization
+                this.monitorSource();
+            }
+
+            if (opts.maximumInputLength !== null) {
+                this.search.attr("maxlength", opts.maximumInputLength);
+            }
+
+            var disabled = opts.element.prop("disabled");
+            if (disabled === undefined) disabled = false;
+            this.enable(!disabled);
+
+            var readonly = opts.element.prop("readonly");
+            if (readonly === undefined) readonly = false;
+            this.readonly(readonly);
+
+            // Calculate size of scrollbar
+            scrollBarDimensions = scrollBarDimensions || measureScrollbar();
+
+            this.autofocus = opts.element.prop("autofocus");
+            opts.element.prop("autofocus", false);
+            if (this.autofocus) this.focus();
+
+            this.nextSearchTerm = undefined;
+        },
+
+        // abstract
+        destroy: function () {
+            var element=this.opts.element, select2 = element.data("select2");
+
+            this.close();
+
+            if (this.propertyObserver) { delete this.propertyObserver; this.propertyObserver = null; }
+
+            if (select2 !== undefined) {
+                select2.container.remove();
+                select2.dropdown.remove();
+                element
+                    .removeClass("select2-offscreen")
+                    .removeData("select2")
+                    .off(".select2")
+                    .prop("autofocus", this.autofocus || false);
+                if (this.elementTabIndex) {
+                    element.attr({tabindex: this.elementTabIndex});
+                } else {
+                    element.removeAttr("tabindex");
+                }
+                element.show();
+            }
+        },
+
+        // abstract
+        optionToData: function(element) {
+            if (element.is("option")) {
+                return {
+                    id:element.prop("value"),
+                    text:element.text(),
+                    element: element.get(),
+                    css: element.attr("class"),
+                    disabled: element.prop("disabled"),
+                    locked: equal(element.attr("locked"), "locked") || equal(element.data("locked"), true)
+                };
+            } else if (element.is("optgroup")) {
+                return {
+                    text:element.attr("label"),
+                    children:[],
+                    element: element.get(),
+                    css: element.attr("class")
+                };
+            }
+        },
+
+        // abstract
+        prepareOpts: function (opts) {
+            var element, select, idKey, ajaxUrl, self = this;
+
+            element = opts.element;
+
+            if (element.get(0).tagName.toLowerCase() === "select") {
+                this.select = select = opts.element;
+            }
+
+            if (select) {
+                // these options are not allowed when attached to a select because they are picked up off the element itself
+                $.each(["id", "multiple", "ajax", "query", "createSearchChoice", "initSelection", "data", "tags"], function () {
+                    if (this in opts) {
+                        throw new Error("Option '" + this + "' is not allowed for Select2 when attached to a <select> element.");
+                    }
+                });
+            }
+
+            opts = $.extend({}, {
+                populateResults: function(container, results, query) {
+                    var populate, id=this.opts.id;
+
+                    populate=function(results, container, depth) {
+
+                        var i, l, result, selectable, disabled, compound, node, label, innerContainer, formatted;
+
+                        results = opts.sortResults(results, container, query);
+
+                        for (i = 0, l = results.length; i < l; i = i + 1) {
+
+                            result=results[i];
+
+                            disabled = (result.disabled === true);
+                            selectable = (!disabled) && (id(result) !== undefined);
+
+                            compound=result.children && result.children.length > 0;
+
+                            node=$("<li></li>");
+                            node.addClass("select2-results-dept-"+depth);
+                            node.addClass("select2-result");
+                            node.addClass(selectable ? "select2-result-selectable" : "select2-result-unselectable");
+                            if (disabled) { node.addClass("select2-disabled"); }
+                            if (compound) { node.addClass("select2-result-with-children"); }
+                            node.addClass(self.opts.formatResultCssClass(result));
+
+                            label=$(document.createElement("div"));
+                            label.addClass("select2-result-label");
+
+                            formatted=opts.formatResult(result, label, query, self.opts.escapeMarkup);
+                            if (formatted!==undefined) {
+                                label.html(formatted);
+                            }
+
+                            node.append(label);
+
+                            if (compound) {
+
+                                innerContainer=$("<ul></ul>");
+                                innerContainer.addClass("select2-result-sub");
+                                populate(result.children, innerContainer, depth+1);
+                                node.append(innerContainer);
+                            }
+
+                            node.data("select2-data", result);
+                            container.append(node);
+                        }
+                    };
+
+                    populate(results, container, 0);
+                }
+            }, $.fn.select2.defaults, opts);
+
+            if (typeof(opts.id) !== "function") {
+                idKey = opts.id;
+                opts.id = function (e) { return e[idKey]; };
+            }
+
+            if ($.isArray(opts.element.data("select2Tags"))) {
+                if ("tags" in opts) {
+                    throw "tags specified as both an attribute 'data-select2-tags' and in options of Select2 " + opts.element.attr("id");
+                }
+                opts.tags=opts.element.data("select2Tags");
+            }
+
+            if (select) {
+                opts.query = this.bind(function (query) {
+                    var data = { results: [], more: false },
+                        term = query.term,
+                        children, placeholderOption, process;
+
+                    process=function(element, collection) {
+                        var group;
+                        if (element.is("option")) {
+                            if (query.matcher(term, element.text(), element)) {
+                                collection.push(self.optionToData(element));
+                            }
+                        } else if (element.is("optgroup")) {
+                            group=self.optionToData(element);
+                            element.children().each2(function(i, elm) { process(elm, group.children); });
+                            if (group.children.length>0) {
+                                collection.push(group);
+                            }
+                        }
+                    };
+
+                    children=element.children();
+
+                    // ignore the placeholder option if there is one
+                    if (this.getPlaceholder() !== undefined && children.length > 0) {
+                        placeholderOption = this.getPlaceholderOption();
+                        if (placeholderOption) {
+                            children=children.not(placeholderOption);
+                        }
+                    }
+
+                    children.each2(function(i, elm) { process(elm, data.results); });
+
+                    query.callback(data);
+                });
+                // this is needed because inside val() we construct choices from options and there id is hardcoded
+                opts.id=function(e) { return e.id; };
+                opts.formatResultCssClass = function(data) { return data.css; };
+            } else {
+                if (!("query" in opts)) {
+
+                    if ("ajax" in opts) {
+                        ajaxUrl = opts.element.data("ajax-url");
+                        if (ajaxUrl && ajaxUrl.length > 0) {
+                            opts.ajax.url = ajaxUrl;
+                        }
+                        opts.query = ajax.call(opts.element, opts.ajax);
+                    } else if ("data" in opts) {
+                        opts.query = local(opts.data);
+                    } else if ("tags" in opts) {
+                        opts.query = tags(opts.tags);
+                        if (opts.createSearchChoice === undefined) {
+                            opts.createSearchChoice = function (term) { return {id: $.trim(term), text: $.trim(term)}; };
+                        }
+                        if (opts.initSelection === undefined) {
+                            opts.initSelection = function (element, callback) {
+                                var data = [];
+                                $(splitVal(element.val(), opts.separator)).each(function () {
+                                    var obj = { id: this, text: this },
+                                        tags = opts.tags;
+                                    if ($.isFunction(tags)) tags=tags();
+                                    $(tags).each(function() { if (equal(this.id, obj.id)) { obj = this; return false; } });
+                                    data.push(obj);
+                                });
+
+                                callback(data);
+                            };
+                        }
+                    }
+                }
+            }
+            if (typeof(opts.query) !== "function") {
+                throw "query function not defined for Select2 " + opts.element.attr("id");
+            }
+
+            return opts;
+        },
+
+        /**
+         * Monitor the original element for changes and update select2 accordingly
+         */
+        // abstract
+        monitorSource: function () {
+            var el = this.opts.element, sync, observer;
+
+            el.on("change.select2", this.bind(function (e) {
+                if (this.opts.element.data("select2-change-triggered") !== true) {
+                    this.initSelection();
+                }
+            }));
+
+            sync = this.bind(function () {
+
+                // sync enabled state
+                var disabled = el.prop("disabled");
+                if (disabled === undefined) disabled = false;
+                this.enable(!disabled);
+
+                var readonly = el.prop("readonly");
+                if (readonly === undefined) readonly = false;
+                this.readonly(readonly);
+
+                syncCssClasses(this.container, this.opts.element, this.opts.adaptContainerCssClass);
+                this.container.addClass(evaluate(this.opts.containerCssClass));
+
+                syncCssClasses(this.dropdown, this.opts.element, this.opts.adaptDropdownCssClass);
+                this.dropdown.addClass(evaluate(this.opts.dropdownCssClass));
+
+            });
+
+            // IE8-10
+            el.on("propertychange.select2", sync);
+
+            // hold onto a reference of the callback to work around a chromium bug
+            if (this.mutationCallback === undefined) {
+                this.mutationCallback = function (mutations) {
+                    mutations.forEach(sync);
+                }
+            }
+
+            // safari, chrome, firefox, IE11
+            observer = window.MutationObserver || window.WebKitMutationObserver|| window.MozMutationObserver;
+            if (observer !== undefined) {
+                if (this.propertyObserver) { delete this.propertyObserver; this.propertyObserver = null; }
+                this.propertyObserver = new observer(this.mutationCallback);
+                this.propertyObserver.observe(el.get(0), { attributes:true, subtree:false });
+            }
+        },
+
+        // abstract
+        triggerSelect: function(data) {
+            var evt = $.Event("select2-selecting", { val: this.id(data), object: data });
+            this.opts.element.trigger(evt);
+            return !evt.isDefaultPrevented();
+        },
+
+        /**
+         * Triggers the change event on the source element
+         */
+        // abstract
+        triggerChange: function (details) {
+
+            details = details || {};
+            details= $.extend({}, details, { type: "change", val: this.val() });
+            // prevents recursive triggering
+            this.opts.element.data("select2-change-triggered", true);
+            this.opts.element.trigger(details);
+            this.opts.element.data("select2-change-triggered", false);
+
+            // some validation frameworks ignore the change event and listen instead to keyup, click for selects
+            // so here we trigger the click event manually
+            this.opts.element.click();
+
+            // ValidationEngine ignorea the change event and listens instead to blur
+            // so here we trigger the blur event manually if so desired
+            if (this.opts.blurOnChange)
+                this.opts.element.blur();
+        },
+
+        //abstract
+        isInterfaceEnabled: function()
+        {
+            return this.enabledInterface === true;
+        },
+
+        // abstract
+        enableInterface: function() {
+            var enabled = this._enabled && !this._readonly,
+                disabled = !enabled;
+
+            if (enabled === this.enabledInterface) return false;
+
+            this.container.toggleClass("select2-container-disabled", disabled);
+            this.close();
+            this.enabledInterface = enabled;
+
+            return true;
+        },
+
+        // abstract
+        enable: function(enabled) {
+            if (enabled === undefined) enabled = true;
+            if (this._enabled === enabled) return;
+            this._enabled = enabled;
+
+            this.opts.element.prop("disabled", !enabled);
+            this.enableInterface();
+        },
+
+        // abstract
+        disable: function() {
+            this.enable(false);
+        },
+
+        // abstract
+        readonly: function(enabled) {
+            if (enabled === undefined) enabled = false;
+            if (this._readonly === enabled) return false;
+            this._readonly = enabled;
+
+            this.opts.element.prop("readonly", enabled);
+            this.enableInterface();
+            return true;
+        },
+
+        // abstract
+        opened: function () {
+            return this.container.hasClass("select2-dropdown-open");
+        },
+
+        // abstract
+        positionDropdown: function() {
+            var $dropdown = this.dropdown,
+                offset = this.container.offset(),
+                height = this.container.outerHeight(false),
+                width = this.container.outerWidth(false),
+                dropHeight = $dropdown.outerHeight(false),
+                $window = $(window),
+                windowWidth = $window.width(),
+                windowHeight = $window.height(),
+                viewPortRight = $window.scrollLeft() + windowWidth,
+                viewportBottom = $window.scrollTop() + windowHeight,
+                dropTop = offset.top + height,
+                dropLeft = offset.left,
+                enoughRoomBelow = dropTop + dropHeight <= viewportBottom,
+                enoughRoomAbove = (offset.top - dropHeight) >= this.body().scrollTop(),
+                dropWidth = $dropdown.outerWidth(false),
+                enoughRoomOnRight = dropLeft + dropWidth <= viewPortRight,
+                aboveNow = $dropdown.hasClass("select2-drop-above"),
+                bodyOffset,
+                above,
+                changeDirection,
+                css,
+                resultsListNode;
+
+            // always prefer the current above/below alignment, unless there is not enough room
+            if (aboveNow) {
+                above = true;
+                if (!enoughRoomAbove && enoughRoomBelow) {
+                    changeDirection = true;
+                    above = false;
+                }
+            } else {
+                above = false;
+                if (!enoughRoomBelow && enoughRoomAbove) {
+                    changeDirection = true;
+                    above = true;
+                }
+            }
+
+            //if we are changing direction we need to get positions when dropdown is hidden;
+            if (changeDirection) {
+                $dropdown.hide();
+                offset = this.container.offset();
+                height = this.container.outerHeight(false);
+                width = this.container.outerWidth(false);
+                dropHeight = $dropdown.outerHeight(false);
+                viewPortRight = $window.scrollLeft() + windowWidth;
+                viewportBottom = $window.scrollTop() + windowHeight;
+                dropTop = offset.top + height;
+                dropLeft = offset.left;
+                dropWidth = $dropdown.outerWidth(false);
+                enoughRoomOnRight = dropLeft + dropWidth <= viewPortRight;
+                $dropdown.show();
+            }
+
+            if (this.opts.dropdownAutoWidth) {
+                resultsListNode = $('.select2-results', $dropdown)[0];
+                $dropdown.addClass('select2-drop-auto-width');
+                $dropdown.css('width', '');
+                // Add scrollbar width to dropdown if vertical scrollbar is present
+                dropWidth = $dropdown.outerWidth(false) + (resultsListNode.scrollHeight === resultsListNode.clientHeight ? 0 : scrollBarDimensions.width);
+                dropWidth > width ? width = dropWidth : dropWidth = width;
+                enoughRoomOnRight = dropLeft + dropWidth <= viewPortRight;
+            }
+            else {
+                this.container.removeClass('select2-drop-auto-width');
+            }
+
+            //console.log("below/ droptop:", dropTop, "dropHeight", dropHeight, "sum", (dropTop+dropHeight)+" viewport bottom", viewportBottom, "enough?", enoughRoomBelow);
+            //console.log("above/ offset.top", offset.top, "dropHeight", dropHeight, "top", (offset.top-dropHeight), "scrollTop", this.body().scrollTop(), "enough?", enoughRoomAbove);
+
+            // fix positioning when body has an offset and is not position: static
+            if (this.body().css('position') !== 'static') {
+                bodyOffset = this.body().offset();
+                dropTop -= bodyOffset.top;
+                dropLeft -= bodyOffset.left;
+            }
+
+            if (!enoughRoomOnRight) {
+               dropLeft = offset.left + width - dropWidth;
+            }
+
+            css =  {
+                left: dropLeft,
+                width: width
+            };
+
+            if (above) {
+                css.bottom = windowHeight - offset.top;
+                css.top = 'auto';
+                this.container.addClass("select2-drop-above");
+                $dropdown.addClass("select2-drop-above");
+            }
+            else {
+                css.top = dropTop;
+                css.bottom = 'auto';
+                this.container.removeClass("select2-drop-above");
+                $dropdown.removeClass("select2-drop-above");
+            }
+            css = $.extend(css, evaluate(this.opts.dropdownCss));
+
+            $dropdown.css(css);
+        },
+
+        // abstract
+        shouldOpen: function() {
+            var event;
+
+            if (this.opened()) return false;
+
+            if (this._enabled === false || this._readonly === true) return false;
+
+            event = $.Event("select2-opening");
+            this.opts.element.trigger(event);
+            return !event.isDefaultPrevented();
+        },
+
+        // abstract
+        clearDropdownAlignmentPreference: function() {
+            // clear the classes used to figure out the preference of where the dropdown should be opened
+            this.container.removeClass("select2-drop-above");
+            this.dropdown.removeClass("select2-drop-above");
+        },
+
+        /**
+         * Opens the dropdown
+         *
+         * @return {Boolean} whether or not dropdown was opened. This method will return false if, for example,
+         * the dropdown is already open, or if the 'open' event listener on the element called preventDefault().
+         */
+        // abstract
+        open: function () {
+
+            if (!this.shouldOpen()) return false;
+
+            this.opening();
+
+            return true;
+        },
+
+        /**
+         * Performs the opening of the dropdown
+         */
+        // abstract
+        opening: function() {
+            var cid = this.containerId,
+                scroll = "scroll." + cid,
+                resize = "resize."+cid,
+                orient = "orientationchange."+cid,
+                mask;
+
+            this.container.addClass("select2-dropdown-open").addClass("select2-container-active");
+
+            this.clearDropdownAlignmentPreference();
+
+            if(this.dropdown[0] !== this.body().children().last()[0]) {
+                this.dropdown.detach().appendTo(this.body());
+            }
+
+            // create the dropdown mask if doesnt already exist
+            mask = $("#select2-drop-mask");
+            if (mask.length == 0) {
+                mask = $(document.createElement("div"));
+                mask.attr("id","select2-drop-mask").attr("class","select2-drop-mask");
+                mask.hide();
+                mask.appendTo(this.body());
+                mask.on("mousedown touchstart click", function (e) {
+                    var dropdown = $("#select2-drop"), self;
+                    if (dropdown.length > 0) {
+                        self=dropdown.data("select2");
+                        if (self.opts.selectOnBlur) {
+                            self.selectHighlighted({noFocus: true});
+                        }
+                        self.close({focus:true});
+                        e.preventDefault();
+                        e.stopPropagation();
+                    }
+                });
+            }
+
+            // ensure the mask is always right before the dropdown
+            if (this.dropdown.prev()[0] !== mask[0]) {
+                this.dropdown.before(mask);
+            }
+
+            // move the global id to the correct dropdown
+            $("#select2-drop").removeAttr("id");
+            this.dropdown.attr("id", "select2-drop");
+
+            // show the elements
+            mask.show();
+
+            this.positionDropdown();
+            this.dropdown.show();
+            this.positionDropdown();
+
+            this.dropdown.addClass("select2-drop-active");
+
+            // attach listeners to events that can change the position of the container and thus require
+            // the position of the dropdown to be updated as well so it does not come unglued from the container
+            var that = this;
+            this.container.parents().add(window).each(function () {
+                $(this).on(resize+" "+scroll+" "+orient, function (e) {
+                    that.positionDropdown();
+                });
+            });
+
+
+        },
+
+        // abstract
+        close: function () {
+            if (!this.opened()) return;
+
+            var cid = this.containerId,
+                scroll = "scroll." + cid,
+                resize = "resize."+cid,
+                orient = "orientationchange."+cid;
+
+            // unbind event listeners
+            this.container.parents().add(window).each(function () { $(this).off(scroll).off(resize).off(orient); });
+
+            this.clearDropdownAlignmentPreference();
+
+            $("#select2-drop-mask").hide();
+            this.dropdown.removeAttr("id"); // only the active dropdown has the select2-drop id
+            this.dropdown.hide();
+            this.container.removeClass("select2-dropdown-open").removeClass("select2-container-active");
+            this.results.empty();
+
+
+            this.clearSearch();
+            this.search.removeClass("select2-active");
+            this.opts.element.trigger($.Event("select2-close"));
+        },
+
+        /**
+         * Opens control, sets input value, and updates results.
+         */
+        // abstract
+        externalSearch: function (term) {
+            this.open();
+            this.search.val(term);
+            this.updateResults(false);
+        },
+
+        // abstract
+        clearSearch: function () {
+
+        },
+
+        //abstract
+        getMaximumSelectionSize: function() {
+            return evaluate(this.opts.maximumSelectionSize);
+        },
+
+        // abstract
+        ensureHighlightVisible: function () {
+            var results = this.results, children, index, child, hb, rb, y, more;
+
+            index = this.highlight();
+
+            if (index < 0) return;
+
+            if (index == 0) {
+
+                // if the first element is highlighted scroll all the way to the top,
+                // that way any unselectable headers above it will also be scrolled
+                // into view
+
+                results.scrollTop(0);
+                return;
+            }
+
+            children = this.findHighlightableChoices().find('.select2-result-label');
+
+            child = $(children[index]);
+
+            hb = child.offset().top + child.outerHeight(true);
+
+            // if this is the last child lets also make sure select2-more-results is visible
+            if (index === children.length - 1) {
+                more = results.find("li.select2-more-results");
+                if (more.length > 0) {
+                    hb = more.offset().top + more.outerHeight(true);
+                }
+            }
+
+            rb = results.offset().top + results.outerHeight(true);
+            if (hb > rb) {
+                results.scrollTop(results.scrollTop() + (hb - rb));
+            }
+            y = child.offset().top - results.offset().top;
+
+            // make sure the top of the element is visible
+            if (y < 0 && child.css('display') != 'none' ) {
+                results.scrollTop(results.scrollTop() + y); // y is negative
+            }
+        },
+
+        // abstract
+        findHighlightableChoices: function() {
+            return this.results.find(".select2-result-selectable:not(.select2-disabled, .select2-selected)");
+        },
+
+        // abstract
+        moveHighlight: function (delta) {
+            var choices = this.findHighlightableChoices(),
+                index = this.highlight();
+
+            while (index > -1 && index < choices.length) {
+                index += delta;
+                var choice = $(choices[index]);
+                if (choice.hasClass("select2-result-selectable") && !choice.hasClass("select2-disabled") && !choice.hasClass("select2-selected")) {
+                    this.highlight(index);
+                    break;
+                }
+            }
+        },
+
+        // abstract
+        highlight: function (index) {
+            var choices = this.findHighlightableChoices(),
+                choice,
+                data;
+
+            if (arguments.length === 0) {
+                return indexOf(choices.filter(".select2-highlighted")[0], choices.get());
+            }
+
+            if (index >= choices.length) index = choices.length - 1;
+            if (index < 0) index = 0;
+
+            this.removeHighlight();
+
+            choice = $(choices[index]);
+            choice.addClass("select2-highlighted");
+
+            this.ensureHighlightVisible();
+
+            data = choice.data("select2-data");
+            if (data) {
+                this.opts.element.trigger({ type: "select2-highlight", val: this.id(data), choice: data });
+            }
+        },
+
+        removeHighlight: function() {
+            this.results.find(".select2-highlighted").removeClass("select2-highlighted");
+        },
+
+        // abstract
+        countSelectableResults: function() {
+            return this.findHighlightableChoices().length;
+        },
+
+        // abstract
+        highlightUnderEvent: function (event) {
+            var el = $(event.target).closest(".select2-result-selectable");
+            if (el.length > 0 && !el.is(".select2-highlighted")) {
+                var choices = this.findHighlightableChoices();
+                this.highlight(choices.index(el));
+            } else if (el.length == 0) {
+                // if we are over an unselectable item remove all highlights
+                this.removeHighlight();
+            }
+        },
+
+        // abstract
+        loadMoreIfNeeded: function () {
+            var results = this.results,
+                more = results.find("li.select2-more-results"),
+                below, // pixels the element is below the scroll fold, below==0 is when the element is starting to be visible
+                page = this.resultsPage + 1,
+                self=this,
+                term=this.search.val(),
+                context=this.context;
+
+            if (more.length === 0) return;
+            below = more.offset().top - results.offset().top - results.height();
+
+            if (below <= this.opts.loadMorePadding) {
+                more.addClass("select2-active");
+                this.opts.query({
+                        element: this.opts.element,
+                        term: term,
+                        page: page,
+                        context: context,
+                        matcher: this.opts.matcher,
+                        callback: this.bind(function (data) {
+
+                    // ignore a response if the select2 has been closed before it was received
+                    if (!self.opened()) return;
+
+
+                    self.opts.populateResults.call(this, results, data.results, {term: term, page: page, context:context});
+                    self.postprocessResults(data, false, false);
+
+                    if (data.more===true) {
+                        more.detach().appendTo(results).text(self.opts.formatLoadMore(page+1));
+                        window.setTimeout(function() { self.loadMoreIfNeeded(); }, 10);
+                    } else {
+                        more.remove();
+                    }
+                    self.positionDropdown();
+                    self.resultsPage = page;
+                    self.context = data.context;
+                    this.opts.element.trigger({ type: "select2-loaded", items: data });
+                })});
+            }
+        },
+
+        /**
+         * Default tokenizer function which does nothing
+         */
+        tokenize: function() {
+
+        },
+
+        /**
+         * @param initial whether or not this is the call to this method right after the dropdown has been opened
+         */
+        // abstract
+        updateResults: function (initial) {
+            var search = this.search,
+                results = this.results,
+                opts = this.opts,
+                data,
+                self = this,
+                input,
+                term = search.val(),
+                lastTerm = $.data(this.container, "select2-last-term"),
+                // sequence number used to drop out-of-order responses
+                queryNumber;
+
+            // prevent duplicate queries against the same term
+            if (initial !== true && lastTerm && equal(term, lastTerm)) return;
+
+            $.data(this.container, "select2-last-term", term);
+
+            // if the search is currently hidden we do not alter the results
+            if (initial !== true && (this.showSearchInput === false || !this.opened())) {
+                return;
+            }
+
+            function postRender() {
+                search.removeClass("select2-active");
+                self.positionDropdown();
+            }
+
+            function render(html) {
+                results.html(html);
+                postRender();
+            }
+
+            queryNumber = ++this.queryCount;
+
+            var maxSelSize = this.getMaximumSelectionSize();
+            if (maxSelSize >=1) {
+                data = this.data();
+                if ($.isArray(data) && data.length >= maxSelSize && checkFormatter(opts.formatSelectionTooBig, "formatSelectionTooBig")) {
+                    render("<li class='select2-selection-limit'>" + opts.formatSelectionTooBig(maxSelSize) + "</li>");
+                    return;
+                }
+            }
+
+            if (search.val().length < opts.minimumInputLength) {
+                if (checkFormatter(opts.formatInputTooShort, "formatInputTooShort")) {
+                    render("<li class='select2-no-results'>" + opts.formatInputTooShort(search.val(), opts.minimumInputLength) + "</li>");
+                } else {
+                    render("");
+                }
+                if (initial && this.showSearch) this.showSearch(true);
+                return;
+            }
+
+            if (opts.maximumInputLength && search.val().length > opts.maximumInputLength) {
+                if (checkFormatter(opts.formatInputTooLong, "formatInputTooLong")) {
+                    render("<li class='select2-no-results'>" + opts.formatInputTooLong(search.val(), opts.maximumInputLength) + "</li>");
+                } else {
+                    render("");
+                }
+                return;
+            }
+
+            if (opts.formatSearching && this.findHighlightableChoices().length === 0) {
+                render("<li class='select2-searching'>" + opts.formatSearching() + "</li>");
+            }
+
+            search.addClass("select2-active");
+
+            this.removeHighlight();
+
+            // give the tokenizer a chance to pre-process the input
+            input = this.tokenize();
+            if (input != undefined && input != null) {
+                search.val(input);
+            }
+
+            this.resultsPage = 1;
+
+            opts.query({
+                element: opts.element,
+                    term: search.val(),
+                    page: this.resultsPage,
+                    context: null,
+                    matcher: opts.matcher,
+                    callback: this.bind(function (data) {
+                var def; // default choice
+
+                // ignore old responses
+                if (queryNumber != this.queryCount) {
+                  return;
+                }
+
+                // ignore a response if the select2 has been closed before it was received
+                if (!this.opened()) {
+                    this.search.removeClass("select2-active");
+                    return;
+                }
+
+                // save context, if any
+                this.context = (data.context===undefined) ? null : data.context;
+                // create a default choice and prepend it to the list
+                if (this.opts.createSearchChoice && search.val() !== "") {
+                    def = this.opts.createSearchChoice.call(self, search.val(), data.results);
+                    if (def !== undefined && def !== null && self.id(def) !== undefined && self.id(def) !== null) {
+                        if ($(data.results).filter(
+                            function () {
+                                return equal(self.id(this), self.id(def));
+                            }).length === 0) {
+                            data.results.unshift(def);
+                        }
+                    }
+                }
+
+                if (data.results.length === 0 && checkFormatter(opts.formatNoMatches, "formatNoMatches")) {
+                    render("<li class='select2-no-results'>" + opts.formatNoMatches(search.val()) + "</li>");
+                    return;
+                }
+
+                results.empty();
+                self.opts.populateResults.call(this, results, data.results, {term: search.val(), page: this.resultsPage, context:null});
+
+                if (data.more === true && checkFormatter(opts.formatLoadMore, "formatLoadMore")) {
+                    results.append("<li class='select2-more-results'>" + self.opts.escapeMarkup(opts.formatLoadMore(this.resultsPage)) + "</li>");
+                    window.setTimeout(function() { self.loadMoreIfNeeded(); }, 10);
+                }
+
+                this.postprocessResults(data, initial);
+
+                postRender();
+
+                this.opts.element.trigger({ type: "select2-loaded", items: data });
+            })});
+        },
+
+        // abstract
+        cancel: function () {
+            this.close();
+        },
+
+        // abstract
+        blur: function () {
+            // if selectOnBlur == true, select the currently highlighted option
+            if (this.opts.selectOnBlur)
+                this.selectHighlighted({noFocus: true});
+
+            this.close();
+            this.container.removeClass("select2-container-active");
+            // synonymous to .is(':focus'), which is available in jquery >= 1.6
+            if (this.search[0] === document.activeElement) { this.search.blur(); }
+            this.clearSearch();
+            this.selection.find(".select2-search-choice-focus").removeClass("select2-search-choice-focus");
+        },
+
+        // abstract
+        focusSearch: function () {
+            focus(this.search);
+        },
+
+        // abstract
+        selectHighlighted: function (options) {
+            var index=this.highlight(),
+                highlighted=this.results.find(".select2-highlighted"),
+                data = highlighted.closest('.select2-result').data("select2-data");
+
+            if (data) {
+                this.highlight(index);
+                this.onSelect(data, options);
+            } else if (options && options.noFocus) {
+                this.close();
+            }
+        },
+
+        // abstract
+        getPlaceholder: function () {
+            var placeholderOption;
+            return this.opts.element.attr("placeholder") ||
+                this.opts.element.attr("data-placeholder") || // jquery 1.4 compat
+                this.opts.element.data("placeholder") ||
+                this.opts.placeholder ||
+                ((placeholderOption = this.getPlaceholderOption()) !== undefined ? placeholderOption.text() : undefined);
+        },
+
+        // abstract
+        getPlaceholderOption: function() {
+            if (this.select) {
+                var firstOption = this.select.children('option').first();
+                if (this.opts.placeholderOption !== undefined ) {
+                    //Determine the placeholder option based on the specified placeholderOption setting
+                    return (this.opts.placeholderOption === "first" && firstOption) ||
+                           (typeof this.opts.placeholderOption === "function" && this.opts.placeholderOption(this.select));
+                } else if (firstOption.text() === "" && firstOption.val() === "") {
+                    //No explicit placeholder option specified, use the first if it's blank
+                    return firstOption;
+                }
+            }
+        },
+
+        /**
+         * Get the desired width for the container element.  This is
+         * derived first from option `width` passed to select2, then
+         * the inline 'style' on the original element, and finally
+         * falls back to the jQuery calculated element width.
+         */
+        // abstract
+        initContainerWidth: function () {
+            function resolveContainerWidth() {
+                var style, attrs, matches, i, l, attr;
+
+                if (this.opts.width === "off") {
+                    return null;
+                } else if (this.opts.width === "element"){
+                    return this.opts.element.outerWidth(false) === 0 ? 'auto' : this.opts.element.outerWidth(false) + 'px';
+                } else if (this.opts.width === "copy" || this.opts.width === "resolve") {
+                    // check if there is inline style on the element that contains width
+                    style = this.opts.element.attr('style');
+                    if (style !== undefined) {
+                        attrs = style.split(';');
+                        for (i = 0, l = attrs.length; i < l; i = i + 1) {
+                            attr = attrs[i].replace(/\s/g, '');
+                            matches = attr.match(/^width:(([-+]?([0-9]*\.)?[0-9]+)(px|em|ex|%|in|cm|mm|pt|pc))/i);
+                            if (matches !== null && matches.length >= 1)
+                                return matches[1];
+                        }
+                    }
+
+                    if (this.opts.width === "resolve") {
+                        // next check if css('width') can resolve a width that is percent based, this is sometimes possible
+                        // when attached to input type=hidden or elements hidden via css
+                        style = this.opts.element.css('width');
+                        if (style.indexOf("%") > 0) return style;
+
+                        // finally, fallback on the calculated width of the element
+                        return (this.opts.element.outerWidth(false) === 0 ? 'auto' : this.opts.element.outerWidth(false) + 'px');
+                    }
+
+                    return null;
+                } else if ($.isFunction(this.opts.width)) {
+                    return this.opts.width();
+                } else {
+                    return this.opts.width;
+               }
+            };
+
+            var width = resolveContainerWidth.call(this);
+            if (width !== null) {
+                this.container.css("width", width);
+            }
+        }
+    });
+
+    SingleSelect2 = clazz(AbstractSelect2, {
+
+        // single
+
+        createContainer: function () {
+            var container = $(document.createElement("div")).attr({
+                "class": "select2-container"
+            }).html([
+                "<a href='javascript:void(0)' onclick='return false;' class='select2-choice' tabindex='-1'>",
+                "   <span class='select2-chosen'>&nbsp;</span><abbr class='select2-search-choice-close'></abbr>",
+                "   <span class='select2-arrow'><b></b></span>",
+                "</a>",
+                "<input class='select2-focusser select2-offscreen' type='text'/>",
+                "<div class='select2-drop select2-display-none'>",
+                "   <div class='select2-search'>",
+                "       <input type='text' autocomplete='off' autocorrect='off' autocapitalize='off' spellcheck='false' class='select2-input'/>",
+                "   </div>",
+                "   <ul class='select2-results'>",
+                "   </ul>",
+                "</div>"].join(""));
+            return container;
+        },
+
+        // single
+        enableInterface: function() {
+            if (this.parent.enableInterface.apply(this, arguments)) {
+                this.focusser.prop("disabled", !this.isInterfaceEnabled());
+            }
+        },
+
+        // single
+        opening: function () {
+            var el, range, len;
+
+            if (this.opts.minimumResultsForSearch >= 0) {
+                this.showSearch(true);
+            }
+
+            this.parent.opening.apply(this, arguments);
+
+            if (this.showSearchInput !== false) {
+                // IE appends focusser.val() at the end of field :/ so we manually insert it at the beginning using a range
+                // all other browsers handle this just fine
+
+                this.search.val(this.focusser.val());
+            }
+            this.search.focus();
+            // move the cursor to the end after focussing, otherwise it will be at the beginning and
+            // new text will appear *before* focusser.val()
+            el = this.search.get(0);
+            if (el.createTextRange) {
+                range = el.createTextRange();
+                range.collapse(false);
+                range.select();
+            } else if (el.setSelectionRange) {
+                len = this.search.val().length;
+                el.setSelectionRange(len, len);
+            }
+
+            // initializes search's value with nextSearchTerm (if defined by user)
+            // ignore nextSearchTerm if the dropdown is opened by the user pressing a letter
+            if(this.search.val() === "") {
+                if(this.nextSearchTerm != undefined){
+                    this.search.val(this.nextSearchTerm);
+                    this.search.select();
+                }
+            }
+
+            this.focusser.prop("disabled", true).val("");
+            this.updateResults(true);
+            this.opts.element.trigger($.Event("select2-open"));
+        },
+
+        // single
+        close: function (params) {
+            if (!this.opened()) return;
+            this.parent.close.apply(this, arguments);
+
+            params = params || {focus: true};
+            this.focusser.removeAttr("disabled");
+
+            if (params.focus) {
+                this.focusser.focus();
+            }
+        },
+
+        // single
+        focus: function () {
+            if (this.opened()) {
+                this.close();
+            } else {
+                this.focusser.removeAttr("disabled");
+                this.focusser.focus();
+            }
+        },
+
+        // single
+        isFocused: function () {
+            return this.container.hasClass("select2-container-active");
+        },
+
+        // single
+        cancel: function () {
+            this.parent.cancel.apply(this, arguments);
+            this.focusser.removeAttr("disabled");
+            this.focusser.focus();
+        },
+
+        // single
+        destroy: function() {
+            $("label[for='" + this.focusser.attr('id') + "']")
+                .attr('for', this.opts.element.attr("id"));
+            this.parent.destroy.apply(this, arguments);
+        },
+
+        // single
+        initContainer: function () {
+
+            var selection,
+                container = this.container,
+                dropdown = this.dropdown;
+
+            if (this.opts.minimumResultsForSearch < 0) {
+                this.showSearch(false);
+            } else {
+                this.showSearch(true);
+            }
+
+            this.selection = selection = container.find(".select2-choice");
+
+            this.focusser = container.find(".select2-focusser");
+
+            // rewrite labels from original element to focusser
+            this.focusser.attr("id", "s2id_autogen"+nextUid());
+
+            $("label[for='" + this.opts.element.attr("id") + "']")
+                .attr('for', this.focusser.attr('id'));
+
+            this.focusser.attr("tabindex", this.elementTabIndex);
+
+            this.search.on("keydown", this.bind(function (e) {
+                if (!this.isInterfaceEnabled()) return;
+
+                if (e.which === KEY.PAGE_UP || e.which === KEY.PAGE_DOWN) {
+                    // prevent the page from scrolling
+                    killEvent(e);
+                    return;
+                }
+
+                switch (e.which) {
+                    case KEY.UP:
+                    case KEY.DOWN:
+                        this.moveHighlight((e.which === KEY.UP) ? -1 : 1);
+                        killEvent(e);
+                        return;
+                    case KEY.ENTER:
+                        this.selectHighlighted();
+                        killEvent(e);
+                        return;
+                    case KEY.TAB:
+                        this.selectHighlighted({noFocus: true});
+                        return;
+                    case KEY.ESC:
+                        this.cancel(e);
+                        killEvent(e);
+                        return;
+                }
+            }));
+
+            this.search.on("blur", this.bind(function(e) {
+                // a workaround for chrome to keep the search field focussed when the scroll bar is used to scroll the dropdown.
+                // without this the search field loses focus which is annoying
+                if (document.activeElement === this.body().get(0)) {
+                    window.setTimeout(this.bind(function() {
+                        this.search.focus();
+                    }), 0);
+                }
+            }));
+
+            this.focusser.on("keydown", this.bind(function (e) {
+                if (!this.isInterfaceEnabled()) return;
+
+                if (e.which === KEY.TAB || KEY.isControl(e) || KEY.isFunctionKey(e) || e.which === KEY.ESC) {
+                    return;
+                }
+
+                if (this.opts.openOnEnter === false && e.which === KEY.ENTER) {
+                    killEvent(e);
+                    return;
+                }
+
+                if (e.which == KEY.DOWN || e.which == KEY.UP
+                    || (e.which == KEY.ENTER && this.opts.openOnEnter)) {
+
+                    if (e.altKey || e.ctrlKey || e.shiftKey || e.metaKey) return;
+
+                    this.open();
+                    killEvent(e);
+                    return;
+                }
+
+                if (e.which == KEY.DELETE || e.which == KEY.BACKSPACE) {
+                    if (this.opts.allowClear) {
+                        this.clear();
+                    }
+                    killEvent(e);
+                    return;
+                }
+            }));
+
+
+            installKeyUpChangeEvent(this.focusser);
+            this.focusser.on("keyup-change input", this.bind(function(e) {
+                if (this.opts.minimumResultsForSearch >= 0) {
+                    e.stopPropagation();
+                    if (this.opened()) return;
+                    this.open();
+                }
+            }));
+
+            selection.on("mousedown", "abbr", this.bind(function (e) {
+                if (!this.isInterfaceEnabled()) return;
+                this.clear();
+                killEventImmediately(e);
+                this.close();
+                this.selection.focus();
+            }));
+
+            selection.on("mousedown", this.bind(function (e) {
+
+                if (!this.container.hasClass("select2-container-active")) {
+                    this.opts.element.trigger($.Event("select2-focus"));
+                }
+
+                if (this.opened()) {
+                    this.close();
+                } else if (this.isInterfaceEnabled()) {
+                    this.open();
+                }
+
+                killEvent(e);
+            }));
+
+            dropdown.on("mousedown", this.bind(function() { this.search.focus(); }));
+
+            selection.on("focus", this.bind(function(e) {
+                killEvent(e);
+            }));
+
+            this.focusser.on("focus", this.bind(function(){
+                if (!this.container.hasClass("select2-container-active")) {
+                    this.opts.element.trigger($.Event("select2-focus"));
+                }
+                this.container.addClass("select2-container-active");
+            })).on("blur", this.bind(function() {
+                if (!this.opened()) {
+                    this.container.removeClass("select2-container-active");
+                    this.opts.element.trigger($.Event("select2-blur"));
+                }
+            }));
+            this.search.on("focus", this.bind(function(){
+                if (!this.container.hasClass("select2-container-active")) {
+                    this.opts.element.trigger($.Event("select2-focus"));
+                }
+                this.container.addClass("select2-container-active");
+            }));
+
+            this.initContainerWidth();
+            this.opts.element.addClass("select2-offscreen");
+            this.setPlaceholder();
+
+        },
+
+        // single
+        clear: function(triggerChange) {
+            var data=this.selection.data("select2-data");
+            if (data) { // guard against queued quick consecutive clicks
+                var evt = $.Event("select2-clearing");
+                this.opts.element.trigger(evt);
+                if (evt.isDefaultPrevented()) {
+                    return;
+                }
+                var placeholderOption = this.getPlaceholderOption();
+                this.opts.element.val(placeholderOption ? placeholderOption.val() : "");
+                this.selection.find(".select2-chosen").empty();
+                this.selection.removeData("select2-data");
+                this.setPlaceholder();
+
+                if (triggerChange !== false){
+                    this.opts.element.trigger({ type: "select2-removed", val: this.id(data), choice: data });
+                    this.triggerChange({removed:data});
+                }
+            }
+        },
+
+        /**
+         * Sets selection based on source element's value
+         */
+        // single
+        initSelection: function () {
+            var selected;
+            if (this.isPlaceholderOptionSelected()) {
+                this.updateSelection(null);
+                this.close();
+                this.setPlaceholder();
+            } else {
+                var self = this;
+                this.opts.initSelection.call(null, this.opts.element, function(selected){
+                    if (selected !== undefined && selected !== null) {
+                        self.updateSelection(selected);
+                        self.close();
+                        self.setPlaceholder();
+                    }
+                });
+            }
+        },
+
+        isPlaceholderOptionSelected: function() {
+            var placeholderOption;
+            if (!this.getPlaceholder()) return false; // no placeholder specified so no option should be considered
+            return ((placeholderOption = this.getPlaceholderOption()) !== undefined && placeholderOption.prop("selected"))
+                || (this.opts.element.val() === "")
+                || (this.opts.element.val() === undefined)
+                || (this.opts.element.val() === null);
+        },
+
+        // single
+        prepareOpts: function () {
+            var opts = this.parent.prepareOpts.apply(this, arguments),
+                self=this;
+
+            if (opts.element.get(0).tagName.toLowerCase() === "select") {
+                // install the selection initializer
+                opts.initSelection = function (element, callback) {
+                    var selected = element.find("option").filter(function() { return this.selected });
+                    // a single select box always has a value, no need to null check 'selected'
+                    callback(self.optionToData(selected));
+                };
+            } else if ("data" in opts) {
+                // install default initSelection when applied to hidden input and data is local
+                opts.initSelection = opts.initSelection || function (element, callback) {
+                    var id = element.val();
+                    //search in data by id, storing the actual matching item
+                    var match = null;
+                    opts.query({
+                        matcher: function(term, text, el){
+                            var is_match = equal(id, opts.id(el));
+                            if (is_match) {
+                                match = el;
+                            }
+                            return is_match;
+                        },
+                        callback: !$.isFunction(callback) ? $.noop : function() {
+                            callback(match);
+                        }
+                    });
+                };
+            }
+
+            return opts;
+        },
+
+        // single
+        getPlaceholder: function() {
+            // if a placeholder is specified on a single select without a valid placeholder option ignore it
+            if (this.select) {
+                if (this.getPlaceholderOption() === undefined) {
+                    return undefined;
+                }
+            }
+
+            return this.parent.getPlaceholder.apply(this, arguments);
+        },
+
+        // single
+        setPlaceholder: function () {
+            var placeholder = this.getPlaceholder();
+
+            if (this.isPlaceholderOptionSelected() && placeholder !== undefined) {
+
+                // check for a placeholder option if attached to a select
+                if (this.select && this.getPlaceholderOption() === undefined) return;
+
+                this.selection.find(".select2-chosen").html(this.opts.escapeMarkup(placeholder));
+
+                this.selection.addClass("select2-default");
+
+                this.container.removeClass("select2-allowclear");
+            }
+        },
+
+        // single
+        postprocessResults: function (data, initial, noHighlightUpdate) {
+            var selected = 0, self = this, showSearchInput = true;
+
+            // find the selected element in the result list
+
+            this.findHighlightableChoices().each2(function (i, elm) {
+                if (equal(self.id(elm.data("select2-data")), self.opts.element.val())) {
+                    selected = i;
+                    return false;
+                }
+            });
+
+            // and highlight it
+            if (noHighlightUpdate !== false) {
+                if (initial === true && selected >= 0) {
+                    this.highlight(selected);
+                } else {
+                    this.highlight(0);
+                }
+            }
+
+            // hide the search box if this is the first we got the results and there are enough of them for search
+
+            if (initial === true) {
+                var min = this.opts.minimumResultsForSearch;
+                if (min >= 0) {
+                    this.showSearch(countResults(data.results) >= min);
+                }
+            }
+        },
+
+        // single
+        showSearch: function(showSearchInput) {
+            if (this.showSearchInput === showSearchInput) return;
+
+            this.showSearchInput = showSearchInput;
+
+            this.dropdown.find(".select2-search").toggleClass("select2-search-hidden", !showSearchInput);
+            this.dropdown.find(".select2-search").toggleClass("select2-offscreen", !showSearchInput);
+            //add "select2-with-searchbox" to the container if search box is shown
+            $(this.dropdown, this.container).toggleClass("select2-with-searchbox", showSearchInput);
+        },
+
+        // single
+        onSelect: function (data, options) {
+
+            if (!this.triggerSelect(data)) { return; }
+
+            var old = this.opts.element.val(),
+                oldData = this.data();
+
+            this.opts.element.val(this.id(data));
+            this.updateSelection(data);
+
+            this.opts.element.trigger({ type: "select2-selected", val: this.id(data), choice: data });
+
+            this.nextSearchTerm = this.opts.nextSearchTerm(data, this.search.val());
+            this.close();
+
+            if (!options || !options.noFocus)
+                this.focusser.focus();
+
+            if (!equal(old, this.id(data))) { this.triggerChange({added:data,removed:oldData}); }
+        },
+
+        // single
+        updateSelection: function (data) {
+
+            var container=this.selection.find(".select2-chosen"), formatted, cssClass;
+
+            this.selection.data("select2-data", data);
+
+            container.empty();
+            if (data !== null) {
+                formatted=this.opts.formatSelection(data, container, this.opts.escapeMarkup);
+            }
+            if (formatted !== undefined) {
+                container.append(formatted);
+            }
+            cssClass=this.opts.formatSelectionCssClass(data, container);
+            if (cssClass !== undefined) {
+                container.addClass(cssClass);
+            }
+
+            this.selection.removeClass("select2-default");
+
+            if (this.opts.allowClear && this.getPlaceholder() !== undefined) {
+                this.container.addClass("select2-allowclear");
+            }
+        },
+
+        // single
+        val: function () {
+            var val,
+                triggerChange = false,
+                data = null,
+                self = this,
+                oldData = this.data();
+
+            if (arguments.length === 0) {
+                return this.opts.element.val();
+            }
+
+            val = arguments[0];
+
+            if (arguments.length > 1) {
+                triggerChange = arguments[1];
+            }
+
+            if (this.select) {
+                this.select
+                    .val(val)
+                    .find("option").filter(function() { return this.selected }).each2(function (i, elm) {
+                        data = self.optionToData(elm);
+                        return false;
+                    });
+                this.updateSelection(data);
+                this.setPlaceholder();
+                if (triggerChange) {
+                    this.triggerChange({added: data, removed:oldData});
+                }
+            } else {
+                // val is an id. !val is true for [undefined,null,'',0] - 0 is legal
+                if (!val && val !== 0) {
+                    this.clear(triggerChange);
+                    return;
+                }
+                if (this.opts.initSelection === undefined) {
+                    throw new Error("cannot call val() if initSelection() is not defined");
+                }
+                this.opts.element.val(val);
+                this.opts.initSelection(this.opts.element, function(data){
+                    self.opts.element.val(!data ? "" : self.id(data));
+                    self.updateSelection(data);
+                    self.setPlaceholder();
+                    if (triggerChange) {
+                        self.triggerChange({added: data, removed:oldData});
+                    }
+                });
+            }
+        },
+
+        // single
+        clearSearch: function () {
+            this.search.val("");
+            this.focusser.val("");
+        },
+
+        // single
+        data: function(value) {
+            var data,
+                triggerChange = false;
+
+            if (arguments.length === 0) {
+                data = this.selection.data("select2-data");
+                if (data == undefined) data = null;
+                return data;
+            } else {
+                if (arguments.length > 1) {
+                    triggerChange = arguments[1];
+                }
+                if (!value) {
+                    this.clear(triggerChange);
+                } else {
+                    data = this.data();
+                    this.opts.element.val(!value ? "" : this.id(value));
+                    this.updateSelection(value);
+                    if (triggerChange) {
+                        this.triggerChange({added: value, removed:data});
+                    }
+                }
+            }
+        }
+    });
+
+    MultiSelect2 = clazz(AbstractSelect2, {
+
+        // multi
+        createContainer: function () {
+            var container = $(document.createElement("div")).attr({
+                "class": "select2-container select2-container-multi"
+            }).html([
+                "<ul class='select2-choices'>",
+                "  <li class='select2-search-field'>",
+                "    <input type='text' autocomplete='off' autocorrect='off' autocapitalize='off' spellcheck='false' class='select2-input'>",
+                "  </li>",
+                "</ul>",
+                "<div class='select2-drop select2-drop-multi select2-display-none'>",
+                "   <ul class='select2-results'>",
+                "   </ul>",
+                "</div>"].join(""));
+            return container;
+        },
+
+        // multi
+        prepareOpts: function () {
+            var opts = this.parent.prepareOpts.apply(this, arguments),
+                self=this;
+
+            // TODO validate placeholder is a string if specified
+
+            if (opts.element.get(0).tagName.toLowerCase() === "select") {
+                // install sthe selection initializer
+                opts.initSelection = function (element, callback) {
+
+                    var data = [];
+
+                    element.find("option").filter(function() { return this.selected }).each2(function (i, elm) {
+                        data.push(self.optionToData(elm));
+                    });
+                    callback(data);
+                };
+            } else if ("data" in opts) {
+                // install default initSelection when applied to hidden input and data is local
+                opts.initSelection = opts.initSelection || function (element, callback) {
+                    var ids = splitVal(element.val(), opts.separator);
+                    //search in data by array of ids, storing matching items in a list
+                    var matches = [];
+                    opts.query({
+                        matcher: function(term, text, el){
+                            var is_match = $.grep(ids, function(id) {
+                                return equal(id, opts.id(el));
+                            }).length;
+                            if (is_match) {
+                                matches.push(el);
+                            }
+                            return is_match;
+                        },
+                        callback: !$.isFunction(callback) ? $.noop : function() {
+                            // reorder matches based on the order they appear in the ids array because right now
+                            // they are in the order in which they appear in data array
+                            var ordered = [];
+                            for (var i = 0; i < ids.length; i++) {
+                                var id = ids[i];
+                                for (var j = 0; j < matches.length; j++) {
+                                    var match = matches[j];
+                                    if (equal(id, opts.id(match))) {
+                                        ordered.push(match);
+                                        matches.splice(j, 1);
+                                        break;
+                                    }
+                                }
+                            }
+                            callback(ordered);
+                        }
+                    });
+                };
+            }
+
+            return opts;
+        },
+
+        // multi
+        selectChoice: function (choice) {
+
+            var selected = this.container.find(".select2-search-choice-focus");
+            if (selected.length && choice && choice[0] == selected[0]) {
+
+            } else {
+                if (selected.length) {
+                    this.opts.element.trigger("choice-deselected", selected);
+                }
+                selected.removeClass("select2-search-choice-focus");
+                if (choice && choice.length) {
+                    this.close();
+                    choice.addClass("select2-search-choice-focus");
+                    this.opts.element.trigger("choice-selected", choice);
+                }
+            }
+        },
+
+        // multi
+        destroy: function() {
+            $("label[for='" + this.search.attr('id') + "']")
+                .attr('for', this.opts.element.attr("id"));
+            this.parent.destroy.apply(this, arguments);
+        },
+
+        // multi
+        initContainer: function () {
+
+            var selector = ".select2-choices", selection;
+
+            this.searchContainer = this.container.find(".select2-search-field");
+            this.selection = selection = this.container.find(selector);
+
+            var _this = this;
+            this.selection.on("click", ".select2-search-choice:not(.select2-locked)", function (e) {
+                //killEvent(e);
+                _this.search[0].focus();
+                _this.selectChoice($(this));
+            });
+
+            // rewrite labels from original element to focusser
+            this.search.attr("id", "s2id_autogen"+nextUid());
+            $("label[for='" + this.opts.element.attr("id") + "']")
+                .attr('for', this.search.attr('id'));
+
+            this.search.on("input paste", this.bind(function() {
+                if (!this.isInterfaceEnabled()) return;
+                if (!this.opened()) {
+                    this.open();
+                }
+            }));
+
+            this.search.attr("tabindex", this.elementTabIndex);
+
+            this.keydowns = 0;
+            this.search.on("keydown", this.bind(function (e) {
+                if (!this.isInterfaceEnabled()) return;
+
+                ++this.keydowns;
+                var selected = selection.find(".select2-search-choice-focus");
+                var prev = selected.prev(".select2-search-choice:not(.select2-locked)");
+                var next = selected.next(".select2-search-choice:not(.select2-locked)");
+                var pos = getCursorInfo(this.search);
+
+                if (selected.length &&
+                    (e.which == KEY.LEFT || e.which == KEY.RIGHT || e.which == KEY.BACKSPACE || e.which == KEY.DELETE || e.which == KEY.ENTER)) {
+                    var selectedChoice = selected;
+                    if (e.which == KEY.LEFT && prev.length) {
+                        selectedChoice = prev;
+                    }
+                    else if (e.which == KEY.RIGHT) {
+                        selectedChoice = next.length ? next : null;
+                    }
+                    else if (e.which === KEY.BACKSPACE) {
+                        this.unselect(selected.first());
+                        this.search.width(10);
+                        selectedChoice = prev.length ? prev : next;
+                    } else if (e.which == KEY.DELETE) {
+                        this.unselect(selected.first());
+                        this.search.width(10);
+                        selectedChoice = next.length ? next : null;
+                    } else if (e.which == KEY.ENTER) {
+                        selectedChoice = null;
+                    }
+
+                    this.selectChoice(selectedChoice);
+                    killEvent(e);
+                    if (!selectedChoice || !selectedChoice.length) {
+                        this.open();
+                    }
+                    return;
+                } else if (((e.which === KEY.BACKSPACE && this.keydowns == 1)
+                    || e.which == KEY.LEFT) && (pos.offset == 0 && !pos.length)) {
+
+                    this.selectChoice(selection.find(".select2-search-choice:not(.select2-locked)").last());
+                    killEvent(e);
+                    return;
+                } else {
+                    this.selectChoice(null);
+                }
+
+                if (this.opened()) {
+                    switch (e.which) {
+                    case KEY.UP:
+                    case KEY.DOWN:
+                        this.moveHighlight((e.which === KEY.UP) ? -1 : 1);
+                        killEvent(e);
+                        return;
+                    case KEY.ENTER:
+                        this.selectHighlighted();
+                        killEvent(e);
+                        return;
+                    case KEY.TAB:
+                        this.selectHighlighted({noFocus:true});
+                        this.close();
+                        return;
+                    case KEY.ESC:
+                        this.cancel(e);
+                        killEvent(e);
+                        return;
+                    }
+                }
+
+                if (e.which === KEY.TAB || KEY.isControl(e) || KEY.isFunctionKey(e)
+                 || e.which === KEY.BACKSPACE || e.which === KEY.ESC) {
+                    return;
+                }
+
+                if (e.which === KEY.ENTER) {
+                    if (this.opts.openOnEnter === false) {
+                        return;
+                    } else if (e.altKey || e.ctrlKey || e.shiftKey || e.metaKey) {
+                        return;
+                    }
+                }
+
+                this.open();
+
+                if (e.which === KEY.PAGE_UP || e.which === KEY.PAGE_DOWN) {
+                    // prevent the page from scrolling
+                    killEvent(e);
+                }
+
+                if (e.which === KEY.ENTER) {
+                    // prevent form from being submitted
+                    killEvent(e);
+                }
+
+            }));
+
+            this.search.on("keyup", this.bind(function (e) {
+                this.keydowns = 0;
+                this.resizeSearch();
+            })
+            );
+
+            this.search.on("blur", this.bind(function(e) {
+                this.container.removeClass("select2-container-active");
+                this.search.removeClass("select2-focused");
+                this.selectChoice(null);
+                if (!this.opened()) this.clearSearch();
+                e.stopImmediatePropagation();
+                this.opts.element.trigger($.Event("select2-blur"));
+            }));
+
+            this.container.on("click", selector, this.bind(function (e) {
+                if (!this.isInterfaceEnabled()) return;
+                if ($(e.target).closest(".select2-search-choice").length > 0) {
+                    // clicked inside a select2 search choice, do not open
+                    return;
+                }
+                this.selectChoice(null);
+                this.clearPlaceholder();
+                if (!this.container.hasClass("select2-container-active")) {
+                    this.opts.element.trigger($.Event("select2-focus"));
+                }
+                this.open();
+                this.focusSearch();
+                e.preventDefault();
+            }));
+
+            this.container.on("focus", selector, this.bind(function () {
+                if (!this.isInterfaceEnabled()) return;
+                if (!this.container.hasClass("select2-container-active")) {
+                    this.opts.element.trigger($.Event("select2-focus"));
+                }
+                this.container.addClass("select2-container-active");
+                this.dropdown.addClass("select2-drop-active");
+                this.clearPlaceholder();
+            }));
+
+            this.initContainerWidth();
+            this.opts.element.addClass("select2-offscreen");
+
+            // set the placeholder if necessary
+            this.clearSearch();
+        },
+
+        // multi
+        enableInterface: function() {
+            if (this.parent.enableInterface.apply(this, arguments)) {
+                this.search.prop("disabled", !this.isInterfaceEnabled());
+            }
+        },
+
+        // multi
+        initSelection: function () {
+            var data;
+            if (this.opts.element.val() === "" && this.opts.element.text() === "") {
+                this.updateSelection([]);
+                this.close();
+                // set the placeholder if necessary
+                this.clearSearch();
+            }
+            if (this.select || this.opts.element.val() !== "") {
+                var self = this;
+                this.opts.initSelection.call(null, this.opts.element, function(data){
+                    if (data !== undefined && data !== null) {
+                        self.updateSelection(data);
+                        self.close();
+                        // set the placeholder if necessary
+                        self.clearSearch();
+                    }
+                });
+            }
+        },
+
+        // multi
+        clearSearch: function () {
+            var placeholder = this.getPlaceholder(),
+                maxWidth = this.getMaxSearchWidth();
+
+            if (placeholder !== undefined  && this.getVal().length === 0 && this.search.hasClass("select2-focused") === false) {
+                this.search.val(placeholder).addClass("select2-default");
+                // stretch the search box to full width of the container so as much of the placeholder is visible as possible
+                // we could call this.resizeSearch(), but we do not because that requires a sizer and we do not want to create one so early because of a firefox bug, see #944
+                this.search.width(maxWidth > 0 ? maxWidth : this.container.css("width"));
+            } else {
+                this.search.val("").width(10);
+            }
+        },
+
+        // multi
+        clearPlaceholder: function () {
+            if (this.search.hasClass("select2-default")) {
+                this.search.val("").removeClass("select2-default");
+            }
+        },
+
+        // multi
+        opening: function () {
+            this.clearPlaceholder(); // should be done before super so placeholder is not used to search
+            this.resizeSearch();
+
+            this.parent.opening.apply(this, arguments);
+
+            this.focusSearch();
+
+            this.updateResults(true);
+            this.search.focus();
+            this.opts.element.trigger($.Event("select2-open"));
+        },
+
+        // multi
+        close: function () {
+            if (!this.opened()) return;
+            this.parent.close.apply(this, arguments);
+        },
+
+        // multi
+        focus: function () {
+            this.close();
+            this.search.focus();
+        },
+
+        // multi
+        isFocused: function () {
+            return this.search.hasClass("select2-focused");
+        },
+
+        // multi
+        updateSelection: function (data) {
+            var ids = [], filtered = [], self = this;
+
+            // filter out duplicates
+            $(data).each(function () {
+                if (indexOf(self.id(this), ids) < 0) {
+                    ids.push(self.id(this));
+                    filtered.push(this);
+                }
+            });
+            data = filtered;
+
+            this.selection.find(".select2-search-choice").remove();
+            $(data).each(function () {
+                self.addSelectedChoice(this);
+            });
+            self.postprocessResults();
+        },
+
+        // multi
+        tokenize: function() {
+            var input = this.search.val();
+            input = this.opts.tokenizer.call(this, input, this.data(), this.bind(this.onSelect), this.opts);
+            if (input != null && input != undefined) {
+                this.search.val(input);
+                if (input.length > 0) {
+                    this.open();
+                }
+            }
+
+        },
+
+        // multi
+        onSelect: function (data, options) {
+
+            if (!this.triggerSelect(data)) { return; }
+
+            this.addSelectedChoice(data);
+
+            this.opts.element.trigger({ type: "selected", val: this.id(data), choice: data });
+
+            if (this.select || !this.opts.closeOnSelect) this.postprocessResults(data, false, this.opts.closeOnSelect===true);
+
+            if (this.opts.closeOnSelect) {
+                this.close();
+                this.search.width(10);
+            } else {
+                if (this.countSelectableResults()>0) {
+                    this.search.width(10);
+                    this.resizeSearch();
+                    if (this.getMaximumSelectionSize() > 0 && this.val().length >= this.getMaximumSelectionSize()) {
+                        // if we reached max selection size repaint the results so choices
+                        // are replaced with the max selection reached message
+                        this.updateResults(true);
+                    }
+                    this.positionDropdown();
+                } else {
+                    // if nothing left to select close
+                    this.close();
+                    this.search.width(10);
+                }
+            }
+
+            // since its not possible to select an element that has already been
+            // added we do not need to check if this is a new element before firing change
+            this.triggerChange({ added: data });
+
+            if (!options || !options.noFocus)
+                this.focusSearch();
+        },
+
+        // multi
+        cancel: function () {
+            this.close();
+            this.focusSearch();
+        },
+
+        addSelectedChoice: function (data) {
+            var enableChoice = !data.locked,
+                enabledItem = $(
+                    "<li class='select2-search-choice'>" +
+                    "    <div></div>" +
+                    "    <a href='#' onclick='return false;' class='select2-search-choice-close' tabindex='-1'></a>" +
+                    "</li>"),
+                disabledItem = $(
+                    "<li class='select2-search-choice select2-locked'>" +
+                    "<div></div>" +
+                    "</li>");
+            var choice = enableChoice ? enabledItem : disabledItem,
+                id = this.id(data),
+                val = this.getVal(),
+                formatted,
+                cssClass;
+
+            formatted=this.opts.formatSelection(data, choice.find("div"), this.opts.escapeMarkup);
+            if (formatted != undefined) {
+                choice.find("div").replaceWith("<div>"+formatted+"</div>");
+            }
+            cssClass=this.opts.formatSelectionCssClass(data, choice.find("div"));
+            if (cssClass != undefined) {
+                choice.addClass(cssClass);
+            }
+
+            if(enableChoice){
+              choice.find(".select2-search-choice-close")
+                  .on("mousedown", killEvent)
+                  .on("click dblclick", this.bind(function (e) {
+                  if (!this.isInterfaceEnabled()) return;
+
+                  $(e.target).closest(".select2-search-choice").fadeOut('fast', this.bind(function(){
+                      this.unselect($(e.target));
+                      this.selection.find(".select2-search-choice-focus").removeClass("select2-search-choice-focus");
+                      this.close();
+                      this.focusSearch();
+                  })).dequeue();
+                  killEvent(e);
+              })).on("focus", this.bind(function () {
+                  if (!this.isInterfaceEnabled()) return;
+                  this.container.addClass("select2-container-active");
+                  this.dropdown.addClass("select2-drop-active");
+              }));
+            }
+
+            choice.data("select2-data", data);
+            choice.insertBefore(this.searchContainer);
+
+            val.push(id);
+            this.setVal(val);
+        },
+
+        // multi
+        unselect: function (selected) {
+            var val = this.getVal(),
+                data,
+                index;
+            selected = selected.closest(".select2-search-choice");
+
+            if (selected.length === 0) {
+                throw "Invalid argument: " + selected + ". Must be .select2-search-choice";
+            }
+
+            data = selected.data("select2-data");
+
+            if (!data) {
+                // prevent a race condition when the 'x' is clicked really fast repeatedly the event can be queued
+                // and invoked on an element already removed
+                return;
+            }
+
+            while((index = indexOf(this.id(data), val)) >= 0) {
+                val.splice(index, 1);
+                this.setVal(val);
+                if (this.select) this.postprocessResults();
+            }
+
+            var evt = $.Event("select2-removing");
+            evt.val = this.id(data);
+            evt.choice = data;
+            this.opts.element.trigger(evt);
+
+            if (evt.isDefaultPrevented()) {
+                return;
+            }
+
+            selected.remove();
+
+            this.opts.element.trigger({ type: "select2-removed", val: this.id(data), choice: data });
+            this.triggerChange({ removed: data });
+        },
+
+        // multi
+        postprocessResults: function (data, initial, noHighlightUpdate) {
+            var val = this.getVal(),
+                choices = this.results.find(".select2-result"),
+                compound = this.results.find(".select2-result-with-children"),
+                self = this;
+
+            choices.each2(function (i, choice) {
+                var id = self.id(choice.data("select2-data"));
+                if (indexOf(id, val) >= 0) {
+                    choice.addClass("select2-selected");
+                    // mark all children of the selected parent as selected
+                    choice.find(".select2-result-selectable").addClass("select2-selected");
+                }
+            });
+
+            compound.each2(function(i, choice) {
+                // hide an optgroup if it doesnt have any selectable children
+                if (!choice.is('.select2-result-selectable')
+                    && choice.find(".select2-result-selectable:not(.select2-selected)").length === 0) {
+                    choice.addClass("select2-selected");
+                }
+            });
+
+            if (this.highlight() == -1 && noHighlightUpdate !== false){
+                self.highlight(0);
+            }
+
+            //If all results are chosen render formatNoMAtches
+            if(!this.opts.createSearchChoice && !choices.filter('.select2-result:not(.select2-selected)').length > 0){
+                if(!data || data && !data.more && this.results.find(".select2-no-results").length === 0) {
+                    if (checkFormatter(self.opts.formatNoMatches, "formatNoMatches")) {
+                        this.results.append("<li class='select2-no-results'>" + self.opts.formatNoMatches(self.search.val()) + "</li>");
+                    }
+                }
+            }
+
+        },
+
+        // multi
+        getMaxSearchWidth: function() {
+            return this.selection.width() - getSideBorderPadding(this.search);
+        },
+
+        // multi
+        resizeSearch: function () {
+            var minimumWidth, left, maxWidth, containerLeft, searchWidth,
+                sideBorderPadding = getSideBorderPadding(this.search);
+
+            minimumWidth = measureTextWidth(this.search) + 10;
+
+            left = this.search.offset().left;
+
+            maxWidth = this.selection.width();
+            containerLeft = this.selection.offset().left;
+
+            searchWidth = maxWidth - (left - containerLeft) - sideBorderPadding;
+
+            if (searchWidth < minimumWidth) {
+                searchWidth = maxWidth - sideBorderPadding;
+            }
+
+            if (searchWidth < 40) {
+                searchWidth = maxWidth - sideBorderPadding;
+            }
+
+            if (searchWidth <= 0) {
+              searchWidth = minimumWidth;
+            }
+
+            this.search.width(Math.floor(searchWidth));
+        },
+
+        // multi
+        getVal: function () {
+            var val;
+            if (this.select) {
+                val = this.select.val();
+                return val === null ? [] : val;
+            } else {
+                val = this.opts.element.val();
+                return splitVal(val, this.opts.separator);
+            }
+        },
+
+        // multi
+        setVal: function (val) {
+            var unique;
+            if (this.select) {
+                this.select.val(val);
+            } else {
+                unique = [];
+                // filter out duplicates
+                $(val).each(function () {
+                    if (indexOf(this, unique) < 0) unique.push(this);
+                });
+                this.opts.element.val(unique.length === 0 ? "" : unique.join(this.opts.separator));
+            }
+        },
+
+        // multi
+        buildChangeDetails: function (old, current) {
+            var current = current.slice(0),
+                old = old.slice(0);
+
+            // remove intersection from each array
+            for (var i = 0; i < current.length; i++) {
+                for (var j = 0; j < old.length; j++) {
+                    if (equal(this.opts.id(current[i]), this.opts.id(old[j]))) {
+                        current.splice(i, 1);
+                        if(i>0){
+                        	i--;
+                        }
+                        old.splice(j, 1);
+                        j--;
+                    }
+                }
+            }
+
+            return {added: current, removed: old};
+        },
+
+
+        // multi
+        val: function (val, triggerChange) {
+            var oldData, self=this;
+
+            if (arguments.length === 0) {
+                return this.getVal();
+            }
+
+            oldData=this.data();
+            if (!oldData.length) oldData=[];
+
+            // val is an id. !val is true for [undefined,null,'',0] - 0 is legal
+            if (!val && val !== 0) {
+                this.opts.element.val("");
+                this.updateSelection([]);
+                this.clearSearch();
+                if (triggerChange) {
+                    this.triggerChange({added: this.data(), removed: oldData});
+                }
+                return;
+            }
+
+            // val is a list of ids
+            this.setVal(val);
+
+            if (this.select) {
+                this.opts.initSelection(this.select, this.bind(this.updateSelection));
+                if (triggerChange) {
+                    this.triggerChange(this.buildChangeDetails(oldData, this.data()));
+                }
+            } else {
+                if (this.opts.initSelection === undefined) {
+                    throw new Error("val() cannot be called if initSelection() is not defined");
+                }
+
+                this.opts.initSelection(this.opts.element, function(data){
+                    var ids=$.map(data, self.id);
+                    self.setVal(ids);
+                    self.updateSelection(data);
+                    self.clearSearch();
+                    if (triggerChange) {
+                        self.triggerChange(self.buildChangeDetails(oldData, self.data()));
+                    }
+                });
+            }
+            this.clearSearch();
+        },
+
+        // multi
+        onSortStart: function() {
+            if (this.select) {
+                throw new Error("Sorting of elements is not supported when attached to <select>. Attach to <input type='hidden'/> instead.");
+            }
+
+            // collapse search field into 0 width so its container can be collapsed as well
+            this.search.width(0);
+            // hide the container
+            this.searchContainer.hide();
+        },
+
+        // multi
+        onSortEnd:function() {
+
+            var val=[], self=this;
+
+            // show search and move it to the end of the list
+            this.searchContainer.show();
+            // make sure the search container is the last item in the list
+            this.searchContainer.appendTo(this.searchContainer.parent());
+            // since we collapsed the width in dragStarted, we resize it here
+            this.resizeSearch();
+
+            // update selection
+            this.selection.find(".select2-search-choice").each(function() {
+                val.push(self.opts.id($(this).data("select2-data")));
+            });
+            this.setVal(val);
+            this.triggerChange();
+        },
+
+        // multi
+        data: function(values, triggerChange) {
+            var self=this, ids, old;
+            if (arguments.length === 0) {
+                 return this.selection
+                     .find(".select2-search-choice")
+                     .map(function() { return $(this).data("select2-data"); })
+                     .get();
+            } else {
+                old = this.data();
+                if (!values) { values = []; }
+                ids = $.map(values, function(e) { return self.opts.id(e); });
+                this.setVal(ids);
+                this.updateSelection(values);
+                this.clearSearch();
+                if (triggerChange) {
+                    this.triggerChange(this.buildChangeDetails(old, this.data()));
+                }
+            }
+        }
+    });
+
+    $.fn.select2 = function () {
+
+        var args = Array.prototype.slice.call(arguments, 0),
+            opts,
+            select2,
+            method, value, multiple,
+            allowedMethods = ["val", "destroy", "opened", "open", "close", "focus", "isFocused", "container", "dropdown", "onSortStart", "onSortEnd", "enable", "disable", "readonly", "positionDropdown", "data", "search"],
+            valueMethods = ["opened", "isFocused", "container", "dropdown"],
+            propertyMethods = ["val", "data"],
+            methodsMap = { search: "externalSearch" };
+
+        this.each(function () {
+            if (args.length === 0 || typeof(args[0]) === "object") {
+                opts = args.length === 0 ? {} : $.extend({}, args[0]);
+                opts.element = $(this);
+
+                if (opts.element.get(0).tagName.toLowerCase() === "select") {
+                    multiple = opts.element.prop("multiple");
+                } else {
+                    multiple = opts.multiple || false;
+                    if ("tags" in opts) {opts.multiple = multiple = true;}
+                }
+
+                select2 = multiple ? new MultiSelect2() : new SingleSelect2();
+                select2.init(opts);
+            } else if (typeof(args[0]) === "string") {
+
+                if (indexOf(args[0], allowedMethods) < 0) {
+                    throw "Unknown method: " + args[0];
+                }
+
+                value = undefined;
+                select2 = $(this).data("select2");
+                if (select2 === undefined) return;
+
+                method=args[0];
+
+                if (method === "container") {
+                    value = select2.container;
+                } else if (method === "dropdown") {
+                    value = select2.dropdown;
+                } else {
+                    if (methodsMap[method]) method = methodsMap[method];
+
+                    value = select2[method].apply(select2, args.slice(1));
+                }
+                if (indexOf(args[0], valueMethods) >= 0
+                    || (indexOf(args[0], propertyMethods) && args.length == 1)) {
+                    return false; // abort the iteration, ready to return first matched value
+                }
+            } else {
+                throw "Invalid arguments to select2 plugin: " + args;
+            }
+        });
+        return (value === undefined) ? this : value;
+    };
+
+    // plugin defaults, accessible to users
+    $.fn.select2.defaults = {
+        width: "copy",
+        loadMorePadding: 0,
+        closeOnSelect: true,
+        openOnEnter: true,
+        containerCss: {},
+        dropdownCss: {},
+        containerCssClass: "",
+        dropdownCssClass: "",
+        formatResult: function(result, container, query, escapeMarkup) {
+            var markup=[];
+            markMatch(result.text, query.term, markup, escapeMarkup);
+            return markup.join("");
+        },
+        formatSelection: function (data, container, escapeMarkup) {
+            return data ? escapeMarkup(data.text) : undefined;
+        },
+        sortResults: function (results, container, query) {
+            return results;
+        },
+        formatResultCssClass: function(data) {return undefined;},
+        formatSelectionCssClass: function(data, container) {return undefined;},
+        formatNoMatches: function () { return "No matches found"; },
+        formatInputTooShort: function (input, min) { var n = min - input.length; return "Please enter " + n + " more character" + (n == 1? "" : "s"); },
+        formatInputTooLong: function (input, max) { var n = input.length - max; return "Please delete " + n + " character" + (n == 1? "" : "s"); },
+        formatSelectionTooBig: function (limit) { return "You can only select " + limit + " item" + (limit == 1 ? "" : "s"); },
+        formatLoadMore: function (pageNumber) { return "Loading more results..."; },
+        formatSearching: function () { return "Searching..."; },
+        minimumResultsForSearch: 0,
+        minimumInputLength: 0,
+        maximumInputLength: null,
+        maximumSelectionSize: 0,
+        id: function (e) { return e.id; },
+        matcher: function(term, text) {
+            return stripDiacritics(''+text).toUpperCase().indexOf(stripDiacritics(''+term).toUpperCase()) >= 0;
+        },
+        separator: ",",
+        tokenSeparators: [],
+        tokenizer: defaultTokenizer,
+        escapeMarkup: defaultEscapeMarkup,
+        blurOnChange: false,
+        selectOnBlur: false,
+        adaptContainerCssClass: function(c) { return c; },
+        adaptDropdownCssClass: function(c) { return null; },
+        nextSearchTerm: function(selectedObject, currentSearchTerm) { return undefined; }
+    };
+
+    $.fn.select2.ajaxDefaults = {
+        transport: $.ajax,
+        params: {
+            type: "GET",
+            cache: false,
+            dataType: "json"
+        }
+    };
+
+    // exports
+    window.Select2 = {
+        query: {
+            ajax: ajax,
+            local: local,
+            tags: tags
+        }, util: {
+            debounce: debounce,
+            markMatch: markMatch,
+            escapeMarkup: defaultEscapeMarkup,
+            stripDiacritics: stripDiacritics
+        }, "class": {
+            "abstract": AbstractSelect2,
+            "single": SingleSelect2,
+            "multi": MultiSelect2
+        }
+    };
+
+}(jQuery));
+
+define("select2", function(){});
+
+//  Underscore.string
+//  (c) 2010 Esa-Matti Suuronen <esa-matti aet suuronen dot org>
+//  Underscore.string is freely distributable under the terms of the MIT license.
+//  Documentation: https://github.com/epeli/underscore.string
+//  Some code is borrowed from MooTools and Alexandru Marasteanu.
+//  Version '2.3.2'
+
+!function(root, String){
+  
+
+  // Defining helper functions.
+
+  var nativeTrim = String.prototype.trim;
+  var nativeTrimRight = String.prototype.trimRight;
+  var nativeTrimLeft = String.prototype.trimLeft;
+
+  var parseNumber = function(source) { return source * 1 || 0; };
+
+  var strRepeat = function(str, qty){
+    if (qty < 1) return '';
+    var result = '';
+    while (qty > 0) {
+      if (qty & 1) result += str;
+      qty >>= 1, str += str;
+    }
+    return result;
+  };
+
+  var slice = [].slice;
+
+  var defaultToWhiteSpace = function(characters) {
+    if (characters == null)
+      return '\\s';
+    else if (characters.source)
+      return characters.source;
+    else
+      return '[' + _s.escapeRegExp(characters) + ']';
+  };
+
+  // Helper for toBoolean
+  function boolMatch(s, matchers) {
+    var i, matcher, down = s.toLowerCase();
+    matchers = [].concat(matchers);
+    for (i = 0; i < matchers.length; i += 1) {
+      matcher = matchers[i];
+      if (!matcher) continue;
+      if (matcher.test && matcher.test(s)) return true;
+      if (matcher.toLowerCase() === down) return true;
+    }
+  }
+
+  var escapeChars = {
+    lt: '<',
+    gt: '>',
+    quot: '"',
+    amp: '&',
+    apos: "'"
+  };
+
+  var reversedEscapeChars = {};
+  for(var key in escapeChars) reversedEscapeChars[escapeChars[key]] = key;
+  reversedEscapeChars["'"] = '#39';
+
+  // sprintf() for JavaScript 0.7-beta1
+  // http://www.diveintojavascript.com/projects/javascript-sprintf
+  //
+  // Copyright (c) Alexandru Marasteanu <alexaholic [at) gmail (dot] com>
+  // All rights reserved.
+
+  var sprintf = (function() {
+    function get_type(variable) {
+      return Object.prototype.toString.call(variable).slice(8, -1).toLowerCase();
+    }
+
+    var str_repeat = strRepeat;
+
+    var str_format = function() {
+      if (!str_format.cache.hasOwnProperty(arguments[0])) {
+        str_format.cache[arguments[0]] = str_format.parse(arguments[0]);
+      }
+      return str_format.format.call(null, str_format.cache[arguments[0]], arguments);
+    };
+
+    str_format.format = function(parse_tree, argv) {
+      var cursor = 1, tree_length = parse_tree.length, node_type = '', arg, output = [], i, k, match, pad, pad_character, pad_length;
+      for (i = 0; i < tree_length; i++) {
+        node_type = get_type(parse_tree[i]);
+        if (node_type === 'string') {
+          output.push(parse_tree[i]);
+        }
+        else if (node_type === 'array') {
+          match = parse_tree[i]; // convenience purposes only
+          if (match[2]) { // keyword argument
+            arg = argv[cursor];
+            for (k = 0; k < match[2].length; k++) {
+              if (!arg.hasOwnProperty(match[2][k])) {
+                throw new Error(sprintf('[_.sprintf] property "%s" does not exist', match[2][k]));
+              }
+              arg = arg[match[2][k]];
+            }
+          } else if (match[1]) { // positional argument (explicit)
+            arg = argv[match[1]];
+          }
+          else { // positional argument (implicit)
+            arg = argv[cursor++];
+          }
+
+          if (/[^s]/.test(match[8]) && (get_type(arg) != 'number')) {
+            throw new Error(sprintf('[_.sprintf] expecting number but found %s', get_type(arg)));
+          }
+          switch (match[8]) {
+            case 'b': arg = arg.toString(2); break;
+            case 'c': arg = String.fromCharCode(arg); break;
+            case 'd': arg = parseInt(arg, 10); break;
+            case 'e': arg = match[7] ? arg.toExponential(match[7]) : arg.toExponential(); break;
+            case 'f': arg = match[7] ? parseFloat(arg).toFixed(match[7]) : parseFloat(arg); break;
+            case 'o': arg = arg.toString(8); break;
+            case 's': arg = ((arg = String(arg)) && match[7] ? arg.substring(0, match[7]) : arg); break;
+            case 'u': arg = Math.abs(arg); break;
+            case 'x': arg = arg.toString(16); break;
+            case 'X': arg = arg.toString(16).toUpperCase(); break;
+          }
+          arg = (/[def]/.test(match[8]) && match[3] && arg >= 0 ? '+'+ arg : arg);
+          pad_character = match[4] ? match[4] == '0' ? '0' : match[4].charAt(1) : ' ';
+          pad_length = match[6] - String(arg).length;
+          pad = match[6] ? str_repeat(pad_character, pad_length) : '';
+          output.push(match[5] ? arg + pad : pad + arg);
+        }
+      }
+      return output.join('');
+    };
+
+    str_format.cache = {};
+
+    str_format.parse = function(fmt) {
+      var _fmt = fmt, match = [], parse_tree = [], arg_names = 0;
+      while (_fmt) {
+        if ((match = /^[^\x25]+/.exec(_fmt)) !== null) {
+          parse_tree.push(match[0]);
+        }
+        else if ((match = /^\x25{2}/.exec(_fmt)) !== null) {
+          parse_tree.push('%');
+        }
+        else if ((match = /^\x25(?:([1-9]\d*)\$|\(([^\)]+)\))?(\+)?(0|'[^$])?(-)?(\d+)?(?:\.(\d+))?([b-fosuxX])/.exec(_fmt)) !== null) {
+          if (match[2]) {
+            arg_names |= 1;
+            var field_list = [], replacement_field = match[2], field_match = [];
+            if ((field_match = /^([a-z_][a-z_\d]*)/i.exec(replacement_field)) !== null) {
+              field_list.push(field_match[1]);
+              while ((replacement_field = replacement_field.substring(field_match[0].length)) !== '') {
+                if ((field_match = /^\.([a-z_][a-z_\d]*)/i.exec(replacement_field)) !== null) {
+                  field_list.push(field_match[1]);
+                }
+                else if ((field_match = /^\[(\d+)\]/.exec(replacement_field)) !== null) {
+                  field_list.push(field_match[1]);
+                }
+                else {
+                  throw new Error('[_.sprintf] huh?');
+                }
+              }
+            }
+            else {
+              throw new Error('[_.sprintf] huh?');
+            }
+            match[2] = field_list;
+          }
+          else {
+            arg_names |= 2;
+          }
+          if (arg_names === 3) {
+            throw new Error('[_.sprintf] mixing positional and named placeholders is not (yet) supported');
+          }
+          parse_tree.push(match);
+        }
+        else {
+          throw new Error('[_.sprintf] huh?');
+        }
+        _fmt = _fmt.substring(match[0].length);
+      }
+      return parse_tree;
+    };
+
+    return str_format;
+  })();
+
+
+
+  // Defining underscore.string
+
+  var _s = {
+
+    VERSION: '2.3.0',
+
+    isBlank: function(str){
+      if (str == null) str = '';
+      return (/^\s*$/).test(str);
+    },
+
+    stripTags: function(str){
+      if (str == null) return '';
+      return String(str).replace(/<\/?[^>]+>/g, '');
+    },
+
+    capitalize : function(str){
+      str = str == null ? '' : String(str);
+      return str.charAt(0).toUpperCase() + str.slice(1);
+    },
+
+    chop: function(str, step){
+      if (str == null) return [];
+      str = String(str);
+      step = ~~step;
+      return step > 0 ? str.match(new RegExp('.{1,' + step + '}', 'g')) : [str];
+    },
+
+    clean: function(str){
+      return _s.strip(str).replace(/\s+/g, ' ');
+    },
+
+    count: function(str, substr){
+      if (str == null || substr == null) return 0;
+
+      str = String(str);
+      substr = String(substr);
+
+      var count = 0,
+        pos = 0,
+        length = substr.length;
+
+      while (true) {
+        pos = str.indexOf(substr, pos);
+        if (pos === -1) break;
+        count++;
+        pos += length;
+      }
+
+      return count;
+    },
+
+    chars: function(str) {
+      if (str == null) return [];
+      return String(str).split('');
+    },
+
+    swapCase: function(str) {
+      if (str == null) return '';
+      return String(str).replace(/\S/g, function(c){
+        return c === c.toUpperCase() ? c.toLowerCase() : c.toUpperCase();
+      });
+    },
+
+    escapeHTML: function(str) {
+      if (str == null) return '';
+      return String(str).replace(/[&<>"']/g, function(m){ return '&' + reversedEscapeChars[m] + ';'; });
+    },
+
+    unescapeHTML: function(str) {
+      if (str == null) return '';
+      return String(str).replace(/\&([^;]+);/g, function(entity, entityCode){
+        var match;
+
+        if (entityCode in escapeChars) {
+          return escapeChars[entityCode];
+        } else if (match = entityCode.match(/^#x([\da-fA-F]+)$/)) {
+          return String.fromCharCode(parseInt(match[1], 16));
+        } else if (match = entityCode.match(/^#(\d+)$/)) {
+          return String.fromCharCode(~~match[1]);
+        } else {
+          return entity;
+        }
+      });
+    },
+
+    escapeRegExp: function(str){
+      if (str == null) return '';
+      return String(str).replace(/([.*+?^=!:${}()|[\]\/\\])/g, '\\$1');
+    },
+
+    splice: function(str, i, howmany, substr){
+      var arr = _s.chars(str);
+      arr.splice(~~i, ~~howmany, substr);
+      return arr.join('');
+    },
+
+    insert: function(str, i, substr){
+      return _s.splice(str, i, 0, substr);
+    },
+
+    include: function(str, needle){
+      if (needle === '') return true;
+      if (str == null) return false;
+      return String(str).indexOf(needle) !== -1;
+    },
+
+    join: function() {
+      var args = slice.call(arguments),
+        separator = args.shift();
+
+      if (separator == null) separator = '';
+
+      return args.join(separator);
+    },
+
+    lines: function(str) {
+      if (str == null) return [];
+      return String(str).split("\n");
+    },
+
+    reverse: function(str){
+      return _s.chars(str).reverse().join('');
+    },
+
+    startsWith: function(str, starts){
+      if (starts === '') return true;
+      if (str == null || starts == null) return false;
+      str = String(str); starts = String(starts);
+      return str.length >= starts.length && str.slice(0, starts.length) === starts;
+    },
+
+    endsWith: function(str, ends){
+      if (ends === '') return true;
+      if (str == null || ends == null) return false;
+      str = String(str); ends = String(ends);
+      return str.length >= ends.length && str.slice(str.length - ends.length) === ends;
+    },
+
+    succ: function(str){
+      if (str == null) return '';
+      str = String(str);
+      return str.slice(0, -1) + String.fromCharCode(str.charCodeAt(str.length-1) + 1);
+    },
+
+    titleize: function(str){
+      if (str == null) return '';
+      str  = String(str).toLowerCase();
+      return str.replace(/(?:^|\s|-)\S/g, function(c){ return c.toUpperCase(); });
+    },
+
+    camelize: function(str){
+      return _s.trim(str).replace(/[-_\s]+(.)?/g, function(match, c){ return c ? c.toUpperCase() : ""; });
+    },
+
+    underscored: function(str){
+      return _s.trim(str).replace(/([a-z\d])([A-Z]+)/g, '$1_$2').replace(/[-\s]+/g, '_').toLowerCase();
+    },
+
+    dasherize: function(str){
+      return _s.trim(str).replace(/([A-Z])/g, '-$1').replace(/[-_\s]+/g, '-').toLowerCase();
+    },
+
+    classify: function(str){
+      return _s.titleize(String(str).replace(/[\W_]/g, ' ')).replace(/\s/g, '');
+    },
+
+    humanize: function(str){
+      return _s.capitalize(_s.underscored(str).replace(/_id$/,'').replace(/_/g, ' '));
+    },
+
+    trim: function(str, characters){
+      if (str == null) return '';
+      if (!characters && nativeTrim) return nativeTrim.call(str);
+      characters = defaultToWhiteSpace(characters);
+      return String(str).replace(new RegExp('\^' + characters + '+|' + characters + '+$', 'g'), '');
+    },
+
+    ltrim: function(str, characters){
+      if (str == null) return '';
+      if (!characters && nativeTrimLeft) return nativeTrimLeft.call(str);
+      characters = defaultToWhiteSpace(characters);
+      return String(str).replace(new RegExp('^' + characters + '+'), '');
+    },
+
+    rtrim: function(str, characters){
+      if (str == null) return '';
+      if (!characters && nativeTrimRight) return nativeTrimRight.call(str);
+      characters = defaultToWhiteSpace(characters);
+      return String(str).replace(new RegExp(characters + '+$'), '');
+    },
+
+    truncate: function(str, length, truncateStr){
+      if (str == null) return '';
+      str = String(str); truncateStr = truncateStr || '...';
+      length = ~~length;
+      return str.length > length ? str.slice(0, length) + truncateStr : str;
+    },
+
+    /**
+     * _s.prune: a more elegant version of truncate
+     * prune extra chars, never leaving a half-chopped word.
+     * @author github.com/rwz
+     */
+    prune: function(str, length, pruneStr){
+      if (str == null) return '';
+
+      str = String(str); length = ~~length;
+      pruneStr = pruneStr != null ? String(pruneStr) : '...';
+
+      if (str.length <= length) return str;
+
+      var tmpl = function(c){ return c.toUpperCase() !== c.toLowerCase() ? 'A' : ' '; },
+        template = str.slice(0, length+1).replace(/.(?=\W*\w*$)/g, tmpl); // 'Hello, world' -> 'HellAA AAAAA'
+
+      if (template.slice(template.length-2).match(/\w\w/))
+        template = template.replace(/\s*\S+$/, '');
+      else
+        template = _s.rtrim(template.slice(0, template.length-1));
+
+      return (template+pruneStr).length > str.length ? str : str.slice(0, template.length)+pruneStr;
+    },
+
+    words: function(str, delimiter) {
+      if (_s.isBlank(str)) return [];
+      return _s.trim(str, delimiter).split(delimiter || /\s+/);
+    },
+
+    pad: function(str, length, padStr, type) {
+      str = str == null ? '' : String(str);
+      length = ~~length;
+
+      var padlen  = 0;
+
+      if (!padStr)
+        padStr = ' ';
+      else if (padStr.length > 1)
+        padStr = padStr.charAt(0);
+
+      switch(type) {
+        case 'right':
+          padlen = length - str.length;
+          return str + strRepeat(padStr, padlen);
+        case 'both':
+          padlen = length - str.length;
+          return strRepeat(padStr, Math.ceil(padlen/2)) + str
+                  + strRepeat(padStr, Math.floor(padlen/2));
+        default: // 'left'
+          padlen = length - str.length;
+          return strRepeat(padStr, padlen) + str;
+        }
+    },
+
+    lpad: function(str, length, padStr) {
+      return _s.pad(str, length, padStr);
+    },
+
+    rpad: function(str, length, padStr) {
+      return _s.pad(str, length, padStr, 'right');
+    },
+
+    lrpad: function(str, length, padStr) {
+      return _s.pad(str, length, padStr, 'both');
+    },
+
+    sprintf: sprintf,
+
+    vsprintf: function(fmt, argv){
+      argv.unshift(fmt);
+      return sprintf.apply(null, argv);
+    },
+
+    toNumber: function(str, decimals) {
+      if (!str) return 0;
+      str = _s.trim(str);
+      if (!str.match(/^-?\d+(?:\.\d+)?$/)) return NaN;
+      return parseNumber(parseNumber(str).toFixed(~~decimals));
+    },
+
+    numberFormat : function(number, dec, dsep, tsep) {
+      if (isNaN(number) || number == null) return '';
+
+      number = number.toFixed(~~dec);
+      tsep = typeof tsep == 'string' ? tsep : ',';
+
+      var parts = number.split('.'), fnums = parts[0],
+        decimals = parts[1] ? (dsep || '.') + parts[1] : '';
+
+      return fnums.replace(/(\d)(?=(?:\d{3})+$)/g, '$1' + tsep) + decimals;
+    },
+
+    strRight: function(str, sep){
+      if (str == null) return '';
+      str = String(str); sep = sep != null ? String(sep) : sep;
+      var pos = !sep ? -1 : str.indexOf(sep);
+      return ~pos ? str.slice(pos+sep.length, str.length) : str;
+    },
+
+    strRightBack: function(str, sep){
+      if (str == null) return '';
+      str = String(str); sep = sep != null ? String(sep) : sep;
+      var pos = !sep ? -1 : str.lastIndexOf(sep);
+      return ~pos ? str.slice(pos+sep.length, str.length) : str;
+    },
+
+    strLeft: function(str, sep){
+      if (str == null) return '';
+      str = String(str); sep = sep != null ? String(sep) : sep;
+      var pos = !sep ? -1 : str.indexOf(sep);
+      return ~pos ? str.slice(0, pos) : str;
+    },
+
+    strLeftBack: function(str, sep){
+      if (str == null) return '';
+      str += ''; sep = sep != null ? ''+sep : sep;
+      var pos = str.lastIndexOf(sep);
+      return ~pos ? str.slice(0, pos) : str;
+    },
+
+    toSentence: function(array, separator, lastSeparator, serial) {
+      separator = separator || ', ';
+      lastSeparator = lastSeparator || ' and ';
+      var a = array.slice(), lastMember = a.pop();
+
+      if (array.length > 2 && serial) lastSeparator = _s.rtrim(separator) + lastSeparator;
+
+      return a.length ? a.join(separator) + lastSeparator + lastMember : lastMember;
+    },
+
+    toSentenceSerial: function() {
+      var args = slice.call(arguments);
+      args[3] = true;
+      return _s.toSentence.apply(_s, args);
+    },
+
+    slugify: function(str) {
+      if (str == null) return '';
+
+      var from  = "ąàáäâãåæăćęèéëêìíïîłńòóöôõøśșțùúüûñçżź",
+          to    = "aaaaaaaaaceeeeeiiiilnoooooosstuuuunczz",
+          regex = new RegExp(defaultToWhiteSpace(from), 'g');
+
+      str = String(str).toLowerCase().replace(regex, function(c){
+        var index = from.indexOf(c);
+        return to.charAt(index) || '-';
+      });
+
+      return _s.dasherize(str.replace(/[^\w\s-]/g, ''));
+    },
+
+    surround: function(str, wrapper) {
+      return [wrapper, str, wrapper].join('');
+    },
+
+    quote: function(str, quoteChar) {
+      return _s.surround(str, quoteChar || '"');
+    },
+
+    unquote: function(str, quoteChar) {
+      quoteChar = quoteChar || '"';
+      if (str[0] === quoteChar && str[str.length-1] === quoteChar)
+        return str.slice(1,str.length-1);
+      else return str;
+    },
+
+    exports: function() {
+      var result = {};
+
+      for (var prop in this) {
+        if (!this.hasOwnProperty(prop) || prop.match(/^(?:include|contains|reverse)$/)) continue;
+        result[prop] = this[prop];
+      }
+
+      return result;
+    },
+
+    repeat: function(str, qty, separator){
+      if (str == null) return '';
+
+      qty = ~~qty;
+
+      // using faster implementation if separator is not needed;
+      if (separator == null) return strRepeat(String(str), qty);
+
+      // this one is about 300x slower in Google Chrome
+      for (var repeat = []; qty > 0; repeat[--qty] = str) {}
+      return repeat.join(separator);
+    },
+
+    naturalCmp: function(str1, str2){
+      if (str1 == str2) return 0;
+      if (!str1) return -1;
+      if (!str2) return 1;
+
+      var cmpRegex = /(\.\d+)|(\d+)|(\D+)/g,
+        tokens1 = String(str1).toLowerCase().match(cmpRegex),
+        tokens2 = String(str2).toLowerCase().match(cmpRegex),
+        count = Math.min(tokens1.length, tokens2.length);
+
+      for(var i = 0; i < count; i++) {
+        var a = tokens1[i], b = tokens2[i];
+
+        if (a !== b){
+          var num1 = parseInt(a, 10);
+          if (!isNaN(num1)){
+            var num2 = parseInt(b, 10);
+            if (!isNaN(num2) && num1 - num2)
+              return num1 - num2;
+          }
+          return a < b ? -1 : 1;
+        }
+      }
+
+      if (tokens1.length === tokens2.length)
+        return tokens1.length - tokens2.length;
+
+      return str1 < str2 ? -1 : 1;
+    },
+
+    levenshtein: function(str1, str2) {
+      if (str1 == null && str2 == null) return 0;
+      if (str1 == null) return String(str2).length;
+      if (str2 == null) return String(str1).length;
+
+      str1 = String(str1); str2 = String(str2);
+
+      var current = [], prev, value;
+
+      for (var i = 0; i <= str2.length; i++)
+        for (var j = 0; j <= str1.length; j++) {
+          if (i && j)
+            if (str1.charAt(j - 1) === str2.charAt(i - 1))
+              value = prev;
+            else
+              value = Math.min(current[j], current[j - 1], prev) + 1;
+          else
+            value = i + j;
+
+          prev = current[j];
+          current[j] = value;
+        }
+
+      return current.pop();
+    },
+
+    toBoolean: function(str, trueValues, falseValues) {
+      if (typeof str === "number") str = "" + str;
+      if (typeof str !== "string") return !!str;
+      str = _s.trim(str);
+      if (boolMatch(str, trueValues || ["true", "1"])) return true;
+      if (boolMatch(str, falseValues || ["false", "0"])) return false;
+    }
+  };
+
+  // Aliases
+
+  _s.strip    = _s.trim;
+  _s.lstrip   = _s.ltrim;
+  _s.rstrip   = _s.rtrim;
+  _s.center   = _s.lrpad;
+  _s.rjust    = _s.lpad;
+  _s.ljust    = _s.rpad;
+  _s.contains = _s.include;
+  _s.q        = _s.quote;
+  _s.toBool   = _s.toBoolean;
+
+  // Exporting
+
+  // CommonJS module is defined
+  if (typeof exports !== 'undefined') {
+    if (typeof module !== 'undefined' && module.exports)
+      module.exports = _s;
+
+    exports._s = _s;
+  }
+
+  // Register as a named module with AMD.
+  if (typeof define === 'function' && define.amd)
+    define('underscore.string', [], function(){ return _s; });
+
+
+  // Integrate with Underscore.js if defined
+  // or create our own underscore object.
+  root._ = root._ || {};
+  root._.string = root._.str = _s;
+}(this, String);
+
+// scripts/entities/community.es6
+define(
+  'entities/community',["entities/base","entities/portal","entities/category","entities/event","exports"],
+  function(__dependency1__, __dependency2__, __dependency3__, __dependency4__, __exports__) {
+    
+    var Base = __dependency1__;
+    var Portal = __dependency2__;
+    var Category = __dependency3__;
+    var Event = __dependency4__;
+
+    var Model = Base.Model.extend({
+      relations: function () {
+        return {
+          portals: {hasMany: Portal.Collection, fk: 'community_id'},
+          umbrellas: {hasMany: Portal.Collection, fk: 'community_id'},
+          categories: {hasMany: Category.Collection, fk: 'community_id'},
+          events: {hasMany: Event.Collection, via: 'portals', fk: 'portal_id'}
+        };
+      },
+      
+      urlRoot: '/communities'
+    });
+
+    var Collection = Base.Collection.extend({
+      model: Model,
+
+      url: '/communities'
+    });
+
+    __exports__.Model = Model;
+    __exports__.Collection = Collection;
   });
 
 // scripts/views/view.es6
@@ -19183,577 +24319,6 @@ define(
       }
     });
   });
-
-/*!
- * mustache.js - Logic-less {{mustache}} templates with JavaScript
- * http://github.com/janl/mustache.js
- */
-
-/*global define: false*/
-
-(function (root, factory) {
-  if (typeof exports === "object" && exports) {
-    factory(exports); // CommonJS
-  } else {
-    var mustache = {};
-    factory(mustache);
-    if (typeof define === "function" && define.amd) {
-      define('mustache',mustache); // AMD
-    } else {
-      root.Mustache = mustache; // <script>
-    }
-  }
-}(this, function (mustache) {
-
-  var whiteRe = /\s*/;
-  var spaceRe = /\s+/;
-  var nonSpaceRe = /\S/;
-  var eqRe = /\s*=/;
-  var curlyRe = /\s*\}/;
-  var tagRe = /#|\^|\/|>|\{|&|=|!/;
-
-  // Workaround for https://issues.apache.org/jira/browse/COUCHDB-577
-  // See https://github.com/janl/mustache.js/issues/189
-  var RegExp_test = RegExp.prototype.test;
-  function testRegExp(re, string) {
-    return RegExp_test.call(re, string);
-  }
-
-  function isWhitespace(string) {
-    return !testRegExp(nonSpaceRe, string);
-  }
-
-  var Object_toString = Object.prototype.toString;
-  var isArray = Array.isArray || function (object) {
-    return Object_toString.call(object) === '[object Array]';
-  };
-
-  function isFunction(object) {
-    return typeof object === 'function';
-  }
-
-  function escapeRegExp(string) {
-    return string.replace(/[\-\[\]{}()*+?.,\\\^$|#\s]/g, "\\$&");
-  }
-
-  var entityMap = {
-    "&": "&amp;",
-    "<": "&lt;",
-    ">": "&gt;",
-    '"': '&quot;',
-    "'": '&#39;',
-    "/": '&#x2F;'
-  };
-
-  function escapeHtml(string) {
-    return String(string).replace(/[&<>"'\/]/g, function (s) {
-      return entityMap[s];
-    });
-  }
-
-  function escapeTags(tags) {
-    if (!isArray(tags) || tags.length !== 2) {
-      throw new Error('Invalid tags: ' + tags);
-    }
-
-    return [
-      new RegExp(escapeRegExp(tags[0]) + "\\s*"),
-      new RegExp("\\s*" + escapeRegExp(tags[1]))
-    ];
-  }
-
-  /**
-   * Breaks up the given `template` string into a tree of tokens. If the `tags`
-   * argument is given here it must be an array with two string values: the
-   * opening and closing tags used in the template (e.g. [ "<%", "%>" ]). Of
-   * course, the default is to use mustaches (i.e. mustache.tags).
-   *
-   * A token is an array with at least 4 elements. The first element is the
-   * mustache symbol that was used inside the tag, e.g. "#" or "&". If the tag
-   * did not contain a symbol (i.e. {{myValue}}) this element is "name". For
-   * all template text that appears outside a symbol this element is "text".
-   *
-   * The second element of a token is its "value". For mustache tags this is
-   * whatever else was inside the tag besides the opening symbol. For text tokens
-   * this is the text itself.
-   *
-   * The third and fourth elements of the token are the start and end indices
-   * in the original template of the token, respectively.
-   *
-   * Tokens that are the root node of a subtree contain two more elements: an
-   * array of tokens in the subtree and the index in the original template at which
-   * the closing tag for that section begins.
-   */
-  function parseTemplate(template, tags) {
-    tags = tags || mustache.tags;
-    template = template || '';
-
-    if (typeof tags === 'string') {
-      tags = tags.split(spaceRe);
-    }
-
-    var tagRes = escapeTags(tags);
-    var scanner = new Scanner(template);
-
-    var sections = [];     // Stack to hold section tokens
-    var tokens = [];       // Buffer to hold the tokens
-    var spaces = [];       // Indices of whitespace tokens on the current line
-    var hasTag = false;    // Is there a {{tag}} on the current line?
-    var nonSpace = false;  // Is there a non-space char on the current line?
-
-    // Strips all whitespace tokens array for the current line
-    // if there was a {{#tag}} on it and otherwise only space.
-    function stripSpace() {
-      if (hasTag && !nonSpace) {
-        while (spaces.length) {
-          delete tokens[spaces.pop()];
-        }
-      } else {
-        spaces = [];
-      }
-
-      hasTag = false;
-      nonSpace = false;
-    }
-
-    var start, type, value, chr, token, openSection;
-    while (!scanner.eos()) {
-      start = scanner.pos;
-
-      // Match any text between tags.
-      value = scanner.scanUntil(tagRes[0]);
-      if (value) {
-        for (var i = 0, len = value.length; i < len; ++i) {
-          chr = value.charAt(i);
-
-          if (isWhitespace(chr)) {
-            spaces.push(tokens.length);
-          } else {
-            nonSpace = true;
-          }
-
-          tokens.push(['text', chr, start, start + 1]);
-          start += 1;
-
-          // Check for whitespace on the current line.
-          if (chr === '\n') {
-            stripSpace();
-          }
-        }
-      }
-
-      // Match the opening tag.
-      if (!scanner.scan(tagRes[0])) break;
-      hasTag = true;
-
-      // Get the tag type.
-      type = scanner.scan(tagRe) || 'name';
-      scanner.scan(whiteRe);
-
-      // Get the tag value.
-      if (type === '=') {
-        value = scanner.scanUntil(eqRe);
-        scanner.scan(eqRe);
-        scanner.scanUntil(tagRes[1]);
-      } else if (type === '{') {
-        value = scanner.scanUntil(new RegExp('\\s*' + escapeRegExp('}' + tags[1])));
-        scanner.scan(curlyRe);
-        scanner.scanUntil(tagRes[1]);
-        type = '&';
-      } else {
-        value = scanner.scanUntil(tagRes[1]);
-      }
-
-      // Match the closing tag.
-      if (!scanner.scan(tagRes[1])) {
-        throw new Error('Unclosed tag at ' + scanner.pos);
-      }
-
-      token = [ type, value, start, scanner.pos ];
-      tokens.push(token);
-
-      if (type === '#' || type === '^') {
-        sections.push(token);
-      } else if (type === '/') {
-        // Check section nesting.
-        openSection = sections.pop();
-
-        if (!openSection) {
-          throw new Error('Unopened section "' + value + '" at ' + start);
-        }
-        if (openSection[1] !== value) {
-          throw new Error('Unclosed section "' + openSection[1] + '" at ' + start);
-        }
-      } else if (type === 'name' || type === '{' || type === '&') {
-        nonSpace = true;
-      } else if (type === '=') {
-        // Set the tags for the next time around.
-        tagRes = escapeTags(tags = value.split(spaceRe));
-      }
-    }
-
-    // Make sure there are no open sections when we're done.
-    openSection = sections.pop();
-    if (openSection) {
-      throw new Error('Unclosed section "' + openSection[1] + '" at ' + scanner.pos);
-    }
-
-    return nestTokens(squashTokens(tokens));
-  }
-
-  /**
-   * Combines the values of consecutive text tokens in the given `tokens` array
-   * to a single token.
-   */
-  function squashTokens(tokens) {
-    var squashedTokens = [];
-
-    var token, lastToken;
-    for (var i = 0, len = tokens.length; i < len; ++i) {
-      token = tokens[i];
-
-      if (token) {
-        if (token[0] === 'text' && lastToken && lastToken[0] === 'text') {
-          lastToken[1] += token[1];
-          lastToken[3] = token[3];
-        } else {
-          squashedTokens.push(token);
-          lastToken = token;
-        }
-      }
-    }
-
-    return squashedTokens;
-  }
-
-  /**
-   * Forms the given array of `tokens` into a nested tree structure where
-   * tokens that represent a section have two additional items: 1) an array of
-   * all tokens that appear in that section and 2) the index in the original
-   * template that represents the end of that section.
-   */
-  function nestTokens(tokens) {
-    var nestedTokens = [];
-    var collector = nestedTokens;
-    var sections = [];
-
-    var token, section;
-    for (var i = 0, len = tokens.length; i < len; ++i) {
-      token = tokens[i];
-
-      switch (token[0]) {
-      case '#':
-      case '^':
-        collector.push(token);
-        sections.push(token);
-        collector = token[4] = [];
-        break;
-      case '/':
-        section = sections.pop();
-        section[5] = token[2];
-        collector = sections.length > 0 ? sections[sections.length - 1][4] : nestedTokens;
-        break;
-      default:
-        collector.push(token);
-      }
-    }
-
-    return nestedTokens;
-  }
-
-  /**
-   * A simple string scanner that is used by the template parser to find
-   * tokens in template strings.
-   */
-  function Scanner(string) {
-    this.string = string;
-    this.tail = string;
-    this.pos = 0;
-  }
-
-  /**
-   * Returns `true` if the tail is empty (end of string).
-   */
-  Scanner.prototype.eos = function () {
-    return this.tail === "";
-  };
-
-  /**
-   * Tries to match the given regular expression at the current position.
-   * Returns the matched text if it can match, the empty string otherwise.
-   */
-  Scanner.prototype.scan = function (re) {
-    var match = this.tail.match(re);
-
-    if (match && match.index === 0) {
-      var string = match[0];
-      this.tail = this.tail.substring(string.length);
-      this.pos += string.length;
-      return string;
-    }
-
-    return "";
-  };
-
-  /**
-   * Skips all text until the given regular expression can be matched. Returns
-   * the skipped string, which is the entire tail if no match can be made.
-   */
-  Scanner.prototype.scanUntil = function (re) {
-    var index = this.tail.search(re), match;
-
-    switch (index) {
-    case -1:
-      match = this.tail;
-      this.tail = "";
-      break;
-    case 0:
-      match = "";
-      break;
-    default:
-      match = this.tail.substring(0, index);
-      this.tail = this.tail.substring(index);
-    }
-
-    this.pos += match.length;
-
-    return match;
-  };
-
-  /**
-   * Represents a rendering context by wrapping a view object and
-   * maintaining a reference to the parent context.
-   */
-  function Context(view, parentContext) {
-    this.view = view == null ? {} : view;
-    this.cache = { '.': this.view };
-    this.parent = parentContext;
-  }
-
-  /**
-   * Creates a new context using the given view with this context
-   * as the parent.
-   */
-  Context.prototype.push = function (view) {
-    return new Context(view, this);
-  };
-
-  /**
-   * Returns the value of the given name in this context, traversing
-   * up the context hierarchy if the value is absent in this context's view.
-   */
-  Context.prototype.lookup = function (name) {
-    var value;
-    if (name in this.cache) {
-      value = this.cache[name];
-    } else {
-      var context = this;
-
-      while (context) {
-        if (name.indexOf('.') > 0) {
-          value = context.view;
-
-          var names = name.split('.'), i = 0;
-          while (value != null && i < names.length) {
-            value = value[names[i++]];
-          }
-        } else {
-          value = context.view[name];
-        }
-
-        if (value != null) break;
-
-        context = context.parent;
-      }
-
-      this.cache[name] = value;
-    }
-
-    if (isFunction(value)) {
-      value = value.call(this.view);
-    }
-
-    return value;
-  };
-
-  /**
-   * A Writer knows how to take a stream of tokens and render them to a
-   * string, given a context. It also maintains a cache of templates to
-   * avoid the need to parse the same template twice.
-   */
-  function Writer() {
-    this.cache = {};
-  }
-
-  /**
-   * Clears all cached templates in this writer.
-   */
-  Writer.prototype.clearCache = function () {
-    this.cache = {};
-  };
-
-  /**
-   * Parses and caches the given `template` and returns the array of tokens
-   * that is generated from the parse.
-   */
-  Writer.prototype.parse = function (template, tags) {
-    var cache = this.cache;
-    var tokens = cache[template];
-
-    if (tokens == null) {
-      tokens = cache[template] = parseTemplate(template, tags);
-    }
-
-    return tokens;
-  };
-
-  /**
-   * High-level method that is used to render the given `template` with
-   * the given `view`.
-   *
-   * The optional `partials` argument may be an object that contains the
-   * names and templates of partials that are used in the template. It may
-   * also be a function that is used to load partial templates on the fly
-   * that takes a single argument: the name of the partial.
-   */
-  Writer.prototype.render = function (template, view, partials) {
-    var tokens = this.parse(template);
-    var context = (view instanceof Context) ? view : new Context(view);
-    return this.renderTokens(tokens, context, partials, template);
-  };
-
-  /**
-   * Low-level method that renders the given array of `tokens` using
-   * the given `context` and `partials`.
-   *
-   * Note: The `originalTemplate` is only ever used to extract the portion
-   * of the original template that was contained in a higher-order section.
-   * If the template doesn't use higher-order sections, this argument may
-   * be omitted.
-   */
-  Writer.prototype.renderTokens = function (tokens, context, partials, originalTemplate) {
-    var buffer = '';
-
-    // This function is used to render an arbitrary template
-    // in the current context by higher-order sections.
-    var self = this;
-    function subRender(template) {
-      return self.render(template, context, partials);
-    }
-
-    var token, value;
-    for (var i = 0, len = tokens.length; i < len; ++i) {
-      token = tokens[i];
-
-      switch (token[0]) {
-      case '#':
-        value = context.lookup(token[1]);
-        if (!value) continue;
-
-        if (isArray(value)) {
-          for (var j = 0, jlen = value.length; j < jlen; ++j) {
-            buffer += this.renderTokens(token[4], context.push(value[j]), partials, originalTemplate);
-          }
-        } else if (typeof value === 'object' || typeof value === 'string') {
-          buffer += this.renderTokens(token[4], context.push(value), partials, originalTemplate);
-        } else if (isFunction(value)) {
-          if (typeof originalTemplate !== 'string') {
-            throw new Error('Cannot use higher-order sections without the original template');
-          }
-
-          // Extract the portion of the original template that the section contains.
-          value = value.call(context.view, originalTemplate.slice(token[3], token[5]), subRender);
-
-          if (value != null) buffer += value;
-        } else {
-          buffer += this.renderTokens(token[4], context, partials, originalTemplate);
-        }
-
-        break;
-      case '^':
-        value = context.lookup(token[1]);
-
-        // Use JavaScript's definition of falsy. Include empty arrays.
-        // See https://github.com/janl/mustache.js/issues/186
-        if (!value || (isArray(value) && value.length === 0)) {
-          buffer += this.renderTokens(token[4], context, partials, originalTemplate);
-        }
-
-        break;
-      case '>':
-        if (!partials) continue;
-        value = isFunction(partials) ? partials(token[1]) : partials[token[1]];
-        if (value != null) buffer += this.renderTokens(this.parse(value), context, partials, value);
-        break;
-      case '&':
-        value = context.lookup(token[1]);
-        if (value != null) buffer += value;
-        break;
-      case 'name':
-        value = context.lookup(token[1]);
-        if (value != null) buffer += mustache.escape(value);
-        break;
-      case 'text':
-        buffer += token[1];
-        break;
-      }
-    }
-
-    return buffer;
-  };
-
-  mustache.name = "mustache.js";
-  mustache.version = "0.8.1";
-  mustache.tags = [ "{{", "}}" ];
-
-  // All high-level mustache.* functions use this writer.
-  var defaultWriter = new Writer();
-
-  /**
-   * Clears all cached templates in the default writer.
-   */
-  mustache.clearCache = function () {
-    return defaultWriter.clearCache();
-  };
-
-  /**
-   * Parses and caches the given template in the default writer and returns the
-   * array of tokens it contains. Doing this ahead of time avoids the need to
-   * parse templates on the fly as they are rendered.
-   */
-  mustache.parse = function (template, tags) {
-    return defaultWriter.parse(template, tags);
-  };
-
-  /**
-   * Renders the `template` with the given `view` and `partials` using the
-   * default writer.
-   */
-  mustache.render = function (template, view, partials) {
-    return defaultWriter.render(template, view, partials);
-  };
-
-  // This is here for backwards compatibility with 0.4.x.
-  mustache.to_html = function (template, view, partials, send) {
-    var result = mustache.render(template, view, partials);
-
-    if (isFunction(send)) {
-      send(result);
-    } else {
-      return result;
-    }
-  };
-
-  // Export the escaping function so that the user may override it.
-  // See https://github.com/janl/mustache.js/issues/244
-  mustache.escape = escapeHtml;
-
-  // Export these mainly for testing, but also for advanced usage.
-  mustache.Scanner = Scanner;
-  mustache.Context = Context;
-  mustache.Writer = Writer;
-
-}));
 
 // scripts/jst/portals/show/index.tmpl
 (function (root, factory) {
@@ -19882,21 +24447,56 @@ define(
     });
   });
 
+// scripts/jst/portals/index/list-item.tmpl
+(function (root, factory) {
+  if (typeof define === 'function' && define.amd) {
+    define('jst/portals/index/list-item',['mustache', 'underscore'], factory);
+  } else if (typeof exports !== 'undefined') {
+    module.exports = factory(require('mustache'), require('underscore'));
+  } else {
+    (root.JST || (root.JST = {}))['scripts/jst/portals/index/list-item'] = factory(root['Mustache'], root['_']);
+  }
+})(this, function (Mustache, _) {
+  return (function(o){
+var __t,__p='',__j=Array.prototype.join,print=function(){__p+=__j.call(arguments,'');};
+__p+='';
+
+var name = o.model.get('name');
+var fittedName = name.length > 80 ? o.model.get('short_name') : name;
+
+__p+='\n<a href=\''+
+((__t=( o.model.orgsyncUrl() ))==null?'':_.escape(__t))+
+'\' tabindex=\'1\'>\n  <div class=\'image-container\'>\n    <img src=\''+
+((__t=( o.model.picture() ))==null?'':_.escape(__t))+
+'\' alt=\''+
+((__t=( name ))==null?'':_.escape(__t))+
+'\'>\n  </div>\n  <div class=\'info\'>\n    <div class=\'name\'>'+
+((__t=( fittedName ))==null?'':_.escape(__t))+
+'</div>\n    <div class=\'umbrella\'>'+
+((__t=( o.model.umbrellaName() ))==null?'':_.escape(__t))+
+'</div>\n    <div class=\'category\'>'+
+((__t=( o.model.get('category').get('name') ))==null?'':_.escape(__t))+
+'</div>\n  </div>\n</a>\n';
+return __p;
+});
+});
+
 // scripts/views/portals/index/list-item.es6
 define(
-  'views/portals/index/list-item',["app","views/view","views/portals/show","exports"],
-  function(__dependency1__, __dependency2__, __dependency3__, __exports__) {
+  'views/portals/index/list-item',["app","views/view","views/portals/show","jst/portals/index/list-item","exports"],
+  function(__dependency1__, __dependency2__, __dependency3__, __dependency4__, __exports__) {
     
     var Olay = __dependency1__.Olay;
     var View = __dependency2__["default"] || __dependency2__;
     var PortalsShowView = __dependency3__["default"] || __dependency3__;
+    var PortalsIndexListItemTemplate = __dependency4__["default"] || __dependency4__;
 
     __exports__["default"] = View.extend({
       tagName: 'li',
 
       className: 'js-list-item list-item',
 
-      template: window.JST['jst/portals/index/list-item'],
+      template: PortalsIndexListItemTemplate,
 
       events: {
         'click': 'open'
@@ -20006,20 +24606,22 @@ return __p;
 
 // scripts/views/portals/index/index.es6
 define(
-  'views/portals/index/index',["app","jquery","underscore","views/base","views/infinite-list","models/community","models/portal","views/portals/index/list-item","jst/portals/index/index","jst/portals/index/no-results","jst/portals/index/results-summary","exports"],
-  function(__dependency1__, __dependency2__, __dependency3__, __dependency4__, __dependency5__, __dependency6__, __dependency7__, __dependency8__, __dependency9__, __dependency10__, __dependency11__, __exports__) {
+  'views/portals/index/index',["app","jquery","select2","underscore","underscore.string","views/base","views/infinite-list","entities/community","entities/portal","views/portals/index/list-item","jst/portals/index/index","jst/portals/index/no-results","jst/portals/index/results-summary","exports"],
+  function(__dependency1__, __dependency2__, __dependency3__, __dependency4__, __dependency5__, __dependency6__, __dependency7__, __dependency8__, __dependency9__, __dependency10__, __dependency11__, __dependency12__, __dependency13__, __exports__) {
     
     var selectorViewMap = __dependency1__.selectorViewMap;
     var $ = __dependency2__["default"] || __dependency2__;
-    var _ = __dependency3__["default"] || __dependency3__;
-    var BaseView = __dependency4__["default"] || __dependency4__;
-    var InfiniteListView = __dependency5__["default"] || __dependency5__;
-    var Community = __dependency6__["default"] || __dependency6__;
-    var Portal = __dependency7__["default"] || __dependency7__;
-    var PortalsIndexListItemView = __dependency8__["default"] || __dependency8__;
-    var PortalsIndexTemplate = __dependency9__["default"] || __dependency9__;
-    var PortalsIndexNoResultsTemplate = __dependency10__["default"] || __dependency10__;
-    var PortalsIndexResultsSummaryTemplate = __dependency11__["default"] || __dependency11__;
+    var select2 = __dependency3__["default"] || __dependency3__;
+    var _ = __dependency4__["default"] || __dependency4__;
+    var _str = __dependency5__["default"] || __dependency5__;
+    var BaseView = __dependency6__["default"] || __dependency6__;
+    var InfiniteListView = __dependency7__["default"] || __dependency7__;
+    var Community = __dependency8__;
+    var Portal = __dependency9__;
+    var PortalsIndexListItemView = __dependency10__["default"] || __dependency10__;
+    var PortalsIndexTemplate = __dependency11__["default"] || __dependency11__;
+    var PortalsIndexNoResultsTemplate = __dependency12__["default"] || __dependency12__;
+    var PortalsIndexResultsSummaryTemplate = __dependency13__["default"] || __dependency13__;
 
     __exports__["default"] = selectorViewMap['.js-osw-portals-index'] =
     BaseView.extend({
@@ -20055,7 +24657,7 @@ define(
 
       initialize: function () {
         BaseView.prototype.initialize.apply(this, arguments);
-        this.community = new Community({id: this.communityId});
+        this.community = new Community.Model({id: this.communityId});
         var bootstrapped = this.portals;
         this.portals = this.community.get('portals');
         this.portals.set(bootstrapped);

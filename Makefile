@@ -10,7 +10,7 @@ cogs:
 	$(COGS) -w scripts,styles
 
 rjs:
-	$(WATCHY) -w tmp,rjs.json,start.frag.js,end.frag.js -W 1 -- $(RJS) -o rjs.json
+	$(WATCHY) -w tmp,build.json,start.frag.js,end.frag.js -W 1 -- $(RJS) -o build.json
 
 server:
 	open http://localhost:8000/

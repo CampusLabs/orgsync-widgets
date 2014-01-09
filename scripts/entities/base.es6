@@ -1,13 +1,13 @@
 import _ from 'underscore';
 import async from 'async';
 import {api} from 'app';
-import {Model, Collection} from 'backbone-relations';
-import require from 'require';
 
-var BaseModel = Model.extend({
+module BackboneRelations from 'backbone-relations';
+
+var Model = BackboneRelations.Model.extend({
   constructor: function () {
     this.constructor.relations();
-    Model.apply(this, arguments);
+    BackboneRelations.Model.apply(this, arguments);
   },
 
   sync: function (method, model, options) {
@@ -26,16 +26,10 @@ var BaseModel = Model.extend({
   relations: function () {
     if (this._relations) return this._relations;
     var relations = _.result(this.prototype, 'relations');
-    if (!relations) return this._relations = {};
-    if (_.isFunction(this.prototype.relations)) {
-      return this._relations = this.prototype.relations = relations;
-    }
     relations = _.reduce(relations, function (rels, rel, key) {
-      var Model = require('models/' + (rel.hasOne || rel.hasMany));
-      if (rel.hasOne) rel.hasOne = Model;
-      if (rel.hasMany) rel.hasMany = Model.Collection;
       if (!rel.via) {
-        var complement = Model.prototype.relations;
+        var complement =
+          (rel.hasOne || rel.hasMany.prototype.model).prototype.relations;
         var hasOne = !rel.hasOne;
         var fk = rel.fk;
         rel.reverse = _.reduce(complement, function (reverse, rel, key) {
@@ -50,8 +44,8 @@ var BaseModel = Model.extend({
   }
 });
 
-var BaseCollection = Collection.extend({
-  model: BaseModel,
+var Collection = BackboneRelations.Collection.extend({
+  model: Model,
 
   sync: Model.prototype.sync,
 
@@ -92,5 +86,4 @@ var BaseCollection = Collection.extend({
   }
 });
 
-export var Model = BaseModel;
-export var Collection = BaseCollection;
+export {Model, Collection};

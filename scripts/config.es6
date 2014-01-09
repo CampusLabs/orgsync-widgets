@@ -1,10 +1,16 @@
+import $ from 'jquery';
+import Backbone from 'backbone';
+import buildJson from 'text!build';
 import moment from 'moment-timezone';
-import timezones from 'text!moment-timezone.json';
+import momentTimezonesConfigJson from 'text!moment-timezone-config';
 
-moment.tz.add(JSON.parse(timezones));
+Backbone.$ = $;
+
+moment.tz.add(JSON.parse(momentTimezonesConfigJson));
 
 var defaults = {
-  api: {cors: false}
+  api: {cors: false},
+  build: JSON.parse(buildJson)
 };
 
-export default = defaults;
+export default defaults;

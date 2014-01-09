@@ -2,14 +2,15 @@ import $ from 'jquery';
 import _ from 'underscore';
 import {selectorViewMap} from 'app';
 import BaseView from 'views/base';
-import Portal from 'models/portal';
 import InfiniteListView from 'views/infinite-list';
 import AlbumsIndexListItemView from 'views/albums/index/list-item';
 import AlbumsIndexTemplate from 'jst/albums/index/index';
 
+module Portal from 'entities/portal';
+
 var dirMap = {'37': -1, '39': 1};
 
-export default =
+export default
 selectorViewMap['.js-osw-albums-index'] =
 BaseView.extend({
   template: AlbumsIndexTemplate,
@@ -24,7 +25,7 @@ BaseView.extend({
 
   initialize: function () {
     BaseView.prototype.initialize.apply(this, arguments);
-    this.portal = new Portal({id: this.portalId});
+    this.portal = new Portal.Model({id: this.portalId});
     this.albums = this.portal.get('albums');
     this.$el.append($('<div>').addClass('js-loading'));
     this.albums.pagedFetch({

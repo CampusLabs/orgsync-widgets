@@ -1,7 +1,8 @@
-import {Model, Collection} from 'models/base';
 import tinycolor from 'tinycolor';
 
-var EventFilter = Model.extend({
+module Base from 'entities/base';
+
+var Model = Base.Model.extend({
   defaults: {
     enabled: true
   },
@@ -9,13 +10,13 @@ var EventFilter = Model.extend({
   color: function () { return tinycolor(this.get('color')); }
 });
 
-EventFilter.Collection = Collection.extend({
-  model: EventFilter,
+var Collection = Base.Collection.extend({
+  model: Model,
 
   comparator: 'name',
 
   constructor: function () {
-    Model.Collection.apply(this, arguments);
+    Base.Model.Collection.apply(this, arguments);
     this.generateColors();
   },
 
@@ -32,4 +33,4 @@ EventFilter.Collection = Collection.extend({
   }
 });
 
-export default = EventFilter;
+export {Model, Collection};

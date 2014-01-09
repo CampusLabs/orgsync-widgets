@@ -3,7 +3,7 @@ import _ from 'underscore';
 import BaseView from 'views/base';
 import ListView from 'views/list';
 
-export default = ListView.extend({
+export default ListView.extend({
   page: 0,
 
   pageSize: 10,

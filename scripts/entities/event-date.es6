@@ -1,12 +1,16 @@
 import _ from 'underscore';
-import {Model, Collection} from 'models/base';
 import moment from 'moment';
 import {tz} from 'app';
-import require from 'require';
 
-var EventDate = Model.extend({
-  relations: {
-    event: {hasOne: 'event', fk: 'event_id'}
+module Base from 'entities/base';
+module Day from 'entities/day';
+module Event from 'entities/event';
+
+var Model = Base.Model.extend({
+  relations: function () {
+    return {
+      event: {hasOne: Event.Model, fk: 'event_id'}
+    };
   },
 
   defaults: {
@@ -43,7 +47,7 @@ var EventDate = Model.extend({
     // All day events should always be midnight to midnight in the timezone
     // they are being viewed in, regardless of the time zone they were created
     // in.
-    return this[key] = moment.tz(require('models/day').id(date), tz);
+    return this[key] = moment.tz(Day.Model.id(date), tz);
   },
 
   isMultiDay: function () {
@@ -69,10 +73,10 @@ var EventDate = Model.extend({
   }
 });
 
-EventDate.Collection = Collection.extend({
-  model: EventDate,
+var Collection = Base.Collection.extend({
+  model: Model,
 
   comparator: function (eventDate) { return eventDate.start(); }
 });
 
-export default = EventDate;
+export {Model, Collection};

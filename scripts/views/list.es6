@@ -1,7 +1,7 @@
 import _ from 'underscore';
 import BaseView from 'views/base';
 
-export default = BaseView.extend({
+export default BaseView.extend({
   options: [
     'modelView',
     'modelViewOptions',

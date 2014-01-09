@@ -9,10 +9,11 @@
   },
   "devDependencies": {
     "cogs": "x",
-    "csso": "x",
+    "es6-module-transpiler": "x",
     "mustache": "x",
     "node-sass": "x",
     "orgsync-javascript-api": "git+ssh://git@github.com:orgsync/orgsync-api-javascript",
-    "uglify-js": "x"
+    "requirejs": "x",
+    "watchy": "x"
   }
 }

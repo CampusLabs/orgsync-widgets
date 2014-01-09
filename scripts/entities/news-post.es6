@@ -1,0 +1,44 @@
+import $ from 'jquery';
+import moment from 'moment';
+
+module Base from 'entities/base';
+module Portal from 'entities/portal';
+module Account from 'entities/account';
+module Comment from 'entities/comment';
+
+var Model = Base.Model.extend({
+  relations: function () {
+    return {
+      portal: {hasOne: Portal.Model, fk: 'portal_id'},
+      creator: {hasOne: Account.Model, fk: 'creator_id'},
+      comments: {hasMany: Comment.Collection, fk: 'news_post_id'}
+    };
+  },
+
+  orgsyncUrl: function () {
+    return 'https://orgsync.com/' + this.get('portal').id + '/news_posts/' +
+      this.id;
+  },
+
+  time: function () {
+    return moment(this.get('created_at')).fromNow();
+  },
+
+  strippedBody: function () {
+    return $($.parseHTML(this.get('body'))).text();
+  },
+
+  truncatedBody: function (length) {
+    var body = this.strippedBody();
+    var ellipsis = '...';
+    var max = length - ellipsis.length;
+    if (!length || body.length <= max) return body;
+    return body.substring(0, max).replace(/[\s,.;]+\S*$/, '') + ellipsis;
+  }
+});
+
+var Collection = Base.Collection.extend({
+  model: Model
+});
+
+export {Model, Collection};

@@ -1,14 +1,16 @@
 BIN=node_modules/.bin/
 COGS=$(BIN)cogs
+RJS=$(BIN)r.js
+WATCHY=$(BIN)watchy
 
 dev:
-	$(MAKE) -j cogs server
+	$(MAKE) -j cogs rjs server
 
 cogs:
-	$(COGS) -w orgsync-widgets.js,styles,jst,models,themes,views
+	$(COGS) -w scripts,styles
 
-compress:
-	$(COGS) -c
+rjs:
+	$(WATCHY) -w tmp,build.json,start.frag.js,end.frag.js -W 1 -- $(RJS) -o build.json
 
 server:
 	open http://localhost:8000/

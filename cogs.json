@@ -4,13 +4,14 @@
     "processors.jst.options.dependencies": {
       "mustache": "Mustache",
       "underscore": "_"
-    }
+    },
+    "processors.es6.options.compatFix": true
   },
   "targets": {
-    "orgsync-widgets.js": "dist",
+    "scripts/**/*.*": "tmp",
     "styles/orgsync-widgets.scss": "dist",
+    "styles/themes/*.*": "dist/themes",
     "images/*.{jpg,png,gif}": "dist",
-    "themes/*.*": "dist/themes",
     "bower_components/select2/*.{jpg,png,gif}": "dist"
   }
 }

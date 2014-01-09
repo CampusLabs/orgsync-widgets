@@ -24,7 +24,6 @@
   "ignore": [
     "images",
     "scripts",
-    "styles",
-    "timezones"
+    "styles"
   ]
 }

@@ -56,6 +56,16 @@
 
     correctDisplay: function () {
       this.$el.toggleClass('js-none', !this.model.get('visible'));
+      var event = this.model.get('event');
+      this.$el.css({borderLeftColor: this.color().toHexString()});
+      if (this.view !== 'list' &&
+          (this.continues || this.continued || event.get('is_all_day'))
+        ) {
+        this.$el.css(
+          'background',
+          tinycolor.lighten(this.color(), 45).toHexString()
+        );
+      }
     },
 
     color: function () {

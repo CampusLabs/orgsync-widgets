@@ -14,6 +14,7 @@
     "moment-timezone-config": "../bower_components/moment-timezone/moment-timezone.json",
     "moment": "../bower_components/moment/moment",
     "olay": "../bower_components/olay/olay",
+    "react": "../bower_components/react/react",
     "select2": "../bower_components/select2/select2",
     "tinycolor": "../bower_components/tinycolor/tinycolor",
     "text": "../bower_components/requirejs-text/text",

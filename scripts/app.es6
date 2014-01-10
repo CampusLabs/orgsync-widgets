@@ -6,8 +6,11 @@ import elementQuery from 'elementQuery';
 import herit from 'herit';
 import jstz from 'jstz';
 import moment from 'moment';
+import api from 'api';
+module Portal from 'entities/portal';
 import Olay from 'olay';
 import OrgSyncApi from 'orgsync-javascript-api';
+import React from 'react';
 
 // requestAnimationFrame shim.
 _.each(['webkit', 'moz'], function (vendor) {
@@ -30,25 +33,7 @@ if (!window.requestAnimationFrame) {
 }
 
 // Tell elementQuery to keep track of sizes for `.orgsync-widget`s
-elementQuery({
-  '.orgsync-widget': {
-    'min-width': [
-      '231px',
-      '251px',
-      '401px',
-      '461px',
-      '480px',
-      '501px',
-      '640px',
-      '691px',
-      '751px',
-      '800px',
-      '921px',
-      '960px',
-      '1001px'
-    ]
-  }
-});
+elementQuery(config.elementQuery);
 
 // Fixing the updateOffset method for some wonky DST issues.
 moment.updateOffset = function (date) {
@@ -66,6 +51,12 @@ var selectorViewMap = {};
 
 var scan = function () {
   $('html').addClass('dpr-' + dpr());
+  $('.osw-albums').each(function () {
+    var portalId = $(this).data('portalId');
+    var albums = (new Portal.Model({id: portalId})).get('albums');
+    var AlbumsIndex = require('components/albums/index').default;
+    React.renderComponent(AlbumsIndex({albums: albums}), this);
+  });
   _.each(selectorViewMap, function (view, selector) {
     $(selector).each(function () { new view({el: this}); });
   });
@@ -74,17 +65,7 @@ var scan = function () {
 
 $(scan);
 
-var OriginalOlay = Olay;
-
-export {selectorViewMap, scan};
-export var api = new OrgSyncApi(config.api);
-export var Olay = herit(OriginalOlay, {
-  constructor: function () {
-    OriginalOlay.apply(this, arguments);
-    this.$content.addClass('orgsync-widget');
-  }
-});
-export var tz = jstz.determine().name();
+export {api, selectorViewMap, scan};
 
 // Require each widget designated in the build.
 _.each(config.build.include, require);

@@ -1,6 +1,6 @@
 import _ from 'underscore';
 import async from 'async';
-import {api} from 'app';
+import api from 'api';
 
 module BackboneRelations from 'backbone-relations';
 

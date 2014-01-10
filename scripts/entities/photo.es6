@@ -6,7 +6,11 @@ var Model = Base.Model.extend({
   relations: function () {
     return {
       album: {hasOne: Album.Model, fk: 'album_id'},
-      comments: {hasMany: Comment.Collection, fk: 'photo_id'}
+      comments: {
+        hasMany: Comment.Collection,
+        fk: 'photo_id',
+        url: function () { return this.owner.get('links').comments; }
+      }
     };
   },
 

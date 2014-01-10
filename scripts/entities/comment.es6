@@ -13,11 +13,15 @@ var Model = Base.Model.extend({
 
   time: function () {
     return moment(this.get('created_at')).fromNow();
-  },
+  }
 });
 
 var Collection = Base.Collection.extend({
-  model: Model
+  model: Model,
+
+  url: function () {
+    console.log(this.parent, this.parent.get('links').comments);
+  }
 });
 
 export {Model, Collection};

@@ -2,8 +2,10 @@
 
 import AlbumsListItem from 'components/albums/list-item';
 import AlbumsShow from 'components/albums/show';
+import BackboneMixin from 'mixins/backbone';
+module Portal from 'entities/portal';
 import React from 'react';
-import Olay from 'olay';
+import OswOlay from 'osw-olay';
 
 var keyDirMap = {
   '37': 'left',
@@ -11,24 +13,31 @@ var keyDirMap = {
 };
 
 export default React.createClass({
+  mixins: [BackboneMixin],
+
+  getBackboneModels: function () {
+    return [this.props.albums];
+  },
+
   getInitialState: function () {
     return {isLoading: false, error: null};
   },
 
   componentWillMount: function () {
+    if (!this.props.albums) {
+      if (this.props.portalId) {
+        this.props.albums =
+          (new Portal.Model({id: this.props.portalId})).get('albums');
+      }
+    }
     $(document).on('keydown', this.handleKeyDown);
-    this.props.albums.on({
-      sync: this.handleSuccess,
-      error: this.handleError
-    }, this);
-    if (this.props.albums.length) return;
-    this.setState({isLoading: true});
-    this.props.albums.fetch();
+    if (this.props.albums.fetched) return;
+    this.props.albums.fetched = true;
+    this.props.albums.pagedFetch();
   },
 
   componentWillUnmount: function () {
     $(document).off('keydown', this.handleKeyDown);
-    this.props.albums.off(null, null, this);
   },
 
   olayHasFocus: function () {
@@ -52,17 +61,9 @@ export default React.createClass({
     }
   },
 
-  handleSuccess: function () {
-    this.setState({isLoading: false, error: null});
-  },
-
-  handleError: function (albums, er) {
-    this.setState({isLoading: false, error: er.toString()});
-  },
-
   openAlbum: function (album) {
     if (this.olay) React.unmountComponentAtNode(this.olay.$el[0]);
-    else this.olay = new Olay('<div>', {preserve: true});
+    else this.olay = new OswOlay('<div>', {preserve: true}, 'albums-show');
     React.renderComponent(<AlbumsShow album={album} />, this.olay.$el[0]);
     this.olay.show();
     this.currentAlbum = album;
@@ -71,14 +72,17 @@ export default React.createClass({
   listItems: function () {
     return this.props.albums.map(function (album) {
       return (
-        <AlbumsListItem key={album.id} album={album} onClick={this.openAlbum} />
+        <AlbumsListItem
+          key={album.id}
+          album={album}
+          redirect={this.props.redirect}
+          onClick={this.openAlbum}
+        />
       );
     }, this);
   },
 
   render: function () {
-    if (this.state.isLoading) return <div>Loading...</div>;
-    if (this.state.error) return <div>{this.state.error}</div>;
-    return <div>{this.listItems()}</div>;
+    return <div className='albums-index'>{this.listItems()}</div>;
   }
 });

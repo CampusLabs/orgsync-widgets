@@ -1,0 +1,95 @@
+@import '../config';
+
+.albums-list-item {
+  position: relative;
+  vertical-align: top;
+  a {
+    display: block;
+    padding: 20px;
+    color: #333333;
+    text-decoration: none;
+    &:hover,
+    &:focus {
+      outline: 0;
+      color: #0076a3;
+      .cover-photo {
+        box-shadow: 0 3px 10px #0076a3;
+        &:not(:last-child) {
+          &:nth-child(1) {
+            @include transform(translate(2px, -3px) rotate(3deg));
+          }
+          &:nth-child(2) {
+            @include transform(translate(3px, 4px) rotate(-4deg));
+          }
+          &:nth-child(3) {
+            @include transform(translate(-3px, -3px) rotate(5deg));
+          }
+        }
+      }
+    }
+  }
+  .cover-photos-container {
+    position: relative;
+  }
+  .cover-photo {
+    position: relative;
+    border: 5px solid white;
+    width: 100%;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
+    transition: all 0.1s ease-in-out;
+    background: white;
+    img {
+      position: absolute;
+      width: 100%;
+      top: 0;
+      left: 0;
+    }
+    &:before {
+      content: "";
+      display: block;
+      padding-top: 66.66%;
+    }
+    &:not(:last-child) {
+      position: absolute;
+      &:nth-child(1) {
+        @include transform(rotate(2deg));
+      }
+      &:nth-child(2) {
+        @include transform(rotate(-3deg));
+      }
+      &:nth-child(3) {
+        @include transform(rotate(4deg));
+      }
+    }
+  }
+  .name {
+    padding-top: 10px;
+    font-weight: bold;
+    font-size: 14px;
+    text-align: center;
+  }
+  .photo-count {
+    text-align: center;
+  }
+}
+
+.orgsync-widget[min-width~='251px'] .albums-list-item {
+  display: inline-block;
+  width: 50%;
+}
+
+.orgsync-widget[min-width~='501px'] .albums-list-item {
+  width: 33.3%;
+}
+
+.orgsync-widget[min-width~='751px'] .albums-index {
+  .albums-list-item {
+    width: 25%;
+  }
+}
+
+.orgsync-widget[min-width~='1001px'] .albums-index {
+  .albums-list-item {
+    width: 20%;
+  }
+}

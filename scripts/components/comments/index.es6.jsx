@@ -31,6 +31,9 @@ export default React.createClass({
   },
 
   listItems: function () {
+    if (!this.props.comments.length) {
+      return <div className='blank-slate'>No one has commented yet.</div>;
+    }
     return this.props.comments.map(function (comment) {
       return <CommentsListItem key={comment.id} comment={comment} />;
     }, this);
@@ -39,6 +42,6 @@ export default React.createClass({
   render: function () {
     if (this.state.isLoading) return <div>Loading...</div>;
     if (this.state.error) return <div>{this.state.error}</div>;
-    return <div>{this.listItems()}</div>;
+    return <div className='comments-index'>{this.listItems()}</div>;
   }
 });

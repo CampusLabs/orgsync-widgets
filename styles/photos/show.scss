@@ -1,0 +1,43 @@
+@import '../config';
+
+.photos-show {
+  img {
+    margin: 0 auto;
+    display: block;
+    max-width: 100%;
+  }
+  .description {
+    margin-top: 5px;
+    font-size: 14px;
+  }
+  .comments-header {
+    font-size: 16px;
+    font-weight: bold;
+    text-align: left;
+  }
+  .comments-index {
+    margin-top: 5px;
+  }
+  .comment-on-orgsync {
+    display: inline-block;
+    margin-top: 5px;
+    text-decoration: none;
+    background: #82a941;
+    color: white;
+    font-weight: bold;
+    padding: 10px;
+    border-radius: 3px;
+    &:hover {
+      background: #759b38;
+    }
+  }
+}
+
+.photos-show-olay .js-olay-content {
+  display: block;
+  margin: 0 auto;
+  padding: 5px;
+  background: white;
+  max-width: 710px;
+  border-radius: 0;
+}

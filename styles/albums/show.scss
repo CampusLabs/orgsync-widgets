@@ -1,0 +1,29 @@
+@import '../config';
+
+.albums-show {
+  .info {
+    padding: 20px;
+  }
+  .name,
+  .photo-count {
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.75);
+    text-align: center;
+    color: white;
+    font-weight: bold;
+    font-size: 20px;
+  }
+  .photo-count {
+    color: #eeeeee;
+    font-weight: normal;
+    font-size: 16px;
+  }
+}
+
+.albums-show-olay .js-olay-content {
+  display: block;
+  margin: 0 auto;
+  background: none;
+  box-shadow: none;
+  border-radius: 0;
+  max-width: 1100px;
+}

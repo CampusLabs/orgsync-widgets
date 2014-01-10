@@ -1,39 +1,18 @@
 /** @jsx React.DOM */
 
-import $ from 'jquery';
 import PhotosIndex from 'components/photos/index';
 import React from 'react';
 
-var keyDirMap = {
-  '37': 'left',
-  '39': 'right'
-};
-
 export default React.createClass({
-  componentWillMount: function () {
-    $(document).on('keydown', this.handleKeyDown);
-  },
-
-  componentWillUnmount: function () {
-    $(document).off('keydown', this.handleKeyDown);
-  },
-
-  handleKeyDown: function (ev) {
-    switch (keyDirMap[ev.which]) {
-    case 'left':
-    case 'right':
-    }
-  },
-
   render: function () {
+    var album = this.props.album;
     return (
       <div className='albums-show'>
-        <div className='album-title'>
-          {this.props.album.get('name')}
+        <div className='info'>
+          <div className='name'>{album.get('name')}</div>
+          <div className='photo-count'>{album.get('photo_count')} Photos</div>
         </div>
-        <div className='album-photos'>
-          <PhotosIndex photos={this.props.album.get('photos')} />
-        </div>
+        <PhotosIndex photos={album.get('photos')} />
       </div>
     );
   }

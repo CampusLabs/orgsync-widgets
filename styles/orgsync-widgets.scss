@@ -1,15 +1,46 @@
-//= require ./config.scss
 //= require bower_components/olay/olay.css
 //= require bower_components/select2/select2.css
-//= requireGlob *.scss
+//= requireTree .
 
 @import "config";
 
 .orgsync-widget {
-  .js-none {
-    display: none;
+  font-family: "Helvetica Neue", Arial, Helvetica, sans-serif;
+  font-size: 12px;
+
+  // Reverse these odd website builder defaults.
+  input,
+  label,
+  select,
+  textarea {
+    float: none;
+    padding: 0;
+    margin: 0;
+    font-size: 12px;
   }
-  .js-hidden {
-    visibility: hidden;
+
+  input[type=button] {
+    border: 1px solid #aaaaaa;
+    padding: 5px;
+    color: #333333;
+    @include linear-gradient(#fafafa, #e8e8e8);
+    cursor: pointer;
+    &:hover {
+      @include linear-gradient(#e8e8e8, #fafafa);
+    }
+    &:active,
+    &.selected {
+      border-color: #00578f;
+      color: white;
+      background: #3872a7;
+      text-shadow: 0 1px 1px rgba(0, 0, 0, 0.75);
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.75) inset;
+    }
+  }
+
+  .loading {
+    min-width: 128px;
+    min-height: 128px;
+    background: url("../loading.gif") no-repeat center;
   }
 }

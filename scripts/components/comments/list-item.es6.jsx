@@ -5,16 +5,16 @@ import React from 'react';
 export default React.createClass({
   render: function () {
     var comment = this.props.comment;
-    var account = this
+    var creator = comment.get('creator');
     return (
-      <div class='osw-comment'>
-        <div class='osw-comment-picture'>
-          <img src={this.props.comment.get('avatar')} />
+      <div className='comments-list-item'>
+        <div className='creator-avatar'>
+          <img src={creator.get('picture_url')} />
         </div>
-        <div class='info'>
-          // <div class='name'>this.props.comm</div>
-          // <div class='time'>{{time}}</div>
-          // <div class='content'>{{content}}</div>
+        <div className='info'>
+          <div className='creator-name'>{creator.get('display_name')}</div>
+          <div className='time'>{comment.time()}</div>
+          <div className='content'>{comment.get('content')}</div>
         </div>
       </div>
     );

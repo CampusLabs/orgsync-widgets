@@ -1,9 +1,10 @@
 /** @jsx React.DOM */
 
+import BackboneMixin from 'mixins/backbone';
 import PhotosListItem from 'components/photos/list-item';
 import PhotosShow from 'components/photos/show';
 import React from 'react';
-import Olay from 'olay';
+import OswOlay from 'osw-olay';
 
 var keyDirMap = {
   '37': 'left',
@@ -11,6 +12,12 @@ var keyDirMap = {
 };
 
 export default React.createClass({
+  mixins: [BackboneMixin],
+
+  getBackboneModels: function () {
+    return [this.props.photos];
+  },
+
   getInitialState: function () {
     return {isLoading: false, error: null};
   },
@@ -23,7 +30,7 @@ export default React.createClass({
     }, this);
     if (this.props.photos.length) return;
     this.setState({isLoading: true});
-    this.props.photos.fetch();
+    this.props.photos.pagedFetch();
   },
 
   componentWillUnmount: function () {
@@ -62,7 +69,7 @@ export default React.createClass({
 
   openPhoto: function (photo) {
     if (this.olay) React.unmountComponentAtNode(this.olay.$el[0]);
-    else this.olay = new Olay('<div>', {preserve: true});
+    else this.olay = new OswOlay('<div>', {preserve: true}, 'photos-show');
     React.renderComponent(<PhotosShow photo={photo} />, this.olay.$el[0]);
     this.olay.show();
     this.currentPhoto = photo;
@@ -71,15 +78,17 @@ export default React.createClass({
   listItems: function () {
     return this.props.photos.map(function (photo) {
       return (
-        <PhotosListItem key={photo.id} photo={photo} onClick={this.openPhoto}
+        <PhotosListItem
+          key={photo.id}
+          photo={photo}
+          redirect={this.props.redirect}
+          onClick={this.openPhoto}
         />
       );
     }, this);
   },
 
   render: function () {
-    if (this.state.isLoading) return <div>Loading...</div>;
-    if (this.state.error) return <div>{this.state.error}</div>;
-    return <div>{this.listItems()}</div>;
+    return <div className='photos-index'>{this.listItems()}</div>;
   }
 });

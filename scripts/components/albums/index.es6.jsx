@@ -33,7 +33,11 @@ export default React.createClass({
     $(document).on('keydown', this.handleKeyDown);
     if (this.props.albums.fetched) return;
     this.props.albums.fetched = true;
-    this.props.albums.pagedFetch();
+    this.setState({isLoading: true, error: null});
+    this.props.albums.pagedFetch({
+      success: this.handleSuccess,
+      error: this.handleError
+    });
   },
 
   componentWillUnmount: function () {
@@ -69,6 +73,14 @@ export default React.createClass({
     this.currentAlbum = album;
   },
 
+  handleSuccess: function () {
+    this.setState({isLoading: false, error: null});
+  },
+
+  handleError: function (albums, er) {
+    this.setState({isLoading: false, error: er.toString()});
+  },
+
   listItems: function () {
     return this.props.albums.map(function (album) {
       return (
@@ -83,6 +95,12 @@ export default React.createClass({
   },
 
   render: function () {
-    return <div className='albums-index'>{this.listItems()}</div>;
+    return (
+      <div className='albums-index'>
+        {this.listItems()}
+        {this.state.isLoading ? 'Loading...' : null}
+        {this.state.error ? this.state.error : null}
+      </div>
+    );
   }
 });

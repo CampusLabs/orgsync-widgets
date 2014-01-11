@@ -24,13 +24,13 @@ export default React.createClass({
 
   componentWillMount: function () {
     $(document).on('keydown', this.handleKeyDown);
-    this.props.photos.on({
-      sync: this.handleSuccess,
-      error: this.handleError
-    }, this);
     if (this.props.photos.length) return;
-    this.setState({isLoading: true});
-    this.props.photos.pagedFetch();
+    this.props.photos.fetched = true;
+    this.setState({isLoading: true, error: null});
+    this.props.photos.pagedFetch({
+      success: this.handleSuccess,
+      error: this.handleError
+    });
   },
 
   componentWillUnmount: function () {
@@ -89,6 +89,12 @@ export default React.createClass({
   },
 
   render: function () {
-    return <div className='photos-index'>{this.listItems()}</div>;
+    return (
+      <div className='photos-index'>
+        {this.listItems()}
+        {this.state.isLoading ? 'Loading...' : null}
+        {this.state.error ? this.state.error : null}
+      </div>
+    );
   }
 });

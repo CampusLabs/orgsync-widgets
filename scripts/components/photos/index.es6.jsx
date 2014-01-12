@@ -40,18 +40,24 @@ export default React.createClass({
 
   handleKeyDown: function (ev) {
     if (!this.olayHasFocus()) return;
+    switch (keyDirMap[ev.which]) {
+    case 'left':
+      return this.nextPhoto();
+    case 'right':
+      return this.prevPhoto();
+    }
+  },
+
+  incrPhoto: function (dir) {
     var photos = this.props.photos;
     var l = photos.length;
     var photo = this.currentPhoto;
-    switch (keyDirMap[ev.which]) {
-    case 'left':
-      this.openPhoto(photos.at((l + photos.indexOf(photo) - 1) % l));
-      break;
-    case 'right':
-      this.openPhoto(photos.at((l + photos.indexOf(photo) + 1) % l));
-      break;
-    }
+    this.openPhoto(photos.at((l + photos.indexOf(photo) + dir) % l));
   },
+
+  nextPhoto: function () { this.incrPhoto(1); },
+
+  prevPhoto: function () { this.incrPhoto(-1); },
 
   handleSuccess: function () {
     this.setState({isLoading: false, error: null});
@@ -70,7 +76,10 @@ export default React.createClass({
   openPhoto: function (photo) {
     if (this.olay) React.unmountComponentAtNode(this.olay.$el[0]);
     else this.olay = new OswOlay('<div>', {preserve: true}, 'photos-show');
-    React.renderComponent(<PhotosShow photo={photo} />, this.olay.$el[0]);
+    React.renderComponent(
+      <PhotosShow photo={photo} onImageClick={this.nextPhoto} />,
+      this.olay.$el[0]
+    );
     this.olay.show();
     this.currentPhoto = photo;
   },

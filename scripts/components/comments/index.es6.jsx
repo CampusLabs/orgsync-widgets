@@ -16,10 +16,13 @@ export default React.createClass({
   },
 
   componentWillMount: function () {
-    this.props.comments.on({
-      sync: this.handleSuccess,
+    if (this.props.comments.areFetched) return;
+    this.props.comments.areFetched = true;
+    this.setState({isLoading: true, error: null});
+    this.props.comments.pagedFetch({
+      success: this.handleSuccess,
       error: this.handleError
-    }, this).fetch();
+    });
   },
 
   handleSuccess: function () {
@@ -32,6 +35,7 @@ export default React.createClass({
 
   listItems: function () {
     if (!this.props.comments.length) {
+      if (this.state.isLoading || this.state.error) return;
       return <div className='blank-slate'>No one has commented yet.</div>;
     }
     return this.props.comments.map(function (comment) {
@@ -40,8 +44,12 @@ export default React.createClass({
   },
 
   render: function () {
-    if (this.state.isLoading) return <div>Loading...</div>;
-    if (this.state.error) return <div>{this.state.error}</div>;
-    return <div className='comments-index'>{this.listItems()}</div>;
+    return (
+      <div className='comments-index'>
+        {this.listItems()}
+        {this.state.isLoading ? 'Loading...' : null}
+        {this.state.error ? this.state.error : null}
+      </div>
+    );
   }
 });

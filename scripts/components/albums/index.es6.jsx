@@ -31,8 +31,8 @@ export default React.createClass({
       }
     }
     $(document).on('keydown', this.handleKeyDown);
-    if (this.props.albums.fetched) return;
-    this.props.albums.fetched = true;
+    if (this.props.albums.areFetched) return;
+    this.props.albums.areFetched = true;
     this.setState({isLoading: true, error: null});
     this.props.albums.pagedFetch({
       success: this.handleSuccess,

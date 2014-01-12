@@ -24,8 +24,8 @@ export default React.createClass({
 
   componentWillMount: function () {
     $(document).on('keydown', this.handleKeyDown);
-    if (this.props.photos.length) return;
-    this.props.photos.fetched = true;
+    if (this.props.photos.areFetched) return;
+    this.props.photos.areFetched = true;
     this.setState({isLoading: true, error: null});
     this.props.photos.pagedFetch({
       success: this.handleSuccess,

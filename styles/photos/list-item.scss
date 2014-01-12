@@ -6,12 +6,8 @@
   a {
     display: block;
     padding: 5px;
-    &:hover,
-    &:focus {
-      outline: 0;
-      .thumbnail {
-        border-color: #0076a3;
-      }
+    &:hover .thumbnail {
+      border-color: #0076a3;
     }
   }
   .thumbnail {

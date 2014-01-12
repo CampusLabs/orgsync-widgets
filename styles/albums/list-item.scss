@@ -8,9 +8,7 @@
     padding: 20px;
     color: #333333;
     text-decoration: none;
-    &:hover,
-    &:focus {
-      outline: 0;
+    &:hover {
       color: #0076a3;
       .cover-photo {
         box-shadow: 0 3px 10px #0076a3;

@@ -7,34 +7,12 @@ import React from 'react';
 export default React.createClass({
   mixins: [BackboneMixin],
 
-  getInitialState: function () {
-    return {isLoading: false, error: null};
-  },
-
   getBackboneModels: function () {
     return [this.props.comments];
   },
 
   componentWillMount: function () {
-    if (!this.props.comments.areFetched) this.fetch();
-  },
-
-  fetch: function () {
-    this.props.comments.areFetched = true;
-    this.setState({isLoading: true, error: null});
-    this.props.comments.pagedFetch({
-      success: this.handleSuccess,
-      error: this.handleError
-    });
-  },
-
-  handleSuccess: function () {
-    this.setState({isLoading: false, error: null});
-  },
-
-  handleError: function (photos, er) {
-    this.props.comments.areFetched = false;
-    this.setState({isLoading: false, error: er.toString()});
+    if (!this.props.comments.areFetched) this.props.comments.pagedFetch();
   },
 
   listItems: function () {

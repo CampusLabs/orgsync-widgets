@@ -15,26 +15,13 @@ export default React.createClass({
     return [this.props.photos];
   },
 
-  getInitialState: function () {
-    return {isLoading: false, error: null};
-  },
-
   componentWillMount: function () {
-    $(document).on('keydown', this.handleKeyDown);
-    if (!this.props.photos.areFetched) this.fetch();
-  },
-
-  fetch: function () {
-    this.props.photos.areFetched = true;
-    this.setState({isLoading: true, error: null});
-    this.props.photos.pagedFetch({
-      success: this.handleSuccess,
-      error: this.handleError
-    });
+    document.addEventListener('keydown', this.handleKeyDown);
+    if (!this.props.photos.areFetched) this.props.photos.pagedFetch();
   },
 
   componentWillUnmount: function () {
-    $(document).off('keydown', this.handleKeyDown);
+    document.removeEventListener('keydown', this.handleKeyDown);
   },
 
   handleKeyDown: function (ev) {
@@ -47,15 +34,6 @@ export default React.createClass({
     var l = photos.length;
     var photo = this.currentPhoto;
     this.openPhoto(photos.at((l + photos.indexOf(photo) + dir) % l));
-  },
-
-  handleSuccess: function () {
-    this.setState({isLoading: false, error: null});
-  },
-
-  handleError: function (photos, er) {
-    this.props.photos.areFetched = false;
-    this.setState({isLoading: false, error: er.toString()});
   },
 
   olayHasFocus: function () {

@@ -1,6 +1,5 @@
 /** @jsx React.DOM */
 
-import $ from 'jquery';
 import CommentsIndex from 'components/comments/index';
 import React from 'react';
 

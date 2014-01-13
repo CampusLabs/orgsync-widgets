@@ -1,50 +1,41 @@
 /** @jsx React.DOM */
 
+module Album from 'entities/portal';
 import AlbumsListItem from 'components/albums/list-item';
 import AlbumsShow from 'components/albums/show';
 import BackboneMixin from 'mixins/backbone';
+import ExpectedPropsMixin from 'mixins/expected-props';
 module Portal from 'entities/portal';
 import React from 'react';
 import OswOlay from 'osw-olay';
 
-var keyDirMap = {
-  '37': 'left',
-  '39': 'right'
-};
+var keyDirMap = {'37': -1, '39': 1};
 
 export default React.createClass({
-  mixins: [BackboneMixin],
+  mixins: [ExpectedPropsMixin, BackboneMixin],
+
+  getExpectedProps: function () {
+    return {
+      albums: {
+        type: Album.Collection,
+        alternates: {
+          portalId: (new Portal.Model({id: this.props.portalId})).get('albums')
+        }
+      }
+    };
+  },
 
   getBackboneModels: function () {
     return [this.props.albums];
   },
 
-  getInitialState: function () {
-    return {isLoading: false, error: null};
-  },
-
   componentWillMount: function () {
-    if (!this.props.albums) {
-      if (this.props.portalId) {
-        this.props.albums =
-          (new Portal.Model({id: this.props.portalId})).get('albums');
-      }
-    }
-    $(document).on('keydown', this.handleKeyDown);
-    if (!this.props.albums.areFetched) this.fetch();
-  },
-
-  fetch: function () {
-    this.props.albums.areFetched = true;
-    this.setState({isLoading: true, error: null});
-    this.props.albums.pagedFetch({
-      success: this.handleSuccess,
-      error: this.handleError
-    });
+    document.addEventListener('keydown', this.handleKeyDown);
+    if (!this.props.albums.areFetched) this.props.albums.pagedFetch();
   },
 
   componentWillUnmount: function () {
-    $(document).off('keydown', this.handleKeyDown);
+    document.removeEventListener('keydown', this.handleKeyDown);
   },
 
   olayHasFocus: function () {
@@ -54,18 +45,15 @@ export default React.createClass({
   },
 
   handleKeyDown: function (ev) {
-    if (!this.olayHasFocus()) return;
+    if (this.olayHasFocus()) this.incrAlbum(keyDirMap[ev.which]);
+  },
+
+  incrAlbum: function (dir) {
+    if (!dir) return;
     var albums = this.props.albums;
     var l = albums.length;
     var album = this.currentAlbum;
-    switch (keyDirMap[ev.which]) {
-    case 'left':
-      this.openAlbum(albums.at((l + albums.indexOf(album) - 1) % l));
-      break;
-    case 'right':
-      this.openAlbum(albums.at((l + albums.indexOf(album) + 1) % l));
-      break;
-    }
+    this.openAlbum(albums.at((l + albums.indexOf(album) + dir) % l));
   },
 
   openAlbum: function (album) {
@@ -74,15 +62,6 @@ export default React.createClass({
     React.renderComponent(<AlbumsShow album={album} />, this.olay.$el[0]);
     this.olay.show();
     this.currentAlbum = album;
-  },
-
-  handleSuccess: function () {
-    this.setState({isLoading: false, error: null});
-  },
-
-  handleError: function (albums, er) {
-    this.props.albums.areFetched = false;
-    this.setState({isLoading: false, error: er.toString()});
   },
 
   listItems: function () {
@@ -99,6 +78,7 @@ export default React.createClass({
   },
 
   render: function () {
+    console.log(JSON.stringify(this.state));
     return (
       <div className='albums-index'>
         {this.listItems()}

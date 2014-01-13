@@ -13,14 +13,16 @@ var Model = BackboneRelations.Model.extend({
   sync: function (method, model, options) {
     var url = _.result(model, 'url');
     var data = options.data;
-    return api.get(url, data, function (er, res) {
+    var xhr = api.get(url, data, function (er, res) {
       if (er || res.error) {
         options.error(er || res.error);
-        return model.trigger('error');
+        return model.trigger('error', model, er || res.error, options);
       }
       options.success(res.data);
-      model.trigger('sync');
+      model.trigger('sync', model, res.data, options);
     });
+    model.trigger('request', model, xhr, options);
+    return xhr;
   }
 }, {
   relations: function () {

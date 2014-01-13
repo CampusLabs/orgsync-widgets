@@ -2,6 +2,7 @@
 
 import BackboneMixin from 'mixins/backbone';
 import CommentsListItem from 'components/comments/list-item';
+import LoadingSpinner from 'components/loading-spinner';
 import React from 'react';
 
 export default React.createClass({
@@ -29,7 +30,7 @@ export default React.createClass({
     return (
       <div className='comments-index'>
         {this.listItems()}
-        {this.state.loadCount ? 'Loading...' : null}
+        {this.state.loadCount ? <LoadingSpinner /> : null}
         {this.state.error ? this.state.error : null}
       </div>
     );

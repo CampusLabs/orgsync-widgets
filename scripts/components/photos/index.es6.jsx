@@ -24,7 +24,10 @@ export default React.createClass({
 
   componentWillMount: function () {
     $(document).on('keydown', this.handleKeyDown);
-    if (this.props.photos.areFetched) return;
+    if (!this.props.photos.areFetched) this.fetch();
+  },
+
+  fetch: function () {
     this.props.photos.areFetched = true;
     this.setState({isLoading: true, error: null});
     this.props.photos.pagedFetch({
@@ -35,7 +38,6 @@ export default React.createClass({
 
   componentWillUnmount: function () {
     $(document).off('keydown', this.handleKeyDown);
-    this.props.photos.off(null, null, this);
   },
 
   handleKeyDown: function (ev) {
@@ -64,6 +66,7 @@ export default React.createClass({
   },
 
   handleError: function (photos, er) {
+    this.props.photos.areFetched = false;
     this.setState({isLoading: false, error: er.toString()});
   },
 

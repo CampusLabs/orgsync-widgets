@@ -31,7 +31,10 @@ export default React.createClass({
       }
     }
     $(document).on('keydown', this.handleKeyDown);
-    if (this.props.albums.areFetched) return;
+    if (!this.props.albums.areFetched) this.fetch();
+  },
+
+  fetch: function () {
     this.props.albums.areFetched = true;
     this.setState({isLoading: true, error: null});
     this.props.albums.pagedFetch({
@@ -78,6 +81,7 @@ export default React.createClass({
   },
 
   handleError: function (albums, er) {
+    this.props.albums.areFetched = false;
     this.setState({isLoading: false, error: er.toString()});
   },
 

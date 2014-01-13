@@ -16,7 +16,10 @@ export default React.createClass({
   },
 
   componentWillMount: function () {
-    if (this.props.comments.areFetched) return;
+    if (!this.props.comments.areFetched) this.fetch();
+  },
+
+  fetch: function () {
     this.props.comments.areFetched = true;
     this.setState({isLoading: true, error: null});
     this.props.comments.pagedFetch({
@@ -30,6 +33,7 @@ export default React.createClass({
   },
 
   handleError: function (photos, er) {
+    this.props.comments.areFetched = false;
     this.setState({isLoading: false, error: er.toString()});
   },
 

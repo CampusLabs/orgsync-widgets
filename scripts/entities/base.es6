@@ -14,12 +14,8 @@ var Model = BackboneRelations.Model.extend({
     var url = _.result(model, 'url');
     var data = options.data;
     var xhr = api.get(url, data, function (er, res) {
-      if (er || res.error) {
-        options.error(er || res.error);
-        return model.trigger('error', model, er || res.error, options);
-      }
+      if (er || res.error) return options.error(er || res.error);
       options.success(res.data);
-      model.trigger('sync', model, res.data, options);
     });
     model.trigger('request', model, xhr, options);
     return xhr;
@@ -55,7 +51,7 @@ var Collection = BackboneRelations.Collection.extend({
     options = options ? _.clone(options) : {};
     var limit = options.limit || Infinity;
     var page = 0;
-    var perPage = options.per_page || 100;
+    var perPage = options.per_page || 5;
     var data = options.data || {};
     var success = options.success || function () {};
     var error = options.error || function () {};

@@ -17,7 +17,7 @@ export default React.createClass({
 
   listItems: function () {
     if (!this.props.comments.length) {
-      if (this.state.isLoading || this.state.error) return;
+      if (this.state.loadCount || this.state.error) return;
       return <div className='blank-slate'>No one has commented yet.</div>;
     }
     return this.props.comments.map(function (comment) {
@@ -29,7 +29,7 @@ export default React.createClass({
     return (
       <div className='comments-index'>
         {this.listItems()}
-        {this.state.isLoading ? 'Loading...' : null}
+        {this.state.loadCount ? 'Loading...' : null}
         {this.state.error ? this.state.error : null}
       </div>
     );

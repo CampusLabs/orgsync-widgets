@@ -5,6 +5,7 @@ import AlbumsListItem from 'components/albums/list-item';
 import AlbumsShow from 'components/albums/show';
 import BackboneMixin from 'mixins/backbone';
 import ExpectedPropsMixin from 'mixins/expected-props';
+import LoadingSpinner from 'components/loading-spinner';
 module Portal from 'entities/portal';
 import React from 'react';
 import OswOlay from 'osw-olay';
@@ -30,12 +31,12 @@ export default React.createClass({
   },
 
   componentWillMount: function () {
-    document.addEventListener('keydown', this.handleKeyDown);
+    document.addEventListener('keydown', this.onKeyDown);
     if (!this.props.albums.areFetched) this.props.albums.pagedFetch();
   },
 
   componentWillUnmount: function () {
-    document.removeEventListener('keydown', this.handleKeyDown);
+    document.removeEventListener('keydown', this.onKeyDown);
   },
 
   olayHasFocus: function () {
@@ -44,7 +45,7 @@ export default React.createClass({
     return olays[olays.length - 1] === this.olay.$container[0];
   },
 
-  handleKeyDown: function (ev) {
+  onKeyDown: function (ev) {
     if (this.olayHasFocus()) this.incrAlbum(keyDirMap[ev.which]);
   },
 
@@ -78,11 +79,10 @@ export default React.createClass({
   },
 
   render: function () {
-    console.log(JSON.stringify(this.state));
     return (
       <div className='albums-index'>
         {this.listItems()}
-        {this.state.isLoading ? 'Loading...' : null}
+        {this.state.loadCount ? <LoadingSpinner /> : null}
         {this.state.error ? this.state.error : null}
       </div>
     );

@@ -4,7 +4,7 @@ import Icon from 'components/icon';
 import React from 'react';
 
 export default React.createClass({
-  handleClick: function (ev) {
+  onClick: function (ev) {
     if (this.props.redirect) return;
     ev.preventDefault();
     if (this.props.onClick) this.props.onClick(this.props.photo);
@@ -14,7 +14,7 @@ export default React.createClass({
     var photo = this.props.photo;
     var count = photo.get('comments_count');
     return (
-      <div className='photos-list-item' onClick={this.handleClick}>
+      <div className='photos-list-item' onClick={this.onClick}>
         <a href={photo.get('links').web}>
           <div className='thumbnail'>
             <img src={photo.get('thumbnail_url')} />

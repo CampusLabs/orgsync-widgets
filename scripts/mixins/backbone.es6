@@ -2,32 +2,32 @@ import {Model} from 'backbone';
 
 export default {
   getInitialState: function () {
-    return {isLoading: false, error: null};
+    return {loadCount: 0, error: null};
   },
 
   componentWillMount: function () {
     this.getBackboneModels().forEach(function (model) {
       model.on({
         'add change remove': this.forceUpdate.bind(this, null),
-        request: this.handleRequest,
-        sync: this.handleSync,
-        error: this.handleError
+        request: this.onRequest,
+        sync: this.onSync,
+        error: this.onError
       }, this);
     }, this);
   },
 
-  handleRequest: function (model) {
+  onRequest: function (model) {
     model[(model instanceof Model ? 'is' : 'are') + 'Fetched'] = true;
-    this.setState({isLoading: true, error: null});
+    this.setState({loadCount: this.state.loadCount + 1, error: null});
   },
 
-  handleSync: function (model) {
-    this.setState({isLoading: false, error: null});
+  onSync: function () {
+    this.setState({loadCount: this.state.loadCount - 1, error: null});
   },
 
-  handleError: function (model, er) {
+  onError: function (model, er) {
     model[(model instanceof Model ? 'is' : 'are') + 'Fetched'] = false;
-    this.setState({isLoading: false, error: er.toString()});
+    this.setState({loadCount: this.state.loadCount - 1, error: er.toString()});
   },
 
   componentWillUnmount: function () {

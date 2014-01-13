@@ -1,6 +1,10 @@
 /** @jsx React.DOM */
 
+module Album from 'entities/album';
 import BackboneMixin from 'mixins/backbone';
+import ExpectedPropsMixin from 'mixins/expected-props';
+import LoadingSpinner from 'components/loading-spinner';
+module Photo from 'entities/photo';
 import PhotosListItem from 'components/photos/list-item';
 import PhotosShow from 'components/photos/show';
 import React from 'react';
@@ -9,22 +13,33 @@ import OswOlay from 'osw-olay';
 var keyDirMap = {'37': -1, '39': 1};
 
 export default React.createClass({
-  mixins: [BackboneMixin],
+  mixins: [ExpectedPropsMixin, BackboneMixin],
+
+  getExpectedProps: function () {
+    return {
+      photos: {
+        type: Photo.Collection,
+        alternates: {
+          albumId: (new Album.Model({id: this.props.albumId})).get('photos')
+        }
+      }
+    };
+  },
 
   getBackboneModels: function () {
     return [this.props.photos];
   },
 
   componentWillMount: function () {
-    document.addEventListener('keydown', this.handleKeyDown);
+    document.addEventListener('keydown', this.onKeyDown);
     if (!this.props.photos.areFetched) this.props.photos.pagedFetch();
   },
 
   componentWillUnmount: function () {
-    document.removeEventListener('keydown', this.handleKeyDown);
+    document.removeEventListener('keydown', this.onKeyDown);
   },
 
-  handleKeyDown: function (ev) {
+  onKeyDown: function (ev) {
     if (this.olayHasFocus()) this.incrPhoto(keyDirMap[ev.which]);
   },
 
@@ -70,7 +85,7 @@ export default React.createClass({
     return (
       <div className='photos-index'>
         {this.listItems()}
-        {this.state.isLoading ? 'Loading...' : null}
+        {this.state.loadCount ? <LoadingSpinner /> : null}
         {this.state.error ? this.state.error : null}
       </div>
     );

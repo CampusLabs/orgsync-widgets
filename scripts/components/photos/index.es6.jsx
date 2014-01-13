@@ -6,10 +6,7 @@ import PhotosShow from 'components/photos/show';
 import React from 'react';
 import OswOlay from 'osw-olay';
 
-var keyDirMap = {
-  '37': 'left',
-  '39': 'right'
-};
+var keyDirMap = {'37': -1, '39': 1};
 
 export default React.createClass({
   mixins: [BackboneMixin],
@@ -41,25 +38,16 @@ export default React.createClass({
   },
 
   handleKeyDown: function (ev) {
-    if (!this.olayHasFocus()) return;
-    switch (keyDirMap[ev.which]) {
-    case 'left':
-      return this.nextPhoto();
-    case 'right':
-      return this.prevPhoto();
-    }
+    if (this.olayHasFocus()) this.incrPhoto(keyDirMap[ev.which]);
   },
 
   incrPhoto: function (dir) {
+    if (!dir) return;
     var photos = this.props.photos;
     var l = photos.length;
     var photo = this.currentPhoto;
     this.openPhoto(photos.at((l + photos.indexOf(photo) + dir) % l));
   },
-
-  nextPhoto: function () { this.incrPhoto(1); },
-
-  prevPhoto: function () { this.incrPhoto(-1); },
 
   handleSuccess: function () {
     this.setState({isLoading: false, error: null});
@@ -80,7 +68,7 @@ export default React.createClass({
     if (this.olay) React.unmountComponentAtNode(this.olay.$el[0]);
     else this.olay = new OswOlay('<div>', {preserve: true}, 'photos-show');
     React.renderComponent(
-      <PhotosShow photo={photo} onImageClick={this.nextPhoto} />,
+      <PhotosShow photo={photo} onImageClick={this.incrPhoto.bind(this, 1)} />,
       this.olay.$el[0]
     );
     this.olay.show();

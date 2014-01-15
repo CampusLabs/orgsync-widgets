@@ -1,9 +1,9 @@
 export default {
   componentWillMount: function () {
     var props = this.props;
-    var expectedProps = this.getExpectedProps();
-    for (var name in expectedProps) {
-      var definition = expectedProps[name];
+    var coercedProps = this.getCoercedProps();
+    for (var name in coercedProps) {
+      var definition = coercedProps[name];
       if (props[name]) {
         if (props[name] instanceof definition.type) continue;
         props[name] = new definition.type(props[name]);

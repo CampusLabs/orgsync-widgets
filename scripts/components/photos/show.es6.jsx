@@ -9,15 +9,14 @@ export default React.createClass({
   },
 
   render: function () {
-    var photo = this.props.photo;
     return (
       <div className='photos-show'>
         <div className='image' onClick={this.onImageClick}>
-          <img src={photo.get('full_url')} />
+          <img src={this.props.photo.get('full_url')} />
         </div>
-        <div className='description'>{photo.get('description')}</div>
+        <div className='description'>{this.props.photo.get('description')}</div>
         <div className='comments-header'>Comments</div>
-        <CommentsIndex comments={photo.get('comments')} />
+        <CommentsIndex comments={this.props.photo.get('comments')} />
       </div>
     );
   }

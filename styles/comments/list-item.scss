@@ -20,6 +20,9 @@
     width: 40px;
     height: 40px;
     background: white;
+    img {
+      max-width: 100%;
+    }
   }
   .creator-name {
     display: inline;

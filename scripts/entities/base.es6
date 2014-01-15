@@ -14,10 +14,9 @@ var Model = BackboneRelations.Model.extend({
     var url = _.result(model, 'url');
     var data = options.data;
     var xhr = api.get(url, data, function (er, res) {
-      if (er || res.error) return options.error(er || res.error);
+      if (er = (er || res.error)) return options.error(er);
       options.success(res.data);
     });
-    model.trigger('request', model, xhr, options);
     return xhr;
   }
 }, {

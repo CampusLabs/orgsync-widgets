@@ -1,38 +1,26 @@
 /** @jsx React.DOM */
 
-import BackboneMixin from 'mixins/backbone';
 import CommentsListItem from 'components/comments/list-item';
-import LoadingSpinner from 'components/loading-spinner';
+import List from 'components/list';
 import React from 'react';
 
 export default React.createClass({
-  mixins: [BackboneMixin],
-
-  getBackboneModels: function () {
-    return [this.props.comments];
+  renderBlankSlate: function () {
+    return <div className='blank-slate'>No one has commented yet.</div>;
   },
 
-  componentWillMount: function () {
-    if (!this.props.comments.areFetched) this.props.comments.pagedFetch();
-  },
-
-  listItems: function () {
-    if (!this.props.comments.length) {
-      if (this.state.loadCount || this.state.error) return;
-      return <div className='blank-slate'>No one has commented yet.</div>;
-    }
-    return this.props.comments.map(function (comment) {
-      return <CommentsListItem key={comment.id} comment={comment} />;
-    }, this);
+  renderListItem: function (comment) {
+    return <CommentsListItem key={comment.id} comment={comment} />;
   },
 
   render: function () {
     return (
-      <div className='comments-index'>
-        {this.listItems()}
-        {this.state.loadCount ? <LoadingSpinner /> : null}
-        {this.state.error ? this.state.error : null}
-      </div>
+      <List
+        className='comments-index'
+        renderListItem={this.renderListItem}
+        renderBlankSlate={this.renderBlankSlate}
+        collection={this.props.comments}
+      />
     );
   }
 });

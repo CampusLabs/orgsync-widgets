@@ -16,7 +16,7 @@ var Collection = Base.Collection.extend({
   comparator: 'name',
 
   constructor: function () {
-    Base.Model.Collection.apply(this, arguments);
+    Base.Collection.apply(this, arguments);
     this.generateColors();
   },
 

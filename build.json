@@ -46,7 +46,9 @@
   },
   "include": [
     "views/albums/index/index",
-    "views/portals/index/index"
+    "views/portals/index/index",
+    "views/news-posts/index/index",
+    "views/events/index"
   ],
   "name": "app",
   "optimize": "none",

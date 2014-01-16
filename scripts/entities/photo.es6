@@ -12,10 +12,6 @@ var Model = Base.Model.extend({
         url: function () { return this.owner.get('links').comments; }
       }
     };
-  },
-
-  orgsyncUrl: function () {
-    return this.get('album').orgsyncUrl() + '/photo/' + this.id;
   }
 });
 

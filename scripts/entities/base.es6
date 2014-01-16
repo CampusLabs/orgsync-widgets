@@ -13,7 +13,11 @@ var Model = BackboneRelations.Model.extend({
   sync: function (method, model, options) {
     var url = _.result(model, 'url');
     var data = options.data;
+    model.requestCount == null ? model.requestCount = 1 : model.requestCount++;
+    model.trigger('request:start');
     return api.get(url, data, function (er, res) {
+      model.requestCount--;
+      model.trigger('request:end');
       if (er || (er = res.error)) return options.error(er);
       options.success(res.data);
     });

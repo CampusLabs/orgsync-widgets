@@ -67,7 +67,12 @@ var selectorViewMap = {};
 var scan = function () {
   $('html').addClass('dpr-' + dpr());
   _.each(selectorViewMap, function (view, selector) {
-    $(selector).each(function () { new view({el: this}); });
+    $(selector).each(function () {
+      var data = $(this).data();
+      if (data.apiKey) api.key = data.apiKey;
+      if (data.apiUrlRoot) api.urlRoot = data.apiUrlRoot;
+      new view({el: this});
+    });
   });
   elementQuery();
 };

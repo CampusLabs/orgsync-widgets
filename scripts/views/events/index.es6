@@ -51,7 +51,10 @@ export default selectorViewMap['.js-osw-events-index'] = BaseView.extend({
 
   listeners: {
     eventFilters: {'change:enabled': 'updateFiltered'},
-    fetchedEvents: {sync: 'onFetchedEvents'}
+    fetchedEvents: {
+      sync: 'onFetchedEvents',
+      'request:start request:end': 'toggleLoading'
+    }
   },
 
   initialize: function () {
@@ -250,5 +253,12 @@ export default selectorViewMap['.js-osw-events-index'] = BaseView.extend({
   toggleFilters: function () {
     this.$el.toggleClass('js-full-width');
     this.updateFilterText();
+  },
+
+  toggleLoading: function () {
+    this.$('.js-loading').toggleClass(
+      'js-none',
+      this.fetchedEvents.requestCount === 0
+    );
   }
 });

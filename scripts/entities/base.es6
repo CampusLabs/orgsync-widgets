@@ -25,11 +25,13 @@ var Model = BackboneRelations.Model.extend({
 }, {
   relations: function () {
     if (this._relations) return this._relations;
-    var relations = _.result(this.prototype, 'relations');
-    relations = _.reduce(relations, function (rels, rel, key) {
+    this._relations = this.prototype.relations =
+    _.reduce(this.prototype.relations, function (rels, rel, key) {
+      if (rel.hasOne) rel.hasOne = rel.hasOne.Model;
+      if (rel.hasMany) rel.hasMany = rel.hasMany.Collection;
       if (!rel.via) {
-        var complement =
-          (rel.hasOne || rel.hasMany.prototype.model).prototype.relations;
+        var Model = rel.hasOne || rel.hasMany.prototype.model;
+        var complement = Model.prototype.relations;
         var hasOne = !rel.hasOne;
         var fk = rel.fk;
         rel.reverse = _.reduce(complement, function (reverse, rel, key) {
@@ -40,7 +42,6 @@ var Model = BackboneRelations.Model.extend({
       rels[key] = rel;
       return rels;
     }, {});
-    return this._relations = this.prototype.relations = relations;
   }
 });
 

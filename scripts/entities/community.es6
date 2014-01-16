@@ -4,15 +4,13 @@ module Category from 'entities/category';
 module Event from 'entities/event';
 
 var Model = Base.Model.extend({
-  relations: function () {
-    return {
-      portals: {hasMany: Portal.Collection, fk: 'community_id'},
-      umbrellas: {hasMany: Portal.Collection, fk: 'community_id'},
-      categories: {hasMany: Category.Collection, fk: 'community_id'},
-      events: {hasMany: Event.Collection, via: 'portals', fk: 'portal_id'}
-    };
+  relations: {
+    portals: {hasMany: Portal, fk: 'community_id'},
+    umbrellas: {hasMany: Portal, fk: 'community_id'},
+    categories: {hasMany: Category, fk: 'community_id'},
+    events: {hasMany: Event, via: 'portals', fk: 'portal_id'}
   },
-  
+
   urlRoot: '/communities'
 });
 

@@ -7,15 +7,9 @@ module EventDate from 'entities/event-date';
 module Event from 'entities/event';
 
 var Model = Base.Model.extend({
-  relations: function () {
-    return {
-      eventDates: {hasMany: EventDate.Collection, fk: 'day_id'},
-      events: {
-        hasMany: Event.Collection,
-        via: 'eventDates#event',
-        fk: 'event_id'
-      }
-    };
+  relations: {
+    eventDates: {hasMany: EventDate, fk: 'day_id'},
+    events: {hasMany: Event, via: 'eventDates#event', fk: 'event_id'}
   },
 
   defaults: {

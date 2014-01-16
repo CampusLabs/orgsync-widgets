@@ -2,10 +2,8 @@ module Base from 'entities/base';
 module Portal from 'entities/portal';
 
 var Model = Base.Model.extend({
-  relations: function () {
-    return {
-      portals: {hasMany: Portal.Collection, fk: 'category_id'}
-    };
+  relations: {
+    portals: {hasMany: Portal, fk: 'category_id'}
   }
 });
 

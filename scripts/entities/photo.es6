@@ -3,15 +3,13 @@ module Album from 'entities/album';
 module Comment from 'entities/comment';
 
 var Model = Base.Model.extend({
-  relations: function () {
-    return {
-      album: {hasOne: Album.Model, fk: 'album_id'},
-      comments: {
-        hasMany: Comment.Collection,
-        fk: 'photo_id',
-        url: function () { return this.owner.get('links').comments; }
-      }
-    };
+  relations: {
+    album: {hasOne: Album, fk: 'album_id'},
+    comments: {
+      hasMany: Comment,
+      fk: 'photo_id',
+      url: function () { return this.owner.get('links').comments; }
+    }
   }
 });
 

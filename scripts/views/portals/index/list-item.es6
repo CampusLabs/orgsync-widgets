@@ -1,9 +1,9 @@
 import {Olay} from 'app';
-import View from 'views/view';
+import BaseView from 'views/base';
 import PortalsShowView from 'views/portals/show';
 import PortalsIndexListItemTemplate from 'jst/portals/index/list-item';
 
-export default View.extend({
+export default BaseView.extend({
   tagName: 'li',
 
   className: 'js-list-item list-item',

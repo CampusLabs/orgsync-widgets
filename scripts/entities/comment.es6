@@ -5,10 +5,8 @@ module Base from 'entities/base';
 module Account from 'entities/account';
 
 var Model = Base.Model.extend({
-  relations: function () {
-    return {
-      creator: {hasOne: Account.Model, fk: 'creator_id'}
-    };
+  relations: {
+    creator: {hasOne: Account, fk: 'creator_id'}
   },
 
   time: function () {

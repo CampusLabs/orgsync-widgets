@@ -7,10 +7,8 @@ module Day from 'entities/day';
 module Event from 'entities/event';
 
 var Model = Base.Model.extend({
-  relations: function () {
-    return {
-      event: {hasOne: Event.Model, fk: 'event_id'}
-    };
+  relations: {
+    event: {hasOne: Event, fk: 'event_id'}
   },
 
   defaults: {

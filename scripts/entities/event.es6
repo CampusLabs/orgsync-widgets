@@ -7,13 +7,11 @@ module EventDate from 'entities/event-date';
 module Comment from 'entities/comment';
 
 var Model = Base.Model.extend({
-  relations: function () {
-    return {
-      portal: {hasOne: Portal.Model, fk: 'portal_id'},
-      creator: {hasOne: Account.Model, fk: 'creator_id'},
-      dates: {hasMany: EventDate.Collection, fk: 'event_id'},
-      comments: {hasMany: Comment.Collection, fk: 'event_id'}
-    };
+  relations: {
+    portal: {hasOne: Portal, fk: 'portal_id'},
+    creator: {hasOne: Account, fk: 'creator_id'},
+    dates: {hasMany: EventDate, fk: 'event_id'},
+    comments: {hasMany: Comment, fk: 'event_id'}
   },
 
   parse: function (data) {

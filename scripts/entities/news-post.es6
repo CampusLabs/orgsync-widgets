@@ -7,12 +7,10 @@ module Account from 'entities/account';
 module Comment from 'entities/comment';
 
 var Model = Base.Model.extend({
-  relations: function () {
-    return {
-      portal: {hasOne: Portal.Model, fk: 'portal_id'},
-      creator: {hasOne: Account.Model, fk: 'creator_id'},
-      comments: {hasMany: Comment.Collection, fk: 'news_post_id'}
-    };
+  relations: {
+    portal: {hasOne: Portal, fk: 'portal_id'},
+    creator: {hasOne: Account, fk: 'creator_id'},
+    comments: {hasMany: Comment, fk: 'news_post_id'}
   },
 
   orgsyncUrl: function () {

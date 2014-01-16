@@ -64,7 +64,8 @@ BaseView.extend({
     this.updateFiltered = _.debounce(this.updateFiltered);
     if (bootstrapped) return this.fetchSuccess();
     this.$el.append($('<div>').addClass('js-loading'));
-    this.portals.pagedFetch({
+    this.portals.fetch({
+      data: {all: true},
       success: _.bind(this.fetchSuccess, this),
       error: _.bind(this.$el.text, this.$el, 'Load failed...')
     });

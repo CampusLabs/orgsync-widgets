@@ -94,6 +94,7 @@ export default selectorViewMap['.js-osw-events-index'] = BaseView.extend({
     this.views.daysList.setView(view, date);
     this.updateMonth();
     this.updateFilterText();
+    this.updateFiltered();
   },
 
   render: function () {

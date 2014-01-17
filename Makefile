@@ -3,8 +3,14 @@ COGS=$(BIN)cogs
 RJS=$(BIN)r.js
 WATCHY=$(BIN)watchy
 
-dev:
+all: clean init
 	$(MAKE) -j cogs rjs server
+
+clean:
+	rm -fr tmp dist
+
+init:
+	$(COGS)
 
 cogs:
 	$(COGS) -w scripts,styles

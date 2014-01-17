@@ -311,8 +311,14 @@ export default ListView.extend({
         );
         self.available.addEventDates(newEventDates);
         var last = newEventDates.last();
-        var endDate = last ? last.start().clone().startOf('day') : day.date();
-        self.available.fill(day.date(), endDate, true);
+        var first = newEventDates.first();
+        var startDate = first ? first.start().clone().startOf('day') : date;
+        var endDate = last ? last.start().clone().startOf('day') : date;
+        self.available.fill(
+          startDate.isBefore(date) ? startDate : date,
+          endDate.isAfter(date) ? endDate : date,
+          true
+        );
         if (self[fetchKey] === day) self.checkFetch();
       }
     });

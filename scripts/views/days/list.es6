@@ -277,9 +277,7 @@ export default ListView.extend({
   },
 
   fetch: function (day, dir) {
-    if (this.fetchedEvents.requestCount) {
-      return this.fetchedEvents.once('request:end', this.checkFetch, this);
-    }
+    if (this.fetchedEvents.requestCount) return;
     var page = day.get('fetched') + 1;
     var self = this;
     var fetchKey = dir + 'FetchDay';

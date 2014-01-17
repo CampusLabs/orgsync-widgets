@@ -73,19 +73,20 @@
     }
   }
   .loading {
-    float: left;
-    margin-left: 5px;
+    position: absolute;
+    left: 10px;
     background-size: contain;
     background-position: left;
     padding-left: 18px;
     min-width: 0;
     min-height: 0;
+    color: #666;
     text-align: left;
   }
   .tz {
     text-align: right;
     font-size: 11px;
-    color: #666666;
+    color: #666;
   }
   .left-buttons,
   .right-buttons {

@@ -100,7 +100,10 @@ export default React.createClass({
     this.setState({isLoading: true, error: null});
     this.props.collection.fetch({
       remove: false,
-      data: {page: this.fetchPage, per_page: this.props.fetchPageSize}
+      data: _.extend({
+        page: this.fetchPage,
+        per_page: this.props.fetchPageSize
+      }, this.props.fetchOptions)
     });
   },
 

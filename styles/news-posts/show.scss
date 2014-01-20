@@ -1,0 +1,19 @@
+@import '../config';
+
+.news-posts-show {
+  text-align: left;
+  padding: 10px;
+  max-width: 480px;
+  img {
+    max-width: 100%;
+  }
+  p {
+    margin-bottom: 20px;
+  }
+  strong {
+    font-weight: bold;
+  }
+  em {
+    font-style: italic;
+  }
+}

@@ -43,7 +43,8 @@
     }
   },
   "include": [
-    "components/albums/index"
+    "components/albums/index",
+    "components/news-posts/index"
   ],
   "name": "app",
   "optimize": "none",

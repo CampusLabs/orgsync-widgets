@@ -1,0 +1,58 @@
+@import '../config';
+
+.news-posts-list-item {
+  @include clearfix;
+  margin: 0 auto;
+  padding: 5px;
+  max-width: 580px;
+  a {
+    color: #0076a3;
+    text-decoration: none;
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+  .thumbnail {
+    display: block;
+    float: right;
+    margin: 0 0 10px 10px;
+  }
+  .title {
+    display: block;
+    font-weight: bold;
+    font-size: 16px;
+  }
+  .creator {
+    display: inline;
+    font-weight: bold;
+    &:before {
+      content: "Posted by ";
+      font-weight: normal;
+    }
+  }
+  .time {
+    display: inline;
+    white-space: nowrap;
+    color: #666666;
+  }
+  .comment-count {
+    display: inline;
+    white-space: nowrap;
+    &.none {
+      display: none;
+    }
+    &:before {
+      content: "with ";
+    }
+    &:after {
+      content: " Comment";
+    }
+    &.plural:after {
+      content: " Comments";
+    }
+  }
+  .body {
+    display: block;
+    margin-top: 10px;
+  }
+}

@@ -526,6 +526,10 @@ li {
   content: "\f099";
 }
 
+.icon-star:before {
+  content: "\f103";
+}
+
 [class^='icon-'],
 [class*=' icon-'] {
   &.after {

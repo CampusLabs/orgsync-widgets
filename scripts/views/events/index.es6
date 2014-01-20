@@ -71,7 +71,7 @@ export default selectorViewMap['.js-osw-events-index'] = BaseView.extend({
         return (new Portal.Model({id: this.id})).get('events');
       default:
         var events = new Event.Collection();
-        events.url = '/account/events';
+        events.url = '/accounts/events';
         return events;
       }
     }).call(this);

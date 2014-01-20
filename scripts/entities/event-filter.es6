@@ -35,7 +35,9 @@ var Collection = Base.Collection.extend({
     this.each(function (eventFilter, i) {
       eventFilter.set(
         'color',
-        tinycolor({h: i * step, s: 1, l: 0.5}).toHex()
+        eventFilter.get('type') === 'rsvp' ?
+        '94b363' :
+        tinycolor({h: i * step, s: 1, l: 0.4}).toHex()
       );
     });
   }

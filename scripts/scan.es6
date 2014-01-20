@@ -8,8 +8,8 @@ export default function () {
   $('.orgsync-widget').each(function () {
     var $self = $(this);
     var data = $self.data();
-    if (!$self.is(':empty') || !data.component) return;
-    var component = require('components/' + data.component).default;
+    if (!$self.is(':empty') || !data.moduleName) return;
+    var component = require('components/' + data.moduleName).default;
     if (data.apiKey) api.key = data.apiKey;
     if (data.apiUrlRoot) api.urlRoot = data.apiUrlRoot;
     React.renderComponent(component(_.clone(data)), this);

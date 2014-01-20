@@ -7,10 +7,11 @@ var iconMap = {
   umbrella: 'umbrella',
   service_umbrella: 'service',
   featured: 'promote',
+  rsvp: 'star'
 };
 
 export default BaseView.extend({
-  tagName: 'label',
+  tagName: 'div',
 
   template: EventFiltersShow,
 
@@ -31,9 +32,11 @@ export default BaseView.extend({
   },
 
   toTemplate: function () {
+    var type = this.model.get('type');
     return {
       name: this.model.get('name'),
-      iconName: iconMap[this.model.get('type')]
+      iconName: iconMap[type],
+      useRule: type === 'rsvp' || type === 'featured'
     };
   },
 

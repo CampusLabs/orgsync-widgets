@@ -57,7 +57,7 @@ export default EventDatesShowView.extend({
       ) {
       this.$el.css(
         'background',
-        tinycolor.lighten(this.color(), 45).toHexString()
+        tinycolor.lighten(this.color(), 55).toHexString()
       );
     }
   },

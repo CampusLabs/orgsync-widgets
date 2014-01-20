@@ -13,7 +13,15 @@ var Model = Base.Model.extend({
 var Collection = Base.Collection.extend({
   model: Model,
 
-  comparator: 'name',
+  comparator: function (a, b) {
+    var aType = a.get('type');
+    var bType = b.get('type');
+    if (aType === 'rsvp') return -1;
+    if (bType === 'rsvp') return 1;
+    if (aType === 'featured') return -1;
+    if (bType === 'featured') return 1;
+    return a.get('name') < b.get('name') ? -1 : 1;
+  },
 
   constructor: function () {
     Base.Collection.apply(this, arguments);
@@ -27,7 +35,9 @@ var Collection = Base.Collection.extend({
     this.each(function (eventFilter, i) {
       eventFilter.set(
         'color',
-        tinycolor({h: i * step, s: 1, l: 0.5}).toHex()
+        eventFilter.get('type') === 'rsvp' ?
+        '94b363' :
+        tinycolor({h: i * step, s: 1, l: 0.4}).toHex()
       );
     });
   }

@@ -71,7 +71,7 @@ export default selectorViewMap['.js-osw-events-index'] = BaseView.extend({
         return (new Portal.Model({id: this.id})).get('events');
       default:
         var events = new Event.Collection();
-        events.url = '/account/events';
+        events.url = '/accounts/events';
         return events;
       }
     }).call(this);
@@ -94,6 +94,7 @@ export default selectorViewMap['.js-osw-events-index'] = BaseView.extend({
     this.views.daysList.setView(view, date);
     this.updateMonth();
     this.updateFilterText();
+    this.updateFiltered();
   },
 
   render: function () {

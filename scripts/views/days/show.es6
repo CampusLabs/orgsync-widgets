@@ -19,6 +19,8 @@ export default BaseView.extend({
 
   options: ['view', 'eventFilters'],
 
+  maxEvents: 4,
+
   toTemplate: function () {
     return {
       longDate: this.longDate(),
@@ -85,6 +87,7 @@ export default BaseView.extend({
   },
 
   correctDisplay: function () {
+    this.$('.js-show-more').addClass('js-none');
     _.invoke(this.views.eventDatesList.views, 'correctDisplay');
     if (this.view === 'list') return;
     var day = this.model;
@@ -108,10 +111,20 @@ export default BaseView.extend({
       }
     });
     var l = Math.max(sorted.length, eventDates.length - hidden.length);
+    var limit = l > this.maxEvents ? this.maxEvents - 1 : l;
+    var rest = l - limit;
     for (var i = 0; i < l; ++i) {
       if (!sorted[i]) {
         sorted[i] = starters.shift() || new EventDate.Model({filler: true});
       }
+      sorted[i].set('visible', i < limit);
+    }
+    if (rest) {
+      this
+        .$('.js-show-more')
+        .removeClass('js-none')
+        .find('.js-show-more-number')
+        .text(rest);
     }
     eventDates.set(sorted.concat(hidden), {sort: false});
   }

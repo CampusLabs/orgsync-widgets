@@ -1,7 +1,4 @@
-
-    for (var key in globals) {
-      if (!(window[key] = globals[key])) delete window[key];
-    }
+    for (var key in globals) window[key] = globals[key];
 
     return require('app');
   }).call({});

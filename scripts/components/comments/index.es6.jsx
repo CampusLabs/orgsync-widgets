@@ -1,12 +1,14 @@
 /** @jsx React.DOM */
 
+import CommentsBlankSlate from 'components/comments/blank-slate'
 import CommentsListItem from 'components/comments/list-item';
+import CommentsNew from 'components/comments/new';
 import List from 'components/list';
 import React from 'react';
 
 export default React.createClass({
   renderBlankSlate: function () {
-    return <div className='blank-slate'>No one has commented yet.</div>;
+    return <CommentsBlankSlate />;
   },
 
   renderListItem: function (comment) {
@@ -15,12 +17,14 @@ export default React.createClass({
 
   render: function () {
     return (
-      <List
-        className='comments-index'
-        renderListItem={this.renderListItem}
-        renderBlankSlate={this.renderBlankSlate}
-        collection={this.props.comments}
-      />
+      <div className='comments-index'>
+        <List
+          renderListItem={this.renderListItem}
+          renderBlankSlate={this.renderBlankSlate}
+          collection={this.props.comments}
+        />
+        <CommentsNew url={this.props.comments.owner.get('links').web} />
+      </div>
     );
   }
 });

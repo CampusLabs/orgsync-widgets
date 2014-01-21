@@ -8,7 +8,7 @@
     vertical-align: top;
     position: absolute;
     .search-input {
-      box-sizing: border-box;
+      @include box-sizing(border-box);
       width: 100%;
       margin-bottom: 5px;
       height: 30px;
@@ -137,7 +137,7 @@
   }
   .js-day-container {
     display: inline-block;
-    box-sizing: border-box;
+    @include box-sizing(border-box);
     width: 14.28%;
     padding: 0 5px;
   }

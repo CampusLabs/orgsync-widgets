@@ -48,7 +48,7 @@
     border-left: 5px solid;
     padding: 2px 5px;
     font-size: 11px;
-    box-sizing: border-box;
+    @include box-sizing(border-box);
     cursor: pointer;
     &:first-child {
       margin-top: 0;

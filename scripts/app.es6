@@ -6,6 +6,7 @@ import elementQuery from 'elementQuery';
 import herit from 'herit';
 import jstz from 'jstz';
 import moment from 'moment';
+import require from 'require';
 import Olay from 'olay';
 import OrgSyncApi from 'orgsync-javascript-api';
 
@@ -81,7 +82,7 @@ $(scan);
 
 var OriginalOlay = Olay;
 
-export {selectorViewMap, scan};
+export {selectorViewMap, scan, require};
 export var api = new OrgSyncApi(config.api);
 export var Olay = herit(OriginalOlay, {
   constructor: function () {

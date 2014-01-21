@@ -38,11 +38,13 @@
       require = function (name, requester) {
 
         // Special cases...
-        if (name === 'module') return mods[requester];
+        if (name === 'require') return require;
         if (name === 'exports') return mods[requester].exports;
+        if (name === 'module') return mods[requester];
 
         // Pull the module from the storage object.
         var mod = mods[name];
+        if (!mod) throw new Error("Cannot find module '" + name + "'");
 
         // Return immediately if the module has already been resolved.
         if (mod.isResolved) return mod.exports;

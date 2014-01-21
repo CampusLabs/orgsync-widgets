@@ -5,7 +5,6 @@ module Category from 'entities/category';
 module NewsPost from 'entities/news-post';
 module Event from 'entities/event';
 
-
 var Model = Base.Model.extend({
   relations: {
     umbrella: {hasOne: __exports__, fk: 'umbrella_id'},

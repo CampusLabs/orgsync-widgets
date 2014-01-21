@@ -11,7 +11,7 @@
     }
   }
   .thumbnail {
-    box-sizing: border-box;
+    @include box-sizing(border-box);
     border: 5px solid white;
     position: relative;
     max-width: 100%;

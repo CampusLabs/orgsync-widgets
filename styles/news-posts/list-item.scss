@@ -1,10 +1,8 @@
 @import '../config';
+@import 'shared';
 
 .news-posts-list-item {
-  @include clearfix;
-  margin: 0 auto;
-  padding: 5px;
-  max-width: 580px;
+  @include news-posts-show;
   a {
     color: #0076a3;
     text-decoration: none;
@@ -17,24 +15,6 @@
     float: right;
     margin: 0 0 10px 10px;
   }
-  .title {
-    display: block;
-    font-weight: bold;
-    font-size: 16px;
-  }
-  .creator {
-    display: inline;
-    font-weight: bold;
-    &:before {
-      content: "Posted by ";
-      font-weight: normal;
-    }
-  }
-  .time {
-    display: inline;
-    white-space: nowrap;
-    color: #666666;
-  }
   .comment-count {
     display: inline;
     white-space: nowrap;
@@ -42,17 +22,7 @@
       display: none;
     }
     &:before {
-      content: "with ";
+      content: " with ";
     }
-    &:after {
-      content: " Comment";
-    }
-    &.plural:after {
-      content: " Comments";
-    }
-  }
-  .body {
-    display: block;
-    margin-top: 10px;
   }
 }

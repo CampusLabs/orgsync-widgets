@@ -1,6 +1,7 @@
 
-    // jQuery insists it should bind to `window`, so politely unbind it.
-    window.jQuery.noConflict(true);
+    for (var key in globals) {
+      if (!(window[key] = globals[key])) delete window[key];
+    }
 
     return require('app');
   }).call({});

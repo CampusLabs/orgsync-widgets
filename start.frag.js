@@ -38,12 +38,13 @@
       require = function (name, requester) {
 
         // Special cases...
-        if (name === 'module') return mods[requester];
+        if (name === 'require') return require;
         if (name === 'exports') return mods[requester].exports;
+        if (name === 'module') return mods[requester];
 
         // Pull the module from the storage object.
         var mod = mods[name];
-        if (!mod) throw new Error("Couldn't find module " + name);
+        if (!mod) throw new Error("Cannot find module '" + name + "'");
 
         // Return immediately if the module has already been resolved.
         if (mod.isResolved) return mod.exports;
@@ -70,4 +71,7 @@
     })();
 
     var globals = {$: null, jQuery: null, Select2: null};
-    for (var key in globals) globals[key] = window[key];
+    for (var key in globals) {
+      globals[key] = window[key];
+      delete window[key];
+    }

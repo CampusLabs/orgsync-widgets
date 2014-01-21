@@ -1,6 +1,6 @@
 import {selectorViewMap} from 'app';
 import $ from 'jquery';
-import select2 from 'select2';
+import Select2 from 'select2';
 import _ from 'underscore';
 import _str from 'underscore.string';
 import BaseView from 'views/base';

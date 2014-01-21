@@ -22,10 +22,10 @@
 .osw-events-index.js-week-view {
   .osw-days-show {
     display: inline-block;
-    box-sizing: border-box;
+    @include box-sizing(border-box);
     border: solid white;
     border-width: 0 5px;
-    width: 14.28571%;
+    width: 14.28%;
     vertical-align: top;
     height: 16.66667%;
     background: #fff;

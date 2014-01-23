@@ -3,7 +3,6 @@
 import $ from 'jquery';
 import _ from 'underscore';
 import ListenersMixin from 'mixins/listeners';
-import LoadingSpinner from 'components/loading-spinner';
 import React from 'react';
 
 export default React.createClass({
@@ -25,6 +24,8 @@ export default React.createClass({
       fetchPageSize: 20,
       threshold: 500,
       shouldFetch: true,
+      renderLoading: function () { return <div>Loading...</div>; },
+      renderError: function (er) { return <div>{er}</div>; },
       renderBlankSlate: function () { return <div>No items to show.</div>; }
     };
   },
@@ -38,13 +39,11 @@ export default React.createClass({
   },
 
   componentWillMount: function () {
-    window.list = this;
-    this.renderPage = 1;
-    this.fetchPage = 1 + Math.floor(
-      this.props.collection.length / this.props.fetchPageSize
-    );
-    this.doneRendering = false;
     this.doneFetching = !this.props.shouldFetch;
+  },
+
+  componentWillReceiveProps: function () {
+    this.setState({models: []});
   },
 
   componentDidMount: function () {
@@ -82,16 +81,24 @@ export default React.createClass({
     return aH + scrollTop > bY + bH - threshold;
   },
 
+  renderPage: function () {
+    return 1 + Math.floor(this.state.models.length / this.props.renderPageSize);
+  },
+
+  fetchPage: function () {
+    return 1 + Math.floor(
+      this.props.collection.length / this.props.fetchPageSize
+    );
+  },
+
   renderNextPage: function () {
-    if (this.doneRendering || !this.needsPage()) return;
-    var length = this.renderPage * this.props.renderPageSize;
+    if (!this.needsPage()) return;
+    var length = this.renderPage() * this.props.renderPageSize;
     var collection = this.props.collection;
     if (this.state.models.length < collection.length) {
-      ++this.renderPage;
       this.setState({models: collection.models.slice(0, length)});
     }
     if (length < collection.length) return;
-    if (this.doneFetching) this.doneRendering = true;
     this.fetchNextPage();
   },
 
@@ -101,16 +108,15 @@ export default React.createClass({
     this.props.collection.fetch({
       remove: false,
       data: _.extend({
-        page: this.fetchPage,
+        page: this.fetchPage(),
         per_page: this.props.fetchPageSize
       }, this.props.fetchOptions)
     });
   },
 
   onSuccess: function (collection) {
-    var length = this.fetchPage * this.props.fetchPageSize;
+    var length = this.fetchPage() * this.props.fetchPageSize;
     if (collection.length < length) this.doneFetching = true;
-    ++this.fetchPage;
     this.setState({isLoading: false, error: null});
   },
 
@@ -124,12 +130,12 @@ export default React.createClass({
         {this.state.models.map(this.props.renderListItem)}
         {
           this.state.isLoading ?
-          <LoadingSpinner /> :
+          this.props.renderLoading() :
             this.state.error ?
-            this.state.error :
-              this.state.models.length ?
-              null :
-              this.props.renderBlankSlate()
+            this.props.renderError(this.state.error) :
+              this.state.models.length === 0 ?
+              this.props.renderBlankSlate() :
+              null
         }
       </div>
     );

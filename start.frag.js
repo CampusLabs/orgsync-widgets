@@ -69,9 +69,3 @@
         return mod.exports;
       };
     })();
-
-    var globals = {$: null, jQuery: null, Select2: null};
-    for (var key in globals) {
-      globals[key] = window[key];
-      delete window[key];
-    }

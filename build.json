@@ -13,12 +13,10 @@
     "moment": "../bower_components/moment/moment",
     "olay": "../bower_components/olay/olay",
     "react": "../bower_components/react/react",
-    "select2": "../bower_components/select2/select2",
     "tinycolor": "../bower_components/tinycolor/tinycolor",
     "text": "../bower_components/requirejs-text/text",
     "underscore.string": "../bower_components/underscore.string/lib/underscore.string",
     "underscore": "../bower_components/underscore/underscore",
-    "mustache": "../node_modules/mustache/mustache",
     "orgsync-javascript-api": "../node_modules/orgsync-javascript-api/orgsync-javascript-api"
   },
   "shim": {
@@ -44,7 +42,8 @@
   },
   "include": [
     "components/albums/index",
-    "components/news-posts/index"
+    "components/news-posts/index",
+    "components/portals/index"
   ],
   "name": "app",
   "optimize": "none",

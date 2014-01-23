@@ -1,0 +1,142 @@
+@import '../config';
+
+.portals-list-item {
+  vertical-align: top;
+  border-top: 1px solid #cccccc;
+  a {
+    display: block;
+    text-decoration: none;
+    &:hover,
+    &:focus {
+      .name {
+        color: #0076a3;
+      }
+    }
+  }
+  .image-container {
+    position: relative;
+    float: left;
+    width: 75px;
+    &:before {
+      content: "";
+      display: block;
+      padding-top: 100%;
+    }
+    img {
+      position: absolute;
+      width: 100%;
+      top: 0;
+      left: 0;
+    }
+  }
+  .info {
+    padding: 10px;
+    min-height: 55px;
+    overflow: hidden;
+  }
+  .name {
+    word-wrap: break-word;
+    color: #2b2b2b;
+    font-size: 16px;
+  }
+  .umbrella,
+  .category {
+    @include box-sizing(border-box);
+    color: #999999;
+    overflow-x: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .umbrella {
+    font-weight: bold;
+  }
+}
+
+.orgsync-widget[min-width~='480px'] .portals-list-item {
+  display: inline-block;
+  @include box-sizing(border-box);
+  border: 5px solid transparent;
+  width: 33.33%;
+  vertical-align: top;
+  background: white;
+  a {
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.25);
+    &:hover,
+    &:focus {
+      box-shadow: 0 1px 5px #0076a3;
+    }
+  }
+  .image-container {
+    float: none;
+    width: 100%;
+  }
+  .name {
+    color: #2b2b2b;
+    font-size: 16px;
+    min-height: 80px;
+  }
+  .umbrella,
+  .category {
+    color: #999999;
+    overflow-x: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+}
+
+.orgsync-widget[min-width~='640px'] .portals-list-item {
+  width: 25%;
+}
+
+.orgsync-widget[min-width~='800px'] .portals-list-item {
+  width: 20%;
+}
+
+.orgsync-widget[min-width~='960px'] .portals-list-item {
+  width: 16.66%;
+}
+
+.portals-index-filters {
+  .select-wrapper {
+    position: relative;
+    display: inline-block;
+    width: 30%;
+    &:after {
+      position: absolute;
+      top: 50%;
+      right: 10px;
+      display: block;
+      width: 0;
+      height: 0;
+      margin-top: -3px;
+      border-color: #808080 transparent transparent transparent;
+      border-style: solid;
+      border-width: 5px 5px 0 5px;
+      content: ' ';
+      pointer-events: none;
+    }
+    select {
+      cursor: pointer;
+      @include appearance(none);
+      @include box-sizing(border-box);
+      width: 100%;
+      padding: 5px 20px 5px 5px;
+      border: 1px solid #b8b8b8;
+      background-color: #f9f9f9;
+      font-size: 16px;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      overflow: hidden;
+
+      // These two lines hide the drop down arrow in FF.
+      text-indent: 0.01px;
+      text-overflow: '';
+
+      @include linear-gradient(#fefefe, #f2f2f2);
+      box-shadow:
+        0 1px 0 rgba(0, 0, 0, 0.05),
+        0 1px 0 rgba(255, 255, 255, 0.8) inset;
+      border-radius: 3px;
+    }
+  }
+}

@@ -18,30 +18,8 @@ var Model = Base.Model.extend({
 
   urlRoot: '/portals',
 
-  searchableWords: function () {
-    if (this._searchableWords) return this._searchableWords;
-    return this._searchableWords = _.str.words(_.values(
-      this.pick('name', 'short_name', 'keywords')
-    ).join(' ').toLowerCase());
-  },
-
-  matchesQuery: function (query) {
-    if (!query) return true;
-    var words = _.str.words(query.toLowerCase());
-    var searchableWords = this.searchableWords();
-    return _.every(words, function (wordA) {
-      return _.any(searchableWords, function (wordB) {
-        return _.str.startsWith(wordB, wordA);
-      });
-    });
-  },
-
   picture: function () {
     return this.get('picture_url') || this.defaultPicture;
-  },
-
-  orgsyncUrl: function () {
-    return 'https://orgsync.com/' + this.id + '/chapter';
   },
 
   isUmbrella: function () {

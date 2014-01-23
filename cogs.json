@@ -1,19 +1,11 @@
 {
   "options": {
     "basePath": "scripts",
-    "processors.tmpl.options.variable": "o",
-    "processors.jst.options.dependencies": {
-      "mustache": "Mustache",
-      "underscore": "_"
-    },
     "processors.es6.options.compatFix": true,
     "processors.es6.options.anonymous": false
   },
   "targets": {
     "scripts/**/*.*": "tmp",
-    "styles/orgsync-widgets.scss": "dist",
-    "styles/themes/*.*": "dist/themes",
-    "images/*.{jpg,png,gif}": "dist",
-    "bower_components/select2/*.{jpg,png,gif}": "dist"
+    "styles/orgsync-widgets.scss": "dist"
   }
 }

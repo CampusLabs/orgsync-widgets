@@ -1,4 +1,4 @@
-    for (var key in globals) window[key] = globals[key];
+    window.jQuery.noConflict(true);
 
     return require('app');
   }).call({});

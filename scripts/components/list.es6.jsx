@@ -124,19 +124,17 @@ export default React.createClass({
     this.setState({isLoading: false, error: er.toString()});
   },
 
+  renderFetchMessage: function () {
+    if (this.state.isLoading) return this.props.renderLoading();
+    if (this.state.error) return this.props.renderError(this.state.error);
+    if (!this.state.models.length) return this.props.renderBlankSlate();
+  },
+
   render: function () {
     return this.transferPropsTo(
       <div>
         {this.state.models.map(this.props.renderListItem)}
-        {
-          this.state.isLoading ?
-          this.props.renderLoading() :
-            this.state.error ?
-            this.props.renderError(this.state.error) :
-              this.state.models.length === 0 ?
-              this.props.renderBlankSlate() :
-              null
-        }
+        {this.renderFetchMessage()}
       </div>
     );
   }

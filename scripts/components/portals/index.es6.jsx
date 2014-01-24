@@ -29,8 +29,6 @@ export default React.createClass({
 
   getDefaultProps: function () {
     return {
-      umbrella: 'All Umbrellas',
-      category: 'All Categories',
       searchableAttributes: ['name', 'short_name', 'keywords']
     };
   },
@@ -64,15 +62,9 @@ export default React.createClass({
     this.setState({isLoading: false, error: er.toString()});
   },
 
-  openNewsPost: function (newsPost) {
-    var component = <NewsPostsShow key={newsPost.id} newsPost={newsPost} />;
-    (
-      <Olay
-        className='news-posts-show'
-        component={component}
-        options={{preserve: true}}
-      />
-    ).show();
+  openPortal: function (portal) {
+    var component = <PortalsShow key={portal.id} portal={portal} />;
+    (<Olay className='portals-show' component={component} />).show();
   },
 
   renderListItem: function (portal) {
@@ -80,18 +72,18 @@ export default React.createClass({
       <PortalsListItem
         key={portal.id}
         portal={portal}
-        onTitleClick={this.openPortal}
+        onClick={this.openPortal}
       />
     );
   },
 
   matchesUmbrella: function (portal) {
-    return this.state.umbrella === 'All Umbrellas' ||
+    return !this.state.umbrella ||
       portal.umbrellaName() === this.state.umbrella;
   },
 
   matchesCategory: function (portal) {
-    return this.state.category === 'All Categories' ||
+    return !this.state.category ||
       portal.get('category').get('name') === this.state.category;
   },
 

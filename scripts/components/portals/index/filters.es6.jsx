@@ -1,84 +1,47 @@
 /** @jsx React.DOM */
 
-import _ from 'underscore';
+import PortalsIndexSelector from 'components/portals/index/selector';
 import React from 'react';
 
 export default React.createClass({
-  onQueryChange: function () {
-    this.props.onChange({query: this.refs.query.getDOMNode().value});
+  onChange: function (ev) {
+    var change = {};
+    change[ev.target.name] = ev.target.value;
+    this.props.onChange(change);
   },
 
-  onUmbrellaChange: function () {
-    this.props.onChange({umbrella: this.refs.umbrella.getDOMNode().value});
+  getUmbrellaName: function (portal) {
+    return portal.umbrellaName();
   },
 
-  onCategoryChange: function () {
-    this.props.onChange({category: this.refs.category.getDOMNode().value});
-  },
-
-  umbrellaOptions: function () {
-    return this.options('Umbrellas', function (portal) {
-      return portal.umbrellaName();
-    });
-  },
-
-  categoryOptions: function () {
-    return this.options('Categories', function (portal) {
-      return portal.get('category').get('name');
-    });
-  },
-
-  options: function (type, getName) {
-    var models = this.props.portals.models;
-    return [
-      {id: 'All ' + type, name: 'All ' + type + ' (' + models.length + ')'}
-    ].concat(
-      _.chain(models)
-        .reduce(function (options, portal) {
-          var name = getName(portal);
-          if (!options[name]) options[name] = {name: name, count: 0};
-          ++options[name].count;
-          return options;
-        }, {})
-        .map(function (option) {
-          return {
-            id: option.name,
-            name: option.name + ' (' + option.count + ')'
-          };
-        })
-        .sortBy('name')
-        .value()
-    ).map(function (option) {
-      return <option key={option.id} value={option.id}>{option.name}</option>;
-    });
+  getCategoryName: function (portal) {
+    return portal.get('category').get('name');
   },
 
   render: function () {
     return (
       <div className='portals-index-filters'>
         <input
-          ref='query'
+          name='query'
           value={this.props.query}
-          onChange={this.onQueryChange}
+          onChange={this.onChange}
         />
-        <div className='select-wrapper'>
-          <select
-            ref='umbrella'
-            value={this.props.umbrella}
-            onChange={this.onUmbrellaChange}
-          >
-            {this.umbrellaOptions()}
-          </select>
-        </div>
-        <div className='select-wrapper'>
-          <select
-            ref='category'
-            value={this.props.category}
-            onChange={this.onCategoryChange}
-          >
-            {this.categoryOptions()}
-          </select>
-        </div>
+        <PortalsIndexSelector
+          portals={this.props.portals}
+          name='umbrella'
+          value={this.props.umbrella}
+          getName={this.getUmbrellaName}
+          allOption='All Umbrellas'
+          onChange={this.onChange}
+        />
+        <PortalsIndexSelector
+          portals={this.props.portals}
+          name='category'
+          value={this.props.category}
+          getName={this.getCategoryName}
+          allOption='All Categories'
+          onChange={this.onChange}
+        />
       </div>
     );
   }

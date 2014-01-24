@@ -1,0 +1,46 @@
+@import '../../config';
+
+.portals-index-selector {
+  position: relative;
+  display: inline-block;
+  @include box-sizing(border-box);
+  border: 5px solid transparent;
+  width: 30%;
+  &:after {
+    position: absolute;
+    top: 50%;
+    right: 10px;
+    display: block;
+    width: 0;
+    height: 0;
+    margin-top: -3px;
+    border-color: #808080 transparent transparent transparent;
+    border-style: solid;
+    border-width: 5px 5px 0 5px;
+    content: ' ';
+    pointer-events: none;
+  }
+  select {
+    cursor: pointer;
+    @include appearance(none);
+    @include box-sizing(border-box);
+    width: 100%;
+    padding: 5px 20px 5px 5px;
+    border: 1px solid #b8b8b8;
+    background-color: #f9f9f9;
+    font-size: 16px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+
+    // These two lines hide the drop down arrow in FF.
+    text-indent: 0.01px;
+    text-overflow: '';
+
+    @include linear-gradient(#fefefe, #f2f2f2);
+    box-shadow:
+      0 1px 0 rgba(0, 0, 0, 0.05),
+      0 1px 0 rgba(255, 255, 255, 0.8) inset;
+    border-radius: 3px;
+  }
+}

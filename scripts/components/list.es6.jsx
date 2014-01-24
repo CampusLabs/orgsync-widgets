@@ -114,9 +114,8 @@ export default React.createClass({
     });
   },
 
-  onSuccess: function (collection, data, options) {
-    var length = options.data.page * this.props.fetchPageSize;
-    if (collection.length < length) this.doneFetching = true;
+  onSuccess: function (collection, data) {
+    if (data.length < this.props.fetchPageSize) this.doneFetching = true;
     this.setState({isLoading: false, error: null});
   },
 

@@ -1,6 +1,6 @@
 @import '../../../config';
 
-.portals-index-filters-selector {
+.portals-index-filters-query {
   position: relative;
   @include box-sizing(border-box);
   border: 5px solid transparent;
@@ -11,34 +11,15 @@
     font-size: 20px;
     font-family: 'SyncDings';
     color: #808080;
+    content: '\f098';
     pointer-events: none;
   }
-  &.umbrella:before {
-    content: '\f035';
-  }
-  &.category:before {
-    content: '\f078';
-  }
-  &:after {
-    position: absolute;
-    top: 50%;
-    right: 10px;
-    display: block;
-    width: 0;
-    height: 0;
-    margin-top: -3px;
-    border-color: #808080 transparent transparent transparent;
-    border-style: solid;
-    border-width: 5px 5px 0 5px;
-    content: ' ';
-    pointer-events: none;
-  }
-  select {
+  input {
     cursor: pointer;
     @include appearance(none);
     @include box-sizing(border-box);
     width: 100%;
-    padding: 5px 20px 5px 30px;
+    padding: 5px 5px 5px 30px;
     border: 1px solid #b8b8b8;
     background-color: #f9f9f9;
     font-size: 16px;
@@ -50,15 +31,15 @@
     text-indent: 0.01px;
     text-overflow: '';
 
-    @include linear-gradient(#fefefe, #f2f2f2);
+    @include linear-gradient(#f2f2f2, #fefefe);
     box-shadow:
-      0 1px 0 rgba(0, 0, 0, 0.05),
-      0 1px 0 rgba(255, 255, 255, 0.8) inset;
+      0 1px 0 rgba(0, 0, 0, 0.05) inset,
+      0 1px 0 rgba(255, 255, 255, 0.8);
     border-radius: 3px;
   }
 }
 
-.orgsync-widget[min-width~='480px'] .portals-index-filters-selector {
+.orgsync-widget[min-width~='480px'] .portals-index-filters-query {
   display: inline-block;
   width: 33.33%;
 }

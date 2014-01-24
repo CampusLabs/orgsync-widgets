@@ -2,6 +2,8 @@
 
 import PortalsIndexFiltersSelector from
   'components/portals/index/filters/selector';
+import PortalsIndexFiltersQuery from
+  'components/portals/index/filters/query';
 import React from 'react';
 
 export default React.createClass({
@@ -22,8 +24,7 @@ export default React.createClass({
   render: function () {
     return (
       <div className='portals-index-filters'>
-        <input
-          name='query'
+        <PortalsIndexFiltersQuery
           value={this.props.query}
           onChange={this.onChange}
         />

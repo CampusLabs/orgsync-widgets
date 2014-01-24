@@ -63,7 +63,7 @@ export default React.createClass({
   },
 
   openPortal: function (portal) {
-    var component = <PortalsShow key={portal.id} portal={portal} />;
+    var component = <PortalsShow portal={portal} />;
     (<Olay className='portals-show' component={component} />).show();
   },
 

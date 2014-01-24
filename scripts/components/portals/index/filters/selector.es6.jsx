@@ -23,7 +23,7 @@ export default React.createClass({
 
   render: function () {
     return (
-      <div className='portals-index-filters-selector'>
+      <div className={'portals-index-filters-selector ' + this.props.name}>
         <select
           name={this.props.name}
           value={this.props.value}

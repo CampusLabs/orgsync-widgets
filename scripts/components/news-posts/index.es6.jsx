@@ -25,7 +25,7 @@ export default React.createClass({
   },
 
   openNewsPost: function (newsPost) {
-    var component = <NewsPostsShow key={newsPost.id} newsPost={newsPost} />;
+    var component = <NewsPostsShow newsPost={newsPost} />;
     (<Olay className='news-posts-show' component={component} />).show();
   },
 

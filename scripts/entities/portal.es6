@@ -1,5 +1,6 @@
 import _ from 'underscore';
 module Base from 'entities/base';
+module Account from 'entities/account';
 module Album from 'entities/album';
 module Category from 'entities/category';
 module NewsPost from 'entities/news-post';
@@ -11,7 +12,8 @@ var Model = Base.Model.extend({
     category: {hasOne: Category, fk: 'category_id'},
     albums: {hasMany: Album, fk: 'portal_id'},
     newsPosts: {hasMany: NewsPost, fk: 'portal_id', urlRoot: '/news'},
-    events: {hasMany: Event, fk: 'portal_id'}
+    events: {hasMany: Event, fk: 'portal_id'},
+    accounts: {hasMany: Account, fk: 'portal_id', urlRoot: '/people'}
   },
 
   defaultPicture: 'https://orgsync.com/assets/no_org_profile_150.png',

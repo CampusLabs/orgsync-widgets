@@ -1,0 +1,21 @@
+@import '../config';
+
+.accounts-list-item {
+  @include clearfix;
+  .avatar {
+    float: left;
+    margin-right: 5px;
+    img {
+      display: block;
+      width: 64px;
+      height: 64px;
+    }
+  }
+  .first-name {
+    font-size: 20px;
+  }
+  .last-name {
+    font-size: 18px;
+    font-weight: bold;
+  }
+}

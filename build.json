@@ -41,6 +41,7 @@
     }
   },
   "include": [
+    "components/accounts/index",
     "components/albums/index",
     "components/news-posts/index",
     "components/portals/index"

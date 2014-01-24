@@ -1,11 +1,9 @@
-@import '../../config';
+@import '../../../config';
 
-.portals-index-selector {
+.portals-index-filters-selector {
   position: relative;
-  display: inline-block;
   @include box-sizing(border-box);
   border: 5px solid transparent;
-  width: 30%;
   &:after {
     position: absolute;
     top: 50%;
@@ -43,4 +41,9 @@
       0 1px 0 rgba(255, 255, 255, 0.8) inset;
     border-radius: 3px;
   }
+}
+
+.orgsync-widget[min-width~='480px'] .portals-index-filters-selector {
+  display: inline-block;
+  width: 33.33%;
 }

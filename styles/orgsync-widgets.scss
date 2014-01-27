@@ -1,11 +1,53 @@
 //= require bower_components/olay/olay.css
 //= requireTree .
 
-@import "config";
+@import 'config';
 
 .orgsync-widget {
-  font-family: "Helvetica Neue", Arial, Helvetica, sans-serif;
+  font-family: 'Helvetica Neue', Arial, Helvetica, sans-serif;
   font-size: 12px;
+
+  &.js-olay-container {
+    background: black;
+    background: rgba(0, 0, 0, 0.75);
+
+    .js-olay-cell {
+      padding: 20px;
+    }
+
+    .js-olay-content {
+      max-width: 800px;
+      background: white;
+      border-radius: 3px;
+      box-shadow: 0 1px 5px rgba(0, 0, 0, 0.75);
+    }
+
+    .close-icon {
+      position: absolute;
+      top: -12px;
+      left: -12px;
+      width: 20px;
+      height: 20px;
+      border: 2px solid #fff;
+      border-radius: 12px;
+      background: #333;
+      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.75);
+      text-shadow: 0 1px 2px rgba(0, 0, 0, 0.75);
+      color: #fff;
+      cursor: pointer;
+
+      &:hover {
+        color: #ccc;
+        border-color: #ccc;
+      }
+
+      i {
+        display: block;
+        font-size: 12px;
+        margin: 1px 0 0 -2px;
+      }
+    }
+  }
 
   // Reverse these odd website builder defaults.
   input,
@@ -18,12 +60,16 @@
     font-size: 12px;
   }
 
-  input[type=button] {
-    border: 1px solid #aaaaaa;
+  .button {
+    border: 1px solid #b8b8b8;
     padding: 5px;
     color: #333333;
-    @include linear-gradient(#fafafa, #e8e8e8);
     cursor: pointer;
+    background-color: #f9f9f9;
+    @include linear-gradient(#fefefe, #f2f2f2);
+    @include appearance(none);
+    box-shadow: 0 1px 0 rgba(0, 0, 0, 0.1);
+    border-radius: 3px;
     &:hover {
       @include linear-gradient(#e8e8e8, #fafafa);
     }
@@ -33,13 +79,7 @@
       color: white;
       background: #3872a7;
       text-shadow: 0 1px 1px rgba(0, 0, 0, 0.75);
-      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.75) inset;
+      box-shadow: 0 1px 0 rgba(0, 0, 0, 0.1) inset;
     }
-  }
-
-  .loading {
-    min-width: 128px;
-    min-height: 128px;
-    background: url("../loading.gif") no-repeat center;
   }
 }

@@ -1,9 +1,8 @@
 /** @jsx React.DOM */
 
-import PortalsIndexFiltersSelector from
-  'components/portals/index/filters/selector';
-import PortalsIndexFiltersQuery from
-  'components/portals/index/filters/query';
+import LetterSelector from 'components/portals/letter-selector';
+import PortalSelector from 'components/portals/portal-selector';
+import Query from 'components/portals/query';
 import React from 'react';
 
 export default React.createClass({
@@ -23,12 +22,10 @@ export default React.createClass({
 
   render: function () {
     return (
-      <div className='portals-index-filters'>
-        <PortalsIndexFiltersQuery
-          value={this.props.query}
-          onChange={this.onChange}
-        />
-        <PortalsIndexFiltersSelector
+      <div className='portals-filters'>
+        <Query value={this.props.query} onChange={this.onChange} />
+        <LetterSelector value={this.props.letter} onChange={this.onChange} />
+        <PortalSelector
           portals={this.props.portals}
           name='umbrella'
           value={this.props.umbrella}
@@ -36,7 +33,7 @@ export default React.createClass({
           allOption='All Umbrellas'
           onChange={this.onChange}
         />
-        <PortalsIndexFiltersSelector
+        <PortalSelector
           portals={this.props.portals}
           name='category'
           value={this.props.category}

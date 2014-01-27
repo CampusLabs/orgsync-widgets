@@ -2,15 +2,14 @@
 
 .portals-list-item {
   vertical-align: top;
-  border-top: 1px solid #cccccc;
+  border-top: 1px solid #b8b8b8;
   a {
     display: block;
     text-decoration: none;
-    &:hover,
-    &:focus {
-      .name {
-        color: #0076a3;
-      }
+    background-color: #f9f9f9;
+    @include linear-gradient(#fefefe, #f2f2f2);
+    &:hover .name {
+      color: #0076a3;
     }
   }
   .image-container {
@@ -58,26 +57,28 @@
   border: 5px solid transparent;
   width: 33.33%;
   vertical-align: top;
-  background: white;
   a {
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.25);
-    &:hover,
-    &:focus {
-      box-shadow: 0 1px 5px #0076a3;
+    border: 1px solid #b8b8b8;
+    box-shadow: 0 1px 0 rgba(0, 0, 0, 0.1);
+    border-radius: 3px;
+    &:hover {
+      border-color: #0076a3;
     }
   }
   .image-container {
     float: none;
     width: 100%;
+    img {
+      @include border-top-radius(3px);
+    }
   }
   .name {
-    color: #2b2b2b;
     font-size: 16px;
     min-height: 80px;
   }
   .umbrella,
   .category {
-    color: #999999;
+    color: #999;
     overflow-x: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;

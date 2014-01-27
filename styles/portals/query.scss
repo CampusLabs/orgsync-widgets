@@ -1,14 +1,15 @@
-@import '../../../config';
+@import '../config';
 
-.portals-index-filters-query {
+.portals-query {
   position: relative;
   @include box-sizing(border-box);
   border: 5px solid transparent;
   &:before {
     position: absolute;
-    top: 1px;
-    left: 7px;
-    font-size: 20px;
+    top: 50%;
+    left: 10px;
+    margin-top: -11px;
+    font-size: 16px;
     font-family: 'SyncDings';
     color: #808080;
     content: '\f098';
@@ -19,27 +20,24 @@
     @include appearance(none);
     @include box-sizing(border-box);
     width: 100%;
-    padding: 5px 5px 5px 30px;
+    padding: 15px 5px 15px 30px;
     border: 1px solid #b8b8b8;
     background-color: #f9f9f9;
-    font-size: 16px;
+    @include linear-gradient(#f2f2f2, #fefefe);
+    font-size: 14px;
     text-overflow: ellipsis;
     white-space: nowrap;
     overflow: hidden;
-
-    // These two lines hide the drop down arrow in FF.
-    text-indent: 0.01px;
-    text-overflow: '';
-
-    @include linear-gradient(#f2f2f2, #fefefe);
-    box-shadow:
-      0 1px 0 rgba(0, 0, 0, 0.05) inset,
-      0 1px 0 rgba(255, 255, 255, 0.8);
+    box-shadow: 0 1px 0 rgba(0, 0, 0, 0.1) inset;
     border-radius: 3px;
   }
 }
 
-.orgsync-widget[min-width~='480px'] .portals-index-filters-query {
+.orgsync-widget[min-width~='480px'] .portals-query {
   display: inline-block;
-  width: 33.33%;
+  width: 50%;
+}
+
+.orgsync-widget[min-width~='800px'] .portals-query {
+  width: 25%;
 }

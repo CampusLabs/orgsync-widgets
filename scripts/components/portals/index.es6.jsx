@@ -7,10 +7,18 @@ module Community from 'entities/community';
 import List from 'components/list';
 import Olay from 'components/olay';
 module Portal from 'entities/portal';
-import PortalsIndexFilters from 'components/portals/index/filters';
+import PortalsIndexFilters from 'components/portals/filters';
 import PortalsListItem from 'components/portals/list-item';
+import BlankSlate from 'components/portals/blank-slate';
 import PortalsShow from 'components/portals/show';
 import React from 'react';
+
+var letters = _.times(26, function (n) {
+  return String.fromCharCode(65 + n);
+}).reduce(function (letters, letter) {
+  letters[letter] = new RegExp('^' + letter, 'i');
+  return letters;
+}, {'Starting with...': /.*/, Other: /^[^a-z]/i});
 
 export default React.createClass({
   mixins: [CoercedPropsMixin],
@@ -29,6 +37,7 @@ export default React.createClass({
 
   getDefaultProps: function () {
     return {
+      letter: 'Starting with...',
       searchableAttributes: ['name', 'short_name', 'keywords']
     };
   },
@@ -108,8 +117,7 @@ export default React.createClass({
   },
 
   matchesLetter: function (portal) {
-    var letter = this.state.letter;
-    return !letter || letter.test(portal.get('name'));
+    return letters[this.state.letter].test(portal.get('name'));
   },
 
   filteredPortals: function () {
@@ -123,6 +131,10 @@ export default React.createClass({
         );
       }, this)
     );
+  },
+
+  renderBlankSlate: function () {
+    return <BlankSlate />;
   },
 
   render: function () {
@@ -141,6 +153,7 @@ export default React.createClass({
           className='portals-index'
           collection={portals}
           renderListItem={this.renderListItem}
+          renderBlankSlate={this.renderBlankSlate}
           shouldFetch={false}
         />
       </div>

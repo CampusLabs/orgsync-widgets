@@ -2,6 +2,7 @@
 
 import _ from 'underscore';
 import React from 'react';
+import Selector from 'components/portals/selector';
 
 var letters = ['Starting with...'].concat(
   _.times(26, function (n) { return String.fromCharCode(65 + n); })
@@ -10,21 +11,13 @@ var letters = ['Starting with...'].concat(
 export default React.createClass({
   renderOptions: function () {
     return letters.map(function (letter) {
-      return <option>{letter}</option>;
+      return <option key={letter}>{letter}</option>;
     });
   },
 
   render: function () {
-    return (
-      <div className='portals-selector letter'>
-        <select
-          name='letter'
-          value={this.props.value}
-          onChange={this.props.onChange}
-        >
-          {this.renderOptions()}
-        </select>
-      </div>
+    return this.transferPropsTo(
+      <Selector name='letter' renderOptions={this.renderOptions} />
     );
   }
 });

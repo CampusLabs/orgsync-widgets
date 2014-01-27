@@ -20,6 +20,8 @@ export default React.createClass({
 
   getDefaultProps: function () {
     return {
+      isLoading: false,
+      error: null,
       renderPageSize: 10,
       fetchPageSize: 20,
       threshold: 500,
@@ -32,8 +34,8 @@ export default React.createClass({
 
   getInitialState: function () {
     return {
-      isLoading: false,
-      error: null,
+      isLoading: this.props.isLoading,
+      error: this.props.error,
       models: []
     };
   },

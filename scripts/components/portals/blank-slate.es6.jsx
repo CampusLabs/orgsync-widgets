@@ -3,20 +3,6 @@
 import React from 'react';
 
 export default React.createClass({
-  onChange: function (ev) {
-    var change = {};
-    change[ev.target.name] = ev.target.value;
-    this.props.onChange(change);
-  },
-
-  getUmbrellaName: function (portal) {
-    return portal.umbrellaName();
-  },
-
-  getCategoryName: function (portal) {
-    return portal.get('category').get('name');
-  },
-
   render: function () {
     return (
       <div className='portals-blank-slate'>
@@ -29,7 +15,12 @@ export default React.createClass({
           <li>Try different, or fewer, keywords</li>
           <li>Clear all filters to return to all organizations</li>
         </ul>
-        <input type='button' className='button' value='Clear All Filters' />
+        <input
+          type='button'
+          className='button'
+          value='Clear All Filters'
+          onClick={this.props.onClick}
+        />
       </div>
     );
   }

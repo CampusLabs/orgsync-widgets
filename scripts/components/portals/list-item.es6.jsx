@@ -3,6 +3,12 @@
 import React from 'react';
 
 export default React.createClass({
+  onClick: function (ev) {
+    if (this.props.redirect) return;
+    ev.preventDefault();
+    if (this.props.onClick) this.props.onClick(this.props.album);
+  },
+
   fittedName: function () {
     var name = this.props.portal.get('name');
     return name.length > 80 ? this.props.portal.get('short_name') : name;
@@ -11,7 +17,7 @@ export default React.createClass({
   render: function () {
     var portal = this.props.portal;
     return (
-      <div className='portals-list-item'>
+      <div className='portals-list-item' onClick={this.onClick}>
         <a href={portal.get('links').web}>
           <div className='image-container'>
             <img src={portal.picture()} />

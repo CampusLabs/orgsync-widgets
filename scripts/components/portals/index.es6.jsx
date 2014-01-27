@@ -7,10 +7,10 @@ module Community from 'entities/community';
 import List from 'components/list';
 import Olay from 'components/olay';
 module Portal from 'entities/portal';
-import PortalsIndexFilters from 'components/portals/filters';
-import PortalsListItem from 'components/portals/list-item';
+import Filters from 'components/portals/filters';
+import ListItem from 'components/portals/list-item';
 import BlankSlate from 'components/portals/blank-slate';
-import PortalsShow from 'components/portals/show';
+import Show from 'components/portals/show';
 import React from 'react';
 
 var letters = _.times(26, function (n) {
@@ -37,7 +37,10 @@ export default React.createClass({
 
   getDefaultProps: function () {
     return {
+      umbrella: '',
+      category: '',
       letter: 'Starting with...',
+      query: '',
       searchableAttributes: ['name', 'short_name', 'keywords']
     };
   },
@@ -72,17 +75,13 @@ export default React.createClass({
   },
 
   openPortal: function (portal) {
-    var component = <PortalsShow portal={portal} />;
+    var component = <Show portal={portal} />;
     (<Olay className='portals-show' component={component} />).show();
   },
 
   renderListItem: function (portal) {
     return (
-      <PortalsListItem
-        key={portal.id}
-        portal={portal}
-        onClick={this.openPortal}
-      />
+      <ListItem key={portal.id} portal={portal} onClick={this.openPortal} />
     );
   },
 
@@ -133,15 +132,25 @@ export default React.createClass({
     );
   },
 
+  clearAllFilters: function () {
+    var defaults = this.getDefaultProps();
+    this.setState({
+      umbrella: defaults.umbrella,
+      category: defaults.category,
+      letter: defaults.letter,
+      query: defaults.query
+    });
+  },
+
   renderBlankSlate: function () {
-    return <BlankSlate />;
+    return <BlankSlate onClick={this.clearAllFilters} />;
   },
 
   render: function () {
     var portals = this.filteredPortals();
     return (
       <div className='portals-index'>
-        <PortalsIndexFilters
+        <Filters
           onChange={this.setState.bind(this)}
           query={this.state.query}
           umbrella={this.state.umbrella}
@@ -152,9 +161,11 @@ export default React.createClass({
         <List
           className='portals-index'
           collection={portals}
+          isLoading={this.state.isLoading}
+          error={this.state.error}
+          shouldFetch={false}
           renderListItem={this.renderListItem}
           renderBlankSlate={this.renderBlankSlate}
-          shouldFetch={false}
         />
       </div>
     );

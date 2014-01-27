@@ -2,14 +2,15 @@
 
 import _ from 'underscore';
 import React from 'react';
+import Selector from 'components/portals/selector';
 
 export default React.createClass({
-  options: function () {
+  renderOptions: function () {
     var models = this.props.portals.models;
     var allOption = this.props.allOption;
     return [{id: '', name: allOption + ' (' + models.length + ')'}].concat(
       _.chain(models)
-        .map(this.props.getName)
+        .map(this.props.getFacet)
         .groupBy()
         .map(function (count, name) {
           return {id: name, name: name + ' (' + count.length + ')'};
@@ -22,16 +23,8 @@ export default React.createClass({
   },
 
   render: function () {
-    return (
-      <div className={'portals-selector ' + this.props.name}>
-        <select
-          name={this.props.name}
-          value={this.props.value}
-          onChange={this.props.onChange}
-        >
-          {this.options()}
-        </select>
-      </div>
+    return this.transferPropsTo(
+      <Selector renderOptions={this.renderOptions} />
     );
   }
 });

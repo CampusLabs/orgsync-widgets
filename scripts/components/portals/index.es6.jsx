@@ -67,7 +67,7 @@ export default React.createClass({
   },
 
   onSuccess: function () {
-    this.setState({isLoading: false});
+    this.setState({isLoading: false, error: null});
   },
 
   onError: function (portals, er) {

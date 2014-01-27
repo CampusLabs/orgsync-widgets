@@ -44,8 +44,13 @@ export default React.createClass({
     this.doneFetching = !this.props.shouldFetch;
   },
 
-  componentWillReceiveProps: function () {
-    this.setState({models: []});
+  componentWillReceiveProps: function (nextProps) {
+    this.setState({
+      isLoading:
+        'isLoading' in nextProps ? nextProps.isLoading : this.state.isLoading,
+      error: 'error' in nextProps ? nextProps.error : this.state.error,
+      models: []
+    });
   },
 
   componentDidMount: function () {

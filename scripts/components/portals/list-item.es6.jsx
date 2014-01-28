@@ -6,7 +6,7 @@ export default React.createClass({
   onClick: function (ev) {
     if (this.props.redirect) return;
     ev.preventDefault();
-    if (this.props.onClick) this.props.onClick(this.props.album);
+    if (this.props.onClick) this.props.onClick(this.props.portal);
   },
 
   fittedName: function () {

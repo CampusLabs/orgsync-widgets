@@ -17,8 +17,8 @@ export default React.createClass({
   render: function () {
     var portal = this.props.portal;
     return (
-      <div className='portals-list-item' onClick={this.onClick}>
-        <a href={portal.get('links').web}>
+      <div className='portals-list-item'>
+        <a href={portal.get('links').web} onClick={this.onClick}>
           <div className='image-container'>
             <img src={portal.picture()} />
           </div>

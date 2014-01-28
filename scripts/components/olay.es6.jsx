@@ -9,12 +9,11 @@ export default React.createClass({
   show: function () {
     var olay = this.olay;
     if (!olay) {
-      olay = this.olay = new Olay(null, this.props.options);
+      olay = this.olay = new Olay('<div>', this.props.options);
       olay.$container
         .addClass('orgsync-widget')
         .addClass(this.props.className + '-olay');
-      React.renderComponent(this, olay.show().$content[0]);
-      olay.setElement(this.getDOMNode());
+      React.renderComponent(this, olay.show().$el[0]);
     }
     olay.show();
     elementQuery();

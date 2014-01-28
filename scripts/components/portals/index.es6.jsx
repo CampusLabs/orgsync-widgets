@@ -166,7 +166,6 @@ export default React.createClass({
           portals={portals}
         />
         <List
-          className='portals-index'
           collection={portals}
           isLoading={this.state.isLoading}
           error={this.state.error}

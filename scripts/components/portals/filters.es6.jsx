@@ -4,6 +4,7 @@ import CategorySelector from 'components/portals/category-selector';
 import LetterSelector from 'components/portals/letter-selector';
 import Query from 'components/portals/query';
 import React from 'react';
+import Summary from 'components/portals/summary';
 import UmbrellaSelector from 'components/portals/umbrella-selector';
 
 export default React.createClass({
@@ -28,6 +29,7 @@ export default React.createClass({
           value={this.props.category}
           onChange={this.onChange}
         />
+        {this.transferPropsTo(<Summary />)}
       </div>
     );
   }

@@ -1,0 +1,21 @@
+@import '../config';
+
+.portals-summary {
+  padding: 5px;
+  .message,
+  .clear-buttons {
+    display: inline-block;
+    vertical-align: middle;
+  }
+  .message {
+    line-height: 28px;
+  }
+  .button {
+    margin-left: 5px;
+    &:after {
+      margin-left: 5px;
+      font-family: 'SyncDings';
+      content: '\f071';
+    }
+  }
+}

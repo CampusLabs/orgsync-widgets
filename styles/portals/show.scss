@@ -32,7 +32,7 @@
 }
 
 .orgsync-widget[min-width~='640px'] .portals-show {
-  min-width: 400px;
+  width: 500px;
   @include clearfix();
   .picture {
     float: right;

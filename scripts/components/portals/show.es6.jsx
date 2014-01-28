@@ -13,6 +13,7 @@ export default React.createClass({
   componentWillMount: function () {
     var portal = this.props.portal;
     if (portal.get('description') != null) return;
+    this.setState({isLoading: true, error: null});
     portal.fetch({
       success: this.onSuccess,
       error: this.onError

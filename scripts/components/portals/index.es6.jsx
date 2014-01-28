@@ -58,7 +58,7 @@ export default React.createClass({
 
   componentWillMount: function () {
     if (this.props.portals.length) return;
-    this.setState({isLoading: true});
+    this.setState({isLoading: true, error: null});
     this.props.portals.fetch({
       data: {all: true},
       success: this.onSuccess,

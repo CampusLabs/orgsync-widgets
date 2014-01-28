@@ -18,7 +18,7 @@ var letters = _.times(26, function (n) {
 }).reduce(function (letters, letter) {
   letters[letter] = new RegExp('^' + letter, 'i');
   return letters;
-}, {'Starting with...': /.*/, Other: /^[^a-z]/i});
+}, {'': /.*/, Other: /^[^a-z]/i});
 
 export default React.createClass({
   mixins: [CoercedPropsMixin],
@@ -39,7 +39,7 @@ export default React.createClass({
     return {
       umbrella: '',
       category: '',
-      letter: 'Starting with...',
+      letter: '',
       query: '',
       searchableAttributes: ['name', 'short_name', 'keywords']
     };
@@ -132,6 +132,12 @@ export default React.createClass({
     );
   },
 
+  clearFilter: function (name) {
+    var change = {};
+    change[name] = this.getDefaultProps()[name];
+    this.setState(change);
+  },
+
   clearAllFilters: function () {
     var defaults = this.getDefaultProps();
     this.setState({
@@ -152,6 +158,7 @@ export default React.createClass({
       <div className='portals-index'>
         <Filters
           onChange={this.setState.bind(this)}
+          onClear={this.clearFilter}
           query={this.state.query}
           umbrella={this.state.umbrella}
           category={this.state.category}

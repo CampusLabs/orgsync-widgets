@@ -13,14 +13,14 @@ import BlankSlate from 'components/portals/blank-slate';
 import Show from 'components/portals/show';
 import React from 'react';
 
-var letters = _.times(26, function (n) {
-  return String.fromCharCode(65 + n);
-}).reduce(function (letters, letter) {
-  letters[letter] = new RegExp('^' + letter, 'i');
-  return letters;
-}, {'': /.*/, Other: /^[^a-z]/i});
-
 export default React.createClass({
+  letterRegexps: _.times(26, function (n) {
+    return String.fromCharCode(65 + n);
+  }).reduce(function (letters, letter) {
+    letters[letter] = new RegExp('^' + letter, 'i');
+    return letters;
+  }, {'': /.*/, Other: /^[^a-z]/i}),
+
   mixins: [CoercedPropsMixin],
 
   getCoercedProps: function () {
@@ -116,7 +116,7 @@ export default React.createClass({
   },
 
   matchesLetter: function (portal) {
-    return letters[this.state.letter].test(portal.get('name'));
+    return this.letterRegexps[this.state.letter].test(portal.get('name'));
   },
 
   filteredPortals: function () {

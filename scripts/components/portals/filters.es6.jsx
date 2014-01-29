@@ -18,7 +18,11 @@ export default React.createClass({
     return (
       <div className='portals-filters'>
         <Query value={this.props.query} onChange={this.onChange} />
-        <LetterSelector value={this.props.letter} onChange={this.onChange} />
+        <LetterSelector
+          portals={this.props.portals}
+          value={this.props.letter}
+          onChange={this.onChange}
+        />
         <UmbrellaSelector
           portals={this.props.portals}
           value={this.props.umbrella}

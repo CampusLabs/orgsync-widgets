@@ -19,7 +19,7 @@ export default React.createClass({
     return (
       <div className='portals-list-item'>
         <a href={portal.get('links').web} onClick={this.onClick}>
-          <div className='image-container'>
+          <div className='picture'>
             <img src={portal.picture()} />
           </div>
           <div className='info'>

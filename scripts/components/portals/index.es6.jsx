@@ -139,13 +139,7 @@ export default React.createClass({
   },
 
   clearAllFilters: function () {
-    var defaults = this.getDefaultProps();
-    this.setState({
-      umbrella: defaults.umbrella,
-      category: defaults.category,
-      letter: defaults.letter,
-      query: defaults.query
-    });
+    ['umbrella', 'category', 'letter', 'query'].forEach(this.clearFilter);
   },
 
   renderBlankSlate: function () {

@@ -1,25 +1,26 @@
 /** @jsx React.DOM */
 
-import _ from 'underscore';
 import React from 'react';
 import Selector from 'components/portals/selector';
 
 export default React.createClass({
+  toOption: function (matches, name) {
+    return {id: name, name: name + ' (' + matches.length + ')'};
+  },
+
+  renderOption: function (option) {
+    return <option key={option.id} value={option.id}>{option.name}</option>;
+  },
+
   renderOptions: function () {
-    var models = this.props.portals.models;
-    var allOption = this.props.allOption;
-    return [{id: '', name: allOption}].concat(
-      _.chain(models)
+    return [{id: '', name: this.props.allOption}].concat(
+      this.props.portals.chain()
         .map(this.props.getFacet)
         .groupBy()
-        .map(function (count, name) {
-          return {id: name, name: name + ' (' + count.length + ')'};
-        })
+        .map(this.toOption)
         .sortBy('name')
         .value()
-    ).map(function (option) {
-      return <option key={option.id} value={option.id}>{option.name}</option>;
-    });
+    ).map(this.renderOption);
   },
 
   render: function () {

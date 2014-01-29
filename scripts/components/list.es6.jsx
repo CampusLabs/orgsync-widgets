@@ -44,15 +44,6 @@ export default React.createClass({
     this.doneFetching = !this.props.shouldFetch;
   },
 
-  componentWillReceiveProps: function (nextProps) {
-    this.setState({
-      isLoading:
-        'isLoading' in nextProps ? nextProps.isLoading : this.state.isLoading,
-      error: 'error' in nextProps ? nextProps.error : this.state.error,
-      models: []
-    });
-  },
-
   componentDidMount: function () {
     this.$scrollParent().on('scroll', this.renderNextPage);
     $(window).on('resize', this.renderNextPage);
@@ -131,8 +122,9 @@ export default React.createClass({
   },
 
   renderFetchMessage: function () {
-    if (this.state.isLoading) return this.props.renderLoading();
-    if (this.state.error) return this.props.renderError(this.state.error);
+    var info = this.props.shouldFetch ? this.state : this.props;
+    if (info.isLoading) return this.props.renderLoading();
+    if (info.error) return this.props.renderError(info.error);
     if (!this.state.models.length) return this.props.renderBlankSlate();
   },
 

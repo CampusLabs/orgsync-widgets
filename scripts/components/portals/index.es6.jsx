@@ -79,9 +79,9 @@ export default React.createClass({
     (<Olay className='portals-show' component={component} />).show();
   },
 
-  renderListItem: function (portal) {
+  renderListItem: function (portal, i) {
     return (
-      <ListItem key={portal.id} portal={portal} onClick={this.openPortal} />
+      <ListItem key={i} portal={portal} onClick={this.openPortal} />
     );
   },
 
@@ -160,6 +160,7 @@ export default React.createClass({
           portals={portals}
         />
         <List
+          key={portals.pluck('id').join()}
           collection={portals}
           isLoading={this.state.isLoading}
           error={this.state.error}

@@ -8,7 +8,7 @@ export default React.createClass({
   renderOptions: function () {
     var models = this.props.portals.models;
     var allOption = this.props.allOption;
-    return [{id: '', name: allOption + ' (' + models.length + ')'}].concat(
+    return [{id: '', name: allOption}].concat(
       _.chain(models)
         .map(this.props.getFacet)
         .groupBy()

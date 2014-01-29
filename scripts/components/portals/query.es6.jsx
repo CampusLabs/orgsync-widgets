@@ -11,6 +11,7 @@ export default React.createClass({
           placeholder='Search by name or keyword'
           value={this.props.value}
           onChange={this.props.onChange}
+          autocomplete='off'
         />
       </div>
     );

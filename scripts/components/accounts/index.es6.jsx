@@ -22,8 +22,8 @@ export default React.createClass({
     };
   },
 
-  renderListItem: function (account) {
-    return <AccountsListItem key={account.id} account={account} />;
+  renderListItem: function (account, i) {
+    return <AccountsListItem key={i} account={account} />;
   },
 
   render: function () {
@@ -32,6 +32,9 @@ export default React.createClass({
         className='accounts-index'
         collection={this.props.accounts}
         renderListItem={this.renderListItem}
+        uniform={true}
+        rowThreshold={50}
+        fetchPageSize={100}
       />
     );
   }

@@ -167,6 +167,7 @@ export default React.createClass({
           shouldFetch={false}
           renderListItem={this.renderListItem}
           renderBlankSlate={this.renderBlankSlate}
+          uniform={true}
         />
       </div>
     );

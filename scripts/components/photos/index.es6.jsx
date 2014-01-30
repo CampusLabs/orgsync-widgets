@@ -45,10 +45,10 @@ export default React.createClass({
     this.currentPhoto = photo;
   },
 
-  renderListItem: function (photo) {
+  renderListItem: function (photo, i) {
     return (
       <PhotosListItem
-        key={photo.id}
+        key={i}
         photo={photo}
         redirect={this.props.redirect}
         onClick={this.openPhoto}
@@ -62,6 +62,7 @@ export default React.createClass({
         className='photos-index'
         collection={this.props.photos}
         renderListItem={this.renderListItem}
+        uniform={true}
       />
     );
   }

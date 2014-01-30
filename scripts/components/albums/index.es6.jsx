@@ -73,6 +73,7 @@ export default React.createClass({
         className='albums-index'
         collection={this.props.albums}
         renderListItem={this.renderListItem}
+        renderPageSize={5}
       />
     );
   }

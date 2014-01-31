@@ -6,7 +6,7 @@ export default React.createClass({
   render: function () {
     return (
       <div className='comments-new'>
-        <a href={this.props.url}>Comment on OrgSync!</a>
+        <a href={this.props.url} className='button'>Comment on OrgSync!</a>
       </div>
     );
   }

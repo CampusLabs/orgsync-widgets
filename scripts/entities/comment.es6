@@ -15,11 +15,7 @@ var Model = Base.Model.extend({
 });
 
 var Collection = Base.Collection.extend({
-  model: Model,
-
-  url: function () {
-    console.log(this.parent, this.parent.get('links').comments);
-  }
+  model: Model
 });
 
 export {Model, Collection};

@@ -45,10 +45,10 @@ export default React.createClass({
     this.currentPhoto = photo;
   },
 
-  renderListItem: function (photo, i) {
+  renderListItem: function (photo) {
     return (
       <PhotosListItem
-        key={i}
+        key={photo.id}
         photo={photo}
         redirect={this.props.redirect}
         onClick={this.openPhoto}

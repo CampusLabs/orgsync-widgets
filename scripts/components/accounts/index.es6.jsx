@@ -22,8 +22,8 @@ export default React.createClass({
     };
   },
 
-  renderListItem: function (account, i) {
-    return <AccountsListItem key={i} account={account} />;
+  renderListItem: function (account) {
+    return <AccountsListItem key={account.id} account={account} />;
   },
 
   render: function () {

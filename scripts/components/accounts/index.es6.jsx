@@ -33,7 +33,6 @@ export default React.createClass({
         collection={this.props.accounts}
         renderListItem={this.renderListItem}
         uniform={true}
-        rowThreshold={50}
         fetchPageSize={100}
       />
     );

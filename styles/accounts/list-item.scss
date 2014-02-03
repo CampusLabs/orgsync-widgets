@@ -1,6 +1,8 @@
 @import '../config';
 
 .accounts-list-item {
+  display: inline-block;
+  width: 25%;
   @include clearfix;
   .picture {
     float: left;
@@ -10,6 +12,12 @@
       width: 64px;
       height: 64px;
     }
+  }
+  .first-name,
+  .last-name {
+    overflow-x: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
   }
   .first-name {
     font-size: 20px;

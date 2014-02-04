@@ -1,29 +1,45 @@
 @import '../config';
 
 .accounts-list-item {
-  display: inline-block;
-  width: 25%;
   @include clearfix;
+
   .picture {
     float: left;
     margin-right: 5px;
+
     img {
       display: block;
       width: 64px;
       height: 64px;
     }
   }
+
   .first-name,
   .last-name {
     overflow-x: hidden;
     white-space: nowrap;
     text-overflow: ellipsis;
   }
+
   .first-name {
     font-size: 20px;
   }
+
   .last-name {
     font-size: 18px;
     font-weight: bold;
   }
+}
+
+.orgsync-widget[min-width~='461px'] .accounts-list-item {
+  display: inline-block;
+  width: 50%;
+}
+
+.orgsync-widget[min-width~='691px'] .accounts-list-item {
+  width: 33.3%;
+}
+
+.orgsync-widget[min-width~='921px'] .accounts-list-item {
+  width: 25%;
 }

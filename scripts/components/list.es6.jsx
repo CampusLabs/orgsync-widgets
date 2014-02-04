@@ -168,7 +168,7 @@ export default React.createClass({
 
   onSuccess: function (collection, data) {
     if (data.length < this.props.fetchPageSize) this.doneFetching = true;
-    this.update();
+    this.delayedUpdate();
     this.setState({isLoading: false, error: null});
   },
 

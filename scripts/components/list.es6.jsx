@@ -72,10 +72,10 @@ export default React.createClass({
     var $scrollParent = this.$scrollParent();
     var $el = $(this.getDOMNode());
 
-    var isWindow = $scrollParent[0] === window;
     var scroll =
-      (isWindow ? $(document) : $scrollParent).scrollTop() -
-      $el[isWindow ? 'offset' : 'position']().top;
+      $scrollParent[0] === window ?
+      $(document).scrollTop() - $el.offset().top :
+      $scrollParent.scrollTop() - $el.position().top;
 
     var itemWidth = this.state.itemWidth;
     var itemHeight = this.state.itemHeight;

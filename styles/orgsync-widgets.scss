@@ -5,21 +5,26 @@
 @import 'config';
 
 .orgsync-widget {
+  position: relative;
   font-family: 'Helvetica Neue', Arial, Helvetica, sans-serif;
   font-size: 12px;
+
   &.js-olay-container {
     background: black;
     background: rgba(0, 0, 0, 0.75);
   }
+
   .js-olay-cell {
     padding: 20px;
   }
+
   .js-olay-content {
     max-width: 800px;
     background: white;
     border-radius: 3px;
     box-shadow: 0 1px 5px rgba(0, 0, 0, 0.75);
   }
+
   .close-icon {
     position: absolute;
     top: -12px;
@@ -33,10 +38,12 @@
     text-shadow: 0 1px 2px rgba(0, 0, 0, 0.75);
     color: #fff;
     cursor: pointer;
+
     &:hover {
       color: #ccc;
       border-color: #ccc;
     }
+
     i {
       display: block;
       font-size: 12px;
@@ -54,6 +61,7 @@
     margin: 0;
     font-size: 12px;
   }
+
   .button {
     display: inline-block;
     border: 1px solid #b8b8b8;
@@ -67,11 +75,13 @@
     @include user-select(none);
     box-shadow: 0 1px 0 rgba(0, 0, 0, 0.1);
     border-radius: 3px;
+
     &:hover {
       background-color: #f3f3f3;
       border-color: #b2b2b2;
       @include linear-gradient(#f8f8f8, #ececec);
     }
+
     &:active,
     &.selected {
       border-color: #00578f;

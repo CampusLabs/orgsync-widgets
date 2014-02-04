@@ -5,9 +5,12 @@
 @import 'config';
 
 .orgsync-widget {
-  position: relative;
   font-family: 'Helvetica Neue', Arial, Helvetica, sans-serif;
   font-size: 12px;
+
+  &:not(.js-olay-container) {
+    position: relative;
+  }
 
   &.js-olay-container {
     background: black;

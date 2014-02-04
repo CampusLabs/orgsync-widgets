@@ -3,24 +3,29 @@
 .portals-list-item {
   vertical-align: top;
   border-top: 1px solid #b8b8b8;
+
   a {
     display: block;
     text-decoration: none;
     background-color: #f9f9f9;
     @include linear-gradient(#fefefe, #f2f2f2);
+
     &:hover .name {
       color: #0076a3;
     }
   }
+
   .picture {
     position: relative;
     float: left;
     width: 75px;
+
     &:before {
       content: "";
       display: block;
       padding-top: 100%;
     }
+
     img {
       position: absolute;
       width: 100%;
@@ -28,11 +33,13 @@
       left: 0;
     }
   }
+
   .info {
     padding: 10px;
     min-height: 55px;
     overflow: hidden;
   }
+
   .name {
     word-wrap: break-word;
     color: #2b2b2b;
@@ -41,6 +48,7 @@
     text-overflow: ellipsis;
     white-space: nowrap;
   }
+
   .umbrella,
   .category {
     @include box-sizing(border-box);
@@ -49,6 +57,7 @@
     text-overflow: ellipsis;
     white-space: nowrap;
   }
+
   .umbrella {
     font-weight: bold;
   }
@@ -60,27 +69,33 @@
   border: 5px solid transparent;
   width: 33.33%;
   vertical-align: top;
+
   a {
     border: 1px solid #b8b8b8;
     box-shadow: 0 1px 0 rgba(0, 0, 0, 0.1);
     border-radius: 3px;
+
     &:hover {
       border-color: #0076a3;
     }
   }
+
   .picture {
     float: none;
     width: 100%;
+
     img {
       @include border-top-radius(3px);
     }
   }
+
   .name {
     font-size: 16px;
     height: 75px;
     white-space: normal;
     overflow: hidden;
   }
+
   .umbrella,
   .category {
     color: #999;

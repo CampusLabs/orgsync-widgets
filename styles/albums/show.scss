@@ -1,9 +1,11 @@
 @import '../config';
 
 .albums-show {
+
   .info {
     padding: 20px;
   }
+
   .name,
   .photo-count {
     text-shadow: 0 1px 3px rgba(0, 0, 0, 0.75);
@@ -12,6 +14,7 @@
     font-weight: bold;
     font-size: 20px;
   }
+
   .photo-count {
     color: #eeeeee;
     font-weight: normal;

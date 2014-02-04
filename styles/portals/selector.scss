@@ -4,6 +4,7 @@
   position: relative;
   @include box-sizing(border-box);
   border: 5px solid transparent;
+
   &:before {
     position: absolute;
     top: 50%;
@@ -14,15 +15,19 @@
     color: #808080;
     pointer-events: none;
   }
+
   &.umbrella:before {
     content: '\f035';
   }
+
   &.category:before {
     content: '\f078';
   }
+
   &.letter:before {
     content: '\f010';
   }
+
   &:after {
     position: absolute;
     top: 50%;
@@ -37,6 +42,7 @@
     content: ' ';
     pointer-events: none;
   }
+
   select {
     cursor: pointer;
     @include appearance(none);

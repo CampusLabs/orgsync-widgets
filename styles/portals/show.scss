@@ -4,27 +4,33 @@
   padding: 10px 10px 0;
   text-align: left;
   max-width: 500px;
+
   .picture {
     text-align: center;
+
     img {
       display: block;
       margin: 0 auto;
       border-radius: 3px;
     }
   }
+
   .name {
     font-size: 18px;
     font-weight: bold;
   }
+
   .umbrella {
     font-weight: bold;
   }
+
   .picture img,
   .category,
   .description,
   .button {
     margin-bottom: 10px;
   }
+
   .button {
     margin-bottom: 10px;
     margin-right: 10px;
@@ -34,8 +40,10 @@
 .orgsync-widget[min-width~='640px'] .portals-show {
   width: 500px;
   @include clearfix();
+
   .picture {
     float: right;
+
     img {
       display: block;
       border-radius: 3px;

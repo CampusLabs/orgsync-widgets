@@ -4,6 +4,7 @@
   position: relative;
   @include box-sizing(border-box);
   border: 5px solid transparent;
+
   &:before {
     position: absolute;
     top: 50%;
@@ -15,6 +16,7 @@
     content: '\f098';
     pointer-events: none;
   }
+
   input {
     cursor: pointer;
     @include appearance(none);

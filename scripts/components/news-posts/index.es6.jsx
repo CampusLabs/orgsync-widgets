@@ -34,6 +34,7 @@ export default React.createClass({
       <NewsPostsListItem
         key={newsPost.id}
         newsPost={newsPost}
+        truncateLength={this.props.truncateLength}
         onTitleClick={this.openNewsPost}
       />
     );

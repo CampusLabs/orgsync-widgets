@@ -1,20 +1,23 @@
 /** @jsx React.DOM */
 
 import $ from 'jquery';
+import _ from 'underscore';
 import Selectize from 'selectize';
-import AccountsListItem from 'components/accounts/list-item';
 import CoercedPropsMixin from 'mixins/coerced-props';
 import ListenersMixin from 'mixins/listeners';
-import List from 'components/list';
-module SelectorToken from 'entities/selector-token';
 import React from 'react';
+module SelectorBrowse from 'components/selector/browse';
+module SelectorToken from 'entities/selector-token';
+import Olay from 'components/olay';
 
 export default React.createClass({
   mixins: [CoercedPropsMixin, ListenersMixin],
 
   getCoercedProps: function () {
     return {
-      value: {type: SelectorToken.Collection}
+      value: {
+        type: SelectorToken.Collection
+      }
     };
   },
 
@@ -38,12 +41,11 @@ export default React.createClass({
   },
 
   componentDidMount: function () {
-    window.blah = this;
     var input = this.refs.input.getDOMNode();
 
     // Initialize Selectize.
     $(input).selectize({
-      create: this.createItem,
+      create: this.props.allowArbitrary && this.createItem,
       persist: false,
       maxItems: this.props.maxItems,
       load: this.fetch,
@@ -65,6 +67,8 @@ export default React.createClass({
 
   onItemAdd: function (val, $item) {
     var i = $item.parent().children().index($item);
+    var data = JSON.parse(val);
+    if (!data.id && this.props.value.findWhere({name: data.name})) return;
     this.props.value.add(JSON.parse(val), {at: i});
   },
 
@@ -92,9 +96,10 @@ export default React.createClass({
   },
 
   createItem: function (data) {
-    var initialItem = typeof data === 'object';
-    if (!this.props.allowArbitrary && !initialItem) return;
-    if (!initialItem) data = {name: data};
+
+    // Normalize data to an object.
+    if (typeof data === 'string') data = {name: data};
+
     return {value: JSON.stringify(data), text: data.name};
   },
 
@@ -103,10 +108,16 @@ export default React.createClass({
     cb([]);
   },
 
+  openBrowse: function () {
+    var component = SelectorBrowse.default(this.props);
+    (<Olay className='selector-browse' component={component} />).show();
+  },
+
   render: function () {
     return (
       <div className='selector-input'>
         <input ref='input' />
+        <span onClick={this.openBrowse}>Browse</span>
       </div>
     );
   }

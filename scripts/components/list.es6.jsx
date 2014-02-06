@@ -162,7 +162,7 @@ export default React.createClass({
       data: _.extend({
         page: 1 + Math.floor(collection.length / fetchPageSize),
         per_page: fetchPageSize
-      }, this.props.fetchOptions)
+      }, _.result(this.props, 'fetchOptions'))
     });
   },
 

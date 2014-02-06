@@ -23,5 +23,8 @@
     "images",
     "scripts",
     "styles"
-  ]
+  ],
+  "dependencies": {
+    "selectize": "~0.8.5"
+  }
 }

@@ -2,10 +2,11 @@
 
 import $ from 'jquery';
 import _ from 'underscore';
-import Selectize from 'selectize';
+import Backbone from 'backbone';
 import CoercedPropsMixin from 'mixins/coerced-props';
 import ListenersMixin from 'mixins/listeners';
 import React from 'react';
+import Selectize from 'selectize';
 module SelectorBrowse from 'components/selector/browse';
 module SelectorToken from 'entities/selector-token';
 import Olay from 'components/olay';
@@ -15,6 +16,9 @@ export default React.createClass({
 
   getCoercedProps: function () {
     return {
+      scope: {
+        type: Backbone.Collection
+      },
       value: {
         type: SelectorToken.Collection
       }
@@ -81,7 +85,7 @@ export default React.createClass({
   },
 
   addItem: function (selectorToken) {
-    var data = this.createItem(selectorToken.attributes);
+    var data = selectorToken.toSelectize();
     var input = this.refs.input.getDOMNode();
     var i = this.props.value.indexOf(selectorToken);
     input.selectize.addOption(data);
@@ -91,24 +95,20 @@ export default React.createClass({
   },
 
   removeItem: function (selectorToken) {
-    var data = this.createItem(selectorToken.attributes);
+    var data = selectorToken.toSelectize();
     var input = this.refs.input.getDOMNode();
     input.selectize.removeItem(data.value);
   },
 
   createItem: function (data) {
-
-    // Normalize data to a selector token.
-    if (_.isString(data)) data = new SelectorToken.Model({name: data.name});
-
-    return data.toSelectize();
+    return (new SelectorToken.Model({name: data.name})).toSelectize();
   },
 
   fetch: function (query, cb) {
     if (this.props.browsing) return cb([]);
     (new SelectorToken.Collection()).fetch({
       data: {
-        scope: _.pluck(this.props.scope, 'id'),
+        scope: this.props.scope.pluck('id'),
         indicies: this.props.indicies,
         q: query
       },

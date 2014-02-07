@@ -1,0 +1,27 @@
+@import '../config';
+
+.selector-browse {
+  padding: 10px;
+  text-align: left;
+  .filters {
+    position: relative;
+    display: inline-block;
+    vertical-align: top;
+    overflow: auto;
+    width: 25%;
+    > .list {
+      overflow: auto;
+      height: 500px;
+    }
+  }
+  .results {
+    position: relative;
+    display: inline-block;
+    vertical-align: top;
+    width: 75%;
+    > .list {
+      overflow: auto;
+      height: 500px;
+    }
+  }
+}

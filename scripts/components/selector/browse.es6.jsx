@@ -1,9 +1,11 @@
 /** @jsx React.DOM */
 
+import Backbone from 'backbone';
 import CoercedPropsMixin from 'mixins/coerced-props';
 import List from 'components/list';
 import React from 'react';
 module SelectorInput from 'components/selector/input';
+module SelectorResult from 'components/selector/result';
 module SelectorToken from 'entities/selector-token';
 
 export default React.createClass({
@@ -11,6 +13,9 @@ export default React.createClass({
 
   getCoercedProps: function () {
     return {
+      scope: {
+        type: Backbone.Collection
+      },
       value: {
         type: SelectorToken.Collection
       }
@@ -39,11 +44,15 @@ export default React.createClass({
   fetchOptions: function () {
     return {
       indicies: this.props.indicies,
-      scope: this.state.scope
+      scope: this.state.scope.pluck('id')
     };
   },
 
-  renderListItem: function (selectorToken) {
+  renderScope: function (scope) {
+    return <div>{scope.get('name')}</div>
+  },
+
+  renderResult: function (selectorToken) {
     return <div>{JSON.stringify(selectorToken)}</div>;
   },
 
@@ -58,11 +67,23 @@ export default React.createClass({
           value={this.props.value}
           scope={this.props.scope}
         />
-        <List
-          collection={this.results}
-          renderListItem={this.renderListItem}
-          fetchOptions={this.fetchOptions}
-        />
+        <div className='filters'>
+          <div>All</div>
+          <List
+            className='list'
+            collection={this.props.scope}
+            renderListItem={this.renderScope}
+            shouldFetch={false}
+          />
+        </div>
+        <div className='results'>
+          <List
+            className='list'
+            collection={this.results}
+            renderListItem={this.renderResult}
+            fetchOptions={this.fetchOptions}
+          />
+        </div>
       </div>
     );
   }

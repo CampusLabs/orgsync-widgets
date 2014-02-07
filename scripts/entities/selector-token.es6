@@ -11,16 +11,18 @@ var live = new Live({
   socketConstructor: SockJS,
 
   fetchAuthKey: function (cb) {
-    $.ajax({url: 'http://orgsync.com.dev/io/live-key', success: _.partial(cb, null), error: cb});
+    $.ajax({
+      url: 'http://orgsync.com.dev/io/live-key',
+      success: _.partial(cb, null),
+      error: cb
+    });
   }
 });
 
 var Model = Base.Model.extend({
   parse: function (data) {
-    return {
-      id: _str.underscored(data.type) + '_' + data.id,
-      name: data.name
-    };
+    data.id = _str.underscored(data.type) + '_' + data.id;
+    return data;
   },
 
   toSelectize: function () {

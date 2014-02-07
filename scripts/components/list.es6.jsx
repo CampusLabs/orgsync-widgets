@@ -117,8 +117,8 @@ export default React.createClass({
       }
     } else if (length <= collection.length) {
       var visibleBottom = scroll + $scrollParent.height();
-      var actualBottom = $el.prop('scrollHeight') - this.props.threshold;
-      if (visibleBottom < actualBottom - this.props.threshold) return;
+      var targetBottom = $el.prop('scrollHeight') - this.props.threshold;
+      if (visibleBottom < targetBottom) return;
       length = length + this.props.renderPageSize;
       this.delayedUpdate();
     }

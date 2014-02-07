@@ -34,9 +34,9 @@ export default React.createClass({
   getDefaultProps: function () {
     return {
       allowArbitrary: false,
-      allowMultiple: true,
       maxItems: Infinity,
-      scope: []
+      scope: [],
+      value: []
     };
   },
 
@@ -46,6 +46,7 @@ export default React.createClass({
     // Initialize Selectize.
     $(input).selectize({
       create: this.props.allowArbitrary && this.createItem,
+      createOnBlur: true,
       persist: false,
       maxItems: this.props.maxItems,
       load: this.fetch,
@@ -97,15 +98,25 @@ export default React.createClass({
 
   createItem: function (data) {
 
-    // Normalize data to an object.
-    if (typeof data === 'string') data = {name: data};
+    // Normalize data to a selector token.
+    if (_.isString(data)) data = new SelectorToken.Model({name: data.name});
 
-    return {value: JSON.stringify(data), text: data.name};
+    return data.toSelectize();
   },
 
   fetch: function (query, cb) {
-    // this.createItem(query);
-    cb([]);
+    if (this.props.browsing) return cb([]);
+    (new SelectorToken.Collection()).fetch({
+      data: {
+        scope: _.pluck(this.props.scope, 'id'),
+        indicies: this.props.indicies,
+        q: query
+      },
+      success: function (selectorTokens) {
+        cb(selectorTokens.invoke('toSelectize'));
+      },
+      error: cb.bind(this, [])
+    });
   },
 
   openBrowse: function () {
@@ -117,7 +128,11 @@ export default React.createClass({
     return (
       <div className='selector-input'>
         <input ref='input' />
-        <span onClick={this.openBrowse}>Browse</span>
+        {
+          this.props.browsing ?
+          null :
+          <span onClick={this.openBrowse}>Browse</span>
+        }
       </div>
     );
   }

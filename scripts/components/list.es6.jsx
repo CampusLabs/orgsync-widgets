@@ -177,19 +177,15 @@ export default React.createClass({
   },
 
   spaceAbove: function () {
-    return this.props.uniform ?
-      (this.state.index / this.state.columns) * this.state.itemHeight :
-      0;
+    if (!this.props.uniform) return 0;
+    return (this.state.index / this.state.columns) * this.state.itemHeight;
   },
 
   spaceBelow: function () {
-    return this.props.uniform ?
-      Math.max(
-        0,
-        (this.props.collection.length - this.state.index - this.state.length) /
-        this.state.columns
-      ) * this.state.itemHeight :
-      0;
+    if (!this.props.uniform) return 0;
+    var total = this.props.collection.length;
+    var below = Math.max(0, total - this.state.index - this.state.length);
+    return (below / this.state.columns) * this.state.itemHeight;
   },
 
   renderListItems: function () {

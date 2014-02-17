@@ -53,7 +53,7 @@ export default React.createClass({
   onKeyDown: function (ev) {
     var query = this.state.query;
     if (ev.which !== 13 || !query) return;
-    this.addSelectorItem(new SelectorItem({name: query}));
+    this.addSelectorItem({name: query});
     this.setState({query: ''});
   },
 

@@ -9,7 +9,10 @@ export default React.createClass({
 
   render: function () {
     return (
-      <div className={'selector-scope button' + (this.props.selected ? ' selected' : '')} onClick={this.onClick}>
+      <div
+        className={'selector-scope' + (this.props.selected ? ' selected' : '')}
+        onClick={this.onClick}
+      >
         {this.props.scope.get('name')}
       </div>
     );

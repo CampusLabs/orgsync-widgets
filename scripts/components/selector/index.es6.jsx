@@ -37,39 +37,41 @@ export default React.createClass({
   },
 
   onScopeClick: function (scope) {
-    this.setState({
-      scope: scope,
-      results: new SelectorItem.Collection()
-    });
+    if (scope === this.state.scope) return;
+    this.setState({scope: scope, results: new SelectorItem.Collection()});
   },
 
   onQueryChange: function (ev) {
-    this.setState({
-      query: ev.target.value,
-      results: new SelectorItem.Collection()
-    });
+    var query = ev.target.value;
+    if (query === this.state.query) return;
+    this.setState({query: query, results: new SelectorItem.Collection()});
   },
 
   onKeyDown: function (ev) {
     var query = this.state.query;
+    if (ev.which === 8 && !query) {
+      return this.removeSelectorItem(this.state.value.last());
+    }
     if (ev.which !== 13 || !query) return;
     this.addSelectorItem({name: query});
     this.setState({query: ''});
   },
 
   addSelectorItem: function (selectorItem) {
-    this.setState({
-      value: new SelectorItem.Collection(
-        this.state.value.models.concat(selectorItem)
-      )
-    });
+    var value = this.state.value;
+    if (value.get(selectorItem)) return;
+    this.setValue(value.models.concat(selectorItem));
   },
 
   removeSelectorItem: function (selectorItem) {
-    this.setState({
-      value:
-        new SelectorItem.Collection(this.state.value.without(selectorItem))
-    });
+    var value = this.state.value;
+    if (!(selectorItem = value.get(selectorItem))) return;
+    this.setValue(value.without(selectorItem));
+  },
+
+  setValue: function (selectorItems) {
+    this.setState({value: new SelectorItem.Collection(selectorItems)});
+    this.refs.results.forceUpdate();
   },
 
   fetchOptions: function () {
@@ -135,6 +137,7 @@ export default React.createClass({
   renderScopes: function () {
     return (
       <List
+        className='scopes'
         key={this.state.scope.id}
         collection={this.props.scopes}
         renderListItem={this.renderScope}
@@ -145,11 +148,13 @@ export default React.createClass({
   },
 
   renderResult: function (selectorItem, i) {
+    var selected = this.state.value.get(selectorItem);
     return (
       <SelectorResult
         key={i}
         selectorItem={selectorItem}
-        onClick={this.addSelectorItem}
+        onClick={selected ? this.removeSelectorItem : this.addSelectorItem}
+        selected={selected}
       />
     );
   },
@@ -157,7 +162,9 @@ export default React.createClass({
   renderResults: function () {
     return (
       <List
-        key={JSON.stringify(_.pick(this.state, 'value', 'scope', 'query'))}
+        className='results'
+        ref='results'
+        key={JSON.stringify(_.pick(this.state, 'scope', 'query'))}
         collection={this.state.results}
         renderListItem={this.renderResult}
         fetchOptions={this.fetchOptions}
@@ -172,6 +179,7 @@ export default React.createClass({
         {this.renderHiddenInput()}
         {this.renderTokens()}
         {this.renderQuery()}
+        <br />
         {this.renderScopes()}
         {this.renderResults()}
       </div>

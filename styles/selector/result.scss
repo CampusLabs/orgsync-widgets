@@ -6,6 +6,11 @@
   padding: 10px;
   text-align: center;
   width: 25%;
+  vertical-align: top;
+  cursor: pointer;
+  &.selected {
+    color: #999;
+  }
   .name {
     overflow: hidden;
     height: 30px;

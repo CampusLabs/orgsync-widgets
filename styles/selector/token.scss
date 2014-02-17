@@ -11,6 +11,7 @@
   text-overflow: ellipsis;
   white-space: nowrap;
   max-width: 100%;
+  @include user-select(none);
   .name {
     display: inline;
   }

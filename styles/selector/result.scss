@@ -8,6 +8,7 @@
   width: 25%;
   vertical-align: top;
   cursor: pointer;
+  @include user-select(none);
   &.selected {
     color: #999;
   }

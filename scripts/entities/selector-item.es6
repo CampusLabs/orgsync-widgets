@@ -24,6 +24,10 @@ var Model = Base.Model.extend({
     return attrs.id ?
       _str.underscored(attrs.type) + '_' + attrs.id :
       'arbitrary_' + attrs.name;
+  },
+
+  isArbitrary: function () {
+    return this.get('id') == null || this.get('type') == null;
   }
 });
 

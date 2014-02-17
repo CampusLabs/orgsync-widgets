@@ -1,0 +1,14 @@
+@import '../config';
+
+.selector-result {
+  display: inline-block;
+  @include box-sizing(border-box);
+  padding: 10px;
+  text-align: center;
+  width: 25%;
+  .name {
+    overflow: hidden;
+    height: 30px;
+    font-weight: bold;
+  }
+}

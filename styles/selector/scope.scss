@@ -1,0 +1,14 @@
+@import '../config';
+
+.selector-scope {
+  padding: 10px;
+  text-align: right;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  cursor: pointer;
+  &.selected {
+    background: #eee;
+    @include border-left-radius(3px);
+  }
+}

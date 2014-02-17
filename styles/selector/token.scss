@@ -1,0 +1,23 @@
+@import '../config';
+
+.selector-token {
+  @include box-sizing(border-box);
+  display: inline-block;
+  background: #eee;
+  border: 2px solid #fff;
+  border-radius: 3px;
+  padding: 3px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 100%;
+  .name {
+    display: inline;
+  }
+  .remove {
+    float: right;
+    cursor: pointer;
+    margin: 1px -3px 0 0;
+    font-size: 10px;
+  }
+}

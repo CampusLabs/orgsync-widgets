@@ -1,5 +1,7 @@
 export default {
-  componentWillMount: function () {
+  coerceProps: function () {
+    if (this.propsAreCoerced) return;
+    this.propsAreCoerced = true;
     var props = this.props;
     var coercedProps = this.getCoercedProps();
     for (var name in coercedProps) {
@@ -14,5 +16,14 @@ export default {
         }
       }
     }
+  },
+
+  getInitialState: function () {
+    this.coerceProps();
+    return {};
+  },
+
+  componentWillMount: function () {
+    this.coerceProps();
   }
 };

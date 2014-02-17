@@ -20,13 +20,10 @@ var live = new Live({
 });
 
 var Model = Base.Model.extend({
-  parse: function (data) {
-    data.id = _str.underscored(data.type) + '_' + data.id;
-    return data;
-  },
-
-  toSelectize: function () {
-    return {value: JSON.stringify(this), text: this.get('name')};
+  generateId: function (attrs) {
+    return attrs.id ?
+      _str.underscored(attrs.type) + '_' + attrs.id :
+      'arbitrary_' + attrs.name;
   }
 });
 

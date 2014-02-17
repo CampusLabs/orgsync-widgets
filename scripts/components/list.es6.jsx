@@ -62,11 +62,17 @@ export default React.createClass({
   },
 
   delayedUpdate: function () {
+    if (this.pendingUpdate) return;
+    this.pendingUpdate = true;
     window.requestAnimationFrame(this.update);
   },
 
   // REFACTOR
   update: function () {
+    if (!this.isMounted()) return;
+
+    this.pendingUpdate = false;
+
     var collection = this.props.collection;
     var uniform = this.props.uniform;
     var $scrollParent = this.$scrollParent();
@@ -167,12 +173,14 @@ export default React.createClass({
   },
 
   onSuccess: function (collection, data) {
+    if (!this.isMounted()) console.log('it was not mounted');
     if (data.length < this.props.fetchPageSize) this.doneFetching = true;
     this.delayedUpdate();
     this.setState({isLoading: false, error: null});
   },
 
   onError: function (collection, er) {
+    if (!this.isMounted()) console.log('it was not mounted');
     this.setState({isLoading: false, error: er.toString()});
   },
 

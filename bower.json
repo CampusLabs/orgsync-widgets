@@ -4,7 +4,7 @@
   "version": "0.0.0",
   "devDependencies": {
     "async": "x",
-    "backbone": "x",
+    "backbone": "caseywebdev/backbone#generate-id",
     "backbone-relations": "x",
     "bourbon": "d01f1d2ce9ab60520e57ccd897baa8c756949f18",
     "elementQuery": "tysonmatanich/elementQuery#prod",
@@ -26,7 +26,7 @@
     "scripts",
     "styles"
   ],
-  "dependencies": {
-    "selectize": "~0.8.5"
+  "resolutions": {
+    "backbone": "generate-id"
   }
 }

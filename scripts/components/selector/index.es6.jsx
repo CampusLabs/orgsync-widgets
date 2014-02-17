@@ -87,12 +87,17 @@ export default React.createClass({
     return options;
   },
 
+  asHiddenInputValue: function (selectorItem) {
+    var fields = selectorItem.isArbitrary() ? ['name'] : ['type', 'id'];
+    return selectorItem.pick.apply(selectorItem, fields);
+  },
+
   renderHiddenInput: function () {
     return (
       <input
         name={this.props.hiddenInputName}
         type='hidden'
-        value={JSON.stringify(_.pluck(this.state.value.models, 'id'))}
+        value={JSON.stringify(this.state.value.map(this.asHiddenInputValue))}
       />
     );
   },

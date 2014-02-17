@@ -42,9 +42,7 @@ export default React.createClass({
   },
 
   onQueryChange: function (ev) {
-    var query = ev.target.value;
-    if (query === this.state.query) return;
-    this.setState({query: query, results: new SelectorItem.Collection()});
+    this.setQuery(ev.target.value);
   },
 
   onKeyDown: function (ev) {
@@ -53,8 +51,8 @@ export default React.createClass({
       return this.removeSelectorItem(this.state.value.last());
     }
     if (ev.which !== 13 || !query) return;
+    this.setQuery('');
     this.addSelectorItem({name: query});
-    this.setState({query: ''});
   },
 
   addSelectorItem: function (selectorItem) {
@@ -72,6 +70,11 @@ export default React.createClass({
   setValue: function (selectorItems) {
     this.setState({value: new SelectorItem.Collection(selectorItems)});
     this.refs.results.forceUpdate();
+  },
+
+  setQuery: function (query) {
+    if (query === this.state.query) return;
+    this.setState({query: query, results: new SelectorItem.Collection()});
   },
 
   fetchOptions: function () {
@@ -121,6 +124,7 @@ export default React.createClass({
   renderQuery: function () {
     return (
       <input
+        className='query'
         value={this.state.query}
         onChange={this.onQueryChange}
         onKeyDown={this.onKeyDown}

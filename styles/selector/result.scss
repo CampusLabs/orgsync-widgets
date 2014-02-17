@@ -1,20 +1,34 @@
 @import '../config';
 
 .selector-result {
-  display: inline-block;
   @include box-sizing(border-box);
   padding: 10px;
+  border: 5px solid #eee;
   text-align: center;
-  width: 25%;
   vertical-align: top;
   cursor: pointer;
   @include user-select(none);
+  background: #fff;
   &.selected {
     color: #999;
+    background: #f9f9f9;
   }
   .name {
     overflow: hidden;
     height: 30px;
     font-weight: bold;
   }
+}
+
+.orgsync-widget[min-width~='461px'] .selector-result {
+  display: inline-block;
+  width: 50%;
+}
+
+.orgsync-widget[min-width~='691px'] .selector-result {
+  width: 33.3%;
+}
+
+.orgsync-widget[min-width~='921px'] .selector-result {
+  width: 25%;
 }

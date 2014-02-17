@@ -5,8 +5,12 @@
 @import 'config';
 
 .orgsync-widget {
-  font-family: 'Helvetica Neue', Arial, Helvetica, sans-serif;
-  font-size: 12px;
+  &,
+  input,
+  textarea {
+    font-family: 'Helvetica Neue', Arial, Helvetica, sans-serif;
+    font-size: 12px;
+  }
 
   &:not(.js-olay-container) {
     position: relative;

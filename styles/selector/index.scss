@@ -4,7 +4,17 @@
   padding: 10px;
   text-align: left;
   .tokens {
-    display: inline-block;
+    padding: 5px;
+    border-radius: 3px;
+    border: 1px solid #eee;
+  }
+  .query {
+    @include appearance(none);
+    border: 2px solid #fff;
+    border-radius: 3px;
+    background: #eee;
+    padding: 3px;
+    outline: none;
   }
   .scopes {
     position: relative;
@@ -19,6 +29,8 @@
     position: relative;
     display: inline-block;
     vertical-align: top;
+    @include box-sizing(border-box);
+    padding: 5px;
     width: 75%;
     height: 500px;
     background: #eee;

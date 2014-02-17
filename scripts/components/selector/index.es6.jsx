@@ -117,7 +117,10 @@ export default React.createClass({
 
   renderTokens: function () {
     return (
-      <div className='tokens'>{this.state.value.map(this.renderToken)}</div>
+      <div className='tokens'>
+        {this.state.value.map(this.renderToken)}
+        {this.renderQuery()}
+      </div>
     );
   },
 
@@ -151,7 +154,7 @@ export default React.createClass({
         collection={this.props.scopes}
         renderListItem={this.renderScope}
         shouldFetch={false}
-        renderPageSize={10}
+        uniform={true}
       />
     );
   },
@@ -187,7 +190,6 @@ export default React.createClass({
       <div className='selector-index'>
         {this.renderHiddenInput()}
         {this.renderTokens()}
-        {this.renderQuery()}
         <br />
         {this.renderScopes()}
         {this.renderResults()}

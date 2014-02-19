@@ -1,5 +1,5 @@
     window.jQuery.noConflict(true);
 
-    return require('app');
+    return require('orgsync-widgets');
   }).call({});
 }));

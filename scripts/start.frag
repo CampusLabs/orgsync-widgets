@@ -25,7 +25,7 @@
       define = function (name, deps, cb) {
         if (!cb) {
           cb = deps;
-          deps = [];
+          deps = ['require', 'exports', 'module'];
         }
         mods[name] = {isResolved: false, deps: deps, exports: {}, cb: cb};
       };

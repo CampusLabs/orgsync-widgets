@@ -14,7 +14,6 @@
     "node-sass": "x",
     "orgsync-javascript-api": "git+ssh://git@github.com:orgsync/orgsync-api-javascript",
     "react-tools": "x",
-    "requirejs": "x",
     "watchy": "x"
   }
 }

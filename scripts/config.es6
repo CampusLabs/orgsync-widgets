@@ -3,7 +3,7 @@ import Backbone from 'backbone';
 import elementQuery from 'elementQuery';
 import jstz from 'jstz';
 import moment from 'moment-timezone';
-import momentTimezonesJson from 'text!moment-timezone.json';
+import momentTimezoneData from 'moment-timezone-data';
 
 var config = {
   api: {cors: false},
@@ -31,7 +31,7 @@ var config = {
 
 Backbone.$ = $;
 
-moment.tz.add(JSON.parse(momentTimezonesJson));
+moment.tz.add(momentTimezoneData);
 
 // Fixing the updateOffset method for some wonky DST issues.
 moment.updateOffset = function (date) {

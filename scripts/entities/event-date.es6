@@ -1,6 +1,6 @@
 import _ from 'underscore';
 import moment from 'moment';
-import {tz} from 'app';
+import {tz} from 'config';
 
 module Base from 'entities/base';
 module Day from 'entities/day';

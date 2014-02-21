@@ -3,6 +3,7 @@
   "private": true,
   "version": "0.0.0",
   "devDependencies": {
+    "amdainty": "x",
     "async": "x",
     "backbone": "caseywebdev/backbone#generate-id",
     "backbone-relations": "x",

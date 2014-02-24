@@ -1,6 +1,6 @@
 //= require ./start.frag
-//= require bower_components/amdainty/amdainty.js
-//= requireself
+//= require ./amd-shim.js
+//= requireSelf
 //= requireTree ./components
 //= require ./end.frag
 

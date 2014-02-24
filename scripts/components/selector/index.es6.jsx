@@ -84,8 +84,8 @@ export default React.createClass({
       indicies: this.props.indicies,
       scopes:
         this.state.scope.id === '_all' ?
-        _.without(this.props.scopes.pluck('id'), '_all') :
-        [this.state.scope.id]
+        this.props.scopes.without(this.props.scopes.get('_all')) :
+        [this.state.scope]
     };
     if (this.state.query) options.q = this.state.query;
     return options;

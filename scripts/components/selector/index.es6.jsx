@@ -23,7 +23,8 @@ export default React.createClass({
   getDefaultProps: function () {
     return {
       initialValue: [],
-      hiddenInputName: 'selection'
+      hiddenInputName: 'selection',
+      allowArbitrary: false
     };
   },
 
@@ -50,7 +51,7 @@ export default React.createClass({
     if (ev.which === 8 && !query) {
       return this.removeSelectorItem(this.state.value.last());
     }
-    if (ev.which !== 13 || !query) return;
+    if (ev.which !== 13 || !query || !this.props.allowArbitrary) return;
     this.setQuery('');
     this.addSelectorItem({name: query});
   },

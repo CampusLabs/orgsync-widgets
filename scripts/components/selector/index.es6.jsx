@@ -24,7 +24,8 @@ export default React.createClass({
     return {
       initialValue: [],
       hiddenInputName: 'selection',
-      allowArbitrary: false
+      allowArbitrary: false,
+      full: false
     };
   },
 
@@ -33,7 +34,10 @@ export default React.createClass({
       value: this.props.initialValue,
       scope: this.props.scopes.first(),
       query: '',
-      results: new SelectorItem.Collection()
+      results: new SelectorItem.Collection(),
+      hasMouse: false,
+      hasFocus: false,
+      isActive: false
     };
   },
 
@@ -48,12 +52,44 @@ export default React.createClass({
 
   onKeyDown: function (ev) {
     var query = this.state.query;
-    if (ev.which === 8 && !query) {
-      return this.removeSelectorItem(this.state.value.last());
+    switch (ev.which) {
+    case 8:
+      if (!query) return this.removeSelectorItem(this.state.value.last());
+      break;
+    case 13:
+      if (!query || !this.props.allowArbitrary) return;
+      this.setQuery('');
+      this.addSelectorItem({name: query});
+      break;
+    case 27:
+      if (query) {
+        this.setQuery('');
+      } else {
+        this.refs.query.getDOMNode().blur();
+        this.setState({isActive: false});
+      }
+      return false;
     }
-    if (ev.which !== 13 || !query || !this.props.allowArbitrary) return;
-    this.setQuery('');
-    this.addSelectorItem({name: query});
+  },
+
+  onClick: function () {
+    if (!this.state.isActive) this.refs.query.getDOMNode().focus();
+  },
+
+  onFocus: function () {
+    this.setState({hasFocus: true, isActive: true});
+  },
+
+  onBlur: function () {
+    this.setState({hasFocus: false, isActive: this.state.hasMouse});
+  },
+
+  onMouseEnter: function () {
+    this.setState({hasMouse: true});
+  },
+
+  onMouseLeave: function () {
+    this.setState({hasMouse: false, isActive: this.state.hasFocus});
   },
 
   addSelectorItem: function (selectorItem) {
@@ -96,6 +132,13 @@ export default React.createClass({
     return selectorItem.pick.apply(selectorItem, fields);
   },
 
+  className: function () {
+    var classes = ['selector-index'];
+    classes.push(this.props.full ? 'full' : 'mini');
+    if (this.state.isActive) classes.push('active');
+    return classes.join(' ');
+  },
+
   renderHiddenInput: function () {
     return (
       <input
@@ -128,10 +171,10 @@ export default React.createClass({
   renderQuery: function () {
     return (
       <input
+        ref='query'
         className='query'
         value={this.state.query}
         onChange={this.onQueryChange}
-        onKeyDown={this.onKeyDown}
       />
     );
   },
@@ -148,6 +191,7 @@ export default React.createClass({
   },
 
   renderScopes: function () {
+    if (!this.props.full) return null;
     return (
       <List
         className='scopes'
@@ -188,7 +232,15 @@ export default React.createClass({
 
   render: function () {
     return (
-      <div className='selector-index'>
+      <div
+        className={this.className()}
+        onClick={this.onClick}
+        onFocus={this.onFocus}
+        onBlur={this.onBlur}
+        onMouseEnter={this.onMouseEnter}
+        onMouseLeave={this.onMouseLeave}
+        onKeyDown={this.onKeyDown}
+      >
         {this.renderHiddenInput()}
         {this.renderTokens()}
         <br />

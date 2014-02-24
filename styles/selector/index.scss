@@ -3,11 +3,26 @@
 .selector-index {
   padding: 10px;
   text-align: left;
+
+  &.mini {
+    &.active {
+      .results {
+        display: block;
+      }
+    }
+
+    .results {
+      position: absolute;
+      display: none;
+    }
+  }
+
   .tokens {
     padding: 5px;
     border-radius: 3px;
     border: 1px solid #eee;
   }
+
   .query {
     @include appearance(none);
     border: 2px solid #fff;
@@ -16,6 +31,7 @@
     padding: 3px;
     outline: none;
   }
+
   .scopes {
     position: relative;
     display: inline-block;
@@ -24,6 +40,7 @@
     width: 25%;
     height: 500px;
   }
+
   .results {
     overflow: auto;
     position: relative;

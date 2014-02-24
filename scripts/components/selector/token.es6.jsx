@@ -1,5 +1,6 @@
 /** @jsx React.DOM */
 
+import Icon from 'components/icon';
 import React from 'react';
 
 export default React.createClass({
@@ -10,10 +11,7 @@ export default React.createClass({
   render: function () {
     return (
       <div className='selector-token'>
-        <div
-          className='remove icon-delete'
-          onClick={this.onRemoveClick}
-        />
+        <Icon className='remove' name='delete' onClick={this.onRemoveClick} />
         <div className='name'>{this.props.selectorItem.get('name')}</div>
       </div>
     );

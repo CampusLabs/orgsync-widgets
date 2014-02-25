@@ -1,34 +1,69 @@
 @import '../config';
 
 .selector-result {
-  @include box-sizing(border-box);
-  padding: 10px;
-  border: 5px solid #eee;
-  text-align: center;
-  vertical-align: top;
-  cursor: pointer;
   @include user-select(none);
-  background: #fff;
+
   &.selected {
     color: #999;
     background: #f9f9f9;
+
+    &:before {
+      float: right;
+      font-family: SyncDings;
+      content: '\f071'
+    }
   }
+}
+
+.selector-index.mini .selector-result {
+  border-top: 1px solid #eee;
+  padding: 5px;
+  background: #fff;
+  cursor: pointer;
+
+  &:first-child {
+    border-top: none;
+  }
+
   .name {
     overflow: hidden;
-    height: 30px;
-    font-weight: bold;
+    text-overflow: ellipsis;
+    white-space: nowrap;
   }
 }
 
-.orgsync-widget[min-width~='461px'] .selector-result {
-  display: inline-block;
-  width: 50%;
-}
+.orgsync-selector.full {
+  .selector-result {
+    @include box-sizing(border-box);
+    padding: 10px;
+    border: 5px solid #eee;
+    text-align: center;
+    vertical-align: top;
+    cursor: pointer;
+    background: #fff;
 
-.orgsync-widget[min-width~='691px'] .selector-result {
-  width: 33.3%;
-}
+    &.selected {
+      color: #999;
+      background: #f9f9f9;
+    }
 
-.orgsync-widget[min-width~='921px'] .selector-result {
-  width: 25%;
+    .name {
+      overflow: hidden;
+      height: 30px;
+      font-weight: bold;
+    }
+  }
+
+  .orgsync-widget[min-width~='461px'] .selector-result {
+    display: inline-block;
+    width: 50%;
+  }
+
+  .orgsync-widget[min-width~='691px'] .selector-result {
+    width: 33.3%;
+  }
+
+  .orgsync-widget[min-width~='921px'] .selector-result {
+    width: 25%;
+  }
 }

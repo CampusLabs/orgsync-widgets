@@ -1,28 +1,43 @@
 @import '../config';
 
 .selector-index {
+  position: relative;
   padding: 10px;
   text-align: left;
 
   &.mini {
     .results {
       position: absolute;
+      left: 10px;
+      right: 10px;
+      max-height: 250px;
+    }
+  }
+
+  &.full {
+    .results {
+      @include box-sizing(border-box);
+      position: relative;
+      display: inline-block;
+      padding: 5px;
+      width: 75%;
+      height: 500px;
+      vertical-align: top;
     }
   }
 
   .tokens {
     padding: 5px;
-    border-radius: 3px;
     border: 1px solid #eee;
   }
 
   .query {
+    @include box-sizing(border-box);
     @include appearance(none);
-    border: 2px solid #fff;
-    border-radius: 3px;
-    background: #eee;
-    padding: 3px;
+    border: none;
+    padding: 5px;
     outline: none;
+    width: 100%;
   }
 
   .scopes {
@@ -36,13 +51,6 @@
 
   .results {
     overflow: auto;
-    position: relative;
-    display: inline-block;
-    vertical-align: top;
-    @include box-sizing(border-box);
-    padding: 5px;
-    width: 75%;
-    height: 500px;
     background: #eee;
   }
 }

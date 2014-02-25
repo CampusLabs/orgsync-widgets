@@ -25,7 +25,8 @@ export default React.createClass({
       initialValue: [],
       hiddenInputName: 'selection',
       allowArbitrary: false,
-      full: false
+      full: false,
+      placeholder: 'Search...'
     };
   },
 
@@ -73,7 +74,7 @@ export default React.createClass({
   },
 
   onClick: function () {
-    if (!this.state.isActive) this.refs.query.getDOMNode().focus();
+    this.refs.query.getDOMNode().focus();
   },
 
   onFocus: function () {
@@ -132,6 +133,13 @@ export default React.createClass({
     return selectorItem.pick.apply(selectorItem, fields);
   },
 
+  className: function () {
+    var classes = ['selector-index'];
+    classes.push(this.props.full ? 'full' : 'mini');
+    if (this.state.isActive) classes.push('active');
+    return classes.join(' ');
+  },
+
   renderHiddenInput: function () {
     return (
       <input
@@ -168,6 +176,7 @@ export default React.createClass({
         className='query'
         value={this.state.query}
         onChange={this.onQueryChange}
+        placeholder={this.props.placeholder}
       />
     );
   },
@@ -184,7 +193,7 @@ export default React.createClass({
   },
 
   renderScopes: function () {
-    if (!this.props.full) return null;
+    if (!this.props.full) return;
     return (
       <List
         className='scopes'
@@ -210,7 +219,7 @@ export default React.createClass({
   },
 
   renderResults: function () {
-    if (!this.props.full && !this.state.isActive) return null;
+    if (!this.props.full && !this.state.isActive) return;
     return (
       <List
         className='results'
@@ -227,7 +236,7 @@ export default React.createClass({
   render: function () {
     return (
       <div
-        className={'selector-index ' + (this.props.full ? 'full' : 'mini')}
+        className={this.className()}
         onClick={this.onClick}
         onFocus={this.onFocus}
         onBlur={this.onBlur}
@@ -237,7 +246,6 @@ export default React.createClass({
       >
         {this.renderHiddenInput()}
         {this.renderTokens()}
-        <br />
         {this.renderScopes()}
         {this.renderResults()}
       </div>

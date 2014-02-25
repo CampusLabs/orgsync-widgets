@@ -5,15 +5,8 @@
   text-align: left;
 
   &.mini {
-    &.active {
-      .results {
-        display: block;
-      }
-    }
-
     .results {
       position: absolute;
-      display: none;
     }
   }
 

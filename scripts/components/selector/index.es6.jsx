@@ -132,13 +132,6 @@ export default React.createClass({
     return selectorItem.pick.apply(selectorItem, fields);
   },
 
-  className: function () {
-    var classes = ['selector-index'];
-    classes.push(this.props.full ? 'full' : 'mini');
-    if (this.state.isActive) classes.push('active');
-    return classes.join(' ');
-  },
-
   renderHiddenInput: function () {
     return (
       <input
@@ -217,6 +210,7 @@ export default React.createClass({
   },
 
   renderResults: function () {
+    if (!this.props.full && !this.state.isActive) return null;
     return (
       <List
         className='results'
@@ -233,7 +227,7 @@ export default React.createClass({
   render: function () {
     return (
       <div
-        className={this.className()}
+        className={'selector-index ' + (this.props.full ? 'full' : 'mini')}
         onClick={this.onClick}
         onFocus={this.onFocus}
         onBlur={this.onBlur}

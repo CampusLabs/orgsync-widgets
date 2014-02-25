@@ -6,7 +6,7 @@ module BackboneRelations from 'backbone-relations';
 
 var Model = BackboneRelations.Model.extend({
   constructor: function () {
-    this.constructor.relations();
+    this.constructor.resolveRelations();
     BackboneRelations.Model.apply(this, arguments);
   },
 
@@ -23,10 +23,9 @@ var Model = BackboneRelations.Model.extend({
     });
   }
 }, {
-  relations: function () {
-    if (this._relations) return this._relations;
-    this._relations = this.prototype.relations =
-    _.reduce(this.prototype.relations, function (rels, rel, key) {
+  resolveRelations: function () {
+    if (this === Model || this.relationsAreResolved) return;
+    _.each(this.prototype.relations, function (rel) {
       if (rel.hasOne) rel.hasOne = rel.hasOne.Model;
       if (rel.hasMany) rel.hasMany = rel.hasMany.Collection;
       if (!rel.via) {
@@ -39,9 +38,8 @@ var Model = BackboneRelations.Model.extend({
           return reverse;
         }, null);
       }
-      rels[key] = rel;
-      return rels;
-    }, {});
+    });
+    this.relationsAreResolved = true;
   }
 });
 

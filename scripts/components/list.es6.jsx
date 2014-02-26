@@ -118,7 +118,7 @@ export default React.createClass({
           )
         );
       } else {
-        length = 1;
+        length = this.props.renderPageSize;
         if (collection.length) this.delayedUpdate();
       }
     } else if (length <= collection.length) {

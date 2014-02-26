@@ -67,6 +67,19 @@ export default React.createClass({
     window.requestAnimationFrame(this.update);
   },
 
+  // Get scroll position relative to the top of the list.
+  scroll: function () {
+    var $scrollParent = this.$scrollParent();
+    var $el = $(this.getDOMNode());
+    if ($scrollParent[0] === $el[0]) {
+      return $scrollParent.scrollTop();
+    } else if ($scrollParent[0] === window) {
+      return $(document).scrollTop() - $el.offset().top;
+    } else {
+      return $scrollParent.scrollTop() - $el.position().top;
+    }
+  },
+
   // REFACTOR
   update: function () {
     if (!this.isMounted()) return;
@@ -78,10 +91,7 @@ export default React.createClass({
     var $scrollParent = this.$scrollParent();
     var $el = $(this.getDOMNode());
 
-    var scroll =
-      $scrollParent[0] === window ?
-      $(document).scrollTop() - $el.offset().top :
-      $scrollParent.scrollTop() - $el.position().top;
+    var scroll = this.scroll();
 
     var itemWidth = this.state.itemWidth;
     var itemHeight = this.state.itemHeight;
@@ -180,6 +190,19 @@ export default React.createClass({
 
   onError: function (collection, er) {
     this.setState({isLoading: false, error: er.toString()});
+  },
+
+  scrollTo: function (model) {
+    var collection = this.props.collection;
+    var targetIndex = collection.indexOf(collection.get(model));
+    if (targetIndex === -1) return;
+    var $scrollParent = this.$scrollParent();
+    var itemHeight = this.state.itemHeight;
+    var current = this.scroll();
+    var max = Math.floor(targetIndex / this.state.columns) * itemHeight;
+    var min = max - $scrollParent.innerHeight() + itemHeight;
+    if (current > max) return $scrollParent.scrollTop(max);
+    if (current < min) $scrollParent.scrollTop(min);
   },
 
   spaceAbove: function () {

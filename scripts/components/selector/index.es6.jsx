@@ -34,7 +34,7 @@ export default React.createClass({
       model: this.state.results,
       events: {
         'add': function (selectorItem) {
-          if (selectorItem !== this.state.results.first()) return;
+          if (selectorItem !== this.firstActiveResult()) return;
           this.setActiveResult();
         }
       }
@@ -95,6 +95,7 @@ export default React.createClass({
       var selectorItem = this.state.results.get(this.state.activeResultId);
       if (this.state.value.get(selectorItem)) this.removeValue(selectorItem);
       else this.addValue(selectorItem);
+      this.setQuery('');
       break;
     case 'Escape':
       if (query) {
@@ -159,6 +160,7 @@ export default React.createClass({
     cache = this.cache[scope.id];
     if (!cache) cache = this.cache[scope.id] = {};
     this.state.results.reset();
+    if (!cache[query] && query.trim()) cache[query] = [{name: query}];
     this.state.results.set(cache[query]);
   },
 
@@ -172,8 +174,14 @@ export default React.createClass({
     this.refs.results.scrollTo(next);
   },
 
+  firstActiveResult: function () {
+    var results = this.state.results;
+    var i = results.length > 1 && results.first().isArbitrary() ? 1 : 0;
+    return results.at(i);
+  },
+
   setActiveResult: function (selectorItem) {
-    if (!selectorItem) selectorItem = this.state.results.first() || {};
+    if (!selectorItem) selectorItem = this.firstActiveResult() || {};
     this.setState({activeResultId: selectorItem.id});
     this.refs.results.forceUpdate();
   },
@@ -288,15 +296,6 @@ export default React.createClass({
     );
   },
 
-  renderResultsLoading: function () {
-    var prev = this.previousResults;
-    return this.state.results.length || !prev || !prev.length ?
-      <div>Loading...</div> :
-      <div>
-        {prev.slice(0, this.props.renderPageSize).map(this.renderResult)}
-      </div>;
-  },
-
   renderResults: function () {
     if (!this.props.full && !this.state.isActive) return;
     return (
@@ -308,7 +307,6 @@ export default React.createClass({
         renderListItem={this.renderResult}
         fetchOptions={this.fetchOptions}
         uniform={true}
-        renderLoading={this.renderResultsLoading}
         renderPageSize={this.props.renderPageSize}
       />
     );

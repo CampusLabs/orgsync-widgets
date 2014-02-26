@@ -4,6 +4,7 @@ import _ from 'underscore';
 module Base from 'entities/base';
 import CoercedPropsMixin from 'mixins/coerced-props';
 import List from 'components/list';
+import ListenersMixin from 'mixins/listeners';
 import React from 'react';
 module SelectorItem from 'entities/selector-item';
 import SelectorResult from 'components/selector/result';
@@ -11,7 +12,7 @@ import SelectorScope from 'components/selector/scope';
 import SelectorToken from 'components/selector/token';
 
 export default React.createClass({
-  mixins: [CoercedPropsMixin],
+  mixins: [CoercedPropsMixin, ListenersMixin],
 
   getCoercedProps: function () {
     return {
@@ -20,9 +21,30 @@ export default React.createClass({
     };
   },
 
+  getListeners: function () {
+    return [{
+      model: this.state.value,
+      events: {
+        'add remove': function () {
+          this.forceUpdate();
+          this.refs.results.forceUpdate();
+        }
+      }
+    }, {
+      model: this.state.results,
+      events: {
+        'add': function (selectorItem) {
+          if (selectorItem !== this.state.results.first()) return;
+          this.setActiveResult();
+        }
+      }
+    }];
+  },
+
   getDefaultProps: function () {
     return {
       initialValue: [],
+      scopes: [],
       hiddenInputName: 'selection',
       allowArbitrary: false,
       full: false,
@@ -32,19 +54,25 @@ export default React.createClass({
 
   getInitialState: function () {
     return {
-      value: this.props.initialValue,
+      value: this.props.initialValue.clone(),
       scope: this.props.scopes.first(),
       query: '',
       results: new SelectorItem.Collection(),
       hasMouse: false,
       hasFocus: false,
-      isActive: false
+      isActive: false,
+      activeResultId: null
     };
+  },
+
+  componentWillMount: function () {
+    this.cache = {};
   },
 
   onScopeClick: function (scope) {
     if (scope === this.state.scope) return;
-    this.setState({scope: scope, results: new SelectorItem.Collection()});
+    this.updateResults(scope, this.state.query);
+    this.setState({scope: scope});
   },
 
   onQueryChange: function (ev) {
@@ -53,22 +81,33 @@ export default React.createClass({
 
   onKeyDown: function (ev) {
     var query = this.state.query;
-    switch (ev.which) {
-    case 8:
-      if (!query) return this.removeSelectorItem(this.state.value.last());
+    var key = ev.key;
+    if (ev.ctrlKey) {
+      if (ev.which === 80) key = 'ArrowUp';
+      if (ev.which === 78) key = 'ArrowDown';
+    }
+    switch (key) {
+    case 'Backspace':
+      if (!query) return this.removeValue(this.state.value.last());
       break;
-    case 13:
-      if (!query || !this.props.allowArbitrary) return;
-      this.setQuery('');
-      this.addSelectorItem({name: query});
+    case 'Enter':
+      var selectorItem = this.state.results.get(this.state.activeResultId);
+      if (this.state.value.get(selectorItem)) this.removeValue(selectorItem);
+      else this.addValue(selectorItem);
       break;
-    case 27:
+    case 'Escape':
       if (query) {
         this.setQuery('');
       } else {
         this.refs.query.getDOMNode().blur();
         this.setState({isActive: false});
       }
+      return false;
+    case 'ArrowUp':
+      this.incrActiveResult(-1);
+      return false;
+    case 'ArrowDown':
+      this.incrActiveResult(1);
       return false;
     }
   },
@@ -93,26 +132,49 @@ export default React.createClass({
     this.setState({hasMouse: false, isActive: this.state.hasFocus});
   },
 
-  addSelectorItem: function (selectorItem) {
-    var value = this.state.value;
-    if (value.get(selectorItem)) return;
-    this.setValue(value.models.concat(selectorItem));
+  addValue: function (selectorItem) {
+    this.state.value.add(selectorItem);
   },
 
-  removeSelectorItem: function (selectorItem) {
-    var value = this.state.value;
-    if (!(selectorItem = value.get(selectorItem))) return;
-    this.setValue(value.without(selectorItem));
-  },
-
-  setValue: function (selectorItems) {
-    this.setState({value: new SelectorItem.Collection(selectorItems)});
-    this.refs.results.forceUpdate();
+  removeValue: function (selectorItem) {
+    this.state.value.remove(selectorItem);
   },
 
   setQuery: function (query) {
     if (query === this.state.query) return;
-    this.setState({query: query, results: new SelectorItem.Collection()});
+    this.updateResults(this.state.scope, query);
+    this.setState({query: query});
+  },
+
+  updateResults: function (scope, query) {
+
+    // Store current results in cache.
+    var cache = this.cache[this.state.scope.id];
+    if (!cache) cache = this.cache[this.state.scope.id] = {};
+    this.previousResults = cache[this.state.query] =
+      this.state.results.models.slice();
+
+    // Retrieve new results from cache.
+    cache = this.cache[scope.id];
+    if (!cache) cache = this.cache[scope.id] = {};
+    this.state.results.reset();
+    this.state.results.set(cache[query]);
+  },
+
+  incrActiveResult: function (dir) {
+    var results = this.state.results;
+    var current = results.get(this.state.activeResultId);
+    var next;
+    if (dir) next = results.at(results.indexOf(current) + dir);
+    if (!next) next = current;
+    this.setActiveResult(next);
+    this.refs.results.scrollTo(next);
+  },
+
+  setActiveResult: function (selectorItem) {
+    if (!selectorItem) selectorItem = this.state.results.first() || {};
+    this.setState({activeResultId: selectorItem.id});
+    this.refs.results.forceUpdate();
   },
 
   fetchOptions: function () {
@@ -140,6 +202,13 @@ export default React.createClass({
     return classes.join(' ');
   },
 
+  onResultClick: function (selectorItem) {
+    if (this.state.value.get(selectorItem)) this.removeValue(selectorItem);
+    else this.addValue(selectorItem);
+    this.setState({activeResultId: selectorItem.id});
+    this.refs.results.forceUpdate();
+  },
+
   renderHiddenInput: function () {
     return (
       <input
@@ -155,7 +224,7 @@ export default React.createClass({
       <SelectorToken
         key={i}
         selectorItem={selectorItem}
-        onRemoveClick={this.removeSelectorItem}
+        onRemoveClick={this.removeValue}
       />
     );
   },
@@ -207,15 +276,22 @@ export default React.createClass({
   },
 
   renderResult: function (selectorItem, i) {
-    var selected = this.state.value.get(selectorItem);
     return (
       <SelectorResult
         key={i}
         selectorItem={selectorItem}
-        onClick={selected ? this.removeSelectorItem : this.addSelectorItem}
-        selected={selected}
+        onClick={this.onResultClick}
+        selected={!!this.state.value.get(selectorItem)}
+        active={selectorItem.id === this.state.activeResultId}
       />
     );
+  },
+
+  renderResultsLoading: function () {
+    var prev = this.previousResults;
+    return this.state.results.length || !prev || !prev.length ?
+      <div>Loading...</div> :
+      <div>{this.previousResults.map(this.renderResult)}</div>;
   },
 
   renderResults: function () {
@@ -229,6 +305,8 @@ export default React.createClass({
         renderListItem={this.renderResult}
         fetchOptions={this.fetchOptions}
         uniform={true}
+        renderLoading={this.renderResultsLoading}
+        renderPageSize={10}
       />
     );
   },

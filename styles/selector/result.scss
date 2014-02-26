@@ -9,6 +9,7 @@
 
     &:before {
       float: right;
+      margin-top: -1px;
       font-family: SyncDings;
       content: '\f071'
     }
@@ -23,6 +24,16 @@
 
   &:first-child {
     border-top: none;
+    padding-top: 6px;
+  }
+
+  &.active {
+    color: #fff;
+    background: #336699;
+
+    &.selected {
+      background: #99ccff;
+    }
   }
 
   .name {

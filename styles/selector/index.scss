@@ -8,6 +8,7 @@
   &.mini {
     .results {
       position: absolute;
+      z-index: 1;
       left: 10px;
       right: 10px;
       border: 1px solid #eee;

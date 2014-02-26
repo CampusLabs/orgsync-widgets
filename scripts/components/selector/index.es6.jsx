@@ -48,7 +48,8 @@ export default React.createClass({
       hiddenInputName: 'selection',
       allowArbitrary: false,
       full: false,
-      placeholder: 'Search...'
+      placeholder: 'Search...',
+      renderPageSize: 20
     };
   },
 
@@ -291,7 +292,9 @@ export default React.createClass({
     var prev = this.previousResults;
     return this.state.results.length || !prev || !prev.length ?
       <div>Loading...</div> :
-      <div>{this.previousResults.map(this.renderResult)}</div>;
+      <div>
+        {prev.slice(0, this.props.renderPageSize).map(this.renderResult)}
+      </div>;
   },
 
   renderResults: function () {
@@ -306,7 +309,7 @@ export default React.createClass({
         fetchOptions={this.fetchOptions}
         uniform={true}
         renderLoading={this.renderResultsLoading}
-        renderPageSize={10}
+        renderPageSize={this.props.renderPageSize}
       />
     );
   },

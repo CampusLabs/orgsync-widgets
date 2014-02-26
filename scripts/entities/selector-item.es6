@@ -21,13 +21,14 @@ var live = new Live({
 
 var Model = Base.Model.extend({
   generateId: function (attrs) {
-    return attrs.id ?
-      _str.underscored(attrs.type) + '_' + attrs.id :
-      'arbitrary_' + attrs.name;
+    return this.isArbitrary(attrs) ?
+      'arbitrary_' + attrs.name :
+      _str.underscored(attrs.type) + '_' + attrs.id;
   },
 
-  isArbitrary: function () {
-    return this.get('id') == null || this.get('type') == null;
+  isArbitrary: function (attrs) {
+    if (!attrs) attrs = this.attributes;
+    return attrs.id == null || attrs.type == null;
   }
 });
 

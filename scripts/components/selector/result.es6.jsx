@@ -14,10 +14,16 @@ export default React.createClass({
     return classes.join(' ');
   },
 
+  name: function () {
+    var selectorItem = this.props.selectorItem;
+    var name = selectorItem.get('name');
+    return selectorItem.isArbitrary() ? 'Add "' + name + '"...' : name;
+  },
+
   render: function () {
     return (
       <div className={this.className()} onClick={this.onClick}>
-        <div className='name'>{this.props.selectorItem.get('name')}</div>
+        <div className='name'>{this.name()}</div>
       </div>
     );
   }

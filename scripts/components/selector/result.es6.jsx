@@ -17,7 +17,8 @@ export default React.createClass({
   name: function () {
     var selectorItem = this.props.selectorItem;
     var name = selectorItem.get('name');
-    return selectorItem.isArbitrary() ? 'Add "' + name + '"...' : name;
+    var verb = this.props.selected ? 'Remove' : 'Add';
+    return selectorItem.isArbitrary() ? verb + ' "' + name + '"...' : name;
   },
 
   render: function () {

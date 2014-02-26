@@ -7,13 +7,16 @@ export default React.createClass({
     this.props.onClick(this.props.selectorItem);
   },
 
+  className: function () {
+    var classes = ['selector-result'];
+    if (this.props.selected) classes.push('selected');
+    if (this.props.active) classes.push('active');
+    return classes.join(' ');
+  },
+
   render: function () {
     return (
-      <div
-        className=
-          {'selector-result ' + (this.props.selected ? ' selected' : '')}
-        onClick={this.onClick}
-      >
+      <div className={this.className()} onClick={this.onClick}>
         <div className='name'>{this.props.selectorItem.get('name')}</div>
       </div>
     );

@@ -173,14 +173,12 @@ export default React.createClass({
   },
 
   onSuccess: function (collection, data) {
-    if (!this.isMounted()) console.log('it was not mounted');
     if (data.length < this.props.fetchPageSize) this.doneFetching = true;
     this.delayedUpdate();
     this.setState({isLoading: false, error: null});
   },
 
   onError: function (collection, er) {
-    if (!this.isMounted()) console.log('it was not mounted');
     this.setState({isLoading: false, error: er.toString()});
   },
 

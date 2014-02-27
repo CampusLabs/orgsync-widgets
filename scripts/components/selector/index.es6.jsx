@@ -30,14 +30,6 @@ export default React.createClass({
           this.refs.results.forceUpdate();
         }
       }
-    }, {
-      model: this.state.results,
-      events: {
-        'add': function (selectorItem) {
-          if (selectorItem !== this.firstActiveResult()) return;
-          this.setActiveResult();
-        }
-      }
     }];
   },
 
@@ -58,7 +50,7 @@ export default React.createClass({
       value: this.props.initialValue.clone(),
       scope: this.props.scopes.first(),
       query: '',
-      results: new SelectorItem.Collection(),
+      results: null,
       hasMouse: false,
       hasFocus: false,
       isActive: false,
@@ -68,6 +60,7 @@ export default React.createClass({
 
   componentWillMount: function () {
     this.cache = {};
+    this.updateResults(this.state.scope, this.state.query);
   },
 
   onScopeClick: function (scope) {
@@ -153,15 +146,22 @@ export default React.createClass({
     // Store current results in cache.
     var cache = this.cache[this.state.scope.id];
     if (!cache) cache = this.cache[this.state.scope.id] = {};
-    this.previousResults = cache[this.state.query] =
-      this.state.results.models.slice();
+    this.previousResults = cache[this.state.query] = this.state.results;
 
     // Retrieve new results from cache.
     cache = this.cache[scope.id];
     if (!cache) cache = this.cache[scope.id] = {};
-    this.state.results.reset();
-    if (!cache[query] && query.trim()) cache[query] = [{name: query}];
-    this.state.results.set(cache[query]);
+    var results = cache[query];
+    if (!results) {
+      results = cache[query] = new SelectorItem.Collection();
+      if (this.props.allowArbitrary && query.trim()) results.add({name: query});
+      results.on('add', function (selectorItem) {
+        if (selectorItem !== this.firstActiveResult(results)) return;
+        this.setActiveResult(selectorItem);
+      }, this);
+    }
+    this.setState({results: results});
+    this.setActiveResult(this.firstActiveResult(results));
   },
 
   incrActiveResult: function (dir) {
@@ -174,16 +174,14 @@ export default React.createClass({
     this.refs.results.scrollTo(next);
   },
 
-  firstActiveResult: function () {
-    var results = this.state.results;
+  firstActiveResult: function (results) {
     var i = results.length > 1 && results.first().isArbitrary() ? 1 : 0;
     return results.at(i);
   },
 
   setActiveResult: function (selectorItem) {
-    if (!selectorItem) selectorItem = this.firstActiveResult() || {};
-    this.setState({activeResultId: selectorItem.id});
-    this.refs.results.forceUpdate();
+    this.setState({activeResultId: (selectorItem || {}).id});
+    if (this.isMounted()) this.refs.results.forceUpdate();
   },
 
   fetchOptions: function () {

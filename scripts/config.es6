@@ -1,17 +1,16 @@
 import $ from 'jquery';
 import Backbone from 'backbone';
-import buildJson from 'text!build';
 import elementQuery from 'elementQuery';
 import moment from 'moment-timezone';
-import momentTimezonesConfigJson from 'text!moment-timezone-config';
+import momentTimezoneData from 'moment-timezone-data';
 
 Backbone.$ = $;
 
-moment.tz.add(JSON.parse(momentTimezonesConfigJson));
+moment.tz.add(momentTimezoneData);
 
 var defaults = {
   api: {cors: false},
-  build: JSON.parse(buildJson)
+  build: {include:['views/events/index']}
 };
 
 $(window).on('ready resize load', function () { elementQuery(); });

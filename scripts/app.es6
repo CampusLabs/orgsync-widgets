@@ -1,7 +1,6 @@
 import $ from 'jquery';
 import _ from 'underscore';
 import config from 'config';
-import dpr from 'dpr';
 import elementQuery from 'elementQuery';
 import herit from 'herit';
 import jstz from 'jstz';
@@ -66,7 +65,6 @@ moment.updateOffset = function (date) {
 var selectorViewMap = {};
 
 var scan = function () {
-  $('html').addClass('dpr-' + dpr());
   _.each(selectorViewMap, function (view, selector) {
     $(selector).each(function () {
       var data = $(this).data();

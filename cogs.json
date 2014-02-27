@@ -7,7 +7,7 @@
       "backbone-relations": "bower_components/backbone-relations/backbone-relations.js",
       "elementQuery": "bower_components/elementQuery/elementQuery.js",
       "herit": "bower_components/herit/herit.js",
-      "jquery": "bower_components/jquery/jquery.js",
+      "jquery": "bower_components/jquery/dist/jquery.js",
       "jstz": "bower_components/jstz/jstz.js",
       "live": "bower_components/live/live.js",
       "moment-timezone": "bower_components/moment-timezone/moment-timezone.js",

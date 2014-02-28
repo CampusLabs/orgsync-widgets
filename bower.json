@@ -10,7 +10,7 @@
     "bourbon": "d01f1d2ce9ab60520e57ccd897baa8c756949f18",
     "elementQuery": "tysonmatanich/elementQuery#prod",
     "moment": "x",
-    "moment-timezone": "caseywebdev/moment-timezone#master",
+    "moment-timezone": "9ac9c477e85df36fc5667fe2733577c6f865d964",
     "jstz": "https://bitbucket.org/pellepim/jstimezonedetect/get/f9e3e30e1e1f.zip",
     "live": "x",
     "olay": "x",

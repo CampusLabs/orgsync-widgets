@@ -1,7 +1,13 @@
 @import "config";
 
-.osw-events-index .events-list {
-  position: relative;
-  overflow: auto;
-  -webkit-overflow-scrolling: touch;
+.osw-events-index {
+  &.js-list-view .events-list {
+    overflow: auto;
+  }
+
+  .events-list {
+    position: relative;
+    overflow: hidden;
+    -webkit-overflow-scrolling: touch;
+  }
 }

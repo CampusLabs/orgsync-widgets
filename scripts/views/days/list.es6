@@ -7,8 +7,6 @@ module EventDate from 'entities/event-date';
 import moment from 'moment';
 
 export default ListView.extend({
-  threshold: 200,
-
   view: 'month',
 
   modelView: DaysShowView,
@@ -192,7 +190,7 @@ export default ListView.extend({
     switch (this.view) {
     case 'month':
     case 'week':
-      date = date.clone().startOf('week');
+      date = date.clone().startOf('month').startOf('week');
       available.fill(date, date.clone().add('days', pageSize));
       var i = available.indexOf(available.get(Day.Model.id(date)));
       this.collection.set(available.models.slice(i, i + pageSize));
@@ -227,6 +225,7 @@ export default ListView.extend({
 
   setView: function (view, date) {
     this.view = view;
+    this.threshold = view === 'list' ? 800 : 0;
     this.modelViewOptions = {view: view, eventFilters: this.eventFilters};
     this.collection.set();
     this.date(date);

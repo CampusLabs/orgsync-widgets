@@ -10,7 +10,7 @@ moment.tz.add(momentTimezoneData);
 
 var defaults = {
   api: {cors: false},
-  build: {include:['views/events/index']}
+  build: {include: ['views/portals/index/index', 'views/events/index']}
 };
 
 $(window).on('ready resize load', function () { elementQuery(); });

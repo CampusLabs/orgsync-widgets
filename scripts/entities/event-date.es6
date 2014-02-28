@@ -61,8 +61,8 @@ var Model = Base.Model.extend({
     });
   },
 
-  orgsyncUrl: function () {
-    return this.get('event').orgsyncUrl() + '/occurrences/' + this.id;
+  webUrl: function () {
+    return this.get('event').webUrl() + '/occurrences/' + this.id;
   },
 
   isGoing: function () {

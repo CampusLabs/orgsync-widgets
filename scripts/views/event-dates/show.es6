@@ -26,7 +26,7 @@ export default BaseView.extend({
       portalName: this.event.get('portal').get('name'),
       shortTime: this.shortTime(),
       title: this.event.get('title'),
-      url: this.model.orgsyncUrl()
+      url: this.model.webUrl()
     };
   },
 

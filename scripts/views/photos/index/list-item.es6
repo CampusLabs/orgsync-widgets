@@ -25,7 +25,7 @@ export default BaseView.extend({
     var model = this.model;
     var count = model.get('comments_count');
     return {
-      url: model.orgsyncUrl(),
+      url: model.webUrl(),
       image: model.get('thumbnail_url'),
       count: count,
       isPlural: count !== 1

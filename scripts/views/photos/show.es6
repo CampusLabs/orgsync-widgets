@@ -23,7 +23,7 @@ export default BaseView.extend({
     return {
       image: model.get('full_url'),
       description: model.get('description'),
-      url: model.orgsyncUrl()
+      url: model.webUrl()
     };
   },
 

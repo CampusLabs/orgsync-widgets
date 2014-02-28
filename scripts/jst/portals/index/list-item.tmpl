@@ -2,7 +2,7 @@
 var name = o.model.get('name');
 var fittedName = name.length > 80 ? o.model.get('short_name') : name;
 %>
-<a href='<%- o.model.orgsyncUrl() %>' tabindex='1'>
+<a href='<%- o.model.webUrl() %>' tabindex='1'>
   <div class='image-container'>
     <img src='<%- o.model.picture() %>' alt='<%- name %>'>
   </div>

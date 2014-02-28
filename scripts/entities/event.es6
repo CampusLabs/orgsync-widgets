@@ -19,7 +19,7 @@ var Model = Base.Model.extend({
     return data;
   },
 
-  orgsyncUrl: function () {
+  webUrl: function () {
     return 'https://orgsync.com/' + this.get('portal').id + '/events/' +
       this.id;
   },

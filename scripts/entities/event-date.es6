@@ -61,7 +61,7 @@ var Model = Base.Model.extend({
     });
   },
 
-  orgsyncUrl: function () {
+  webUrl: function () {
     return this.get('event').get('links').web + '/occurrences/' + this.id;
   },
 

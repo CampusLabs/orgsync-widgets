@@ -41,7 +41,7 @@ var Model = Base.Model.extend({
     return this.get('picture_url') || this.defaultPicture;
   },
 
-  orgsyncUrl: function () {
+  webUrl: function () {
     return 'https://orgsync.com/' + this.id + '/chapter';
   },
 

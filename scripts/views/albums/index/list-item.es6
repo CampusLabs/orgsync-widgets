@@ -22,17 +22,17 @@ export default BaseView.extend({
   },
 
   options: ['portalId', 'action'],
-  
+
   toTemplate: function () {
     var model = this.model;
     return {
-      url: model.orgsyncUrl(),
+      url: model.webUrl(),
       avatar: model.get('cover_photo'),
       name: model.get('name'),
       count: model.get('photo_count')
     };
   },
-  
+
   render: function () {
     BaseView.prototype.render.apply(this, arguments);
     var $img = this.$('.image-container')
@@ -40,7 +40,7 @@ export default BaseView.extend({
     $img.before(_.times(3, _.bind($img.clone, $img)));
     return this;
   },
-  
+
   select: function () {
     if (this.action === 'redirect') return;
     this.collection.each(function (album) {

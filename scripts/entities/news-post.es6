@@ -13,7 +13,7 @@ var Model = Base.Model.extend({
     comments: {hasMany: Comment, fk: 'news_post_id'}
   },
 
-  orgsyncUrl: function () {
+  webUrl: function () {
     return 'https://orgsync.com/' + this.get('portal').id + '/news_posts/' +
       this.id;
   },

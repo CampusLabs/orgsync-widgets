@@ -8,7 +8,7 @@ var Model = Base.Model.extend({
     photos: {hasMany: Photo, fk: 'album_id'}
   },
 
-  orgsyncUrl: function () {
+  webUrl: function () {
     return 'https://orgsync.com/' + this.get('portal').id +
       '/photos/albums/' + this.id;
   }

@@ -8,8 +8,8 @@ var Model = Base.Model.extend({
     comments: {hasMany: Comment, fk: 'photo_id'}
   },
 
-  orgsyncUrl: function () {
-    return this.get('album').orgsyncUrl() + '/photo/' + this.id;
+  webUrl: function () {
+    return this.get('album').webUrl() + '/photo/' + this.id;
   }
 });
 

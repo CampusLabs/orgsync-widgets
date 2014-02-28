@@ -62,7 +62,7 @@ var Model = Base.Model.extend({
   },
 
   orgsyncUrl: function () {
-    return this.get('event').orgsyncUrl() + '/occurrences/' + this.id;
+    return this.get('event').get('links').web + '/occurrences/' + this.id;
   },
 
   isGoing: function () {

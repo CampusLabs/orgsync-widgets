@@ -19,11 +19,6 @@ var Model = Base.Model.extend({
     return data;
   },
 
-  orgsyncUrl: function () {
-    return 'https://orgsync.com/' + this.get('portal').id + '/events/' +
-      this.id;
-  },
-
   searchableWords: function () {
     if (this._searchableWords) return this._searchableWords;
     return this._searchableWords = _.str.words(_.values(

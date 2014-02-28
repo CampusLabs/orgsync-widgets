@@ -7,7 +7,7 @@ module EventDate from 'entities/event-date';
 import moment from 'moment';
 
 export default ListView.extend({
-  threshold: 800,
+  threshold: 200,
 
   view: 'month',
 
@@ -59,7 +59,7 @@ export default ListView.extend({
     var pageSize = this.pageSize();
     var edge = collection.first();
     var target = edge.date().clone().subtract('days', pageSize);
-    var scrollHeight = this.$el.prop('scrollHeight');
+    var bottom = this.bottom();
     switch (this.view) {
     case 'month':
     case 'week':
@@ -71,35 +71,34 @@ export default ListView.extend({
     case 'list':
       this.collection.add(this.listStep(target).prev);
     }
-    this.adjustAbove(scrollHeight);
+    this.adjustAbove(bottom);
+    this.padAndTrim();
   },
+
 
   extraAbove: function () {
     if (this.bottomEdge()) return false;
     var $el = this.$el;
     var scrollTop = $el.scrollTop();
     var firstHeight = $el.children().first().outerHeight();
-    return scrollTop > this.threshold + firstHeight;
+    return scrollTop >= this.threshold + firstHeight;
   },
 
   removeAbove: function () {
-    var scrollHeight = this.$el.prop('scrollHeight');
+    var bottom = this.bottom();
     this.collection.remove(this.collection.first(this.pageSize()));
-    this.adjustAbove(scrollHeight);
+    this.adjustAbove(bottom);
+    this.padAndTrim();
   },
 
-  adjustAbove: function (scrollHeight) {
-    var delta = this.$el.prop('scrollHeight') - scrollHeight;
-    this.$el.scrollTop(this.$el.scrollTop() + delta);
+  adjustAbove: function (bottom) {
+    this.$el.scrollTop(this.$el.scrollTop() + this.bottom() - bottom);
   },
 
   needsBelow: function () {
     if (this.bottomEdge()) return false;
     var $el = this.$el;
-    var scrollHeight = $el.prop('scrollHeight');
-    var scrollTop = $el.scrollTop();
-    var height = $el.outerHeight();
-    return scrollHeight < scrollTop + height + this.threshold;
+    return this.bottom() < $el.scrollTop() + $el.outerHeight() + this.threshold;
   },
 
   renderBelow: function () {
@@ -119,25 +118,29 @@ export default ListView.extend({
     case 'list':
       collection.add(this.listStep(target).next);
     }
+    this.padAndTrim();
   },
 
   extraBelow: function () {
     if (this.topEdge()) return false;
     var $el = this.$el;
-    var scrollHeight = $el.prop('scrollHeight');
-    var scrollTop = $el.scrollTop();
-    var height = this.$el.outerHeight();
-    var lastHeight = this.$el.children().last().outerHeight();
-    return scrollHeight > scrollTop + height + this.threshold + lastHeight;
+    var lastTop = $el.children().last()[0].offsetTop;
+    return lastTop >= $el.scrollTop() + $el.outerHeight() + this.threshold;
   },
 
   removeBelow: function () {
     this.collection.remove(this.collection.last(this.pageSize()));
+    this.padAndTrim();
   },
 
   remove: function () {
     $(window).off('resize', this.padAndTrim);
     return ListView.prototype.remove.apply(this, arguments);
+  },
+
+  bottom: function () {
+    var $last = this.$el.children().last();
+    return $last[0].offsetTop + $last.outerHeight();
   },
 
   topEdge: function () {
@@ -174,11 +177,8 @@ export default ListView.extend({
       // Add or remove elements below if necessary.
       if (this.needsBelow()) this.renderBelow();
       else if (this.needsAbove()) this.renderAbove();
-      else if (this.extraBelow()) this.removeBelow();
+      if (this.extraBelow()) this.removeBelow();
       else if (this.extraAbove()) this.removeAbove();
-      else return;
-
-      this.padAndTrim();
     }, this));
   },
 

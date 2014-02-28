@@ -180,9 +180,11 @@ export default selectorViewMap['.js-osw-events-index'] = BaseView.extend({
   },
 
   date: function (date) {
-    return this.views.daysList ?
+    var val = this.views.daysList ?
       this.views.daysList.date(date) :
       moment().tz(this.tz);
+    if (date) this.updateMonth();
+    return val;
   },
 
   searchKeydown: function () {

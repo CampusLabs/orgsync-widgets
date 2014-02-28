@@ -190,10 +190,11 @@ export default ListView.extend({
     switch (this.view) {
     case 'month':
     case 'week':
+      var rows = this.view === 'month' ? 6 : 1;
       date = date.clone().startOf('month').startOf('week');
-      available.fill(date, date.clone().add('days', pageSize));
+      available.fill(date, date.clone().add('days', pageSize * rows));
       var i = available.indexOf(available.get(Day.Model.id(date)));
-      this.collection.set(available.models.slice(i, i + pageSize));
+      this.collection.set(available.models.slice(i, i + (pageSize * rows)));
       break;
     case 'list':
       this.collection.set(this.listStep(date).next);

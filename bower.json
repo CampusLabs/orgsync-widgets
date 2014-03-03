@@ -5,7 +5,7 @@
   "devDependencies": {
     "amdainty": "x",
     "async": "x",
-    "backbone": "caseywebdev/backbone#generate-id",
+    "backbone": "master",
     "backbone-relations": "x",
     "bourbon": "d01f1d2ce9ab60520e57ccd897baa8c756949f18",
     "elementQuery": "tysonmatanich/elementQuery#prod",
@@ -27,6 +27,6 @@
     "styles"
   ],
   "resolutions": {
-    "backbone": "generate-id"
+    "backbone": "master"
   }
 }

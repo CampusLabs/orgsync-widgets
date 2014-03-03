@@ -9,31 +9,34 @@
     <div class='month-year'>
       <div class='left-buttons'>
         <span class='js-toggle-filters toggle-filters'></span>
+        |
+        <span class='js-change-view change-view' data-view='list'>
+          View List
+        </span>
+        |
+        <span class='js-change-view change-view' data-view='month'>
+          View Month
+        </span>
       </div>
       <div class='right-buttons'>
-        <span class='js-today today'>Today</span
-        >
-        View as:
-        <span class='js-change-view change-view' data-view='list'>List</span>
-        |
-        <span class='js-change-view change-view' data-view='month'>Month</span>
+        <span class='js-prev-month prev-month'>&lt;</span
+        ><span class='js-today today'>Today</span
+        ><span class='js-next-month next-month'>&gt;</span>
       </div>
-      <span class='js-prev-month prev-month'>&lt;</span
-      <% var date = o.date(); %>
-      ><select class='js-month month'>
+      <select class='js-month month'>
+        <% var date = o.date(); %>
         <% _.each(_.range(0, 12), function (month) { %>
         <option value='<%= month %>'>
           <%= date.month(month).format('MMMM') %>
         </option>
         <% }); %>
       </select
-      <% var year = date.year(); %>
       ><select class='js-year year'>
+        <% var year = date.year(); %>
         <% _.each(_.range(year - 3, year + 4), function (year) { %>
         <option value='<%= year %>'><%= year %></option>
         <% }); %>
-      </select
-      ><span class='js-next-month next-month'>&gt;</span>
+      </select>
     </div>
   </div>
   <div class='events'>

@@ -106,7 +106,6 @@ export default selectorViewMap['.js-osw-events-index'] = BaseView.extend({
     this.$('.js-days-of-week .js-day')
       .wrap($('<div>').addClass('js-day-container'));
     this.$('.js-toggle-filters').addClass('icon-office-shortcuts');
-    this.$('.top .js-today').addClass('icon-calendar');
     this.$('.js-prev-month').addClass('icon-pointer-left').text('');
     this.$('.js-next-month').addClass('icon-pointer-right').text('');
     return this;

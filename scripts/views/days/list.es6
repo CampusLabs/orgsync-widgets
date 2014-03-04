@@ -138,7 +138,7 @@ export default ListView.extend({
 
   bottom: function () {
     var $last = this.$el.children().last();
-    return $last[0].offsetTop + $last.outerHeight();
+    return $last.length ? $last[0].offsetTop + $last.outerHeight() : 0;
   },
 
   topEdge: function () {

@@ -62,7 +62,9 @@ var Model = Base.Model.extend({
   },
 
   webUrl: function () {
-    return this.get('event').get('links').web + '/occurrences/' + this.id;
+    return this.get('filler') ?
+      '' :
+      this.get('event').get('links').web + '/occurrences/' + this.id;
   },
 
   isGoing: function () {

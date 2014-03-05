@@ -4,9 +4,6 @@
   label {
     display: block;
     cursor: pointer;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
     padding: 2px;
   }
   &.js-legend-mode {
@@ -18,6 +15,11 @@
   .enabled {
     cursor: pointer;
     margin-right: 5px;
+  }
+  .name {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
   }
   .js-icon {
     float: right;

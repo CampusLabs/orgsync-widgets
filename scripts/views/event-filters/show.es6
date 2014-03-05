@@ -3,7 +3,7 @@ import EventFiltersShow from 'jst/event-filters/show';
 
 var iconMap = {
   organization: 'organization',
-  service_organization: 'service',
+  service_partner: 'service',
   umbrella: 'umbrella',
   service_umbrella: 'service',
   featured: 'promote',

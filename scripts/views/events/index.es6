@@ -86,7 +86,11 @@ export default selectorViewMap['.js-osw-events-index'] = BaseView.extend({
 
   setView: function (view, date) {
     if (!date) {
-      date = view === 'list' ? this.date().clone().weekday(0) : this.date();
+
+      // While infinite scroll is disabled, it's better to jump to the current
+      // date in list view;
+      // date = view === 'list' ? this.date().clone().weekday(0) : this.date();
+      date = view === 'list' ? moment().tz(this.tz) : this.date();
     }
     this.view = view;
     this.$el

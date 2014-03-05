@@ -69,6 +69,6 @@ export default BaseView.extend({
     if (!multiDay && allDay) return 'All Day';
     var format = allDay ? '[All Day]' : 'LT';
     if (multiDay) format += ', MMM D';
-    return start.format(format) + ' to ' + end.format(format);
+    return start.format(format) + ' - ' + end.format(format);
   }
 });

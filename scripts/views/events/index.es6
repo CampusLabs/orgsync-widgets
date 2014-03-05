@@ -35,7 +35,8 @@ export default selectorViewMap['.js-osw-events-index'] = BaseView.extend({
     'view',
     'fetchedEvents',
     'eventFilters',
-    'legendMode'
+    'legendMode',
+    'filtersHeader'
   ],
 
   classes: [
@@ -124,7 +125,10 @@ export default selectorViewMap['.js-osw-events-index'] = BaseView.extend({
       el: this.$('.js-event-filters-list'),
       collection: this.eventFilters,
       modelView: EventFiltersShowView,
-      modelViewOptions: {legendMode: this.legendMode}
+      modelViewOptions: {
+        legendMode: this.legendMode,
+        header: this.filtersHeader
+      }
     });
   },
 

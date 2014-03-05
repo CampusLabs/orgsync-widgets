@@ -4,4 +4,7 @@
     <input type='checkbox' class='js-enabled enabled' checked>{{name}}
   </div>
 </label>
-{{#useRule}}<hr>{{/useRule}}
+{{#useRule}}
+  <hr>
+  {{#header}}<div class='header'>{{header}}</div>{{/header}}
+{{/useRule}}

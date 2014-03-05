@@ -21,7 +21,7 @@ export default BaseView.extend({
     'osw-event-filters-show'
   ],
 
-  options: ['legendMode'],
+  options: ['legendMode', 'header'],
 
   events: {
     'change .js-enabled': 'updateEnabled'
@@ -36,7 +36,8 @@ export default BaseView.extend({
     return {
       name: this.model.get('name'),
       iconName: iconMap[type],
-      useRule: type === 'rsvp' || type === 'featured'
+      useRule: type === 'rsvp' || type === 'featured',
+      header: this.header
     };
   },
 

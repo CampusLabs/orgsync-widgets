@@ -20,6 +20,14 @@
         width: 100%;
       }
     }
+    .default-picture {
+      line-height: 45px;
+      text-align: center;
+      font-size: 24px;
+      background: #eee;
+      color: #999;
+      border-radius: 3px;
+    }
     .location,
     .short-time {
       display: none;

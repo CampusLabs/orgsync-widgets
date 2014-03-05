@@ -28,6 +28,13 @@
       color: #999;
       border-radius: 3px;
     }
+    .portal-name,
+    .attending {
+      &:before {
+        color: #000;
+        content: '\2022';
+      }
+    }
     .location,
     .short-time {
       display: none;
@@ -36,10 +43,23 @@
       font-size: 14px;
       color: #333333;
     }
-    .long-time {
+    .long-time,
+    .portal-name,
+    .attending {
       display: inline;
       font-size: 11px;
-      color: #666666;
+      color: #666;
+    }
+    .portal-name {
+      color: #333;
+      &:before {
+        margin-right: 5px;
+      }
+    }
+    .attending {
+      color: #94b363;
+      font-weight: bold;
+      text-transform: uppercase;
     }
     .info {
       padding: 8px 5px;
@@ -84,7 +104,9 @@
     }
     .location,
     .picture-container,
-    .long-time {
+    .long-time,
+    .portal-name,
+    .attending {
       display: none;
     }
     .short-time {

@@ -123,14 +123,14 @@
     display: none;
   }
   .change-view[data-view=list] {
-    font-weight: bold;
+    display: none;
   }
 }
 
 .osw-events-index.js-month-view,
 .osw-events-index.js-week-view {
   .change-view[data-view=month] {
-    font-weight: bold;
+    display: none;
   }
   .js-day-container {
     display: inline-block;

@@ -14,7 +14,7 @@ export default EventDatesShowView.extend({
 
   options: function () {
     return (_.result(EventDatesShowView.prototype, 'options') || []).concat(
-      ['eventFilters']
+      ['eventFilters', 'view']
     );
   },
 

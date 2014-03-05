@@ -58,7 +58,8 @@ export default BaseView.extend({
       modelView: EventDatesListItemView,
       modelViewOptions: {
         day: this.model,
-        eventFilters: this.eventFilters
+        eventFilters: this.eventFilters,
+        view: this.view
       }
     });
     this.correctDisplay();

@@ -7,7 +7,7 @@ var iconMap = {
   umbrella: 'umbrella',
   service_umbrella: 'service',
   featured: 'promote',
-  rsvp: 'star'
+  rsvp: 'check'
 };
 
 export default BaseView.extend({

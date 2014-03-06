@@ -1,5 +1,5 @@
 import {Model, Collection} from 'entities/base';
-import moment from 'moment';
+import moment from 'my-moment';
 
 module Base from 'entities/base';
 module Account from 'entities/account';

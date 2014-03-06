@@ -11,7 +11,7 @@ module Day from 'entities/day';
 module Event from 'entities/event';
 module EventFilter from 'entities/event-filter';
 module Portal from 'entities/portal';
-import moment from 'moment';
+import moment from 'my-moment';
 
 export default selectorViewMap['.js-osw-events-index'] = BaseView.extend({
   template: EventsIndexTemplate,

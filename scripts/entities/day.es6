@@ -1,5 +1,5 @@
-import moment from 'moment';
-import {tz} from 'config';
+import moment from 'my-moment';
+import tz from 'tz';
 
 module Base from 'entities/base';
 module Day from 'entities/day';

@@ -1,5 +1,5 @@
 import $ from 'jquery';
-import moment from 'moment';
+import moment from 'my-moment';
 
 module Base from 'entities/base';
 module Portal from 'entities/portal';

@@ -1,5 +1,5 @@
 import _ from 'underscore';
-import {View} from 'backbone';
+import {View} from 'my-backbone';
 
 export default View.extend({
   constructor: function () {

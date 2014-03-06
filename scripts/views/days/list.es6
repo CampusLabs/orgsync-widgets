@@ -4,7 +4,7 @@ import ListView from 'views/list';
 import DaysShowView from 'views/days/show';
 module Day from 'entities/day';
 module EventDate from 'entities/event-date';
-import moment from 'moment';
+import moment from 'my-moment';
 
 export default ListView.extend({
   threshold: 800,

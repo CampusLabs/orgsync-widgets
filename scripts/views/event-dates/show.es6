@@ -64,11 +64,14 @@ export default BaseView.extend({
   longTime: function () {
     var start = this.model.start();
     var end = this.model.end();
-    var allDay = this.model.get('event').get('is_all_day');
+    var allDay = this.event.get('is_all_day');
     var multiDay = this.model.isMultiDay();
     if (!multiDay && allDay) return 'All Day';
     var format = allDay ? '[All Day]' : 'LT';
-    if (multiDay) format += ', MMM D';
+    if (multiDay) {
+      format += ', MMM D';
+      if (allDay) end = end.clone().subtract('days', 1);
+    }
     return start.format(format) + ' - ' + end.format(format);
   }
 });

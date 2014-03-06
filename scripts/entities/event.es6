@@ -15,6 +15,7 @@ var Model = Base.Model.extend({
   },
 
   parse: function (data) {
+    data = _.clone(data);
     data.dates = this.get('dates').models.concat(data.dates);
     return data;
   },

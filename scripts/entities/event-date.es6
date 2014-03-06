@@ -37,11 +37,6 @@ var Model = Base.Model.extend({
     var tz = this.get('tz');
     if (!this.get('event').get('is_all_day')) return date.tz(tz);
 
-    // HACK: Until event occurrences is out, this is necessary for any
-    // duration calculation to work as all day events return the same
-    // starts_at and ends_at. This can be removed in the future (hopefully).
-    if (which === 'ends_at') date.add('days', 1);
-
     // All day events should always be midnight to midnight in the timezone
     // they are being viewed in, regardless of the time zone they were created
     // in.

@@ -58,7 +58,6 @@ export default ListView.extend({
     var pageSize = this.pageSize();
     var edge = collection.first();
     var target = edge.date().clone().subtract('days', pageSize);
-    var bottom = this.bottom();
     switch (this.view) {
     case 'month':
     case 'week':

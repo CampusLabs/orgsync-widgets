@@ -40,6 +40,7 @@ export default ListView.extend({
     this.collection.tz = this.available.tz;
     this.setView(this.view, this.initialDate);
     ListView.prototype.initialize.apply(this, arguments);
+    _.defer(_.bind(this.checkFetch, this));
   },
 
   pageSize: function () {

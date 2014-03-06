@@ -70,10 +70,9 @@ export default ListView.extend({
     case 'list':
       this.collection.add(this.listStep(target).prev);
     }
-    this.adjustAbove(bottom);
+    this.adjustAbove(1);
     this.padAndTrim();
   },
-
 
   extraAbove: function () {
     if (this.bottomEdge()) return false;
@@ -84,14 +83,14 @@ export default ListView.extend({
   },
 
   removeAbove: function () {
-    var bottom = this.bottom();
+    this.adjustAbove(-1);
     this.collection.remove(this.collection.first(this.pageSize()));
-    this.adjustAbove(bottom);
     this.padAndTrim();
   },
 
-  adjustAbove: function (bottom) {
-    this.$el.scrollTop(this.$el.scrollTop() + this.bottom() - bottom);
+  adjustAbove: function (dir) {
+    var firstHeight = this.$el.children().first().outerHeight();
+    this.$el.scrollTop(this.$el.scrollTop() + dir * firstHeight);
   },
 
   needsBelow: function () {

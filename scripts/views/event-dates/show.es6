@@ -20,8 +20,8 @@ export default BaseView.extend({
       isMultiDay: this.model.isMultiDay(),
       location: this.event.get('location'),
       longTime: this.longTime(),
-      multiDayStart: this.model.start().format('dddd, MMMM D, YYYY [at] LT'),
-      multiDayEnd: this.model.end().format('dddd, MMMM D, YYYY [at] LT'),
+      multiDayStart: this.multiDayDateTime('start'),
+      multiDayEnd: this.multiDayDateTime('end'),
       singleDayDate: this.model.start().format('dddd, MMMM D, YYYY'),
       portalName: this.event.get('portal').get('name'),
       shortTime: this.shortTime(),
@@ -51,7 +51,7 @@ export default BaseView.extend({
   },
 
   shortTime: function () {
-    if (this.model.get('event').get('is_all_day')) return 'all day';
+    if (this.event.get('is_all_day')) return 'all day';
     if (!this.continued) return this.shortTimeFormat(this.model.start());
     if (this.continues) return 'all day';
     return 'ends ' + this.shortTimeFormat(this.model.end());
@@ -70,8 +70,20 @@ export default BaseView.extend({
     var format = allDay ? '[All Day]' : 'LT';
     if (multiDay) {
       format += ', MMM D';
-      if (allDay) end = end.clone().subtract('days', 1);
+      if (allDay) end = end.clone().subtract('day', 1);
     }
     return start.format(format) + ' - ' + end.format(format);
+  },
+
+  multiDayDateTime: function (which) {
+    var date = this.model[which]();
+    var format = 'dddd, MMMM D, YYYY';
+    if (this.event.get('is_all_day')) {
+      format += ', [All Day]';
+      if (which === 'end') date = date.clone().subtract('day', 1);
+    } else {
+      format += ' [at] LT';
+    }
+    return date.format(format);
   }
 });

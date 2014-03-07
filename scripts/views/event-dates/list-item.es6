@@ -30,8 +30,9 @@ export default EventDatesShowView.extend({
 
   toTemplate: function () {
     return _.extend(EventDatesShowView.prototype.toTemplate.call(this), {
+      date: this.day.date().date(),
       filler: this.model.get('filler'),
-      date: this.day.date().date()
+      month: this.day.date().format('MMM')
     });
   },
 

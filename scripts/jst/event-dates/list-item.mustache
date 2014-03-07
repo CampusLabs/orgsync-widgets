@@ -1,6 +1,11 @@
 <div class='picture-container'>
   {{#image}}<img src='{{image}}'>{{/image}}
-  {{^image}}<div class='default-picture'>{{date}}</div>{{/image}}
+  {{^image}}
+  <div class='default-picture'>
+    <div class='month'>{{month}}</div>
+    <div class='date'>{{date}}</div>
+  </div>
+  {{/image}}
 </div>
 <div class='info'>
   <div class='short-time'>{{shortTime}}</div>

@@ -14,7 +14,7 @@ var Model = Base.Model.extend({
 
   defaults: {
     tz: tz,
-    visible: true,
+    visible: false,
     fetched: 0
   },
 

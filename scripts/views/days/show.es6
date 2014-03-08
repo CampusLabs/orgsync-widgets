@@ -4,7 +4,7 @@ import ListView from 'views/list';
 import DaysShowTemplate from 'jst/days/show';
 import EventDatesListItemView from 'views/event-dates/list-item';
 module EventDate from 'entities/event-date';
-import moment from 'moment-timezone';
+import moment from 'moment';
 
 export default BaseView.extend({
   template: DaysShowTemplate,
@@ -58,7 +58,8 @@ export default BaseView.extend({
       modelView: EventDatesListItemView,
       modelViewOptions: {
         day: this.model,
-        eventFilters: this.eventFilters
+        eventFilters: this.eventFilters,
+        view: this.view
       }
     });
     this.correctDisplay();

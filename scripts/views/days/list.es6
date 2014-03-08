@@ -4,11 +4,9 @@ import ListView from 'views/list';
 import DaysShowView from 'views/days/show';
 module Day from 'entities/day';
 module EventDate from 'entities/event-date';
-import moment from 'moment-timezone';
+import moment from 'moment';
 
 export default ListView.extend({
-  threshold: 800,
-
   view: 'month',
 
   modelView: DaysShowView,
@@ -42,6 +40,7 @@ export default ListView.extend({
     this.collection.tz = this.available.tz;
     this.setView(this.view, this.initialDate);
     ListView.prototype.initialize.apply(this, arguments);
+    _.defer(_.bind(this.checkFetch, this));
   },
 
   pageSize: function () {
@@ -59,7 +58,6 @@ export default ListView.extend({
     var pageSize = this.pageSize();
     var edge = collection.first();
     var target = edge.date().clone().subtract('days', pageSize);
-    var scrollHeight = this.$el.prop('scrollHeight');
     switch (this.view) {
     case 'month':
     case 'week':
@@ -71,7 +69,8 @@ export default ListView.extend({
     case 'list':
       this.collection.add(this.listStep(target).prev);
     }
-    this.adjustAbove(scrollHeight);
+    this.adjustAbove(1);
+    this.padAndTrim();
   },
 
   extraAbove: function () {
@@ -79,27 +78,24 @@ export default ListView.extend({
     var $el = this.$el;
     var scrollTop = $el.scrollTop();
     var firstHeight = $el.children().first().outerHeight();
-    return scrollTop > this.threshold + firstHeight;
+    return scrollTop >= this.threshold + firstHeight;
   },
 
   removeAbove: function () {
-    var scrollHeight = this.$el.prop('scrollHeight');
+    this.adjustAbove(-1);
     this.collection.remove(this.collection.first(this.pageSize()));
-    this.adjustAbove(scrollHeight);
+    this.padAndTrim();
   },
 
-  adjustAbove: function (scrollHeight) {
-    var delta = this.$el.prop('scrollHeight') - scrollHeight;
-    this.$el.scrollTop(this.$el.scrollTop() + delta);
+  adjustAbove: function (dir) {
+    var firstHeight = this.$el.children().first().outerHeight();
+    this.$el.scrollTop(this.$el.scrollTop() + dir * firstHeight);
   },
 
   needsBelow: function () {
     if (this.bottomEdge()) return false;
     var $el = this.$el;
-    var scrollHeight = $el.prop('scrollHeight');
-    var scrollTop = $el.scrollTop();
-    var height = $el.outerHeight();
-    return scrollHeight < scrollTop + height + this.threshold;
+    return this.bottom() < $el.scrollTop() + $el.outerHeight() + this.threshold;
   },
 
   renderBelow: function () {
@@ -119,25 +115,29 @@ export default ListView.extend({
     case 'list':
       collection.add(this.listStep(target).next);
     }
+    this.padAndTrim();
   },
 
   extraBelow: function () {
     if (this.topEdge()) return false;
     var $el = this.$el;
-    var scrollHeight = $el.prop('scrollHeight');
-    var scrollTop = $el.scrollTop();
-    var height = this.$el.outerHeight();
-    var lastHeight = this.$el.children().last().outerHeight();
-    return scrollHeight > scrollTop + height + this.threshold + lastHeight;
+    var lastTop = $el.children().last()[0].offsetTop;
+    return lastTop >= $el.scrollTop() + $el.outerHeight() + this.threshold;
   },
 
   removeBelow: function () {
     this.collection.remove(this.collection.last(this.pageSize()));
+    this.padAndTrim();
   },
 
   remove: function () {
     $(window).off('resize', this.padAndTrim);
     return ListView.prototype.remove.apply(this, arguments);
+  },
+
+  bottom: function () {
+    var $last = this.$el.children().last();
+    return $last.length ? $last[0].offsetTop + $last.outerHeight() : 0;
   },
 
   topEdge: function () {
@@ -174,11 +174,8 @@ export default ListView.extend({
       // Add or remove elements below if necessary.
       if (this.needsBelow()) this.renderBelow();
       else if (this.needsAbove()) this.renderAbove();
-      else if (this.extraBelow()) this.removeBelow();
+      if (this.extraBelow()) this.removeBelow();
       else if (this.extraAbove()) this.removeAbove();
-      else return;
-
-      this.padAndTrim();
     }, this));
   },
 
@@ -192,10 +189,11 @@ export default ListView.extend({
     switch (this.view) {
     case 'month':
     case 'week':
-      date = date.clone().startOf('week');
-      available.fill(date, date.clone().add('days', pageSize));
+      var rows = this.view === 'month' ? 6 : 1;
+      date = date.clone().startOf('month').startOf('week');
+      available.fill(date, date.clone().add('days', pageSize * rows));
       var i = available.indexOf(available.get(Day.Model.id(date)));
-      this.collection.set(available.models.slice(i, i + pageSize));
+      this.collection.set(available.models.slice(i, i + (pageSize * rows)));
       break;
     case 'list':
       this.collection.set(this.listStep(date).next);
@@ -227,6 +225,7 @@ export default ListView.extend({
 
   setView: function (view, date) {
     this.view = view;
+    this.threshold = view === 'list' ? 800 : 0;
     this.modelViewOptions = {view: view, eventFilters: this.eventFilters};
     this.collection.set();
     this.date(date);

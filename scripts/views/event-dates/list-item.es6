@@ -14,7 +14,7 @@ export default EventDatesShowView.extend({
 
   options: function () {
     return (_.result(EventDatesShowView.prototype, 'options') || []).concat(
-      ['eventFilters']
+      ['eventFilters', 'view']
     );
   },
 
@@ -30,7 +30,9 @@ export default EventDatesShowView.extend({
 
   toTemplate: function () {
     return _.extend(EventDatesShowView.prototype.toTemplate.call(this), {
-      filler: this.model.get('filler')
+      date: this.day.date().date(),
+      filler: this.model.get('filler'),
+      month: this.day.date().format('MMM')
     });
   },
 

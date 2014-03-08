@@ -11,7 +11,7 @@ module Day from 'entities/day';
 module Event from 'entities/event';
 module EventFilter from 'entities/event-filter';
 module Portal from 'entities/portal';
-import moment from 'moment-timezone';
+import moment from 'moment';
 
 export default selectorViewMap['.js-osw-events-index'] = BaseView.extend({
   template: EventsIndexTemplate,
@@ -35,7 +35,8 @@ export default selectorViewMap['.js-osw-events-index'] = BaseView.extend({
     'view',
     'fetchedEvents',
     'eventFilters',
-    'legendMode'
+    'legendMode',
+    'filtersHeader'
   ],
 
   classes: [
@@ -85,7 +86,11 @@ export default selectorViewMap['.js-osw-events-index'] = BaseView.extend({
 
   setView: function (view, date) {
     if (!date) {
-      date = view === 'list' ? this.date().clone().weekday(0) : this.date();
+
+      // While infinite scroll is disabled, it's better to jump to the current
+      // date in list view;
+      // date = view === 'list' ? this.date().clone().weekday(0) : this.date();
+      date = view === 'list' ? moment().tz(this.tz) : this.date();
     }
     this.view = view;
     this.$el
@@ -106,7 +111,6 @@ export default selectorViewMap['.js-osw-events-index'] = BaseView.extend({
     this.$('.js-days-of-week .js-day')
       .wrap($('<div>').addClass('js-day-container'));
     this.$('.js-toggle-filters').addClass('icon-office-shortcuts');
-    this.$('.top .js-today').addClass('icon-calendar');
     this.$('.js-prev-month').addClass('icon-pointer-left').text('');
     this.$('.js-next-month').addClass('icon-pointer-right').text('');
     return this;
@@ -125,7 +129,10 @@ export default selectorViewMap['.js-osw-events-index'] = BaseView.extend({
       el: this.$('.js-event-filters-list'),
       collection: this.eventFilters,
       modelView: EventFiltersShowView,
-      modelViewOptions: {legendMode: this.legendMode}
+      modelViewOptions: {
+        legendMode: this.legendMode,
+        header: this.filtersHeader
+      }
     });
   },
 
@@ -180,9 +187,11 @@ export default selectorViewMap['.js-osw-events-index'] = BaseView.extend({
   },
 
   date: function (date) {
-    return this.views.daysList ?
+    var val = this.views.daysList ?
       this.views.daysList.date(date) :
       moment().tz(this.tz);
+    if (date) this.updateMonth();
+    return val;
   },
 
   searchKeydown: function () {

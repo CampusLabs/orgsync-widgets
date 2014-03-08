@@ -3,11 +3,11 @@ import EventFiltersShow from 'jst/event-filters/show';
 
 var iconMap = {
   organization: 'organization',
-  service_organization: 'service',
+  service_partner: 'service',
   umbrella: 'umbrella',
   service_umbrella: 'service',
   featured: 'promote',
-  rsvp: 'star'
+  rsvp: 'check'
 };
 
 export default BaseView.extend({
@@ -21,7 +21,7 @@ export default BaseView.extend({
     'osw-event-filters-show'
   ],
 
-  options: ['legendMode'],
+  options: ['legendMode', 'header'],
 
   events: {
     'change .js-enabled': 'updateEnabled'
@@ -36,7 +36,8 @@ export default BaseView.extend({
     return {
       name: this.model.get('name'),
       iconName: iconMap[type],
-      useRule: type === 'rsvp' || type === 'featured'
+      useRule: type === 'rsvp' || type === 'featured',
+      header: this.header
     };
   },
 

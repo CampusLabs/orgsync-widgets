@@ -1,4 +1,4 @@
-import moment from 'moment-timezone';
+import moment from 'moment-timezone-pristine';
 import momentTimezoneData from 'moment-timezone-data';
 
 moment.tz.add(momentTimezoneData);

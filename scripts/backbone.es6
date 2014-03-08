@@ -1,5 +1,5 @@
 import $ from 'jquery';
-import Backbone from 'backbone';
+import Backbone from 'backbone-pristine';
 
 Backbone.$ = $;
 

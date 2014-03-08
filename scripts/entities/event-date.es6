@@ -1,5 +1,5 @@
 import _ from 'underscore';
-import moment from 'my-moment';
+import moment from 'moment-timezone';
 import tz from 'tz';
 
 module Base from 'entities/base';

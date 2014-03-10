@@ -168,6 +168,7 @@ export default React.createClass({
           renderListItem={this.renderListItem}
           renderBlankSlate={this.renderBlankSlate}
           uniform={true}
+          renderPageSize={18}
         />
       </div>
     );

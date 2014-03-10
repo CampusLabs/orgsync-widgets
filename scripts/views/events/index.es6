@@ -5,15 +5,15 @@ import ListView from 'views/list';
 import EventsIndexTemplate from 'jst/events/index';
 import DaysListView from 'views/days/list';
 import EventFiltersShowView from 'views/event-filters/show';
-import {selectorViewMap, tz} from 'app';
+import tz from 'tz';
 module Community from 'entities/community';
 module Day from 'entities/day';
 module Event from 'entities/event';
 module EventFilter from 'entities/event-filter';
 module Portal from 'entities/portal';
-import moment from 'moment';
+import moment from 'moment-timezone';
 
-export default selectorViewMap['.js-osw-events-index'] = BaseView.extend({
+export default BaseView.extend({
   template: EventsIndexTemplate,
 
   events: {

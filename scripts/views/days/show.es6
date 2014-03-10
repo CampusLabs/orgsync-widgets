@@ -4,7 +4,7 @@ import ListView from 'views/list';
 import DaysShowTemplate from 'jst/days/show';
 import EventDatesListItemView from 'views/event-dates/list-item';
 module EventDate from 'entities/event-date';
-import moment from 'moment';
+import moment from 'moment-timezone';
 
 export default BaseView.extend({
   template: DaysShowTemplate,

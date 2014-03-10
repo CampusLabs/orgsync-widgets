@@ -8,6 +8,7 @@ export default React.createClass({
       <div className='portals-query'>
         <input
           name='query'
+          type='text'
           placeholder='Search by name or keyword'
           value={this.props.value}
           onChange={this.props.onChange}

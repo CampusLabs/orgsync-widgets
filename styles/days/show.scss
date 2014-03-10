@@ -1,4 +1,8 @@
-@import "config";
+@import '../config';
+
+.osw-days-show {
+  position: relative;
+}
 
 .osw-events-index.js-list-view {
   .osw-days-show {

@@ -13,6 +13,7 @@
       "moment-timezone-pristine": "bower_components/moment-timezone/moment-timezone.js",
       "moment-timezone-data": "bower_components/moment-timezone/moment-timezone.json",
       "moment": "bower_components/moment/moment.js",
+      "mustache": "bower_components/mustache/mustache.js",
       "olay": "bower_components/olay/olay.js",
       "react": "bower_components/react/react.js",
       "sockjs": "bower_components/sockjs/sockjs.js",
@@ -31,7 +32,12 @@
       }
     },
     "amd.concat": true,
-    "processors.es6.options.compatFix": true
+    "processors.es6.options.compatFix": true,
+    "processors.tmpl.options.variable": "o",
+    "processors.jst.options.dependencies": {
+      "underscore": "_",
+      "mustache": "Mustache"
+    }
   },
   "targets": {
     "scripts/orgsync-widgets.es6": "dist",

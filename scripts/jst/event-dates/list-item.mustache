@@ -1,4 +1,12 @@
-<div class='picture-container'>{{#image}}<img src='{{image}}'>{{/image}}</div>
+<div class='picture-container'>
+  {{#image}}<img src='{{image}}'>{{/image}}
+  {{^image}}
+  <div class='default-picture'>
+    <div class='month'>{{month}}</div>
+    <div class='date'>{{date}}</div>
+  </div>
+  {{/image}}
+</div>
 <div class='info'>
   <div class='short-time'>{{shortTime}}</div>
   <div class='title'>
@@ -7,4 +15,9 @@
   </div>
   <div class='long-time'>{{longTime}}</div>
   <div class='location'>{{location}}</div>
+  <div class='portal-name'>{{portalName}}</div>
+  {{#isGoing}}<div class='attending'>
+    <i class='icon-check'></i>Attending
+  </div>
+  {{/isGoing}}
 </div>

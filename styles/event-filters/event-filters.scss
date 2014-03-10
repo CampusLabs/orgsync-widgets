@@ -1,12 +1,9 @@
-@import "config";
+@import '../config';
 
 .orgsync-widget.osw-event-filters-show {
   label {
     display: block;
     cursor: pointer;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
     padding: 2px;
   }
   &.js-legend-mode {
@@ -19,6 +16,11 @@
     cursor: pointer;
     margin-right: 5px;
   }
+  .name {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
   .js-icon {
     float: right;
   }
@@ -27,5 +29,9 @@
     border: 0;
     height: 1px;
     background: #ccc;
+  }
+  .header {
+    font-weight: bold;
+    margin: 5px;
   }
 }

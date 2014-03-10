@@ -1,4 +1,6 @@
-@import "config";
+@import '../config';
+
+$green: #94b363;
 
 .osw-events-index.js-list-view {
   .osw-event-dates-list-item {
@@ -15,9 +17,28 @@
       float: left;
       width: 45px;
       height: 45px;
-      margin: 0 5px 0 30px;
+      margin: 0 5px;
       img {
         width: 100%;
+      }
+    }
+    .default-picture {
+      @include user-select(none);
+      background: #eee;
+      text-align: center;
+      color: #999;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+      .month {
+        padding-top: 4px;
+        font-size: 12px;
+        text-transform: uppercase;
+        line-height: 15px;
+      }
+      .date {
+        padding-bottom: 4px;
+        font-size: 20px;
+        line-height: 20px;
       }
     }
     .location,
@@ -28,10 +49,30 @@
       font-size: 14px;
       color: #333333;
     }
-    .long-time {
+    .long-time,
+    .portal-name,
+    .attending {
       display: inline;
       font-size: 11px;
-      color: #666666;
+      color: #666;
+    }
+    .portal-name,
+    .attending {
+      &:before {
+        color: #000;
+        content: '\2022';
+      }
+    }
+    .portal-name {
+      color: #333;
+      &:before {
+        margin-right: 5px;
+      }
+    }
+    .attending {
+      color: #94b363;
+      font-weight: bold;
+      text-transform: uppercase;
     }
     .info {
       padding: 8px 5px;
@@ -76,7 +117,9 @@
     }
     .location,
     .picture-container,
-    .long-time {
+    .long-time,
+    .portal-name,
+    .attending {
       display: none;
     }
     .short-time {

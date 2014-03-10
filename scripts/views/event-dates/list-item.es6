@@ -1,7 +1,7 @@
 import _ from 'underscore';
 import EventDatesShowView from 'views/event-dates/show';
 import EventDatesListItemTemplate from 'jst/event-dates/list-item';
-import {Olay} from 'app';
+import Olay from 'olay';
 module EventFilter from 'entities/event-filter';
 import tinycolor from 'tinycolor';
 
@@ -47,7 +47,9 @@ export default EventDatesShowView.extend({
       model: this.model,
       day: this.day
     })).render();
-    (this.olay = new Olay(this.views.event.el)).show();
+    this.olay = new Olay(this.views.event.el);
+    this.olay.$container.addClass('orgsync-widget');
+    this.olay.show();
   },
 
   correctDisplay: function () {

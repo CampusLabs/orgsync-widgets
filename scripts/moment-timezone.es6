@@ -1,3 +1,4 @@
+import module from 'module';
 import moment from 'moment-timezone-pristine';
 import momentTimezoneData from 'moment-timezone-data';
 
@@ -13,4 +14,8 @@ moment.updateOffset = function (date) {
   if (Math.abs(delta) <= 60) date.subtract('minutes', delta);
 };
 
-export default moment;
+// This is for compat with current-gen AMD.
+module.exports = moment;
+
+// In the future it will be...
+// export default moment;

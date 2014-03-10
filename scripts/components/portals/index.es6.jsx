@@ -75,8 +75,7 @@ export default React.createClass({
   },
 
   openPortal: function (portal) {
-    var component = <Show portal={portal} />;
-    (<Olay className='portals-show' component={component} />).show();
+    Olay.create({className: 'portals-show'}, <Show portal={portal} />).show();
   },
 
   renderListItem: function (portal) {

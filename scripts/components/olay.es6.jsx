@@ -1,39 +1,43 @@
 /** @jsx React.DOM */
 
+import _ from 'underscore';
 import elementQuery from 'elementQuery';
 import Icon from 'components/icon';
 import Olay from 'olay';
 import React from 'react';
 
 export default React.createClass({
-  show: function () {
-    var olay = this.olay;
-    if (!olay) {
-      olay = this.olay = new Olay('<div>', this.props.options);
+  statics: {
+    create: function (props, children) {
+      var olay = new Olay('<div>', props.options);
       olay.$container
         .addClass('orgsync-widget')
-        .addClass(this.props.className + '-olay');
-      React.renderComponent(this, olay.show().$el[0]);
+        .addClass(props.className + '-olay');
+      props = _.extend({olay: olay}, props);
+      return React.renderComponent(this(props, children), olay.$el[0]);
     }
-    olay.show();
+  },
+
+  show: function () {
+    this.props.olay.show();
     elementQuery();
   },
 
   hide: function () {
-    this.olay.hide();
+    this.props.olay.hide();
   },
 
   hasFocus: function () {
-    if (!this.olay) return false;
+    if (!this.props.olay) return false;
     var olays = document.getElementsByClassName('js-olay-container');
-    return olays[olays.length - 1] === this.olay.$container[0];
+    return olays[olays.length - 1] === this.props.olay.$container[0];
   },
 
   render: function () {
     return (
       <div>
         <div className='js-olay-hide close-icon'><Icon name='delete' /></div>
-        {this.props.component}
+        {this.props.children}
       </div>
     );
   }

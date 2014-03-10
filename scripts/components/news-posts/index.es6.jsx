@@ -25,8 +25,9 @@ export default React.createClass({
   },
 
   openNewsPost: function (newsPost) {
-    var component = <NewsPostsShow newsPost={newsPost} />;
-    (<Olay className='news-posts-show' component={component} />).show();
+    Olay.create({
+      className: 'news-posts-show'
+    }, <NewsPostsShow newsPost={newsPost} />).show();
   },
 
   renderListItem: function (newsPost) {

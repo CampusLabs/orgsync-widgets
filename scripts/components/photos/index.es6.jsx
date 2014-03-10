@@ -31,17 +31,20 @@ export default React.createClass({
 
   openPhoto: function (photo) {
     if (!this.olay) {
-      this.olay = <Olay className='photos-show' options={{preserve: true}} />;
+      this.olay = Olay.create({
+        className: 'photos-show',
+        options: {preserve: true}
+      });
     }
-    this.olay.show();
     this.olay.setProps({
-      component:
+      children:
         <PhotosShow
           key={photo.id}
           photo={photo}
           onImageClick={this.incrPhoto.bind(this, 1)}
         />
     });
+    this.olay.show();
     this.currentPhoto = photo;
   },
 

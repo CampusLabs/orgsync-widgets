@@ -80,7 +80,12 @@ export default React.createClass({
 
   renderListItem: function (portal) {
     return (
-      <ListItem key={portal.id} portal={portal} onClick={this.openPortal} />
+      <ListItem
+        key={portal.id}
+        portal={portal}
+        onClick={this.openPortal}
+        redirect={this.props.redirect}
+      />
     );
   },
 

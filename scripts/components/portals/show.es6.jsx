@@ -50,8 +50,8 @@ export default React.createClass({
         <div className='umbrella'>{portal.umbrellaName()}</div>
         <div className='category'>{portal.get('category').get('name')}</div>
         <div className='description'>{this.renderDescription()}</div>
-        {this.renderWebsiteLink()}
         <a href={portal.get('links').web} className='button'>On OrgSync.com</a>
+        {this.renderWebsiteLink()}
       </div>
     );
   }

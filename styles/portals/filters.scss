@@ -1,0 +1,16 @@
+@import '../config';
+
+.portals-filters .field {
+  @include box-sizing(border-box);
+  border: 5px solid transparent;
+}
+
+.orgsync-widget[min-width~='480px'] .portals-filters .field {
+  display: inline-block;
+  vertical-align: top;
+  width: 50%;
+}
+
+.orgsync-widget[min-width~='800px'] .portals-filters .field {
+  width: 25%;
+}

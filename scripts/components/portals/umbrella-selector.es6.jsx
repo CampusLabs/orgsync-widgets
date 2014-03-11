@@ -12,6 +12,7 @@ export default React.createClass({
         name='umbrella'
         allOption='All Umbrellas'
         getFacet={this.getFacet}
+        icon='icon-umbrella'
       />
     );
   }

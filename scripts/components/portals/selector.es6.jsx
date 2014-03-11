@@ -5,7 +5,7 @@ import React from 'react';
 export default React.createClass({
   render: function () {
     return (
-      <div className={'portals-selector ' + this.props.name}>
+      <div className={'field dropdown ' + (this.props.icon || '')}>
         <select
           name={this.props.name}
           value={this.props.value}

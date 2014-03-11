@@ -12,6 +12,7 @@ export default React.createClass({
         name='category'
         allOption='All Categories'
         getFacet={this.getFacet}
+        icon='icon-invoice'
       />
     );
   }

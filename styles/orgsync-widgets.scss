@@ -7,7 +7,8 @@
 .orgsync-widget {
   &,
   input,
-  textarea {
+  textarea,
+  select {
     font-family: 'Helvetica Neue', Arial, Helvetica, sans-serif;
     font-size: 12px;
   }
@@ -96,6 +97,80 @@
       background: #3872a7;
       text-shadow: 0 1px 1px rgba(0, 0, 0, 0.75);
       box-shadow: 0 1px 0 rgba(0, 0, 0, 0.1) inset;
+    }
+  }
+
+  .field {
+    position: relative;
+
+    &[class^='icon-'],
+    &[class*=' icon-'] {
+      &:before {
+        position: absolute;
+        top: 50%;
+        left: 5px;
+        margin-top: -8px;
+        font-size: 16px;
+        color: #808080;
+        pointer-events: none;
+      }
+
+      input,
+      select {
+        padding-left: 30px;
+      }
+    }
+
+    input,
+    select {
+      cursor: pointer;
+      @include appearance(none);
+      @include box-sizing(border-box);
+      width: 100%;
+      padding: 15px 10px 15px 10px;
+      border: 1px solid #b8b8b8;
+      background-color: #f9f9f9;
+      font-size: 14px;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      overflow: hidden;
+      border-radius: 3px;
+    }
+
+    input {
+      @include linear-gradient(#f2f2f2, #fefefe);
+      box-shadow: 0 1px 0 rgba(0, 0, 0, 0.1) inset;
+    }
+
+    select {
+      @include linear-gradient(#fefefe, #f2f2f2);
+      box-shadow: 0 1px 0 rgba(0, 0, 0, 0.1);
+
+      // These two lines hide the drop down arrow in FF.
+      text-indent: 0.01px;
+      text-overflow: '';
+    }
+
+    &.dropdown {
+      &:after {
+        position: absolute;
+        top: 50%;
+        right: 10px;
+        display: block;
+        width: 0;
+        height: 0;
+        margin-top: -3px;
+        border-color: #808080 transparent transparent transparent;
+        border-style: solid;
+        border-width: 5px 5px 0 5px;
+        content: ' ';
+        pointer-events: none;
+      }
+
+      input,
+      select {
+        padding-right: 25px;
+      }
     }
   }
 

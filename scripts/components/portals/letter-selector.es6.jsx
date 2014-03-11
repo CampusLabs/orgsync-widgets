@@ -13,8 +13,9 @@ export default React.createClass({
     return this.transferPropsTo(
       <FacetedSelector
         name='letter'
-        allOption='Starting with...'
+        allOption='All Letters'
         getFacet={this.getFacet}
+        icon='icon-book'
       />
     );
   }

@@ -108,18 +108,15 @@ export default BaseView.extend({
     this.renderDaysOfWeek();
     this.renderDaysList();
     this.setView(this.view);
-    this.$('.js-days-of-week .js-day')
-      .wrap($('<div>').addClass('js-day-container'));
-    this.$('.js-toggle-filters').addClass('icon-office-shortcuts');
-    this.$('.js-prev-month').addClass('icon-pointer-left').text('');
-    this.$('.js-next-month').addClass('icon-pointer-right').text('');
     return this;
   },
 
   renderDaysOfWeek: function () {
     var day = this.date().startOf('week');
     var $days = [];
-    do $days.push($('<div>').addClass('js-day').text(day.format('ddd')));
+    do $days.push($('<div>').addClass('js-day-container').append(
+      $('<div>').addClass('js-day').text(day.format('ddd'))
+    ));
     while (day.add('day', 1).weekday());
     this.$('.js-days-of-week').append($days);
   },

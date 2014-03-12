@@ -10,14 +10,11 @@
     width: 15%;
     vertical-align: top;
     position: absolute;
-    .search-input {
-      @include box-sizing(border-box);
+    .search-field {
       width: 100%;
-      margin-bottom: 5px;
-      height: 30px;
-      padding: 0 5px;
-      border-radius: 3px;
-      border: 1px solid #cccccc;
+    }
+    .search-container {
+      padding: 5px;
     }
   }
   .main {
@@ -106,6 +103,12 @@
     color: #3872a7;
     &:hover {
       color: #00578f;
+    }
+  }
+  .toggle-filters {
+    &:before {
+      font-size: 20px;
+      margin-right: 5px;
     }
   }
   .today {

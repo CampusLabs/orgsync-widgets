@@ -1,5 +1,9 @@
 <div class='js-event-filters event-filters'>
-  <input class='js-search-input search-input' placeholder='Search Events'>
+  <div class='search-container'>
+    <div class='search-field field icon icon-magnify'>
+      <input class='js-search-input search-input' placeholder='Search Events'>
+    </div>
+  </div>
   <div class='js-event-filters-list event-filters-list'></div>
 </div
 ><div class='main'>
@@ -8,7 +12,7 @@
     <div class='js-tz tz'><%- o.tzDisplay() %></div>
     <div class='month-year'>
       <div class='left-buttons'>
-        <span class='js-toggle-filters toggle-filters'></span>
+        <span class='js-toggle-filters toggle-filters icon icon-office-shortcuts'></span>
         |
         <span class='js-change-view change-view' data-view='list'>
           View List
@@ -18,9 +22,9 @@
         </span>
       </div>
       <div class='right-buttons'>
-        <span class='js-prev-month prev-month'>&lt;</span
+        <i class='js-prev-month prev-month icon icon-pointer-left'></i
         ><span class='js-today today'>Today</span
-        ><span class='js-next-month next-month'>&gt;</span>
+        ><i class='js-next-month next-month icon icon-pointer-right'></i>
       </div>
       <select class='js-month month'>
         <% var date = o.date(); %>

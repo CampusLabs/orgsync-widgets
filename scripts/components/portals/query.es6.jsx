@@ -5,7 +5,7 @@ import React from 'react';
 export default React.createClass({
   render: function () {
     return (
-      <div className='field icon icon-magnify'>
+      <div className='big field icon icon-magnify'>
         <input
           name='query'
           type='text'

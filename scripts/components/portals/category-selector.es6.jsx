@@ -12,7 +12,7 @@ export default React.createClass({
         name='category'
         allOption='All Categories'
         getFacet={this.getFacet}
-        className='icon icon-invoice'
+        className='icon-invoice'
       />
     );
   }

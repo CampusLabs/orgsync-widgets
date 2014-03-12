@@ -109,8 +109,8 @@
       &:before {
         position: absolute;
         top: 50%;
-        left: 10px;
-        margin-top: -10px;
+        left: 7px;
+        margin-top: -11px;
         font-size: 16px;
         color: $grey-darker;
         pointer-events: none;
@@ -118,17 +118,24 @@
 
       input,
       select {
-        padding-left: 30px;
+        padding-left: 25px;
+      }
+    }
+
+    &.big {
+      input,
+      select {
+        padding-top: 15px;
+        padding-bottom: 15px;
       }
     }
 
     input,
     select {
-      cursor: pointer;
       @include appearance(none);
       @include box-sizing(border-box);
       width: 100%;
-      padding: 15px 10px 15px 10px;
+      padding: 5px;
       border: 1px solid $grey;
       background-color: $grey-lightest;
       font-size: 14px;
@@ -144,6 +151,7 @@
     }
 
     select {
+      cursor: pointer;
       @include linear-gradient(#fff, $grey-lightest);
       box-shadow: 0 1px 0 rgba(0, 0, 0, 0.1);
 

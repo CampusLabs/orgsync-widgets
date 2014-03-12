@@ -1,0 +1,30 @@
+@import '../config';
+
+.letter-selector {
+  display: none;
+}
+
+.orgsync-widget[min-width~='640px'] .letter-selector {
+  display: table;
+  width: 100%;
+  @include box-sizing(border-box);
+  border: 5px solid transparent;
+  border-collapse: collapse;
+
+  td {
+    padding: 0;
+
+    &:not(:first-child) .button {
+      @include border-left-radius(0);
+    }
+
+    &:not(:last-child) .button {
+      border-right: 0;
+      @include border-right-radius(0);
+    }
+  }
+
+  .button {
+    width: 100%
+  }
+}

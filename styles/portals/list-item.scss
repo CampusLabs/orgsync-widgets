@@ -2,16 +2,15 @@
 
 .portals-list-item {
   vertical-align: top;
-  border-top: 1px solid #b8b8b8;
+  border-top: 1px solid $grey;
 
   a {
     display: block;
     text-decoration: none;
-    background-color: #f9f9f9;
-    @include linear-gradient(#fefefe, #f2f2f2);
+    background-color: $grey-lightest;
 
     &:hover .name {
-      color: #0076a3;
+      color: $blue-darkest;
     }
   }
 
@@ -42,7 +41,7 @@
 
   .name {
     word-wrap: break-word;
-    color: #2b2b2b;
+    color: $grey-darkest;
     font-size: 16px;
     overflow-x: hidden;
     text-overflow: ellipsis;
@@ -52,7 +51,7 @@
   .umbrella,
   .category {
     @include box-sizing(border-box);
-    color: #999999;
+    color: $grey-darker;
     overflow-x: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
@@ -71,12 +70,12 @@
   vertical-align: top;
 
   a {
-    border: 1px solid #b8b8b8;
+    border: 1px solid $grey;
     box-shadow: 0 1px 0 rgba(0, 0, 0, 0.1);
     border-radius: 3px;
 
     &:hover {
-      border-color: #0076a3;
+      border-color: $blue-darkest;
     }
   }
 
@@ -94,14 +93,6 @@
     height: 75px;
     white-space: normal;
     overflow: hidden;
-  }
-
-  .umbrella,
-  .category {
-    color: #999;
-    overflow-x: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
   }
 }
 

@@ -4,11 +4,14 @@
 
 @import 'config';
 
+@import 'bower_components/velcro/styles/syncdings';
+
 .orgsync-widget {
   &,
   input,
   textarea,
   select {
+    color: $grey-darkest;
     font-family: 'Helvetica Neue', Arial, Helvetica, sans-serif;
     font-size: 12px;
   }
@@ -52,10 +55,9 @@
       border-color: #ccc;
     }
 
-    i {
-      display: block;
-      font-size: 12px;
-      margin: 1px 0 0 -2px;
+    .icon-delete {
+      font-size: 14px;
+      margin-top: 1px;
     }
   }
 
@@ -72,13 +74,13 @@
 
   .button {
     display: inline-block;
-    border: 1px solid #b8b8b8;
+    border: 1px solid $grey;
     padding: 5px;
-    color: #333333;
+    color: $grey-darkest;
     cursor: pointer;
     background-color: #f9f9f9;
     text-decoration: none;
-    @include linear-gradient(#fefefe, #f2f2f2);
+    @include linear-gradient(#fff, $grey-lightest);
     @include appearance(none);
     @include user-select(none);
     box-shadow: 0 1px 0 rgba(0, 0, 0, 0.1);
@@ -87,31 +89,30 @@
     &:hover {
       background-color: #f3f3f3;
       border-color: #b2b2b2;
-      @include linear-gradient(#f8f8f8, #ececec);
+      @include linear-gradient($grey-lightest, $grey-lighter);
     }
 
     &:active,
     &.selected {
-      border-color: #00578f;
+      border-color: $blue-darkest;
       color: white;
-      background: #3872a7;
+      background: $blue-darkest;
       text-shadow: 0 1px 1px rgba(0, 0, 0, 0.75);
-      box-shadow: 0 1px 0 rgba(0, 0, 0, 0.1) inset;
+      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.25) inset;
     }
   }
 
   .field {
     position: relative;
 
-    &[class^='icon-'],
-    &[class*=' icon-'] {
+    &.icon {
       &:before {
         position: absolute;
         top: 50%;
-        left: 5px;
-        margin-top: -8px;
+        left: 10px;
+        margin-top: -10px;
         font-size: 16px;
-        color: #808080;
+        color: $grey-darker;
         pointer-events: none;
       }
 
@@ -128,8 +129,8 @@
       @include box-sizing(border-box);
       width: 100%;
       padding: 15px 10px 15px 10px;
-      border: 1px solid #b8b8b8;
-      background-color: #f9f9f9;
+      border: 1px solid $grey;
+      background-color: $grey-lightest;
       font-size: 14px;
       text-overflow: ellipsis;
       white-space: nowrap;
@@ -138,12 +139,12 @@
     }
 
     input {
-      @include linear-gradient(#f2f2f2, #fefefe);
+      @include linear-gradient($grey-lightest, #fff);
       box-shadow: 0 1px 0 rgba(0, 0, 0, 0.1) inset;
     }
 
     select {
-      @include linear-gradient(#fefefe, #f2f2f2);
+      @include linear-gradient(#fff, $grey-lightest);
       box-shadow: 0 1px 0 rgba(0, 0, 0, 0.1);
 
       // These two lines hide the drop down arrow in FF.
@@ -160,7 +161,7 @@
         width: 0;
         height: 0;
         margin-top: -3px;
-        border-color: #808080 transparent transparent transparent;
+        border-color: $grey-darker transparent transparent transparent;
         border-style: solid;
         border-width: 5px 5px 0 5px;
         content: ' ';

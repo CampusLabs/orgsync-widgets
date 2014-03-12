@@ -4,8 +4,8 @@ import React from 'react';
 
 export default React.createClass({
   render: function () {
-    return (
-      <div className={'field dropdown ' + (this.props.icon || '')}>
+    return this.transferPropsTo(
+      <div className={'field dropdown'}>
         <select
           name={this.props.name}
           value={this.props.value}

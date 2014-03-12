@@ -14,7 +14,7 @@ import Show from 'components/portals/show';
 import React from 'react';
 
 export default React.createClass({
-  letterRegexps: _.times(26, function (n) {
+  letterRegExps: _.times(26, function (n) {
     return String.fromCharCode(65 + n);
   }).reduce(function (letters, letter) {
     letters[letter] = new RegExp('^' + letter, 'i');
@@ -61,17 +61,21 @@ export default React.createClass({
     this.setState({isLoading: true, error: null});
     this.props.portals.fetch({
       data: {all: true},
-      success: this.onSuccess,
-      error: this.onError
+      success: this.handleSuccess,
+      error: this.handleError
     });
   },
 
-  onSuccess: function () {
+  handleSuccess: function () {
     this.setState({isLoading: false, error: null});
   },
 
-  onError: function (portals, er) {
+  handleError: function (portals, er) {
     this.setState({isLoading: false, error: er.toString()});
+  },
+
+  handleChange: function (changes) {
+    this.setState(changes);
   },
 
   openPortal: function (portal) {
@@ -120,7 +124,7 @@ export default React.createClass({
   },
 
   matchesLetter: function (portal) {
-    return this.letterRegexps[this.state.letter].test(portal.get('name'));
+    return this.letterRegExps[this.state.letter].test(portal.get('name'));
   },
 
   filteredPortals: function () {
@@ -155,7 +159,7 @@ export default React.createClass({
     return (
       <div className='portals-index'>
         <Filters
-          onChange={this.setState.bind(this)}
+          onChange={this.handleChange}
           onClear={this.clearFilter}
           query={this.state.query}
           umbrella={this.state.umbrella}

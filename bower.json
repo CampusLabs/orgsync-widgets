@@ -20,7 +20,8 @@
     "sockjs": "x",
     "tinycolor": "x",
     "underscore": "x",
-    "underscore.string": "x"
+    "underscore.string": "x",
+    "velcro": "master"
   },
   "ignore": [
     "images",

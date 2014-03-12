@@ -46,43 +46,7 @@ var Model = BackboneRelations.Model.extend({
 var Collection = BackboneRelations.Collection.extend({
   model: Model,
 
-  sync: Model.prototype.sync,
-
-  pagedFetch: function (options) {
-    options = options ? _.clone(options) : {};
-    var limit = options.limit || Infinity;
-    var page = 0;
-    var perPage = options.per_page || 5;
-    var data = options.data || {};
-    var success = options.success || function () {};
-    var error = options.error || function () {};
-    delete options.success;
-    delete options.error;
-    var self = this;
-    var length = -1;
-    async.whilst(
-      function () {
-        var l = self.length;
-        return !(length === l || (length = l) >= limit || length % perPage);
-      },
-      function (cb) {
-        self.fetch({
-          data: _.extend({
-            page: ++page,
-            per_page: perPage
-          }, data),
-          remove: false,
-          success: _.bind(cb, null, null),
-          error: error
-        });
-      },
-      function () {
-        length = self.length;
-        if (limit && length > limit) self.remove(self.last(length - limit));
-        if (success) success(self, self.models, options);
-      }
-    );
-  }
+  sync: Model.prototype.sync
 });
 
 export {Model, Collection};

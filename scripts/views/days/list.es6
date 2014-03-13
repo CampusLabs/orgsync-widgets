@@ -252,17 +252,17 @@ export default ListView.extend({
     switch (this.view) {
     case 'list':
       var id = Day.Model.id(this.date());
-      var prev;
-      var next;
-      this.available.find(function (day) {
-        if (day.get('eventDates').length && day.get('visible')) {
-          if (!prev) prev = day;
-          next = day;
-        }
-        if (day.get('fetched') === Infinity) return;
-        if (day.id <= id) prev = day;
-        if (day.id >= id) return next = day;
-      });
+      var beforeAndAfter = _.partition(
+        this.available.where({visible: true}),
+        function (day) { return day.id < id; }
+      );
+      var before = beforeAndAfter[0].reverse();
+      var after = beforeAndAfter[1];
+      if (!before.length && after.length) before.push(_.first(after));
+      if (!after.length && before.length) after.push(_.first(before));
+      var unfilled = function (day) { return day.get('fetched') !== Infinity; };
+      var prev = _.find(before, unfilled) || _.last(before);
+      var next = _.find(after, unfilled) || _.last(after);
       if (this.collection.get(prev)) this.fetch(prev, 'before');
       if (this.collection.get(next)) this.fetch(next, 'after');
       break;

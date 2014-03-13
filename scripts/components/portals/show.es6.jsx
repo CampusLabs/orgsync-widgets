@@ -36,21 +36,23 @@ export default React.createClass({
 
   renderWebsiteLink: function () {
     var url = this.props.portal.get('website_url');
-    return url && <a href={url} className='button'>Website</a>;
+    return url && <a href={url} className='osw-button'>Website</a>;
   },
 
   render: function () {
     var portal = this.props.portal;
     return (
-      <div className='portals-show'>
-        <div className='picture'>
+      <div className='osw-portals-show'>
+        <div className='osw-picture'>
           <img src={portal.picture()} alt={portal.get('name')} />
         </div>
-        <div className='name'>{portal.get('name')}</div>
-        <div className='umbrella'>{portal.umbrellaName()}</div>
-        <div className='category'>{portal.get('category').get('name')}</div>
-        <div className='description'>{this.renderDescription()}</div>
-        <a href={portal.get('links').web} className='button'>On OrgSync.com</a>
+        <div className='osw-name'>{portal.get('name')}</div>
+        <div className='osw-umbrella'>{portal.umbrellaName()}</div>
+        <div className='osw-category'>{portal.get('category').get('name')}</div>
+        <div className='osw-description'>{this.renderDescription()}</div>
+        <a href={portal.get('links').web} className='osw-button'>
+          On OrgSync.com
+        </a>
         {this.renderWebsiteLink()}
       </div>
     );

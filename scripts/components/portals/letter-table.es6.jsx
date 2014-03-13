@@ -23,7 +23,7 @@ export default React.createClass({
 
   render: function () {
     return (
-      <table className='letter-selector'>
+      <table className='osw-portals-letter-table'>
         <tbody>
           <tr>
             {this.renderColumns()}

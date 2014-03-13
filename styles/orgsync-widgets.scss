@@ -36,7 +36,7 @@
     box-shadow: 0 1px 5px rgba(0, 0, 0, 0.75);
   }
 
-  .close-icon {
+  .osw-close-icon {
     position: absolute;
     top: -12px;
     left: -12px;
@@ -55,7 +55,7 @@
       border-color: #ccc;
     }
 
-    .icon-delete {
+    .oswi-delete {
       font-size: 14px;
       margin-top: 1px;
     }
@@ -72,7 +72,7 @@
     font-size: 12px;
   }
 
-  .button {
+  .osw-button {
     display: inline-block;
     border: 1px solid $grey;
     padding: 5px;
@@ -93,7 +93,7 @@
     }
 
     &:active,
-    &.selected {
+    &.osw-selected {
       border-color: $blue-darkest;
       color: white;
       background: $blue-darkest;
@@ -102,10 +102,10 @@
     }
   }
 
-  .field {
+  .osw-field {
     position: relative;
 
-    &.icon {
+    &.oswi {
       &:before {
         position: absolute;
         top: 50%;
@@ -122,7 +122,7 @@
       }
     }
 
-    &.big {
+    &.osw-big {
       input,
       select {
         padding-top: 15px;
@@ -160,7 +160,7 @@
       text-overflow: '';
     }
 
-    &.dropdown {
+    &.osw-dropdown {
       &:after {
         position: absolute;
         top: 50%;

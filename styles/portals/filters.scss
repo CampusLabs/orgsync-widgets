@@ -1,11 +1,11 @@
 @import '../config';
 
-.portals-filters .field {
+.osw-portals-filters .osw-field {
   @include box-sizing(border-box);
   border: 5px solid transparent;
 }
 
-.orgsync-widget[min-width~='480px'] .portals-filters .field {
+.orgsync-widget[min-width~='480px'] .osw-portals-filters .osw-field {
   display: inline-block;
   vertical-align: top;
   width: 33.33%;

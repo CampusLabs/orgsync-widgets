@@ -7,12 +7,16 @@ export default React.createClass({
     this.props.onClick(this.props.letter);
   },
 
+  getInputClassName: function () {
+    return 'osw-button' + (this.props.selected ? ' osw-selected' : '');
+  },
+
   render: function () {
     return (
-      <td className='letter-column'>
+      <td className='osw-portals-letter-column'>
         <input
           type='button'
-          className={'button' + (this.props.selected ? ' selected' : '')}
+          className={this.getInputClassName()}
           value={this.props.letter || 'All'}
           onClick={this.handleClick}
         />

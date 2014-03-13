@@ -1,25 +1,23 @@
 @import '../config';
 
-.portals-summary {
-  padding: 5px;
+.osw-portals-summary {
+  padding: 5px 10px;
 
-  .message,
-  .clear-buttons {
+  .osw-message,
+  .osw-clear-buttons {
     display: inline-block;
     vertical-align: middle;
   }
 
-  .message {
+  .osw-message {
     line-height: 28px;
   }
 
-  .button {
+  .osw-button {
     margin-left: 5px;
 
-    &:after {
-      margin-left: 5px;
-      font-family: 'SyncDings';
-      content: '\f071';
+    .oswi-delete {
+      margin-left: 5px
     }
   }
 }

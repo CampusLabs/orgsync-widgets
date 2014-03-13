@@ -1,11 +1,11 @@
 @import '../config';
 
-.portals-show {
+.osw-portals-show {
   padding: 10px 10px 0;
   text-align: left;
   max-width: 500px;
 
-  .picture {
+  .osw-picture {
     text-align: center;
 
     img {
@@ -15,33 +15,33 @@
     }
   }
 
-  .name {
+  .osw-name {
     font-size: 18px;
     font-weight: bold;
   }
 
-  .umbrella {
+  .osw-umbrella {
     font-weight: bold;
   }
 
-  .picture img,
-  .category,
-  .description,
-  .button {
+  .osw-picture img,
+  .osw-category,
+  .osw-description,
+  .osw-button {
     margin-bottom: 10px;
   }
 
-  .button {
+  .osw-button {
     margin-bottom: 10px;
     margin-right: 10px;
   }
 }
 
-.orgsync-widget[min-width~='640px'] .portals-show {
+.orgsync-widget[min-width~='640px'] .osw-portals-show {
   width: 500px;
   @include clearfix();
 
-  .picture {
+  .osw-picture {
     float: right;
 
     img {

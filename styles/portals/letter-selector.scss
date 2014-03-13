@@ -1,10 +1,10 @@
 @import '../config';
 
-.letter-selector {
+.osw-portals-letter-table {
   display: none;
 }
 
-.orgsync-widget[min-width~='640px'] .letter-selector {
+.orgsync-widget[min-width~='640px'] .osw-portals-letter-table {
   display: table;
   width: 100%;
   @include box-sizing(border-box);
@@ -14,17 +14,17 @@
   td {
     padding: 0;
 
-    &:not(:first-child) .button {
+    &:not(:first-child) .osw-button {
       @include border-left-radius(0);
     }
 
-    &:not(:last-child) .button {
+    &:not(:last-child) .osw-button {
       border-right: 0;
       @include border-right-radius(0);
     }
   }
 
-  .button {
+  .osw-button {
     width: 100%
   }
 }

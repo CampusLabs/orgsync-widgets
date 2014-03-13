@@ -5,7 +5,7 @@ import React from 'react';
 export default React.createClass({
   render: function () {
     return this.transferPropsTo(
-      <div className='big field icon dropdown'>
+      <div className='osw-big osw-field oswi osw-dropdown'>
         <select
           name={this.props.name}
           value={this.props.value}

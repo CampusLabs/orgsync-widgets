@@ -157,7 +157,7 @@ export default React.createClass({
   render: function () {
     var portals = this.filteredPortals();
     return (
-      <div className='portals-index'>
+      <div className='osw-portals-index'>
         <Filters
           onChange={this.handleChange}
           onClear={this.clearFilter}

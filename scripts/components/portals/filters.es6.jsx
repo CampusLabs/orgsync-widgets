@@ -20,7 +20,7 @@ export default React.createClass({
 
   render: function () {
     return (
-      <div className='portals-filters'>
+      <div className='osw-portals-filters'>
         <Query value={this.props.query} onChange={this.handleChange} />
         <UmbrellaSelector
           portals={this.props.portals}

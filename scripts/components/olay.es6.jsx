@@ -36,7 +36,9 @@ export default React.createClass({
   render: function () {
     return (
       <div>
-        <div className='js-olay-hide close-icon'><Icon name='delete' /></div>
+        <div className='js-olay-hide osw-close-icon'>
+          <Icon name='delete' />
+        </div>
         {this.props.children}
       </div>
     );

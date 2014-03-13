@@ -1,6 +1,6 @@
 @import '../config';
 
-.portals-list-item {
+.osw-portals-list-item {
   vertical-align: top;
   border-top: 1px solid $grey;
 
@@ -9,12 +9,12 @@
     text-decoration: none;
     background-color: $grey-lightest;
 
-    &:hover .name {
+    &:hover .osw-name {
       color: $blue-darkest;
     }
   }
 
-  .picture {
+  .osw-picture {
     position: relative;
     float: left;
     width: 75px;
@@ -33,13 +33,13 @@
     }
   }
 
-  .info {
+  .osw-info {
     padding: 10px;
     min-height: 55px;
     overflow: hidden;
   }
 
-  .name {
+  .osw-name {
     word-wrap: break-word;
     color: $grey-darkest;
     font-size: 16px;
@@ -48,8 +48,8 @@
     white-space: nowrap;
   }
 
-  .umbrella,
-  .category {
+  .osw-umbrella,
+  .osw-category {
     @include box-sizing(border-box);
     color: $grey-darker;
     overflow-x: hidden;
@@ -57,12 +57,12 @@
     white-space: nowrap;
   }
 
-  .umbrella {
+  .osw-umbrella {
     font-weight: bold;
   }
 }
 
-.orgsync-widget[min-width~='480px'] .portals-list-item {
+.orgsync-widget[min-width~='480px'] .osw-portals-list-item {
   display: inline-block;
   @include box-sizing(border-box);
   border: 5px solid transparent;
@@ -79,7 +79,7 @@
     }
   }
 
-  .picture {
+  .osw-picture {
     float: none;
     width: 100%;
 
@@ -88,7 +88,7 @@
     }
   }
 
-  .name {
+  .osw-name {
     font-size: 16px;
     height: 75px;
     white-space: normal;
@@ -96,14 +96,14 @@
   }
 }
 
-.orgsync-widget[min-width~='640px'] .portals-list-item {
+.orgsync-widget[min-width~='640px'] .osw-portals-list-item {
   width: 25%;
 }
 
-.orgsync-widget[min-width~='800px'] .portals-list-item {
+.orgsync-widget[min-width~='800px'] .osw-portals-list-item {
   width: 20%;
 }
 
-.orgsync-widget[min-width~='960px'] .portals-list-item {
+.orgsync-widget[min-width~='960px'] .osw-portals-list-item {
   width: 16.66%;
 }

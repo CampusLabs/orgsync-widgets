@@ -17,15 +17,17 @@ export default React.createClass({
   render: function () {
     var portal = this.props.portal;
     return (
-      <div className='portals-list-item'>
+      <div className='osw-portals-list-item'>
         <a href={portal.get('links').web} onClick={this.onClick}>
-          <div className='picture'>
+          <div className='osw-picture'>
             <img src={portal.picture()} />
           </div>
-          <div className='info'>
-            <div className='name'>{this.fittedName()}</div>
-            <div className='umbrella'>{portal.umbrellaName()}</div>
-            <div className='category'>{portal.get('category').get('name')}</div>
+          <div className='osw-info'>
+            <div className='osw-name'>{this.fittedName()}</div>
+            <div className='osw-umbrella'>{portal.umbrellaName()}</div>
+            <div className='osw-category'>
+              {portal.get('category').get('name')}
+            </div>
           </div>
         </a>
       </div>

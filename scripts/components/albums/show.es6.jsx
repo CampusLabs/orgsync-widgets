@@ -6,10 +6,10 @@ import React from 'react';
 export default React.createClass({
   render: function () {
     return (
-      <div className='albums-show'>
-        <div className='info'>
-          <div className='name'>{this.props.album.get('name')}</div>
-          <div className='photo-count'>
+      <div className='osw-albums-show'>
+        <div className='osw-info'>
+          <div className='osw-name'>{this.props.album.get('name')}</div>
+          <div className='osw-photo-count'>
             {this.props.album.get('photo_count')} Photos
           </div>
         </div>

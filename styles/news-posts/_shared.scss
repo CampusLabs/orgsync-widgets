@@ -6,28 +6,34 @@
   margin: 0 auto;
   padding: 10px;
   max-width: 480px;
-  .title {
+
+  .osw-title {
     display: block;
     font-weight: bold;
     font-size: 16px;
   }
-  .creator {
+
+  .osw-creator {
     display: inline;
     font-weight: bold;
+
     &:before {
-      content: " Posted by ";
+      content: ' Posted by ';
       font-weight: normal;
     }
+
     &:after {
       content: ' ';
     }
   }
-  .time {
+
+  .osw-time {
     display: inline;
     white-space: nowrap;
     color: #666666;
   }
-  .body {
+
+  .osw-body {
     display: block;
     margin-top: 10px;
   }

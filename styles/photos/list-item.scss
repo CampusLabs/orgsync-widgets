@@ -1,6 +1,6 @@
 @import '../config';
 
-.photos-list-item {
+.osw-photos-list-item {
   position: relative;
   vertical-align: top;
 
@@ -8,12 +8,12 @@
     display: block;
     padding: 5px;
 
-    &:hover .thumbnail {
+    &:hover .osw-thumbnail {
       border-color: #0076a3;
     }
   }
 
-  .thumbnail {
+  .osw-thumbnail {
     @include box-sizing(border-box);
     border: 5px solid white;
     position: relative;
@@ -35,7 +35,7 @@
     }
   }
 
-  .comment-count {
+  .osw-comment-count {
     position: absolute;
     right: 10px;
     bottom: 10px;
@@ -44,25 +44,25 @@
     padding: 5px 5px 5px 10px;
     background: rgba(0, 118, 163, 0.75);
 
-    &.none {
+    &.osw-none {
       display: none;
     }
   }
 }
 
-.orgsync-widget[min-width~='231px'] .photos-list-item {
+.orgsync-widget[min-width~='231px'] .osw-photos-list-item {
   display: inline-block;
   width: 50%;
 }
 
-.orgsync-widget[min-width~='461px'] .photos-list-item {
+.orgsync-widget[min-width~='461px'] .osw-photos-list-item {
   width: 33.3%;
 }
 
-.orgsync-widget[min-width~='691px'] .photos-list-item {
+.orgsync-widget[min-width~='691px'] .osw-photos-list-item {
   width: 25%;
 }
 
-.orgsync-widget[min-width~='921px'] .photos-list-item {
+.orgsync-widget[min-width~='921px'] .osw-photos-list-item {
   width: 20%;
 }

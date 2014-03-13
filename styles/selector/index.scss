@@ -1,12 +1,12 @@
 @import '../config';
 
-.selector-index {
+.osw-selector-index {
   position: relative;
   padding: 10px;
   text-align: left;
 
-  &.mini {
-    .results {
+  &.osw-mini {
+    .osw-results {
       position: absolute;
       z-index: 1;
       left: 10px;
@@ -18,8 +18,8 @@
     }
   }
 
-  &.full {
-    .results {
+  &.osw-full {
+    .osw-results {
       @include box-sizing(border-box);
       position: relative;
       display: inline-block;
@@ -31,12 +31,12 @@
     }
   }
 
-  .tokens {
+  .osw-tokens {
     padding: 5px;
     border: 1px solid #eee;
   }
 
-  .query {
+  .osw-query {
     @include box-sizing(border-box);
     @include appearance(none);
     border: none;
@@ -45,7 +45,7 @@
     width: 100%;
   }
 
-  .scopes {
+  .osw-scopes {
     position: relative;
     display: inline-block;
     vertical-align: top;
@@ -54,7 +54,7 @@
     height: 500px;
   }
 
-  .results {
+  .osw-results {
     overflow: auto;
   }
 }

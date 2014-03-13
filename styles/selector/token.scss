@@ -1,6 +1,6 @@
 @import '../config';
 
-.selector-token {
+.osw-selector-token {
   @include box-sizing(border-box);
   display: inline-block;
   background: #eee;
@@ -11,10 +11,12 @@
   white-space: nowrap;
   max-width: 100%;
   @include user-select(none);
-  .name {
+
+  .osw-name {
     display: inline;
   }
-  .remove {
+
+  .osw-remove {
     float: right;
     cursor: pointer;
     margin: 1px -3px 0 0;

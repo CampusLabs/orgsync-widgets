@@ -1,6 +1,6 @@
 @import '../config';
 
-.albums-list-item {
+.osw-albums-list-item {
   position: relative;
   vertical-align: top;
 
@@ -13,7 +13,7 @@
     &:hover {
       color: #0076a3;
 
-      .cover-photo {
+      .osw-cover-photo {
         box-shadow: 0 3px 10px #0076a3;
 
         &:not(:last-child) {
@@ -34,11 +34,11 @@
     }
   }
 
-  .cover-photos-container {
+  .osw-cover-photos-container {
     position: relative;
   }
 
-  .cover-photo {
+  .osw-cover-photo {
     position: relative;
     border: 5px solid white;
     width: 100%;
@@ -76,31 +76,31 @@
     }
   }
 
-  .name {
+  .osw-name {
     padding-top: 10px;
     font-weight: bold;
     font-size: 14px;
     text-align: center;
   }
 
-  .photo-count {
+  .osw-photo-count {
     text-align: center;
   }
 }
 
-.orgsync-widget[min-width~='251px'] .albums-list-item {
+.orgsync-widget[min-width~='251px'] .osw-albums-list-item {
   display: inline-block;
   width: 50%;
 }
 
-.orgsync-widget[min-width~='501px'] .albums-list-item {
+.orgsync-widget[min-width~='501px'] .osw-albums-list-item {
   width: 33.3%;
 }
 
-.orgsync-widget[min-width~='751px'] .albums-list-item {
+.orgsync-widget[min-width~='751px'] .osw-albums-list-item {
   width: 25%;
 }
 
-.orgsync-widget[min-width~='1001px'] .albums-list-item {
+.orgsync-widget[min-width~='1001px'] .osw-albums-list-item {
   width: 20%;
 }

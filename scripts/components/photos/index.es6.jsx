@@ -62,7 +62,7 @@ export default React.createClass({
   render: function () {
     return (
       <List
-        className='photos-index'
+        className='osw-photos-index'
         collection={this.props.photos}
         renderListItem={this.renderListItem}
         uniform={true}

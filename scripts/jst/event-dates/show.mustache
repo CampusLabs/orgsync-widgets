@@ -1,17 +1,17 @@
-<div class='picture-container'>{{#image}}<img src='{{image}}'>{{/image}}</div>
-<div class='info'>
-  <div class='title'>{{title}}</div>
-  <div class='datetime'>
+<div class='osw-picture-container'>{{#image}}<img src='{{image}}'>{{/image}}</div>
+<div class='osw-info'>
+  <div class='osw-title'>{{title}}</div>
+  <div class='osw-datetime'>
     {{#isMultiDay}}
-    <div class='time'>{{multiDayStart}} to<br>{{multiDayEnd}}</div>
+    <div class='osw-time'>{{multiDayStart}} to<br>{{multiDayEnd}}</div>
     {{/isMultiDay}}
     {{^isMultiDay}}
-    <div class='date'>{{singleDayDate}}</div>
-    <div class='time'>{{longTime}}</div>
+    <div class='osw-date'>{{singleDayDate}}</div>
+    <div class='osw-time'>{{longTime}}</div>
     {{/isMultiDay}}
   </div>
-  <div class='location'>{{location}}</div>
-  <div class='portal'>{{portalName}}</div>
-  <div class='description'>{{description}}</div>
-  <a href='{{url}}' class='see-full-details'>See Full Details</a>
+  <div class='osw-location'>{{location}}</div>
+  <div class='osw-portal'>{{portalName}}</div>
+  <div class='osw-description'>{{description}}</div>
+  <a href='{{url}}' class='osw-see-full-details'>See Full Details</a>
 </div>

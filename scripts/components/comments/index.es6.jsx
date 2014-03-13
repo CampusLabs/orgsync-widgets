@@ -17,7 +17,7 @@ export default React.createClass({
 
   render: function () {
     return (
-      <div className='comments-index'>
+      <div className='osw-comments-index'>
         <List
           renderListItem={this.renderListItem}
           renderBlankSlate={this.renderBlankSlate}

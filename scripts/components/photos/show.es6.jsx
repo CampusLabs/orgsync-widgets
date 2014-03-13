@@ -10,12 +10,14 @@ export default React.createClass({
 
   render: function () {
     return (
-      <div className='photos-show'>
-        <div className='image' onClick={this.onImageClick}>
+      <div className='osw-photos-show'>
+        <div className='osw-image' onClick={this.onImageClick}>
           <img src={this.props.photo.get('full_url')} />
         </div>
-        <div className='description'>{this.props.photo.get('description')}</div>
-        <div className='comments-header'>Comments</div>
+        <div className='osw-description'>
+          {this.props.photo.get('description')}
+        </div>
+        <div className='osw-comments-header'>Comments</div>
         <CommentsIndex comments={this.props.photo.get('comments')} />
       </div>
     );

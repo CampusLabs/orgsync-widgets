@@ -1,28 +1,34 @@
 @import '../config';
 @import 'shared';
 
-.news-posts-list-item {
+.osw-news-posts-list-item {
   @include news-posts-show;
+
   a {
     color: #0076a3;
     text-decoration: none;
+
     &:hover {
       text-decoration: underline;
     }
   }
-  .thumbnail {
+
+  .osw-thumbnail {
     display: block;
     float: right;
     margin: 0 0 10px 10px;
   }
-  .comment-count {
+
+  .osw-comment-count {
     display: inline;
     white-space: nowrap;
-    &.none {
+
+    &.osw-none {
       display: none;
     }
+
     &:before {
-      content: " with ";
+      content: ' with ';
     }
   }
 }

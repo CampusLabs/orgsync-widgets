@@ -10,71 +10,85 @@ $green: #94b363;
     padding: 5px;
     cursor: pointer;
     @include clearfix;
+
     &:first-child {
       border-top: none;
     }
-    .picture-container {
+
+    .osw-picture-container {
       float: left;
       width: 45px;
       height: 45px;
       margin: 0 5px;
+
       img {
         width: 100%;
       }
     }
-    .default-picture {
+
+    .osw-default-picture {
       @include user-select(none);
       background: #eee;
       text-align: center;
       color: #999;
       border-radius: 5px;
       border: 1px solid #ccc;
-      .month {
+
+      .osw-month {
         padding-top: 4px;
         font-size: 12px;
         text-transform: uppercase;
         line-height: 15px;
       }
-      .date {
+
+      .osw-date {
         padding-bottom: 4px;
         font-size: 20px;
         line-height: 20px;
       }
     }
-    .location,
-    .short-time {
+
+    .osw-location,
+    .osw-short-time {
       display: none;
     }
-    .title {
+
+    .osw-title {
       font-size: 14px;
       color: #333333;
     }
-    .long-time,
-    .portal-name,
-    .attending {
+
+    .osw-long-time,
+    .osw-portal-name,
+    .osw-attending {
       display: inline;
       font-size: 11px;
       color: #666;
     }
-    .portal-name,
-    .attending {
+
+    .osw-portal-name,
+    .osw-attending {
       &:before {
         color: #000;
         content: '\2022';
       }
     }
-    .portal-name {
+
+    .osw-portal-name {
       color: #333;
+
       &:before {
         margin-right: 5px;
       }
     }
-    .attending {
+
+    .osw-attending {
       color: #94b363;
       font-weight: bold;
       text-transform: uppercase;
     }
-    .info {
+
+    .osw-info {
       padding: 8px 5px;
       overflow: auto;
     }
@@ -91,45 +105,55 @@ $green: #94b363;
     font-size: 11px;
     @include box-sizing(border-box);
     cursor: pointer;
+
     &:first-child {
       margin-top: 0;
     }
-    &.js-all-day .short-time {
+
+    &.js-all-day .osw-short-time {
       display: none;
     }
+
     &.js-continues {
       padding-right: 10px;
       margin-right: -5px;
     }
+
     &.js-continued {
       margin-left: -5px;
       padding-left: 10px;
       border-left-width: 0;
+
       &:not(.js-continues) {
         @include border-right-radius(5px);
       }
     }
-    &.js-continued:not(.js-first-dow) .title {
+
+    &.js-continued:not(.js-first-dow) .osw-title {
       visibility: hidden;
     }
-    &.js-is-going .title {
+
+    &.js-is-going .osw-title {
       color: $green;
     }
-    .location,
-    .picture-container,
-    .long-time,
-    .portal-name,
-    .attending {
+
+    .osw-location,
+    .osw-picture-container,
+    .osw-long-time,
+    .osw-portal-name,
+    .osw-attending {
       display: none;
     }
-    .short-time {
+
+    .osw-short-time {
       float: right;
       padding-left: 5px;
       max-width: 100%;
       color: #999999;
     }
-    .short-time,
-    .title {
+
+    .osw-short-time,
+    .osw-title {
       overflow: hidden;
       text-overflow: ellipsis;
       white-space: nowrap;
@@ -143,36 +167,44 @@ $green: #94b363;
     padding: 20px;
     max-width: 480px;
     @include clearfix;
-    .picture-container {
+
+    .osw-picture-container {
       float: right;
     }
-    .title {
+
+    .osw-title {
       font-size: 20px;
       font-weight: bold;
     }
-    .datetime,
-    .location,
-    .portal,
-    .description {
+
+    .osw-datetime,
+    .osw-location,
+    .osw-portal,
+    .osw-description {
       padding: 10px;
       &:before {
         display: block;
         color: #999999;
       }
     }
-    .datetime:before {
+
+    .osw-datetime:before {
       content: "WHEN";
     }
-    .location:before {
+
+    .osw-location:before {
       content: "WHERE";
     }
-    .portal:before {
+
+    .osw-portal:before {
       content: "HOST";
     }
-    .description:before {
+
+    .osw-description:before {
       content: "DETAILS";
     }
-    .see-full-details {
+
+    .osw-see-full-details {
       float: right;
       display: inline-block;
       padding: 10px;
@@ -180,6 +212,7 @@ $green: #94b363;
       color: #3872a7;
       border-radius: 5px;
       border: 1px solid #3872a7;
+
       &:hover {
         color: #00578f;
         border-color: #00578f;

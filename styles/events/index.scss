@@ -2,22 +2,27 @@
 
 .orgsync-widget.osw-events-index {
   position: relative;
-  &.js-full-width .main {
+
+  &.js-full-width .osw-main {
     width: 100%;
   }
-  .event-filters {
+
+  .osw-event-filters {
     display: inline-block;
     width: 15%;
     vertical-align: top;
     position: absolute;
-    .search-field {
+
+    .osw-search-field {
       width: 100%;
     }
-    .search-container {
+
+    .osw-search-container {
       padding: 5px;
     }
   }
-  .main {
+
+  .osw-main {
     display: inline-block;
     width: 85%;
     position: absolute;
@@ -26,19 +31,23 @@
     vertical-align: top;
     background: white;
   }
-  .events-list {
+
+  .osw-events-list {
     height: 600px;
   }
-  .top {
+
+  .osw-top {
     position: relative;
     padding: 0 5px;
     text-align: center;
     @include clearfix;
   }
-  .month-year {
+
+  .osw-month-year {
     padding-bottom: 5px;
-    .month,
-    .year {
+
+    .osw-month,
+    .osw-year {
       vertical-align: middle;
       font-size: 24px;
       background: none;
@@ -50,92 +59,107 @@
       text-overflow: "";
       border-radius: 0;
     }
-    .month {
+
+    .osw-month {
       margin-right: 5px;
       font-weight: bold;
       direction: rtl;
     }
-    .prev-month,
-    .next-month {
+
+    .osw-prev-month,
+    .osw-next-month {
       font-weight: bold;
       font-size: 20px;
       vertical-align: middle;
       cursor: pointer;
+
       &:hover {
         color: #00578f;
       }
     }
-    .prev-month {
+
+    .osw-prev-month {
       margin-right: 5px;
     }
-    .next-month {
+
+    .osw-next-month {
       margin-left: 5px;
     }
   }
-  .loading {
+
+  .osw-loading {
     position: absolute;
     left: 10px;
     color: #666;
     text-align: left;
   }
-  .tz {
+
+  .osw-tz {
     text-align: right;
     font-size: 11px;
     color: #666;
   }
-  .left-buttons,
-  .right-buttons {
+
+  .osw-left-buttons,
+  .osw-right-buttons {
     position: absolute;
     bottom: 0;
     padding: 5px;
     font-size: 14px;
   }
-  .left-buttons {
+
+  .osw-left-buttons {
     left: 0;
   }
-  .right-buttons {
+
+  .osw-right-buttons {
     right: 0;
   }
-  .toggle-filters,
-  .today,
-  .change-view {
+
+  .osw-toggle-filters,
+  .osw-today,
+  .osw-change-view {
     cursor: pointer;
     color: #3872a7;
+
     &:hover {
       color: #00578f;
     }
   }
-  .toggle-filters {
-    &:before {
-      font-size: 20px;
-      margin-right: 5px;
-    }
+
+  .osw-toggle-filters:before {
+    font-size: 20px;
+    margin-right: 5px;
   }
-  .today {
+
+  .osw-today {
     margin-right: 10px;
   }
 }
 
 .osw-events-index.js-list-view {
-  .days-of-week {
+  .osw-days-of-week {
     display: none;
   }
-  .change-view[data-view=list] {
+
+  .osw-change-view[data-view=list] {
     display: none;
   }
 }
 
 .osw-events-index.js-month-view,
 .osw-events-index.js-week-view {
-  .change-view[data-view=month] {
+  .osw-change-view[data-view=month] {
     display: none;
   }
+
   .js-day-container {
     display: inline-block;
     @include box-sizing(border-box);
     width: 14.28%;
     padding: 0 5px;
   }
+
   .js-day {
     border-bottom: 1px solid #cccccc;
     padding: 0 5px;

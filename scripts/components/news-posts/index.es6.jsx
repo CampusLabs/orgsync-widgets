@@ -44,7 +44,7 @@ export default React.createClass({
   render: function () {
     return (
       <List
-        className='news-posts-index'
+        className='osw-news-posts-index'
         collection={this.props.newsPosts}
         renderListItem={this.renderListItem}
         fetchOptions={{strip_html: false}}

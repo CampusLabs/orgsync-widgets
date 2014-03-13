@@ -1,9 +1,9 @@
 @import '../config';
 
-.accounts-list-item {
+.osw-accounts-list-item {
   @include clearfix;
 
-  .picture {
+  .osw-picture {
     float: left;
     margin-right: 5px;
 
@@ -14,32 +14,32 @@
     }
   }
 
-  .first-name,
-  .last-name {
+  .osw-first-name,
+  .osw-last-name {
     overflow-x: hidden;
     white-space: nowrap;
     text-overflow: ellipsis;
   }
 
-  .first-name {
+  .osw-first-name {
     font-size: 20px;
   }
 
-  .last-name {
+  .osw-last-name {
     font-size: 18px;
     font-weight: bold;
   }
 }
 
-.orgsync-widget[min-width~='461px'] .accounts-list-item {
+.orgsync-widget[min-width~='461px'] .osw-accounts-list-item {
   display: inline-block;
   width: 50%;
 }
 
-.orgsync-widget[min-width~='691px'] .accounts-list-item {
+.orgsync-widget[min-width~='691px'] .osw-accounts-list-item {
   width: 33.3%;
 }
 
-.orgsync-widget[min-width~='921px'] .accounts-list-item {
+.orgsync-widget[min-width~='921px'] .osw-accounts-list-item {
   width: 25%;
 }

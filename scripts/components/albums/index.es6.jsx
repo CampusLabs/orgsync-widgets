@@ -71,7 +71,7 @@ export default React.createClass({
   render: function () {
     return (
       <List
-        className='albums-index'
+        className='osw-albums-index'
         collection={this.props.albums}
         renderListItem={this.renderListItem}
         renderPageSize={5}

@@ -20,24 +20,24 @@ export default React.createClass({
     var newsPost = this.props.newsPost;
     var count = newsPost.get('comments_count');
     return (
-      <div className='news-posts-list-item'>
-        <div className='thumbnail'>
+      <div className='osw-news-posts-list-item'>
+        <div className='osw-thumbnail'>
           <img src={newsPost.get('thumbnail_url')} />
         </div>
         <a
           href={newsPost.get('links').web}
-          className='title'
+          className='osw-title'
           onClick={this.onTitleClick}>
           {newsPost.get('title')}
         </a>
-        <div className='creator'>
+        <div className='osw-creator'>
           {newsPost.get('creator').get('display_name')}
         </div>
-        <div className='time'>{newsPost.time()}</div>
-        <div className={'comment-count' + (count ? '' : ' none')}>
+        <div className='osw-time'>{newsPost.time()}</div>
+        <div className={'osw-comment-count' + (count ? '' : ' osw-none')}>
           {count}<Icon name='communication' />
         </div>
-        <div className='body'>
+        <div className='osw-body'>
           {newsPost.truncatedBody(this.props.truncateLength)}
         </div>
       </div>

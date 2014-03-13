@@ -1,32 +1,32 @@
-<div class='js-event-filters event-filters'>
-  <div class='search-container'>
-    <div class='search-field field icon icon-magnify'>
-      <input class='js-search-input search-input' placeholder='Search Events'>
+<div class='js-event-filters osw-event-filters'>
+  <div class='osw-search-container'>
+    <div class='osw-search-field osw-field oswi oswi-magnify'>
+      <input class='js-search-input osw-search-input' placeholder='Search Events'>
     </div>
   </div>
-  <div class='js-event-filters-list event-filters-list'></div>
+  <div class='js-event-filters-list osw-event-filters-list'></div>
 </div
-><div class='main'>
-  <div class='top'>
-    <div class='js-loading loading js-none'>Loading events...</div>
-    <div class='js-tz tz'><%- o.tzDisplay() %></div>
-    <div class='month-year'>
-      <div class='left-buttons'>
-        <span class='js-toggle-filters toggle-filters icon icon-office-shortcuts'></span>
+><div class='osw-main'>
+  <div class='osw-top'>
+    <div class='js-loading osw-loading js-none'>Loading events...</div>
+    <div class='js-tz osw-tz'><%- o.tzDisplay() %></div>
+    <div class='osw-month-year'>
+      <div class='osw-left-buttons'>
+        <span class='js-toggle-filters osw-toggle-filters oswi oswi-office-shortcuts'></span>
         |
-        <span class='js-change-view change-view' data-view='list'>
+        <span class='js-change-view osw-change-view' data-view='list'>
           View List
         </span
-        ><span class='js-change-view change-view' data-view='month'>
+        ><span class='js-change-view osw-change-view' data-view='month'>
           View Month
         </span>
       </div>
-      <div class='right-buttons'>
-        <i class='js-prev-month prev-month icon icon-pointer-left'></i
+      <div class='osw-right-buttons'>
+        <i class='js-prev-month osw-prev-month oswi oswi-pointer-left'></i
         ><span class='js-today today'>Today</span
-        ><i class='js-next-month next-month icon icon-pointer-right'></i>
+        ><i class='js-next-month osw-next-month oswi oswi-pointer-right'></i>
       </div>
-      <select class='js-month month'>
+      <select class='js-month osw-month'>
         <% var date = o.date(); %>
         <% _.each(_.range(0, 12), function (month) { %>
         <option value='<%= month %>'>
@@ -34,7 +34,7 @@
         </option>
         <% }); %>
       </select
-      ><select class='js-year year'>
+      ><select class='js-year osw-year'>
         <% var year = date.year(); %>
         <% _.each(_.range(year - 3, year + 4), function (year) { %>
         <option value='<%= year %>'><%= year %></option>
@@ -42,8 +42,8 @@
       </select>
     </div>
   </div>
-  <div class='events'>
-    <div class='js-days-of-week days-of-week'></div>
-    <div class='js-events-list events-list'></div>
+  <div class='osw-events'>
+    <div class='js-days-of-week osw-days-of-week'></div>
+    <div class='js-events-list osw-events-list'></div>
   </div>
 </div>

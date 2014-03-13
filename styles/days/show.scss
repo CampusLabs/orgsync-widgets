@@ -6,10 +6,11 @@
 
 .osw-events-index.js-list-view {
   .osw-days-show {
-    .short-date {
+    .osw-short-date {
       display: none;
     }
-    .long-date {
+
+    .osw-long-date {
       position: -webkit-sticky;
       position: sticky;
       top: 0;
@@ -33,28 +34,35 @@
     vertical-align: top;
     height: 16.66667%;
     background: #fff;
+
     &:before {
       display: block;
       content: "";
       border-top: 1px solid #cccccc;
     }
+
     &.js-current-week {
       background: #f9f9f9;
+
       &:before {
         border-top-width: 3px;
         border-color: #999999;
       }
     }
+
     &.js-today {
       background: #eeeeee;
+
       &:before {
         border-top-color: #666666;
       }
     }
-    .long-date {
+
+    .osw-long-date {
       display: none;
     }
-    .short-date {
+
+    .osw-short-date {
       padding: 5px;
       text-align: right;
       font-size: 14px;
@@ -63,7 +71,8 @@
       white-space: nowrap;
       cursor: pointer;
     }
-    .show-more {
+
+    .osw-show-more {
       padding: 5px;
       color: #666;
       cursor: pointer;

@@ -8,9 +8,9 @@ export default React.createClass({
   },
 
   className: function () {
-    var classes = ['selector-result'];
-    if (this.props.selected) classes.push('selected');
-    if (this.props.active) classes.push('active');
+    var classes = ['osw-selector-result'];
+    if (this.props.selected) classes.push('osw-selected');
+    if (this.props.active) classes.push('osw-active');
     return classes.join(' ');
   },
 
@@ -24,7 +24,7 @@ export default React.createClass({
   render: function () {
     return (
       <div className={this.className()} onClick={this.onClick}>
-        <div className='name'>{this.name()}</div>
+        <div className='osw-name'>{this.name()}</div>
       </div>
     );
   }

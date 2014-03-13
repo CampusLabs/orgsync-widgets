@@ -7,14 +7,14 @@ export default React.createClass({
     var comment = this.props.comment;
     var creator = comment.get('creator');
     return (
-      <div className='comments-list-item'>
-        <div className='creator-avatar'>
+      <div className='osw-comments-list-item'>
+        <div className='osw-creator-avatar'>
           <img src={creator.get('picture_url')} />
         </div>
-        <div className='info'>
-          <div className='creator-name'>{creator.get('display_name')}</div>
-          <div className='time'>{comment.time()}</div>
-          <div className='content'>{comment.get('content')}</div>
+        <div className='osw-info'>
+          <div className='osw-creator-name'>{creator.get('display_name')}</div>
+          <div className='osw-time'>{comment.time()}</div>
+          <div className='osw-content'>{comment.get('content')}</div>
         </div>
       </div>
     );

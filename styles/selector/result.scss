@@ -1,9 +1,9 @@
 @import '../config';
 
-.selector-result {
+.osw-selector-result {
   @include user-select(none);
 
-  &.selected {
+  &.osw-selected {
     color: #999;
     background: #f9f9f9;
 
@@ -16,7 +16,7 @@
   }
 }
 
-.selector-index.mini .selector-result {
+.osw-selector-index.osw-mini .osw-selector-result {
   border-top: 1px solid #eee;
   padding: 5px;
   background: #fff;
@@ -27,24 +27,24 @@
     padding-top: 6px;
   }
 
-  &.active {
+  &.osw-active {
     color: #fff;
     background: #336699;
 
-    &.selected {
+    &.osw-selected {
       background: #99ccff;
     }
   }
 
-  .name {
+  .osw-name {
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
   }
 }
 
-.orgsync-selector.full {
-  .selector-result {
+.osw-orgsync-selector.osw-full {
+  .osw-selector-result {
     @include box-sizing(border-box);
     padding: 10px;
     border: 5px solid #eee;
@@ -53,28 +53,28 @@
     cursor: pointer;
     background: #fff;
 
-    &.selected {
+    &.osw-selected {
       color: #999;
       background: #f9f9f9;
     }
 
-    .name {
+    .osw-name {
       overflow: hidden;
       height: 30px;
       font-weight: bold;
     }
   }
 
-  .orgsync-widget[min-width~='461px'] .selector-result {
+  .orgsync-widget[min-width~='461px'] .osw-selector-result {
     display: inline-block;
     width: 50%;
   }
 
-  .orgsync-widget[min-width~='691px'] .selector-result {
+  .orgsync-widget[min-width~='691px'] .osw-selector-result {
     width: 33.3%;
   }
 
-  .orgsync-widget[min-width~='921px'] .selector-result {
+  .orgsync-widget[min-width~='921px'] .osw-selector-result {
     width: 25%;
   }
 }

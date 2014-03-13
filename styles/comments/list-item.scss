@@ -1,6 +1,6 @@
 @import '../config';
 
-.comments-list-item {
+.osw-comments-list-item {
   text-align: left;
   border: 1px solid #dddddd;
   padding: 5px;
@@ -11,12 +11,12 @@
     border-top: 0;
   }
 
-  .info {
+  .osw-info {
     overflow: auto;
     padding-left: 5px;
   }
 
-  .creator-avatar {
+  .osw-creator-avatar {
     float: left;
     border: 1px solid #dddddd;
     padding: 5px;
@@ -29,13 +29,13 @@
     }
   }
 
-  .creator-name {
+  .osw-creator-name {
     display: inline;
     margin-right: 5px;
     font-weight: bold;
   }
 
-  .time {
+  .osw-time {
     display: inline;
     color: #666666;
   }

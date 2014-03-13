@@ -1,19 +1,11 @@
 @import '../config';
 
-.photos-index {
+.osw-photos-index {
   margin: 0 auto;
   max-width: 1100px;
   text-align: center;
 
-  .js-loading {
-    margin: 0 auto;
-    width: 148px;
-    height: 148px;
-    background-color: #fff;
-    border-radius: 5px;
-  }
-
-  .info {
+  .osw-info {
     padding: 20px;
   }
 }

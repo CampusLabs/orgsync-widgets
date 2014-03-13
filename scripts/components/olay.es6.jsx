@@ -12,7 +12,7 @@ export default React.createClass({
       var olay = new Olay('<div>', props.options);
       olay.$container
         .addClass('orgsync-widget')
-        .addClass(props.className + '-olay');
+        .addClass('osw-' + props.className + '-olay');
       props = _.extend({olay: olay}, props);
       return React.renderComponent(this(props, children), olay.$el[0]);
     }

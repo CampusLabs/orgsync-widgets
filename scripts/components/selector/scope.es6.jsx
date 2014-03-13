@@ -3,16 +3,17 @@
 import React from 'react';
 
 export default React.createClass({
-  onClick: function () {
+  handleClick: function () {
     this.props.onClick(this.props.scope);
+  },
+
+  getClassName: function () {
+    return 'osw-selector-scope' + (this.props.selected ? ' osw-selected' : '');
   },
 
   render: function () {
     return (
-      <div
-        className={'selector-scope' + (this.props.selected ? ' selected' : '')}
-        onClick={this.onClick}
-      >
+      <div className={this.getClassName()} onClick={this.handleClick}>
         {this.props.scope.get('name')}
       </div>
     );

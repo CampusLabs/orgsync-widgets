@@ -13,18 +13,20 @@ export default React.createClass({
   coverPhotos: function () {
     var src = this.props.album.get('cover_photo');
     return _.times(4, function (n) {
-      return <div className='cover-photo' key={n}><img src={src} /></div>;
+      return <div className='osw-cover-photo' key={n}><img src={src} /></div>;
     }, this);
   },
 
   render: function () {
     var album = this.props.album;
     return (
-      <div className='albums-list-item' onClick={this.onClick}>
+      <div className='osw-albums-list-item' onClick={this.onClick}>
         <a href={album.get('links').web}>
-          <div className='cover-photos-container'>{this.coverPhotos()}</div>
-          <div className='name'>{album.get('name')}</div>
-          <div className='photo-count'>{album.get('photo_count')} Photos</div>
+          <div className='osw-cover-photos-container'>{this.coverPhotos()}</div>
+          <div className='osw-name'>{album.get('name')}</div>
+          <div className='osw-photo-count'>
+            {album.get('photo_count') + ' Photos'}
+          </div>
         </a>
       </div>
     );

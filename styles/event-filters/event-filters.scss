@@ -6,33 +6,40 @@
     cursor: pointer;
     padding: 2px;
   }
+
   &.js-legend-mode {
     cursor: default;
-    .enabled {
+
+    .osw-enabled {
       display: none;
     }
   }
-  .enabled {
+
+  .osw-enabled {
     cursor: pointer;
     margin-right: 5px;
   }
-  .name {
+
+  .osw-name {
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
   }
+
   .js-icon {
     float: right;
     font-size: 16px;
     margin-top: -4px;
   }
+
   hr {
     margin: 10px;
     border: 0;
     height: 1px;
     background: #ccc;
   }
-  .header {
+
+  .osw-header {
     font-weight: bold;
     margin: 5px;
   }

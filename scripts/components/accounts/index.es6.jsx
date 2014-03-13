@@ -29,7 +29,7 @@ export default React.createClass({
   render: function () {
     return (
       <List
-        className='accounts-index'
+        className='osw-accounts-index'
         collection={this.props.accounts}
         renderListItem={this.renderListItem}
         uniform={true}

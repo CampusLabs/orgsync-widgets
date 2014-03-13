@@ -202,10 +202,10 @@ export default React.createClass({
     return selectorItem.pick.apply(selectorItem, fields);
   },
 
-  className: function () {
-    var classes = ['selector-index'];
-    classes.push(this.props.full ? 'full' : 'mini');
-    if (this.state.isActive) classes.push('active');
+  getClassName: function () {
+    var classes = ['osw-selector-index'];
+    classes.push(this.props.full ? 'osw-full' : 'osw-mini');
+    if (this.state.isActive) classes.push('osw-active');
     return classes.join(' ');
   },
 
@@ -238,7 +238,7 @@ export default React.createClass({
 
   renderTokens: function () {
     return (
-      <div className='tokens'>
+      <div className='osw-tokens'>
         {this.state.value.map(this.renderToken)}
         {this.renderQuery()}
       </div>
@@ -249,7 +249,7 @@ export default React.createClass({
     return (
       <input
         ref='query'
-        className='query'
+        className='osw-query'
         value={this.state.query}
         onChange={this.onQueryChange}
         placeholder={this.props.placeholder}
@@ -272,7 +272,7 @@ export default React.createClass({
     if (!this.props.full) return;
     return (
       <List
-        className='scopes'
+        className='osw-scopes'
         key={this.state.scope.id}
         collection={this.props.scopes}
         renderListItem={this.renderScope}
@@ -298,7 +298,7 @@ export default React.createClass({
     if (!this.props.full && !this.state.isActive) return;
     return (
       <List
-        className='results'
+        className='osw-results'
         ref='results'
         key={JSON.stringify(_.pick(this.state, 'scope', 'query'))}
         collection={this.state.results}
@@ -313,7 +313,7 @@ export default React.createClass({
   render: function () {
     return (
       <div
-        className={this.className()}
+        className={this.getClassName()}
         onClick={this.onClick}
         onFocus={this.onFocus}
         onBlur={this.onBlur}

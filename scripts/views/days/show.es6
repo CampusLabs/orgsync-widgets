@@ -19,7 +19,7 @@ export default BaseView.extend({
 
   options: ['view', 'eventFilters'],
 
-  maxEvents: 4,
+  maxEvents: 5,
 
   toTemplate: function () {
     return {

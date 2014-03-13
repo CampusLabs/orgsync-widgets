@@ -251,7 +251,7 @@ export default BaseView.extend({
   },
 
   updateFilterText: function () {
-    this.$('.js-toggle-filters').text(
+    this.$('.js-toggle-filters-text').text(
       (this.$el.hasClass('js-full-width') ? 'Show ' : 'Hide ') +
       (this.legendMode ? 'Legend' : 'Filters')
     );

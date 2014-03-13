@@ -38,14 +38,12 @@
 
   .osw-top {
     position: relative;
-    padding: 0 5px;
+    padding: 5px;
     text-align: center;
     @include clearfix;
   }
 
   .osw-month-year {
-    padding-bottom: 5px;
-
     .osw-month,
     .osw-year {
       vertical-align: middle;
@@ -88,22 +86,19 @@
   }
 
   .osw-loading {
-    position: absolute;
-    left: 10px;
-    color: #666;
-    text-align: left;
+    float: left;
+    color: $grey-darker;
   }
 
   .osw-tz {
     text-align: right;
-    font-size: 11px;
-    color: #666;
+    color: $grey-darker;
   }
 
   .osw-left-buttons,
   .osw-right-buttons {
     position: absolute;
-    bottom: 0;
+    bottom: 5px;
     padding: 5px;
     font-size: 14px;
   }
@@ -127,9 +122,8 @@
     }
   }
 
-  .osw-toggle-filters:before {
+  .osw-toggle-filters .oswi {
     font-size: 20px;
-    margin-right: 5px;
   }
 
   .osw-today {
@@ -157,14 +151,17 @@
     display: inline-block;
     @include box-sizing(border-box);
     width: 14.28%;
-    padding: 0 5px;
+    padding: 0 2px;
   }
 
   .js-day {
-    border-bottom: 1px solid #cccccc;
-    padding: 0 5px;
+    border-top: 1px solid $grey;
+    padding: 0 2px;
+    color: $grey-darker;
     font-weight: bold;
-    font-size: 14px;
-    line-height: 26px;
+    line-height: 20px;
+    text-align: right;
+    text-transform: uppercase;
+    font-size: 11px;
   }
 }

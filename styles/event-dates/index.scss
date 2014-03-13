@@ -1,10 +1,8 @@
 @import '../config';
 
-$green: #94b363;
-
 .osw-events-index.js-list-view {
   .osw-event-dates-list-item {
-    border: 1px solid #cccccc;
+    border: 1px solid $grey;
     border-left-width: 5px;
     border-bottom: none;
     padding: 5px;
@@ -28,11 +26,11 @@ $green: #94b363;
 
     .osw-default-picture {
       @include user-select(none);
-      background: #eee;
+      background: $grey-lighter;
       text-align: center;
-      color: #999;
+      color: $grey-darker;
       border-radius: 5px;
-      border: 1px solid #ccc;
+      border: 1px solid $grey;
 
       .osw-month {
         padding-top: 4px;
@@ -55,7 +53,7 @@ $green: #94b363;
 
     .osw-title {
       font-size: 14px;
-      color: #333333;
+      color: $grey-darkest;
     }
 
     .osw-long-time,
@@ -63,19 +61,19 @@ $green: #94b363;
     .osw-attending {
       display: inline;
       font-size: 11px;
-      color: #666;
+      color: $grey-darker;
     }
 
     .osw-portal-name,
     .osw-attending {
       &:before {
-        color: #000;
+        color: black;
         content: '\2022';
       }
     }
 
     .osw-portal-name {
-      color: #333;
+      color: $grey-darkest;
 
       &:before {
         margin-right: 5px;
@@ -83,7 +81,7 @@ $green: #94b363;
     }
 
     .osw-attending {
-      color: #94b363;
+      color: $green-darkest;
       font-weight: bold;
       text-transform: uppercase;
     }
@@ -100,9 +98,10 @@ $green: #94b363;
   .osw-event-dates-list-item {
     position: relative;
     margin-top: 1px;
-    border-left: 5px solid;
-    padding: 2px 5px;
+    border-left: 2px solid;
+    padding: 0 4px;
     font-size: 11px;
+    line-height: 16px;
     @include box-sizing(border-box);
     cursor: pointer;
 
@@ -115,17 +114,17 @@ $green: #94b363;
     }
 
     &.js-continues {
-      padding-right: 10px;
-      margin-right: -5px;
+      padding-right: 4px;
+      margin-right: -2px;
     }
 
     &.js-continued {
-      margin-left: -5px;
-      padding-left: 10px;
+      margin-left: -2px;
+      padding-left: 4px;
       border-left-width: 0;
 
       &:not(.js-continues) {
-        @include border-right-radius(5px);
+        @include border-right-radius(3px);
       }
     }
 
@@ -134,7 +133,7 @@ $green: #94b363;
     }
 
     &.js-is-going .osw-title {
-      color: $green;
+      color: $green-darkest;
     }
 
     .osw-location,
@@ -149,7 +148,7 @@ $green: #94b363;
       float: right;
       padding-left: 5px;
       max-width: 100%;
-      color: #999999;
+      color: $grey-darker;
     }
 
     .osw-short-time,
@@ -161,62 +160,45 @@ $green: #94b363;
   }
 }
 
-.js-olay-content {
-  .osw-event-dates-show {
-    text-align: left;
-    padding: 20px;
-    max-width: 480px;
-    @include clearfix;
+.js-olay-content .osw-event-dates-show {
+  text-align: left;
+  padding: 20px;
+  max-width: 480px;
+  @include clearfix;
 
-    .osw-picture-container {
-      float: right;
+  .osw-picture-container {
+    float: right;
+  }
+
+  .osw-title {
+    font-size: 20px;
+    font-weight: bold;
+  }
+
+  .osw-datetime,
+  .osw-location,
+  .osw-portal,
+  .osw-description {
+    padding: 10px;
+    &:before {
+      display: block;
+      color: $grey-darker;
     }
+  }
 
-    .osw-title {
-      font-size: 20px;
-      font-weight: bold;
-    }
+  .osw-datetime:before {
+    content: "WHEN";
+  }
 
-    .osw-datetime,
-    .osw-location,
-    .osw-portal,
-    .osw-description {
-      padding: 10px;
-      &:before {
-        display: block;
-        color: #999999;
-      }
-    }
+  .osw-location:before {
+    content: "WHERE";
+  }
 
-    .osw-datetime:before {
-      content: "WHEN";
-    }
+  .osw-portal:before {
+    content: "HOST";
+  }
 
-    .osw-location:before {
-      content: "WHERE";
-    }
-
-    .osw-portal:before {
-      content: "HOST";
-    }
-
-    .osw-description:before {
-      content: "DETAILS";
-    }
-
-    .osw-see-full-details {
-      float: right;
-      display: inline-block;
-      padding: 10px;
-      text-decoration: none;
-      color: #3872a7;
-      border-radius: 5px;
-      border: 1px solid #3872a7;
-
-      &:hover {
-        color: #00578f;
-        border-color: #00578f;
-      }
-    }
+  .osw-description:before {
+    content: "DETAILS";
   }
 }

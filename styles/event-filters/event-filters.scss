@@ -41,6 +41,9 @@
 
   .osw-header {
     font-weight: bold;
-    margin: 5px;
+    margin-bottom: 10px;
+    text-transform: uppercase;
+    color: $grey-darker;
+    text-align: center;
   }
 }

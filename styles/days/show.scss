@@ -13,12 +13,12 @@
     .osw-long-date {
       position: -webkit-sticky;
       position: sticky;
+      z-index: 1;
       top: 0;
       padding: 10px;
-      color: #666666;
-      font-size: 14px;
-      border: 1px solid #cccccc;
-      background: #eeeeee;
+      color: $grey-darker;
+      border: 1px solid $grey;
+      background: $grey-lighter;
     }
   }
 }
@@ -29,32 +29,32 @@
     display: inline-block;
     @include box-sizing(border-box);
     border: solid white;
-    border-width: 0 5px;
+    border-width: 0 2px;
     width: 14.28%;
     vertical-align: top;
     height: 16.66667%;
-    background: #fff;
+    background: white;
 
     &:before {
       display: block;
-      content: "";
-      border-top: 1px solid #cccccc;
+      content: '';
+      border-top: 1px solid $grey;
     }
 
     &.js-current-week {
-      background: #f9f9f9;
+      background: $grey-lightest;
 
       &:before {
         border-top-width: 3px;
-        border-color: #999999;
+        border-color: $grey-darker;
       }
     }
 
     &.js-today {
-      background: #eeeeee;
+      background: $grey-lighter;
 
       &:before {
-        border-top-color: #666666;
+        border-top-color: $grey-darkest;
       }
     }
 
@@ -63,9 +63,9 @@
     }
 
     .osw-short-date {
-      padding: 5px;
+      padding: 0 2px;
+      line-height: 15px;
       text-align: right;
-      font-size: 14px;
       overflow: hidden;
       text-overflow: ellipsis;
       white-space: nowrap;
@@ -73,8 +73,8 @@
     }
 
     .osw-show-more {
-      padding: 5px;
-      color: #666;
+      padding: 2px;
+      color: $grey-darker;
       cursor: pointer;
       font-size: 11px;
       text-align: center;

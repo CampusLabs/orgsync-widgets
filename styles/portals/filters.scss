@@ -1,6 +1,7 @@
 @import '../config';
 
 .osw-portals-filters .osw-field {
+  display: block;
   @include box-sizing(border-box);
   border: 5px solid transparent;
 }

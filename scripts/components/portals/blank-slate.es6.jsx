@@ -5,7 +5,7 @@ import React from 'react';
 export default React.createClass({
   render: function () {
     return (
-      <div className='osw-portals-blank-slate'>
+      <div className='osw-portals-blank-slate osw-inset-block'>
         <div className='osw-apology'>
           We're sorry, but no portals match your selected filters.
         </div>

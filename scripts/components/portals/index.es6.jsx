@@ -82,17 +82,6 @@ export default React.createClass({
     Olay.create({className: 'portals-show'}, <Show portal={portal} />).show();
   },
 
-  renderListItem: function (portal) {
-    return (
-      <ListItem
-        key={portal.id}
-        portal={portal}
-        onClick={this.openPortal}
-        redirect={this.props.redirect}
-      />
-    );
-  },
-
   matchesUmbrella: function (portal) {
     return !this.state.umbrella ||
       portal.umbrellaName() === this.state.umbrella;
@@ -150,6 +139,25 @@ export default React.createClass({
     ['umbrella', 'category', 'letter', 'query'].forEach(this.clearFilter);
   },
 
+  renderListItem: function (portal) {
+    return (
+      <ListItem
+        key={portal.id}
+        portal={portal}
+        onClick={this.openPortal}
+        redirect={this.props.redirect}
+      />
+    );
+  },
+
+  renderLoading: function () {
+    return <div className='osw-inset-block'>Loading...</div>;
+  },
+
+  renderError: function (er) {
+    return <div className='osw-inset-block'>{er}</div>;
+  },
+
   renderBlankSlate: function () {
     return <BlankSlate onClick={this.clearAllFilters} />;
   },
@@ -173,6 +181,8 @@ export default React.createClass({
           isLoading={this.state.isLoading}
           error={this.state.error}
           shouldFetch={false}
+          renderLoading={this.renderLoading}
+          renderError={this.renderError}
           renderListItem={this.renderListItem}
           renderBlankSlate={this.renderBlankSlate}
           uniform={true}

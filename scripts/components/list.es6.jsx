@@ -13,8 +13,8 @@ export default React.createClass({
     return [{
       model: this.props.collection,
       events: {
-        sync: this.onSuccess,
-        error: this.onError
+        sync: this.handleSuccess,
+        error: this.handleError
       }
     }];
   },
@@ -52,17 +52,17 @@ export default React.createClass({
   },
 
   componentDidMount: function () {
-    this.$scrollParent().on('scroll', this.delayedUpdate);
-    $(window).on('resize', this.delayedUpdate);
+    this.get$ScrollParent().on('scroll', this.delayUpdate);
+    $(window).on('resize', this.delayUpdate);
     this.update();
   },
 
   componentWillUnmount: function () {
-    this.$scrollParent().off('scroll', this.delayedUpdate);
-    $(window).off('resize', this.delayedUpdate);
+    this.get$ScrollParent().off('scroll', this.delayUpdate);
+    $(window).off('resize', this.delayUpdate);
   },
 
-  delayedUpdate: function () {
+  delayUpdate: function () {
     if (this.pendingUpdate) return;
     this.pendingUpdate = true;
     animationFrame.request(this.update);
@@ -70,7 +70,7 @@ export default React.createClass({
 
   // Get scroll position relative to the top of the list.
   scroll: function () {
-    var $scrollParent = this.$scrollParent();
+    var $scrollParent = this.get$ScrollParent();
     var $el = $(this.getDOMNode());
     if ($scrollParent[0] === $el[0]) {
       return $scrollParent.scrollTop();
@@ -89,7 +89,7 @@ export default React.createClass({
 
     var collection = this.props.collection;
     var uniform = this.props.uniform;
-    var $scrollParent = this.$scrollParent();
+    var $scrollParent = this.get$ScrollParent();
     var $el = $(this.getDOMNode());
 
     var scroll = this.scroll();
@@ -115,7 +115,7 @@ export default React.createClass({
           else if (data.top === listItem.offsetTop) ++data.count;
           return data;
         }, {count: 1}).count;
-        if (columns !== this.state.columns) this.delayedUpdate();
+        if (columns !== this.state.columns) this.delayUpdate();
         rows = Math.ceil($scrollParent.innerHeight() / itemHeight);
 
         var rowThreshold = Math.ceil(this.props.threshold / itemHeight);
@@ -130,14 +130,14 @@ export default React.createClass({
         );
       } else {
         length = this.props.renderPageSize;
-        if (collection.length) this.delayedUpdate();
+        if (collection.length) this.delayUpdate();
       }
     } else if (length <= collection.length) {
       var visibleBottom = scroll + $scrollParent.height();
       var targetBottom = $el.prop('scrollHeight') - this.props.threshold;
       if (visibleBottom < targetBottom) return;
       length = length + this.props.renderPageSize;
-      this.delayedUpdate();
+      this.delayUpdate();
     }
 
     // Fetch if the models in memory have been exhausted.
@@ -159,7 +159,7 @@ export default React.createClass({
       !_.isEqual(this.state, nextState);
   },
 
-  $scrollParent: function () {
+  get$ScrollParent: function () {
     if (this._$scrollParent) return this._$scrollParent;
     var el = this.getDOMNode();
     var parents = [el].concat($(el).parents().toArray());
@@ -183,13 +183,13 @@ export default React.createClass({
     });
   },
 
-  onSuccess: function (collection, data) {
+  handleSuccess: function (collection, data) {
     if (data.length < this.props.fetchPageSize) this.doneFetching = true;
-    this.delayedUpdate();
+    this.delayUpdate();
     this.setState({isLoading: false, error: null});
   },
 
-  onError: function (collection, er) {
+  handleError: function (collection, er) {
     this.setState({isLoading: false, error: er.toString()});
   },
 
@@ -197,7 +197,7 @@ export default React.createClass({
     var collection = this.props.collection;
     var targetIndex = collection.indexOf(collection.get(model));
     if (targetIndex === -1) return;
-    var $scrollParent = this.$scrollParent();
+    var $scrollParent = this.get$ScrollParent();
     var itemHeight = this.state.itemHeight;
     var current = this.scroll();
     var max = Math.floor(targetIndex / this.state.columns) * itemHeight;
@@ -206,12 +206,12 @@ export default React.createClass({
     if (current < min) $scrollParent.scrollTop(min);
   },
 
-  spaceAbove: function () {
+  getSpaceAbove: function () {
     if (!this.props.uniform) return 0;
     return (this.state.index / this.state.columns) * this.state.itemHeight;
   },
 
-  spaceBelow: function () {
+  getSpaceBelow: function () {
     if (!this.props.uniform) return 0;
     var total = this.props.collection.length;
     var below = Math.max(0, total - this.state.index - this.state.length);
@@ -235,9 +235,9 @@ export default React.createClass({
   render: function () {
     return this.transferPropsTo(
       <div>
-        <div style={{height: this.spaceAbove()}} />
+        <div style={{height: this.getSpaceAbove()}} />
         {this.renderListItems()}
-        <div style={{height: this.spaceBelow()}} />
+        <div style={{height: this.getSpaceBelow()}} />
         {this.renderFetchMessage()}
       </div>
     );

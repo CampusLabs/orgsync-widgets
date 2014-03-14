@@ -15,16 +15,16 @@ export default React.createClass({
     if (portal.get('description') != null) return;
     this.setState({isLoading: true, error: null});
     portal.fetch({
-      success: this.onSuccess,
-      error: this.onError
+      success: this.handleSuccess,
+      error: this.handleError
     });
   },
 
-  onSuccess: function () {
+  handleSuccess: function () {
     this.setState({isLoading: false, error: null});
   },
 
-  onError: function (portal, er) {
+  handleError: function (portal, er) {
     this.setState({isLoading: false, error: er.toString()});
   },
 

@@ -63,17 +63,17 @@ export default React.createClass({
     this.updateResults(this.state.scope, this.state.query);
   },
 
-  onScopeClick: function (scope) {
+  handleScopeClick: function (scope) {
     if (scope === this.state.scope) return;
     this.updateResults(scope, this.state.query);
     this.setState({scope: scope});
   },
 
-  onQueryChange: function (ev) {
+  handleQueryChange: function (ev) {
     this.setQuery(ev.target.value);
   },
 
-  onKeyDown: function (ev) {
+  handleKeyDown: function (ev) {
     var query = this.state.query;
     var key = ev.key;
     if (ev.ctrlKey) {
@@ -107,23 +107,23 @@ export default React.createClass({
     }
   },
 
-  onClick: function () {
+  handleClick: function () {
     this.refs.query.getDOMNode().focus();
   },
 
-  onFocus: function () {
+  handleFocus: function () {
     this.setState({hasFocus: true, isActive: true});
   },
 
-  onBlur: function () {
+  handleBlur: function () {
     this.setState({hasFocus: false, isActive: this.state.hasMouse});
   },
 
-  onMouseEnter: function () {
+  handleMouseEnter: function () {
     this.setState({hasMouse: true});
   },
 
-  onMouseLeave: function () {
+  handleMouseLeave: function () {
     this.setState({hasMouse: false, isActive: this.state.hasFocus});
   },
 
@@ -209,7 +209,7 @@ export default React.createClass({
     return classes.join(' ');
   },
 
-  onResultClick: function (selectorItem) {
+  handleResultClick: function (selectorItem) {
     if (this.state.value.get(selectorItem)) this.removeValue(selectorItem);
     else this.addValue(selectorItem);
     this.setState({activeResultId: selectorItem.id});
@@ -251,7 +251,7 @@ export default React.createClass({
         ref='query'
         className='osw-query'
         value={this.state.query}
-        onChange={this.onQueryChange}
+        onChange={this.handleQueryChange}
         placeholder={this.props.placeholder}
       />
     );
@@ -262,7 +262,7 @@ export default React.createClass({
       <SelectorScope
         key={i}
         scope={scope}
-        onClick={this.onScopeClick}
+        onClick={this.handleScopeClick}
         selected={scope === this.state.scope}
       />
     );
@@ -287,7 +287,7 @@ export default React.createClass({
       <SelectorResult
         key={i}
         selectorItem={selectorItem}
-        onClick={this.onResultClick}
+        onClick={this.handleResultClick}
         selected={!!this.state.value.get(selectorItem)}
         active={selectorItem.id === this.state.activeResultId}
       />
@@ -314,12 +314,12 @@ export default React.createClass({
     return (
       <div
         className={this.getClassName()}
-        onClick={this.onClick}
-        onFocus={this.onFocus}
-        onBlur={this.onBlur}
-        onMouseEnter={this.onMouseEnter}
-        onMouseLeave={this.onMouseLeave}
-        onKeyDown={this.onKeyDown}
+        onClick={this.handleClick}
+        onFocus={this.handleFocus}
+        onBlur={this.handleBlur}
+        onMouseEnter={this.handleMouseEnter}
+        onMouseLeave={this.handleMouseLeave}
+        onKeyDown={this.handleKeyDown}
       >
         {this.renderHiddenInput()}
         {this.renderTokens()}

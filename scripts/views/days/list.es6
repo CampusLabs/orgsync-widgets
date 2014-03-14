@@ -1,5 +1,6 @@
 import $ from 'jquery';
 import _ from 'underscore';
+import animationFrame from 'animation-frame';
 import ListView from 'views/list';
 import DaysShowView from 'views/days/show';
 module Day from 'entities/day';
@@ -167,9 +168,9 @@ export default ListView.extend({
     }
     this.padAndTrimCalled = false;
 
-    window.cancelAnimationFrame(this.afid);
+    animationFrame.cancel(this.afid);
 
-    this.afid = window.requestAnimationFrame(_.bind(function () {
+    this.afid = animationFrame.request(_.bind(function () {
 
       // Add or remove elements below if necessary.
       if (this.needsBelow()) this.renderBelow();

@@ -1,5 +1,6 @@
 import $ from 'jquery';
 import _ from 'underscore';
+import animationFrame from 'animation-frame';
 import BaseView from 'views/base';
 import ListView from 'views/list';
 
@@ -56,7 +57,7 @@ export default ListView.extend({
       this.collection.set(
         this.available.models.slice(0, ++this.page * this.pageSize)
       );
-      window.requestAnimationFrame(this.nextPage);
+      animationFrame.request(this.nextPage);
     } else {
       this.trigger('done-paging');
     }

@@ -1,5 +1,6 @@
 import $ from 'jquery';
 import _ from 'underscore';
+import animationFrame from 'animation-frame';
 import BaseView from 'views/base';
 import ListView from 'views/list';
 import EventsIndexTemplate from 'jst/events/index';
@@ -205,7 +206,7 @@ export default BaseView.extend({
   },
 
   updateFiltered: function () {
-    window.requestAnimationFrame(_.bind(function () {
+    animationFrame.request(_.bind(function () {
       var eventFilters = this.eventFilters;
       var query = this.query;
       var date = this.date();

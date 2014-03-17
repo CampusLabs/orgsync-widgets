@@ -1,5 +1,6 @@
 /** @jsx React.DOM */
 
+import $ from 'jquery';
 import List from 'components/list';
 import PhotosListItem from 'components/photos/list-item';
 import PhotosShow from 'components/photos/show';
@@ -10,11 +11,11 @@ var keyDirMap = {'37': -1, '39': 1};
 
 export default React.createClass({
   componentWillMount: function () {
-    document.addEventListener('keydown', this.onKeyDown);
+    $(document).on('keydown', this.onKeyDown);
   },
 
   componentWillUnmount: function () {
-    document.removeEventListener('keydown', this.onKeyDown);
+    $(document).on('keydown', this.onKeyDown);
   },
 
   onKeyDown: function (ev) {

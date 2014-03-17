@@ -1,5 +1,6 @@
 /** @jsx React.DOM */
 
+import $ from 'jquery';
 module Album from 'entities/portal';
 import AlbumsListItem from 'components/albums/list-item';
 import AlbumsShow from 'components/albums/show';
@@ -26,11 +27,11 @@ export default React.createClass({
   },
 
   componentWillMount: function () {
-    document.addEventListener('keydown', this.onKeyDown);
+    $(document).on('keydown', this.onKeyDown);
   },
 
   componentWillUnmount: function () {
-    document.removeEventListener('keydown', this.onKeyDown);
+    $(document).off('keydown', this.onKeyDown);
   },
 
   onKeyDown: function (ev) {

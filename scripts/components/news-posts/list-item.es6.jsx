@@ -35,7 +35,7 @@ export default React.createClass({
         </div>
         <div className='osw-time'>{newsPost.time()}</div>
         <div className={'osw-comment-count' + (count ? '' : ' osw-none')}>
-          {count}<Icon name='communication' />
+          {count} <Icon name='communication' />
         </div>
         <div className='osw-body'>
           {newsPost.truncatedBody(this.props.truncateLength)}

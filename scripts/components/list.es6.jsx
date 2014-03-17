@@ -207,12 +207,12 @@ export default React.createClass({
   },
 
   getSpaceAbove: function () {
-    if (!this.props.uniform) return 0;
+    if (!this.props.uniform || !this.state.columns) return 0;
     return (this.state.index / this.state.columns) * this.state.itemHeight;
   },
 
   getSpaceBelow: function () {
-    if (!this.props.uniform) return 0;
+    if (!this.props.uniform || !this.state.columns) return 0;
     var total = this.props.collection.length;
     var below = Math.max(0, total - this.state.index - this.state.length);
     return (below / this.state.columns) * this.state.itemHeight;

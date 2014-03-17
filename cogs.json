@@ -8,6 +8,7 @@
       "backbone-relations": "bower_components/backbone-relations/backbone-relations.js",
       "elementQuery": "bower_components/elementQuery/elementQuery.js",
       "es5-shim": "bower_components/es5-shim/es5-shim.js",
+      "es5-sham": "bower_components/es5-shim/es5-sham.js",
       "herit": "bower_components/herit/herit.js",
       "jquery": "bower_components/jquery/dist/jquery.js",
       "jstz": "bower_components/jstz/jstz.js",

@@ -139,6 +139,10 @@
       color: $green-darkest;
     }
 
+    &.js-is-pending .osw-title {
+      color: $grey-darker;
+    }
+
     .osw-location,
     .osw-picture-container,
     .osw-long-time,

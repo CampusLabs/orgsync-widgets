@@ -101,7 +101,7 @@
     border-left: 2px solid;
     padding: 0 4px;
     font-size: 11px;
-    line-height: 16px;
+    line-height: 18px;
     @include box-sizing(border-box);
     cursor: pointer;
 
@@ -122,7 +122,10 @@
       margin-left: -2px;
       padding-left: 4px;
       border-left-width: 0;
+    }
 
+    &.js-all-day,
+    &.js-continued {
       &:not(.js-continues) {
         @include border-right-radius(3px);
       }

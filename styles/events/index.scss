@@ -9,23 +9,33 @@
 
   .osw-event-filters {
     display: inline-block;
-    width: 15%;
+    width: 20%;
     vertical-align: top;
     position: absolute;
+    margin: 0;
     left: 0;
+
+    .osw-event-filters-container {
+      padding: 5px;
+    }
 
     .osw-search-field {
       width: 100%;
     }
 
     .osw-search-container {
-      padding: 5px;
+      margin-bottom: 5px;
+    }
+
+    .osw-event-filters-list {
+      overflow: auto;
+      max-height: 600px;
     }
   }
 
   .osw-main {
     display: inline-block;
-    width: 85%;
+    width: 80%;
     position: absolute;
     right: 0;
     transition: width 0.5s ease-in-out;

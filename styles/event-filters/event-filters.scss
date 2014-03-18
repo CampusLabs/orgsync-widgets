@@ -24,6 +24,7 @@
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
+    color: $grey-darker;
   }
 
   .js-icon {
@@ -33,7 +34,7 @@
   }
 
   hr {
-    margin: 10px;
+    margin: 5px;
     border: 0;
     height: 1px;
     background: #ccc;
@@ -41,9 +42,11 @@
 
   .osw-header {
     font-weight: bold;
-    margin-bottom: 10px;
+    margin: 5px;
     text-transform: uppercase;
     color: $grey-darker;
-    text-align: center;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
   }
 }

@@ -8,7 +8,7 @@
     "async": "x",
     "backbone": "master",
     "backbone-relations": "x",
-    "bourbon": "d01f1d2ce9ab60520e57ccd897baa8c756949f18",
+    "bourbon": "x",
     "elementQuery": "tysonmatanich/elementQuery#prod",
     "es5-shim": "x",
     "moment": "2.5.0",

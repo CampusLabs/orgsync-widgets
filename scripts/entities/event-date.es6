@@ -66,9 +66,12 @@ var Model = Base.Model.extend({
     return rsvp === 'Attending' || rsvp === 'Added by Admin';
   },
 
-  isPending: function () {
-    var rsvp = this.get('rsvp');
-    return rsvp === 'Invited' || rsvp === 'Maybe';
+  isInvited: function () {
+    return this.get('rsvp') === 'Invited';
+  },
+
+  isMaybeAttending: function () {
+    return this.get('rsvp') === 'Maybe Attending';
   }
 });
 

@@ -18,7 +18,6 @@ export default BaseView.extend({
       image: this.event.get('thumbnail_url'),
       isGoing: this.model.isGoing(),
       isMultiDay: this.model.isMultiDay(),
-      isPending: this.model.isPending(),
       location: this.event.get('location'),
       longTime: this.longTime(),
       multiDayStart: this.multiDayDateTime('start'),
@@ -48,8 +47,11 @@ export default BaseView.extend({
         this.$el.addClass('js-continues');
       }
     }
+    if (this.model.isInvited()) this.$el.addClass('js-is-invited');
+    if (this.model.isMaybeAttending()) {
+      this.$el.addClass('js-is-maybe-attending');
+    }
     if (this.model.isGoing()) this.$el.addClass('js-is-going');
-    if (this.model.isPending()) this.$el.addClass('js-is-pending');
   },
 
   shortTime: function () {

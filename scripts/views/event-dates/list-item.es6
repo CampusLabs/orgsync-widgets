@@ -54,6 +54,7 @@ export default EventDatesShowView.extend({
 
   correctDisplay: function () {
     this.$el.toggleClass('js-none', !this.model.get('visible'));
+    if (this.model.isInvited()) return;
     var event = this.model.get('event');
     this.$el.css({borderLeftColor: this.color().toHexString()});
     if (this.view !== 'list' &&

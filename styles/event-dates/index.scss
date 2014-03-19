@@ -105,6 +105,15 @@
     @include box-sizing(border-box);
     cursor: pointer;
 
+    &.js-is-invited {
+      border-color: $grey-darker;
+      border-style: dashed;
+      border-width: 1px;
+      line-height: 16px;
+      padding: 0 3px 0 5px;
+      border-radius: 3px;
+    }
+
     &:first-child {
       margin-top: 0;
     }
@@ -116,12 +125,15 @@
     &.js-continues {
       padding-right: 4px;
       margin-right: -2px;
+      border-right-width: 0;
+      @include border-right-radius(0);
     }
 
     &.js-continued {
       margin-left: -2px;
-      padding-left: 4px;
+      padding-left: 6px;
       border-left-width: 0;
+      @include border-left-radius(0);
     }
 
     &.js-all-day,
@@ -139,7 +151,8 @@
       color: $green-darkest;
     }
 
-    &.js-is-pending .osw-title {
+    &.js-is-invited .osw-title,
+    &.js-is-maybe-attending .osw-title {
       color: $grey-darker;
     }
 

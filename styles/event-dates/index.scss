@@ -5,7 +5,7 @@
     border: 1px solid $grey;
     border-left-width: 5px;
     border-bottom: none;
-    padding: 5px;
+    padding: 10px;
     cursor: pointer;
     @include clearfix;
 
@@ -87,7 +87,7 @@
     }
 
     .osw-info {
-      padding: 8px 5px;
+      padding: 8px 5px 8px 15px;
       overflow: auto;
     }
   }

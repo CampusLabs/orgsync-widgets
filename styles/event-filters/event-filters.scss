@@ -5,6 +5,7 @@
     display: block;
     cursor: pointer;
     padding: 2px;
+    line-height: 1.5;
   }
 
   &.js-legend-mode {
@@ -34,7 +35,7 @@
   }
 
   hr {
-    margin: 5px;
+    margin: 5px 0;
     border: 0;
     height: 1px;
     background: #ccc;
@@ -42,7 +43,7 @@
 
   .osw-header {
     font-weight: bold;
-    margin: 5px;
+    margin: 5px 0;
     text-transform: uppercase;
     color: $grey-darker;
     overflow: hidden;

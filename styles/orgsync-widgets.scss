@@ -105,9 +105,9 @@
   .osw-inset-block {
     margin: 5px;
     padding: 20px;
-    border: 1px solid #b8b8b8;
+    border: 1px solid $grey;
     border-radius: 3px;
-    background-color: #f9f9f9;
+    background-color: $grey-lightest;
     box-shadow: 0 1px 0 rgba(0, 0, 0, .1) inset;
   }
 
@@ -136,6 +136,7 @@
       select {
         padding-top: 15px;
         padding-bottom: 15px;
+        font-size: 14px;
       }
     }
 
@@ -147,7 +148,6 @@
       padding: 5px;
       border: 1px solid $grey;
       background-color: $grey-lightest;
-      font-size: 14px;
       text-overflow: ellipsis;
       white-space: nowrap;
       overflow: hidden;

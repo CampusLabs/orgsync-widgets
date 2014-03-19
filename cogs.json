@@ -4,7 +4,7 @@
     "amd.names": {
       "animation-frame-pristine": "bower_components/animation-frame/AnimationFrame.js",
       "async": "bower_components/async/lib/async.js",
-      "backbone-pristine": "bower_components/backbone/backbone.js",
+      "backbone": "bower_components/backbone/backbone.js",
       "backbone-relations": "bower_components/backbone-relations/backbone-relations.js",
       "elementQuery": "bower_components/elementQuery/elementQuery.js",
       "es5-shim": "bower_components/es5-shim/es5-shim.js",

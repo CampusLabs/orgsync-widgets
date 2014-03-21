@@ -1,6 +1,6 @@
 @import '../config';
 
-.orgsync-widget.osw-events-index {
+.osw-events-index {
   position: relative;
 
   &.js-full-width .osw-main {
@@ -12,7 +12,6 @@
     width: 20%;
     vertical-align: top;
     position: absolute;
-    margin: 0;
     left: 0;
 
     .osw-event-filters-container {
@@ -111,7 +110,6 @@
   .osw-left-buttons,
   .osw-right-buttons {
     position: absolute;
-    bottom: 5px;
     padding: 5px;
     font-size: 14px;
   }

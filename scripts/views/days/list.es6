@@ -122,7 +122,8 @@ export default ListView.extend({
   extraBelow: function () {
     if (this.topEdge()) return false;
     var $el = this.$el;
-    var lastTop = $el.children().last()[0].offsetTop;
+    var last = $el.children().last()[0];
+    var lastTop = last ? last.offsetTop : 0;
     return lastTop >= $el.scrollTop() + $el.outerHeight() + this.threshold;
   },
 

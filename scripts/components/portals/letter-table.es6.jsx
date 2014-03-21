@@ -1,13 +1,13 @@
 /** @jsx React.DOM */
 
 import _ from 'underscore';
-import LetterColumn from 'components/portals/letter-column';
+import LetterCell from 'components/portals/letter-cell';
 import React from 'react';
 
 export default React.createClass({
-  renderColumn: function (letter, i) {
+  renderCell: function (letter, i) {
     return this.transferPropsTo(
-      <LetterColumn
+      <LetterCell
         key={i}
         letter={letter}
         selected={this.props.value === letter}
@@ -15,10 +15,10 @@ export default React.createClass({
     );
   },
 
-  renderColumns: function () {
+  renderCells: function () {
     var fromCode = function (n) { return String.fromCharCode(n); };
     var letters = _.map(_.range(65, 91), fromCode);
-    return _.map([''].concat(letters, 'Other'), this.renderColumn);
+    return _.map([''].concat(letters, 'Other'), this.renderCell);
   },
 
   render: function () {
@@ -26,7 +26,7 @@ export default React.createClass({
       <table className='osw-portals-letter-table'>
         <tbody>
           <tr>
-            {this.renderColumns()}
+            {this.renderCells()}
           </tr>
         </tbody>
       </table>

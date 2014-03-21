@@ -13,7 +13,7 @@ export default React.createClass({
 
   render: function () {
     return (
-      <td className='osw-portals-letter-column'>
+      <td className='osw-portals-letter-cell'>
         <input
           type='button'
           className={this.getInputClassName()}

@@ -1,0 +1,18 @@
+@import '../config';
+
+.osw-portals-letter-cell {
+  padding: 0;
+
+  &:not(:first-child) .osw-button {
+    @include border-left-radius(0);
+  }
+
+  &:not(:last-child) .osw-button {
+    border-right: 0;
+    @include border-right-radius(0);
+  }
+
+  .osw-button {
+    width: 100%
+  }
+}

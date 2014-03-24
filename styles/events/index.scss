@@ -56,6 +56,8 @@
   }
 
   .osw-month-year {
+    padding-top: 10px;
+
     .osw-month,
     .osw-year {
       vertical-align: middle;
@@ -98,12 +100,14 @@
   }
 
   .osw-loading {
-    float: left;
+    position: absolute;
+    left: 5px;
     color: $grey-darker;
   }
 
   .osw-tz {
-    text-align: right;
+    position: absolute;
+    right: 5px;
     color: $grey-darker;
   }
 

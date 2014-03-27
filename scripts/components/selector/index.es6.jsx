@@ -64,6 +64,12 @@ export default React.createClass({
     this.updateResults(this.state.scope, this.state.query);
   },
 
+  componentDidUpdate: function (prevProps, prevState) {
+    if (prevState.isActive && !this.state.isActive) {
+      this.setActiveResult(this.firstActiveResult(this.state.results));
+    }
+  },
+
   handleScopeClick: function (scope) {
     if (scope === this.state.scope) return;
     this.updateResults(scope, this.state.query);

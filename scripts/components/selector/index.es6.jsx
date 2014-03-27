@@ -41,7 +41,8 @@ export default React.createClass({
       allowArbitrary: false,
       full: false,
       placeholder: 'Search...',
-      renderPageSize: 20
+      renderPageSize: 20,
+      indicies: ['all']
     };
   },
 

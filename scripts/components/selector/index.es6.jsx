@@ -182,7 +182,7 @@ export default React.createClass({
 
   setActiveResult: function (selectorItem) {
     this.setState({activeResultId: (selectorItem || {}).id});
-    if (this.isMounted()) this.refs.results.forceUpdate();
+    if (this.refs.results) this.refs.results.forceUpdate();
   },
 
   fetchOptions: function () {

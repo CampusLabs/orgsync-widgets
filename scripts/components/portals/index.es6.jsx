@@ -176,7 +176,6 @@ export default React.createClass({
           portals={portals}
         />
         <List
-          key={portals.pluck('id').join()}
           collection={portals}
           isLoading={this.state.isLoading}
           error={this.state.error}

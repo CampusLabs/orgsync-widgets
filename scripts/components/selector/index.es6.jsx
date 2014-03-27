@@ -27,7 +27,7 @@ export default React.createClass({
       events: {
         'add remove': function () {
           this.forceUpdate();
-          this.refs.results.forceUpdate();
+          if (this.refs.results) this.refs.results.forceUpdate();
         }
       }
     }];

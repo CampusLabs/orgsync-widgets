@@ -149,6 +149,7 @@ export default React.createClass({
   },
 
   updateResults: function (scope, query) {
+    query = query.trim().replace(/\s+/g, ' ');
 
     // Store current results in cache.
     var cache = this.cache[this.state.scope.id];
@@ -161,7 +162,7 @@ export default React.createClass({
     var results = cache[query];
     if (!results) {
       results = cache[query] = new SelectorItem.Collection();
-      if (this.props.allowArbitrary && query.trim()) results.add({name: query});
+      if (this.props.allowArbitrary && query) results.add({name: query});
       results.on('add', function (selectorItem) {
         if (selectorItem !== this.firstActiveResult(results)) return;
         this.setActiveResult(selectorItem);

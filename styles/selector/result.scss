@@ -2,21 +2,15 @@
 
 .osw-selector-result {
   @include user-select(none);
+  background: white;
 
   &.osw-selected {
     color: #999;
     background: #f9f9f9;
-
-    &:before {
-      float: right;
-      margin-top: -1px;
-      font-family: SyncDings;
-      content: '\f071'
-    }
   }
 }
 
-.osw-selector-index.osw-mini .osw-selector-result {
+.osw-mini .osw-selector-result {
   border-top: 1px solid #eee;
   padding: 5px;
   background: #fff;
@@ -25,6 +19,13 @@
   &:first-child {
     border-top: none;
     padding-top: 6px;
+  }
+
+  &.osw-selected:before {
+    float: right;
+    margin-top: -1px;
+    font-family: SyncDings;
+    content: '\f071'
   }
 
   &.osw-active {
@@ -43,7 +44,7 @@
   }
 }
 
-.osw-orgsync-selector.osw-full {
+.osw-full {
   .osw-selector-result {
     @include box-sizing(border-box);
     padding: 10px;
@@ -51,11 +52,15 @@
     text-align: center;
     vertical-align: top;
     cursor: pointer;
-    background: #fff;
+    background: white;
 
-    &.osw-selected {
-      color: #999;
-      background: #f9f9f9;
+    &.osw-active {
+      color: white;
+      background: $blue-darkest;
+
+      &.osw-selected {
+        background: $blue;
+      }
     }
 
     .osw-name {
@@ -64,17 +69,17 @@
       font-weight: bold;
     }
   }
+}
 
-  .orgsync-widget[min-width~='461px'] .osw-selector-result {
-    display: inline-block;
-    width: 50%;
-  }
+.orgsync-widget[min-width~='461px'] .osw-full .osw-selector-result {
+  display: inline-block;
+  width: 50%;
+}
 
-  .orgsync-widget[min-width~='691px'] .osw-selector-result {
-    width: 33.3%;
-  }
+.orgsync-widget[min-width~='691px'] .osw-full .osw-selector-result {
+  width: 33.3%;
+}
 
-  .orgsync-widget[min-width~='921px'] .osw-selector-result {
-    width: 25%;
-  }
+.orgsync-widget[min-width~='921px'] .osw-full .osw-selector-result {
+  width: 25%;
 }

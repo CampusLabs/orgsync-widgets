@@ -39,6 +39,8 @@ export default React.createClass({
       scopes: [],
       hiddenInputName: 'selection',
       allowArbitrary: false,
+      allowFull: true,
+      fullText: 'Browse',
       full: false,
       placeholder: 'Search...',
       renderPageSize: 20,
@@ -255,8 +257,26 @@ export default React.createClass({
 
   renderTokens: function () {
     return (
-      <div className='osw-tokens'>
-        {this.state.value.map(this.renderToken)}
+      <div className='osw-tokens'>{this.state.value.map(this.renderToken)}</div>
+    );
+  },
+
+  renderBrowse: function () {
+    if (this.props.full) return;
+    return (
+      <input
+        type='button'
+        className='osw-button osw-full-button'
+        value={this.props.fullText}
+      />
+    );
+  },
+
+  renderTokensAndQuery: function () {
+    return (
+      <div className='osw-tokens-and-query'>
+        {this.renderTokens()}
+        {this.renderBrowse()}
         {this.renderQuery()}
       </div>
     );
@@ -340,7 +360,7 @@ export default React.createClass({
         onKeyDown={this.handleKeyDown}
       >
         {this.renderHiddenInput()}
-        {this.renderTokens()}
+        {this.renderTokensAndQuery()}
         {this.renderScopes()}
         {this.renderResults()}
       </div>

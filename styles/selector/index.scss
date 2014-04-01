@@ -31,9 +31,14 @@
     }
   }
 
-  .osw-tokens {
+  .osw-tokens-and-query {
     padding: 5px;
     border: 1px solid #eee;
+  }
+
+  .osw-full-button {
+    float: right;
+    padding: 3px 5px;
   }
 
   .osw-query {
@@ -42,7 +47,6 @@
     border: none;
     padding: 5px;
     outline: none;
-    width: 100%;
   }
 
   .osw-scopes {

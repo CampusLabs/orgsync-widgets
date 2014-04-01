@@ -24,6 +24,12 @@ export default React.createClass({
     }
   },
 
+  getDefaultProps: function () {
+    return {
+      showHideButton: true
+    };
+  },
+
   show: function () {
     this.props.olay.show();
     elementQuery();
@@ -39,12 +45,17 @@ export default React.createClass({
     return olays[olays.length - 1] === this.props.olay.$container[0];
   },
 
+  renderHideButton: function () {
+    if (!this.props.showHideButton) return;
+    return (
+      <div className='js-olay-hide osw-hide-button'><Icon name='delete' /></div>
+    );
+  },
+
   render: function () {
     return (
       <div>
-        <div className='js-olay-hide osw-close-icon'>
-          <Icon name='delete' />
-        </div>
+        {this.renderHideButton()}
         {this.props.children}
       </div>
     );

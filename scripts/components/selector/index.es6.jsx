@@ -242,20 +242,32 @@ var SelectorIndex = React.createClass({
     this.openBrowse();
   },
 
+  handleBrowseCancel: function () {
+    this.olay.hide();
+  },
+
+  handleBrowseDone: function (state) {
+    this.state.value.set(state.value.models);
+    this.olay.hide();
+  },
+
   openBrowse: function () {
     var descriptor = SelectorIndex(_.extend({}, this.props, {
       browse: true,
       initialValue: this.state.value,
-      initialQuery: this.state.query
+      initialQuery: this.state.query,
+      onCancel: this.handleBrowseCancel,
+      onDone: this.handleBrowseDone
     }));
-    var olay = Olay.create({className: 'selector-index'}, descriptor);
-    olay.show();
-    olay.props.olay.$el.one('olay:hide', _.bind(function () {
-      this.setState({
-        value: olay.props.children.state.value,
-        query: olay.props.children.state.query
-      });
-    }, this));
+    this.setQuery('');
+    (this.olay = Olay.create({
+      className: 'selector-index',
+      showHideButton: false,
+      options: {
+        hideOnKeys: false,
+        hideOnClick: false
+      }
+    }, descriptor)).show();
   },
 
   renderHiddenInput: function () {
@@ -373,6 +385,32 @@ var SelectorIndex = React.createClass({
     );
   },
 
+  renderCancel: function () {
+    var onCancel = this.props.onCancel;
+    if (!onCancel) return;
+    return (
+      <input
+        type='button'
+        className='osw-button osw-cancel'
+        onClick={onCancel}
+        value='Cancel'
+      />
+    );
+  },
+
+  renderDone: function () {
+    var onDone = this.props.onDone;
+    if (!onDone) return;
+    return (
+      <input
+        type='button'
+        className='osw-button osw-done'
+        onClick={_.partial(onDone, this.state)}
+        value='Done'
+      />
+    );
+  },
+
   render: function () {
     return (
       <div
@@ -388,6 +426,8 @@ var SelectorIndex = React.createClass({
         {this.renderTokensAndQuery()}
         {this.renderScopes()}
         {this.renderResults()}
+        {this.renderCancel()}
+        {this.renderDone()}
       </div>
     );
   }

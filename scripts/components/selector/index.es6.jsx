@@ -164,10 +164,6 @@ export default React.createClass({
       results = cache[query] = new SelectorItem.Collection();
       results.hasFetched = false;
       results.once('request:end', function () { this.hasFetched = true; });
-      results.on('add', function (selectorItem) {
-        if (selectorItem !== this.firstActiveResult(results)) return;
-        this.setActiveResult(selectorItem);
-      }, this);
       if (this.props.allowArbitrary && query) results.add({name: query});
       if (this.previousResults) {
         var fillers = this.previousResults.reject(function (result) {
@@ -176,6 +172,10 @@ export default React.createClass({
         results.add(fillers);
         results.once('request:end', _.partial(results.remove, fillers));
       }
+      results.once('request:end add', function () {
+        if (results !== this.state.results) return;
+        this.setActiveResult(this.firstActiveResult(results));
+      }, this);
     }
     this.setState({results: results});
     this.setActiveResult(this.firstActiveResult(results));

@@ -14,7 +14,13 @@ export default React.createClass({
         .addClass('orgsync-widget')
         .addClass('osw-' + props.className + '-olay');
       props = _.extend({olay: olay}, props);
-      return React.renderComponent(this(props, children), olay.$el[0]);
+      var duration = olay.duration;
+      olay.duration = 0;
+      olay.show();
+      var component = React.renderComponent(this(props, children), olay.$el[0]);
+      olay.hide();
+      olay.duration = duration;
+      return component;
     }
   },
 

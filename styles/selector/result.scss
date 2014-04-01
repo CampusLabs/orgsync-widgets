@@ -3,18 +3,26 @@
 .osw-selector-result {
   @include user-select(none);
   background: white;
+  cursor: pointer;
 
   &.osw-selected {
-    color: #999;
-    background: #f9f9f9;
+    color: $grey-darker;
+    background: $grey-lightest;
+  }
+
+  &.osw-active {
+    color: white;
+    background: $blue-darkest;
+
+    &.osw-selected {
+      background: $blue;
+    }
   }
 }
 
 .osw-mini .osw-selector-result {
   border-top: 1px solid #eee;
   padding: 5px;
-  background: #fff;
-  cursor: pointer;
 
   &:first-child {
     border-top: none;
@@ -26,15 +34,6 @@
     margin-top: -1px;
     font-family: SyncDings;
     content: '\f071'
-  }
-
-  &.osw-active {
-    color: #fff;
-    background: #336699;
-
-    &.osw-selected {
-      background: #99ccff;
-    }
   }
 
   .osw-name {
@@ -51,17 +50,6 @@
     border: 5px solid #eee;
     text-align: center;
     vertical-align: top;
-    cursor: pointer;
-    background: white;
-
-    &.osw-active {
-      color: white;
-      background: $blue-darkest;
-
-      &.osw-selected {
-        background: $blue;
-      }
-    }
 
     .osw-name {
       overflow: hidden;

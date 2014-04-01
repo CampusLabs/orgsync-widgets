@@ -49,6 +49,8 @@ export default React.createClass({
 
   componentWillMount: function () {
     this.doneFetching = !this.props.shouldFetch;
+    var initialFetchPage = this.props.initialFetchPage;
+    if (initialFetchPage != null) this.fetchPage(initialFetchPage);
   },
 
   componentDidMount: function () {
@@ -141,7 +143,7 @@ export default React.createClass({
     }
 
     // Fetch if the models in memory have been exhausted.
-    if (index + length > collection.length) this.fetchNextPage();
+    if (index + length > collection.length) this.fetchPage();
 
     // Finally, set the new state.
     this.setState({
@@ -169,7 +171,7 @@ export default React.createClass({
     }) || window);
   },
 
-  fetchNextPage: function () {
+  fetchPage: function (page) {
     if (this.doneFetching || this.state.isLoading || this.state.error) return;
     this.setState({isLoading: true, error: null});
     var collection = this.props.collection;
@@ -177,7 +179,7 @@ export default React.createClass({
     collection.fetch({
       remove: false,
       data: _.extend({
-        page: 1 + Math.floor(collection.length / fetchPageSize),
+        page: page || 1 + Math.floor(collection.length / fetchPageSize),
         per_page: fetchPageSize
       }, _.result(this.props, 'fetchOptions'))
     });

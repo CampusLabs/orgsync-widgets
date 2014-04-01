@@ -162,11 +162,20 @@ export default React.createClass({
     var results = cache[query];
     if (!results) {
       results = cache[query] = new SelectorItem.Collection();
-      if (this.props.allowArbitrary && query) results.add({name: query});
+      results.hasFetched = false;
+      results.once('request:end', function () { this.hasFetched = true; });
       results.on('add', function (selectorItem) {
         if (selectorItem !== this.firstActiveResult(results)) return;
         this.setActiveResult(selectorItem);
       }, this);
+      if (this.props.allowArbitrary && query) results.add({name: query});
+      if (this.previousResults) {
+        var fillers = this.previousResults.reject(function (result) {
+          return result.isArbitrary();
+        });
+        results.add(fillers);
+        results.once('request:end', _.partial(results.remove, fillers));
+      }
     }
     this.setState({results: results});
     this.setActiveResult(this.firstActiveResult(results));
@@ -314,6 +323,7 @@ export default React.createClass({
         fetchOptions={this.fetchOptions}
         uniform={true}
         renderPageSize={this.props.renderPageSize}
+        initialFetchPage={this.state.results.hasFetched ? null : 1}
       />
     );
   },

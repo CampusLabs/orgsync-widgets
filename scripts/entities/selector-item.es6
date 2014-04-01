@@ -36,7 +36,9 @@ var Collection = Base.Collection.extend({
   model: Model,
 
   sync: function (method, model, options) {
+    model.trigger('request:start');
     live.send('selector', options.data, function (er, results) {
+      model.trigger('request:end');
       if (er) return options.error(er);
       options.success(results);
     });

@@ -41,9 +41,9 @@ var SelectorIndex = React.createClass({
       scopes: [],
       hiddenInputName: 'selection',
       allowArbitrary: false,
-      allowFull: true,
-      fullText: 'Browse',
-      full: false,
+      allowBrowse: true,
+      browseText: 'Browse',
+      browse: false,
       placeholder: 'Search...',
       renderPageSize: 20,
       indicies: ['all']
@@ -225,7 +225,7 @@ var SelectorIndex = React.createClass({
 
   getClassName: function () {
     var classes = ['osw-selector-index'];
-    classes.push(this.props.full ? 'osw-full' : 'osw-mini');
+    classes.push(this.props.browse ? 'osw-browse' : 'osw-inline');
     if (this.state.isActive) classes.push('osw-active');
     return classes.join(' ');
   },
@@ -237,14 +237,14 @@ var SelectorIndex = React.createClass({
     this.refs.results.forceUpdate();
   },
 
-  handleBrowseClick: function (ev) {
+  handleBrowseButtonClick: function (ev) {
     ev.stopPropagation();
-    this.openFull();
+    this.openBrowse();
   },
 
-  openFull: function () {
+  openBrowse: function () {
     var descriptor = SelectorIndex(_.extend({}, this.props, {
-      full: true,
+      browse: true,
       initialValue: this.state.value,
       initialQuery: this.state.query
     }));
@@ -284,14 +284,14 @@ var SelectorIndex = React.createClass({
     );
   },
 
-  renderBrowse: function () {
-    if (this.props.full) return;
+  renderBrowseButton: function () {
+    if (this.props.browse) return;
     return (
       <input
         type='button'
-        className='osw-button osw-full-button'
-        value={this.props.fullText}
-        onClick={this.handleBrowseClick}
+        className='osw-button osw-browse-button'
+        value={this.props.browseText}
+        onClick={this.handleBrowseButtonClick}
       />
     );
   },
@@ -301,7 +301,7 @@ var SelectorIndex = React.createClass({
       <div className='osw-tokens-and-query'>
         {this.renderTokens()}
         {this.renderQuery()}
-        {this.renderBrowse()}
+        {this.renderBrowseButton()}
       </div>
     );
   },
@@ -330,7 +330,7 @@ var SelectorIndex = React.createClass({
   },
 
   renderScopes: function () {
-    if (!this.props.full) return;
+    if (!this.props.browse) return;
     return (
       <List
         className='osw-scopes'
@@ -356,7 +356,7 @@ var SelectorIndex = React.createClass({
   },
 
   renderResults: function () {
-    if (!this.props.full && !this.state.isActive) return;
+    if (!this.props.browse && !this.state.isActive) return;
     return (
       <List
         className='osw-results'

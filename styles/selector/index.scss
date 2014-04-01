@@ -37,18 +37,21 @@
   }
 
   .osw-browse-button {
-    @include box-sizing(border-box);
-    padding: 3px 0;
-    width: 20%;
+    float: right;
+    padding: 3px 5px;
   }
 
   .osw-query {
-    @include box-sizing(border-box);
-    @include appearance(none);
-    border: none;
-    padding: 5px;
-    outline: none;
-    width: 80%;
+    overflow: hidden;
+
+    input {
+      @include box-sizing(border-box);
+      @include appearance(none);
+      border: none;
+      padding: 5px;
+      outline: none;
+      width: 100%;
+    }
   }
 
   .osw-scopes {

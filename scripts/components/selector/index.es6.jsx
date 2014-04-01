@@ -300,21 +300,22 @@ var SelectorIndex = React.createClass({
     return (
       <div className='osw-tokens-and-query'>
         {this.renderTokens()}
-        {this.renderQuery()}
         {this.renderBrowseButton()}
+        {this.renderQuery()}
       </div>
     );
   },
 
   renderQuery: function () {
     return (
-      <input
-        ref='query'
-        className='osw-query'
-        value={this.state.query}
-        onChange={this.handleQueryChange}
-        placeholder={this.props.placeholder}
-      />
+      <div className='osw-query'>
+        <input
+          ref='query'
+          value={this.state.query}
+          onChange={this.handleQueryChange}
+          placeholder={this.props.placeholder}
+        />
+      </div>
     );
   },
 

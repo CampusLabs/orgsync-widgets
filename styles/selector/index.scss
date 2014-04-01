@@ -37,8 +37,9 @@
   }
 
   .osw-full-button {
-    float: right;
-    padding: 3px 5px;
+    @include box-sizing(border-box);
+    padding: 3px 0;
+    width: 20%;
   }
 
   .osw-query {
@@ -47,6 +48,7 @@
     border: none;
     padding: 5px;
     outline: none;
+    width: 80%;
   }
 
   .osw-scopes {
@@ -63,7 +65,7 @@
   }
 }
 
-.selector-index-olay .js-olay-content {
+.osw-selector-index-olay .js-olay-content {
   display: block;
   margin: 0 auto;
 }

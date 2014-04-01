@@ -5,13 +5,14 @@ module Base from 'entities/base';
 import CoercedPropsMixin from 'mixins/coerced-props';
 import List from 'components/list';
 import ListenersMixin from 'mixins/listeners';
+import Olay from 'components/olay';
 import React from 'react';
 module SelectorItem from 'entities/selector-item';
 import SelectorResult from 'components/selector/result';
 import SelectorScope from 'components/selector/scope';
 import SelectorToken from 'components/selector/token';
 
-export default React.createClass({
+var SelectorIndex = React.createClass({
   mixins: [CoercedPropsMixin, ListenersMixin],
 
   getCoercedProps: function () {
@@ -36,6 +37,7 @@ export default React.createClass({
   getDefaultProps: function () {
     return {
       initialValue: [],
+      initialQuery: '',
       scopes: [],
       hiddenInputName: 'selection',
       allowArbitrary: false,
@@ -52,7 +54,7 @@ export default React.createClass({
     return {
       value: this.props.initialValue.clone(),
       scope: this.props.scopes.first(),
-      query: '',
+      query: this.props.initialQuery,
       results: null,
       hasMouse: false,
       hasFocus: false,
@@ -235,6 +237,27 @@ export default React.createClass({
     this.refs.results.forceUpdate();
   },
 
+  handleBrowseClick: function (ev) {
+    ev.stopPropagation();
+    this.openFull();
+  },
+
+  openFull: function () {
+    var descriptor = SelectorIndex(_.extend({}, this.props, {
+      full: true,
+      initialValue: this.state.value,
+      initialQuery: this.state.query
+    }));
+    var olay = Olay.create({className: 'selector-index'}, descriptor);
+    olay.show();
+    olay.props.olay.$el.one('olay:hide', _.bind(function () {
+      this.setState({
+        value: olay.props.children.state.value,
+        query: olay.props.children.state.query
+      });
+    }, this));
+  },
+
   renderHiddenInput: function () {
     return (
       <input
@@ -268,6 +291,7 @@ export default React.createClass({
         type='button'
         className='osw-button osw-full-button'
         value={this.props.fullText}
+        onClick={this.handleBrowseClick}
       />
     );
   },
@@ -276,8 +300,8 @@ export default React.createClass({
     return (
       <div className='osw-tokens-and-query'>
         {this.renderTokens()}
-        {this.renderBrowse()}
         {this.renderQuery()}
+        {this.renderBrowse()}
       </div>
     );
   },
@@ -367,3 +391,5 @@ export default React.createClass({
     );
   }
 });
+
+export default SelectorIndex;

@@ -29,32 +29,60 @@
     padding-top: 6px;
   }
 
-  &.osw-selected:before {
-    float: right;
-    margin-top: -1px;
-    font-family: SyncDings;
-    content: '\f071'
+  .osw-image {
+    display: none;
   }
 
   .osw-name {
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
+
+    .oswi {
+      width: 12px;
+    }
   }
 }
 
 .osw-browse {
   .osw-selector-result {
+    position: relative;
     @include box-sizing(border-box);
-    padding: 10px;
     border: 5px solid #eee;
     text-align: center;
     vertical-align: top;
 
+    .osw-image {
+      &:before {
+        content: "";
+        display: block;
+        padding-top: 100%;
+      }
+
+      img {
+        position: absolute;
+        width: 100%;
+        top: 0;
+        left: 0;
+      }
+    }
+
+
     .osw-name {
       overflow: hidden;
+      margin: 5px;
       height: 30px;
       font-weight: bold;
+
+      .oswi {
+        position: absolute;
+        top: -5px;
+        left: -5px;
+        padding: 5px;
+        font-size: 20px;
+        color: $grey-darkest;
+        background: white;
+      }
     }
   }
 }

@@ -411,6 +411,13 @@ var SelectorIndex = React.createClass({
     );
   },
 
+  renderFinishButtons: function () {
+    var cancel = this.renderCancel();
+    var done = this.renderDone();
+    if (!cancel || !done) return;
+    return <div className='osw-finish-buttons'>{cancel}{done}</div>;
+  },
+
   render: function () {
     return (
       <div
@@ -426,8 +433,7 @@ var SelectorIndex = React.createClass({
         {this.renderTokensAndQuery()}
         {this.renderScopes()}
         {this.renderResults()}
-        {this.renderCancel()}
-        {this.renderDone()}
+        {this.renderFinishButtons()}
       </div>
     );
   }

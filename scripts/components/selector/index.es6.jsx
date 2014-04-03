@@ -46,7 +46,7 @@ var SelectorIndex = React.createClass({
       browse: false,
       placeholder: 'Search...',
       renderPageSize: 20,
-      indicies: ['all']
+      indicies: ['_all']
     };
   },
 

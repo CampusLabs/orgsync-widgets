@@ -16,8 +16,11 @@ export default React.createClass({
     return classes.join(' ');
   },
 
-  image: function () {
-    return <img src={this.props.selectorItem.get('image_url') || 'dne'} />;
+  imageStyle: function () {
+    var src = this.props.selectorItem.get('image_url');
+    if (!src) return {};
+    if (src[0] === '/') src = 'https://orgsync.com' + src;
+    return {backgroundImage: "url('" + src + "')"};
   },
 
   icon: function () {
@@ -41,7 +44,7 @@ export default React.createClass({
   render: function () {
     return (
       <div className={this.className()} onClick={this.onClick}>
-        <div className='osw-image'>{this.image()}</div>
+        <div className='osw-image' style={this.imageStyle()} />
         <div className='osw-name'>{this.icon()}{this.name()}</div>
       </div>
     );

@@ -1,7 +1,7 @@
 //= require ./start.frag
 //= require ./amd-shim.js
 //= requireSelf
-//= requireTree ./components
+//= require ./components/**/*
 //= require ./end.frag
 
 import $ from 'jquery';

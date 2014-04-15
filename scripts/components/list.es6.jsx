@@ -15,7 +15,7 @@ export default React.createClass({
       events: {
         sync: this.handleSuccess,
         error: this.handleError,
-        'add change remove': this.delayUpdate
+        'add sort remove': this.delayUpdate
       }
     }];
   },

@@ -14,7 +14,8 @@ export default React.createClass({
       model: this.props.collection,
       events: {
         sync: this.handleSuccess,
-        error: this.handleError
+        error: this.handleError,
+        'add change remove': this.delayUpdate
       }
     }];
   },
@@ -187,7 +188,6 @@ export default React.createClass({
 
   handleSuccess: function (collection, data) {
     if (data.length < this.props.fetchPageSize) this.doneFetching = true;
-    this.delayUpdate();
     this.setState({isLoading: false, error: null});
   },
 

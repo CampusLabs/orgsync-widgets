@@ -136,11 +136,12 @@ export default React.createClass({
         if (collection.length) this.delayUpdate();
       }
     } else if (length <= collection.length) {
+      var listBottom = $el.prop('scrollHeight') - this.props.threshold;
       var visibleBottom = scroll + $scrollParent.height();
-      var targetBottom = $el.prop('scrollHeight') - this.props.threshold;
-      if (visibleBottom < targetBottom) return;
-      length = length + this.props.renderPageSize;
-      this.delayUpdate();
+      if (listBottom < visibleBottom) {
+        length += this.props.renderPageSize;
+        this.delayUpdate();
+      }
     }
 
     // Fetch if the models in memory have been exhausted.
@@ -155,11 +156,6 @@ export default React.createClass({
       index: index,
       length: length
     });
-  },
-
-  shouldComponentUpdate: function (nextProps, nextState) {
-    return !_.isEqual(this.props, nextProps) ||
-      !_.isEqual(this.state, nextState);
   },
 
   get$ScrollParent: function () {

@@ -6,7 +6,7 @@ module BackboneRelations from 'backbone-relations';
 var methodMap = {
   create: 'post',
   read: 'get',
-  update: 'post',
+  update: 'put',
   delete: 'delete',
   patch: 'patch'
 };

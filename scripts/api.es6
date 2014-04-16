@@ -1,5 +1,5 @@
 import config from 'config';
-import OrgSyncApi from 'orgsync-javascript-api';
+import OrgSyncApi from 'orgsync-api';
 
 var api = new OrgSyncApi(config.api);
 

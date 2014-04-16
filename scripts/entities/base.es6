@@ -3,6 +3,14 @@ import api from 'api';
 
 module BackboneRelations from 'backbone-relations';
 
+var methodMap = {
+  create: 'post',
+  read: 'get',
+  update: 'post',
+  delete: 'delete',
+  patch: 'patch'
+};
+
 var Model = BackboneRelations.Model.extend({
   constructor: function () {
     this.constructor.resolveRelations();
@@ -14,7 +22,7 @@ var Model = BackboneRelations.Model.extend({
     var data = options.data;
     model.requestCount == null ? model.requestCount = 1 : model.requestCount++;
     model.trigger('request:start');
-    return api.get(url, data, function (er, res) {
+    return api[methodMap[method]](url, data, function (er, res) {
       model.requestCount--;
       model.trigger('request:end');
       if (er || (er = res.error)) return options.error(er);

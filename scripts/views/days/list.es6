@@ -320,7 +320,7 @@ export default ListView.extend({
           endDate.isAfter(date) ? endDate : date,
           true
         );
-        if (self[fetchKey] === day) self.checkFetch();
+        if (self[fetchKey] === day) self.debouncedCheckFetch();
       }
     });
   }

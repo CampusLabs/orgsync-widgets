@@ -33,7 +33,7 @@ var Model = Base.Model.extend({
   normalize: function (which) {
     var key = '_' + which;
     if (this[key]) return this[key];
-    var date = moment(this.get(which));
+    var date = moment.utc(this.get(which));
     var tz = this.get('tz');
     if (!this.get('event').get('is_all_day')) return date.tz(tz);
 

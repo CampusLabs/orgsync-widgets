@@ -31,7 +31,6 @@ var Model = BackboneRelations.Model.extend({
   }
 }, {
   resolveRelations: function () {
-    resolveRelations: function () {
     if (this === Model || this.relationsAreResolved) return;
     _.each(this.prototype.relations, function (rel) {
       if (rel.hasOne) rel.hasOne = rel.hasOne.Model;

@@ -3,13 +3,13 @@ import tz from 'tz';
 
 module Base from 'entities/base';
 module Day from 'entities/day';
-module EventDate from 'entities/event-date';
+module EventOccurrence from 'entities/event-occurrence';
 module Event from 'entities/event';
 
 var Model = Base.Model.extend({
   relations: {
-    eventDates: {hasMany: EventDate, fk: 'day_id'},
-    events: {hasMany: Event, via: 'eventDates#event', fk: 'event_id'}
+    eventOccurrences: {hasMany: EventOccurrence, fk: 'day_id'},
+    events: {hasMany: Event, via: 'eventOccurrences#event', fk: 'event_id'}
   },
 
   defaults: {
@@ -18,27 +18,8 @@ var Model = Base.Model.extend({
     fetched: 0
   },
 
-  initialize: function () {
-    this.listenTo(this.get('eventDates'), {
-      add: function (eventDate) {
-        this.setVisible();
-        this.listenTo(eventDate, 'change:visible', this.setVisible);
-      },
-      remove: function (eventDate) {
-        this.setVisible();
-        this.stopListening(eventDate, 'change:visible', this.setVisible);
-      }
-    });
-  },
-
   date: function () {
     return this._date || (this._date = moment.tz(this.id, this.get('tz')));
-  },
-
-  setVisible: function () {
-    this.set('visible', this.get('eventDates').any(function (eventDate) {
-      return !eventDate.get('filler') && eventDate.get('visible');
-    }));
   }
 }, {
   id: function (date) { return date.format('YYYY-MM-DD'); }
@@ -56,23 +37,23 @@ var Collection = Base.Collection.extend({
   },
 
   addEvent: function (event) {
-    this.addEventDates(event.get('dates'), this);
+    this.addEventOccurrences(event.get('dates'), this);
   },
 
-  addEventDates: function (eventDates) {
-    eventDates.each(this.addEventDate, this);
+  addEventOccurrences: function (eventOccurrences) {
+    eventOccurrences.each(this.addEventOccurrence, this);
   },
 
-  addEventDate: function (eventDate) {
+  addEventOccurrence: function (eventOccurrence) {
     var tz = this.tz;
-    eventDate.set('tz', tz);
-    var start = eventDate.start().clone().startOf('day');
-    var end = eventDate.end();
+    eventOccurrence.set('tz', tz);
+    var start = eventOccurrence.start().clone().startOf('day');
+    var end = eventOccurrence.end();
     do {
       var id = Day.Model.id(start);
       var day = this.get(id);
       if (!day) this.add((day = new Day.Model({id: id})).set('tz', tz));
-      day.get('eventDates').add(eventDate);
+      day.get('eventOccurrences').add(eventOccurrence);
     } while (start.add('days', 1).isBefore(end));
   },
 

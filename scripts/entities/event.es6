@@ -1,17 +1,18 @@
 import _ from 'underscore';
 
-module Base from 'entities/base';
-module Portal from 'entities/portal';
 module Account from 'entities/account';
-module EventDate from 'entities/event-date';
+module Base from 'entities/base';
 module Comment from 'entities/comment';
+module EventFilter from 'entities/event-filter';
+module EventOccurrence from 'entities/event-occurrence';
+module Portal from 'entities/portal';
 
 var Model = Base.Model.extend({
   relations: {
     portal: {hasOne: Portal, fk: 'portal_id'},
     creator: {hasOne: Account, fk: 'creator_id'},
-    dates: {hasMany: EventDate, fk: 'event_id'},
-    comments: {hasMany: Comment, fk: 'event_id'}
+    dates: {hasMany: EventOccurrence, fk: 'event_id'},
+    comments: {hasMany: Comment}
   },
 
   parse: function (data) {
@@ -42,7 +43,14 @@ var Model = Base.Model.extend({
 var Collection = Base.Collection.extend({
   model: Model,
 
-  comparator: 'name'
+  comparator: 'name',
+
+  eventFilters: function () {
+    if (this._eventFilters) return this._eventFilters;
+    var eventFilters = this._eventFilters = new EventFilter.Collection();
+    eventFilters.url = _.result(this, 'url') + '/filters';
+    return eventFilters;
+  }
 });
 
 export {Model, Collection};

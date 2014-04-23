@@ -129,7 +129,7 @@ export default BaseView.extend({
       modelView: EventFiltersShowView,
       modelViewOptions: {
         legendMode: this.legendMode,
-        header: this.filtersHeader
+        header: this.filtersHeader || 'Filters'
       }
     });
   },

@@ -1,3 +1,4 @@
+import _ from 'underscore';
 import BaseView from 'views/base';
 import EventFiltersShow from 'jst/event-filters/show';
 
@@ -24,11 +25,16 @@ export default BaseView.extend({
   options: ['legendMode', 'header'],
 
   events: {
-    'change .js-enabled': 'updateEnabled'
+    'change .js-enabled': 'setEnabled',
+    'change .js-all-enabled': 'setAllEnabled'
   },
 
   listeners: {
-    model: {'change:color': 'updateColor'}
+    model: {
+      'change:color': 'updateColor',
+      'change:enabled': 'updateEnabled'
+    },
+    collection: {'change:enabled': 'updateAllEnabled'}
   },
 
   toTemplate: function () {
@@ -36,7 +42,7 @@ export default BaseView.extend({
     return {
       name: this.model.get('name'),
       iconName: iconMap[type],
-      useRule: type === 'rsvp' || type === 'featured',
+      isFirst: this.model === this.collection.first(),
       header: this.header
     };
   },
@@ -52,11 +58,32 @@ export default BaseView.extend({
     return this;
   },
 
-  updateEnabled: function () {
+  setEnabled: function () {
     this.model.set(
       'enabled',
       this.legendMode || this.$('.js-enabled').prop('checked')
     );
+  },
+
+  updateEnabled: function () {
+    this.$('.js-enabled').prop('checked', this.model.get('enabled'));
+  },
+
+  setAllEnabled: function () {
+    var enabled = this.legendMode || this.$('.js-all-enabled').prop('checked');
+    _.invoke(this.collection.slice(1), 'set', 'enabled', enabled);
+  },
+
+  updateAllEnabled: function () {
+    if (this.model !== this.collection.first()) return;
+    var enabled = this.collection.at(1).get('enabled');
+    var indeterminate = this.collection.any(function (filter) {
+      return filter !== this.model && filter.get('enabled') !== enabled;
+    }, this);
+    this.$('.js-all-enabled').prop({
+      indeterminate: indeterminate,
+      checked: indeterminate || enabled
+    });
   },
 
   updateColor: function () {

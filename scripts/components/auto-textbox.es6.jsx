@@ -17,6 +17,10 @@ export default React.createClass({
     this.resize();
   },
 
+  shouldComponentUpdate: function (nextProps) {
+    return this.props.value !== nextProps.value;
+  },
+
   resize: function () {
     var $el = $(this.getDOMNode());
     $el.height(0);

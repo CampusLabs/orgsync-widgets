@@ -22,13 +22,16 @@ export default React.createClass({
   },
 
   resize: function () {
-    var $el = $(this.getDOMNode());
-    $el.height(0);
-    var targetHeight = $el.prop('scrollHeight');
-    var clientHeight = $el.prop('clientHeight');
+    var el = this.getDOMNode();
+    var $el = $(el);
+    var minHeight = el.style.minHeight;
+    $el.css({minHeight: 0, height: 0});
+    var targetHeight = el.scrollHeight;
+    var clientHeight = el.clientHeight;
     var innerHeight = $el.innerHeight();
-    if (clientHeight === innerHeight) targetHeight -= clientHeight;
-    $el.height(targetHeight);
+    if (clientHeight === innerHeight) targetHeight -= el.clientHeight;
+    if ($el.css('boxSizing') === 'border-box') targetHeight += el.offsetHeight;
+    $el.css({minHeight: minHeight, height: targetHeight});
   },
 
   render: function () {

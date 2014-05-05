@@ -4,7 +4,11 @@
     <input type='checkbox' class='js-enabled osw-enabled' checked>{{name}}
   </div>
 </label>
-{{#useRule}}
-  <hr>
-  {{#header}}<div class='osw-header'>{{header}}</div>{{/header}}
-{{/useRule}}
+{{#isFirst}}
+<hr>
+<label>
+  <div class='osw-name osw-header'>
+    <input type='checkbox' class='js-all-enabled osw-enabled' checked>{{header}}
+  </div>
+</label>
+{{/isFirst}}

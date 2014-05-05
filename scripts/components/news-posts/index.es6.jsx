@@ -47,7 +47,7 @@ export default React.createClass({
         className='osw-news-posts-index'
         collection={this.props.newsPosts}
         renderListItem={this.renderListItem}
-        fetchOptions={{strip_html: false}}
+        fetchData={{strip_html: false}}
       />
     );
   }

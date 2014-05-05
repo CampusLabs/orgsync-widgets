@@ -50,8 +50,7 @@ export default React.createClass({
 
   componentWillMount: function () {
     this.doneFetching = !this.props.shouldFetch;
-    var initialFetchPage = this.props.initialFetchPage;
-    if (initialFetchPage != null) this.fetchPage(initialFetchPage);
+    if (this.props.fetchInitially) this.fetchPage();
   },
 
   componentDidMount: function () {
@@ -168,18 +167,18 @@ export default React.createClass({
     }) || window);
   },
 
-  fetchPage: function (page) {
+  fetchPage: function () {
     if (this.doneFetching || this.state.isLoading || this.state.error) return;
     this.setState({isLoading: true, error: null});
     var collection = this.props.collection;
     var fetchPageSize = this.props.fetchPageSize;
-    collection.fetch({
+    collection.fetch(_.extend({
       remove: false,
       data: _.extend({
-        page: page || 1 + Math.floor(collection.length / fetchPageSize),
+        page: 1 + Math.floor(collection.length / fetchPageSize),
         per_page: fetchPageSize
-      }, _.result(this.props, 'fetchOptions'))
-    });
+      }, _.result(this.props, 'fetchData'))
+    }, _.result(this.props, 'fetchOptions')));
   },
 
   handleSuccess: function (collection, data) {

@@ -205,8 +205,8 @@ var SelectorIndex = React.createClass({
     if (this.refs.results) this.refs.results.forceUpdate();
   },
 
-  fetchOptions: function () {
-    var options = {
+  fetchData: function () {
+    var data = {
       selected: _.pluck(this.state.value.models, 'id'),
       indicies: this.props.indicies,
       scopes:
@@ -214,8 +214,9 @@ var SelectorIndex = React.createClass({
         this.props.scopes.without(this.props.scopes.get('_all')) :
         [this.state.scope]
     };
-    if (this.state.query) options.q = this.state.query;
-    return options;
+    if (this.state.query) data.q = this.state.query;
+    if (!this.state.results.hasFetched) data.page = 1;
+    return data;
   },
 
   asHiddenInputValue: function (selectorItem) {
@@ -377,10 +378,10 @@ var SelectorIndex = React.createClass({
         key={JSON.stringify(_.pick(this.state, 'scope', 'query'))}
         collection={this.state.results}
         renderListItem={this.renderResult}
-        fetchOptions={this.fetchOptions}
+        fetchData={this.fetchData}
+        fetchInitially={true}
         uniform={true}
         renderPageSize={this.props.renderPageSize}
-        initialFetchPage={this.state.results.hasFetched ? null : 1}
       />
     );
   },

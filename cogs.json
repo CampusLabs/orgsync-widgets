@@ -1,7 +1,7 @@
 {
   "options": {
-    "amd.basePath": "scripts",
-    "amd.names": {
+    "basePath": "scripts",
+    "names": {
       "animation-frame-pristine": "bower_components/animation-frame/AnimationFrame.js",
       "async": "bower_components/async/lib/async.js",
       "backbone-pristine": "bower_components/backbone/backbone.js",
@@ -25,7 +25,7 @@
       "underscore.string": "bower_components/underscore.string/lib/underscore.string.js",
       "underscore": "bower_components/underscore/underscore.js"
     },
-    "amd.shims": {
+    "shims": {
       "elementQuery": {
         "global": "elementQuery",
         "dependencies": ["jquery"]
@@ -34,7 +34,7 @@
         "global": "jstz"
       }
     },
-    "amd.concat": true,
+    "concatAmd": true,
     "processors.es6.options.compatFix": true,
     "processors.tmpl.options.variable": "o",
     "processors.jst.options.dependencies": {

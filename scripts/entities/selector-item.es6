@@ -6,13 +6,13 @@ import Live from 'live';
 import SockJS from 'sockjs';
 
 var live = new Live({
-  url: 'http://orgsync.com.dev/io/live',
+  url: 'http://orgsync.com.dev/io',
 
   socketConstructor: SockJS,
 
   fetchAuthKey: function (cb) {
     $.ajax({
-      url: 'http://orgsync.com.dev/io/live-key',
+      url: 'http://orgsync.com.dev/live_key',
       success: _.partial(cb, null),
       error: cb
     });

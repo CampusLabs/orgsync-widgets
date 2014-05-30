@@ -79,7 +79,11 @@ export default React.createClass({
   },
 
   openPortal: function (portal) {
-    Olay.create({className: 'portals-show'}, <Show portal={portal} />).show();
+    Olay.create({
+      olayClassName: 'portals-show',
+      component: Show,
+      portal: portal
+    }).show();
   },
 
   matchesUmbrella: function (portal) {

@@ -253,22 +253,21 @@ var SelectorIndex = React.createClass({
   },
 
   openBrowse: function () {
-    var descriptor = SelectorIndex(_.extend({}, this.props, {
+    (this.olay = Olay.create(_.extend({}, this.props, {
+      olayClassName: 'selector-index',
+      showHideOlayButton: false,
+      olayOptions: {
+        hideOnKeys: false,
+        hideOnClick: false
+      },
+      component: SelectorIndex,
       browse: true,
       initialValue: this.state.value,
       initialQuery: this.state.query,
       onCancel: this.handleBrowseCancel,
       onDone: this.handleBrowseDone
-    }));
+    }))).show();
     this.setQuery('');
-    (this.olay = Olay.create({
-      className: 'selector-index',
-      showHideButton: false,
-      options: {
-        hideOnKeys: false,
-        hideOnClick: false
-      }
-    }, descriptor)).show();
   },
 
   renderHiddenInput: function () {

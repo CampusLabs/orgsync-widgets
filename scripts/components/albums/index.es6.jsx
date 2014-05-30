@@ -49,11 +49,15 @@ export default React.createClass({
   openAlbum: function (album) {
     if (!this.olay) {
       this.olay = Olay.create({
-        className: 'albums-show',
-        options: {preserve: true}
+        olayClassName: 'albums-show',
+        olayOptions: {preserve: true},
+        component: AlbumsShow,
+        key: album.get('id'),
+        album: album
       });
+    } else {
+      this.olay.setProps({key: album.get('id'), album: album});
     }
-    this.olay.setProps({children: <AlbumsShow key={album.id} album={album} />});
     this.olay.show();
     this.currentAlbum = album;
   },

@@ -8,16 +8,16 @@ import React from 'react';
 
 export default React.createClass({
   statics: {
-    create: function (props, children) {
-      var olay = new Olay('<div>', props.options);
+    create: function (props) {
+      var olay = new Olay('<div>', props.olayOptions);
       olay.$container
         .addClass('orgsync-widget')
-        .addClass('osw-' + props.className + '-olay');
+        .addClass('osw-' + props.olayClassName + '-olay');
       props = _.extend({olay: olay}, props);
       var duration = olay.duration;
       olay.duration = 0;
       olay.show();
-      var component = React.renderComponent(this(props, children), olay.$el[0]);
+      var component = React.renderComponent(this(props), olay.$el[0]);
       olay.hide();
       olay.duration = duration;
       return component;
@@ -26,7 +26,7 @@ export default React.createClass({
 
   getDefaultProps: function () {
     return {
-      showHideButton: true
+      showHideOlayButton: true
     };
   },
 
@@ -46,7 +46,7 @@ export default React.createClass({
   },
 
   renderHideButton: function () {
-    if (!this.props.showHideButton) return;
+    if (!this.props.showHideOlayButton) return;
     return (
       <div className='js-olay-hide osw-hide-button'><Icon name='delete' /></div>
     );
@@ -56,7 +56,7 @@ export default React.createClass({
     return (
       <div>
         {this.renderHideButton()}
-        {this.props.children}
+        {this.props.component(this.props)}
       </div>
     );
   }

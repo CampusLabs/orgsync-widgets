@@ -1,7 +1,7 @@
 /** @jsx React.DOM */
 
 import Icon from 'components/icon';
-import React from 'react';
+import React from 'react/addons';
 
 export default React.createClass({
   getDefaultProps: function () {

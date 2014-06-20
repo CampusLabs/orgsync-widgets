@@ -1,6 +1,6 @@
 /** @jsx React.DOM */
 
-import React from 'react';
+import React from 'react/addons';
 import Selector from 'components/portals/selector';
 
 export default React.createClass({

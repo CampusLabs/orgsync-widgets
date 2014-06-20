@@ -1,0 +1,36 @@
+@import '../config';
+
+.osw-events-column {
+  padding: 1px 2px 0;
+  cursor: pointer;
+  height: 18px;
+  font-size: 11px;
+
+  .osw-all-day {
+    background: #ddd;
+  }
+
+  .osw-event {
+    border-left: 2px solid;
+    padding: 0 4px;
+    line-height: 18px;
+    @include box-sizing(border-box);
+  }
+
+  .osw-time {
+    float: right;
+    padding-left: 5px;
+    color: $grey-darker;
+  }
+
+  .osw-time,
+  .osw-title {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .osw-remaining {
+    text-align: center;
+  }
+}

@@ -3,33 +3,17 @@
 import $ from 'jquery';
 import _ from 'underscore';
 import animationFrame from 'animation-frame';
-import ListenersMixin from 'mixins/listeners';
 import React from 'react/addons';
 
 export default React.createClass({
-  mixins: [ListenersMixin],
-
-  getListeners: function () {
-    return [{
-      model: this.props.collection,
-      events: {
-        sync: this.handleSuccess,
-        error: this.handleError,
-        'add sort remove': this.delayUpdate
-      }
-    }];
-  },
-
   getDefaultProps: function () {
     return {
       isLoading: false,
       error: null,
-      fetchPageSize: 20,
       renderPageSize: 10,
-      shouldFetch: true,
-      fetchOnce: false,
       threshold: 500,
       uniform: false,
+      component: React.DOM.div,
       renderLoading: function () { return <div>Loading...</div>; },
       renderError: function (er) { return <div>{er}</div>; },
       renderBlankSlate: function () { return <div>No items to show.</div>; }
@@ -50,7 +34,7 @@ export default React.createClass({
   },
 
   componentWillMount: function () {
-    this.doneFetching = !this.props.shouldFetch;
+    this.isDoneFetching = !this.props.fetch;
     if (this.props.fetchInitially) this.fetchPage();
   },
 
@@ -72,7 +56,7 @@ export default React.createClass({
   },
 
   // Get scroll position relative to the top of the list.
-  scroll: function () {
+  getScroll: function () {
     var $scrollParent = this.get$ScrollParent();
     var $el = $(this.getDOMNode());
     if ($scrollParent[0] === $el[0]) {
@@ -90,12 +74,12 @@ export default React.createClass({
 
     this.pendingUpdate = false;
 
-    var collection = this.props.collection;
+    var items = this.props.items;
     var uniform = this.props.uniform;
     var $scrollParent = this.get$ScrollParent();
     var $el = $(this.getDOMNode());
 
-    var scroll = this.scroll();
+    var scroll = this.getScroll();
 
     var itemWidth = this.state.itemWidth;
     var itemHeight = this.state.itemHeight;
@@ -127,15 +111,15 @@ export default React.createClass({
         index = Math.max(
           0,
           Math.min(
-            (collection.length + columns) - (collection.length % columns) - length,
+            (items.length + columns) - (items.length % columns) - length,
             (Math.floor(scroll / itemHeight) - rowThreshold) * columns
           )
         );
       } else {
         length = this.props.renderPageSize;
-        if (collection.length) this.delayUpdate();
+        if (items.length) this.delayUpdate();
       }
-    } else if (length <= collection.length) {
+    } else if (length <= items.length) {
       var listBottom = $el.prop('scrollHeight') - this.props.threshold;
       var visibleBottom = scroll + $scrollParent.height();
       if (listBottom < visibleBottom) {
@@ -145,7 +129,7 @@ export default React.createClass({
     }
 
     // Fetch if the models in memory have been exhausted.
-    if (index + length > collection.length) this.fetchPage();
+    if (index + length > items.length) this.fetchPage();
 
     // Finally, set the new state.
     this.setState({
@@ -169,77 +153,67 @@ export default React.createClass({
   },
 
   fetchPage: function () {
-    if (this.doneFetching || this.state.isLoading || this.state.error) return;
+    if (this.isDoneFetching || this.state.isLoading || this.state.error) return;
     this.setState({isLoading: true, error: null});
-    var collection = this.props.collection;
-    var fetchPageSize = this.props.fetchPageSize;
-    collection.fetch(_.extend({
-      remove: false,
-      data: _.extend({
-        page: 1 + Math.floor(collection.length / fetchPageSize),
-        per_page: fetchPageSize
-      }, _.result(this.props, 'fetchData'))
-    }, _.result(this.props, 'fetchOptions')));
+    this.props.fetch(this.props.items, this.handleFetchResult);
   },
 
-  handleSuccess: function (collection, data) {
-    if (data.length < this.props.fetchPageSize || this.props.fetchOnce) {
-      this.doneFetching = true;
-    }
-    this.setState({isLoading: false, error: null});
-  },
-
-  handleError: function (collection, er) {
+  handleFetchResult: function (er, isDone) {
+    if (!er && isDone) this.isDoneFetching = true;
     this.setState({isLoading: false, error: er});
   },
 
-  scrollTo: function (model) {
-    var collection = this.props.collection;
-    var targetIndex = collection.indexOf(collection.get(model));
+  scrollTo: function (item) {
+    var items = this.props.items;
+    var targetIndex = _.indexOf(items, item);
     if (targetIndex === -1) return;
     var $scrollParent = this.get$ScrollParent();
     var itemHeight = this.state.itemHeight;
-    var current = this.scroll();
+    var current = this.getScroll();
     var max = Math.floor(targetIndex / this.state.columns) * itemHeight;
     var min = max - $scrollParent.innerHeight() + itemHeight;
     if (current > max) return $scrollParent.scrollTop(max);
     if (current < min) $scrollParent.scrollTop(min);
   },
 
-  getSpaceAbove: function () {
-    if (!this.props.uniform || !this.state.columns) return 0;
-    return (this.state.index / this.state.columns) * this.state.itemHeight;
+  renderSpace: function (n) {
+    if (!this.props.uniform || !this.state.columns) return;
+    var height = (n / this.state.columns) * this.state.itemHeight;
+    return <div style={{height: height}} />;
   },
 
-  getSpaceBelow: function () {
-    if (!this.props.uniform || !this.state.columns) return 0;
-    var total = this.props.collection.length;
-    var below = Math.max(0, total - this.state.index - this.state.length);
-    return (below / this.state.columns) * this.state.itemHeight;
+  renderSpaceAbove: function () {
+    return this.renderSpace(this.state.index);
+  },
+
+  renderSpaceBelow: function () {
+    var n = this.props.items.length - this.state.index - this.state.length;
+    return this.renderSpace(Math.max(0, n));
   },
 
   renderListItems: function () {
-    var listItems = this.props.collection
+    var listItems = this.props.items
       .slice(this.state.index, this.state.index + this.state.length)
       .map(this.props.renderListItem);
     return <div ref='listItems'>{listItems}</div>;
   },
 
   renderFetchMessage: function () {
-    var info = this.props.shouldFetch ? this.state : this.props;
+    var info = this.props.fetch ? this.state : this.props;
     if (info.isLoading) return this.props.renderLoading();
     if (info.error) return this.props.renderError(info.error);
-    if (!this.props.collection.length) return this.props.renderBlankSlate();
+    if (!this.props.items.length) return this.props.renderBlankSlate();
   },
 
   render: function () {
+    var Component = this.props.component;
     return this.transferPropsTo(
-      <div>
-        <div style={{height: this.getSpaceAbove()}} />
+      <Component>
+        {this.renderSpaceAbove()}
         {this.renderListItems()}
-        <div style={{height: this.getSpaceBelow()}} />
+        {this.renderSpaceBelow()}
         {this.renderFetchMessage()}
-      </div>
+      </Component>
     );
   }
 });

@@ -1,7 +1,7 @@
 /** @jsx React.DOM */
 
 import CommentsIndex from 'components/comments/index';
-import React from 'react';
+import React from 'react/addons';
 
 export default React.createClass({
   onImageClick: function () {

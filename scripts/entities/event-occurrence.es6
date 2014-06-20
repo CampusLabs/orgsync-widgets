@@ -4,7 +4,6 @@ import tz from 'tz';
 
 module Base from 'entities/base';
 module Event from 'entities/event';
-module EventDay from 'entities/event-day';
 
 var Model = Base.Model.extend({
   relations: {
@@ -40,7 +39,7 @@ var Model = Base.Model.extend({
     // All day events should always be midnight to midnight in the timezone
     // they are being viewed in, regardless of the time zone they were created
     // in.
-    return this[key] = moment.tz(EventDay.Model.id(date), tz);
+    return this[key] = moment.tz(date.format('YYYY-MM-DD'), tz);
   },
 
   isMultiDay: function () {
@@ -83,6 +82,15 @@ var Collection = Base.Collection.extend({
     var bStart = b.start();
     if (!aStart.isSame(bStart)) return aStart.isBefore(bStart) ? -1 : 1;
     return a.get('event').get('title') < b.get('event').get('title') ? -1 : 1;
+  },
+
+  filterByDate: function (date) {
+    var start = date.clone().startOf('day');
+    var end = start.clone().add('day', 1);
+    return new Collection(this.filter(function (eventOccurrence) {
+      return start.isBefore(eventOccurrence.end()) &&
+        end.isAfter(eventOccurence.start())
+    }));
   }
 });
 

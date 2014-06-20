@@ -11,7 +11,7 @@ import Filters from 'components/portals/filters';
 import ListItem from 'components/portals/list-item';
 import BlankSlate from 'components/portals/blank-slate';
 import Show from 'components/portals/show';
-import React from 'react';
+import React from 'react/addons';
 
 export default React.createClass({
   letterRegExps: _.times(26, function (n) {

@@ -50,6 +50,12 @@ var Collection = Base.Collection.extend({
     var eventFilters = this._eventFilters = new EventFilter.Collection();
     eventFilters.url = _.result(this, 'url') + '/filters';
     return eventFilters;
+  },
+
+  getEventOccurrences: function () {
+    return new EventOccurrence.Collection(_.flatten(
+      _.pluck(this.pluck('dates'), 'models')
+    ));
   }
 });
 

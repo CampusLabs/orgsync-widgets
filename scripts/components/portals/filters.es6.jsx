@@ -3,7 +3,7 @@
 import CategorySelector from 'components/portals/category-selector';
 import LetterTable from 'components/portals/letter-table';
 import Query from 'components/portals/query';
-import React from 'react';
+import React from 'react/addons';
 import Summary from 'components/portals/summary';
 import UmbrellaSelector from 'components/portals/umbrella-selector';
 

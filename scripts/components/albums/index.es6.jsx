@@ -7,7 +7,7 @@ import AlbumsShow from 'components/albums/show';
 import CoercedPropsMixin from 'mixins/coerced-props';
 import List from 'components/list';
 module Portal from 'entities/portal';
-import React from 'react';
+import React from 'react/addons';
 import Olay from 'components/olay';
 
 var keyDirMap = {'37': -1, '39': 1};

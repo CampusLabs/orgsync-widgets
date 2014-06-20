@@ -4,12 +4,12 @@ import _ from 'underscore';
 import elementQuery from 'elementQuery';
 import Icon from 'components/icon';
 import Olay from 'olay';
-import React from 'react';
+import React from 'react/addons';
 
 export default React.createClass({
   statics: {
     create: function (props, children) {
-      var olay = new Olay('<div>', props.options);
+      var olay = new Olay('<div>', props && props.options);
       olay.$container
         .addClass('orgsync-widget')
         .addClass('osw-' + props.className + '-olay');

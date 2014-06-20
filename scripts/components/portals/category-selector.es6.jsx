@@ -1,7 +1,7 @@
 /** @jsx React.DOM */
 
 import FacetedSelector from 'components/portals/faceted-selector';
-import React from 'react';
+import React from 'react/addons';
 
 export default React.createClass({
   getFacet: function (portal) { return portal.get('category').get('name'); },

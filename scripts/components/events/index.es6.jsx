@@ -5,7 +5,7 @@ import api from 'api';
 import Calendar from 'components/events/calendar';
 import Cursors from 'cursors';
 import moment from 'moment-timezone';
-import React from 'react/addons';
+import React from 'react';
 import tz from 'tz';
 
 export default React.createClass({

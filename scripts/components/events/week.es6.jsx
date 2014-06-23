@@ -4,7 +4,7 @@ import _ from 'underscore';
 import Cursors from 'cursors';
 import Column from 'components/events/column';
 import moment from 'moment-timezone';
-import React from 'react/addons';
+import React from 'react';
 
 export default React.createClass({
   mixins: [Cursors],

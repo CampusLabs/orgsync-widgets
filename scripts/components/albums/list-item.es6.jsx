@@ -1,7 +1,7 @@
 /** @jsx React.DOM */
 
 import _ from 'underscore';
-import React from 'react/addons';
+import React from 'react';
 
 export default React.createClass({
   handleClick: function (ev) {

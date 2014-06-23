@@ -2,7 +2,7 @@
 
 import _ from 'underscore';
 import LetterCell from 'components/portals/letter-cell';
-import React from 'react/addons';
+import React from 'react';
 
 export default React.createClass({
   renderCell: function (letter, i) {

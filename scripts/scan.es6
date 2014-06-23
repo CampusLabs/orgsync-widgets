@@ -2,7 +2,7 @@ import $ from 'jquery';
 import _ from 'underscore';
 import api from 'api';
 import elementQuery from 'elementQuery';
-import React from 'react/addons';
+import React from 'react';
 
 export default function () {
   $('.orgsync-widget').each(function () {

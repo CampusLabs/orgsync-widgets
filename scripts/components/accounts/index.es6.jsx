@@ -5,7 +5,7 @@ import AccountsListItem from 'components/accounts/list-item';
 import CoercedPropsMixin from 'mixins/coerced-props';
 import List from 'components/list';
 module Portal from 'entities/portal';
-import React from 'react/addons';
+import React from 'react';
 
 export default React.createClass({
   mixins: [CoercedPropsMixin],

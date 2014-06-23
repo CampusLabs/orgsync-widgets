@@ -2,7 +2,7 @@
 
 import _str from 'underscore.string';
 import Icon from 'components/icon';
-import React from 'react/addons';
+import React from 'react';
 
 export default React.createClass({
   onClick: function () {

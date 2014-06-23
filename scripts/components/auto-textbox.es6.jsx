@@ -1,7 +1,7 @@
 /** @jsx React.DOM */
 
 import $ from 'jquery';
-import React from 'react/addons';
+import React from 'react';
 
 export default React.createClass({
   componentDidMount: function () {

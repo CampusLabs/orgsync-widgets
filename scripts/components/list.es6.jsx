@@ -4,7 +4,7 @@ import $ from 'jquery';
 import _ from 'underscore';
 import animationFrame from 'animation-frame';
 import ListenersMixin from 'mixins/listeners';
-import React from 'react/addons';
+import React from 'react';
 
 export default React.createClass({
   mixins: [ListenersMixin],

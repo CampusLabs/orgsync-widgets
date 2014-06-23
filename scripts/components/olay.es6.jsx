@@ -4,7 +4,7 @@ import _ from 'underscore';
 import elementQuery from 'elementQuery';
 import Icon from 'components/icon';
 import Olay from 'olay';
-import React from 'react/addons';
+import React from 'react';
 
 export default React.createClass({
   statics: {

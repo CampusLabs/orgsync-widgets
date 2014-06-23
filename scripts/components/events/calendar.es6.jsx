@@ -3,7 +3,7 @@
 import _ from 'underscore';
 import Cursors from 'cursors';
 import moment from 'moment-timezone';
-import React from 'react/addons';
+import React from 'react';
 import Week from 'components/events/week';
 
 export default React.createClass({

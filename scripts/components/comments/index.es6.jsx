@@ -4,7 +4,7 @@ import CommentsBlankSlate from 'components/comments/blank-slate'
 import CommentsListItem from 'components/comments/list-item';
 import CommentsNew from 'components/comments/new';
 import List from 'components/list';
-import React from 'react/addons';
+import React from 'react';
 
 export default React.createClass({
   renderBlankSlate: function () {

@@ -3,7 +3,19 @@
 import $ from 'jquery';
 import _ from 'underscore';
 import animationFrame from 'animation-frame';
-import React from 'react/addons';
+import React from 'react';
+
+var isEqualSubset = function (a, b) {
+  for (var key in a) {
+    if (key === 'cursors') continue;
+    if (b[key] !== a[key]) return false;
+  }
+  return true;
+};
+
+var isEqual = function (a, b) {
+  return isEqualSubset(a, b) && isEqualSubset(b, a);
+};
 
 export default React.createClass({
   getDefaultProps: function () {
@@ -39,20 +51,11 @@ export default React.createClass({
   },
 
   componentDidMount: function () {
-    this.get$ScrollParent().on('scroll', this.delayUpdate);
-    $(window).on('resize', this.delayUpdate);
     this.update();
   },
 
   componentWillUnmount: function () {
-    this.get$ScrollParent().off('scroll', this.delayUpdate);
-    $(window).off('resize', this.delayUpdate);
-  },
-
-  delayUpdate: function () {
-    if (this.pendingUpdate) return;
-    this.pendingUpdate = true;
-    animationFrame.request(this.update);
+    animationFrame.cancel(this.afid);
   },
 
   // Get scroll position relative to the top of the list.
@@ -70,10 +73,7 @@ export default React.createClass({
 
   // REFACTOR
   update: function () {
-    if (!this.isMounted()) return;
-
-    this.pendingUpdate = false;
-
+    this.afid = animationFrame.request(this.update);
     var items = this.props.items;
     var uniform = this.props.uniform;
     var $scrollParent = this.get$ScrollParent();
@@ -102,7 +102,6 @@ export default React.createClass({
           else if (data.top === listItem.offsetTop) ++data.count;
           return data;
         }, {count: 1}).count;
-        if (columns !== this.state.columns) this.delayUpdate();
         rows = Math.ceil($scrollParent.innerHeight() / itemHeight);
 
         var rowThreshold = Math.ceil(this.props.threshold / itemHeight);
@@ -117,15 +116,11 @@ export default React.createClass({
         );
       } else {
         length = this.props.renderPageSize;
-        if (items.length) this.delayUpdate();
       }
     } else if (length <= items.length) {
       var listBottom = $el.prop('scrollHeight') - this.props.threshold;
       var visibleBottom = scroll + $scrollParent.height();
-      if (listBottom < visibleBottom) {
-        length += this.props.renderPageSize;
-        this.delayUpdate();
-      }
+      if (listBottom < visibleBottom) length += this.props.renderPageSize;
     }
 
     // Fetch if the models in memory have been exhausted.
@@ -140,6 +135,10 @@ export default React.createClass({
       index: index,
       length: length
     });
+  },
+
+  shouldComponentUpdate: function (props, state) {
+    return !isEqual(this.props, props) || !isEqual(this.state, state);
   },
 
   get$ScrollParent: function () {
@@ -217,3 +216,4 @@ export default React.createClass({
     );
   }
 });
+

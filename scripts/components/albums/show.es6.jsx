@@ -1,7 +1,7 @@
 /** @jsx React.DOM */
 
 import PhotosIndex from 'components/photos/index';
-import React from 'react/addons';
+import React from 'react';
 
 export default React.createClass({
   render: function () {

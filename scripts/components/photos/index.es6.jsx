@@ -4,7 +4,7 @@ import $ from 'jquery';
 import List from 'components/list';
 import PhotosListItem from 'components/photos/list-item';
 import PhotosShow from 'components/photos/show';
-import React from 'react/addons';
+import React from 'react';
 import Olay from 'components/olay';
 
 var keyDirMap = {'37': -1, '39': 1};

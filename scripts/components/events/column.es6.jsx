@@ -2,7 +2,7 @@
 
 import Cursors from 'cursors';
 import moment from 'moment-timezone';
-import React from 'react/addons';
+import React from 'react';
 
 export default React.createClass({
   mixins: [Cursors],

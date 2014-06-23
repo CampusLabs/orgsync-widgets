@@ -2,7 +2,7 @@
 
 import _ from 'underscore';
 import Icon from 'components/icon'
-import React from 'react/addons';
+import React from 'react';
 
 export default React.createClass({
   filters: function () {

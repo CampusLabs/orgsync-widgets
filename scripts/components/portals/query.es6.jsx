@@ -1,6 +1,6 @@
 /** @jsx React.DOM */
 
-import React from 'react/addons';
+import React from 'react';
 
 export default React.createClass({
   render: function () {

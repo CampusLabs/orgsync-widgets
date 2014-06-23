@@ -6,7 +6,7 @@ import CoercedPropsMixin from 'mixins/coerced-props';
 import List from 'components/list';
 import ListenersMixin from 'mixins/listeners';
 import Olay from 'components/olay';
-import React from 'react/addons';
+import React from 'react';
 module SelectorItem from 'entities/selector-item';
 import SelectorResult from 'components/selector/result';
 import SelectorScope from 'components/selector/scope';

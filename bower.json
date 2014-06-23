@@ -21,6 +21,7 @@
     "orgsync-api": "x",
     "jquery": "1.x",
     "react": "x",
+    "react-list": "x",
     "sockjs": "x",
     "tinycolor": "x",
     "underscore": "x",

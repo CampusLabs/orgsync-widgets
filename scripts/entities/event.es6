@@ -1,12 +1,6 @@
 import _ from 'underscore';
+import _str from 'underscore.string';
 import moment from 'moment-timezone';
-
-module Account from 'entities/account';
-module Base from 'entities/base';
-module Comment from 'entities/comment';
-module EventFilter from 'entities/event-filter';
-module EventOccurrence from 'entities/event-occurrence';
-module Portal from 'entities/portal';
 
 var cache = _.memoize(function (date, tz) {
   return date && date.length === 10 ?
@@ -22,56 +16,27 @@ export var getDaySpan = function (start, end, tz) {
   );
 };
 
-var Model = Base.Model.extend({
-  relations: {
-    portal: {hasOne: Portal, fk: 'portal_id'},
-    creator: {hasOne: Account, fk: 'creator_id'},
-    dates: {hasMany: EventOccurrence, fk: 'event_id'},
-    comments: {hasMany: Comment}
-  },
+var searchableWords = function (event) {
+  return _str.words(_.values(
+    _.pick(event, 'title', 'description', 'location')
+  ).join(' ').toLowerCase());
+};
 
-  parse: function (data) {
-    data = _.clone(data);
-    data.dates = this.get('dates').models.concat(data.dates);
-    return data;
-  },
-
-  searchableWords: function () {
-    if (this._searchableWords) return this._searchableWords;
-    return this._searchableWords = _.str.words(_.values(
-      this.pick('title', 'description', 'location')
-    ).join(' ').toLowerCase());
-  },
-
-  matchesQuery: function (query) {
-    if (!query) return true;
-    var words = _.str.words(query.toLowerCase());
-    var searchableWords = this.searchableWords();
-    return _.every(words, function (wordA) {
-      return _.any(searchableWords, function (wordB) {
-        return _.str.startsWith(wordB, wordA);
-      });
+var matchesQuery = function (event, query) {
+  if (!query) return true;
+  var words = _str.words(query.toLowerCase());
+  var searchable = searchableWords(event);
+  return _.every(words, function (wordA) {
+    return _.any(searchable, function (wordB) {
+      return _str.startsWith(wordB, wordA);
     });
-  }
-});
+  });
+};
 
-var Collection = Base.Collection.extend({
-  model: Model,
+var matchesFilters = function (event, filters) {
+  return _.intersection(event.filters, _.pluck(filters, 'id')).length > 0;
+};
 
-  comparator: 'name',
-
-  eventFilters: function () {
-    if (this._eventFilters) return this._eventFilters;
-    var eventFilters = this._eventFilters = new EventFilter.Collection();
-    eventFilters.url = _.result(this, 'url') + '/filters';
-    return eventFilters;
-  },
-
-  getEventOccurrences: function () {
-    return new EventOccurrence.Collection(_.flatten(
-      _.pluck(this.pluck('dates'), 'models')
-    ));
-  }
-});
-
-export {getDaySpan, Model, Collection};
+export var matchesQueryAndFilters = function (event, query, filters) {
+  return matchesFilters(event, filters) && matchesQuery(event, query);
+};

@@ -56,7 +56,6 @@ export default React.createClass({
       <div className='osw-events-calendar'>
         {this.renderDayNames()}
         {this.getStarts().map(this.renderWeek)}
-        }
       </div>
     );
   }

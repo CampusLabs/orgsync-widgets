@@ -37,14 +37,31 @@ export default React.createClass({
       var events = _.difference(getEventsForDay(x), added);
       _.times(rows, function (y) {
         var i;
-        if (!events.length || grid[y][x]) return;
+        if (!events.length) return;
+
+        // Show the more message.
         if (y === rows - 1 && events.length > 1) {
+          var prev = grid[y][x];
           grid[y][x] = {more: events.length};
-          for (i = x - 1; i >= 0 && grid[y][i] && !grid[y][i].more; --i) {
-            grid[y][i] = {more: 1};
+
+          // This is tricky. If a previous event was overlapping what will be
+          // our more message, it is necessary to move backward and change the
+          // space that event took up to say "1 more..." as well.
+          if (prev && (prev === true || (prev.id === grid[y][x - 1].id))) {
+            var id = prev.id;
+            for (i = x - 1; i >= 0 && grid[y][i] && !grid[y][i].more; --i) {
+              var col = grid[y][i];
+              if (id && col.id && id !== col.id) break;
+              if (!id && col.id) id = col.id;
+              grid[y][i] = {more: 1};
+            }
           }
-          return;
         }
+
+        // At this point if the spot is taken, move along.
+        if (grid[y][x]) return;
+
+        // Grab the next event up for display.
         var event = events.shift();
         added.push(event);
         var daySpan = getDaySpan(startDate, event.ends_at, tz);

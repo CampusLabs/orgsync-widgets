@@ -34,6 +34,9 @@ export default React.createClass({
       var startMom = mom(start, tz).day(x);
       var startISO = startMom.toISOString();
       var startDate = startMom.format('YYYY-MM-DD');
+
+      // Find events for this day, then remove the events that have already been
+      // added previously in the grid.
       var events = _.difference(getEventsForDay(x), added);
       _.times(rows, function (y) {
         var i;
@@ -49,8 +52,14 @@ export default React.createClass({
           // space that event took up to say "1 more..." as well.
           if (prev && (prev === true || (prev.id === grid[y][x - 1].id))) {
             var id = prev.id;
+
+            // Walk back down the row, stopping at `null` and `more` columns.
             for (i = x - 1; i >= 0 && grid[y][i] && !grid[y][i].more; --i) {
               var col = grid[y][i];
+
+              // If the id of the event has been found and the current column id
+              // does not match, time to go. The `id` aspect here is necessary
+              // for the special case below.
               if (id && col.id && id !== col.id) break;
               if (!id && col.id) id = col.id;
               grid[y][i] = {more: 1};

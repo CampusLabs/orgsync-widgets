@@ -6,15 +6,40 @@
   height: 18px;
   font-size: 11px;
 
-  .osw-all-day {
-    background: #ddd;
+  &.osw-all-day,
+  &.osw-continued,
+  &.osw-continues {
+    .osw-event {
+      background: #ddd;
+    }
+  }
+
+  &.osw-all-day,
+  &.osw-continued {
+    &:not(.osw-continues) .osw-event{
+      @include border-right-radius(5px);
+    }
   }
 
   .osw-event {
     border-left: 2px solid;
     padding: 0 4px;
     line-height: 18px;
+    height: 18px;
     @include box-sizing(border-box);
+    @include clearfix;
+  }
+
+  &.osw-continues {
+    padding-right: 0;
+  }
+
+  &.osw-continued {
+    padding-left: 0;
+
+    .osw-event {
+      border-left: none;
+    }
   }
 
   .osw-time {

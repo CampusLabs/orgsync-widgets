@@ -4,7 +4,7 @@ import _ from 'underscore';
 import api from 'api';
 import Calendar from 'components/events/calendar';
 import Cursors from 'cursors';
-import moment from 'moment-timezone';
+import mom from 'mom';
 import React from 'react';
 import tz from 'tz';
 
@@ -14,7 +14,10 @@ export default React.createClass({
   getDefaultProps: function () {
     return {
       tz: tz,
-      target: moment().startOf('month').startOf('week').format('YYYY-MM-DD')
+      target: mom(void 0, tz)
+        .startOf('month')
+        .startOf('week')
+        .format('YYYY-MM-DD')
     };
   },
 
@@ -42,7 +45,15 @@ export default React.createClass({
     return isAllDay ? date.slice(0, 10) : (new Date(date)).toISOString();
   },
 
+  getDaySpan: function (event) {
+    var tz = this.state.tz;
+    return Math.ceil(mom(event.ends_at, tz).diff(mom(event.starts_at, tz)));
+  },
+
   comparator: function (a, b) {
+    var aDaySpan = this.getDaySpan(a);
+    var bDaySpan = this.getDaySpan(b);
+    if (aDaySpan !== bDaySpan) return aDaySpan > bDaySpan ? -1 : 1;
     if (a.is_all_day !== b.is_all_day) return a.is_all_day ? -1 : 1;
     if (a.starts_at !== b.starts_at) return a.starts_at < b.starts_at ? -1 : 1;
     if (a.title !== b.title) return a.title < b.title ? -1 : 1;
@@ -64,9 +75,21 @@ export default React.createClass({
     }, []).sort(this.comparator)});
   },
 
+  handleTzChange: function (ev) {
+    this.update('tz', {$set: ev.target.value});
+  },
+
   render: function () {
     return (
       <div className='osw-events-index'>
+        <select onChange={this.handleTzChange} value={this.state.tz}>
+          <option>{tz}</option>
+          <option>America/Los_Angeles</option>
+          <option>America/New_York</option>
+          <option>Europe/London</option>
+          <option>Australia/Brisbane</option>
+          <option>Asia/Hong_Kong</option>
+        </select>
         <Calendar
           rows={6}
           cursors={{

@@ -5,11 +5,15 @@
   table-layout: fixed;
   border-collapse: collapse;
 
+  tr {
+    background: white;
+  }
+
   th {
     padding: 0 2px 2px;
     font-weight: normal;
 
-    .osw-wrapper {
+    .osw-day-wrapper {
       border-top: 1px solid $grey;
       padding: 2px;
       font-size: 14px;
@@ -17,13 +21,8 @@
     }
   }
 
-  &.osw-current-week {
-    tr {
-      background: $grey-lightest;
-    }
-
-    .osw-wrapper {
-      border-top: 3px solid $grey-darker;
-    }
+  .osw-current-day .osw-day-wrapper {
+    color: $red;
+    font-weight: bold;
   }
 }

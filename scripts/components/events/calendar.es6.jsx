@@ -2,7 +2,7 @@
 
 import _ from 'underscore';
 import Cursors from 'cursors';
-import moment from 'moment-timezone';
+import mom from 'mom';
 import React from 'react';
 import Week from 'components/events/week';
 
@@ -10,7 +10,8 @@ export default React.createClass({
   mixins: [Cursors],
 
   getStarts: function () {
-    var first = moment(this.state.target).startOf('week').subtract('weeks', 1);
+    var first = mom(this.state.target, this.state.tz)
+      .startOf('week').subtract('weeks', 1);
     return _.times(this.props.rows, function () {
       return first.add('weeks', 1).format('YYYY-MM-DD');
     });

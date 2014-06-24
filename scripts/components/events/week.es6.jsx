@@ -3,40 +3,41 @@
 import _ from 'underscore';
 import Cursors from 'cursors';
 import Column from 'components/events/column';
-import moment from 'moment-timezone';
+import mom from 'mom';
 import React from 'react';
 
 export default React.createClass({
   mixins: [Cursors],
 
-  getClassName: function () {
-    var classes = ['osw-events-week'];
-    var a = moment.tz(this.props.start, this.state.tz);
-    var b = moment.tz(this.state.tz).startOf('week');
-    if (a.isSame(b)) classes.push('osw-current-week');
-    return classes.join(' ');
-  },
-
-  getEventsForDay: function (events, n) {
-    var startMom = moment.tz(this.props.start, this.state.tz).day(n);
+  getEventsForDay: function (n) {
+    var startMom = mom(this.props.start, this.state.tz).day(n);
     var start = startMom.toISOString();
     var startDate = startMom.format('YYYY-MM-DD');
-    var endMom = startMom.clone().add('day', 1);
+    var endMom = startMom.add('day', 1);
     var end = endMom.toISOString();
     var endDate = endMom.format('YYYY-MM-DD');
     return _.filter(this.state.events, function (event) {
       var startComp = event.is_all_day ? startDate : start;
       var endComp = event.is_all_day ? endDate : end;
-      return event.ends_at > startComp &&
-        event.starts_at < endComp &&
-        (n === 0 || event.starts_at >= startComp);
+      return event.ends_at > startComp && event.starts_at < endComp;
     });
   },
 
+  isCurrentDay: function (n) {
+    var tz = this.state.tz;
+    var day = mom(this.props.start, tz).day(n);
+    var now = mom(void 0, tz);
+    return day.isSame(now, 'day');
+  },
+
   renderHeader: function (n) {
-    var day = moment.tz(this.props.start, this.state.tz).day(n);
+    var day = mom(this.props.start, this.state.tz).day(n);
     var formatted = day.format(day.date() === 1 ? 'MMMM D' : 'D');
-    return <th key={n}><div className='osw-wrapper'>{formatted}</div></th>;
+    return (
+      <th key={n} className={this.isCurrentDay(n) ? 'osw-current-day' : null}>
+        <div className='osw-day-wrapper'>{formatted}</div>
+      </th>
+    );
   },
 
   renderHead: function () {
@@ -50,33 +51,52 @@ export default React.createClass({
   renderColumn: function (n, added, row) {
     if (n >= 7) return [];
     var tz = this.state.tz;
-    var events = this.getEventsForDay(events, n);
+    var events = this.getEventsForDay(n);
     var remaining = _.difference(events, added);
     var dayDiff = 1;
     var first = remaining[0];
     var firstI = -1;
-    if ((row < this.props.rows - 1 || remaining.length < 2) && first) {
+    var startMom = mom(this.props.start, tz).day(n);
+    if (first && (row < this.props.rows - 1 || remaining.length === 1)) {
       firstI = _.indexOf(this.state.events, first);
       added.push(first);
-      var startMom = moment.tz(this.props.start, tz).day(n);
-      var firstEndsAtMom =
-        first.is_all_day ?
-        moment.tz(first.ends_at, this.state.tz) :
-        moment(first.ends_at);
+      var firstEndsAtMom = mom(first.ends_at, tz);
       dayDiff = Math.ceil(firstEndsAtMom.diff(startMom, 'days', true));
     }
     var colSpan = Math.min(7 - n, dayDiff);
-    return [
+    var cols = [];
+    var hideTitle = false;
+    if (colSpan > 1 && !first.is_all_day) {
+      cols.push(
+        <Column
+          key={n}
+          colSpan={1}
+          first={startMom.format('YYYY-MM-DD')}
+          cursors={{
+            event: this.getCursor('events', firstI),
+            tz: this.getCursor('tz')
+          }}
+        />
+      );
+      ++n;
+      --colSpan;
+      startMom.add('days', 1);
+      hideTitle = true;
+    }
+    return cols.concat(
       <Column
         key={n}
         colSpan={colSpan}
-        remaining={remaining.length && remaining}
+        remaining={remaining.length}
+        first={startMom.format('YYYY-MM-DD')}
+        hideTitle={hideTitle}
         cursors={{
           event: this.getCursor('events', firstI),
           tz: this.getCursor('tz')
         }}
-      />
-    ].concat(this.renderColumn(n + colSpan, added, row));
+      />,
+      this.renderColumn(n + colSpan, added, row)
+    );
   },
 
   renderRow: function (added, n) {
@@ -91,7 +111,7 @@ export default React.createClass({
 
   render: function () {
     return (
-      <table className={this.getClassName()}>
+      <table className='osw-events-week'>
         {this.renderHead()}
         {this.renderBody()}
       </table>

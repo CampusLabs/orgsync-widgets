@@ -1,7 +1,7 @@
 @import '../config';
 
 .osw-events-column {
-  padding: 1px 2px 0;
+  padding: 0 2px 1px;
   cursor: pointer;
   height: 18px;
   font-size: 11px;
@@ -32,6 +32,10 @@
 
   &.osw-continues {
     padding-right: 0;
+
+    .osw-event {
+      padding-right: 6px;
+    }
   }
 
   &.osw-continued {
@@ -39,6 +43,7 @@
 
     .osw-event {
       border-left: none;
+      padding-left: 8px;
     }
   }
 
@@ -50,13 +55,13 @@
 
   .osw-time,
   .osw-title,
-  .osw-remaining {
+  .osw-more {
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
   }
 
-  .osw-remaining {
+  .osw-more {
     text-align: center;
   }
 }

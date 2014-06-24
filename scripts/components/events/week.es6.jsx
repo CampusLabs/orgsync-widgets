@@ -3,7 +3,7 @@
 import _ from 'underscore';
 import Cursors from 'cursors';
 import Column from 'components/events/column';
-import mom from 'mom';
+import {mom, getDaySpan} from 'entities/event';
 import React from 'react';
 
 export default React.createClass({
@@ -11,30 +11,74 @@ export default React.createClass({
 
   getEventsForDay: function (n) {
     var startMom = mom(this.props.start, this.state.tz).day(n);
-    var start = startMom.toISOString();
+    var startISO = startMom.toISOString();
     var startDate = startMom.format('YYYY-MM-DD');
     var endMom = startMom.add('day', 1);
-    var end = endMom.toISOString();
+    var endISO = endMom.toISOString();
     var endDate = endMom.format('YYYY-MM-DD');
     return _.filter(this.state.events, function (event) {
-      var startComp = event.is_all_day ? startDate : start;
-      var endComp = event.is_all_day ? endDate : end;
-      return event.ends_at > startComp && event.starts_at < endComp;
+      var start = event.is_all_day ? startDate : startISO;
+      var end = event.is_all_day ? endDate : endISO;
+      return event.ends_at > start && event.starts_at < end;
     });
   },
 
-  isCurrentDay: function (n) {
+  getGrid: function () {
+    var getEventsForDay = this.getEventsForDay;
+    var rows = this.props.rows;
+    var added = [];
+    var start = this.props.start;
     var tz = this.state.tz;
-    var day = mom(this.props.start, tz).day(n);
-    var now = mom(void 0, tz);
-    return day.isSame(now, 'day');
+    var grid = _.times(rows, _.partial(_.times, 7, _.constant(null)));
+    _.times(7, function (x) {
+      var startMom = mom(start, tz).day(x);
+      var startISO = startMom.toISOString();
+      var startDate = startMom.format('YYYY-MM-DD');
+      var events = _.difference(getEventsForDay(x), added);
+      _.times(rows, function (y) {
+        var i;
+        if (!events.length || grid[y][x]) return;
+        if (y === rows - 1 && events.length > 1) {
+          grid[y][x] = {more: events.length};
+          for (i = x - 1; i >= 0 && grid[y][i] && !grid[y][i].more; --i) {
+            grid[y][i] = {more: 1};
+          }
+          return;
+        }
+        var event = events.shift();
+        added.push(event);
+        var daySpan = getDaySpan(startDate, event.ends_at, tz);
+        var colSpan = Math.min(daySpan, 7 - x);
+
+        // Mark spots this event takes up as taken.
+        for (i = x + 1; i < x + colSpan; i++) grid[y][i] = true;
+
+        // This is the special case where an event starts on one day at non-
+        // midnight and ends on a different day. For this case we have to create
+        // a single column to display the start time and the event name,
+        // followed by the remaining columns to show the end time.
+        if (!event.is_all_day && event.starts_at > startISO && colSpan > 1) {
+          grid[y][x + 1] = {
+            start: startMom.clone().add('day', 1).format('YYYY-MM-DD'),
+            span: colSpan - 1,
+            hideTitle: true,
+            event: event
+          };
+          colSpan = 1;
+        }
+        grid[y][x] = {start: startDate, span: colSpan, event: event};
+      });
+    });
+    return grid;
   },
 
   renderHeader: function (n) {
-    var day = mom(this.props.start, this.state.tz).day(n);
+    var tz = this.state.tz;
+    var day = mom(this.props.start, tz).day(n);
     var formatted = day.format(day.date() === 1 ? 'MMMM D' : 'D');
+    var now = mom(void 0, tz);
     return (
-      <th key={n} className={this.isCurrentDay(n) ? 'osw-current-day' : null}>
+      <th key={n} className={day.isSame(now, 'day') ? 'osw-current-day' : null}>
         <div className='osw-day-wrapper'>{formatted}</div>
       </th>
     );
@@ -44,68 +88,32 @@ export default React.createClass({
     return <thead><tr>{_.times(7, this.renderHeader)}</tr></thead>;
   },
 
-  renderEvent: function (event) {
-    return event.title;
-  },
-
-  renderColumn: function (n, added, row) {
-    if (n >= 7) return [];
-    var tz = this.state.tz;
-    var events = this.getEventsForDay(n);
-    var remaining = _.difference(events, added);
-    var dayDiff = 1;
-    var first = remaining[0];
-    var firstI = -1;
-    var startMom = mom(this.props.start, tz).day(n);
-    if (first && (row < this.props.rows - 1 || remaining.length === 1)) {
-      firstI = _.indexOf(this.state.events, first);
-      added.push(first);
-      var firstEndsAtMom = mom(first.ends_at, tz);
-      dayDiff = Math.ceil(firstEndsAtMom.diff(startMom, 'days', true));
-    }
-    var colSpan = Math.min(7 - n, dayDiff);
-    var cols = [];
-    var hideTitle = false;
-    if (colSpan > 1 && !first.is_all_day) {
-      cols.push(
-        <Column
-          key={n}
-          colSpan={1}
-          first={startMom.format('YYYY-MM-DD')}
-          cursors={{
-            event: this.getCursor('events', firstI),
-            tz: this.getCursor('tz')
-          }}
-        />
-      );
-      ++n;
-      --colSpan;
-      startMom.add('days', 1);
-      hideTitle = true;
-    }
-    return cols.concat(
+  renderColumn: function (col, y) {
+    if (col === true) return;
+    if (col === null) return <Column key={'empty-' + y} />;
+    if (col.more) return  <Column key={'more-' + y} more={col.more} />;
+    var i = _.indexOf(this.state.events, col.event);
+    return (
       <Column
-        key={n}
-        colSpan={colSpan}
-        remaining={remaining.length}
-        first={startMom.format('YYYY-MM-DD')}
-        hideTitle={hideTitle}
+        key={'event-' + col.event.id + '-' + y}
+        colSpan={col.span}
+        start={col.start}
+        hideTitle={col.hideTitle}
         cursors={{
-          event: this.getCursor('events', firstI),
+          event: this.getCursor('events', i),
           tz: this.getCursor('tz')
         }}
-      />,
-      this.renderColumn(n + colSpan, added, row)
+      />
     );
   },
 
-  renderRow: function (added, n) {
-    return <tr key={n}>{this.renderColumn(0, added, n)}</tr>;
+  renderRow: function (row, x) {
+    return <tr key={x}>{_.map(row, this.renderColumn)}</tr>;
   },
 
   renderBody: function () {
     return (
-      <tbody>{_.times(this.props.rows, _.partial(this.renderRow, []))}</tbody>
+      <tbody>{_.map(this.getGrid(), this.renderRow)}</tbody>
     );
   },
 

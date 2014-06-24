@@ -1,4 +1,5 @@
 import _ from 'underscore';
+import moment from 'moment-timezone';
 
 module Account from 'entities/account';
 module Base from 'entities/base';
@@ -6,6 +7,20 @@ module Comment from 'entities/comment';
 module EventFilter from 'entities/event-filter';
 module EventOccurrence from 'entities/event-occurrence';
 module Portal from 'entities/portal';
+
+var cache = _.memoize(function (date, tz) {
+  return date && date.length === 10 ?
+    moment.tz(date, tz) :
+    moment.utc(date).tz(tz);
+}, function (date, tz) { return date + '/' + tz; });
+
+export var mom = function (date, tz) { return cache(date, tz).clone(); };
+
+export var getDaySpan = function (start, end, tz) {
+  return Math.ceil(
+    mom(end, tz).diff(mom(start, tz).startOf('day'), 'days', true)
+  );
+};
 
 var Model = Base.Model.extend({
   relations: {
@@ -59,4 +74,4 @@ var Collection = Base.Collection.extend({
   }
 });
 
-export {Model, Collection};
+export {getDaySpan, Model, Collection};

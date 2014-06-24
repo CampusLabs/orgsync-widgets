@@ -4,7 +4,7 @@ import _ from 'underscore';
 import api from 'api';
 import Calendar from 'components/events/calendar';
 import Cursors from 'cursors';
-import mom from 'mom';
+import {mom, getDaySpan} from 'entities/event';
 import React from 'react';
 import tz from 'tz';
 
@@ -45,16 +45,14 @@ export default React.createClass({
     return isAllDay ? date.slice(0, 10) : (new Date(date)).toISOString();
   },
 
-  getDaySpan: function (event) {
-    var tz = this.state.tz;
-    return Math.ceil(mom(event.ends_at, tz).diff(mom(event.starts_at, tz)));
-  },
-
   comparator: function (a, b) {
-    var aDaySpan = this.getDaySpan(a);
-    var bDaySpan = this.getDaySpan(b);
-    if (aDaySpan !== bDaySpan) return aDaySpan > bDaySpan ? -1 : 1;
     if (a.is_all_day !== b.is_all_day) return a.is_all_day ? -1 : 1;
+    if (a.is_all_day) {
+      var tz = this.state.tz;
+      var aDaySpan = getDaySpan(a.starts_at, a.ends_at, tz);
+      var bDaySpan = getDaySpan(b.starts_at, b.ends_at, tz);
+      if (aDaySpan !== bDaySpan) return aDaySpan > bDaySpan ? -1 : 1;
+    }
     if (a.starts_at !== b.starts_at) return a.starts_at < b.starts_at ? -1 : 1;
     if (a.title !== b.title) return a.title < b.title ? -1 : 1;
     return 0;
@@ -66,6 +64,7 @@ export default React.createClass({
       return events.concat(_.map(event.dates, function (date) {
         var isAllDay = event.is_all_day;
         return _.extend({
+          id: date.id,
           title: event.title,
           is_all_day: isAllDay,
           starts_at: parseDate(date.starts_at, isAllDay),
@@ -83,12 +82,13 @@ export default React.createClass({
     return (
       <div className='osw-events-index'>
         <select onChange={this.handleTzChange} value={this.state.tz}>
-          <option>{tz}</option>
+          <option>{this.props.tz}</option>
           <option>America/Los_Angeles</option>
           <option>America/New_York</option>
           <option>Europe/London</option>
           <option>Australia/Brisbane</option>
           <option>Asia/Hong_Kong</option>
+          <option>Asia/Kolkata</option>
         </select>
         <Calendar
           rows={6}

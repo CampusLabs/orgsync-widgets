@@ -7,10 +7,8 @@ import Cursors from 'cursors';
 import EventFiltersIndex from 'components/event-filters/index';
 import {mom, getDaySpan, matchesQueryAndFilters} from 'entities/event';
 import React from 'react';
-import tinycolor from 'tinycolor';
 import tz from 'tz';
 
-var RSVP_COLOR = '94b363';
 var FILTERED_EVENTS_MODIFIER_KEYS = ['events', 'query', 'filters'];
 
 export default React.createClass({
@@ -46,10 +44,7 @@ export default React.createClass({
   },
 
   componentDidUpdate: function (__, prevState) {
-    if (this.filteredEventsShouldUpdate(prevState)) {
-      console.log('should filter');
-      this.updateFilteredEvents();
-    }
+    if (this.filteredEventsShouldUpdate(prevState)) this.updateFilteredEvents();
   },
 
   filteredEventsShouldUpdate: function (prevState) {
@@ -66,32 +61,20 @@ export default React.createClass({
     this.update('filteredEvents', {$set: _.filter(events, matches)});
   },
 
+  getEventsUrl: function () {
+    return (
+      this.props.communityId ? '/communities/' + this.props.communityId :
+      this.props.portalId ? '/portals/' + this.props.portalId :
+      '/accounts'
+    ) + '/events';
+  },
+
   testFetch: function () {
-    api.get('/accounts/events', {
+    api.get(this.getEventsUrl(), {
       upcoming: true,
       per_page: 100,
       after: this.props.target
     }, this.handleTestFetch);
-    api.get('/accounts/events/filters', this.handleFiltersFetch);
-  },
-
-  getFilterColor: function (filter, i, filters) {
-    return filter.color || (
-      filter.type === 'rsvp' ?
-      RSVP_COLOR :
-      tinycolor({h: i * (filters.length / 360), s: 1, l: 0.4}).toHex()
-    );
-  },
-
-  handleFiltersFetch: function (er, res) {
-    var getFilterColor = this.getFilterColor;
-    var filters = res.data;
-    this.update('filters', {$set: _.map(filters, function (filter, i) {
-      return _.extend({}, filter, {
-        color: getFilterColor(filter, i, filters),
-        active: true
-      });
-    })});
   },
 
   parseDate: function (date, isAllDay) {
@@ -153,6 +136,7 @@ export default React.createClass({
         Search:
         <input value={this.state.query} onChange={this.handleQueryChange}/>
         <EventFiltersIndex
+          eventsUrl={this.getEventsUrl()}
           cursors={{eventFilters: this.getCursor('filters')}}
         />
         <Calendar

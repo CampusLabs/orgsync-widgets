@@ -16,7 +16,7 @@
   &.osw-all-day,
   &.osw-continued {
     &:not(.osw-continues) .osw-event{
-      @include border-right-radius(5px);
+      @include border-right-radius(3px);
     }
   }
 

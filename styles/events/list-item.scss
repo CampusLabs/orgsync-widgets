@@ -1,0 +1,89 @@
+@import '../config';
+
+.osw-events-list-item {
+  border: 1px solid $grey;
+  border-bottom: none;
+  padding: 10px;
+  cursor: pointer;
+  @include clearfix;
+
+  &:first-child {
+    border-top: none;
+  }
+
+  .osw-picture-container {
+    float: left;
+    width: 45px;
+    height: 45px;
+    margin-right: 10px;
+
+    img {
+      width: 100%;
+    }
+  }
+
+  .osw-default-picture {
+    @include user-select(none);
+    border-radius: 3px;
+    font-weight: bold;
+    text-align: center;
+    box-shadow: 0 1px 2px $grey;
+
+    .osw-month {
+      @include border-top-radius(3px);
+      color: white;
+      background: $red;
+      font-size: 11px;
+      line-height: 20px;
+      text-transform: uppercase;
+    }
+
+    .osw-date {
+      @include border-bottom-radius(3px);
+      color: $grey-darker;
+      background: $grey-lightest;
+      font-size: 14px;
+      line-height: 25px;
+    }
+  }
+
+
+  .osw-info {
+    padding-top: 6px;
+  }
+
+  .osw-title {
+    font-size: 14px;
+    color: $grey-darkest;
+  }
+
+  .osw-subtext {
+    font-size: 11px;
+    color: $grey-darker;
+  }
+
+  .osw-time,
+  .osw-portal-name {
+    margin-right: 5px;
+    margin-right: 5px;
+  }
+
+  .osw-maybe-attending {
+    color: $orange;
+  }
+
+  .osw-attending {
+    color: $green;
+  }
+
+  .osw-portal-name {
+    color: black;
+  }
+
+  .osw-title,
+  .osw-subtext {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+}

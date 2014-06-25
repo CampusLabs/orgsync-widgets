@@ -10,7 +10,22 @@ export default React.createClass({
   mixins: [Cursors],
 
   getTime: function () {
-    return this.state.event.starts_at;
+    var event = this.state.event;
+    if (event.is_all_day) return 'All Day';
+    var date = this.props.date;
+    var tz = this.state.tz;
+    var eventStart = mom(event.starts_at, tz);
+    var eventEnd = mom(event.ends_at, tz);
+    var dateStart = mom(date, tz);
+    var dateEnd = dateStart.clone().add('day', 1);
+    var startsBefore = eventStart <= dateStart;
+    var endsAfter = eventEnd >= dateEnd;
+    if (startsBefore && endsAfter) return 'All Day';
+    if (!startsBefore && !endsAfter) {
+      return eventStart.format('h:mm A') + ' - ' + eventEnd.format('h:mm A');
+    }
+    if (startsBefore) return eventEnd.format('[Ends at ]h:mm A');
+    return eventStart.format('[Starts at ]h:mm A');
   },
 
   renderRsvp: function () {
@@ -22,9 +37,9 @@ export default React.createClass({
       null;
     if (!icon) return;
     return (
-      <div className={'osw-rsvp osw-' + _str.slugify(rsvp)}>
+      <span className={'osw-rsvp osw-' + _str.slugify(rsvp)}>
         <Icon name={icon} /> {rsvp}
-      </div>
+      </span>
     );
   },
 
@@ -48,9 +63,11 @@ export default React.createClass({
         </div>
         <div className='osw-info'>
           <div className='osw-title'>{event.title}</div>
-          <div className='osw-time'>{this.getTime()}</div>
-          <div className='osw-portal-name'>{event.portal.name}</div>
-          {this.renderRsvp()}
+          <div className='osw-subtext'>
+            <span className='osw-time'>{this.getTime()}</span>
+            <span className='osw-portal-name'>{event.portal.name}</span>
+            {this.renderRsvp()}
+          </div>
         </div>
       </div>
     );

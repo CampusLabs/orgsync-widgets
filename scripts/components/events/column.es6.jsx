@@ -30,10 +30,10 @@ export default React.createClass({
   },
 
   getEndTime: function () {
-    var endISO = mom(this.props.date, this.state.tz)
+    var endIso = mom(this.props.date, this.state.tz)
       .add('days', this.props.colSpan).toISOString();
     var event = this.state.event;
-    if (event.ends_at >= endISO) return;
+    if (event.ends_at >= endIso) return;
     return 'ends ' + this.getFormattedTime(event.ends_at);
   },
 

@@ -34,7 +34,7 @@ var matchesQuery = function (event, query) {
 };
 
 var matchesFilters = function (event, filters) {
-  return _.intersection(event.filters, _.pluck(filters, 'id')).length > 0;
+  return _.any(event.filters, _.partial(_.contains, _.pluck(filters, 'id')));
 };
 
 export var matchesQueryAndFilters = function (event, query, filters) {

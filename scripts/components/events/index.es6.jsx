@@ -100,15 +100,7 @@ export default React.createClass({
     this.update('events', {$set: _.reduce(res.data, function (events, event) {
       return events.concat(_.map(event.dates, function (date) {
         var isAllDay = event.is_all_day;
-        return _.extend({
-          id: date.id,
-          title: event.title,
-          description: event.description,
-          location: event.location,
-          portal: event.portal,
-          thumbnail_url: event.thumbnail_url,
-          filters: date.filters,
-          is_all_day: isAllDay,
+        return _.extend({}, event, date, {
           starts_at: parseDate(date.starts_at, isAllDay),
           ends_at: parseDate(date.ends_at, isAllDay)
         });

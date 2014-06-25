@@ -1,182 +1,182 @@
-@import '../config';
+// @import '../config';
 
-.osw-events-index {
-  position: relative;
+// .osw-events-index {
+//   position: relative;
 
-  &.js-full-width .osw-main {
-    width: 100%;
-  }
+//   &.js-full-width .osw-main {
+//     width: 100%;
+//   }
 
-  .osw-event-filters {
-    display: inline-block;
-    width: 20%;
-    vertical-align: top;
-    position: absolute;
-    left: 0;
+//   .osw-event-filters {
+//     display: inline-block;
+//     width: 20%;
+//     vertical-align: top;
+//     position: absolute;
+//     left: 0;
 
-    .osw-event-filters-container {
-      padding: 5px;
-      background: white;
-      box-shadow: none;
-    }
+//     .osw-event-filters-container {
+//       padding: 5px;
+//       background: white;
+//       box-shadow: none;
+//     }
 
-    .osw-search-field {
-      width: 100%;
-    }
+//     .osw-search-field {
+//       width: 100%;
+//     }
 
-    .osw-search-container {
-      margin: 5px;
-    }
+//     .osw-search-container {
+//       margin: 5px;
+//     }
 
-    .osw-event-filters-list {
-      overflow: auto;
-      max-height: 600px;
-    }
-  }
+//     .osw-event-filters-list {
+//       overflow: auto;
+//       max-height: 600px;
+//     }
+//   }
 
-  .osw-main {
-    display: inline-block;
-    width: 80%;
-    position: absolute;
-    right: 0;
-    transition: width 0.5s ease-in-out;
-    vertical-align: top;
-    background: white;
-  }
+//   .osw-main {
+//     display: inline-block;
+//     width: 80%;
+//     position: absolute;
+//     right: 0;
+//     transition: width 0.5s ease-in-out;
+//     vertical-align: top;
+//     background: white;
+//   }
 
-  .osw-events-list {
-    height: 600px;
-  }
+//   .osw-events-list {
+//     height: 600px;
+//   }
 
-  .osw-top {
-    position: relative;
-    padding: 5px;
-    text-align: center;
-    @include clearfix;
-  }
+//   .osw-top {
+//     position: relative;
+//     padding: 5px;
+//     text-align: center;
+//     @include clearfix;
+//   }
 
-  .osw-month-year {
-    padding-top: 10px;
+//   .osw-month-year {
+//     padding-top: 10px;
 
-    .osw-month,
-    .osw-year {
-      vertical-align: middle;
-      font-size: 24px;
-      background: none;
-      border: none;
-      outline: none;
-      cursor: pointer;
-      @include appearance(none);
-      text-indent: 0.01px;
-      text-overflow: "";
-      border-radius: 0;
-    }
+//     .osw-month,
+//     .osw-year {
+//       vertical-align: middle;
+//       font-size: 24px;
+//       background: none;
+//       border: none;
+//       outline: none;
+//       cursor: pointer;
+//       @include appearance(none);
+//       text-indent: 0.01px;
+//       text-overflow: "";
+//       border-radius: 0;
+//     }
 
-    .osw-month {
-      margin-right: 5px;
-      font-weight: bold;
-      direction: rtl;
-    }
+//     .osw-month {
+//       margin-right: 5px;
+//       font-weight: bold;
+//       direction: rtl;
+//     }
 
-    .osw-prev-month,
-    .osw-next-month {
-      font-weight: bold;
-      font-size: 20px;
-      vertical-align: middle;
-      cursor: pointer;
+//     .osw-prev-month,
+//     .osw-next-month {
+//       font-weight: bold;
+//       font-size: 20px;
+//       vertical-align: middle;
+//       cursor: pointer;
 
-      &:hover {
-        color: #00578f;
-      }
-    }
+//       &:hover {
+//         color: #00578f;
+//       }
+//     }
 
-    .osw-prev-month {
-      margin-right: 10px;
-    }
+//     .osw-prev-month {
+//       margin-right: 10px;
+//     }
 
-    .osw-next-month {
-      margin-left: 10px;
-    }
-  }
+//     .osw-next-month {
+//       margin-left: 10px;
+//     }
+//   }
 
-  .osw-loading {
-    position: absolute;
-    left: 5px;
-    color: $grey-darker;
-  }
+//   .osw-loading {
+//     position: absolute;
+//     left: 5px;
+//     color: $grey-darker;
+//   }
 
-  .osw-tz {
-    position: absolute;
-    right: 5px;
-    color: $grey-darker;
-  }
+//   .osw-tz {
+//     position: absolute;
+//     right: 5px;
+//     color: $grey-darker;
+//   }
 
-  .osw-left-buttons,
-  .osw-right-buttons {
-    position: absolute;
-    padding: 5px;
-    font-size: 14px;
-  }
+//   .osw-left-buttons,
+//   .osw-right-buttons {
+//     position: absolute;
+//     padding: 5px;
+//     font-size: 14px;
+//   }
 
-  .osw-left-buttons {
-    left: 0;
-  }
+//   .osw-left-buttons {
+//     left: 0;
+//   }
 
-  .osw-right-buttons {
-    right: 0;
-  }
+//   .osw-right-buttons {
+//     right: 0;
+//   }
 
-  .osw-toggle-filters,
-  .osw-today,
-  .osw-change-view {
-    cursor: pointer;
-    color: #3872a7;
+//   .osw-toggle-filters,
+//   .osw-today,
+//   .osw-change-view {
+//     cursor: pointer;
+//     color: #3872a7;
 
-    &:hover {
-      color: #00578f;
-    }
-  }
+//     &:hover {
+//       color: #00578f;
+//     }
+//   }
 
-  .osw-toggle-filters .oswi {
-    font-size: 20px;
-  }
+//   .osw-toggle-filters .oswi {
+//     font-size: 20px;
+//   }
 
-  .osw-today {
-    vertical-align: bottom;
-  }
-}
+//   .osw-today {
+//     vertical-align: bottom;
+//   }
+// }
 
-.osw-events-index.js-list-view {
-  .osw-days-of-week {
-    display: none;
-  }
+// .osw-events-index.js-list-view {
+//   .osw-days-of-week {
+//     display: none;
+//   }
 
-  .osw-change-view[data-view=list] {
-    display: none;
-  }
-}
+//   .osw-change-view[data-view=list] {
+//     display: none;
+//   }
+// }
 
-.osw-events-index.js-month-view,
-.osw-events-index.js-week-view {
-  .osw-change-view[data-view=month] {
-    display: none;
-  }
+// .osw-events-index.js-month-view,
+// .osw-events-index.js-week-view {
+//   .osw-change-view[data-view=month] {
+//     display: none;
+//   }
 
-  .js-day-container {
-    display: inline-block;
-    @include box-sizing(border-box);
-    width: 14.28%;
-    padding: 0 2px;
-  }
+//   .js-day-container {
+//     display: inline-block;
+//     @include box-sizing(border-box);
+//     width: 14.28%;
+//     padding: 0 2px;
+//   }
 
-  .js-day {
-    border-top: 1px solid $grey;
-    padding: 0 2px;
-    color: $grey-darker;
-    font-weight: bold;
-    line-height: 20px;
-    text-align: right;
-    text-transform: uppercase;
-    font-size: 11px;
-  }
-}
+//   .js-day {
+//     border-top: 1px solid $grey;
+//     padding: 0 2px;
+//     color: $grey-darker;
+//     font-weight: bold;
+//     line-height: 20px;
+//     text-align: right;
+//     text-transform: uppercase;
+//     font-size: 11px;
+//   }
+// }

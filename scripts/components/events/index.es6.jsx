@@ -3,6 +3,7 @@
 import _ from 'underscore';
 import api from 'api';
 import Calendar from 'components/events/calendar';
+import List from 'components/events/list';
 import Cursors from 'cursors';
 import EventFiltersIndex from 'components/event-filters/index';
 import {mom, getDaySpan, matchesQueryAndFilters} from 'entities/event';
@@ -104,6 +105,8 @@ export default React.createClass({
           title: event.title,
           description: event.description,
           location: event.location,
+          portal: event.portal,
+          thumbnail_url: event.thumbnail_url,
           filters: date.filters,
           is_all_day: isAllDay,
           starts_at: parseDate(date.starts_at, isAllDay),
@@ -121,9 +124,18 @@ export default React.createClass({
     this.update('query', {$set: ev.target.value});
   },
 
+  renderTz: function () {
+    var tz = this.state.tz;
+    var city = tz.replace(/^.*?\//, '').replace(/_/g, ' ');
+    return city + ' Time (' + mom(void 0, tz).zoneAbbr() + ')';
+  },
+
   render: function () {
     return (
       <div className='osw-events-index'>
+        Search:
+        <input value={this.state.query} onChange={this.handleQueryChange}/>
+        {this.renderTz()}
         <select onChange={this.handleTzChange} value={this.state.tz}>
           <option>{this.props.tz}</option>
           <option>America/Los_Angeles</option>
@@ -133,10 +145,9 @@ export default React.createClass({
           <option>Asia/Hong_Kong</option>
           <option>Asia/Kolkata</option>
         </select>
-        Search:
-        <input value={this.state.query} onChange={this.handleQueryChange}/>
         <EventFiltersIndex
-          eventsUrl={this.getEventsUrl()}
+          url={this.getEventsUrl() + '/filters'}
+          header={this.props.eventFiltersHeader}
           cursors={{eventFilters: this.getCursor('filters')}}
         />
         <Calendar
@@ -146,6 +157,23 @@ export default React.createClass({
             events: this.getCursor('filteredEvents'),
             tz: this.getCursor('tz'),
             target: this.getCursor('target')
+          }}
+        />
+        <List
+          cursors={{
+            allEvents: this.getCursor('events'),
+            events: this.getCursor('filteredEvents'),
+            tz: this.getCursor('tz'),
+            target: this.getCursor('target')
+          }}
+        />
+        <List
+          past={true}
+          cursors={{
+            allEvents: this.getCursor('events'),
+            events: this.getCursor('filteredEvents'),
+            tz: this.getCursor('tz'),
+            target: this.getCursor('target'),
           }}
         />
       </div>

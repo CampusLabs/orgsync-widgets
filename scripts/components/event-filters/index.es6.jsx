@@ -33,14 +33,14 @@ export default React.createClass({
   fetch: function () {
     this.update('isLoading', {$set: true});
     this.update('error', {$set: null});
-    api.get(this.props.eventsUrl + '/filters', this.handleFetch);
+    api.get(this.props.url, this.handleFetch);
   },
 
   handleFetch: function (er, res) {
     this.update('isLoading', {$set: false});
     if (er) return this.update('error', {$set: null});
     var getEventFilterColor = this.getEventFilterColor;
-    var eventFilters = res.data;
+    var eventFilters = res.data.slice().sort(this.comparator);
     this.update('eventFilters', {
       $set: _.map(eventFilters, function (eventFilter, i) {
         return _.extend({}, eventFilter, {
@@ -51,11 +51,22 @@ export default React.createClass({
     });
   },
 
+  comparator: function (a, b) {
+    if (a.type !== b.type) {
+      if (a.type === 'rsvp') return -1;
+      if (b.type === 'rsvp') return 1;
+      if (a.type === 'featured') return -1;
+      if (b.type === 'feature') return 1;
+    }
+    if (a.name !== b.name) return a.name < b.name ? -1 : 1;
+    return 0;
+  },
+
   getEventFilterColor: function (filter, i, filters) {
     return filter.color || (
       filter.type === 'rsvp' ?
       RSVP_COLOR :
-      tinycolor({h: i * (filters.length / 360), s: 1, l: 0.4}).toHex()
+      tinycolor({h: i * (360 / filters.length), s: 1, l: 0.4}).toHex()
     );
   },
 
@@ -63,6 +74,7 @@ export default React.createClass({
     return (
       <EventFilterListItem
         key={eventFilter.id}
+        header={this.props.header}
         cursors={{eventFilter: this.getCursor('eventFilters', i)}}
       />
     );

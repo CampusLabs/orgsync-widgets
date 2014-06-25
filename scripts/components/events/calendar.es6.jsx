@@ -9,11 +9,11 @@ import Week from 'components/events/week';
 export default React.createClass({
   mixins: [Cursors],
 
-  getStarts: function () {
-    var first = mom(this.state.target, this.state.tz)
+  getDates: function () {
+    var dateMom = mom(this.state.target, this.state.tz)
       .startOf('week').subtract('weeks', 1);
     return _.times(this.props.rows, function () {
-      return first.add('weeks', 1).format('YYYY-MM-DD');
+      return dateMom.add('weeks', 1).format('YYYY-MM-DD');
     });
   },
 
@@ -37,11 +37,11 @@ export default React.createClass({
     );
   },
 
-  renderWeek: function (start) {
+  renderWeek: function (date) {
     return (
       <Week
-        key={start}
-        start={start}
+        key={date}
+        date={date}
         rows={4}
         cursors={{
           events: this.getCursor('events'),
@@ -55,7 +55,7 @@ export default React.createClass({
     return (
       <div className='osw-events-calendar'>
         {this.renderDayNames()}
-        {this.getStarts().map(this.renderWeek)}
+        {this.getDates().map(this.renderWeek)}
       </div>
     );
   }

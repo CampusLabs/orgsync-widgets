@@ -9,35 +9,32 @@ import React from 'react';
 export default React.createClass({
   mixins: [Cursors],
 
-  getEventsForDay: function (n) {
-    var startMom = mom(this.props.start, this.state.tz).day(n);
-    var startISO = startMom.toISOString();
-    var startDate = startMom.format('YYYY-MM-DD');
-    var endMom = startMom.add('day', 1);
-    var endISO = endMom.toISOString();
-    var endDate = endMom.format('YYYY-MM-DD');
+  getEventsForDate: function (date) {
+    var dateMom = mom(date, this.state.tz);
+    var iso = dateMom.toISOString();
+    dateMom.add('day', 1);
+    var endIso = dateMom.toISOString();
+    var endDate = dateMom.format('YYYY-MM-DD');
     return _.filter(this.state.events, function (event) {
-      var start = event.is_all_day ? startDate : startISO;
-      var end = event.is_all_day ? endDate : endISO;
+      var start = event.is_all_day ? date : iso;
+      var end = event.is_all_day ? endDate : endIso;
       return event.ends_at > start && event.starts_at < end;
     });
   },
 
   getGrid: function () {
-    var getEventsForDay = this.getEventsForDay;
     var rows = this.props.rows;
     var added = [];
-    var start = this.props.start;
     var tz = this.state.tz;
     var grid = _.times(rows, _.partial(_.times, 7, _.constant(null)));
     _.times(7, function (x) {
-      var startMom = mom(start, tz).day(x);
-      var startISO = startMom.toISOString();
-      var startDate = startMom.format('YYYY-MM-DD');
+      var dateMom = mom(this.props.date, tz).day(x);
+      var iso = dateMom.toISOString();
+      var date = dateMom.format('YYYY-MM-DD');
 
       // Find events for this day, then remove the events that have already been
       // added previously in the grid.
-      var events = _.difference(getEventsForDay(x), added);
+      var events = _.difference(this.getEventsForDate(date), added);
       _.times(rows, function (y) {
         var i;
         if (!events.length) return;
@@ -73,7 +70,7 @@ export default React.createClass({
         // Grab the next event up for display.
         var event = events.shift();
         added.push(event);
-        var daySpan = getDaySpan(startDate, event.ends_at, tz);
+        var daySpan = getDaySpan(date, event.ends_at, tz);
         var colSpan = Math.min(daySpan, 7 - x);
 
         // Mark spots this event takes up as taken.
@@ -83,24 +80,24 @@ export default React.createClass({
         // midnight and ends on a different day. For this case we have to create
         // a single column to display the start time and the event name,
         // followed by the remaining columns to show the end time.
-        if (!event.is_all_day && event.starts_at > startISO && colSpan > 1) {
+        if (!event.is_all_day && event.starts_at > iso && colSpan > 1) {
           grid[y][x + 1] = {
-            start: startMom.clone().add('day', 1).format('YYYY-MM-DD'),
+            date: dateMom.clone().add('day', 1).format('YYYY-MM-DD'),
             span: colSpan - 1,
             hideTitle: true,
             event: event
           };
           colSpan = 1;
         }
-        grid[y][x] = {start: startDate, span: colSpan, event: event};
-      });
-    });
+        grid[y][x] = {date: date, span: colSpan, event: event};
+      }, this);
+    }, this);
     return grid;
   },
 
   renderHeader: function (n) {
     var tz = this.state.tz;
-    var day = mom(this.props.start, tz).day(n);
+    var day = mom(this.props.date, tz).day(n);
     var formatted = day.format(day.date() === 1 ? 'MMMM D' : 'D');
     var now = mom(void 0, tz);
     return (
@@ -123,7 +120,7 @@ export default React.createClass({
       <Column
         key={'event-' + col.event.id + '-' + y}
         colSpan={col.span}
-        start={col.start}
+        date={col.date}
         hideTitle={col.hideTitle}
         cursors={{
           event: this.getCursor('events', i),

@@ -112,8 +112,9 @@ export default React.createClass({
   render: function () {
     return (
       <div className='osw-events-index'>
-        Search:
-        <input value={this.state.query} onChange={this.handleQueryChange}/>
+        <div className='osw-field oswi oswi-magnify'>
+          <input value={this.state.query} onChange={this.handleQueryChange}/>
+        </div>
         {this.renderTz()}
         <select onChange={this.handleTzChange} value={this.state.tz}>
           <option>{this.props.tz}</option>

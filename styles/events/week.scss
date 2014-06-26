@@ -10,12 +10,12 @@
   }
 
   th {
-    padding: 0 2px 2px;
+    padding: 0 2px;
     font-weight: normal;
 
     .osw-day-wrapper {
       border-top: 1px solid $grey;
-      padding: 2px;
+      padding: 2px 4px;
       color: $grey-darker;
       font-size: 14px;
       text-align: right;
@@ -23,7 +23,11 @@
   }
 
   .osw-current-day .osw-day-wrapper {
-    color: $red;
+    color: white;
+    background: $red;
     font-weight: bold;
+    padding-top: 3px;
+    border-top: none;
+    @include border-top-radius(3px)
   }
 }

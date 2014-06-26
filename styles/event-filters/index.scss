@@ -1,0 +1,14 @@
+@import '../config';
+
+.osw-event-filters-index {
+  &.osw-inset-block {
+    padding: 5px;
+  }
+
+  hr {
+    margin: 5px 0;
+    border: 0;
+    height: 1px;
+    background: #ccc;
+  }
+}

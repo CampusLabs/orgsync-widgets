@@ -23,18 +23,18 @@ export default React.createClass({
   render: function () {
     var eventFilter = this.state.eventFilter;
     return (
-      <div
-        className='osw-event-filters-list-item'
-        style={{color: '#' + eventFilter.color}}
-      >
+      <div className='osw-event-filters-list-item'>
         <label>
-          <Icon name={ICON_MAP[eventFilter.type]} />
+          <Icon
+            name={ICON_MAP[eventFilter.type]}
+            style={{color: '#' + eventFilter.color}}
+          />
           <input
             type='checkbox'
             checked={eventFilter.active}
             onChange={this.handleChange}
           />
-          {eventFilter.name}
+          <span className='osw-name'>{eventFilter.name}</span>
         </label>
       </div>
     );

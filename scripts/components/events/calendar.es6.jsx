@@ -23,7 +23,6 @@ export default React.createClass({
     };
   },
 
-
   getDates: function () {
     var dateMom = mom(this.state.date, this.props.tz)
       .startOf('month').startOf('week');
@@ -36,32 +35,52 @@ export default React.createClass({
 
   handleMonthChange: function (ev) {
     var month = parseInt(ev.target.value);
-    var dateMom = mom(this.state.date, this.state.tz).month(month);
+    var dateMom = mom(this.state.date, this.props.tz).month(month);
     this.update('date', {$set: dateMom.format('YYYY-MM-DD')});
   },
 
   handleYearChange: function (ev) {
     var year = parseInt(ev.target.value);
-    var dateMom = mom(this.state.date, this.state.tz).year(year);
+    var dateMom = mom(this.state.date, this.props.tz).year(year);
+    this.update('date', {$set: dateMom.format('YYYY-MM-DD')});
+  },
+
+  handleTodayClick: function () {
+    var dateMom = mom(void 0, this.props.tz);
+    this.update('date', {$set: dateMom.format('YYYY-MM-DD')});
+  },
+
+  handlePrevClick: function () {
+    this.incrMonth(-1);
+  },
+
+  handleNextClick: function () {
+    this.incrMonth(1);
+  },
+
+  incrMonth: function (dir) {
+    var dateMom = mom(this.state.date, this.props.tz).add('month', dir);
     this.update('date', {$set: dateMom.format('YYYY-MM-DD')});
   },
 
   renderMonthOption: function (month) {
     return (
       <option key={month} value={month}>
-        {mom(this.state.date, this.state.tz).month(month).format('MMMM')}
+        {mom(this.state.date, this.props.tz).month(month).format('MMMM')}
       </option>
     );
   },
 
   renderMonthSelect: function () {
     return (
-      <select
-        value={mom(this.state.date, this.state.tz).month()}
-        onChange={this.handleMonthChange}
-      >
-        {_.times(12, this.renderMonthOption)}
-      </select>
+      <div className='osw-month osw-field osw-dropdown'>
+        <select
+          value={mom(this.state.date, this.props.tz).month()}
+          onChange={this.handleMonthChange}
+        >
+          {_.times(12, this.renderMonthOption)}
+        </select>
+      </div>
     );
   },
 
@@ -70,11 +89,13 @@ export default React.createClass({
   },
 
   renderYearSelect: function () {
-    var year = mom(this.state.date, this.state.tz).year();
+    var year = mom(this.state.date, this.props.tz).year();
     return (
-      <select value={year} onChange={this.handleYearChange}>
-        {_.map(_.range(year - 3, year + 4), this.renderYearOption)}
-      </select>
+      <div className='osw-year osw-field osw-dropdown'>
+        <select value={year} onChange={this.handleYearChange}>
+          {_.map(_.range(year - 3, year + 4), this.renderYearOption)}
+        </select>
+      </div>
     );
   },
 
@@ -116,6 +137,15 @@ export default React.createClass({
       <div className='osw-events-calendar'>
         {this.renderMonthSelect()}
         {this.renderYearSelect()}
+        <span className='osw-button' onClick={this.handlePrevClick}>
+          &lt;
+        </span>
+        <span className='osw-button' onClick={this.handleTodayClick}>
+          Today
+        </span>
+        <span className='osw-button' onClick={this.handleNextClick}>
+          &gt;
+        </span>
         {this.renderDayNames()}
         {this.getDates().map(this.renderWeek)}
       </div>

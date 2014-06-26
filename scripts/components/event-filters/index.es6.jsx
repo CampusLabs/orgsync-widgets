@@ -7,6 +7,8 @@ import EventFilterListItem from 'components/event-filters/list-item';
 import React from 'react';
 import tinycolor from 'tinycolor';
 
+var update = React.addons.update;
+
 var RSVP_COLOR = '94b363';
 
 export default React.createClass({
@@ -14,7 +16,8 @@ export default React.createClass({
 
   getDefaultProps: function () {
     return {
-      eventFilters: []
+      eventFilters: [],
+      header: 'Filters'
     };
   },
 
@@ -70,7 +73,38 @@ export default React.createClass({
     );
   },
 
-  renderEventFilter: function (eventFilter, i) {
+  handleChange: function (ev) {
+    var active = ev.target.checked;
+    var eventFilters = this.state.eventFilters;
+    var first = eventFilters.slice(0, 1);
+    var setActive = _.partial(update, _, {active: {$set: active}});
+    var rest = _.map(eventFilters.slice(1), setActive);
+    this.update('eventFilters', {$set: first.concat(rest)});
+  },
+
+  renderHeader: function () {
+    var header = this.props.header;
+    var checked =
+       _.every(this.state.eventFilters.slice(1), _.matches({active: true}));
+    return (
+      <div>
+        <hr />
+        <div className='osw-event-filters-list-item osw-header'>
+          <label>
+            <input
+              type='checkbox'
+              checked={checked}
+              onChange={this.handleChange}
+            />
+            <span className='osw-name'>{header}</span>
+          </label>
+        </div>
+      </div>
+    );
+  },
+
+  renderEventFilter: function (eventFilter) {
+    var i = _.indexOf(this.state.eventFilters, eventFilter);
     return (
       <EventFilterListItem
         key={eventFilter.id}
@@ -81,9 +115,12 @@ export default React.createClass({
   },
 
   render: function () {
+    var eventFilters = this.state.eventFilters;
     return (
-      <div className='osw-event-filters-index'>
-        {_.map(this.state.eventFilters, this.renderEventFilter)}
+      <div className='osw-inset-block osw-event-filters-index'>
+        {_.map(eventFilters.slice(0, 1), this.renderEventFilter)}
+        {this.renderHeader()}
+        {_.map(eventFilters.slice(1), this.renderEventFilter)}
       </div>
     );
   }

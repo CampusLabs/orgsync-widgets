@@ -6,11 +6,10 @@ import Calendar from 'components/events/calendar';
 import List from 'components/events/list';
 import Cursors from 'cursors';
 import EventFiltersIndex from 'components/event-filters/index';
+import moment from 'moment';
 import {mom, getDaySpan, matchesQueryAndFilters} from 'entities/event';
 import React from 'react';
 import tz from 'tz';
-
-var FILTERED_EVENTS_MODIFIER_KEYS = ['events', 'query', 'filters'];
 
 export default React.createClass({
   mixins: [Cursors],
@@ -19,47 +18,30 @@ export default React.createClass({
     return {
       events: [],
       query: '',
-      filters: [],
-      tz: tz,
-      target: mom(void 0, tz)
-        .startOf('month')
-        .startOf('week')
-        .format('YYYY-MM-DD')
+      eventFilters: [],
+      tz: tz
     };
   },
 
   getInitialState: function () {
     return {
       events: this.props.events,
-      filters: this.props.filters,
-      filteredEvents: [],
       query: this.props.query,
-      tz: this.props.tz,
-      target: this.props.target
+      eventFilters: this.props.eventFilters,
+      tz: this.props.tz
     };
   },
 
-  componentWillMount: function () {
-    this.updateFilteredEvents();
+  componentDidMount: function () {
     this.testFetch();
   },
 
-  componentDidUpdate: function (__, prevState) {
-    if (this.filteredEventsShouldUpdate(prevState)) this.updateFilteredEvents();
-  },
-
-  filteredEventsShouldUpdate: function (prevState) {
-    return _.any(FILTERED_EVENTS_MODIFIER_KEYS, function (key) {
-      return prevState[key] !== this.state[key];
-    }, this);
-  },
-
-  updateFilteredEvents: function () {
+  getFilteredEvents: function () {
     var events = this.state.events;
     var query = this.state.query;
-    var filters = _.filter(this.state.filters, _.matches({active: true}));
+    var filters = this.getActiveEventFilters();
     var matches = _.partial(matchesQueryAndFilters, _, query, filters);
-    this.update('filteredEvents', {$set: _.filter(events, matches)});
+    return _.filter(events, matches);
   },
 
   getEventsUrl: function () {
@@ -70,16 +52,21 @@ export default React.createClass({
     ) + '/events';
   },
 
+  getActiveEventFilters: function () {
+    return _.filter(this.state.eventFilters, _.matches({active: true}));
+  },
+
   testFetch: function () {
     api.get(this.getEventsUrl(), {
       upcoming: true,
       per_page: 100,
-      after: this.props.target
+      after: mom(void 0, this.state.tz)
+        .startOf('month').startOf('week').toISOString()
     }, this.handleTestFetch);
   },
 
   parseDate: function (date, isAllDay) {
-    return isAllDay ? date.slice(0, 10) : (new Date(date)).toISOString();
+    return isAllDay ? date.slice(0, 10) : moment.utc(date).toISOString();
   },
 
   comparator: function (a, b) {
@@ -140,33 +127,25 @@ export default React.createClass({
         <EventFiltersIndex
           url={this.getEventsUrl() + '/filters'}
           header={this.props.eventFiltersHeader}
-          cursors={{eventFilters: this.getCursor('filters')}}
+          cursors={{eventFilters: this.getCursor('eventFilters')}}
         />
         <Calendar
           rows={6}
-          cursors={{
-            allEvents: this.getCursor('events'),
-            events: this.getCursor('filteredEvents'),
-            tz: this.getCursor('tz'),
-            target: this.getCursor('target')
-          }}
+          events={this.getFilteredEvents()}
+          eventFilters={this.getActiveEventFilters()}
+          tz={this.state.tz}
+          date={this.props.date}
         />
         <List
-          cursors={{
-            allEvents: this.getCursor('events'),
-            events: this.getCursor('filteredEvents'),
-            tz: this.getCursor('tz'),
-            target: this.getCursor('target')
-          }}
+          events={this.getFilteredEvents()}
+          eventFilters={this.getActiveEventFilters()}
+          tz={this.state.tz}
         />
         <List
+          events={this.getFilteredEvents()}
+          eventFilters={this.getActiveEventFilters()}
+          tz={this.state.tz}
           past={true}
-          cursors={{
-            allEvents: this.getCursor('events'),
-            events: this.getCursor('filteredEvents'),
-            tz: this.getCursor('tz'),
-            target: this.getCursor('target'),
-          }}
         />
       </div>
     );

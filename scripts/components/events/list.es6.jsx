@@ -8,52 +8,45 @@ import List from 'react-list';
 import ListItem from 'components/events/list-item';
 import React from 'react';
 
+var PREFIX_RE = /^(Yesterday|Today|Tomorrow)/;
+
 export default React.createClass({
   mixins: [Cursors],
 
-  getDefaultProps: function () {
-    return {
-      events: []
-    };
-  },
-
-  getInitialState: function () {
-    return {
-      events: this.props.events
-    };
-  },
-
   getDates: function () {
-    var tz = this.state.tz;
-    var now = mom(void 0, this.state.tz);
-    return _.chain(this.state.events)
+    var tz = this.props.tz;
+    var now = mom(void 0, this.props.tz);
+    var past = this.props.past;
+    var dir = past ? -1 : 1;
+    return _.chain(this.props.events)
       .reduce(function (dates, event) {
         var start = mom(event.starts_at, tz);
         var end = mom(event.ends_at, tz);
-        var cursor = (now < start ? start : now).clone();
-        while (cursor < end) {
+        var cursor =
+          past ?
+          (now > end ? end : now.clone()) :
+          (now < start ? start : now.clone());
+        while (past ? cursor > start : cursor < end) {
           var key = cursor.format('YYYY-MM-DD');
           if (!dates[key]) dates[key] = [];
           dates[key].push(event);
-          cursor.add('day', 1).startOf('day');
+          cursor.add('day', dir).startOf('day');
         }
         return dates;
       }, {})
       .pairs()
-      .sortBy(0)
-      .value();
+      .value()
+      .sort(function (a, b) { return dir * (a[0] < b[0] ? -1 : 1); });
   },
 
   renderEvent: function (date, event) {
-    var i = _.indexOf(this.state.allEvents, event);
     return (
       <ListItem
         key={event.id}
         date={date}
-        cursors={{
-          event: this.getCursor('allEvents', i),
-          tz: this.getCursor('tz')
-        }}
+        event={event}
+        eventFilters={this.props.eventFilters}
+        tz={this.props.tz}
       />
     );
   },
@@ -61,13 +54,18 @@ export default React.createClass({
   renderDate: function (date) {
     var events = date[1];
     date = date[0];
+    var dateMom = mom(date, this.props.tz);
+    var prefix = PREFIX_RE.exec(dateMom.calendar()) || '';
+    if (prefix) prefix = prefix[0] + ', ';
     return (
-      <div key={date} className='osw-events-list-date'>
-        <div>{date}</div>
+      <div key={date}>
+        <div className='osw-events-list-date'>
+          {prefix + dateMom.format('dddd, MMMM D, YYYY')}
+        </div>
         <List
-          className='osw-events-list'
           items={events}
           renderItem={_.partial(this.renderEvent, date)}
+          uniform={true}
         />
       </div>
     );

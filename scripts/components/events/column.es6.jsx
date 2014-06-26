@@ -1,15 +1,16 @@
 /** @jsx React.DOM */
 
 import Cursors from 'cursors';
-import {mom} from 'entities/event';
+import {mom, getColor} from 'entities/event';
 import React from 'react';
+import tinycolor from 'tinycolor';
 
 export default React.createClass({
   mixins: [Cursors],
 
   getClassName: function () {
     var classes = ['osw-events-column'];
-    var event = this.state.event;
+    var event = this.props.event;
     if (event) {
       if (event.is_all_day) classes.push('osw-all-day');
       if (this.isContinued()) classes.push('osw-continued');
@@ -18,27 +19,38 @@ export default React.createClass({
     return classes.join(' ');
   },
 
+  getEventStyle: function () {
+    var event = this.props.event;
+    var color = getColor(event, this.props.eventFilters);
+    if (!color) return;
+    var style = {borderLeftColor: '#' + color};
+    if (event.is_all_day || this.isContinued() || this.doesContinue()) {
+      style.background = tinycolor.lighten(color, 55).toHexString();
+    }
+    return style;
+  },
+
   getFormattedTime: function (date) {
-    return mom(date, this.state.tz)
+    return mom(date, this.props.tz)
       .format('h:mma')
       .replace(':00', '')
       .replace('m', '');
   },
 
   getStartTime: function () {
-    return this.getFormattedTime(this.state.event.starts_at);
+    return this.getFormattedTime(this.props.event.starts_at);
   },
 
   getEndTime: function () {
-    var endIso = mom(this.props.date, this.state.tz)
+    var endIso = mom(this.props.date, this.props.tz)
       .add('days', this.props.colSpan).toISOString();
-    var event = this.state.event;
+    var event = this.props.event;
     if (event.ends_at >= endIso) return;
     return 'ends ' + this.getFormattedTime(event.ends_at);
   },
 
   getTime: function () {
-    var event = this.state.event;
+    var event = this.props.event;
     if (event.is_all_day) return;
     var isContinued = this.isContinued();
     var doesContinue = this.doesContinue();
@@ -50,15 +62,15 @@ export default React.createClass({
   },
 
   isContinued: function () {
-    var event = this.state.event;
+    var event = this.props.event;
     var start = this.props.date;
-    if (!event.is_all_day) start = mom(start, this.state.tz).toISOString();
+    if (!event.is_all_day) start = mom(start, this.props.tz).toISOString();
     return event.starts_at < start;
   },
 
   doesContinue: function () {
-    var event = this.state.event;
-    var tz = this.state.tz;
+    var event = this.props.event;
+    var tz = this.props.tz;
     var start = this.props.date;
     var endMom = mom(start, tz).add('days', this.props.colSpan);
     var end =
@@ -69,8 +81,8 @@ export default React.createClass({
   },
 
   startsAtMidnight: function () {
-    return this.state.event.starts_at ===
-      mom(this.props.date, this.state.tz).toISOString();
+    return this.props.event.starts_at ===
+      mom(this.props.date, this.props.tz).toISOString();
   },
 
   renderMore: function () {
@@ -79,12 +91,12 @@ export default React.createClass({
 
   renderTitle: function () {
     if (this.props.hideTitle) return;
-    return <div className='osw-title'>{this.state.event.title}</div>;
+    return <div className='osw-title'>{this.props.event.title}</div>;
   },
 
   renderEvent: function () {
     return (
-      <div className='osw-event'>
+      <div className='osw-event' style={this.getEventStyle()}>
         <div className='osw-time'>{this.getTime()}</div>
         {this.renderTitle()}
       </div>
@@ -92,7 +104,7 @@ export default React.createClass({
   },
 
   render: function () {
-    var event = this.state.event;
+    var event = this.props.event;
     var more = this.props.more;
     return (
       <td className={this.getClassName()} colSpan={this.props.colSpan}>

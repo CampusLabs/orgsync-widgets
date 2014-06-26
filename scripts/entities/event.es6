@@ -40,3 +40,10 @@ var matchesFilters = function (event, filters) {
 export var matchesQueryAndFilters = function (event, query, filters) {
   return matchesFilters(event, filters) && matchesQuery(event, query);
 };
+
+export var getColor = function(event, filters) {
+  var match = _.find(filters, function (filter) {
+    return _.contains(event.filters, filter.id);
+  });
+  return match && match.color;
+};

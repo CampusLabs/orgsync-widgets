@@ -10,12 +10,12 @@ export default React.createClass({
   mixins: [Cursors],
 
   getEventsForDate: function (date) {
-    var dateMom = mom(date, this.state.tz);
+    var dateMom = mom(date, this.props.tz);
     var iso = dateMom.toISOString();
     dateMom.add('day', 1);
     var endIso = dateMom.toISOString();
     var endDate = dateMom.format('YYYY-MM-DD');
-    return _.filter(this.state.events, function (event) {
+    return _.filter(this.props.events, function (event) {
       var start = event.is_all_day ? date : iso;
       var end = event.is_all_day ? endDate : endIso;
       return event.ends_at > start && event.starts_at < end;
@@ -25,7 +25,7 @@ export default React.createClass({
   getGrid: function () {
     var rows = this.props.rows;
     var added = [];
-    var tz = this.state.tz;
+    var tz = this.props.tz;
     var grid = _.times(rows, _.partial(_.times, 7, _.constant(null)));
     _.times(7, function (x) {
       var dateMom = mom(this.props.date, tz).day(x);
@@ -96,7 +96,7 @@ export default React.createClass({
   },
 
   renderHeader: function (n) {
-    var tz = this.state.tz;
+    var tz = this.props.tz;
     var day = mom(this.props.date, tz).day(n);
     var formatted = day.format(day.date() === 1 ? 'MMMM D' : 'D');
     var now = mom(void 0, tz);
@@ -115,17 +115,15 @@ export default React.createClass({
     if (col === true) return;
     if (col === null) return <Column key={'empty-' + y} />;
     if (col.more) return  <Column key={'more-' + y} more={col.more} />;
-    var i = _.indexOf(this.state.events, col.event);
     return (
       <Column
         key={'event-' + col.event.id + '-' + y}
         colSpan={col.span}
         date={col.date}
         hideTitle={col.hideTitle}
-        cursors={{
-          event: this.getCursor('events', i),
-          tz: this.getCursor('tz')
-        }}
+        event={col.event}
+        eventFilters={this.props.eventFilters}
+        tz={this.props.tz}
       />
     );
   },

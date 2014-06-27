@@ -15,22 +15,20 @@ export default React.createClass({
 
   getDates: function () {
     var tz = this.props.tz;
-    var now = mom(void 0, this.props.tz);
+    var now = mom(void 0, tz);
     var past = this.props.past;
     var dir = past ? -1 : 1;
     return _.chain(this.props.events)
       .reduce(function (dates, event) {
         var start = mom(event.starts_at, tz);
         var end = mom(event.ends_at, tz);
-        var cursor =
-          past ?
-          (now > end ? end : now.clone()) :
-          (now < start ? start : now.clone());
-        while (past ? cursor > start : cursor < end) {
-          var key = cursor.format('YYYY-MM-DD');
+        if (!past && start < now) start = now.clone();
+        if (past && end > now) end = now.clone();
+        while (start < end) {
+          var key = start.format('YYYY-MM-DD');
           if (!dates[key]) dates[key] = [];
           dates[key].push(event);
-          cursor.add('day', dir).startOf('day');
+          start.add('day', 1).startOf('day');
         }
         return dates;
       }, {})

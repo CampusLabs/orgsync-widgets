@@ -6,8 +6,16 @@ import Icon from 'components/icon';
 import {mom, getColor} from 'entities/event';
 import React from 'react';
 
+var FORMAT = 'h:mm A';
+
 export default React.createClass({
   mixins: [Cursors],
+
+  formatWithVerb: function (time, verb) {
+    var now = mom(void 0, this.props.tz);
+    var suffix = time < now ? 'ed' : 's';
+    return time.format('[' + verb + suffix + ' at ]h:mm A');
+  },
 
   getTime: function () {
     var event = this.props.event;
@@ -22,10 +30,10 @@ export default React.createClass({
     var endsAfter = eventEnd >= dateEnd;
     if (startsBefore && endsAfter) return 'All Day';
     if (!startsBefore && !endsAfter) {
-      return eventStart.format('h:mm A') + ' - ' + eventEnd.format('h:mm A');
+      return eventStart.format(FORMAT) + ' - ' + eventEnd.format(FORMAT);
     }
-    if (startsBefore) return eventEnd.format('[Ends at ]h:mm A');
-    return eventStart.format('[Starts at ]h:mm A');
+    if (startsBefore) return this.formatWithVerb(eventEnd, 'End');
+    return this.formatWithVerb(eventStart, 'Start');
   },
 
   getStyle: function () {

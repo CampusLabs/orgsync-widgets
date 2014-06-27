@@ -137,11 +137,13 @@ export default React.createClass({
           tz={this.state.tz}
           date={this.props.date}
         />
+        <h1>UPCOMING</h1>
         <List
           events={this.getFilteredEvents()}
           eventFilters={this.getActiveEventFilters()}
           tz={this.state.tz}
         />
+        <h1>PAST</h1>
         <List
           events={this.getFilteredEvents()}
           eventFilters={this.getActiveEventFilters()}

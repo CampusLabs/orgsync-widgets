@@ -4,6 +4,7 @@ import _ from 'underscore';
 import api from 'api';
 import Cursors from 'cursors';
 import List from 'react-list';
+import ListDate from 'components/events/list-date';
 import React from 'react';
 
 import {
@@ -73,6 +74,7 @@ export default React.createClass({
         key={date[0]}
         date={date[0]}
         events={date[1]}
+        eventFilters={this.props.eventFilters}
         tz={this.props.tz}
       />
     );

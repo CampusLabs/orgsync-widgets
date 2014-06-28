@@ -20,15 +20,18 @@
     position: relative;
   }
 
+  .olay-container,
   &.js-olay-container {
     background: black;
     background: rgba(0, 0, 0, 0.75);
   }
 
+  .olay-cell,
   .js-olay-cell {
     padding: 20px;
   }
 
+  .olay-content,
   .js-olay-content {
     max-width: 800px;
     background: white;

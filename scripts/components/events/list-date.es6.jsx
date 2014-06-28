@@ -2,6 +2,7 @@
 
 import _ from 'underscore';
 import Cursors from 'cursors';
+import List from 'react-list';
 import ListItem from 'components/events/list-item';
 import React from 'react';
 
@@ -18,6 +19,7 @@ export default React.createClass({
         key={event.id}
         date={this.props.date}
         event={event}
+        eventFilters={this.props.eventFilters}
         tz={this.props.tz}
       />
     );

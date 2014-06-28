@@ -16,6 +16,7 @@
       "moment": "bower_components/moment/moment.js",
       "mustache": "bower_components/mustache/mustache.js",
       "olay": "bower_components/olay/olay.js",
+      "olay-react": "bower_components/olay-react/olay-react.js",
       "orgsync-api": "bower_components/orgsync-api/orgsync-api.js",
       "react": "bower_components/react/react-with-addons.js",
       "react-list": "bower_components/react-list/react-list.js",

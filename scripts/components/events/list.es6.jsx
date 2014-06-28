@@ -4,7 +4,6 @@ import _ from 'underscore';
 import api from 'api';
 import Cursors from 'cursors';
 import List from 'react-list';
-import ListItem from 'components/events/list-item';
 import React from 'react';
 
 import {
@@ -13,8 +12,6 @@ import {
   getNextContiguous,
   getPrevContiguous
 } from 'entities/event';
-
-var PREFIX_RE = /^(Yesterday|Today|Tomorrow)/;
 
 export default React.createClass({
   mixins: [Cursors],
@@ -70,35 +67,14 @@ export default React.createClass({
       .sort(function (a, b) { return dir * (a[0] < b[0] ? -1 : 1); });
   },
 
-  renderEvent: function (date, event) {
+  renderDate: function (date) {
     return (
-      <ListItem
-        key={event.id}
-        date={date}
-        event={event}
-        eventFilters={this.props.eventFilters}
+      <ListDate
+        key={date[0]}
+        date={date[0]}
+        events={date[1]}
         tz={this.props.tz}
       />
-    );
-  },
-
-  renderDate: function (date) {
-    var events = date[1];
-    date = date[0];
-    var dateMom = getMoment(date, this.props.tz);
-    var prefix = PREFIX_RE.exec(dateMom.calendar()) || '';
-    if (prefix) prefix = prefix[0] + ', ';
-    return (
-      <div key={date}>
-        <div className='osw-events-list-date'>
-          {prefix + dateMom.format('dddd, MMMM D, YYYY')}
-        </div>
-        <List
-          items={events}
-          renderItem={_.partial(this.renderEvent, date)}
-          uniform={true}
-        />
-      </div>
     );
   },
 

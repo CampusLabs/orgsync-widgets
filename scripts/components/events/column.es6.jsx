@@ -2,11 +2,19 @@
 
 import Cursors from 'cursors';
 import {getMoment, getColor} from 'entities/event';
+import Olay from 'olay-react';
 import React from 'react';
+import Show from 'components/events/show';
 import tinycolor from 'tinycolor';
 
 export default React.createClass({
   mixins: [Cursors],
+
+  getInitialState: function () {
+    return {
+      showIsOpen: false
+    };
+  },
 
   getClassName: function () {
     var classes = ['osw-events-column'];
@@ -85,6 +93,14 @@ export default React.createClass({
       getMoment(this.props.date, this.props.tz).toISOString();
   },
 
+  openShow: function () {
+    this.update('showIsOpen', {$set: true});
+  },
+
+  closeShow: function () {
+    this.update('showIsOpen', {$set: false});
+  },
+
   renderMore: function () {
     return <div className='osw-more'>{this.props.more} more...</div>;
   },
@@ -96,10 +112,26 @@ export default React.createClass({
 
   renderEvent: function () {
     return (
-      <div className='osw-event' style={this.getEventStyle()}>
+      <div
+        className='osw-event'
+        style={this.getEventStyle()}
+        onClick={this.openShow}
+      >
         <div className='osw-time'>{this.getTime()}</div>
         {this.renderTitle()}
       </div>
+    );
+  },
+
+  renderShow: function () {
+    return <Show event={this.props.event} date={this.props.date} />;
+  },
+
+  renderShowOlay: function () {
+    return (
+      <Olay close={this.closeShow}>
+        {this.state.showIsOpen ? this.renderShow() : null}
+      </Olay>
     );
   },
 
@@ -109,6 +141,7 @@ export default React.createClass({
     return (
       <td className={this.getClassName()} colSpan={this.props.colSpan}>
         {event ? this.renderEvent() : more ? this.renderMore() : null}
+        {this.renderShowOlay()}
       </td>
     );
   }

@@ -3,14 +3,14 @@
 import _ from 'underscore';
 import Cursors from 'cursors';
 import Column from 'components/events/column';
-import {mom, getDaySpan} from 'entities/event';
+import {getMoment, getDaySpan} from 'entities/event';
 import React from 'react';
 
 export default React.createClass({
   mixins: [Cursors],
 
   getEventsForDate: function (date) {
-    var dateMom = mom(date, this.props.tz);
+    var dateMom = getMoment(date, this.props.tz);
     var iso = dateMom.toISOString();
     dateMom.add('day', 1);
     var endIso = dateMom.toISOString();
@@ -28,7 +28,7 @@ export default React.createClass({
     var tz = this.props.tz;
     var grid = _.times(rows, _.partial(_.times, 7, _.constant(null)));
     _.times(7, function (x) {
-      var dateMom = mom(this.props.date, tz).day(x);
+      var dateMom = getMoment(this.props.date, tz).day(x);
       var iso = dateMom.toISOString();
       var date = dateMom.format('YYYY-MM-DD');
 
@@ -97,9 +97,9 @@ export default React.createClass({
 
   renderHeader: function (n) {
     var tz = this.props.tz;
-    var day = mom(this.props.date, tz).day(n);
+    var day = getMoment(this.props.date, tz).day(n);
     var formatted = day.format(day.date() === 1 ? 'MMMM D' : 'D');
-    var now = mom(void 0, tz);
+    var now = getMoment(void 0, tz);
     return (
       <th key={n} className={day.isSame(now, 'day') ? 'osw-current-day' : null}>
         <div className='osw-day-wrapper'>{formatted}</div>

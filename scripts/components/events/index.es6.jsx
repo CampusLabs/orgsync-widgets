@@ -7,7 +7,7 @@ import List from 'components/events/list';
 import Cursors from 'cursors';
 import EventFiltersIndex from 'components/event-filters/index';
 import moment from 'moment';
-import {mom, getDaySpan, matchesQueryAndFilters} from 'entities/event';
+import {getMoment, getDaySpan, matchesQueryAndFilters} from 'entities/event';
 import React from 'react';
 import tz from 'tz';
 
@@ -60,7 +60,7 @@ export default React.createClass({
     api.get(this.getEventsUrl(), {
       upcoming: true,
       per_page: 100,
-      after: mom(void 0, this.state.tz)
+      after: getMoment(void 0, this.state.tz)
         .startOf('month').startOf('week').toISOString()
     }, this.handleTestFetch);
   },
@@ -106,7 +106,7 @@ export default React.createClass({
   renderTz: function () {
     var tz = this.state.tz;
     var city = tz.replace(/^.*?\//, '').replace(/_/g, ' ');
-    return city + ' Time (' + mom(void 0, tz).zoneAbbr() + ')';
+    return city + ' Time (' + getMoment(void 0, tz).zoneAbbr() + ')';
   },
 
   render: function () {

@@ -3,7 +3,7 @@
 import _ from 'underscore';
 import api from 'api';
 import Cursors from 'cursors';
-import {mom} from 'entities/event';
+import {getMoment} from 'entities/event';
 import List from 'react-list';
 import ListItem from 'components/events/list-item';
 import React from 'react';
@@ -15,13 +15,13 @@ export default React.createClass({
 
   getDates: function () {
     var tz = this.props.tz;
-    var now = mom(void 0, tz);
+    var now = getMoment(void 0, tz);
     var past = this.props.past;
     var dir = past ? -1 : 1;
     return _.chain(this.props.events)
       .reduce(function (dates, event) {
-        var start = mom(event.starts_at, tz);
-        var end = mom(event.ends_at, tz);
+        var start = getMoment(event.starts_at, tz);
+        var end = getMoment(event.ends_at, tz);
         if (!past && start < now) start = now.clone();
         if (past && end > now) end = now.clone();
         while (start < end) {
@@ -52,7 +52,7 @@ export default React.createClass({
   renderDate: function (date) {
     var events = date[1];
     date = date[0];
-    var dateMom = mom(date, this.props.tz);
+    var dateMom = getMoment(date, this.props.tz);
     var prefix = PREFIX_RE.exec(dateMom.calendar()) || '';
     if (prefix) prefix = prefix[0] + ', ';
     return (

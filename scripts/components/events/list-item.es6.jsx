@@ -3,7 +3,7 @@
 import _str from 'underscore.string';
 import Cursors from 'cursors';
 import Icon from 'components/icon';
-import {mom, getColor} from 'entities/event';
+import {getMoment, getColor} from 'entities/event';
 import React from 'react';
 
 var FORMAT = 'h:mm A';
@@ -12,7 +12,7 @@ export default React.createClass({
   mixins: [Cursors],
 
   formatWithVerb: function (time, verb) {
-    var now = mom(void 0, this.props.tz);
+    var now = getMoment(void 0, this.props.tz);
     var suffix = time < now ? 'ed' : 's';
     return time.format('[' + verb + suffix + ' at ]h:mm A');
   },
@@ -22,9 +22,9 @@ export default React.createClass({
     if (event.is_all_day) return 'All Day';
     var date = this.props.date;
     var tz = this.props.tz;
-    var eventStart = mom(event.starts_at, tz);
-    var eventEnd = mom(event.ends_at, tz);
-    var dateStart = mom(date, tz);
+    var eventStart = getMoment(event.starts_at, tz);
+    var eventEnd = getMoment(event.ends_at, tz);
+    var dateStart = getMoment(date, tz);
     var dateEnd = dateStart.clone().add('day', 1);
     var startsBefore = eventStart <= dateStart;
     var endsAfter = eventEnd >= dateEnd;
@@ -57,7 +57,7 @@ export default React.createClass({
   },
 
   renderDefaultPicture: function () {
-    var dateMom = mom(this.props.date, this.props.tz);
+    var dateMom = getMoment(this.props.date, this.props.tz);
     return (
       <div className='osw-default-picture'>
         <div className='osw-month'>{dateMom.format('MMM')}</div>

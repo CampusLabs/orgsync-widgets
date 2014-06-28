@@ -1,7 +1,7 @@
 /** @jsx React.DOM */
 
 import Cursors from 'cursors';
-import {mom, getColor} from 'entities/event';
+import {getMoment, getColor} from 'entities/event';
 import React from 'react';
 import tinycolor from 'tinycolor';
 
@@ -31,7 +31,7 @@ export default React.createClass({
   },
 
   getFormattedTime: function (date) {
-    return mom(date, this.props.tz)
+    return getMoment(date, this.props.tz)
       .format('h:mma')
       .replace(':00', '')
       .replace('m', '');
@@ -42,7 +42,7 @@ export default React.createClass({
   },
 
   getEndTime: function () {
-    var endIso = mom(this.props.date, this.props.tz)
+    var endIso = getMoment(this.props.date, this.props.tz)
       .add('days', this.props.colSpan).toISOString();
     var event = this.props.event;
     if (event.ends_at >= endIso) return;
@@ -64,7 +64,7 @@ export default React.createClass({
   isContinued: function () {
     var event = this.props.event;
     var start = this.props.date;
-    if (!event.is_all_day) start = mom(start, this.props.tz).toISOString();
+    if (!event.is_all_day) start = getMoment(start, this.props.tz).toISOString();
     return event.starts_at < start;
   },
 
@@ -72,7 +72,7 @@ export default React.createClass({
     var event = this.props.event;
     var tz = this.props.tz;
     var start = this.props.date;
-    var endMom = mom(start, tz).add('days', this.props.colSpan);
+    var endMom = getMoment(start, tz).add('days', this.props.colSpan);
     var end =
       event.is_all_day ?
       endMom.format('YYYY-MM-DD') :
@@ -82,7 +82,7 @@ export default React.createClass({
 
   startsAtMidnight: function () {
     return this.props.event.starts_at ===
-      mom(this.props.date, this.props.tz).toISOString();
+      getMoment(this.props.date, this.props.tz).toISOString();
   },
 
   renderMore: function () {

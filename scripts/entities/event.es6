@@ -8,11 +8,11 @@ var cache = _.memoize(function (date, tz) {
     moment.utc(date).tz(tz);
 }, function (date, tz) { return date + '/' + tz; });
 
-export var mom = function (date, tz) { return cache(date, tz).clone(); };
+export var getMoment = function (date, tz) { return cache(date, tz).clone(); };
 
 export var getDaySpan = function (start, end, tz) {
   return Math.ceil(
-    mom(end, tz).diff(mom(start, tz).startOf('day'), 'days', true)
+    getMoment(end, tz).diff(getMoment(start, tz).startOf('day'), 'days', true)
   );
 };
 

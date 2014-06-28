@@ -2,7 +2,7 @@
 
 import _ from 'underscore';
 import Cursors from 'cursors';
-import {mom} from 'entities/event';
+import {getMoment} from 'entities/event';
 import React from 'react';
 import tz from 'tz';
 import Week from 'components/events/week';
@@ -13,18 +13,18 @@ export default React.createClass({
   getDefaultProps: function () {
     return {
       tz: tz,
-      date: mom(void 0, tz).format('YYYY-MM-DD')
+      date: getMoment(void 0, tz).format('YYYY-MM-DD')
     };
   },
 
   getInitialState: function () {
     return {
-      date: mom(this.props.date, this.props.tz).format('YYYY-MM-DD')
+      date: getMoment(this.props.date, this.props.tz).format('YYYY-MM-DD')
     };
   },
 
   getDates: function () {
-    var dateMom = mom(this.state.date, this.props.tz)
+    var dateMom = getMoment(this.state.date, this.props.tz)
       .startOf('month').startOf('week');
     return _.times(this.props.rows, function () {
       var date = dateMom.format('YYYY-MM-DD');
@@ -35,18 +35,18 @@ export default React.createClass({
 
   handleMonthChange: function (ev) {
     var month = parseInt(ev.target.value);
-    var dateMom = mom(this.state.date, this.props.tz).month(month);
+    var dateMom = getMoment(this.state.date, this.props.tz).month(month);
     this.update('date', {$set: dateMom.format('YYYY-MM-DD')});
   },
 
   handleYearChange: function (ev) {
     var year = parseInt(ev.target.value);
-    var dateMom = mom(this.state.date, this.props.tz).year(year);
+    var dateMom = getMoment(this.state.date, this.props.tz).year(year);
     this.update('date', {$set: dateMom.format('YYYY-MM-DD')});
   },
 
   handleTodayClick: function () {
-    var dateMom = mom(void 0, this.props.tz);
+    var dateMom = getMoment(void 0, this.props.tz);
     this.update('date', {$set: dateMom.format('YYYY-MM-DD')});
   },
 
@@ -59,14 +59,14 @@ export default React.createClass({
   },
 
   incrMonth: function (dir) {
-    var dateMom = mom(this.state.date, this.props.tz).add('month', dir);
+    var dateMom = getMoment(this.state.date, this.props.tz).add('month', dir);
     this.update('date', {$set: dateMom.format('YYYY-MM-DD')});
   },
 
   renderMonthOption: function (month) {
     return (
       <option key={month} value={month}>
-        {mom(this.state.date, this.props.tz).month(month).format('MMMM')}
+        {getMoment(this.state.date, this.props.tz).month(month).format('MMMM')}
       </option>
     );
   },
@@ -75,7 +75,7 @@ export default React.createClass({
     return (
       <div className='osw-month osw-field osw-dropdown'>
         <select
-          value={mom(this.state.date, this.props.tz).month()}
+          value={getMoment(this.state.date, this.props.tz).month()}
           onChange={this.handleMonthChange}
         >
           {_.times(12, this.renderMonthOption)}
@@ -89,7 +89,7 @@ export default React.createClass({
   },
 
   renderYearSelect: function () {
-    var year = mom(this.state.date, this.props.tz).year();
+    var year = getMoment(this.state.date, this.props.tz).year();
     return (
       <div className='osw-year osw-field osw-dropdown'>
         <select value={year} onChange={this.handleYearChange}>
@@ -103,7 +103,7 @@ export default React.createClass({
     return (
       <th key={n}>
         <div className='osw-day-name'>
-          {mom(void 0, this.props.tz).day(n).format('ddd')}
+          {getMoment(void 0, this.props.tz).day(n).format('ddd')}
         </div>
       </th>
     );

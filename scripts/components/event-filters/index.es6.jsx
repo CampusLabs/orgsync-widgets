@@ -29,7 +29,7 @@ export default React.createClass({
     };
   },
 
-  componentWillMount: function () {
+  componentDidMount: function () {
     if (!this.state.eventFilters.length) this.fetch();
   },
 
@@ -41,7 +41,7 @@ export default React.createClass({
 
   handleFetch: function (er, res) {
     this.update('isLoading', {$set: false});
-    if (er) return this.update('error', {$set: null});
+    if (er) return this.update('error', {$set: er});
     var getEventFilterColor = this.getEventFilterColor;
     var eventFilters = res.data.slice().sort(this.comparator);
     this.update('eventFilters', {
@@ -114,13 +114,27 @@ export default React.createClass({
     );
   },
 
-  render: function () {
+  renderEventFilters: function () {
+    if (this.state.isLoading) {
+      return <div className='osw-loading'>Loading...</div>;
+    }
+    if (this.state.error) {
+      return <div className='osw-error'>{this.state.error}</div>;
+    }
     var eventFilters = this.state.eventFilters;
     return (
-      <div className='osw-inset-block osw-event-filters-index'>
+      <div className='osw-event-filters'>
         {_.map(eventFilters.slice(0, 1), this.renderEventFilter)}
         {this.renderHeader()}
         {_.map(eventFilters.slice(1), this.renderEventFilter)}
+      </div>
+    );
+  },
+
+  render: function () {
+    return (
+      <div className='osw-inset-block osw-event-filters-index'>
+       {this.renderEventFilters()}
       </div>
     );
   }

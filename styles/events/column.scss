@@ -9,7 +9,7 @@
   &.osw-continued,
   &.osw-continues {
     .osw-event {
-      background: #ddd;
+      background: $grey-lightest;
     }
   }
 
@@ -21,10 +21,11 @@
   }
 
   .osw-event {
-    border-left: 2px solid;
+    border-left: 2px solid $grey;
     padding: 0 4px;
     line-height: 18px;
     height: 18px;
+    cursor: pointer;
     @include box-sizing(border-box);
     @include clearfix;
   }

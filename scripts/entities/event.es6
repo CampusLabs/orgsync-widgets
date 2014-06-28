@@ -3,7 +3,7 @@ import _str from 'underscore.string';
 import api from 'api';
 import moment from 'moment-timezone';
 
-var PER_PAGE = 20;
+var PER_PAGE = 100;
 
 var cache = _.memoize(function (date, tz) {
   return date && date.length === 10 ?

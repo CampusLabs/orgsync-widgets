@@ -4,8 +4,6 @@ import api from 'api';
 import moment from 'moment-timezone';
 
 var PER_PAGE = 100;
-var FIRST_ISO = '0000-01-01T00:00:00.000Z';
-var LAST_ISO = '9999-12-31T23:59:59.999Z';
 
 var cache = _.memoize(function (date, tz) {
   return date && date.length === 10 ?
@@ -88,7 +86,6 @@ export var merge = function (a, b) {
 };
 
 export var getNextContiguous = function (after, ranges) {
-  if (!after) return;
   ranges = _.sortBy(ranges, 0);
   for (var i = 0, l = ranges.length; i < l; ++i) {
     var range = ranges[i];
@@ -98,7 +95,6 @@ export var getNextContiguous = function (after, ranges) {
 };
 
 export var getPrevContiguous = function (before, ranges) {
-  if (!before) return;
   ranges = _.sortBy(ranges, 1);
   for (var i = ranges.length - 1; i >= 0; --i) {
     var range = ranges[i];
@@ -113,12 +109,11 @@ var handleFetch = function (options, cb, er, res) {
   var before = options.before;
   var events = parseResponse(res);
   if (events.length === PER_PAGE) {
-    if (after) before = _.last(_.sortBy(events, 'starts_at')).starts_at;
-    else if (before) after = _.first(_.sortBy(events, 'ends_at')).ends_at;
-  } else if (!after) {
-    after = FIRST_ISO;
-  } else if (!before) {
-    before = LAST_ISO;
+    if (options.direction === 'backwards') {
+      after = _.first(_.sortBy(events, 'ends_at')).ends_at;
+    } else {
+      before = _.last(_.sortBy(events, 'starts_at')).starts_at;
+    }
   }
   var ranges = options.ranges.concat([[after, before]]);
   var events = merge(options.events, events);
@@ -128,15 +123,14 @@ var handleFetch = function (options, cb, er, res) {
 export var fetch = function (options, cb) {
   var options = _.clone(options);
   var ranges = options.ranges;
-  var after = options.after = getNextContiguous(options.after, ranges);
-  var before = options.before = getPrevContiguous(options.before, ranges);
-  var atLimit = after === LAST_ISO || before === FIRST_ISO;
-  var isSatisfied = after && before && after >= before;
-  if (atLimit || isSatisfied) return cb();
+  options.after = getNextContiguous(options.after, ranges);
+  options.before = getPrevContiguous(options.before, ranges);
+  if (options.after >= options.before) return cb();
   api.get(options.url, {
     upcoming: true,
     per_page: PER_PAGE,
-    after: after,
-    before: before
+    after: options.after,
+    before: options.before,
+    direction: options.direction
   }, _.partial(handleFetch, options, cb));
 };

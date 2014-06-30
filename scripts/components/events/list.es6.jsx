@@ -14,6 +14,8 @@ import {
   getPrevContiguous
 } from 'entities/event';
 
+var YEAR_LIMIT = 2;
+
 export default React.createClass({
   mixins: [Cursors],
 
@@ -23,8 +25,12 @@ export default React.createClass({
       events: this.state.allEvents,
       url: this.props.eventsUrl
     };
-    var iso = getMoment(void 0, this.props.tz).toISOString();
-    options[this.props.past ? 'before' : 'after'] = iso;
+    var past = this.props.past;
+    var now = getMoment(void 0, this.props.tz);
+    options[past ? 'before' : 'after'] = now.toISOString();
+    options[past ? 'after' : 'before'] =
+      now.add('years', (past ? -1 : 1) * YEAR_LIMIT).toISOString();
+    if (past) options.direction = 'backwards';
     fetch(options, _.partial(this.handleFetch, cb));
   },
 

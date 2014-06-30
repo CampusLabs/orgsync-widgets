@@ -24,10 +24,10 @@
   > .osw-header {
     padding: 0 5px 5px;
     text-align: center;
-  }
 
-  .osw-year,
-  .osw-month {
-    display: inline-block;
+    > .osw-year,
+    > .osw-month {
+      display: inline-block;
+    }
   }
 }

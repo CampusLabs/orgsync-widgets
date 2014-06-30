@@ -1,9 +1,11 @@
 @import '../config';
 
 .osw-events-week {
-  width: 100%;
-  table-layout: fixed;
-  border-collapse: collapse;
+  table {
+    width: 100%;
+    table-layout: fixed;
+    border-collapse: collapse;
+  }
 
   tr {
     background: white;
@@ -19,6 +21,7 @@
       color: $grey-darker;
       font-size: 14px;
       text-align: right;
+      cursor: pointer;
     }
   }
 

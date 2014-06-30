@@ -4,10 +4,19 @@ import _ from 'underscore';
 import Cursors from 'cursors';
 import Column from 'components/events/column';
 import {getMoment, getDaySpan} from 'entities/event';
+import ListDate from 'components/events/list-date';
+import Olay from 'olay-react';
 import React from 'react';
+
 
 export default React.createClass({
   mixins: [Cursors],
+
+  getInitialState: function () {
+    return {
+      openDate: null
+    };
+  },
 
   getEventsForDate: function (date) {
     var dateMom = getMoment(date, this.props.tz);
@@ -42,7 +51,7 @@ export default React.createClass({
         // Show the more message.
         if (y === rows - 1 && events.length > 1) {
           var prev = grid[y][x];
-          grid[y][x] = {more: events.length};
+          grid[y][x] = {more: events.length, date: date};
 
           // This is tricky. If a previous event was overlapping what will be
           // our more message, it is necessary to move backward and change the
@@ -59,7 +68,7 @@ export default React.createClass({
               // for the special case below.
               if (id && col.id && id !== col.id) break;
               if (!id && col.id) id = col.id;
-              grid[y][i] = {more: 1};
+              grid[y][i].more = 1;
             }
           }
         }
@@ -82,7 +91,7 @@ export default React.createClass({
         // followed by the remaining columns to show the end time.
         if (!event.is_all_day && event.starts_at > iso && colSpan > 1) {
           grid[y][x + 1] = {
-            date: dateMom.clone().add('day', 1).format('YYYY-MM-DD'),
+            date: dateMom.clone().day(x + 1).format('YYYY-MM-DD'),
             span: colSpan - 1,
             hideTitle: true,
             event: event
@@ -95,14 +104,30 @@ export default React.createClass({
     return grid;
   },
 
+  openDate: function (date) {
+    this.update('openDate', {$set: date});
+  },
+
+  closeDate: function () {
+    this.update('openDate', {$set: null});
+  },
+
   renderHeader: function (n) {
     var tz = this.props.tz;
-    var day = getMoment(this.props.date, tz).day(n);
-    var formatted = day.format(day.date() === 1 ? 'MMMM D' : 'D');
+    var date = getMoment(this.props.date, tz).day(n);
+    var formatted = date.format(date.date() === 1 ? 'MMMM D' : 'D');
     var now = getMoment(void 0, tz);
     return (
-      <th key={n} className={day.isSame(now, 'day') ? 'osw-current-day' : null}>
-        <div className='osw-day-wrapper'>{formatted}</div>
+      <th
+        key={n}
+        className={date.isSame(now, 'day') ? 'osw-current-day' : null}
+      >
+        <div
+          className='osw-day-wrapper'
+          onClick={_.partial(this.openDate, date.format('YYYY-MM-DD'))}
+        >
+          {formatted}
+        </div>
       </th>
     );
   },
@@ -114,7 +139,15 @@ export default React.createClass({
   renderColumn: function (col, y) {
     if (col === true) return;
     if (col === null) return <Column key={'empty-' + y} />;
-    if (col.more) return  <Column key={'more-' + y} more={col.more} />;
+    if (col.more) {
+      return (
+        <Column
+          key={'more-' + y}
+          more={col.more}
+          openDate={_.partial(this.openDate, col.date)}
+        />
+      );
+    }
     return (
       <Column
         key={'event-' + col.event.id + '-' + y}
@@ -138,12 +171,35 @@ export default React.createClass({
     );
   },
 
+  renderOpenDate: function () {
+    var date = this.state.openDate;
+    return (
+      <ListDate
+        events={this.getEventsForDate(date)}
+        eventFilters={this.props.eventFilters}
+        date={date}
+        tz={this.props.tz}
+      />
+    );
+  },
+
+  renderOpenDateOlay: function () {
+    return (
+      <Olay close={this.closeDate}>
+        {this.state.openDate ? this.renderOpenDate() : null}
+      </Olay>
+    );
+  },
+
   render: function () {
     return (
-      <table className='osw-events-week'>
-        {this.renderHead()}
-        {this.renderBody()}
-      </table>
+      <div className='osw-events-week'>
+        <table>
+          {this.renderHead()}
+          {this.renderBody()}
+        </table>
+        {this.renderOpenDateOlay()}
+      </div>
     );
   }
 });

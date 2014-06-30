@@ -102,7 +102,14 @@ export default React.createClass({
   },
 
   renderMore: function () {
-    return <div className='osw-more'>{this.props.more} more...</div>;
+    return (
+      <div
+        className='osw-more'
+        onClick={this.props.openDate}
+      >
+        {this.props.more + ' more...'}
+      </div>
+    );
   },
 
   renderTitle: function () {

@@ -91,12 +91,14 @@ export default React.createClass({
         <hr />
         <div className='osw-event-filters-list-item osw-header'>
           <label>
-            <input
-              type='checkbox'
-              checked={checked}
-              onChange={this.handleChange}
-            />
-            <span className='osw-name'>{header}</span>
+            <div className='osw-name'>
+              <input
+                type='checkbox'
+                checked={checked}
+                onChange={this.handleChange}
+              />
+              {header}
+            </div>
           </label>
         </div>
       </div>

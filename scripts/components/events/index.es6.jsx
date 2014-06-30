@@ -28,7 +28,8 @@ export default React.createClass({
       query: '',
       eventFilters: [],
       tz: tz,
-      view: VIEWS[0]
+      view: VIEWS[0],
+      filtersAreShowing: true
     };
   },
 
@@ -39,7 +40,8 @@ export default React.createClass({
       eventFilters: this.props.eventFilters,
       tz: this.props.tz,
       view: this.props.view,
-      ranges: []
+      ranges: [],
+      filtersAreShowing: this.props.filtersAreShowing
     };
   },
 
@@ -63,12 +65,22 @@ export default React.createClass({
     return _.filter(this.state.eventFilters, _.matches({active: true}));
   },
 
+  getMainClassName: function () {
+    var classes = ['osw-main'];
+    if (!this.state.filtersAreShowing) classes.push('osw-full-width');
+    return classes.join(' ');
+  },
+
   handleTzChange: function (ev) {
     this.update('tz', {$set: ev.target.value});
   },
 
   handleQueryChange: function (ev) {
     this.update('query', {$set: ev.target.value});
+  },
+
+  toggleFiltersAreShowing: function () {
+    this.update('filtersAreShowing', {$set: !this.state.filtersAreShowing});
   },
 
   renderTz: function () {
@@ -144,26 +156,29 @@ export default React.createClass({
   render: function () {
     return (
       <div className='osw-events-index'>
-        <div className='osw-field oswi oswi-magnify'>
-          <input value={this.state.query} onChange={this.handleQueryChange}/>
+        <div className='osw-sidebar'>
+          <div className='osw-search'>
+            <div className='osw-field oswi oswi-magnify'>
+              <input
+                value={this.state.query}
+                onChange={this.handleQueryChange}
+              />
+            </div>
+          </div>
+          <EventFiltersIndex
+            url={this.getEventsUrl() + '/filters'}
+            header={this.props.eventFiltersHeader}
+            cursors={{eventFilters: this.getCursor('eventFilters')}}
+          />
         </div>
-        {this.renderTz()}
-        <select onChange={this.handleTzChange} value={this.state.tz}>
-          <option>{this.props.tz}</option>
-          <option>America/Los_Angeles</option>
-          <option>America/New_York</option>
-          <option>Europe/London</option>
-          <option>Australia/Brisbane</option>
-          <option>Asia/Hong_Kong</option>
-          <option>Asia/Kolkata</option>
-        </select>
-        <EventFiltersIndex
-          url={this.getEventsUrl() + '/filters'}
-          header={this.props.eventFiltersHeader}
-          cursors={{eventFilters: this.getCursor('eventFilters')}}
-        />
-        {this.renderTabs()}
-        {this.renderView()}
+        <div className={this.getMainClassName()}>
+          <span className='osw-button' onClick={this.toggleFiltersAreShowing}>
+            {this.state.filtersAreShowing ? 'Hide Filters' : 'Show Filters'}
+          </span>
+          {this.renderTabs()}
+          {this.renderTz()}
+          <div className='osw-view'>{this.renderView()}</div>
+        </div>
       </div>
     );
   }

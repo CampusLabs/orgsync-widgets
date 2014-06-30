@@ -29,12 +29,14 @@ export default React.createClass({
             name={ICON_MAP[eventFilter.type]}
             style={{color: '#' + eventFilter.color}}
           />
-          <input
-            type='checkbox'
-            checked={eventFilter.active}
-            onChange={this.handleChange}
-          />
-          <span className='osw-name'>{eventFilter.name}</span>
+          <div className='osw-name'>
+            <input
+              type='checkbox'
+              checked={eventFilter.active}
+              onChange={this.handleChange}
+            />
+            {eventFilter.name}
+          </div>
         </label>
       </div>
     );

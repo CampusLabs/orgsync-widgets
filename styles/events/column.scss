@@ -47,6 +47,19 @@
     }
   }
 
+  &.osw-attending .osw-event {
+    color: $green-darkest;
+  }
+
+  &.osw-maybe-attending .osw-event,
+  &.osw-invited .osw-event {
+    color: $grey-darker;
+  }
+
+  &.osw-invited .osw-event {
+    border: 1px dashed $grey;
+  }
+
   .osw-time {
     float: right;
     padding-left: 5px;

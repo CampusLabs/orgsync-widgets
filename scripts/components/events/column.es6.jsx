@@ -23,6 +23,13 @@ export default React.createClass({
       if (event.is_all_day) classes.push('osw-all-day');
       if (this.isContinued()) classes.push('osw-continued');
       if (this.doesContinue()) classes.push('osw-continues');
+      var rsvp = event.rsvp;
+      var type =
+        rsvp === 'Attending' || rsvp === 'Added by Admin' ? 'attending' :
+        rsvp === 'Maybe Attending' ? 'maybe-attending' :
+        rsvp === 'Invited' ? 'invited' :
+        null;
+      if (type) classes.push('osw-' + type);
     }
     return classes.join(' ');
   },

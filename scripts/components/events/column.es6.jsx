@@ -131,7 +131,7 @@ export default React.createClass({
   },
 
   renderShow: function () {
-    return <Show event={this.props.event} date={this.props.date} />;
+    return <Show event={this.props.event} tz={this.props.tz} />;
   },
 
   renderShowOlay: function () {

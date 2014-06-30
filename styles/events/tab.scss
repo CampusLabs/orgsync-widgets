@@ -1,0 +1,12 @@
+@import '../config';
+
+.osw-events-tab {
+  &:not(:first-child) {
+    border-left: none;
+    @include border-left-radius(0);
+  }
+
+  &:not(:last-child) {
+    @include border-right-radius(0);
+  }
+}

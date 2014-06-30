@@ -2,63 +2,87 @@
 
 .osw-events-index {
   position: relative;
+}
 
-  .osw-sidebar {
-    width: 20%;
+.osw-events-index-sidebar {
+  width: 20%;
+}
+
+.osw-events-index-search {
+  padding: 5px 5px 0;
+
+  .osw-field {
+    width: 100%;
   }
+}
 
-  .osw-search {
-    padding: 5px 5px 0;
+.osw-events-index-main {
+  background: white;
+  position: absolute;
+  top: 0;
+  left: 20%;
+  width: 80%;
+  @include transition(all 0.5s $ease-out-expo);
+}
 
-    .osw-field {
-      width: 100%;
-    }
-  }
+.osw-events-index-full-width {
+  left: 0;
+  width: 100%;
+}
 
-  .osw-main {
-    background: white;
-    position: absolute;
-    top: 0;
-    left: 20%;
-    width: 80%;
-    @include transition(all 1s $ease-out-expo);
+.osw-events-index-header {
+  padding: 5px;
+  @include clearfix;
+}
 
-    &.osw-full-width {
-      left: 0;
-      width: 100%;
-    }
+.osw-events-index-tz {
+  text-align: right;
+  color: $grey-darker;
+  padding-bottom: 5px;
+}
 
-    > .osw-header {
-      padding: 5px;
-    }
-  }
+.osw-events-index-left {
+  float: left;
+}
 
-  .osw-toggle-filters {
-    float: left;
-  }
+.osw-events-index-toggle-filters {
+  margin-right: 5px;
+}
 
-  .osw-tz {
-    float: right;
-    line-height: 26px;
-    color: $grey-darker;
-  }
+.osw-events-index-view-tabs {
+  margin-right: 5px;
+}
 
-  .osw-view-tabs {
-    text-align: center;
+.osw-events-index-list-controls,
+.osw-events-index-calendar-controls {
+  text-align: center;
+}
 
-    .osw-button {
-      &:not(:first-child) {
-        @include border-left-radius(0);
-      }
+.osw-events-index-view {
+  max-height: 650px;
+  overflow: auto;
+}
 
-      &:not(:last-child) {
-        @include border-right-radius(0);
-      }
-    }
-  }
+.osw-events-index-month,
+.osw-events-index-year {
+  vertical-align: middle;
+  background: none;
+  border: none;
+  outline: none;
+  cursor: pointer;
+  @include appearance(none);
+  text-indent: 0.01px;
+  text-overflow: "";
+  border-radius: 0;
+  font-size: 20px;
+}
 
-  .osw-view {
-    max-height: 650px;
-    overflow: auto;
-  }
+.osw-events-index-month {
+  margin-right: 5px;
+  font-weight: bold;
+  direction: rtl;
+}
+
+.osw-events-index-incr {
+  float: right;
 }

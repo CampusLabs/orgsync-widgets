@@ -12,18 +12,10 @@ import Week from 'components/events/week';
 export default React.createClass({
   mixins: [Cursors],
 
-  getDefaultProps: function () {
-    return {
-      tz: tz,
-      date: getMoment(void 0, tz).format('YYYY-MM-DD')
-    };
-  },
-
   getInitialState: function () {
     return {
       isLoading: false,
-      error: null,
-      date: getMoment(this.props.date, this.props.tz).format('YYYY-MM-DD')
+      error: null
     };
   },
 
@@ -31,8 +23,8 @@ export default React.createClass({
     this.fetch();
   },
 
-  componentDidUpdate: function (prevProps, prevState) {
-    if (this.state.date !== prevState.date) this.fetch();
+  componentDidUpdate: function (prevProps) {
+    if (this.props.date !== prevProps.date) this.fetch();
   },
 
   fetch: function () {
@@ -48,6 +40,7 @@ export default React.createClass({
   },
 
   handleFetch: function (er, ranges, events) {
+    if (!this.isMounted()) return;
     this.update('isLoading', {$set: false});
     if (er) {
       this.update('error', {$set: er});
@@ -59,7 +52,7 @@ export default React.createClass({
   },
 
   getStartMom: function () {
-    return getMoment(this.state.date, this.props.tz)
+    return getMoment(this.props.date, this.props.tz)
       .startOf('month').startOf('week');
   },
 
@@ -72,72 +65,6 @@ export default React.createClass({
     return _.times(this.props.weeks, function (n) {
       return startMom.clone().add('weeks', n).format('YYYY-MM-DD');
     });
-  },
-
-  handleMonthChange: function (ev) {
-    var month = parseInt(ev.target.value);
-    var dateMom = getMoment(this.state.date, this.props.tz).month(month);
-    this.update('date', {$set: dateMom.format('YYYY-MM-DD')});
-  },
-
-  handleYearChange: function (ev) {
-    var year = parseInt(ev.target.value);
-    var dateMom = getMoment(this.state.date, this.props.tz).year(year);
-    this.update('date', {$set: dateMom.format('YYYY-MM-DD')});
-  },
-
-  handleTodayClick: function () {
-    var dateMom = getMoment(void 0, this.props.tz);
-    this.update('date', {$set: dateMom.format('YYYY-MM-DD')});
-  },
-
-  handlePrevClick: function () {
-    this.incrMonth(-1);
-  },
-
-  handleNextClick: function () {
-    this.incrMonth(1);
-  },
-
-  incrMonth: function (dir) {
-    var dateMom = getMoment(this.state.date, this.props.tz).add('month', dir);
-    this.update('date', {$set: dateMom.format('YYYY-MM-DD')});
-  },
-
-  renderMonthOption: function (month) {
-    return (
-      <option key={month} value={month}>
-        {getMoment(this.state.date, this.props.tz).month(month).format('MMMM')}
-      </option>
-    );
-  },
-
-  renderMonthSelect: function () {
-    return (
-      <div className='osw-month osw-field osw-dropdown'>
-        <select
-          value={getMoment(this.state.date, this.props.tz).month()}
-          onChange={this.handleMonthChange}
-        >
-          {_.times(12, this.renderMonthOption)}
-        </select>
-      </div>
-    );
-  },
-
-  renderYearOption: function (year) {
-    return <option key={year}>{year}</option>;
-  },
-
-  renderYearSelect: function () {
-    var year = getMoment(this.state.date, this.props.tz).year();
-    return (
-      <div className='osw-year osw-field osw-dropdown'>
-        <select value={year} onChange={this.handleYearChange}>
-          {_.map(_.range(year - 3, year + 4), this.renderYearOption)}
-        </select>
-      </div>
-    );
   },
 
   renderDayName: function (n) {
@@ -176,19 +103,6 @@ export default React.createClass({
   render: function () {
     return (
       <div className='osw-events-calendar'>
-        <div className='osw-header'>
-          {this.renderMonthSelect()}
-          {this.renderYearSelect()}
-          <span className='osw-button' onClick={this.handlePrevClick}>
-            &lt;
-          </span>
-          <span className='osw-button' onClick={this.handleTodayClick}>
-            Today
-          </span>
-          <span className='osw-button' onClick={this.handleNextClick}>
-            &gt;
-          </span>
-        </div>
         {this.renderDayNames()}
         {this.getDates().map(this.renderWeek)}
       </div>

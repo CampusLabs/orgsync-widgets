@@ -1,6 +1,9 @@
 @import '../config';
 
 .osw-event-filters-index {
+  overflow: auto;
+  height: 500px;
+
   &.osw-inset-block {
     padding: 5px;
   }

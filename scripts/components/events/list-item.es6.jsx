@@ -4,12 +4,28 @@ import _str from 'underscore.string';
 import Cursors from 'cursors';
 import Icon from 'components/icon';
 import {getMoment, getColor} from 'entities/event';
+import Olay from 'olay-react';
 import React from 'react';
+import Show from 'components/events/show';
 
 var FORMAT = 'h:mm A';
 
 export default React.createClass({
   mixins: [Cursors],
+
+  getInitialState: function () {
+    return {
+      showIsOpen: false
+    };
+  },
+
+  openShow: function () {
+    this.update('showIsOpen', {$set: true});
+  },
+
+  closeShow: function () {
+    this.update('showIsOpen', {$set: false});
+  },
 
   formatWithVerb: function (time, verb) {
     var now = getMoment(void 0, this.props.tz);
@@ -66,22 +82,37 @@ export default React.createClass({
     );
   },
 
+  renderShow: function () {
+    return <Show event={this.props.event} tz={this.props.tz} />;
+  },
+
+  renderShowOlay: function () {
+    return (
+      <Olay close={this.closeShow}>
+        {this.state.showIsOpen ? this.renderShow() : null}
+      </Olay>
+    );
+  },
+
   render: function () {
     var event = this.props.event;
     var src = event.thumbnail_url;
     return (
       <div className='osw-events-list-item' style={this.getStyle()}>
-        <div className='osw-picture-container'>
-          {src ? <img src={src} /> : this.renderDefaultPicture()}
-        </div>
-        <div className='osw-info'>
-          <div className='osw-title'>{event.title}</div>
-          <div className='osw-subtext'>
-            <span className='osw-time'>{this.getTime()}</span>
-            <span className='osw-portal-name'>{event.portal.name}</span>
-            {this.renderRsvp()}
+        <div onClick={this.openShow}>
+          <div className='osw-picture-container'>
+            {src ? <img src={src} /> : this.renderDefaultPicture()}
+          </div>
+          <div className='osw-info'>
+            <div className='osw-title'>{event.title}</div>
+            <div className='osw-subtext'>
+              <span className='osw-time'>{this.getTime()}</span>
+              <span className='osw-portal-name'>{event.portal.name}</span>
+              {this.renderRsvp()}
+            </div>
           </div>
         </div>
+        {this.renderShowOlay()}
       </div>
     );
   }

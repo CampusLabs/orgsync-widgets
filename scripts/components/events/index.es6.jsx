@@ -86,7 +86,11 @@ export default React.createClass({
   renderTz: function () {
     var tz = this.state.tz;
     var city = tz.replace(/^.*?\//, '').replace(/_/g, ' ');
-    return city + ' Time (' + getMoment(void 0, tz).zoneAbbr() + ')';
+    return (
+      <span className='osw-tz'>
+        {city + ' Time (' + getMoment(void 0, tz).zoneAbbr() + ')'}
+      </span>
+    );
   },
 
   renderTab: function (view) {
@@ -172,11 +176,16 @@ export default React.createClass({
           />
         </div>
         <div className={this.getMainClassName()}>
-          <span className='osw-button' onClick={this.toggleFiltersAreShowing}>
-            {this.state.filtersAreShowing ? 'Hide Filters' : 'Show Filters'}
-          </span>
-          {this.renderTabs()}
-          {this.renderTz()}
+          <div className='osw-header'>
+            <span
+              className='osw-button osw-toggle-filters'
+              onClick={this.toggleFiltersAreShowing}
+            >
+              {this.state.filtersAreShowing ? 'Hide Filters' : 'Show Filters'}
+            </span>
+            {this.renderTz()}
+            {this.renderTabs()}
+          </div>
           <div className='osw-view'>{this.renderView()}</div>
         </div>
       </div>

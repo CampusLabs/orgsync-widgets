@@ -176,17 +176,19 @@ export default React.createClass({
   render: function () {
     return (
       <div className='osw-events-calendar'>
-        {this.renderMonthSelect()}
-        {this.renderYearSelect()}
-        <span className='osw-button' onClick={this.handlePrevClick}>
-          &lt;
-        </span>
-        <span className='osw-button' onClick={this.handleTodayClick}>
-          Today
-        </span>
-        <span className='osw-button' onClick={this.handleNextClick}>
-          &gt;
-        </span>
+        <div className='osw-header'>
+          {this.renderMonthSelect()}
+          {this.renderYearSelect()}
+          <span className='osw-button' onClick={this.handlePrevClick}>
+            &lt;
+          </span>
+          <span className='osw-button' onClick={this.handleTodayClick}>
+            Today
+          </span>
+          <span className='osw-button' onClick={this.handleNextClick}>
+            &gt;
+          </span>
+        </div>
         {this.renderDayNames()}
         {this.getDates().map(this.renderWeek)}
       </div>

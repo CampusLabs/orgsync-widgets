@@ -27,10 +27,24 @@
       left: 0;
       width: 100%;
     }
+
+    > .osw-header {
+      padding: 5px;
+    }
+  }
+
+  .osw-toggle-filters {
+    float: left;
+  }
+
+  .osw-tz {
+    float: right;
+    line-height: 26px;
+    color: $grey-darker;
   }
 
   .osw-view-tabs {
-    display: inline-block;
+    text-align: center;
 
     .osw-button {
       &:not(:first-child) {

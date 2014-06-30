@@ -4,6 +4,8 @@ import api from 'api';
 import moment from 'moment-timezone';
 
 var PER_PAGE = 100;
+var FIRST_ISO = '0000-01-01T00:00:00.000Z';
+var LAST_ISO = '9999-12-31T23:59:59.999Z';
 
 var cache = _.memoize(function (date, tz) {
   return date && date.length === 10 ?
@@ -114,9 +116,9 @@ var handleFetch = function (options, cb, er, res) {
     if (after) before = _.last(_.sortBy(events, 'starts_at')).starts_at;
     else if (before) after = _.first(_.sortBy(events, 'ends_at')).ends_at;
   } else if (!after) {
-    after = '9';
+    after = FIRST_ISO;
   } else if (!before) {
-    before = '0';
+    before = LAST_ISO;
   }
   var ranges = options.ranges.concat([[after, before]]);
   var events = merge(options.events, events);
@@ -128,7 +130,7 @@ export var fetch = function (options, cb) {
   var ranges = options.ranges;
   var after = options.after = getNextContiguous(options.after, ranges);
   var before = options.before = getPrevContiguous(options.before, ranges);
-  var atLimit = after === '9' || before === '0';
+  var atLimit = after === LAST_ISO || before === FIRST_ISO;
   var isSatisfied = after && before && after >= before;
   if (atLimit || isSatisfied) return cb();
   api.get(options.url, {

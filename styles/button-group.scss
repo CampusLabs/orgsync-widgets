@@ -1,12 +1,12 @@
-@import '../config';
+@import 'config';
 
-.osw-events-tab {
-  &:not(:first-child) {
+.osw-button-group {
+  .osw-button:not(:first-child) {
     border-left: none;
     @include border-left-radius(0);
   }
 
-  &:not(:last-child) {
+  .osw-button:not(:last-child) {
     @include border-right-radius(0);
   }
 }

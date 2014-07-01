@@ -20,16 +20,16 @@ export default React.createClass({
     var classes = ['osw-events-column'];
     var event = this.props.event;
     if (event) {
-      if (event.is_all_day) classes.push('osw-all-day');
-      if (this.isContinued()) classes.push('osw-continued');
-      if (this.doesContinue()) classes.push('osw-continues');
+      if (event.is_all_day) classes.push('osw-events-column-all-day');
+      if (this.isContinued()) classes.push('osw-events-column-continued');
+      if (this.doesContinue()) classes.push('osw-events-column-continues');
       var rsvp = event.rsvp;
       var type =
         rsvp === 'Attending' || rsvp === 'Added by Admin' ? 'attending' :
         rsvp === 'Maybe Attending' ? 'maybe-attending' :
         rsvp === 'Invited' ? 'invited' :
         null;
-      if (type) classes.push('osw-' + type);
+      if (type) classes.push('osw-events-column-' + type);
     }
     return classes.join(' ');
   },
@@ -111,7 +111,7 @@ export default React.createClass({
   renderMore: function () {
     return (
       <div
-        className='osw-more'
+        className='osw-events-column-more'
         onClick={this.props.openDate}
       >
         {this.props.more + ' more...'}
@@ -121,17 +121,21 @@ export default React.createClass({
 
   renderTitle: function () {
     if (this.props.hideTitle) return;
-    return <div className='osw-title'>{this.props.event.title}</div>;
+    return (
+      <div className='osw-events-column-title'>
+        {this.props.event.title}
+      </div>
+    );
   },
 
   renderEvent: function () {
     return (
       <div
-        className='osw-event'
+        className='osw-events-column-event'
         style={this.getEventStyle()}
         onClick={this.openShow}
       >
-        <div className='osw-time'>{this.getTime()}</div>
+        <div className='osw-events-column-time'>{this.getTime()}</div>
         {this.renderTitle()}
       </div>
     );

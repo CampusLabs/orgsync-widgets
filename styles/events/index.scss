@@ -45,12 +45,9 @@
   float: left;
 }
 
-.osw-events-index-toggle-filters {
-  margin-right: 5px;
-}
-
 .osw-events-index-view-tabs {
-  margin-right: 5px;
+  margin-left: 5px;
+  display: inline-block;
 }
 
 .osw-events-index-list-controls,
@@ -59,7 +56,7 @@
 }
 
 .osw-events-index-view {
-  max-height: 650px;
+  height: 605px;
   overflow: auto;
 }
 

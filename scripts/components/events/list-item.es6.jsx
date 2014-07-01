@@ -66,7 +66,7 @@ export default React.createClass({
       null;
     if (!icon) return;
     return (
-      <span className={'osw-rsvp osw-' + _str.slugify(rsvp)}>
+      <span className={'osw-events-list-item-' + _str.slugify(rsvp)}>
         <Icon name={icon} /> {rsvp}
       </span>
     );
@@ -75,9 +75,11 @@ export default React.createClass({
   renderDefaultPicture: function () {
     var dateMom = getMoment(this.props.date, this.props.tz);
     return (
-      <div className='osw-default-picture'>
-        <div className='osw-month'>{dateMom.format('MMM')}</div>
-        <div className='osw-date'>{dateMom.format('D')}</div>
+      <div>
+        <div className='osw-events-list-item-month'>
+          {dateMom.format('MMM')}
+          </div>
+        <div className='osw-events-list-item-date'>{dateMom.format('D')}</div>
       </div>
     );
   },
@@ -100,14 +102,18 @@ export default React.createClass({
     return (
       <div className='osw-events-list-item' style={this.getStyle()}>
         <div onClick={this.openShow}>
-          <div className='osw-picture-container'>
+          <div className='osw-events-list-item-picture-container'>
             {src ? <img src={src} /> : this.renderDefaultPicture()}
           </div>
-          <div className='osw-info'>
-            <div className='osw-title'>{event.title}</div>
-            <div className='osw-subtext'>
-              <span className='osw-time'>{this.getTime()}</span>
-              <span className='osw-portal-name'>{event.portal.name}</span>
+          <div className='osw-events-list-item-info'>
+            <div className='osw-events-list-item-title'>{event.title}</div>
+            <div className='osw-events-list-item-subtext'>
+              <span className='osw-events-list-item-time'>
+                {this.getTime()}
+              </span>
+              <span className='osw-events-list-item-portal-name'>
+                {event.portal.name}
+              </span>
               {this.renderRsvp()}
             </div>
           </div>

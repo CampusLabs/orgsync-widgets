@@ -9,6 +9,11 @@ import React from 'react';
 export default React.createClass({
   mixins: [Cursors],
 
+  getEventUrl: function () {
+    var event = this.props.event;
+    return event.links.web + '/occurrences/' + event.id;
+  },
+
   getTime: function () {
     return 'TBD';
     var event = this.props.event;
@@ -32,9 +37,9 @@ export default React.createClass({
   renderDefaultPicture: function () {
     var dateMom = getMoment(this.props.event.starts_at, this.props.tz);
     return (
-      <div className='osw-default-picture'>
-        <div className='osw-month'>{dateMom.format('MMM')}</div>
-        <div className='osw-date'>{dateMom.format('D')}</div>
+      <div>
+        <div className='osw-events-show-month'>{dateMom.format('MMM')}</div>
+        <div className='osw-events-show-date'>{dateMom.format('D')}</div>
       </div>
     );
   },
@@ -48,7 +53,7 @@ export default React.createClass({
       null;
     if (!icon) return;
     return (
-      <span className={'osw-rsvp osw-' + _str.slugify(rsvp)}>
+      <span className={'osw-events-show-' + _str.slugify(rsvp)}>
         <Icon name={icon} /> {rsvp}
       </span>
     );
@@ -59,14 +64,18 @@ export default React.createClass({
     var src = event.thumbnail_url;
     return (
       <div className='osw-events-show'>
-        <div className='osw-picture-container'>
+        <div className='osw-events-show-picture-container'>
           {src ? <img src={src} /> : this.renderDefaultPicture()}
         </div>
-        <div className='osw-info'>
-          <div className='osw-title'>{event.title}</div>
-          <div className='osw-subtext'>
-            <span className='osw-time'>{this.getTime()}</span>
-            <span className='osw-portal-name'>{event.portal.name}</span>
+        <div className='osw-events-show-info'>
+          <a href={this.getEventUrl()} className='osw-events-show-title'>
+            {event.title}
+          </a>
+          <div className='osw-events-show-subtext'>
+            <span className='osw-events-show-time'>{this.getTime()}</span>
+            <span className='osw-events-show-portal-name'>
+              {event.portal.name}
+            </span>
             {this.renderRsvp()}
           </div>
         </div>

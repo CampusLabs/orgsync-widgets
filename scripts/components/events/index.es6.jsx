@@ -1,6 +1,8 @@
 /** @jsx React.DOM */
 
 import _ from 'underscore';
+import Button from 'components/button';
+import ButtonGroup from 'components/button-group';
 import Calendar from 'components/events/calendar';
 import List from 'components/events/list';
 import Cursors from 'cursors';
@@ -8,7 +10,6 @@ import EventFiltersIndex from 'components/event-filters/index';
 import Icon from 'components/icon';
 import moment from 'moment';
 import React from 'react';
-import Tab from 'components/events/tab';
 import tz from 'tz';
 
 import {
@@ -17,8 +18,6 @@ import {
   getDaySpan,
   matchesQueryAndFilters
 } from 'entities/event';
-
-var VIEWS = ['calendar', 'upcoming', 'past'];
 
 export default React.createClass({
   mixins: [Cursors],
@@ -29,7 +28,7 @@ export default React.createClass({
       query: '',
       eventFilters: [],
       tz: tz,
-      view: VIEWS[0],
+      view: 'calendar',
       filtersAreShowing: true,
       date: getMoment(void 0, tz).format('YYYY-MM-DD')
     };
@@ -168,32 +167,21 @@ export default React.createClass({
   renderCalendarControls: function () {
     return (
       <div className='osw-events-index-calendar-controls'>
-        <span className='osw-events-index-incr'>
-          <span
-            className='osw-button osw-events-tab'
-            onClick={this.handlePrevClick}
-          >
+        <ButtonGroup className='osw-events-index-incr'>
+          <Button onClick={this.handlePrevClick}>
             <Icon
               name='pointer-left'
               className='osw-events-index-prev-month'
             />
-          </span>
-          <span
-            className='osw-events-tab osw-events-index-today-month osw-button'
-            onClick={this.handleTodayClick}
-          >
-            Today
-          </span>
-          <span
-            className='osw-button osw-events-tab'
-            onClick={this.handleNextClick}
-          >
+          </Button>
+          <Button onClick={this.handleTodayClick}>Today</Button>
+          <Button onClick={this.handleNextClick}>
             <Icon
               name='pointer-right'
               className='osw-events-index-next-month'
             />
-          </span>
-        </span>
+          </Button>
+        </ButtonGroup>
         {this.renderMonthSelect()}
         {this.renderYearSelect()}
       </div>
@@ -203,18 +191,20 @@ export default React.createClass({
   renderListControls: function () {
     var view = this.state.view;
     return (
-      <div className='osw-events-index-list-controls'>
-        <Tab
-          view='upcoming'
-          selected={view === 'upcoming'}
-          cursors={{currentView: this.getCursor('view')}}
-        />
-        <Tab
-          view='past'
-          selected={view === 'past'}
-          cursors={{currentView: this.getCursor('view')}}
-        />
-      </div>
+      <ButtonGroup className='osw-events-index-list-controls'>
+        <Button
+          isSelected={view === 'upcoming'}
+          onClick={_.partial(this.update, 'view', {$set: 'upcoming'})}
+        >
+          Upcoming
+        </Button>
+        <Button
+          isSelected={view === 'past'}
+          onClick={_.partial(this.update, 'view', {$set: 'past'})}
+        >
+          Past
+        </Button>
+      </ButtonGroup>
     );
   },
 
@@ -297,27 +287,27 @@ export default React.createClass({
           <div className='osw-events-index-header'>
             {this.renderTz()}
             <div className='osw-events-index-left'>
-              <span
-                className='osw-button osw-events-index-toggle-filters'
+              <Button
+                className='osw-events-index-toggle-filters'
                 onClick={this.toggleFiltersAreShowing}
               >
                 <Icon name='office-shortcuts' />{' '}
                 {this.state.filtersAreShowing ? 'Hide Filters' : 'Show Filters'}
-              </span>
-              <span className='osw-events-index-view-tabs'>
-                <Tab
-                  name='Calendar'
-                  view='calendar'
-                  selected={view === 'calendar'}
-                  cursors={{currentView: this.getCursor('view')}}
-                />
-                <Tab
-                  name='List'
-                  view='upcoming'
-                  selected={view === 'upcoming' || view === 'past'}
-                  cursors={{currentView: this.getCursor('view')}}
-                />
-              </span>
+              </Button>
+              <ButtonGroup className='osw-events-index-view-tabs'>
+                <Button
+                  isSelected={view === 'calendar'}
+                  onClick={_.partial(this.update, 'view', {$set: 'calendar'})}
+                >
+                  Calendar
+                </Button>
+                <Button
+                  isSelected={view === 'upcoming' || view === 'past'}
+                  onClick={_.partial(this.update, 'view', {$set: 'upcoming'})}
+                >
+                  List
+                </Button>
+              </ButtonGroup>
             </div>
             {this.renderViewControls()}
           </div>

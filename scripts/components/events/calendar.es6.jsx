@@ -70,7 +70,7 @@ export default React.createClass({
   renderDayName: function (n) {
     return (
       <th key={n}>
-        <div className='osw-day-name'>
+        <div className='osw-events-calendar-day-name'>
           {getMoment(void 0, this.props.tz).day(n).format('ddd')}
         </div>
       </th>
@@ -79,7 +79,7 @@ export default React.createClass({
 
   renderDayNames: function () {
     return (
-      <table className='osw-day-names'>
+      <table className='osw-events-calendar-day-names'>
         <thead>
           <tr>{_.times(7, this.renderDayName)}</tr>
         </thead>

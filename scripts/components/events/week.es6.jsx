@@ -120,10 +120,11 @@ export default React.createClass({
     return (
       <th
         key={n}
-        className={date.isSame(now, 'day') ? 'osw-current-day' : null}
+        className=
+          {date.isSame(now, 'day') ? 'osw-events-week-current-day' : null}
       >
         <div
-          className='osw-day-wrapper'
+          className='osw-events-week-day-wrapper'
           onClick={_.partial(this.openDate, date.format('YYYY-MM-DD'))}
         >
           {formatted}

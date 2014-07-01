@@ -5,6 +5,14 @@
   width: 500px;
   max-width: 100%;
   @include clearfix;
+
+  a {
+    text-decoration: none;
+
+    &:hover {
+      text-decoration: underline;
+    }
+  }
 }
 
 .osw-events-show-picture-container {
@@ -28,8 +36,8 @@
   @include border-top-radius(3px);
   color: white;
   background: $red;
-  font-size: 18px;
-  line-height: 35px;
+  font-size: 16px;
+  line-height: 30px;
   text-transform: uppercase;
 }
 
@@ -37,22 +45,17 @@
   @include border-bottom-radius(3px);
   color: $grey-darker;
   background: $grey-lightest;
-  font-size: 30px;
-  line-height: 55px;
+  font-size: 40px;
+  line-height: 60px;
 }
 
 .osw-events-show-info {
-  padding-top: 6px;
+  overflow: hidden;
 }
 
 .osw-events-show-title {
   font-size: 26px;
   color: $blue-darkest;
-  text-decoration: none;
-
-  &:hover {
-    text-decoration: underline;
-  }
 }
 
 .osw-events-show-subtext {
@@ -74,6 +77,31 @@
   color: $green;
 }
 
+.osw-events-show-section {
+  padding-top: 20px;
+  @include clearfix;
+
+  > .oswi {
+    float: left;
+    margin-top: -7px;
+    margin-right: 10px;
+    text-align: center;
+    width: 30px;
+    font-size: 25px;
+    color: $grey;
+  }
+}
+
+.osw-events-show-section-main {
+  overflow: hidden;
+  font-size: 16px;
+}
+
+.osw-events-show-time {
+  font-size: 14px;
+}
+
+.osw-events-show-location,
 .osw-events-show-portal-name {
-  color: black;
+  color: $grey-darkest;
 }

@@ -4,9 +4,12 @@
   border-bottom: 1px solid $grey;
   border-left: 5px solid $grey;
   padding: 10px;
-  cursor: pointer;
   background: white;
   @include clearfix;
+}
+
+.osw-events-list-item-target {
+  cursor: pointer;
 }
 
 .osw-events-list-item-picture-container {

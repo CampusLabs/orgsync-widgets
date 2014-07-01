@@ -10,6 +10,7 @@
   color: $grey-darkest;
   font-family: Helvetica, Arial, FreeSans, Clean, sans-serif;
   font-size: 12px;
+  word-wrap: break-word;
 
   &:not(.js-olay-container) {
     position: relative;

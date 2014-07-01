@@ -101,7 +101,7 @@ export default React.createClass({
     var src = event.thumbnail_url;
     return (
       <div className='osw-events-list-item' style={this.getStyle()}>
-        <div onClick={this.openShow}>
+        <div className='osw-events-list-item-target' onClick={this.openShow}>
           <div className='osw-events-list-item-picture-container'>
             {src ? <img src={src} /> : this.renderDefaultPicture()}
           </div>

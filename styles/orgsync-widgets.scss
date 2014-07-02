@@ -27,8 +27,9 @@
     padding: 20px;
   }
 
-  .olay-content,
+  .olay-cell > *,
   .js-olay-content {
+    margin: 0 auto;
     max-width: 800px;
     background: white;
     border-radius: 3px;

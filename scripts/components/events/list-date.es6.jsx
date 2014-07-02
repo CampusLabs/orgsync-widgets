@@ -31,8 +31,8 @@ export default React.createClass({
     var prefix = PREFIX_RE.exec(dateMom.calendar()) || '';
     if (prefix) prefix = prefix[0] + ', ';
     return (
-      <div key={date}>
-        <div className='osw-events-list-date'>
+      <div className='osw-events-list-date'>
+        <div className='osw-events-list-date-header'>
           {prefix + dateMom.format('dddd, MMMM D, YYYY')}
         </div>
         <List

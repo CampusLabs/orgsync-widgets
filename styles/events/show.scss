@@ -1,9 +1,11 @@
 @import '../config';
 
+.olay-cell > .osw-events-show {
+  max-width: 500px;
+}
+
 .osw-events-show {
   padding: 20px;
-  width: 500px;
-  max-width: 100%;
   @include clearfix;
 
   a {

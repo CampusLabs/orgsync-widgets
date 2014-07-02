@@ -8,7 +8,7 @@ export default React.createClass({
   },
 
   getInputClassName: function () {
-    return 'osw-button' + (this.props.selected ? ' osw-selected' : '');
+    return 'osw-button' + (this.props.selected ? ' osw-button-selected' : '');
   },
 
   render: function () {

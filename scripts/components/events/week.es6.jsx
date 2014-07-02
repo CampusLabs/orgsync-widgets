@@ -149,15 +149,16 @@ export default React.createClass({
         />
       );
     }
+    var i = this.state.allEvents.indexOf(col.event);
     return (
       <Column
         key={'event-' + col.event.id + '-' + y}
         colSpan={col.span}
         date={col.date}
         hideTitle={col.hideTitle}
-        event={col.event}
         eventFilters={this.props.eventFilters}
         tz={this.props.tz}
+        cursors={{event: this.getCursor('allEvents', i)}}
       />
     );
   },
@@ -180,6 +181,7 @@ export default React.createClass({
         eventFilters={this.props.eventFilters}
         date={date}
         tz={this.props.tz}
+        cursors={{allEvents: this.getCursor('allEvents')}}
       />
     );
   },

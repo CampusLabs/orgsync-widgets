@@ -83,6 +83,7 @@ export default React.createClass({
         events={date[1]}
         eventFilters={this.props.eventFilters}
         tz={this.props.tz}
+        cursors={{allEvents: this.getCursor('allEvents')}}
       />
     );
   },

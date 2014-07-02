@@ -14,13 +14,14 @@ export default React.createClass({
   mixins: [Cursors],
 
   renderEvent: function (event) {
+    var i = this.state.allEvents.indexOf(event);
     return (
       <ListItem
         key={event.id}
         date={this.props.date}
-        event={event}
         eventFilters={this.props.eventFilters}
         tz={this.props.tz}
+        cursors={{event: this.getCursor('allEvents', i)}}
       />
     );
   },

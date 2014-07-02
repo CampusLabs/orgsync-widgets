@@ -18,7 +18,7 @@ export default React.createClass({
 
   getClassName: function () {
     var classes = ['osw-events-column'];
-    var event = this.props.event;
+    var event = this.state.event;
     if (event) {
       var tz = this.props.tz;
       if (isAllDay(event, tz)) classes.push('osw-events-column-all-day');
@@ -36,7 +36,7 @@ export default React.createClass({
   },
 
   getEventStyle: function () {
-    var event = this.props.event;
+    var event = this.state.event;
     var color = getColor(event, this.props.eventFilters);
     if (!color) return;
     var style = {borderLeftColor: '#' + color};
@@ -55,19 +55,19 @@ export default React.createClass({
   },
 
   getStartTime: function () {
-    return this.getFormattedTime(this.props.event.starts_at);
+    return this.getFormattedTime(this.state.event.starts_at);
   },
 
   getEndTime: function () {
     var endIso = getMoment(this.props.date, this.props.tz)
       .add('days', this.props.colSpan).toISOString();
-    var event = this.props.event;
+    var event = this.state.event;
     if (event.ends_at >= endIso) return;
     return 'ends ' + this.getFormattedTime(event.ends_at);
   },
 
   getTime: function () {
-    var event = this.props.event;
+    var event = this.state.event;
     if (isAllDay(event, this.props.tz)) return;
     var isContinued = this.isContinued();
     var doesContinue = this.doesContinue();
@@ -79,14 +79,14 @@ export default React.createClass({
   },
 
   isContinued: function () {
-    var event = this.props.event;
+    var event = this.state.event;
     var start = this.props.date;
     if (!event.is_all_day) start = getMoment(start, this.props.tz).toISOString();
     return event.starts_at < start;
   },
 
   doesContinue: function () {
-    var event = this.props.event;
+    var event = this.state.event;
     var tz = this.props.tz;
     var start = this.props.date;
     var endMom = getMoment(start, tz).add('days', this.props.colSpan);
@@ -98,7 +98,7 @@ export default React.createClass({
   },
 
   startsAtMidnight: function () {
-    return this.props.event.starts_at ===
+    return this.state.event.starts_at ===
       getMoment(this.props.date, this.props.tz).toISOString();
   },
 
@@ -125,7 +125,7 @@ export default React.createClass({
     if (this.props.hideTitle) return;
     return (
       <div className='osw-events-column-title'>
-        {this.props.event.title}
+        {this.state.event.title}
       </div>
     );
   },
@@ -144,7 +144,12 @@ export default React.createClass({
   },
 
   renderShow: function () {
-    return <Show event={this.props.event} tz={this.props.tz} />;
+    return (
+      <Show
+        tz={this.props.tz}
+        cursors={{event: this.getCursor('event')}}
+      />
+    );
   },
 
   renderShowOlay: function () {
@@ -156,7 +161,7 @@ export default React.createClass({
   },
 
   render: function () {
-    var event = this.props.event;
+    var event = this.state.event;
     var more = this.props.more;
     return (
       <td className={this.getClassName()} colSpan={this.props.colSpan}>

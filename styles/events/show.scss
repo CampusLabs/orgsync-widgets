@@ -8,7 +8,7 @@
   padding: 20px;
   @include clearfix;
 
-  a {
+  a:not(.osw-button) {
     text-decoration: none;
 
     &:hover {
@@ -100,6 +100,11 @@
 }
 
 .osw-events-show-time {
+  font-size: 14px;
+}
+
+.osw-events-show-rsvp-message {
+  margin-top: 10px;
   font-size: 14px;
 }
 

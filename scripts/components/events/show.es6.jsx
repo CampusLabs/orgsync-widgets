@@ -2,6 +2,9 @@
 
 import _ from 'underscore';
 import _str from 'underscore.string';
+import api from 'api';
+import Button from 'components/button';
+import ButtonGroup from 'components/button-group';
 import Cursors from 'cursors';
 import Icon from 'components/icon';
 import {getMoment, isAllDay} from 'entities/event';
@@ -10,21 +13,72 @@ import React from 'react';
 var DATE_FORMAT = 'dddd, MMM D, YYYY';
 var TIME_FORMAT = 'h:mm A';
 
+var STATUS_MAP = {
+  Yes: 'Attending',
+  Maybe: 'Maybe Attending',
+  No: 'Not Attending'
+};
+
+var ACTION_MAP = {
+  Attending: 'Yes',
+  'Added by Admin': 'Yes',
+  'Maybe Attending': 'Maybe',
+  'Not Attending': 'No'
+};
+
+var Section = React.createClass({
+  mixin: [Cursors],
+
+  render: function () {
+    return (
+      <div className='osw-events-show-section'>
+        <Icon name={this.props.icon} />
+        <div className='osw-events-show-section-main'>
+          {this.props.children}
+        </div>
+      </div>
+    );
+  }
+});
+
 export default React.createClass({
   mixins: [Cursors],
 
   getEventUrl: function () {
-    var event = this.props.event;
+    var event = this.state.event;
     return event.links.web + '/occurrences/' + event.id;
   },
 
   getLocationUrl: function () {
     return 'https://www.google.com/maps/dir//' +
-      encodeURIComponent(this.props.event.location);
+      encodeURIComponent(this.state.event.location);
+  },
+
+  setRsvp: function (status) {
+
+    // This temporary CORS enabling is required for non-GET requests until we
+    // stop supporting IE9, at which point every request will use CORS.
+    api.cors = true;
+    api.post(this.state.event.links.rsvp, {
+      occurs_at: this.state.event.starts_at,
+      status: status
+    }, this.handleRsvpResponse);
+    api.cors = false;
+  },
+
+  handleRsvpResponse: function (er, res) {
+    if (er) return window.alert('Unable to RSVP. Please try again.');
+    var status = res.data.status;
+    var filters = _.without(this.state.event.filters, 'rsvp');
+    if (status !== 'Not Attending') filters = ['rsvp'].concat(filters);
+    this.update('event', {
+      rsvp: {$set: status},
+      filters: {$set: filters}
+    });
   },
 
   renderDefaultPicture: function () {
-    var dateMom = getMoment(this.props.event.starts_at, this.props.tz);
+    var dateMom = getMoment(this.state.event.starts_at, this.props.tz);
     return (
       <div>
         <div className='osw-events-show-month'>{dateMom.format('MMM')}</div>
@@ -34,7 +88,7 @@ export default React.createClass({
   },
 
   renderTime: function () {
-    var event = this.props.event;
+    var event = this.state.event;
     var tz = this.props.tz;
     var startMom = getMoment(event.starts_at, tz);
     var endMom = getMoment(event.ends_at, tz);
@@ -59,65 +113,83 @@ export default React.createClass({
     var startTime = event.is_all_day ? 'All Day' : startMom.format('h:mm A z');
     var endTime = event.is_all_day ? 'All Day' : startMom.format('h:mm A z');
     return (
-      <div className='osw-events-show-section'>
-        <Icon name='time' />
-        <div className='osw-events-show-section-main'>
-          <div>{start}</div>
-          {end ? <div>{end}</div> : null}
-          {time ? <div className='osw-events-show-time'>{time}</div> : null}
-        </div>
+      <Section icon='time' >
+        <div>{start}</div>
+        {end ? <div>{end}</div> : null}
+        {time ? <div className='osw-events-show-time'>{time}</div> : null}
+      </Section>
+    );
+  },
+
+  renderRsvpAction: function () {
+    var event = this.state.event;
+    var actions = event.rsvp_actions;
+    if (!_.size(actions)) return;
+    var buttons;
+    if (actions[0] === 'Register') {
+      buttons = <Button href={event.pre_event_form}>Yes, Register Now</Button>;
+    } else {
+      var userAction = ACTION_MAP[event.rsvp];
+      buttons = actions.map(function (action) {
+        return (
+          <Button
+            key={action}
+            isSelected={action === userAction}
+            onClick={_.partial(this.setRsvp, STATUS_MAP[action])}
+          >
+            {action}
+          </Button>
+        );
+      }, this);
+    }
+    return (
+      <div className='osw-events-show-rsvp-action'>
+        <div>Will you be attending?</div>
+        <ButtonGroup>{buttons}</ButtonGroup>
       </div>
     );
   },
 
+  renderRsvpMessage: function () {
+    var message = this.state.event.rsvp_message;
+    if (!message) return;
+    return <div className='osw-events-show-rsvp-message'>{message}</div>;
+  },
+
   renderRsvp: function () {
-    var rsvp = this.props.event.rsvp;
-    var icon =
-      rsvp === 'Attending' || rsvp === 'Added by Admin' ? 'check' :
-      rsvp === 'Maybe Attending' ? 'construction' :
-      rsvp === 'Invited' ? 'info' :
-      null;
     return (
-      <div className='osw-events-show-section'>
-        <Icon name='rsvp' />
-        <div className='osw-events-show-section-main'>
-          <span className='osw-events-show-time'>{rsvp}</span>
-        </div>
-      </div>
+      <Section icon='rsvp'>
+        {this.renderRsvpAction()}
+        {this.renderRsvpMessage()}
+      </Section>
     );
   },
 
   renderLocation: function () {
-    var location = this.props.event.location;
+    var location = this.state.event.location;
     if (!location) return;
     return (
-      <div className='osw-events-show-section'>
-        <Icon name='location' />
-        <div className='osw-events-show-section-main'>
-          <a className='osw-events-show-location' href={this.getLocationUrl()}>
-            {location}
-          </a>
-        </div>
-      </div>
+      <Section icon='location'>
+        <a className='osw-events-show-location' href={this.getLocationUrl()}>
+          {location}
+        </a>
+      </Section>
     );
   },
 
   renderPortalName: function () {
-    var portal = this.props.event.portal;
+    var portal = this.state.event.portal;
     return (
-      <div className='osw-events-show-section'>
-        <Icon name='organization' />
-        <div className='osw-events-show-section-main'>
-          <a className='osw-events-show-portal-name' href={portal.links.web}>
-            {portal.name}
-          </a>
-        </div>
-      </div>
+      <Section icon='organization'>
+        <a className='osw-events-show-portal-name' href={portal.links.web}>
+          {portal.name}
+        </a>
+      </Section>
     );
   },
 
   renderDescription: function () {
-    var description = this.props.event.description;
+    var description = this.state.event.description;
     if (description) description = _str.trim(description);
     if (!description) return;
     var blocks = description.split(/\r?\n/);
@@ -126,16 +198,11 @@ export default React.createClass({
       if (block) blocks.push(<span key={'span-' + i}>{block}</span>);
       return blocks;
     }, []);
-    return (
-      <div className='osw-events-show-section'>
-        <Icon name='info' />
-        <div className='osw-events-show-section-main'>{components}</div>
-      </div>
-    );
+    return <Section icon='info'>{components}</Section>;
   },
 
   render: function () {
-    var event = this.props.event;
+    var event = this.state.event;
     var src = event.thumbnail_url;
     return (
       <div className='osw-events-show'>

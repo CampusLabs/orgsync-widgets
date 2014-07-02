@@ -96,6 +96,7 @@ export default React.createClass({
         events={this.props.events}
         eventFilters={this.props.eventFilters}
         tz={this.props.tz}
+        cursors={{allEvents: this.getCursor('allEvents')}}
       />
     );
   },

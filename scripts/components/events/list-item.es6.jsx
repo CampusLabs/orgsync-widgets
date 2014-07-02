@@ -34,7 +34,7 @@ export default React.createClass({
   },
 
   getTime: function () {
-    var event = this.props.event;
+    var event = this.state.event;
     if (event.is_all_day) return 'All Day';
     var date = this.props.date;
     var tz = this.props.tz;
@@ -53,12 +53,12 @@ export default React.createClass({
   },
 
   getStyle: function () {
-    var color = getColor(this.props.event, this.props.eventFilters);
+    var color = getColor(this.state.event, this.props.eventFilters);
     if (color) return {borderLeftColor: '#' + color};
   },
 
   renderRsvp: function () {
-    var rsvp = this.props.event.rsvp;
+    var rsvp = this.state.event.rsvp;
     var icon =
       rsvp === 'Attending' || rsvp === 'Added by Admin' ? 'check' :
       rsvp === 'Maybe Attending' ? 'construction' :
@@ -85,7 +85,12 @@ export default React.createClass({
   },
 
   renderShow: function () {
-    return <Show event={this.props.event} tz={this.props.tz} />;
+    return (
+      <Show
+        tz={this.props.tz}
+        cursors={{event: this.getCursor('event')}}
+      />
+    );
   },
 
   renderShowOlay: function () {
@@ -97,7 +102,7 @@ export default React.createClass({
   },
 
   render: function () {
-    var event = this.props.event;
+    var event = this.state.event;
     var src = event.thumbnail_url;
     return (
       <div className='osw-events-list-item'>

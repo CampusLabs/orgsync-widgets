@@ -1,0 +1,81 @@
+@import '../config';
+
+.osw-events-column {
+  padding: 1px 2px 0;
+  height: 18px;
+  font-size: 11px;
+}
+
+.osw-events-column-all-day,
+.osw-events-column-continued,
+.osw-events-column-continues {
+  .osw-events-column-event {
+    background: $grey-lightest;
+  }
+}
+
+.osw-events-column-all-day,
+.osw-events-column-continued {
+  &:not(.osw-events-column-continues) .osw-events-column-event{
+    @include border-right-radius(3px);
+  }
+}
+
+.osw-events-column-event {
+  border-left: 2px solid $grey;
+  padding: 0 4px;
+  line-height: 18px;
+  height: 18px;
+  cursor: pointer;
+  @include box-sizing(border-box);
+  @include clearfix;
+}
+
+.osw-events-column-continues {
+  padding-right: 0;
+
+  .osw-events-column-event {
+    padding-right: 6px;
+  }
+}
+
+.osw-events-column-continued {
+  padding-left: 0;
+
+  .osw-events-column-event {
+    border-left: none;
+    padding-left: 8px;
+  }
+}
+
+.osw-events-column-attending .osw-events-column-event {
+  color: $green-darkest;
+}
+
+.osw-events-column-maybe-attending .osw-events-column-event,
+.osw-events-column-invited .osw-events-column-event {
+  color: $grey-darker;
+}
+
+.osw-events-column-invited .osw-events-column-event {
+  border: 1px dashed $grey;
+}
+
+.osw-events-column-time {
+  float: right;
+  padding-left: 5px;
+  color: $grey-darker;
+}
+
+.osw-events-column-time,
+.osw-events-column-title,
+.osw-events-column-more {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.osw-events-column-more {
+  text-align: center;
+  cursor: pointer;
+}

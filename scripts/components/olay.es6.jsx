@@ -8,8 +8,8 @@ import React from 'react';
 
 export default React.createClass({
   statics: {
-    create: function (props) {
-      var olay = new Olay('<div>', props.olayOptions);
+    create: function (props, children) {
+      var olay = new Olay('<div>', props && props.options);
       olay.$container
         .addClass('orgsync-widget')
         .addClass('osw-' + props.olayClassName + '-olay');

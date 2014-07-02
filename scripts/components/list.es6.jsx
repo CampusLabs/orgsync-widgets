@@ -25,8 +25,9 @@ export default React.createClass({
       isLoading: false,
       error: null,
       fetchPageSize: 20,
-      renderPageSize: 1,
+      renderPageSize: 10,
       shouldFetch: true,
+      fetchOnce: false,
       threshold: 500,
       uniform: false,
       renderLoading: function () { return <div>Loading...</div>; },
@@ -182,12 +183,14 @@ export default React.createClass({
   },
 
   handleSuccess: function (collection, data) {
-    if (data.length < this.props.fetchPageSize) this.doneFetching = true;
+    if (data.length < this.props.fetchPageSize || this.props.fetchOnce) {
+      this.doneFetching = true;
+    }
     this.setState({isLoading: false, error: null});
   },
 
   handleError: function (collection, er) {
-    this.setState({isLoading: false, error: er.toString()});
+    this.setState({isLoading: false, error: er});
   },
 
   scrollTo: function (model) {

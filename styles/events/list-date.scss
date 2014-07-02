@@ -1,0 +1,17 @@
+@import '../config';
+
+.olay-cell > .osw-events-list-date {
+  max-width: 500px;
+}
+
+.osw-events-list-date-header {
+  position: -webkit-sticky;
+  position: sticky;
+  top: 0;
+  border-bottom: 1px solid $grey;
+  padding: 10px;
+  color: $grey-darker;
+  background: $grey-lightest;
+  font-weight: bold;
+  font-size: 14px;
+}

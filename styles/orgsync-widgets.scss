@@ -7,29 +7,29 @@
 @import 'bower_components/velcro/styles/syncdings';
 
 .orgsync-widget {
-  &,
-  input,
-  textarea,
-  select {
-    color: $grey-darkest;
-    font-family: 'Helvetica Neue', Arial, Helvetica, sans-serif;
-    font-size: 12px;
-  }
+  color: $grey-darkest;
+  font-family: Helvetica, Arial, FreeSans, Clean, sans-serif;
+  font-size: 12px;
+  word-wrap: break-word;
 
   &:not(.js-olay-container) {
     position: relative;
   }
 
+  .olay-container,
   &.js-olay-container {
     background: black;
     background: rgba(0, 0, 0, 0.75);
   }
 
+  .olay-cell,
   .js-olay-cell {
     padding: 20px;
   }
 
+  .olay-cell > *,
   .js-olay-content {
+    margin: 0 auto;
     max-width: 800px;
     background: white;
     border-radius: 3px;
@@ -61,47 +61,6 @@
     }
   }
 
-  // Reverse these odd website builder defaults.
-  input,
-  label,
-  select,
-  textarea {
-    float: none;
-    padding: 0;
-    margin: 0;
-    font-size: 12px;
-  }
-
-  .osw-button {
-    display: inline-block;
-    border: 1px solid $grey;
-    padding: 5px;
-    color: $grey-darkest;
-    cursor: pointer;
-    background-color: #f9f9f9;
-    text-decoration: none;
-    @include linear-gradient(#fff, $grey-lightest);
-    @include appearance(none);
-    @include user-select(none);
-    box-shadow: 0 1px 0 rgba(0, 0, 0, 0.1);
-    border-radius: 3px;
-
-    &:hover {
-      background-color: #f3f3f3;
-      border-color: #b2b2b2;
-      @include linear-gradient($grey-lightest, $grey-lighter);
-    }
-
-    &:active,
-    &.osw-selected {
-      border-color: $blue-darkest;
-      color: white;
-      background: $blue-darkest;
-      text-shadow: 0 1px 1px rgba(0, 0, 0, 0.75);
-      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.25) inset;
-    }
-  }
-
   .osw-inset-block {
     margin: 5px;
     padding: 20px;
@@ -128,6 +87,7 @@
       input,
       select {
         padding-left: 25px;
+        font-size: 12px;
       }
     }
 

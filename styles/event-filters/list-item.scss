@@ -1,0 +1,32 @@
+@import '../config';
+
+.osw-event-filters-list-item {
+  label {
+    display: block;
+    cursor: pointer;
+    padding: 2px;
+    line-height: 1.5;
+  }
+
+  .osw-name {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    color: $grey-darker;
+
+    input {
+      margin-right: 5px;
+    }
+  }
+
+  &.osw-header .osw-name {
+    font-weight: bold;
+    text-transform: uppercase;
+  }
+
+  .oswi {
+    float: right;
+    margin-top: -1px;
+    font-size: 16px;
+  }
+}

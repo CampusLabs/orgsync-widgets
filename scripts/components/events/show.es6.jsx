@@ -150,17 +150,13 @@ export default React.createClass({
     );
   },
 
-  renderRsvpMessage: function () {
-    var message = this.state.event.rsvp_message;
-    if (!message) return;
-    return <div className='osw-events-show-rsvp-message'>{message}</div>;
-  },
-
   renderRsvp: function () {
+    var message = this.state.event.rsvp_message;
+    if (message) message = <div>{message}</div>;
     return (
       <Section icon='rsvp'>
         {this.renderRsvpAction()}
-        {this.renderRsvpMessage()}
+        {message}
       </Section>
     );
   },

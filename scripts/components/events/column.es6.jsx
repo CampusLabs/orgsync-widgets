@@ -1,7 +1,7 @@
 /** @jsx React.DOM */
 
 import Cursors from 'cursors';
-import {getMoment, getColor} from 'entities/event';
+import {getMoment, getColor, isAllDay} from 'entities/event';
 import Olay from 'olay-react';
 import React from 'react';
 import Show from 'components/events/show';
@@ -20,7 +20,8 @@ export default React.createClass({
     var classes = ['osw-events-column'];
     var event = this.props.event;
     if (event) {
-      if (event.is_all_day) classes.push('osw-events-column-all-day');
+      var tz = this.props.tz;
+      if (isAllDay(event, tz)) classes.push('osw-events-column-all-day');
       if (this.isContinued()) classes.push('osw-events-column-continued');
       if (this.doesContinue()) classes.push('osw-events-column-continues');
       var rsvp = event.rsvp;
@@ -39,7 +40,8 @@ export default React.createClass({
     var color = getColor(event, this.props.eventFilters);
     if (!color) return;
     var style = {borderLeftColor: '#' + color};
-    if (event.is_all_day || this.isContinued() || this.doesContinue()) {
+    var tz = this.props.tz;
+    if (isAllDay(event, tz) || this.isContinued() || this.doesContinue()) {
       style.background = tinycolor.lighten(color, 55).toHexString();
     }
     return style;
@@ -66,7 +68,7 @@ export default React.createClass({
 
   getTime: function () {
     var event = this.props.event;
-    if (event.is_all_day) return;
+    if (isAllDay(event, this.props.tz)) return;
     var isContinued = this.isContinued();
     var doesContinue = this.doesContinue();
     if (isContinued && doesContinue) return;

@@ -4,7 +4,7 @@ import _ from 'underscore';
 import _str from 'underscore.string';
 import Cursors from 'cursors';
 import Icon from 'components/icon';
-import {getMoment} from 'entities/event';
+import {getMoment, isAllDay} from 'entities/event';
 import React from 'react';
 
 var DATE_FORMAT = 'dddd, MMM D, YYYY';
@@ -23,26 +23,6 @@ export default React.createClass({
       encodeURIComponent(this.props.event.location);
   },
 
-  getTime: function () {
-    return 'TBD';
-    var event = this.props.event;
-    if (event.is_all_day) return 'All Day';
-    var date = this.props.date;
-    var tz = this.props.tz;
-    var eventStart = getMoment(event.starts_at, tz);
-    var eventEnd = getMoment(event.ends_at, tz);
-    var dateStart = getMoment(date, tz);
-    var dateEnd = dateStart.clone().add('day', 1);
-    var startsBefore = eventStart <= dateStart;
-    var endsAfter = eventEnd >= dateEnd;
-    if (startsBefore && endsAfter) return 'All Day';
-    if (!startsBefore && !endsAfter) {
-      return eventStart.format(FORMAT) + ' - ' + eventEnd.format(FORMAT);
-    }
-    if (startsBefore) return this.formatWithVerb(eventEnd, 'End');
-    return this.formatWithVerb(eventStart, 'Start');
-  },
-
   renderDefaultPicture: function () {
     var dateMom = getMoment(this.props.event.starts_at, this.props.tz);
     return (
@@ -55,20 +35,22 @@ export default React.createClass({
 
   renderTime: function () {
     var event = this.props.event;
-    var startMom = getMoment(event.starts_at, this.props.tz);
-    var endMom = getMoment(event.ends_at, this.props.tz);
+    var tz = this.props.tz;
+    var startMom = getMoment(event.starts_at, tz);
+    var endMom = getMoment(event.ends_at, tz);
     var isMultiDay = startMom.clone().add('day', 1).startOf('day') < endMom;
     var start = startMom.format(DATE_FORMAT);
     var end, time;
-    if (event.is_all_day) {
+    if (isAllDay(event, tz)) {
       if (isMultiDay) {
         start += ' -';
-        end = startMom.format(DATE_FORMAT);
+        end = endMom.format(DATE_FORMAT);
       }
       time = 'All Day';
     } else {
       if (isMultiDay) {
-
+        start += ' ' + startMom.format(TIME_FORMAT + ' z') + ' -';
+        end = endMom.format(DATE_FORMAT + ' ' + TIME_FORMAT + ' z');
       } else {
         time = startMom.format(TIME_FORMAT) + ' - ' +
           endMom.format(TIME_FORMAT + ' z');
@@ -99,7 +81,7 @@ export default React.createClass({
       <div className='osw-events-show-section'>
         <Icon name='rsvp' />
         <div className='osw-events-show-section-main'>
-          <span className='osw-events-show-time'>{this.getTime()}</span>
+          <span className='osw-events-show-time'>{rsvp}</span>
         </div>
       </div>
     );

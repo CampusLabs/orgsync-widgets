@@ -19,6 +19,14 @@ export var getDaySpan = function (start, end, tz) {
   );
 };
 
+export var isAllDay = function (event, tz) {
+  if (event.is_all_day) return true;
+  var startMom = getMoment(event.starts_at, tz);
+  var endMom = getMoment(event.ends_at, tz);
+  return startMom.isSame(startMom.clone().startOf('day')) &&
+    endMom.isSame(endMom.clone().startOf('day'));
+};
+
 var searchableWords = function (event) {
   return _str.words(_.values(
     _.pick(event, 'title', 'description', 'location')

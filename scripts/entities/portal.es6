@@ -12,7 +12,6 @@ var Model = Base.Model.extend({
     category: {hasOne: Category, fk: 'category_id'},
     albums: {hasMany: Album, fk: 'portal_id'},
     newsPosts: {hasMany: NewsPost, fk: 'portal_id', urlRoot: '/news'},
-    events: {hasMany: Event, fk: 'portal_id'},
     accounts: {hasMany: Account, fk: 'portal_id', urlRoot: '/people'}
   },
 

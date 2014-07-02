@@ -7,8 +7,7 @@ var Model = Base.Model.extend({
   relations: {
     portals: {hasMany: Portal, fk: 'community_id'},
     umbrellas: {hasMany: Portal, fk: 'community_id'},
-    categories: {hasMany: Category, fk: 'community_id'},
-    events: {hasMany: Event, via: 'portals', fk: 'portal_id'}
+    categories: {hasMany: Category, fk: 'community_id'}
   },
 
   urlRoot: '/communities'

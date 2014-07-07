@@ -7,8 +7,9 @@ import Button from 'components/button';
 import ButtonGroup from 'components/button-group';
 import Cursors from 'cursors';
 import Icon from 'components/icon';
-import {getMoment, isAllDay} from 'entities/event';
 import React from 'react';
+
+import {getMoment, isAllDay} from 'entities/event';
 
 var DATE_FORMAT = 'dddd, MMM D, YYYY';
 var TIME_FORMAT = 'h:mm A';
@@ -44,7 +45,23 @@ var Section = React.createClass({
 export default React.createClass({
   mixins: [Cursors],
 
-  getEventUrl: function () {
+  getInitialState: function () {
+    return {
+      isLoading: false,
+      error: null
+    };
+  },
+
+  componentDidMount: function () {
+    this.fetch();
+  },
+
+  getShowUrl: function () {
+    var event = this.state.event;
+    return event.links.show.replace(/\/\d+$/, '/occurrences/' + event.id);
+  },
+
+  getWebUrl: function () {
     var event = this.state.event;
     return event.links.web + '/occurrences/' + event.id;
   },
@@ -52,6 +69,12 @@ export default React.createClass({
   getLocationUrl: function () {
     return 'https://www.google.com/maps/dir//' +
       encodeURIComponent(this.state.event.location);
+  },
+
+  fetch: function () {
+    if ('rsvp_attendees' in this.state.event) return;
+    this.update({isLoading: {$set: true}, error: {$set: null}});
+    api.get(this.getShowUrl(), this.handleFetch);
   },
 
   setRsvp: function (status) {
@@ -62,11 +85,19 @@ export default React.createClass({
     api.post(this.state.event.links.rsvp, {
       occurs_at: this.state.event.starts_at,
       status: status
-    }, this.handleRsvpResponse);
+    }, this.handleRsvp);
     api.cors = false;
   },
 
-  handleRsvpResponse: function (er, res) {
+  handleFetch: function (er, res) {
+    this.update({isLoading: {$set: false}});
+    if (er) return this.update({error: {$set: er}});
+    this.update({event: {$merge: {
+      rsvp_attendees: res.data.rsvp_attendees
+    }}});
+  },
+
+  handleRsvp: function (er, res) {
     if (er) return window.alert('Unable to RSVP. Please try again.');
     var status = res.data.status;
     var filters = _.without(this.state.event.filters, 'rsvp');
@@ -203,7 +234,7 @@ export default React.createClass({
           {src ? <img src={src} /> : this.renderDefaultPicture()}
         </div>
         <div className='osw-events-show-info'>
-          <a href={this.getEventUrl()} className='osw-events-show-title'>
+          <a href={this.getWebUrl()} className='osw-events-show-title'>
             {event.title}
           </a>
           {this.renderTime()}

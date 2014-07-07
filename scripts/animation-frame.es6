@@ -1,5 +1,5 @@
-// NOTE: Delete this file and remove the package from bower.json after events is React-
-// ified.
+// NOTE: Delete this file and remove the package from bower.json after
+// components/list.es6.jsx is removed.
 
 import AnimationFrame from 'animation-frame-pristine';
 

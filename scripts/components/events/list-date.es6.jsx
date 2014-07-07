@@ -26,6 +26,10 @@ export default React.createClass({
     );
   },
 
+  renderEmpty: function () {
+    return <div className='osw-inset-block'>There are no events to show.</div>;
+  },
+
   render: function () {
     var date = this.props.date;
     var dateMom = getMoment(date, this.props.tz);
@@ -39,6 +43,7 @@ export default React.createClass({
         <List
           items={this.props.events}
           renderItem={this.renderEvent}
+          renderEmpty={this.renderEmpty}
           uniform={true}
         />
       </div>

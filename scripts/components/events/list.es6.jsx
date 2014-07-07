@@ -87,12 +87,22 @@ export default React.createClass({
     );
   },
 
+  renderLoading: function () {
+    return <div className='osw-inset-block'>Loading...</div>;
+  },
+
+  renderEmpty: function () {
+    return <div className='osw-inset-block'>There are no events to show.</div>;
+  },
+
   render: function () {
     return (
       <List
         className='osw-events-list'
         items={this.getDates()}
         renderItem={this.renderDate}
+        renderLoading={this.renderLoading}
+        renderEmpty={this.renderEmpty}
         fetch={this.fetch}
       />
     );

@@ -4,62 +4,62 @@
   vertical-align: top;
   border-top: 1px solid $grey;
 
-  a {
+  > a {
     display: block;
     text-decoration: none;
     background-color: $grey-lightest;
 
-    &:hover .osw-name {
+    &:hover .osw-portals-list-item-name {
       color: $blue-darkest;
     }
   }
+}
 
-  .osw-picture {
-    position: relative;
-    float: left;
-    width: 75px;
+.osw-portals-list-item-picture {
+  position: relative;
+  float: left;
+  width: 75px;
 
-    &:before {
-      content: "";
-      display: block;
-      padding-top: 100%;
-    }
-
-    img {
-      position: absolute;
-      width: 100%;
-      top: 0;
-      left: 0;
-    }
+  &:before {
+    content: "";
+    display: block;
+    padding-top: 100%;
   }
 
-  .osw-info {
-    padding: 10px;
-    min-height: 55px;
-    overflow: hidden;
+  > img {
+    position: absolute;
+    width: 100%;
+    top: 0;
+    left: 0;
   }
+}
 
-  .osw-name {
-    word-wrap: break-word;
-    color: $grey-darkest;
-    font-size: 16px;
-    overflow-x: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-  }
+.osw-portals-list-item-info {
+  padding: 10px;
+  min-height: 55px;
+  overflow: hidden;
+}
 
-  .osw-umbrella,
-  .osw-category {
-    @include box-sizing(border-box);
-    color: $grey-darker;
-    overflow-x: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-  }
+.osw-portals-list-item-name {
+  word-wrap: break-word;
+  color: $grey-darkest;
+  font-size: 16px;
+  overflow-x: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
 
-  .osw-umbrella {
-    font-weight: bold;
-  }
+.osw-portals-list-item-umbrella,
+.osw-portals-list-item-category {
+  @include box-sizing(border-box);
+  color: $grey-darker;
+  overflow-x: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.osw-portals-list-item-umbrella {
+  font-weight: bold;
 }
 
 .orgsync-widget[min-width~='480px'] .osw-portals-list-item {
@@ -69,7 +69,7 @@
   width: 33.33%;
   vertical-align: top;
 
-  a {
+  > a {
     border: 1px solid $grey;
     box-shadow: 0 1px 0 rgba(0, 0, 0, 0.1);
     border-radius: 3px;
@@ -79,16 +79,16 @@
     }
   }
 
-  .osw-picture {
+  .osw-portals-list-item-picture {
     float: none;
     width: 100%;
 
-    img {
+    > img {
       @include border-top-radius(3px);
     }
   }
 
-  .osw-name {
+  .osw-portals-list-item-name {
     font-size: 16px;
     height: 75px;
     white-space: normal;

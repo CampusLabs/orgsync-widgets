@@ -105,11 +105,11 @@ export default React.createClass({
   },
 
   openDate: function (date) {
-    this.update('openDate', {$set: date});
+    this.update({openDate: {$set: date}});
   },
 
   closeDate: function () {
-    this.update('openDate', {$set: null});
+    this.update({openDate: {$set: null}});
   },
 
   renderHeader: function (n) {

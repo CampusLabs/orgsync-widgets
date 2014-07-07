@@ -1,6 +1,7 @@
 @import 'config';
 
 .osw-button {
+  @include box-sizing(border-box);
   display: inline-block;
   border: 1px solid $grey;
   padding: 5px;
@@ -13,6 +14,7 @@
   @include user-select(none);
   box-shadow: 0 1px 0 rgba(0, 0, 0, 0.1);
   border-radius: 3px;
+  text-align: center;
 
   &:hover {
     background-color: #f3f3f3;

@@ -38,8 +38,7 @@ export default React.createClass({
     if (!this.isMounted()) return;
     if (er) return cb(er);
     if (!ranges || !events) return cb(null, true);
-    this.update('ranges', {$set: ranges});
-    this.update('allEvents', {$set: events});
+    this.update({ranges: {$set: ranges}, allEvents: {$set: events}});
     cb();
   },
 

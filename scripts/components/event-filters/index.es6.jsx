@@ -34,24 +34,23 @@ export default React.createClass({
   },
 
   fetch: function () {
-    this.update('isLoading', {$set: true});
-    this.update('error', {$set: null});
+    this.update({isLoading: {$set: true}, error: {$set: null}});
     api.get(this.props.url, this.handleFetch);
   },
 
   handleFetch: function (er, res) {
-    this.update('isLoading', {$set: false});
-    if (er) return this.update('error', {$set: er});
+    this.update({isLoading: {$set: false}});
+    if (er) return this.update({error: {$set: er}});
     var getEventFilterColor = this.getEventFilterColor;
     var eventFilters = res.data.slice().sort(this.comparator);
-    this.update('eventFilters', {
+    this.update({eventFilters: {
       $set: _.map(eventFilters, function (eventFilter, i) {
         return _.extend({}, eventFilter, {
           color: getEventFilterColor(eventFilter, i, eventFilters),
           active: true
         });
       })
-    });
+    }});
   },
 
   comparator: function (a, b) {
@@ -79,7 +78,7 @@ export default React.createClass({
     var first = eventFilters.slice(0, 1);
     var setActive = _.partial(update, _, {active: {$set: active}});
     var rest = _.map(eventFilters.slice(1), setActive);
-    this.update('eventFilters', {$set: first.concat(rest)});
+    this.update({eventFilters: {$set: first.concat(rest)}});
   },
 
   renderHeader: function () {

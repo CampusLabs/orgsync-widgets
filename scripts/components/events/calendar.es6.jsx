@@ -29,7 +29,7 @@ export default React.createClass({
 
   fetch: function () {
     if (this.state.isLoading) return;
-    this.update('isLoading', {$set: true});
+    this.update({isLoading: {$set: true}, error: {$set: null}});
     fetch({
       after: this.getStartMom().toISOString(),
       before: this.getEndMom().toISOString(),
@@ -41,12 +41,11 @@ export default React.createClass({
 
   handleFetch: function (er, ranges, events) {
     if (!this.isMounted()) return;
-    this.update('isLoading', {$set: false});
+    this.update({isLoading: {$set: false}});
     if (er) {
-      this.update('error', {$set: er});
+      this.update({error: {$set: er}});
     } else if (ranges && events) {
-      this.update('ranges', {$set: ranges});
-      this.update('allEvents', {$set: events});
+      this.update({ranges: {$set: ranges}, allEvents: {$set: events}});
       this.fetch();
     }
   },

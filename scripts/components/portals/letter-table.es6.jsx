@@ -1,16 +1,19 @@
 /** @jsx React.DOM */
 
 import _ from 'underscore';
+import Cursors from 'cursors';
 import LetterCell from 'components/portals/letter-cell';
 import React from 'react';
 
 export default React.createClass({
+  mixins: [Cursors],
+
   renderCell: function (letter, i) {
     return this.transferPropsTo(
       <LetterCell
         key={i}
         letter={letter}
-        selected={this.props.value === letter}
+        cursors={{currentLetter: this.getCursor('letter')}}
       />
     );
   },

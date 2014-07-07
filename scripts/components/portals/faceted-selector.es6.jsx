@@ -1,9 +1,13 @@
 /** @jsx React.DOM */
 
+import _ from 'underscore';
+import Cursors from 'cursors';
 import React from 'react';
 import Selector from 'components/portals/selector';
 
 export default React.createClass({
+  mixins: [Cursors],
+
   toOption: function (matches, name) {
     return {id: name, name: name + ' (' + matches.length + ')'};
   },
@@ -14,7 +18,7 @@ export default React.createClass({
 
   renderOptions: function () {
     return [{id: '', name: this.props.allOption}].concat(
-      this.props.portals.chain()
+      _.chain(this.props.portals)
         .map(this.props.getFacet)
         .groupBy()
         .map(this.toOption)

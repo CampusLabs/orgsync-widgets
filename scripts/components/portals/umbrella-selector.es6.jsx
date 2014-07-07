@@ -1,10 +1,15 @@
 /** @jsx React.DOM */
 
+import Cursors from 'cursors';
 import FacetedSelector from 'components/portals/faceted-selector';
 import React from 'react';
 
 export default React.createClass({
-  getFacet: function (portal) { return portal.umbrellaName(); },
+  mixins: [Cursors],
+
+  getFacet: function (portal) {
+    return portal.umbrella ? portal.umbrella.name : 'Umbrella';
+  },
 
   render: function () {
     return this.transferPropsTo(

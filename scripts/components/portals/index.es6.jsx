@@ -2,18 +2,22 @@
 
 import _ from 'underscore';
 import _str from 'underscore.string';
+import api from 'api';
 import CoercedPropsMixin from 'mixins/coerced-props';
 module Community from 'entities/community';
-import List from 'components/list';
+import Cursors from 'cursors';
+import List from 'react-list';
 import Olay from 'components/olay';
 module Portal from 'entities/portal';
 import Filters from 'components/portals/filters';
 import ListItem from 'components/portals/list-item';
-import BlankSlate from 'components/portals/blank-slate';
+import Empty from 'components/portals/empty';
 import Show from 'components/portals/show';
 import React from 'react';
 
 export default React.createClass({
+  mixins: [Cursors],
+
   letterRegExps: _.times(26, function (n) {
     return String.fromCharCode(65 + n);
   }).reduce(function (letters, letter) {
@@ -21,18 +25,11 @@ export default React.createClass({
     return letters;
   }, {'': /.*/, Other: /^[^a-z]/i}),
 
-  mixins: [CoercedPropsMixin],
-
-  getCoercedProps: function () {
-    return {
-      portals: {
-        type: Portal.Collection,
-        alternates: {
-          communityId:
-            (new Community.Model({id: this.props.communityId})).get('portals')
-        }
-      }
-    };
+  comparator: function (a, b) {
+    if (!a.umbrella !== !b.umbrella) return !a.umbrella ? -1 : 1;
+    var aName = (a.name || '').toLowerCase();
+    var bName = (b.name || '').toLowerCase();
+    return aName < bName ? -1 : 1;
   },
 
   getDefaultProps: function () {
@@ -41,7 +38,8 @@ export default React.createClass({
       category: '',
       letter: '',
       query: '',
-      searchableAttributes: ['name', 'short_name', 'keywords']
+      searchableAttributes: ['name', 'short_name', 'keywords'],
+      portals: []
     };
   },
 
@@ -51,54 +49,43 @@ export default React.createClass({
       category: this.props.category,
       letter: this.props.letter,
       query: this.props.query,
-      isLoading: false,
-      error: null
+      portals: this.props.portals
     };
   },
 
-  componentWillMount: function () {
-    if (this.props.portals.length) return;
-    this.setState({isLoading: true, error: null});
-    this.props.portals.fetch({
-      data: {all: true},
-      success: this.handleSuccess,
-      error: this.handleError
+  getUrl: function () {
+    if (this.props.portalId) {
+      return '/portals/' + this.props.portalId + '/portals';
+    }
+    return '/communities/' + this.props.communityId + '/portals';
+  },
+
+  fetch: function (cb) {
+    if (this.state.portals.length) return cb(null, true);
+    var update = this.update;
+    var comparator = this.comparator;
+    api.get(this.getUrl(), {all: true}, function (er, res) {
+      if (er) cb(er);
+      update({portals: {$set: res.data.slice().sort(comparator)}});
+      cb(null, true);
     });
   },
 
-  handleSuccess: function () {
-    this.setState({isLoading: false, error: null});
-  },
-
-  handleError: function (portals, er) {
-    this.setState({isLoading: false, error: er.toString()});
-  },
-
-  handleChange: function (changes) {
-    this.setState(changes);
-  },
-
-  openPortal: function (portal) {
-    Olay.create({
-      olayClassName: 'portals-show',
-      component: Show,
-      portal: portal
-    }).show();
-  },
-
   matchesUmbrella: function (portal) {
-    return !this.state.umbrella ||
-      portal.umbrellaName() === this.state.umbrella;
+    var a = this.state.umbrella;
+    var b = portal.umbrella ? portal.umbrella.name : 'Umbrella';
+    return !a || a === b;
   },
 
   matchesCategory: function (portal) {
-    return !this.state.category ||
-      portal.get('category').get('name') === this.state.category;
+    var a = this.state.category;
+    var b = portal.category.name;
+    return !a || a === b;
   },
 
   searchableWordsFor: function (portal) {
     return _str.words(
-      _.values(portal.pick.apply(portal, this.props.searchableAttributes))
+      _.values(_.pick(portal, this.props.searchableAttributes))
       .join(' ')
       .toLowerCase()
     );
@@ -117,39 +104,29 @@ export default React.createClass({
   },
 
   matchesLetter: function (portal) {
-    return this.letterRegExps[this.state.letter].test(portal.get('name'));
+    return this.letterRegExps[this.state.letter].test(portal.name);
   },
 
-  filteredPortals: function () {
-    return new Portal.Collection(
-      this.props.portals.filter(function (portal) {
-        return (
-          this.matchesUmbrella(portal) &&
-          this.matchesCategory(portal) &&
-          this.matchesLetter(portal) &&
-          this.matchesQuery(portal)
-        );
-      }, this)
+  portalMatchesFilters: function (portal) {
+    return (
+      this.matchesUmbrella(portal) &&
+      this.matchesCategory(portal) &&
+      this.matchesLetter(portal) &&
+      this.matchesQuery(portal)
     );
   },
 
-  clearFilter: function (name) {
-    var change = {};
-    change[name] = this.getDefaultProps()[name];
-    this.setState(change);
-  },
-
-  clearAllFilters: function () {
-    ['umbrella', 'category', 'letter', 'query'].forEach(this.clearFilter);
+  getFilteredPortals: function () {
+    return this.state.portals.filter(this.portalMatchesFilters);
   },
 
   renderListItem: function (portal) {
+    var i = this.state.portals.indexOf(portal);
     return (
       <ListItem
         key={portal.id}
-        portal={portal}
-        onClick={this.openPortal}
         redirect={this.props.redirect}
+        cursors={{portal: this.getCursor('portals', i)}}
       />
     );
   },
@@ -162,34 +139,44 @@ export default React.createClass({
     return <div className='osw-inset-block'>{er}</div>;
   },
 
-  renderBlankSlate: function () {
-    return <BlankSlate onClick={this.clearAllFilters} />;
+  renderEmpty: function () {
+    return (
+      <Empty
+        cursors={{
+          umbrella: this.getCursor('umbrella'),
+          category: this.getCursor('category'),
+          letter: this.getCursor('letter'),
+          query: this.getCursor('query')
+        }}
+      />
+    );
   },
 
   render: function () {
-    var portals = this.filteredPortals();
+    var portals = this.getFilteredPortals();
     return (
       <div className='osw-portals-index'>
-        <Filters
-          onChange={this.handleChange}
-          onClear={this.clearFilter}
-          query={this.state.query}
-          umbrella={this.state.umbrella}
-          category={this.state.category}
-          letter={this.state.letter}
-          portals={portals}
-        />
+        {
+          this.state.portals.length ?
+          <Filters
+            portals={portals}
+            cursors={{
+              query: this.getCursor('query'),
+              umbrella: this.getCursor('umbrella'),
+              category: this.getCursor('category'),
+              letter: this.getCursor('letter')
+            }}
+          /> :
+          null
+        }
         <List
-          collection={portals}
-          isLoading={this.state.isLoading}
-          error={this.state.error}
-          shouldFetch={false}
+          items={portals}
+          fetch={this.fetch}
           renderLoading={this.renderLoading}
           renderError={this.renderError}
-          renderListItem={this.renderListItem}
-          renderBlankSlate={this.renderBlankSlate}
+          renderItem={this.renderListItem}
+          renderEmpty={this.renderEmpty}
           uniform={true}
-          renderPageSize={18}
         />
       </div>
     );

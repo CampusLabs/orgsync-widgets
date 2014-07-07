@@ -1,25 +1,28 @@
 /** @jsx React.DOM */
 
+import Button from 'components/button';
+import Cursors from 'cursors';
 import React from 'react';
 
 export default React.createClass({
-  handleClick: function () {
-    this.props.onClick(this.props.letter);
+  mixins: [Cursors],
+
+  getClassName: function () {
+    if (this.state.currentLetter === this.props.letter) {
+      return 'osw-button-selected';
+    }
   },
 
-  getInputClassName: function () {
-    return 'osw-button' + (this.props.selected ? ' osw-button-selected' : '');
+  handleClick: function () {
+    this.update({currentLetter: {$set: this.props.letter}});
   },
 
   render: function () {
     return (
       <td className='osw-portals-letter-cell'>
-        <input
-          type='button'
-          className={this.getInputClassName()}
-          value={this.props.letter || 'All'}
-          onClick={this.handleClick}
-        />
+        <Button className={this.getClassName()} onClick={this.handleClick}>
+          {this.props.letter || 'All'}
+        </Button>
       </td>
     );
   }

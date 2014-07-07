@@ -71,10 +71,7 @@ export default React.createClass({
     var status = res.data.status;
     var filters = _.without(this.state.event.filters, 'rsvp');
     if (status !== 'Not Attending') filters = ['rsvp'].concat(filters);
-    this.update('event', {
-      rsvp: {$set: status},
-      filters: {$set: filters}
-    });
+    this.update({event: {rsvp: {$set: status}, filters: {$set: filters}}});
   },
 
   renderDefaultPicture: function () {

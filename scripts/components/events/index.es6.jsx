@@ -76,15 +76,15 @@ export default React.createClass({
   },
 
   handleTzChange: function (ev) {
-    this.update('tz', {$set: ev.target.value});
+    this.update({tz: {$set: ev.target.value}});
   },
 
   handleQueryChange: function (ev) {
-    this.update('query', {$set: ev.target.value});
+    this.update({query: {$set: ev.target.value}});
   },
 
   toggleFiltersAreShowing: function () {
-    this.update('filtersAreShowing', {$set: !this.state.filtersAreShowing});
+    this.update({filtersAreShowing: {$set: !this.state.filtersAreShowing}});
   },
 
   renderTz: function () {
@@ -100,18 +100,18 @@ export default React.createClass({
   handleMonthChange: function (ev) {
     var month = parseInt(ev.target.value);
     var dateMom = getMoment(this.state.date, this.state.tz).month(month);
-    this.update('date', {$set: dateMom.format('YYYY-MM-DD')});
+    this.update({date: {$set: dateMom.format('YYYY-MM-DD')}});
   },
 
   handleYearChange: function (ev) {
     var year = parseInt(ev.target.value);
     var dateMom = getMoment(this.state.date, this.state.tz).year(year);
-    this.update('date', {$set: dateMom.format('YYYY-MM-DD')});
+    this.update({date: {$set: dateMom.format('YYYY-MM-DD')}});
   },
 
   handleTodayClick: function () {
     var dateMom = getMoment(void 0, this.state.tz);
-    this.update('date', {$set: dateMom.format('YYYY-MM-DD')});
+    this.update({date: {$set: dateMom.format('YYYY-MM-DD')}});
   },
 
   handlePrevClick: function () {
@@ -124,7 +124,7 @@ export default React.createClass({
 
   incrMonth: function (dir) {
     var dateMom = getMoment(this.state.date, this.state.tz).add('month', dir);
-    this.update('date', {$set: dateMom.format('YYYY-MM-DD')});
+    this.update({date: {$set: dateMom.format('YYYY-MM-DD')}});
   },
 
   renderMonthOption: function (month) {

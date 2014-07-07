@@ -1,8 +1,15 @@
 /** @jsx React.DOM */
 
+import api from 'api';
+import Cursors from 'cursors';
+import Button from 'components/button';
 import React from 'react';
 
+var DEFAULT_SRC = 'https://orgsync.com/assets/no_org_profile_150.png';
+
 export default React.createClass({
+  mixins: [Cursors],
+
   getInitialState: function () {
     return {
       isLoading: false,
@@ -10,49 +17,51 @@ export default React.createClass({
     };
   },
 
+  getSrc: function () {
+    return this.state.portal.picture_url || DEFAULT_SRC;
+  },
+
   componentWillMount: function () {
-    var portal = this.props.portal;
-    if (portal.get('description') != null) return;
-    this.setState({isLoading: true, error: null});
-    portal.fetch({
-      success: this.handleSuccess,
-      error: this.handleError
-    });
+    var portal = this.state.portal;
+    if (portal.description != null) return;
+    this.update({isLoading: {$set: true}, error: {$set: null}});
+    api.get('/portals/:id', {id: portal.id}, this.handleFetch);
   },
 
-  handleSuccess: function () {
-    this.setState({isLoading: false, error: null});
-  },
-
-  handleError: function (portal, er) {
-    this.setState({isLoading: false, error: er.toString()});
+  handleFetch: function (er, res) {
+    if (!this.isMounted()) return;
+    this.update({isLoading: {$set: false}});
+    if (er) return this.update({error: {$set: er}});
+    this.update({portal: {$set: res.data}});
   },
 
   renderDescription: function () {
     if (this.state.isLoading) return 'Loading...';
     if (this.state.error) return this.state.error;
-    return this.props.portal.get('description');
+    return this.state.portal.description;
   },
 
   renderWebsiteLink: function () {
-    var url = this.props.portal.get('website_url');
-    return url && <a href={url} className='osw-button'>Website</a>;
+    var url = this.state.portal.website_url;
+    return url && <Button href={url}>Website</Button>;
   },
 
   render: function () {
-    var portal = this.props.portal;
+    var portal = this.state.portal;
     return (
       <div className='osw-portals-show'>
-        <div className='osw-picture'>
-          <img src={portal.picture()} alt={portal.get('name')} />
+        <div className='osw-portals-show-picture'>
+          <img src={this.getSrc()} alt={portal.name} />
         </div>
-        <div className='osw-name'>{portal.get('name')}</div>
-        <div className='osw-umbrella'>{portal.umbrellaName()}</div>
-        <div className='osw-category'>{portal.get('category').get('name')}</div>
-        <div className='osw-description'>{this.renderDescription()}</div>
-        <a href={portal.get('links').web} className='osw-button'>
-          On OrgSync.com
-        </a>
+        <div className='osw-portals-show-name'>{portal.name}</div>
+        <div className='osw-portals-show-umbrella'>
+          {portal.umbrella ? portal.umbrella.name : 'Umbrella'}
+        </div>
+        <div className='osw-portals-show-category'>{portal.category.name}</div>
+        <div className='osw-portals-show-description'>
+          {this.renderDescription()}
+        </div>
+        <Button href={portal.links.web}>On OrgSync.com</Button>
         {this.renderWebsiteLink()}
       </div>
     );

@@ -20,11 +20,11 @@ export default React.createClass({
   },
 
   openShow: function () {
-    this.update('showIsOpen', {$set: true});
+    this.update({showIsOpen: {$set: true}});
   },
 
   closeShow: function () {
-    this.update('showIsOpen', {$set: false});
+    this.update({showIsOpen: {$set: false}});
   },
 
   formatWithVerb: function (time, verb) {

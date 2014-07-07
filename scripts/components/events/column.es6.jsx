@@ -42,7 +42,7 @@ export default React.createClass({
     var style = {borderLeftColor: '#' + color};
     var tz = this.props.tz;
     if (isAllDay(event, tz) || this.isContinued() || this.doesContinue()) {
-      style.background = tinycolor.lighten(color, 55).toHexString();
+      style.background = tinycolor(color).lighten(55).toHexString();
     }
     return style;
   },

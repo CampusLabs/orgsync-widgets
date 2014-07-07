@@ -160,20 +160,26 @@ export default React.createClass({
       var userAction = ACTION_MAP[event.rsvp];
       buttons = actions.map(function (action) {
         return (
-          <Button
-            key={action}
-            isSelected={action === userAction}
-            onClick={_.partial(this.setRsvp, STATUS_MAP[action])}
-          >
+          <label key={action}>
+            <input
+              type='radio'
+              name='rsvp'
+              checked={action === userAction}
+              onChange={_.partial(this.setRsvp, STATUS_MAP[action])}
+            />
             {action}
-          </Button>
+          </label>
         );
       }, this);
     }
     return (
       <div className='osw-events-show-rsvp-action'>
         <div>Will you be attending?</div>
-        <ButtonGroup>{buttons}</ButtonGroup>
+        {
+          buttons ?
+          <div className='osw-events-show-actions'>{buttons}</div> :
+          null
+        }
       </div>
     );
   },

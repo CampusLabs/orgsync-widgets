@@ -194,13 +194,13 @@ export default React.createClass({
       <ButtonGroup className='osw-events-index-list-controls'>
         <Button
           isSelected={view === 'upcoming'}
-          onClick={_.partial(this.update, 'view', {$set: 'upcoming'})}
+          onClick={_.partial(this.update, {view: {$set: 'upcoming'}})}
         >
           Upcoming
         </Button>
         <Button
           isSelected={view === 'past'}
-          onClick={_.partial(this.update, 'view', {$set: 'past'})}
+          onClick={_.partial(this.update, {view: {$set: 'past'}})}
         >
           Past
         </Button>
@@ -297,13 +297,13 @@ export default React.createClass({
               <ButtonGroup className='osw-events-index-view-tabs'>
                 <Button
                   isSelected={view === 'calendar'}
-                  onClick={_.partial(this.update, 'view', {$set: 'calendar'})}
+                  onClick={_.partial(this.update, {view: {$set: 'calendar'}})}
                 >
                   Calendar
                 </Button>
                 <Button
                   isSelected={view === 'upcoming' || view === 'past'}
-                  onClick={_.partial(this.update, 'view', {$set: 'upcoming'})}
+                  onClick={_.partial(this.update, {view: {$set: 'upcoming'}})}
                 >
                   List
                 </Button>

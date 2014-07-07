@@ -1,9 +1,5 @@
 @import '../config';
 
-.olay-cell > .osw-events-show {
-  max-width: 500px;
-}
-
 .osw-events-show {
   padding: 20px;
   @include clearfix;
@@ -18,10 +14,9 @@
 }
 
 .osw-events-show-picture-container {
-  float: left;
   width: 90px;
   height: 90px;
-  margin-right: 20px;
+  margin: 0 auto 20px;
   border-radius: 3px;
   font-weight: bold;
   text-align: center;
@@ -106,4 +101,31 @@
 .osw-events-show-location,
 .osw-events-show-portal-name {
   color: $grey-darkest;
+}
+
+.osw-events-show-actions {
+  padding-top: 10px;
+
+  .osw-button,
+  label {
+    margin-bottom: 10px;
+  }
+
+  input {
+    margin-right: 10px;
+  }
+
+  label {
+    cursor: pointer;
+    display: block;
+  }
+}
+
+.osw-events-show-popup {
+  max-width: 500px;
+
+  &[min-width~='480px'] .osw-events-show-picture-container {
+    float: left;
+    margin: 0 20px 0 0;
+  }
 }

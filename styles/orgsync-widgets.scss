@@ -16,18 +16,15 @@
     position: relative;
   }
 
-  .olay-container,
   &.js-olay-container {
     background: black;
     background: rgba(0, 0, 0, 0.75);
   }
 
-  .olay-cell,
   .js-olay-cell {
     padding: 20px;
   }
 
-  .olay-cell > *,
   .js-olay-content {
     margin: 0 auto;
     max-width: 800px;

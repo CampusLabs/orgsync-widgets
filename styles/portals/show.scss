@@ -2,8 +2,6 @@
 
 .osw-portals-show {
   padding: 10px 10px 0;
-  text-align: left;
-  max-width: 500px;
 
   > .osw-button {
     margin-bottom: 10px;
@@ -37,17 +35,22 @@
   margin-bottom: 10px;
 }
 
-.orgsync-widget[min-width~='640px'] .osw-portals-show {
-  width: 500px;
-  @include clearfix();
+.osw-portals-show-popup {
+  max-width: 500px;
 
-  .osw-portals-show-picture {
-    float: right;
+  &[min-width~='480px'] {
+    .osw-portals-show {
+      @include clearfix();
+    }
 
-    > img {
-      display: block;
-      border-radius: 3px;
-      margin: 0 0 10px 10px;
+    .osw-portals-show-picture {
+      float: right;
+
+      > img {
+        display: block;
+        border-radius: 3px;
+        margin: 0 0 10px 10px;
+      }
     }
   }
 }

@@ -1,9 +1,5 @@
 @import '../config';
 
-.olay-cell > .osw-events-list-date {
-  max-width: 500px;
-}
-
 .osw-events-list-date-header {
   position: -webkit-sticky;
   position: sticky;
@@ -14,4 +10,8 @@
   background: $grey-lightest;
   font-weight: bold;
   font-size: 14px;
+}
+
+.osw-events-list-date-popup {
+  max-width: 500px;
 }

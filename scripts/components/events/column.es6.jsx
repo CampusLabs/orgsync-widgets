@@ -1,11 +1,12 @@
 /** @jsx React.DOM */
 
 import Cursors from 'cursors';
-import {getMoment, getColor, isAllDay} from 'entities/event';
-import Olay from 'olay-react';
+import Popup from 'components/popup';
 import React from 'react';
 import Show from 'components/events/show';
 import tinycolor from 'tinycolor';
+
+import {getMoment, getColor, isAllDay} from 'entities/event';
 
 export default React.createClass({
   mixins: [Cursors],
@@ -152,11 +153,11 @@ export default React.createClass({
     );
   },
 
-  renderShowOlay: function () {
+  renderShowPopup: function () {
     return (
-      <Olay close={this.closeShow}>
+      <Popup name='events-show' close={this.closeShow} title='Event Details'>
         {this.state.showIsOpen ? this.renderShow() : null}
-      </Olay>
+      </Popup>
     );
   },
 
@@ -166,7 +167,7 @@ export default React.createClass({
     return (
       <td className={this.getClassName()} colSpan={this.props.colSpan}>
         {event ? this.renderEvent() : more ? this.renderMore() : null}
-        {this.renderShowOlay()}
+        {this.renderShowPopup()}
       </td>
     );
   }

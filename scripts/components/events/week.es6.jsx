@@ -3,11 +3,11 @@
 import _ from 'underscore';
 import Cursors from 'cursors';
 import Column from 'components/events/column';
-import {getMoment, getDaySpan} from 'entities/event';
 import ListDate from 'components/events/list-date';
-import Olay from 'olay-react';
+import Popup from 'components/popup';
 import React from 'react';
 
+import {getMoment, getDaySpan} from 'entities/event';
 
 export default React.createClass({
   mixins: [Cursors],
@@ -186,11 +186,15 @@ export default React.createClass({
     );
   },
 
-  renderOpenDateOlay: function () {
+  renderOpenDatePopup: function () {
     return (
-      <Olay close={this.closeDate}>
+      <Popup
+        name='events-list-date'
+        close={this.closeDate}
+        title='Date Details'
+      >
         {this.state.openDate ? this.renderOpenDate() : null}
-      </Olay>
+      </Popup>
     );
   },
 
@@ -201,7 +205,7 @@ export default React.createClass({
           {this.renderHead()}
           {this.renderBody()}
         </table>
-        {this.renderOpenDateOlay()}
+        {this.renderOpenDatePopup()}
       </div>
     );
   }

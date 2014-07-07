@@ -1,7 +1,7 @@
 /** @jsx React.DOM */
 
 import Cursors from 'cursors';
-import Olay from 'olay-react';
+import Popup from 'components/popup';
 import React from 'react';
 import Show from 'components/portals/show';
 
@@ -44,11 +44,11 @@ export default React.createClass({
     return <Show cursors={{portal: this.getCursor('portal')}} />;
   },
 
-  renderShowOlay: function () {
+  renderShowPopup: function () {
     return (
-      <Olay close={this.closeShow}>
+      <Popup name='portals-show' close={this.closeShow} title='Portal Details'>
         {this.state.showIsOpen ? this.renderShow() : null}
-      </Olay>
+      </Popup>
     );
   },
 
@@ -72,7 +72,7 @@ export default React.createClass({
             </div>
           </div>
         </a>
-        {this.renderShowOlay()}
+        {this.renderShowPopup()}
       </div>
     );
   }

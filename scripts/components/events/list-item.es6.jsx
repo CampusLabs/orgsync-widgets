@@ -3,10 +3,11 @@
 import _str from 'underscore.string';
 import Cursors from 'cursors';
 import Icon from 'components/icon';
-import {getMoment, getColor} from 'entities/event';
-import Olay from 'olay-react';
+import Popup from 'components/popup';
 import React from 'react';
 import Show from 'components/events/show';
+
+import {getMoment, getColor} from 'entities/event';
 
 var FORMAT = 'h:mm A';
 
@@ -93,11 +94,11 @@ export default React.createClass({
     );
   },
 
-  renderShowOlay: function () {
+  renderShowPopup: function () {
     return (
-      <Olay close={this.closeShow}>
+      <Popup name='events-show' close={this.closeShow} title='Event Details'>
         {this.state.showIsOpen ? this.renderShow() : null}
-      </Olay>
+      </Popup>
     );
   },
 
@@ -127,7 +128,7 @@ export default React.createClass({
             </div>
           </div>
         </div>
-        {this.renderShowOlay()}
+        {this.renderShowPopup()}
       </div>
     );
   }

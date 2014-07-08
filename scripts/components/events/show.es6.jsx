@@ -72,12 +72,12 @@ export default React.createClass({
   },
 
   fetch: function () {
-    if ('rsvp_attendees' in this.state.event) return;
     this.update({isLoading: {$set: true}, error: {$set: null}});
     api.get(this.getShowUrl(), this.handleFetch);
   },
 
   setRsvp: function (status) {
+    this.update({isLoading: {$set: true}, error: {$set: null}});
     api.post(this.state.event.links.rsvp, {
       occurs_at: this.state.event.starts_at,
       status: status
@@ -85,19 +85,25 @@ export default React.createClass({
   },
 
   handleFetch: function (er, res) {
+    if (!this.isMounted()) return;
     this.update({isLoading: {$set: false}});
     if (er) return this.update({error: {$set: er}});
-    this.update({event: {$merge: {
-      rsvp_attendees: res.data.rsvp_attendees
-    }}});
+    this.update({event: {$merge: _.pick(res.data, [
+      'max_attendees',
+      'total_attendees',
+      'attendees_sample'
+    ])}});
   },
 
   handleRsvp: function (er, res) {
-    if (er) return window.alert('Unable to RSVP. Please try again.');
+    if (!this.isMounted()) return;
+    this.update({isLoading: {$set: false}});
+    if (er) return this.update({error: {$set: er}});
     var status = res.data.status;
     var filters = _.without(this.state.event.filters, 'rsvp');
     if (status !== 'Not Attending') filters = ['rsvp'].concat(filters);
     this.update({event: {rsvp: {$set: status}, filters: {$set: filters}}});
+    this.fetch();
   },
 
   renderDefaultPicture: function () {
@@ -144,6 +150,32 @@ export default React.createClass({
     );
   },
 
+  renderAttendee: function (attendee) {
+    var alt = attendee.display_name;
+    return (
+      <span key={attendee.id} className='osw-events-show-attendee'>
+        <img src={attendee.picture_url} alt={alt} title={alt} />
+      </span>
+    );
+  },
+
+  renderAttendees: function () {
+    var event = this.state.event;
+    var sample = event.attendees_sample;
+    if (!_.size(sample)) return;
+    var more = event.total_attendees - sample.length;
+    return (
+      <div className='osw-events-show-attendees'>
+        {event.attendees_sample.map(this.renderAttendee)}
+        {
+          more ?
+          <div><a href={this.getWebUrl()}>And {more} more...</a></div> :
+          null
+        }
+      </div>
+    );
+  },
+
   renderRsvpAction: function () {
     var event = this.state.event;
     var actions = event.rsvp_actions;
@@ -184,6 +216,7 @@ export default React.createClass({
     if (message) message = <div>{message}</div>;
     return (
       <Section icon='rsvp'>
+        {this.renderAttendees()}
         {this.renderRsvpAction()}
         {message}
       </Section>

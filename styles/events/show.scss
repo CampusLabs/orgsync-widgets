@@ -105,6 +105,19 @@
     color: $grey-darkest;
   }
 
+  .osw-events-show-attendees {
+    padding-bottom: 10px;
+  }
+
+  .osw-events-show-attendee {
+    img {
+      margin: 0 5px 5px 0;
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+    }
+  }
+
   .osw-events-show-actions {
     padding-top: 10px;
 

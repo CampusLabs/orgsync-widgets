@@ -8,14 +8,20 @@
 
 .orgsync-widget {
   color: $grey-darkest;
-  font-family: Helvetica, Arial, FreeSans, Clean, sans-serif;
   font-size: 12px;
   word-wrap: break-word;
 
+  &,
+  input,
+  select,
+  textarea {
+    font-family: Helvetica, Arial, FreeSans, Clean, sans-serif;
+  }
+
   *, *:before, *:after {
-    -webkit-box-sizing: content-box;
-    -moz-box-sizing: content-box;
-    box-sizing: content-box;
+    -webkit-box-sizing: inherit;
+    -moz-box-sizing: inherit;
+    box-sizing: inherit;
   }
 
   label {
@@ -142,7 +148,6 @@
       cursor: pointer;
       @include linear-gradient(#fff, $grey-lightest);
       box-shadow: 0 1px 0 rgba(0, 0, 0, 0.1);
-      -moz-appearance: window;
     }
 
     &.osw-dropdown {

@@ -69,7 +69,6 @@
     outline: none;
     cursor: pointer;
     @include appearance(none);
-    -moz-appearance: window;
     border-radius: 0;
     font-size: 20px;
   }

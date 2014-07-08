@@ -13,9 +13,9 @@
   word-wrap: break-word;
 
   *, *:before, *:after {
-    -webkit-box-sizing: inherit;
-    -moz-box-sizing: inherit;
-    box-sizing: inherit;
+    -webkit-box-sizing: content-box;
+    -moz-box-sizing: content-box;
+    box-sizing: content-box;
   }
 
   label {
@@ -142,10 +142,7 @@
       cursor: pointer;
       @include linear-gradient(#fff, $grey-lightest);
       box-shadow: 0 1px 0 rgba(0, 0, 0, 0.1);
-
-      // These two lines hide the drop down arrow in FF.
-      text-indent: 0.01px;
-      text-overflow: '';
+      -moz-appearance: window;
     }
 
     &.osw-dropdown {

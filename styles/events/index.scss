@@ -69,8 +69,7 @@
     outline: none;
     cursor: pointer;
     @include appearance(none);
-    text-indent: 0.01px;
-    text-overflow: "";
+    -moz-appearance: window;
     border-radius: 0;
     font-size: 20px;
   }

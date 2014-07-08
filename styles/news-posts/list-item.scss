@@ -1,34 +1,36 @@
 @import '../config';
 @import 'shared';
 
-.osw-news-posts-list-item {
-  @include news-posts-show;
+.orgsync-widget {
+  .osw-news-posts-list-item {
+    @include news-posts-show;
 
-  a {
-    color: #0076a3;
-    text-decoration: none;
+    a {
+      color: #0076a3;
+      text-decoration: none;
 
-    &:hover {
-      text-decoration: underline;
-    }
-  }
-
-  .osw-thumbnail {
-    display: block;
-    float: right;
-    margin: 0 0 10px 10px;
-  }
-
-  .osw-comment-count {
-    display: inline;
-    white-space: nowrap;
-
-    &.osw-none {
-      display: none;
+      &:hover {
+        text-decoration: underline;
+      }
     }
 
-    &:before {
-      content: ' with ';
+    .osw-thumbnail {
+      display: block;
+      float: right;
+      margin: 0 0 10px 10px;
+    }
+
+    .osw-comment-count {
+      display: inline;
+      white-space: nowrap;
+
+      &.osw-none {
+        display: none;
+      }
+
+      &:before {
+        content: ' with ';
+      }
     }
   }
 }

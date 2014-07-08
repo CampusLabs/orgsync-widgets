@@ -1,69 +1,71 @@
 @import '../config';
 
-.osw-photos-list-item {
-  position: relative;
-  vertical-align: top;
-
-  a {
-    display: block;
-    padding: 5px;
-
-    &:hover .osw-thumbnail {
-      border-color: #0076a3;
-    }
-  }
-
-  .osw-thumbnail {
-    @include box-sizing(border-box);
-    border: 5px solid white;
+.orgsync-widget {
+  .osw-photos-list-item {
     position: relative;
-    max-width: 100%;
-    box-shadow: 0 1px 10px rgba(0, 0, 0, 0.75);
-    background: white;
-    overflow: hidden;
+    vertical-align: top;
 
-    img {
-      position: absolute;
-      left: 0;
-      top: 0;
-      width: 100%;
-    }
-
-    &:before {
-      content: '';
+    a {
       display: block;
-      padding-top: 66.67%;
+      padding: 5px;
+
+      &:hover .osw-thumbnail {
+        border-color: #0076a3;
+      }
+    }
+
+    .osw-thumbnail {
+      @include box-sizing(border-box);
+      border: 5px solid white;
+      position: relative;
+      max-width: 100%;
+      box-shadow: 0 1px 10px rgba(0, 0, 0, 0.75);
+      background: white;
+      overflow: hidden;
+
+      img {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 100%;
+      }
+
+      &:before {
+        content: '';
+        display: block;
+        padding-top: 66.67%;
+      }
+    }
+
+    .osw-comment-count {
+      position: absolute;
+      right: 10px;
+      bottom: 10px;
+      color: white;
+      text-shadow: 0 1px 2px rgba(0, 0, 0, 0.75);
+      padding: 5px 5px 5px 10px;
+      background: rgba(0, 118, 163, 0.75);
+
+      &.osw-none {
+        display: none;
+      }
     }
   }
 
-  .osw-comment-count {
-    position: absolute;
-    right: 10px;
-    bottom: 10px;
-    color: white;
-    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.75);
-    padding: 5px 5px 5px 10px;
-    background: rgba(0, 118, 163, 0.75);
-
-    &.osw-none {
-      display: none;
-    }
+  &[min-width~='231px'] .osw-photos-list-item {
+    display: inline-block;
+    width: 50%;
   }
-}
 
-.orgsync-widget[min-width~='231px'] .osw-photos-list-item {
-  display: inline-block;
-  width: 50%;
-}
+  &[min-width~='461px'] .osw-photos-list-item {
+    width: 33.3%;
+  }
 
-.orgsync-widget[min-width~='461px'] .osw-photos-list-item {
-  width: 33.3%;
-}
+  &[min-width~='691px'] .osw-photos-list-item {
+    width: 25%;
+  }
 
-.orgsync-widget[min-width~='691px'] .osw-photos-list-item {
-  width: 25%;
-}
-
-.orgsync-widget[min-width~='921px'] .osw-photos-list-item {
-  width: 20%;
+  &[min-width~='921px'] .osw-photos-list-item {
+    width: 20%;
+  }
 }

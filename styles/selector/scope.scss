@@ -1,15 +1,17 @@
 @import '../config';
 
-.osw-selector-scope {
-  padding: 10px;
-  text-align: right;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  cursor: pointer;
-  @include user-select(none);
+.orgsync-widget {
+  .osw-selector-scope {
+    padding: 10px;
+    text-align: right;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    cursor: pointer;
+    @include user-select(none);
 
-  &.osw-selected {
-    background: #eee;
+    &.osw-selected {
+      background: #eee;
+    }
   }
 }

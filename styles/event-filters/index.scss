@@ -1,17 +1,19 @@
 @import '../config';
 
-.osw-event-filters-index {
-  overflow: auto;
-  max-height: 605px;
+.orgsync-widget {
+  .osw-event-filters-index {
+    overflow: auto;
+    max-height: 605px;
 
-  &.osw-inset-block {
-    padding: 5px;
-  }
+    &.osw-inset-block {
+      padding: 5px;
+    }
 
-  hr {
-    margin: 5px 0;
-    border: 0;
-    height: 1px;
-    background: #ccc;
+    hr {
+      margin: 5px 0;
+      border: 0;
+      height: 1px;
+      background: #ccc;
+    }
   }
 }

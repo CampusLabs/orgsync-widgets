@@ -78,15 +78,10 @@ export default React.createClass({
   },
 
   setRsvp: function (status) {
-
-    // This temporary CORS enabling is required for non-GET requests until we
-    // stop supporting IE9, at which point every request will use CORS.
-    api.cors = true;
     api.post(this.state.event.links.rsvp, {
       occurs_at: this.state.event.starts_at,
       status: status
     }, this.handleRsvp);
-    api.cors = false;
   },
 
   handleFetch: function (er, res) {

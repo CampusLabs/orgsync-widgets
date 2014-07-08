@@ -1,11 +1,13 @@
 @import '../config';
 
-.osw-photos-index {
-  margin: 0 auto;
-  max-width: 1100px;
-  text-align: center;
+.orgsync-widget {
+  .osw-photos-index {
+    margin: 0 auto;
+    max-width: 1100px;
+    text-align: center;
 
-  .osw-info {
-    padding: 20px;
+    .osw-info {
+      padding: 20px;
+    }
   }
 }

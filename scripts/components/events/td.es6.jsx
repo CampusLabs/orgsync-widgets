@@ -18,20 +18,20 @@ export default React.createClass({
   },
 
   getClassName: function () {
-    var classes = ['osw-events-column'];
+    var classes = ['osw-events-td'];
     var event = this.state.event;
     if (event) {
       var tz = this.props.tz;
-      if (isAllDay(event, tz)) classes.push('osw-events-column-all-day');
-      if (this.isContinued()) classes.push('osw-events-column-continued');
-      if (this.doesContinue()) classes.push('osw-events-column-continues');
+      if (isAllDay(event, tz)) classes.push('osw-events-td-all-day');
+      if (this.isContinued()) classes.push('osw-events-td-continued');
+      if (this.doesContinue()) classes.push('osw-events-td-continues');
       var rsvp = event.rsvp;
       var type =
         rsvp === 'Attending' || rsvp === 'Added by Admin' ? 'attending' :
         rsvp === 'Maybe Attending' ? 'maybe-attending' :
         rsvp === 'Invited' ? 'invited' :
         null;
-      if (type) classes.push('osw-events-column-' + type);
+      if (type) classes.push('osw-events-td-' + type);
     }
     return classes.join(' ');
   },
@@ -114,7 +114,7 @@ export default React.createClass({
   renderMore: function () {
     return (
       <div
-        className='osw-events-column-more'
+        className='osw-events-td-more'
         onClick={this.props.openDate}
       >
         {this.props.more + ' more...'}
@@ -125,7 +125,7 @@ export default React.createClass({
   renderTitle: function () {
     if (this.props.hideTitle) return;
     return (
-      <div className='osw-events-column-title'>
+      <div className='osw-events-td-title'>
         {this.state.event.title}
       </div>
     );
@@ -134,11 +134,11 @@ export default React.createClass({
   renderEvent: function () {
     return (
       <div
-        className='osw-events-column-event'
+        className='osw-events-td-event'
         style={this.getEventStyle()}
         onClick={this.openShow}
       >
-        <div className='osw-events-column-time'>{this.getTime()}</div>
+        <div className='osw-events-td-time'>{this.getTime()}</div>
         {this.renderTitle()}
       </div>
     );

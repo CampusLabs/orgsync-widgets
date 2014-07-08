@@ -1,7 +1,9 @@
 @import '../config';
 
-.osw-albums-index {
-  max-width: 1250px;
-  margin: 0 auto;
-  text-align: center;
+.orgsync-widget {
+  .osw-albums-index {
+    max-width: 1250px;
+    margin: 0 auto;
+    text-align: center;
+  }
 }

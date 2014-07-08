@@ -1,24 +1,26 @@
 @import '../config';
 
-.osw-selector-token {
-  @include box-sizing(border-box);
-  display: inline-block;
-  background: #eee;
-  border: 2px solid #fff;
-  padding: 3px;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  max-width: 100%;
-  @include user-select(none);
+.orgsync-widget {
+  .osw-selector-token {
+    @include box-sizing(border-box);
+    display: inline-block;
+    background: #eee;
+    border: 2px solid #fff;
+    padding: 3px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    max-width: 100%;
+    @include user-select(none);
 
-  .osw-name {
-    display: inline;
-  }
+    .osw-name {
+      display: inline;
+    }
 
-  .osw-remove {
-    float: right;
-    cursor: pointer;
-    padding-left: 3px;
+    .osw-remove {
+      float: right;
+      cursor: pointer;
+      padding-left: 3px;
+    }
   }
 }

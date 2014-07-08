@@ -1,23 +1,25 @@
 @import '../config';
 
-.osw-portals-summary {
-  padding: 5px 10px;
-}
-
-.osw-portals-summary-clear-buttons > .osw-button {
-  margin-left: 5px;
-
-  > .oswi {
-    margin-left: 5px
+.orgsync-widget {
+  .osw-portals-summary {
+    padding: 5px 10px;
   }
-}
 
-.osw-portals-summary-message,
-.osw-portals-summary-clear-buttons {
-  display: inline-block;
-  vertical-align: middle;
-}
+  .osw-portals-summary-clear-buttons > .osw-button {
+    margin-left: 5px;
 
-.osw-portals-summary-message {
-  line-height: 28px;
+    > .oswi {
+      margin-left: 5px
+    }
+  }
+
+  .osw-portals-summary-message,
+  .osw-portals-summary-clear-buttons {
+    display: inline-block;
+    vertical-align: middle;
+  }
+
+  .osw-portals-summary-message {
+    line-height: 28px;
+  }
 }

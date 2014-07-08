@@ -1,35 +1,37 @@
 @import '../config';
 
-.osw-events-week {
-  > table {
-    width: 100%;
-    table-layout: fixed;
-    border-collapse: collapse;
+.orgsync-widget {
+  .osw-events-week {
+    > table {
+      width: 100%;
+      table-layout: fixed;
+      border-collapse: collapse;
 
-    > thead > tr > th {
-      padding: 0 2px;
-      font-weight: normal;
+      > thead > tr > th {
+        padding: 0 2px;
+        font-weight: normal;
+      }
     }
   }
-}
 
-.osw-events-week-day-wrapper {
-  border-top: 1px solid $grey;
-  padding: 2px 4px;
-  color: $grey-darker;
-  font-size: 14px;
-  text-align: right;
-  cursor: pointer;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
+  .osw-events-week-day-wrapper {
+    border-top: 1px solid $grey;
+    padding: 2px 4px;
+    color: $grey-darker;
+    font-size: 14px;
+    text-align: right;
+    cursor: pointer;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
 
-.osw-events-week-current-day .osw-events-week-day-wrapper {
-  color: white;
-  background: $red;
-  font-weight: bold;
-  padding-top: 3px;
-  border-top: none;
-  @include border-top-radius(3px)
+  .osw-events-week-current-day .osw-events-week-day-wrapper {
+    color: white;
+    background: $red;
+    font-weight: bold;
+    padding-top: 3px;
+    border-top: none;
+    @include border-top-radius(3px)
+  }
 }

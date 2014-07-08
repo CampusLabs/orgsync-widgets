@@ -1,17 +1,19 @@
 @import '../config';
 
-.osw-events-list-date-header {
-  position: -webkit-sticky;
-  position: sticky;
-  top: 0;
-  border-bottom: 1px solid $grey;
-  padding: 10px;
-  color: $grey-darker;
-  background: $grey-lightest;
-  font-weight: bold;
-  font-size: 14px;
-}
+.orgsync-widget {
+  .osw-events-list-date-header {
+    position: -webkit-sticky;
+    position: sticky;
+    top: 0;
+    border-bottom: 1px solid $grey;
+    padding: 10px;
+    color: $grey-darker;
+    background: $grey-lightest;
+    font-weight: bold;
+    font-size: 14px;
+  }
 
-.osw-events-list-date-popup {
-  max-width: 500px;
+  .osw-events-list-date-popup {
+    max-width: 500px;
+  }
 }

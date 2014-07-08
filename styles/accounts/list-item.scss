@@ -1,45 +1,47 @@
 @import '../config';
 
-.osw-accounts-list-item {
-  @include clearfix;
+.orgsync-widget {
+  .osw-accounts-list-item {
+    @include clearfix;
 
-  .osw-picture {
-    float: left;
-    margin-right: 5px;
+    .osw-picture {
+      float: left;
+      margin-right: 5px;
 
-    img {
-      display: block;
-      width: 64px;
-      height: 64px;
+      img {
+        display: block;
+        width: 64px;
+        height: 64px;
+      }
+    }
+
+    .osw-first-name,
+    .osw-last-name {
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+    }
+
+    .osw-first-name {
+      font-size: 20px;
+    }
+
+    .osw-last-name {
+      font-size: 18px;
+      font-weight: bold;
     }
   }
 
-  .osw-first-name,
-  .osw-last-name {
-    overflow-x: hidden;
-    white-space: nowrap;
-    text-overflow: ellipsis;
+  &[min-width~='461px'] .osw-accounts-list-item {
+    display: inline-block;
+    width: 50%;
   }
 
-  .osw-first-name {
-    font-size: 20px;
+  &[min-width~='691px'] .osw-accounts-list-item {
+    width: 33.3%;
   }
 
-  .osw-last-name {
-    font-size: 18px;
-    font-weight: bold;
+  &[min-width~='921px'] .osw-accounts-list-item {
+    width: 25%;
   }
-}
-
-.orgsync-widget[min-width~='461px'] .osw-accounts-list-item {
-  display: inline-block;
-  width: 50%;
-}
-
-.orgsync-widget[min-width~='691px'] .osw-accounts-list-item {
-  width: 33.3%;
-}
-
-.orgsync-widget[min-width~='921px'] .osw-accounts-list-item {
-  width: 25%;
 }

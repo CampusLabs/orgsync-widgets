@@ -1,42 +1,44 @@
 @import '../config';
 
-.osw-comments-list-item {
-  text-align: left;
-  border: 1px solid #dddddd;
-  padding: 5px;
-  background: #f9f9f9;
-  @include clearfix;
-
-  &:not(:first-child) {
-    border-top: 0;
-  }
-
-  .osw-info {
-    overflow: auto;
-    padding-left: 5px;
-  }
-
-  .osw-creator-avatar {
-    float: left;
+.orgsync-widget {
+  .osw-comments-list-item {
+    text-align: left;
     border: 1px solid #dddddd;
     padding: 5px;
-    width: 40px;
-    height: 40px;
-    background: white;
+    background: #f9f9f9;
+    @include clearfix;
 
-    img {
-      max-width: 100%;
+    &:not(:first-child) {
+      border-top: 0;
     }
-  }
 
-  .osw-creator-name {
-    display: inline;
-    margin-right: 5px;
-    font-weight: bold;
-  }
+    .osw-info {
+      overflow: auto;
+      padding-left: 5px;
+    }
 
-  .osw-time {
-    display: inline;
-    color: #666666;
+    .osw-creator-avatar {
+      float: left;
+      border: 1px solid #dddddd;
+      padding: 5px;
+      width: 40px;
+      height: 40px;
+      background: white;
+
+      img {
+        max-width: 100%;
+      }
+    }
+
+    .osw-creator-name {
+      display: inline;
+      margin-right: 5px;
+      font-weight: bold;
+    }
+
+    .osw-time {
+      display: inline;
+      color: #666666;
+    }
   }
 }

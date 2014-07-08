@@ -1,34 +1,36 @@
 @import 'config';
 
-.osw-button {
-  @include box-sizing(border-box);
-  display: inline-block;
-  border: 1px solid $grey;
-  padding: 5px;
-  color: $grey-darkest;
-  cursor: pointer;
-  background-color: #f9f9f9;
-  text-decoration: none;
-  @include linear-gradient(#fff, $grey-lightest);
-  @include appearance(none);
-  @include user-select(none);
-  box-shadow: 0 1px 0 rgba(0, 0, 0, 0.1);
-  border-radius: 3px;
-  text-align: center;
+.orgsync-widget {
+  .osw-button {
+    @include box-sizing(border-box);
+    display: inline-block;
+    border: 1px solid $grey;
+    padding: 0 5px;
+    color: $grey-darkest;
+    cursor: pointer;
+    background-color: #f9f9f9;
+    text-decoration: none;
+    @include linear-gradient(#fff, $grey-lightest);
+    @include appearance(none);
+    @include user-select(none);
+    box-shadow: 0 1px 0 rgba(0, 0, 0, 0.1);
+    border-radius: 3px;
+    text-align: center;
+    line-height: 22px;
 
-  &:hover {
-    background-color: #f3f3f3;
-    border-color: #b2b2b2;
-    @include linear-gradient($grey-lightest, $grey-lighter);
-  }
+    &:hover {
+      background-color: #f3f3f3;
+      border-color: #b2b2b2;
+      @include linear-gradient($grey-lightest, $grey-lighter);
+    }
 
-  &:active,
-  &.osw-button-selected {
-    border-color: $blue-darkest;
-    color: white;
-    background: $blue-darkest;
-    text-shadow: 0 1px 1px rgba(0, 0, 0, 0.75);
-    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.25) inset;
+    &:active,
+    &.osw-button-selected {
+      border-color: $blue-darkest;
+      color: white;
+      background: $blue-darkest;
+      text-shadow: 0 1px 1px rgba(0, 0, 0, 0.75);
+      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.25) inset;
+    }
   }
 }
-

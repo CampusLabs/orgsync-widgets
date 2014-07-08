@@ -1,12 +1,14 @@
 @import 'config';
 
-.osw-button-group {
-  .osw-button:not(:first-child) {
-    border-left: none;
-    @include border-left-radius(0);
-  }
+.orgsync-widget {
+  .osw-button-group {
+    .osw-button:not(:first-child) {
+      border-left: none;
+      @include border-left-radius(0);
+    }
 
-  .osw-button:not(:last-child) {
-    @include border-right-radius(0);
+    .osw-button:not(:last-child) {
+      @include border-right-radius(0);
+    }
   }
 }

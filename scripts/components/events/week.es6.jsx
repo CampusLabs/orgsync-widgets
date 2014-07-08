@@ -2,7 +2,7 @@
 
 import _ from 'underscore';
 import Cursors from 'cursors';
-import Column from 'components/events/column';
+import Td from 'components/events/td';
 import ListDate from 'components/events/list-date';
 import Popup from 'components/popup';
 import React from 'react';
@@ -59,15 +59,15 @@ export default React.createClass({
           if (prev && (prev === true || (prev.id === grid[y][x - 1].id))) {
             var id = prev.id;
 
-            // Walk back down the row, stopping at `null` and `more` columns.
+            // Walk back down the row, stopping at `null` and `more` tds.
             for (i = x - 1; i >= 0 && grid[y][i] && !grid[y][i].more; --i) {
-              var col = grid[y][i];
+              var td = grid[y][i];
 
-              // If the id of the event has been found and the current column id
+              // If the id of the event has been found and the current td id
               // does not match, time to go. The `id` aspect here is necessary
               // for the special case below.
-              if (id && col.id && id !== col.id) break;
-              if (!id && col.id) id = col.id;
+              if (id && td.id && id !== td.id) break;
+              if (!id && td.id) id = td.id;
               grid[y][i].more = 1;
             }
           }
@@ -87,18 +87,18 @@ export default React.createClass({
 
         // This is the special case where an event starts on one day at non-
         // midnight and ends on a different day. For this case we have to create
-        // a single column to display the start time and the event name,
-        // followed by the remaining columns to show the end time.
+        // a single td to display the start time and the event name, followed by
+        // the remaining tds to show the end time.
         if (!event.is_all_day && event.starts_at > iso && colSpan > 1) {
           grid[y][x + 1] = {
             date: dateMom.clone().day(x + 1).format('YYYY-MM-DD'),
-            span: colSpan - 1,
+            colSpan: colSpan - 1,
             hideTitle: true,
             event: event
           };
           colSpan = 1;
         }
-        grid[y][x] = {date: date, span: colSpan, event: event};
+        grid[y][x] = {date: date, colSpan: colSpan, event: event};
       }, this);
     }, this);
     return grid;
@@ -137,25 +137,25 @@ export default React.createClass({
     return <thead><tr>{_.times(7, this.renderHeader)}</tr></thead>;
   },
 
-  renderColumn: function (col, y) {
-    if (col === true) return;
-    if (col === null) return <Column key={'empty-' + y} />;
-    if (col.more) {
+  renderTd: function (td, y) {
+    if (td === true) return;
+    if (td === null) return <Td key={'empty-' + y} />;
+    if (td.more) {
       return (
-        <Column
+        <Td
           key={'more-' + y}
-          more={col.more}
-          openDate={_.partial(this.openDate, col.date)}
+          more={td.more}
+          openDate={_.partial(this.openDate, td.date)}
         />
       );
     }
-    var i = this.state.allEvents.indexOf(col.event);
+    var i = this.state.allEvents.indexOf(td.event);
     return (
-      <Column
-        key={'event-' + col.event.id + '-' + y}
-        colSpan={col.span}
-        date={col.date}
-        hideTitle={col.hideTitle}
+      <Td
+        key={'event-' + td.event.id + '-' + y}
+        colSpan={td.colSpan}
+        date={td.date}
+        hideTitle={td.hideTitle}
         eventFilters={this.props.eventFilters}
         tz={this.props.tz}
         cursors={{event: this.getCursor('allEvents', i)}}
@@ -164,7 +164,7 @@ export default React.createClass({
   },
 
   renderRow: function (row, x) {
-    return <tr key={x}>{_.map(row, this.renderColumn)}</tr>;
+    return <tr key={x}>{_.map(row, this.renderTd)}</tr>;
   },
 
   renderBody: function () {

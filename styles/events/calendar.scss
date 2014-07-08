@@ -1,20 +1,22 @@
 @import '../config';
 
-.osw-events-calendar-day-names {
-  width: 100%;
-  table-layout: fixed;
-  border-collapse: collapse;
+.orgsync-widget {
+  .osw-events-calendar-day-names {
+    width: 100%;
+    table-layout: fixed;
+    border-collapse: collapse;
 
-  > thead > tr > th {
-    padding: 2px;
+    > thead > tr > th {
+      padding: 2px;
+    }
   }
-}
 
-.osw-events-calendar-day-name {
-  border-top: 1px solid $grey;
-  padding: 2px 2px 0;
-  font-weight: bold;
-  text-transform: uppercase;
-  color: $grey-darker;
-  text-align: right;
+  .osw-events-calendar-day-name {
+    border-top: 1px solid $grey;
+    padding: 2px 2px 0;
+    font-weight: bold;
+    text-transform: uppercase;
+    color: $grey-darker;
+    text-align: right;
+  }
 }

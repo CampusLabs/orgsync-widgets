@@ -1,55 +1,57 @@
 @import '../config';
 
-.osw-portals-show {
-  padding: 10px 10px 0;
+.orgsync-widget {
+  .osw-portals-show {
+    padding: 10px 10px 0;
 
-  > .osw-button {
-    margin-bottom: 10px;
-    margin-right: 10px;
-  }
-}
-
-.osw-portals-show-picture {
-  text-align: center;
-
-  > img {
-    display: block;
-    margin: 0 auto;
-    border-radius: 3px;
-  }
-}
-
-.osw-portals-show-name {
-  font-size: 18px;
-  font-weight: bold;
-}
-
-.osw-portals-show-umbrella {
-  font-weight: bold;
-}
-
-.osw-portals-show-picture img,
-.osw-portals-show-category,
-.osw-portals-show-description,
-.osw-portals-show-button {
-  margin-bottom: 10px;
-}
-
-.osw-portals-show-popup {
-  max-width: 500px;
-
-  &[min-width~='480px'] {
-    .osw-portals-show {
-      @include clearfix();
+    > .osw-button {
+      margin-bottom: 10px;
+      margin-right: 10px;
     }
+  }
 
-    .osw-portals-show-picture {
-      float: right;
+  .osw-portals-show-picture {
+    text-align: center;
 
-      > img {
-        display: block;
-        border-radius: 3px;
-        margin: 0 0 10px 10px;
+    > img {
+      display: block;
+      margin: 0 auto;
+      border-radius: 3px;
+    }
+  }
+
+  .osw-portals-show-name {
+    font-size: 18px;
+    font-weight: bold;
+  }
+
+  .osw-portals-show-umbrella {
+    font-weight: bold;
+  }
+
+  .osw-portals-show-picture img,
+  .osw-portals-show-category,
+  .osw-portals-show-description,
+  .osw-portals-show-button {
+    margin-bottom: 10px;
+  }
+
+  .osw-portals-show-popup {
+    max-width: 500px;
+
+    &[min-width~='480px'] {
+      .osw-portals-show {
+        @include clearfix();
+      }
+
+      .osw-portals-show-picture {
+        float: right;
+
+        > img {
+          display: block;
+          border-radius: 3px;
+          margin: 0 0 10px 10px;
+        }
       }
     }
   }

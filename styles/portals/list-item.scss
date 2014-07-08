@@ -1,109 +1,111 @@
 @import '../config';
 
-.osw-portals-list-item {
-  vertical-align: top;
-  border-top: 1px solid $grey;
+.orgsync-widget {
+  .osw-portals-list-item {
+    vertical-align: top;
+    border-top: 1px solid $grey;
 
-  > a {
-    display: block;
-    text-decoration: none;
-    background-color: $grey-lightest;
+    > a {
+      display: block;
+      text-decoration: none;
+      background-color: $grey-lightest;
 
-    &:hover .osw-portals-list-item-name {
-      color: $blue-darkest;
-    }
-  }
-}
-
-.osw-portals-list-item-picture {
-  position: relative;
-  float: left;
-  width: 75px;
-
-  &:before {
-    content: "";
-    display: block;
-    padding-top: 100%;
-  }
-
-  > img {
-    position: absolute;
-    width: 100%;
-    top: 0;
-    left: 0;
-  }
-}
-
-.osw-portals-list-item-info {
-  padding: 10px;
-  min-height: 55px;
-  overflow: hidden;
-}
-
-.osw-portals-list-item-name {
-  word-wrap: break-word;
-  color: $grey-darkest;
-  font-size: 16px;
-  overflow-x: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.osw-portals-list-item-umbrella,
-.osw-portals-list-item-category {
-  @include box-sizing(border-box);
-  color: $grey-darker;
-  overflow-x: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.osw-portals-list-item-umbrella {
-  font-weight: bold;
-}
-
-.orgsync-widget[min-width~='480px'] .osw-portals-list-item {
-  display: inline-block;
-  @include box-sizing(border-box);
-  border: 5px solid transparent;
-  width: 33.33%;
-  vertical-align: top;
-
-  > a {
-    border: 1px solid $grey;
-    box-shadow: 0 1px 0 rgba(0, 0, 0, 0.1);
-    border-radius: 3px;
-
-    &:hover {
-      border-color: $blue-darkest;
+      &:hover .osw-portals-list-item-name {
+        color: $blue-darkest;
+      }
     }
   }
 
   .osw-portals-list-item-picture {
-    float: none;
-    width: 100%;
+    position: relative;
+    float: left;
+    width: 75px;
+
+    &:before {
+      content: "";
+      display: block;
+      padding-top: 100%;
+    }
 
     > img {
-      @include border-top-radius(3px);
+      position: absolute;
+      width: 100%;
+      top: 0;
+      left: 0;
     }
   }
 
-  .osw-portals-list-item-name {
-    font-size: 16px;
-    height: 75px;
-    white-space: normal;
+  .osw-portals-list-item-info {
+    padding: 10px;
+    min-height: 55px;
     overflow: hidden;
   }
-}
 
-.orgsync-widget[min-width~='640px'] .osw-portals-list-item {
-  width: 25%;
-}
+  .osw-portals-list-item-name {
+    word-wrap: break-word;
+    color: $grey-darkest;
+    font-size: 16px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
 
-.orgsync-widget[min-width~='800px'] .osw-portals-list-item {
-  width: 20%;
-}
+  .osw-portals-list-item-umbrella,
+  .osw-portals-list-item-category {
+    @include box-sizing(border-box);
+    color: $grey-darker;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
 
-.orgsync-widget[min-width~='960px'] .osw-portals-list-item {
-  width: 16.66%;
+  .osw-portals-list-item-umbrella {
+    font-weight: bold;
+  }
+
+  &[min-width~='480px'] .osw-portals-list-item {
+    display: inline-block;
+    @include box-sizing(border-box);
+    border: 5px solid transparent;
+    width: 33.33%;
+    vertical-align: top;
+
+    > a {
+      border: 1px solid $grey;
+      box-shadow: 0 1px 0 rgba(0, 0, 0, 0.1);
+      border-radius: 3px;
+
+      &:hover {
+        border-color: $blue-darkest;
+      }
+    }
+
+    .osw-portals-list-item-picture {
+      float: none;
+      width: 100%;
+
+      > img {
+        @include border-top-radius(3px);
+      }
+    }
+
+    .osw-portals-list-item-name {
+      font-size: 16px;
+      height: 75px;
+      white-space: normal;
+      overflow: hidden;
+    }
+  }
+
+  &[min-width~='640px'] .osw-portals-list-item {
+    width: 25%;
+  }
+
+  &[min-width~='800px'] .osw-portals-list-item {
+    width: 20%;
+  }
+
+  &[min-width~='960px'] .osw-portals-list-item {
+    width: 16.66%;
+  }
 }

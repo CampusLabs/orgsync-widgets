@@ -1,5 +1,4 @@
 export default {
-  api: {cors: false},
   elementQuery: {
     '.orgsync-widget, .osw-popup': {
       'min-width': [

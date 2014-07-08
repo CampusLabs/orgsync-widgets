@@ -1,34 +1,35 @@
 @import '../config';
 
-.osw-photos-show {
+.orgsync-widget {
+  .osw-photos-show {
+    .osw-image img {
+      margin: 0 auto;
+      display: block;
+      max-width: 100%;
+    }
 
-  .osw-image img {
-    margin: 0 auto;
+    .osw-description {
+      margin-top: 5px;
+      font-size: 14px;
+    }
+
+    .osw-comments-header {
+      font-size: 16px;
+      font-weight: bold;
+      text-align: left;
+    }
+
+    .osw-comments-index {
+      margin-top: 5px;
+    }
+  }
+
+  .osw-photos-show-olay .js-olay-content {
     display: block;
-    max-width: 100%;
+    margin: 0 auto;
+    padding: 5px;
+    background: white;
+    max-width: 710px;
+    border-radius: 0;
   }
-
-  .osw-description {
-    margin-top: 5px;
-    font-size: 14px;
-  }
-
-  .osw-comments-header {
-    font-size: 16px;
-    font-weight: bold;
-    text-align: left;
-  }
-
-  .osw-comments-index {
-    margin-top: 5px;
-  }
-}
-
-.osw-photos-show-olay .js-olay-content {
-  display: block;
-  margin: 0 auto;
-  padding: 5px;
-  background: white;
-  max-width: 710px;
-  border-radius: 0;
 }

@@ -12,25 +12,47 @@
   font-size: 12px;
   word-wrap: break-word;
 
-  &:not(.js-olay-container) {
-    position: relative;
+  *, *:before, *:after {
+    -webkit-box-sizing: inherit;
+    -moz-box-sizing: inherit;
+    box-sizing: inherit;
   }
 
-  &.js-olay-container {
-    background: black;
-    background: rgba(0, 0, 0, 0.75);
+  label {
+    color: inherit;
+    font-size: inherit;
+    font-weight: inherit;
+    line-height: inherit;
   }
 
-  .js-olay-cell {
-    padding: 20px;
+  select,
+  input {
+    margin: inherit;
+    padding: inherit;
+    width: inherit;
+    height: inherit;
   }
 
-  .js-olay-content {
-    margin: 0 auto;
-    max-width: 800px;
-    background: white;
-    border-radius: 3px;
-    box-shadow: 0 1px 5px rgba(0, 0, 0, 0.75);
+  table {
+    margin: inherit;
+    border: inherit;
+
+    thead,
+    tbody {
+      background: inherit;
+
+      tr {
+        background: inherit;
+
+        th, td {
+          border: inherit;
+          font-size: inherit;
+          font-weight: inherit;
+          color: inherit;
+          line-height: inherit;
+        }
+      }
+    }
   }
 
   .osw-hide-button {
@@ -142,15 +164,5 @@
         padding-right: 25px;
       }
     }
-  }
-
-  // These are from BB widgets, may be able to remove after events are converted
-  // to React.
-  .js-none {
-    display: none;
-  }
-
-  .js-hidden {
-    visibility: none;
   }
 }

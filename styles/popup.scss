@@ -1,45 +1,47 @@
 @import 'config';
 
-.olay-container {
-  background: black;
-  background: rgba(0, 0, 0, 0.75);
-}
+.orgsync-widget {
+  .olay-container {
+    background: black;
+    background: rgba(0, 0, 0, 0.75);
+  }
 
-.olay-cell {
-  padding: 20px;
-}
+  .olay-cell {
+    padding: 20px;
+  }
 
-.osw-popup {
-  margin: 0 auto;
-  border-radius: 3px;
-  box-shadow: 0 1px 5px rgba(0, 0, 0, 0.75);
-}
+  .osw-popup {
+    margin: 0 auto;
+    border-radius: 3px;
+    box-shadow: 0 1px 5px rgba(0, 0, 0, 0.75);
+  }
 
-.osw-popup-head {
-  @include border-top-radius(3px);
-  padding: 10px;
-  background: $grey-lighter;
-  color: $grey-darker;
-  font-size: 16px;
-  font-weight: bold;
-}
+  .osw-popup-head {
+    @include border-top-radius(3px);
+    padding: 10px;
+    background: $grey-lighter;
+    color: $grey-darker;
+    font-size: 16px;
+    font-weight: bold;
+  }
 
-.osw-popup-title {
-  text-align: center;
-}
+  .osw-popup-title {
+    text-align: center;
+  }
 
-.osw-popup-body {
-  @include border-bottom-radius(3px);
-  background: white;
-  overflow: hidden;
-}
+  .osw-popup-body {
+    @include border-bottom-radius(3px);
+    background: white;
+    overflow: hidden;
+  }
 
-.osw-popup-close-button {
-  float: right;
-  cursor: pointer;
+  .osw-popup-close-button {
+    float: right;
+    cursor: pointer;
 
-  &:hover {
-    color: $grey-darkest;
-    border-color: $grey-darkest;
+    &:hover {
+      color: $grey-darkest;
+      border-color: $grey-darkest;
+    }
   }
 }

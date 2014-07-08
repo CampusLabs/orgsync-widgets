@@ -1,13 +1,15 @@
 @import '../config';
 
-.osw-portals-letter-table {
-  display: none;
-}
+.orgsync-widget {
+  .osw-portals-letter-table {
+    display: none;
+  }
 
-.orgsync-widget[min-width~='640px'] .osw-portals-letter-table {
-  display: table;
-  width: 100%;
-  @include box-sizing(border-box);
-  border: 5px solid transparent;
-  border-collapse: collapse;
+  &[min-width~='640px'] .osw-portals-letter-table {
+    display: table;
+    width: 100%;
+    @include box-sizing(border-box);
+    border: 5px solid transparent;
+    border-collapse: collapse;
+  }
 }

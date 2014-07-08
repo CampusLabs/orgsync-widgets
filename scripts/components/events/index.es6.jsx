@@ -279,7 +279,7 @@ export default React.createClass({
           </div>
           <EventFiltersIndex
             url={this.getEventsUrl() + '/filters'}
-            header={this.props.eventFiltersHeader}
+            header={this.props.filtersHeader}
             cursors={{eventFilters: this.getCursor('eventFilters')}}
           />
         </div>

@@ -23,8 +23,10 @@ export default React.createClass({
   renderClearButtons: function () {
     return _.map(this.getFilters(), function (value, name) {
       if (!value) return null;
+      var deltas = {};
+      deltas[name] = {$set: ''};
       return (
-        <Button key={name} onClick={_.partial(this.update, name, {$set: ''})}>
+        <Button key={name} onClick={_.partial(this.update, deltas)}>
           {value}
           <Icon name='delete' />
         </Button>

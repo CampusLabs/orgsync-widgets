@@ -7,14 +7,17 @@ export default React.createClass({
   mixins: [Cursors],
 
   render: function () {
+    var options = this.props.renderOptions();
+    var value = this.props.value;
+    if (options.length === 2) value = options[1].props.value;
     return this.transferPropsTo(
       <div className='osw-big osw-field oswi osw-dropdown'>
         <select
           name={this.props.name}
-          value={this.props.value}
+          value={value}
           onChange={this.props.onChange}
         >
-          {this.props.renderOptions()}
+          {options}
         </select>
       </div>
     );

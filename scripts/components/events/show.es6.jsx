@@ -289,6 +289,9 @@ export default React.createClass({
           {this.renderRsvp()}
           {this.renderPortalName()}
           {this.renderDescription()}
+          <div className='osw-events-show-see-full-details'>
+            <Button href={this.getWebUrl()}>See Full Details</Button>
+          </div>
         </div>
       </div>
     );

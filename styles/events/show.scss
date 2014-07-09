@@ -58,15 +58,15 @@
     color: $blue-darkest;
   }
 
-  .osw-events-show-subtext {
-    font-size: 11px;
-    color: $grey-darker;
-  }
-
   .osw-events-show-time,
   .osw-events-show-portal-name {
     margin-right: 5px;
     margin-right: 5px;
+  }
+
+  .osw-events-show-add-to-calendar {
+    margin-top: 5px;
+    font-size: 12px;
   }
 
   .osw-events-show-maybe-attending {
@@ -136,15 +136,12 @@
     }
   }
 
-  @media (min-width: 480px) {
-    .osw-events-show-picture-container {
-      float: left;
-      margin: 0 20px 0 0;
-    }
-  }
-
   .osw-events-show-popup {
     max-width: 500px;
 
+    &[min-width~='480px'] .osw-events-show-picture-container {
+      float: left;
+      margin: 0 20px 0 0;
+    }
   }
 }

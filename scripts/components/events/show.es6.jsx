@@ -66,6 +66,14 @@ export default React.createClass({
     return event.links.web + '/occurrences/' + event.id;
   },
 
+  getIcsUrl: function () {
+    return api.urlRoot + this.getShowUrl() + '.ics?key=' + api.key;
+  },
+
+  getGcalUrl: function () {
+    return api.urlRoot + this.getShowUrl() + '/gcal?key=' + api.key;
+  },
+
   getLocationUrl: function () {
     return 'https://www.google.com/maps/dir//' +
       encodeURIComponent(this.state.event.location);
@@ -146,6 +154,11 @@ export default React.createClass({
         <div>{start}</div>
         {end ? <div>{end}</div> : null}
         {time ? <div className='osw-events-show-time'>{time}</div> : null}
+        <div className='osw-events-show-add-to-calendar'>
+          <a href={this.getIcsUrl()}>Add to iCal/Outlook</a>
+          {' | '}
+          <a href={this.getGcalUrl()}>Add to Google Calendar</a>
+        </div>
       </Section>
     );
   },

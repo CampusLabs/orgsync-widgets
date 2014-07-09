@@ -133,10 +133,8 @@
       padding: 5px;
       border: 1px solid $grey;
       background-color: $grey-lightest;
-      text-overflow: ellipsis;
-      white-space: nowrap;
-      overflow: hidden;
       border-radius: 3px;
+      @include ellipsis;
     }
 
     input {

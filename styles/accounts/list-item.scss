@@ -17,9 +17,7 @@
 
     .osw-first-name,
     .osw-last-name {
-      overflow: hidden;
-      white-space: nowrap;
-      text-overflow: ellipsis;
+      @include ellipsis;
     }
 
     .osw-first-name {

@@ -35,9 +35,7 @@
     }
 
     .osw-name {
-      overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
+      @include ellipsis;
 
       .oswi {
         width: 12px;

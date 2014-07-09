@@ -45,18 +45,14 @@
     word-wrap: break-word;
     color: $grey-darkest;
     font-size: 16px;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
+    @include ellipsis;
   }
 
   .osw-portals-list-item-umbrella,
   .osw-portals-list-item-category {
     @include box-sizing(border-box);
     color: $grey-darker;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
+    @include ellipsis;
   }
 
   .osw-portals-list-item-umbrella {

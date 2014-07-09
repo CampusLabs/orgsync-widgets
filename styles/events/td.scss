@@ -71,9 +71,7 @@
   .osw-events-td-time,
   .osw-events-td-title,
   .osw-events-td-more {
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
+    @include ellipsis;
   }
 
   .osw-events-td-more {

@@ -77,8 +77,6 @@
 
   .osw-events-list-item-title,
   .osw-events-list-item-subtext {
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
+    @include ellipsis;
   }
 }

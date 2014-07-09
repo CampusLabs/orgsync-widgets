@@ -21,9 +21,7 @@
     font-size: 14px;
     text-align: right;
     cursor: pointer;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
+    @include ellipsis;
   }
 
   .osw-events-week-current-day .osw-events-week-day-wrapper {

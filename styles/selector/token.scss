@@ -7,10 +7,8 @@
     background: #eee;
     border: 2px solid #fff;
     padding: 3px;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
     max-width: 100%;
+    @include ellipsis;
     @include user-select(none);
 
     .osw-name {

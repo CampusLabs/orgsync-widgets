@@ -56,22 +56,17 @@ export default React.createClass({
     this.fetch();
   },
 
-  getShowUrl: function () {
-    var event = this.state.event;
-    return event.links.show.replace(/\/\d+$/, '/occurrences/' + event.id);
-  },
-
   getWebUrl: function () {
     var event = this.state.event;
     return event.links.web + '/occurrences/' + event.id;
   },
 
   getIcsUrl: function () {
-    return api.urlRoot + this.getShowUrl() + '.ics?key=' + api.key;
+    return api.url(this.state.event.links.ics);
   },
 
   getGcalUrl: function () {
-    return api.urlRoot + this.getShowUrl() + '/gcal?key=' + api.key;
+    return api.url(this.state.event.links.gcal);
   },
 
   getLocationUrl: function () {
@@ -81,7 +76,7 @@ export default React.createClass({
 
   fetch: function () {
     this.update({isLoading: {$set: true}, error: {$set: null}});
-    api.get(this.getShowUrl(), this.handleFetch);
+    api.get(this.state.event.links.show, this.handleFetch);
   },
 
   setRsvp: function (status) {
@@ -196,7 +191,10 @@ export default React.createClass({
     var buttons;
     if (actions[0] === 'Register') {
       buttons = <Button href={event.pre_event_form}>Yes, Register Now</Button>;
-    } else {
+
+    // HACK: Remove this condition once IE9 support is dropped.
+    // https://hacks.mozilla.org/2009/07/cross-site-xmlhttprequest-with-cors/
+    } else if ('withCredentials' in new XMLHttpRequest()) {
       var userAction = ACTION_MAP[event.rsvp];
       buttons = actions.map(function (action) {
         return (
@@ -211,6 +209,8 @@ export default React.createClass({
           </label>
         );
       }, this);
+    } else {
+      buttons = <Button href={this.getWebUrl()}>RSVP</Button>;
     }
     return (
       <div className='osw-events-show-rsvp-action'>

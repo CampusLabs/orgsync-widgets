@@ -69,7 +69,8 @@ export var parseResponse = function (res) {
       var isAllDay = event.is_all_day;
       return _.extend({}, event, date, {
         starts_at: fixDate(date.starts_at, isAllDay),
-        ends_at: fixDate(date.ends_at, isAllDay)
+        ends_at: fixDate(date.ends_at, isAllDay),
+        links: _.extend({}, event.links, date.links)
       });
     });
   }));

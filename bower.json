@@ -23,6 +23,7 @@
     "react": "x",
     "react-list": "x",
     "sockjs": "x",
+    "superagent": "x",
     "tinycolor": "x",
     "underscore": "x",
     "underscore.string": "x",

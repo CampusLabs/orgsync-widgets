@@ -9,7 +9,7 @@ import Cursors from 'cursors';
 import Icon from 'components/icon';
 import React from 'react';
 
-import {getMoment, isAllDay} from 'entities/event';
+import {getMoment, isAllDay, mergeResponse} from 'entities/event';
 
 var DATE_FORMAT = 'dddd, MMM D, YYYY';
 var TIME_FORMAT = 'h:mm A';
@@ -81,32 +81,14 @@ export default React.createClass({
 
   setRsvp: function (status) {
     this.update({isLoading: {$set: true}, error: {$set: null}});
-    api.post(this.state.event.links.rsvp, {
-      occurs_at: this.state.event.starts_at,
-      status: status
-    }, this.handleRsvp);
+    api.post(this.state.event.links.rsvp, {status: status}, this.handleFetch);
   },
 
   handleFetch: function (er, res) {
     if (!this.isMounted()) return;
     this.update({isLoading: {$set: false}});
     if (er) return this.update({error: {$set: er}});
-    this.update({event: {$merge: _.pick(res.data, [
-      'max_attendees',
-      'total_attendees',
-      'attendees_sample'
-    ])}});
-  },
-
-  handleRsvp: function (er, res) {
-    if (!this.isMounted()) return;
-    this.update({isLoading: {$set: false}});
-    if (er) return this.update({error: {$set: er}});
-    var status = res.data.status;
-    var filters = _.without(this.state.event.filters, 'rsvp');
-    if (status !== 'Not Attending') filters = ['rsvp'].concat(filters);
-    this.update({event: {rsvp: {$set: status}, filters: {$set: filters}}});
-    this.fetch();
+    this.update({event: {$merge: mergeResponse(this.state.event, res.data)}});
   },
 
   renderDefaultPicture: function () {

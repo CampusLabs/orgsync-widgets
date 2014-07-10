@@ -63,16 +63,18 @@ var fixDate = function (date, isAllDay) {
   return isAllDay ? date.slice(0, 10) : moment.utc(date).toISOString();
 };
 
+export var mergeResponse = function (a, b) {
+  var isAllDay = event.is_all_day;
+  return _.extend({}, a, b, {
+    starts_at: fixDate(b.starts_at, isAllDay),
+    ends_at: fixDate(b.ends_at, isAllDay),
+    links: _.extend({}, a.links, b.links)
+  });
+};
+
 export var parseResponse = function (res) {
   return _.flatten(_.map(res.data, function (event) {
-    return _.map(event.dates, function (date) {
-      var isAllDay = event.is_all_day;
-      return _.extend({}, event, date, {
-        starts_at: fixDate(date.starts_at, isAllDay),
-        ends_at: fixDate(date.ends_at, isAllDay),
-        links: _.extend({}, event.links, date.links)
-      });
-    });
+    return _.map(event.dates, _.partial(mergeResponse, event));
   }));
 };
 

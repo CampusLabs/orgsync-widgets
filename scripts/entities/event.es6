@@ -64,7 +64,7 @@ var fixDate = function (date, isAllDay) {
 };
 
 export var mergeResponse = function (a, b) {
-  var isAllDay = event.is_all_day;
+  var isAllDay = a.is_all_day;
   return _.extend({}, a, b, {
     starts_at: fixDate(b.starts_at, isAllDay),
     ends_at: fixDate(b.ends_at, isAllDay),

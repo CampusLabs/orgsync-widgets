@@ -175,6 +175,7 @@ export default React.createClass({
 
   renderOpenDate: function () {
     var date = this.state.openDate;
+    if (!date) return;
     return (
       <ListDate
         events={this.getEventsForDate(date)}
@@ -193,7 +194,7 @@ export default React.createClass({
         close={this.closeDate}
         title='Date Details'
       >
-        {this.state.openDate ? this.renderOpenDate() : null}
+        {this.renderOpenDate()}
       </Popup>
     );
   },

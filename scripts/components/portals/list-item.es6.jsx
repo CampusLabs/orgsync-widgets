@@ -41,13 +41,14 @@ export default React.createClass({
   },
 
   renderShow: function () {
+    if (!this.state.showIsOpen) return;
     return <Show cursors={{portal: this.getCursor('portal')}} />;
   },
 
   renderShowPopup: function () {
     return (
       <Popup name='portals-show' close={this.closeShow} title='Portal Details'>
-        {this.state.showIsOpen ? this.renderShow() : null}
+        {this.renderShow()}
       </Popup>
     );
   },

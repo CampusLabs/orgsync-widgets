@@ -1,5 +1,6 @@
 /** @jsx React.DOM */
 
+import Button from 'components/button';
 import Cursors from 'cursors';
 import React from 'react';
 
@@ -22,17 +23,12 @@ export default React.createClass({
           We're sorry, but no portals match your selected filters.
         </div>
         <div className='osw-portals-empty-suggestions-header'>Suggestions</div>
-        <ul>
+        <ul className='osw-portals-empty-suggestions'>
           <li>Make sure all words are spelled correctly</li>
           <li>Try different, or fewer, keywords</li>
           <li>Clear all filters to return to all organizations</li>
         </ul>
-        <input
-          type='button'
-          className='osw-button'
-          value='Clear All Filters'
-          onClick={this.handleClick}
-        />
+        <Button onClick={this.handleClick}>Clear All Filters</Button>
       </div>
     );
   }

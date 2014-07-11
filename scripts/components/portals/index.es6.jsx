@@ -120,6 +120,21 @@ export default React.createClass({
     return this.state.portals.filter(this.portalMatchesFilters);
   },
 
+  renderFilters: function (portals) {
+    if (!this.state.portals.length) return;
+    return (
+      <Filters
+        portals={portals}
+        cursors={{
+          query: this.getCursor('query'),
+          umbrella: this.getCursor('umbrella'),
+          category: this.getCursor('category'),
+          letter: this.getCursor('letter')
+        }}
+      />
+    );
+  },
+
   renderListItem: function (portal) {
     var i = this.state.portals.indexOf(portal);
     return (
@@ -156,19 +171,7 @@ export default React.createClass({
     var portals = this.getFilteredPortals();
     return (
       <div className='osw-portals-index'>
-        {
-          this.state.portals.length ?
-          <Filters
-            portals={portals}
-            cursors={{
-              query: this.getCursor('query'),
-              umbrella: this.getCursor('umbrella'),
-              category: this.getCursor('category'),
-              letter: this.getCursor('letter')
-            }}
-          /> :
-          null
-        }
+        {this.renderFilters(portals)}
         <List
           items={portals}
           fetch={this.fetch}

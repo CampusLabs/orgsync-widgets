@@ -145,6 +145,7 @@ export default React.createClass({
   },
 
   renderShow: function () {
+    if (!this.state.showIsOpen) return;
     return (
       <Show
         tz={this.props.tz}
@@ -156,7 +157,7 @@ export default React.createClass({
   renderShowPopup: function () {
     return (
       <Popup name='events-show' close={this.closeShow} title='Event Details'>
-        {this.state.showIsOpen ? this.renderShow() : null}
+        {this.renderShow()}
       </Popup>
     );
   },

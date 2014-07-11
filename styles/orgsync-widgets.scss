@@ -39,6 +39,12 @@
     height: inherit;
   }
 
+  ul, ol, dl {
+    font-size: inherit;
+    line-height: inherit;
+    list-style-position: inherit;
+  }
+
   table {
     margin: inherit;
     border: inherit;

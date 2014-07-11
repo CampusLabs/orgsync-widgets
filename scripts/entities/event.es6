@@ -67,8 +67,7 @@ export var mergeResponse = function (a, b) {
   var isAllDay = a.is_all_day;
   return _.extend({}, a, b, {
     starts_at: fixDate(b.starts_at, isAllDay),
-    ends_at: fixDate(b.ends_at, isAllDay),
-    links: _.extend({}, a.links, b.links)
+    ends_at: fixDate(b.ends_at, isAllDay)
   });
 };
 

@@ -56,11 +56,6 @@ export default React.createClass({
     this.fetch();
   },
 
-  getWebUrl: function () {
-    var event = this.state.event;
-    return event.links.web + '/occurrences/' + event.id;
-  },
-
   getIcsUrl: function () {
     return api.url(this.state.event.links.ics);
   },
@@ -159,7 +154,7 @@ export default React.createClass({
         {event.attendees_sample.map(this.renderAttendee)}
         {
           more ?
-          <div><a href={this.getWebUrl()}>And {more} more...</a></div> :
+          <div><a href={event.links.web}>And {more} more...</a></div> :
           null
         }
       </div>
@@ -192,7 +187,7 @@ export default React.createClass({
         );
       }, this);
     } else {
-      buttons = <Button href={this.getWebUrl()}>RSVP</Button>;
+      buttons = <Button href={event.links.web}>RSVP</Button>;
     }
     return (
       <div className='osw-events-show-rsvp-action'>
@@ -263,7 +258,7 @@ export default React.createClass({
           {src ? <img src={src} /> : this.renderDefaultPicture()}
         </div>
         <div className='osw-events-show-info'>
-          <a href={this.getWebUrl()} className='osw-events-show-title'>
+          <a href={event.links.web} className='osw-events-show-title'>
             {event.title}
           </a>
           {this.renderTime()}
@@ -272,7 +267,7 @@ export default React.createClass({
           {this.renderPortalName()}
           {this.renderDescription()}
           <div className='osw-events-show-see-full-details'>
-            <Button href={this.getWebUrl()}>See Full Details</Button>
+            <Button href={event.links.web}>See Full Details</Button>
           </div>
         </div>
       </div>

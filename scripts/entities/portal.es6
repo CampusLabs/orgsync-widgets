@@ -1,10 +1,10 @@
 import _ from 'underscore';
-module Base from 'entities/base';
-module Account from 'entities/account';
-module Album from 'entities/album';
-module Category from 'entities/category';
-module NewsPost from 'entities/news-post';
-module Event from 'entities/event';
+import Base from 'entities/base';
+import Account from 'entities/account';
+import Album from 'entities/album';
+import Category from 'entities/category';
+import NewsPost from 'entities/news-post';
+import Event from 'entities/event';
 
 var Model = Base.Model.extend({
   relations: {

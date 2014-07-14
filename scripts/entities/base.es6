@@ -1,4 +1,4 @@
-module BackboneRelations from 'backbone-relations';
+import BackboneRelations from 'backbone-relations';
 
 var Model = BackboneRelations.Model;
 

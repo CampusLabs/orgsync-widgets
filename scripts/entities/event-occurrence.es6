@@ -2,8 +2,8 @@ import _ from 'underscore';
 import moment from 'moment-timezone';
 import tz from 'tz';
 
-module Base from 'entities/base';
-module Event from 'entities/event';
+import Base from 'entities/base';
+import Event from 'entities/event';
 
 var Model = Base.Model.extend({
   relations: {

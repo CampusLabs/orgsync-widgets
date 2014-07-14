@@ -1,12 +1,12 @@
 /** @jsx React.DOM */
 
 import $ from 'jquery';
-module Album from 'entities/portal';
+import Album from 'entities/portal';
 import AlbumsListItem from 'components/albums/list-item';
 import AlbumsShow from 'components/albums/show';
 import CoercedPropsMixin from 'mixins/coerced-props';
 import List from 'components/list';
-module Portal from 'entities/portal';
+import Portal from 'entities/portal';
 import React from 'react';
 import Olay from 'components/olay';
 

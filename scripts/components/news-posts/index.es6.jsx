@@ -1,11 +1,11 @@
 /** @jsx React.DOM */
 
-module NewsPost from 'entities/news-post';
+import NewsPost from 'entities/news-post';
 import NewsPostsListItem from 'components/news-posts/list-item';
 import NewsPostsShow from 'components/news-posts/show';
 import CoercedPropsMixin from 'mixins/coerced-props';
 import List from 'components/list';
-module Portal from 'entities/portal';
+import Portal from 'entities/portal';
 import React from 'react';
 import Olay from 'components/olay';
 

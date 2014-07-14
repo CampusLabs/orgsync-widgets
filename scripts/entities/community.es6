@@ -1,7 +1,7 @@
-module Base from 'entities/base';
-module Portal from 'entities/portal';
-module Category from 'entities/category';
-module Event from 'entities/event';
+import Base from 'entities/base';
+import Portal from 'entities/portal';
+import Category from 'entities/category';
+import Event from 'entities/event';
 
 var Model = Base.Model.extend({
   relations: {

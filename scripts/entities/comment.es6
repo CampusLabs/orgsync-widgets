@@ -1,8 +1,8 @@
 import {Model, Collection} from 'entities/base';
 import moment from 'moment-timezone';
 
-module Base from 'entities/base';
-module Account from 'entities/account';
+import Base from 'entities/base';
+import Account from 'entities/account';
 
 var Model = Base.Model.extend({
   relations: {

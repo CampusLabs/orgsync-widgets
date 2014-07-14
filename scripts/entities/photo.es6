@@ -1,6 +1,6 @@
-module Base from 'entities/base';
-module Album from 'entities/album';
-module Comment from 'entities/comment';
+import Base from 'entities/base';
+import Album from 'entities/album';
+import Comment from 'entities/comment';
 
 var Model = Base.Model.extend({
   relations: {

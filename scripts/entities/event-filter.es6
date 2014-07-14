@@ -1,6 +1,6 @@
 import tinycolor from 'tinycolor';
 
-module Base from 'entities/base';
+import Base from 'entities/base';
 
 var Model = Base.Model.extend({
   defaults: {

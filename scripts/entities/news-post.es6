@@ -1,10 +1,10 @@
 import $ from 'jquery';
 import moment from 'moment';
 
-module Base from 'entities/base';
-module Portal from 'entities/portal';
-module Account from 'entities/account';
-module Comment from 'entities/comment';
+import Base from 'entities/base';
+import Portal from 'entities/portal';
+import Account from 'entities/account';
+import Comment from 'entities/comment';
 
 var Model = Base.Model.extend({
   relations: {

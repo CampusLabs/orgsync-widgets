@@ -1,7 +1,7 @@
 import _ from 'underscore';
 import _str from 'underscore.string';
 import $ from 'jquery';
-module Base from 'entities/base';
+import Base from 'entities/base';
 import Live from 'live';
 import SockJS from 'sockjs';
 

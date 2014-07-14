@@ -1,6 +1,6 @@
-module Base from 'entities/base';
-module Portal from 'entities/portal';
-module Photo from 'entities/photo';
+import Base from 'entities/base';
+import Portal from 'entities/portal';
+import Photo from 'entities/photo';
 
 var Model = Base.Model.extend({
   relations: {

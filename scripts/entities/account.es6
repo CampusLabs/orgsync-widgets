@@ -1,4 +1,4 @@
-module Base from 'entities/base';
+import Base from 'entities/base';
 
 var Model = Base.Model.extend({
   defaultPicture: 'https://orgsync.com/assets/profile_blank_64.gif',

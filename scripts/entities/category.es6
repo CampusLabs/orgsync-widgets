@@ -1,5 +1,5 @@
-module Base from 'entities/base';
-module Portal from 'entities/portal';
+import Base from 'entities/base';
+import Portal from 'entities/portal';
 
 var Model = Base.Model.extend({
   relations: {

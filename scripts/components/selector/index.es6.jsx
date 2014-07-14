@@ -1,13 +1,13 @@
 /** @jsx React.DOM */
 
 import _ from 'underscore';
-module Base from 'entities/base';
+import Base from 'entities/base';
 import CoercedPropsMixin from 'mixins/coerced-props';
 import List from 'components/list';
 import ListenersMixin from 'mixins/listeners';
 import Olay from 'components/olay';
 import React from 'react';
-module SelectorItem from 'entities/selector-item';
+import SelectorItem from 'entities/selector-item';
 import SelectorResult from 'components/selector/result';
 import SelectorScope from 'components/selector/scope';
 import SelectorToken from 'components/selector/token';

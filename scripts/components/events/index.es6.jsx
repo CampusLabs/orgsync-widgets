@@ -8,14 +8,12 @@ import List from 'components/events/list';
 import Cursors from 'cursors';
 import EventFiltersIndex from 'components/event-filters/index';
 import Icon from 'components/icon';
-import moment from 'moment';
 import React from 'react';
 import tz from 'tz';
 
 import {
   comparator,
   getMoment,
-  getDaySpan,
   matchesQueryAndFilters
 } from 'entities/event';
 

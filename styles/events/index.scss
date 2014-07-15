@@ -18,12 +18,12 @@
   }
 
   .osw-events-index-main {
-    background: white;
+    @include transition(all .5s $ease-out-expo);
+    background: #fff;
+    left: 20%;
     position: absolute;
     top: 0;
-    left: 20%;
     width: 80%;
-    @include transition(all 0.5s $ease-out-expo);
   }
 
   .osw-events-index-full-width {
@@ -37,9 +37,9 @@
   }
 
   .osw-events-index-tz {
-    text-align: right;
     color: $grey-darker;
     padding-bottom: 5px;
+    text-align: right;
   }
 
   .osw-events-index-left {
@@ -47,8 +47,8 @@
   }
 
   .osw-events-index-view-tabs {
-    margin-left: 5px;
     display: inline-block;
+    margin-left: 5px;
   }
 
   .osw-events-index-list-controls,
@@ -63,20 +63,20 @@
 
   .osw-events-index-month,
   .osw-events-index-year {
-    vertical-align: middle;
-    background: none;
-    border: none;
-    outline: none;
-    cursor: pointer;
     @include appearance(none);
+    background: none;
+    border: 0;
     border-radius: 0;
+    cursor: pointer;
     font-size: 20px;
+    outline: none;
+    vertical-align: middle;
   }
 
   .osw-events-index-month {
-    margin-right: 5px;
-    font-weight: bold;
     direction: rtl;
+    font-weight: bold;
+    margin-right: 5px;
   }
 
   .osw-events-index-incr {

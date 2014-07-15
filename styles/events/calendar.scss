@@ -2,21 +2,21 @@
 
 .orgsync-widget {
   .osw-events-calendar-day-names {
-    width: 100%;
-    table-layout: fixed;
     border-collapse: collapse;
+    table-layout: fixed;
+    width: 100%;
 
-    > thead > tr > th {
+    th {
       padding: 2px;
     }
   }
 
   .osw-events-calendar-day-name {
     border-top: 1px solid $grey;
-    padding: 2px 2px 0;
-    font-weight: bold;
-    text-transform: uppercase;
     color: $grey-darker;
+    font-weight: bold;
+    padding: 2px 2px 0;
     text-align: right;
+    text-transform: uppercase;
   }
 }

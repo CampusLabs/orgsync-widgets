@@ -1,12 +1,9 @@
 /** @jsx React.DOM */
 
 import _ from 'underscore';
-import api from 'api';
 import Cursors from 'cursors';
-import moment from 'moment'
-import {fetch, getMoment, getDaySpan} from 'entities/event';
+import {fetch, getMoment} from 'entities/event';
 import React from 'react';
-import tz from 'tz';
 import Week from 'components/events/week';
 
 export default React.createClass({
@@ -36,7 +33,7 @@ export default React.createClass({
       ranges: this.state.ranges,
       events: this.state.allEvents,
       url: this.props.eventsUrl
-    }, this.handleFetch)
+    }, this.handleFetch);
   },
 
   handleFetch: function (er, ranges, events) {

@@ -3,16 +3,11 @@
 import _ from 'underscore';
 import _str from 'underscore.string';
 import api from 'api';
-import CoercedPropsMixin from 'mixins/coerced-props';
-import Community from 'entities/community';
 import Cursors from 'cursors';
 import List from 'react-list';
-import Olay from 'components/olay';
-import Portal from 'entities/portal';
 import Filters from 'components/portals/filters';
 import ListItem from 'components/portals/list-item';
 import Empty from 'components/portals/empty';
-import Show from 'components/portals/show';
 import React from 'react';
 
 export default React.createClass({

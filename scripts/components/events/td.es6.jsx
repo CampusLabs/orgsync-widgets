@@ -82,7 +82,9 @@ export default React.createClass({
   isContinued: function () {
     var event = this.state.event;
     var start = this.props.date;
-    if (!event.is_all_day) start = getMoment(start, this.props.tz).toISOString();
+    if (!event.is_all_day) {
+      start = getMoment(start, this.props.tz).toISOString();
+    }
     return event.starts_at < start;
   },
 

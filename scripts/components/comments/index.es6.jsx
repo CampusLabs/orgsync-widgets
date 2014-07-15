@@ -1,6 +1,6 @@
 /** @jsx React.DOM */
 
-import CommentsBlankSlate from 'components/comments/blank-slate'
+import CommentsBlankSlate from 'components/comments/blank-slate';
 import CommentsListItem from 'components/comments/list-item';
 import CommentsNew from 'components/comments/new';
 import List from 'components/list';

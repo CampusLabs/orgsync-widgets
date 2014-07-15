@@ -1,7 +1,6 @@
 /** @jsx React.DOM */
 
 import _ from 'underscore';
-import api from 'api';
 import Cursors from 'cursors';
 import List from 'react-list';
 import ListDate from 'components/events/list-date';

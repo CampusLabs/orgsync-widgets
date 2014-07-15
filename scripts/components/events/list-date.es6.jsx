@@ -1,6 +1,5 @@
 /** @jsx React.DOM */
 
-import _ from 'underscore';
 import Cursors from 'cursors';
 import List from 'react-list';
 import ListItem from 'components/events/list-item';

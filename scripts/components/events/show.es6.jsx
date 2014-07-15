@@ -4,7 +4,6 @@ import _ from 'underscore';
 import _str from 'underscore.string';
 import api from 'api';
 import Button from 'components/button';
-import ButtonGroup from 'components/button-group';
 import Cursors from 'cursors';
 import Icon from 'components/icon';
 import React from 'react';
@@ -119,8 +118,6 @@ export default React.createClass({
           endMom.format(TIME_FORMAT + ' z');
       }
     }
-    var startTime = event.is_all_day ? 'All Day' : startMom.format('h:mm A z');
-    var endTime = event.is_all_day ? 'All Day' : startMom.format('h:mm A z');
     return (
       <Section icon='time' >
         <div>{start}</div>

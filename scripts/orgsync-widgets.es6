@@ -15,6 +15,6 @@ elementQuery(config.elementQuery);
 
 $(window).on('ready resize load', function () { elementQuery(); });
 
-$(scan);
+$(scan.mount);
 
 export {require};

@@ -2,24 +2,24 @@
 
 .orgsync-widget {
   .osw-events-list-item-content {
+    @include clearfix;
+    background: #fff;
     border-bottom: 1px solid $grey;
     border-left: 5px solid $grey;
-    padding: 10px;
-    background: white;
     cursor: pointer;
-    @include clearfix;
+    padding: 10px;
   }
 
   .osw-events-list-item-picture-container {
+    @include user-select(none);
+    border-radius: 3px;
+    box-shadow: 0 1px 2px $grey;
     float: left;
-    width: 45px;
+    font-weight: bold;
     height: 45px;
     margin-right: 10px;
-    border-radius: 3px;
-    font-weight: bold;
     text-align: center;
-    box-shadow: 0 1px 2px $grey;
-    @include user-select(none);
+    width: 45px;
 
     > img {
       border-radius: 3px;
@@ -29,8 +29,8 @@
 
   .osw-events-list-item-month {
     @include border-top-radius(3px);
-    color: white;
     background: $red;
+    color: #fff;
     font-size: 11px;
     line-height: 20px;
     text-transform: uppercase;
@@ -38,8 +38,8 @@
 
   .osw-events-list-item-date {
     @include border-bottom-radius(3px);
-    color: $grey-darker;
     background: $grey-lightest;
+    color: $grey-darker;
     font-size: 14px;
     line-height: 25px;
   }
@@ -49,13 +49,13 @@
   }
 
   .osw-events-list-item-title {
-    font-size: 14px;
     color: $grey-darkest;
+    font-size: 14px;
   }
 
   .osw-events-list-item-subtext {
-    font-size: 11px;
     color: $grey-darker;
+    font-size: 11px;
   }
 
   .osw-events-list-item-time,
@@ -72,7 +72,7 @@
   }
 
   .osw-events-list-item-portal-name {
-    color: black;
+    color: #000;
   }
 
   .osw-events-list-item-title,

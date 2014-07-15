@@ -4,7 +4,7 @@ import api from 'api';
 import elementQuery from 'elementQuery';
 import React from 'react';
 
-export default function () {
+export var mount = function () {
   $('.orgsync-widget').each(function () {
     var $self = $(this);
     var data = $self.data();
@@ -15,4 +15,8 @@ export default function () {
     React.renderComponent(component(_.clone(data)), this);
   });
   elementQuery();
-}
+};
+
+export var unmount = function () {
+  $('.orgsync-widget').each(React.unmountComponentAtNode);
+};

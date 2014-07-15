@@ -15,7 +15,7 @@ import require from 'require';
 // Tell elementQuery to keep track of sizes for `.orgsync-widget`s
 elementQuery(config.elementQuery);
 
-$(window).on('ready resize load', _.partial(elementQuery, null));
+$(window).on('ready resize load', function () { elementQuery(); });
 
 var eachEl = function (fn) {
   _.each($('.orgsync-widget'), fn);

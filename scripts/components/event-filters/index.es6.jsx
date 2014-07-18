@@ -58,7 +58,7 @@ export default React.createClass({
       if (a.type === 'rsvp') return -1;
       if (b.type === 'rsvp') return 1;
       if (a.type === 'featured') return -1;
-      if (b.type === 'feature') return 1;
+      if (b.type === 'featured') return 1;
     }
     if (a.name !== b.name) return a.name < b.name ? -1 : 1;
     return 0;

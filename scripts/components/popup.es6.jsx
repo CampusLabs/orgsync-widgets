@@ -1,6 +1,5 @@
 /** @jsx React.DOM */
 
-import _ from 'underscore';
 import elementQuery from 'elementQuery';
 import Icon from 'components/icon';
 import Olay from 'olay-react';
@@ -14,26 +13,23 @@ export default React.createClass({
   },
 
   componentDidMount: function () {
-    if (this.hasChildren()) elementQuery();
+    if (React.Children.count(this.props.children)) elementQuery();
   },
 
   componentDidUpdate: function () {
-    if (this.hasChildren()) elementQuery();
-  },
-
-  hasChildren: function () {
-    return _.any([].concat(this.props.children));
+    if (React.Children.count(this.props.children)) elementQuery();
   },
 
   renderPopup: function () {
-    if (!this.hasChildren()) return;
+    var children = this.props.children;
+    if (!React.Children.count(children)) return;
     return (
       <div className={'osw-popup osw-' + this.props.name + '-popup'}>
         <div className='osw-popup-head'>
           {this.renderCloseButton()}
           <div className='osw-popup-title'>{this.props.title}</div>
         </div>
-        <div className='osw-popup-body'>{this.props.children}</div>
+        <div className='osw-popup-body'>{children}</div>
       </div>
     );
   },

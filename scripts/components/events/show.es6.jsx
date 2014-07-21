@@ -106,7 +106,7 @@ export default React.createClass({
     if (isAllDay(event, tz)) {
       if (isMultiDay) {
         start += ' -';
-        end = endMom.format(DATE_FORMAT);
+        end = endMom.clone().subtract('day', 1).format(DATE_FORMAT);
       }
       time = 'All Day';
     } else {

@@ -48,6 +48,10 @@ export default React.createClass({
     };
   },
 
+  componentWillMount: function () {
+    if (this.state.portals.length) this.sortAndUpdate(this.state.portals);
+  },
+
   getUrl: function () {
     if (this.props.portalId) {
       return '/portals/' + this.props.portalId + '/portals';
@@ -57,13 +61,17 @@ export default React.createClass({
 
   fetch: function (cb) {
     if (this.state.portals.length) return cb(null, true);
-    var update = this.update;
-    var comparator = this.comparator;
-    api.get(this.getUrl(), {all: true}, function (er, res) {
-      if (er) cb(er);
-      update({portals: {$set: res.data.slice().sort(comparator)}});
-      cb(null, true);
-    });
+    api.get(this.getUrl(), {all: true}, _.partial(this.handleFetch, cb));
+  },
+
+  handleFetch: function (cb, er, res) {
+    if (er) return cb(er);
+    this.sortAndUpdate(res.data);
+    cb(null, true);
+  },
+
+  sortAndUpdate: function (portals) {
+    this.update({portals: {$set: portals.slice().sort(this.comparator)}});
   },
 
   matchesUmbrella: function (portal) {

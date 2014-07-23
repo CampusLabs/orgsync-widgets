@@ -1,24 +1,30 @@
 /** @jsx React.DOM */
 
+import moment from 'moment';
 import React from 'react';
 
 export default React.createClass({
   render: function () {
     var comment = this.props.comment;
-    var creator = comment.get('creator');
+    var creator = comment.creator;
     return (
       <div className='osw-comments-list-item'>
-        <div className='osw-creator-avatar'>
-          <img src={creator.get('picture_url')} />
-        </div>
-        <div className='osw-info'>
-          <div className='osw-creator-name'>{creator.get('display_name')}</div>
-          <div className='osw-time'>{comment.time()}</div>
-          <div className='osw-content'>{comment.get('content')}</div>
+        <img
+          className='osw-comments-list-item-creator-avatar'
+          src={creator.picture_url}
+        />
+        <div className='osw-comments-list-item-info'>
+          <div className='osw-comments-list-item-creator-name'>
+            {creator.display_name}
+          </div>
+          <div className='osw-comments-list-item-content'>
+            {comment.content}
+          </div>
+          <div className='osw-comments-list-item-time'>
+            {moment(comment.created_at).fromNow()}
+          </div>
         </div>
       </div>
     );
   }
 });
-
-

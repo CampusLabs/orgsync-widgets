@@ -2,43 +2,38 @@
 
 .orgsync-widget {
   .osw-comments-list-item {
-    text-align: left;
-    border: 1px solid #dddddd;
-    padding: 5px;
-    background: #f9f9f9;
     @include clearfix;
+    background: #f9f9f9;
+    border-bottom: 1px solid $grey-lighter;
+    text-align: left;
+  }
 
-    &:not(:first-child) {
-      border-top: 0;
-    }
 
-    .osw-info {
-      overflow: auto;
-      padding-left: 5px;
-    }
+  .osw-comments-list-item-creator-avatar {
+    border-radius: 50%;
+    float: left;
+    height: 64px;
+    margin: 10px 0 10px 10px;
+    width: 64px;
+  }
 
-    .osw-creator-avatar {
-      float: left;
-      border: 1px solid #dddddd;
-      padding: 5px;
-      width: 40px;
-      height: 40px;
-      background: white;
+  .osw-comments-list-item-info {
+    overflow: hidden;
+    padding: 10px;
+  }
 
-      img {
-        max-width: 100%;
-      }
-    }
+  .osw-comments-list-item-creator-name {
+    color: $blue-darkest;
+    font-size: 14px;
+  }
 
-    .osw-creator-name {
-      display: inline;
-      margin-right: 5px;
-      font-weight: bold;
-    }
+  .osw-comments-list-item-content {
+    margin-top: 5px;
+    font-size: 14px;
+  }
 
-    .osw-time {
-      display: inline;
-      color: #666666;
-    }
+  .osw-comments-list-item-time {
+    color: $grey-darker;
+    margin-top: 5px;
   }
 }

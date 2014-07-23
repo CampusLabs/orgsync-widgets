@@ -2,34 +2,33 @@
 
 .orgsync-widget {
   .osw-photos-show {
-    .osw-image img {
-      margin: 0 auto;
+    position: relative;
+  }
+
+  .osw-photos-show-image {
+    background: center no-repeat #000;
+    background-size: contain;
+    position: relative;
+
+    &:before {
+      content: '';
       display: block;
-      max-width: 100%;
-    }
-
-    .osw-description {
-      margin-top: 5px;
-      font-size: 14px;
-    }
-
-    .osw-comments-header {
-      font-size: 16px;
-      font-weight: bold;
-      text-align: left;
-    }
-
-    .osw-comments-index {
-      margin-top: 5px;
+      padding-top: 100%;
     }
   }
 
-  .osw-photos-show-olay .js-olay-content {
-    display: block;
-    margin: 0 auto;
-    padding: 5px;
-    background: white;
+  .osw-photos-show-description {
+    @include box-sizing(border-box);
+    @include linear-gradient(rgba(0, 0, 0, 0), rgba(0, 0, 0, .8) 40px);
+    bottom: 0;
+    color: #fff;
+    font-size: 14px;
+    padding: 30px 10px 10px;
+    position: absolute;
+    width: 100%;
+  }
+
+  .osw-photos-show-popup {
     max-width: 710px;
-    border-radius: 0;
   }
 }

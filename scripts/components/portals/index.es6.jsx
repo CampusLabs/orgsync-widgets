@@ -10,15 +10,15 @@ import ListItem from 'components/portals/list-item';
 import Empty from 'components/portals/empty';
 import React from 'react';
 
+var LETTER_REG_EXPS = _.times(26, function (n) {
+  return String.fromCharCode(65 + n);
+}).reduce(function (letters, letter) {
+  letters[letter] = new RegExp('^' + letter, 'i');
+  return letters;
+}, {'': /.*/, Other: /^[^a-z]/i});
+
 export default React.createClass({
   mixins: [Cursors],
-
-  letterRegExps: _.times(26, function (n) {
-    return String.fromCharCode(65 + n);
-  }).reduce(function (letters, letter) {
-    letters[letter] = new RegExp('^' + letter, 'i');
-    return letters;
-  }, {'': /.*/, Other: /^[^a-z]/i}),
 
   comparator: function (a, b) {
     if (!a.umbrella !== !b.umbrella) return !a.umbrella ? -1 : 1;
@@ -107,7 +107,7 @@ export default React.createClass({
   },
 
   matchesLetter: function (portal) {
-    return this.letterRegExps[this.state.letter].test(portal.name);
+    return LETTER_REG_EXPS[this.state.letter].test(portal.name);
   },
 
   portalMatchesFilters: function (portal) {

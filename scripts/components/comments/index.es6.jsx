@@ -1,22 +1,40 @@
 /** @jsx React.DOM */
 
-import CommentsBlankSlate from 'components/comments/blank-slate';
-import CommentsListItem from 'components/comments/list-item';
-import CommentsNew from 'components/comments/new';
-import List from 'components/list';
+import $ from 'jquery';
+import _ from 'underscore';
+import api from 'api';
+import Cursors from 'cursors';
+import List from 'react-list';
+import ListItem from 'components/comments/list-item';
+import New from 'components/comments/new';
 import React from 'react';
 
+var PER_PAGE = 100;
+
 export default React.createClass({
-  renderBlankSlate: function () {
-    return <CommentsBlankSlate />;
+  mixins: [Cursors],
+
+  fetch: function (cb) {
+    api.get(this.props.url, {
+      page: Math.floor(this.state.comments.length / PER_PAGE) + 1,
+      per_page: PER_PAGE
+    }, _.partial(this.handleFetch, cb));
+  },
+
+  handleFetch: function (cb, er, res) {
+    if (!this.isMounted()) return;
+    if (er) return cb(er);
+    this.update({comments: {
+      $set: _.chain(this.state.comments.concat(res.data))
+        .unique(_.property('id'))
+        .sortBy(_.property('created_at'))
+        .value()
+    }});
+    cb(null, res.data.length < PER_PAGE);
   },
 
   renderListItem: function (comment) {
-    return <CommentsListItem key={comment.id} comment={comment} />;
-  },
-
-  renderLoading: function () {
-    return <div className='osw-inset-block'>Loading...</div>;
+    return <ListItem key={comment.id} comment={comment} />;
   },
 
   renderError: function (er) {
@@ -27,13 +45,14 @@ export default React.createClass({
     return (
       <div className='osw-comments-index'>
         <List
-          renderListItem={this.renderListItem}
-          renderBlankSlate={this.renderBlankSlate}
-          renderLoading={this.renderLoading}
+          items={this.state.comments}
+          renderItem={this.renderListItem}
+          renderEmpty={$.noop}
+          renderLoading={$.noop}
           renderError={this.renderError}
-          collection={this.props.comments}
+          fetch={this.fetch}
         />
-        <CommentsNew url={this.props.comments.owner.get('links').web} />
+        <New url={this.props.newUrl} />
       </div>
     );
   }

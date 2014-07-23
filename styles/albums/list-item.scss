@@ -2,92 +2,89 @@
 
 .orgsync-widget {
   .osw-albums-list-item {
+    color: $grey-darkest;
+    display: block;
+    padding: 20px;
     position: relative;
+    text-decoration: none;
     vertical-align: top;
 
-    a {
-      display: block;
-      padding: 20px;
-      color: #333333;
-      text-decoration: none;
+    &:hover {
+      color: $blue-darkest;
 
-      &:hover {
-        color: #0076a3;
+      .osw-albums-list-item-cover-photo {
+        box-shadow: 0 3px 10px $blue-darkest;
 
-        .osw-cover-photo {
-          box-shadow: 0 3px 10px #0076a3;
+        &:not(:last-child) {
 
-          &:not(:last-child) {
+          &:nth-child(1) {
+            @include transform(translate(2px, -3px) rotate(3deg));
+          }
 
-            &:nth-child(1) {
-              @include transform(translate(2px, -3px) rotate(3deg));
-            }
+          &:nth-child(2) {
+            @include transform(translate(3px, 4px) rotate(-4deg));
+          }
 
-            &:nth-child(2) {
-              @include transform(translate(3px, 4px) rotate(-4deg));
-            }
-
-            &:nth-child(3) {
-              @include transform(translate(-3px, -3px) rotate(5deg));
-            }
+          &:nth-child(3) {
+            @include transform(translate(-3px, -3px) rotate(5deg));
           }
         }
       }
     }
+  }
 
-    .osw-cover-photos-container {
-      position: relative;
-    }
+  .osw-albums-list-item-cover-photos-container {
+    position: relative;
+  }
 
-    .osw-cover-photo {
-      position: relative;
-      border: 5px solid white;
+  .osw-albums-list-item-cover-photo {
+    @include transition(all .1s ease-in-out);
+    background: #fff;
+    border: 5px solid #fff;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, .5);
+    overflow: hidden;
+    position: relative;
+    width: 100%;
+
+    img {
+      left: 0;
+      position: absolute;
+      top: 0;
       width: 100%;
-      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
-      transition: all 0.1s ease-in-out;
-      background: white;
-      overflow: hidden;
-
-      img {
-        position: absolute;
-        width: 100%;
-        top: 0;
-        left: 0;
-      }
-
-      &:before {
-        content: "";
-        display: block;
-        padding-top: 66.66%;
-      }
-
-      &:not(:last-child) {
-        position: absolute;
-
-        &:nth-child(1) {
-          @include transform(rotate(2deg));
-        }
-
-        &:nth-child(2) {
-          @include transform(rotate(-3deg));
-        }
-
-        &:nth-child(3) {
-          @include transform(rotate(4deg));
-        }
-      }
     }
 
-    .osw-name {
-      padding-top: 10px;
-      font-weight: bold;
-      font-size: 14px;
-      text-align: center;
+    &:before {
+      content: '';
+      display: block;
+      padding-top: 66.66%;
     }
 
-    .osw-photo-count {
-      text-align: center;
+    &:not(:last-child) {
+      position: absolute;
+
+      &:nth-child(1) {
+        @include transform(rotate(2deg));
+      }
+
+      &:nth-child(2) {
+        @include transform(rotate(-3deg));
+      }
+
+      &:nth-child(3) {
+        @include transform(rotate(4deg));
+      }
     }
+  }
+
+  .osw-albums-list-item-name {
+    font-size: 14px;
+    font-weight: bold;
+    margin-top: 15px;
+    text-align: center;
+  }
+
+  .osw-albums-list-item-photo-count {
+    text-align: center;
   }
 
   &[min-width~='251px'] .osw-albums-list-item {

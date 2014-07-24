@@ -25,7 +25,7 @@ export default React.createClass({
   },
 
   fetch: function () {
-    if (this.state.isLoading) return;
+    if (this.state.isLoading || this.state.error) return;
     this.update({isLoading: {$set: true}, error: {$set: null}});
     fetch({
       after: this.getStartMom().toISOString(),
@@ -37,14 +37,16 @@ export default React.createClass({
   },
 
   handleFetch: function (er, ranges, events) {
-    if (!this.isMounted()) return;
     this.update({isLoading: {$set: false}});
+    var deltas = {isLoading: {$set: false}};
     if (er) {
-      this.update({error: {$set: er}});
+      deltas.error = {$set: er};
     } else if (ranges && events) {
-      this.update({ranges: {$set: ranges}, allEvents: {$set: events}});
-      this.fetch();
+      deltas.ranges = {$set: ranges};
+      deltas.allEvents = {$set: events};
+      _.defer(this.fetch);
     }
+    this.update(deltas);
   },
 
   getStartMom: function () {

@@ -34,7 +34,6 @@ export default React.createClass({
   },
 
   handleFetch: function (cb, er, ranges, events) {
-    if (!this.isMounted()) return;
     if (er) return cb(er);
     if (!ranges || !events) return cb(null, true);
     this.update({ranges: {$set: ranges}, allEvents: {$set: events}});

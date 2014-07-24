@@ -79,10 +79,10 @@ export default React.createClass({
   },
 
   handleFetch: function (er, res) {
-    if (!this.isMounted()) return;
-    this.update({isLoading: {$set: false}});
-    if (er) return this.update({error: {$set: er}});
-    this.update({event: {$merge: mergeResponse(this.state.event, res.data)}});
+    var deltas = {isLoading: {$set: false}};
+    if (er) deltas.error = {$set: er};
+    else deltas.event = {$merge: mergeResponse(this.state.event, res.data)};
+    this.update(deltas);
   },
 
   renderDefaultPicture: function () {

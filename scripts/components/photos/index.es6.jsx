@@ -64,7 +64,6 @@ export default React.createClass({
   },
 
   handleFetch: function (cb, er, res) {
-    if (!this.isMounted()) return;
     if (er) return cb(er);
     var photos = _.chain(this.state.photos.concat(res.data))
       .unique(_.property('id'))

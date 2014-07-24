@@ -22,7 +22,6 @@ export default React.createClass({
   },
 
   handleFetch: function (cb, er, res) {
-    if (!this.isMounted()) return;
     if (er) return cb(er);
     this.update({comments: {
       $set: _.chain(this.state.comments.concat(res.data))

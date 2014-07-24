@@ -29,10 +29,10 @@ export default React.createClass({
   },
 
   handleFetch: function (er, res) {
-    if (!this.isMounted()) return;
-    this.update({isLoading: {$set: false}});
-    if (er) return this.update({error: {$set: er}});
-    this.update({portal: {$set: res.data}});
+    var deltas = {isLoading: {$set: false}};
+    if (er) deltas.error = {$set: er};
+    else deltas.portal = {$set: res.data};
+    this.update(deltas);
   },
 
   renderDescription: function () {

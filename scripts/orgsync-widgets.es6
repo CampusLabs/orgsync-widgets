@@ -22,19 +22,21 @@ var eachEl = function (fn) {
 };
 
 export var mount = function (el) {
-  var $self = $(el);
-  var data = $self.data();
-  if (!$self.is(':empty') || !data.moduleName) return;
+  if (el.widgetIsMounted) return;
+  var data = $(el).data();
   var component = require('components/' + data.moduleName).default;
   if (data.apiKey) api.key = data.apiKey;
   if (data.apiUrlRoot) api.urlRoot = data.apiUrlRoot;
+  el.widgetIsMounted = true;
   React.renderComponent(component(_.clone(data)), el);
   elementQuery();
 };
 
 export var mountAll = _.partial(eachEl, mount);
 
-export var unmount = React.unmountComponentAtNode;
+export var unmount = function (el) {
+  if (React.unmountComponentAtNode(el)) el.widgetIsMounted = false;
+};
 
 export var unmountAll = _.partial(eachEl, unmount);
 

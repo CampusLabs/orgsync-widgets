@@ -31,12 +31,15 @@
     line-height: inherit;
   }
 
+  button,
   select,
   input {
+    @include transition(none);
+    font-size: inherit;
+    height: inherit;
     margin: inherit;
     padding: inherit;
     width: inherit;
-    height: inherit;
   }
 
   ul, ol, dl {

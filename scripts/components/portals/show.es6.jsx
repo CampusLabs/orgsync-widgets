@@ -3,6 +3,7 @@
 import api from 'api';
 import Cursors from 'cursors';
 import Button from 'components/button';
+import ButtonRow from 'components/button-row';
 import React from 'react';
 
 var DEFAULT_SRC = 'https://orgsync.com/assets/no_org_profile_150.png';
@@ -50,9 +51,11 @@ export default React.createClass({
     var portal = this.state.portal;
     return (
       <div className='osw-portals-show'>
-        <div className='osw-portals-show-picture'>
-          <img src={this.getSrc()} alt={portal.name} />
-        </div>
+        <img
+          className='osw-portals-show-picture'
+          src={this.getSrc()}
+          alt={portal.name}
+        />
         <div className='osw-portals-show-name'>{portal.name}</div>
         <div className='osw-portals-show-umbrella'>
           {portal.umbrella ? portal.umbrella.name : 'Umbrella'}
@@ -61,8 +64,10 @@ export default React.createClass({
         <div className='osw-portals-show-description'>
           {this.renderDescription()}
         </div>
-        <Button href={portal.links.web}>On OrgSync.com</Button>
-        {this.renderWebsiteLink()}
+        <ButtonRow>
+          <Button href={portal.links.web}>On OrgSync.com</Button>
+          {this.renderWebsiteLink()}
+        </ButtonRow>
       </div>
     );
   }

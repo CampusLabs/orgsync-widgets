@@ -2,8 +2,7 @@
 
 .orgsync-widget {
   .olay-container {
-    background: black;
-    background: rgba(0, 0, 0, 0.75);
+    background: rgba(0, 0, 0, .75);
   }
 
   .olay-cell {
@@ -11,18 +10,18 @@
   }
 
   .osw-popup {
-    margin: 0 auto;
     border-radius: 3px;
-    box-shadow: 0 1px 5px rgba(0, 0, 0, 0.75);
+    box-shadow: 0 1px 5px rgba(0, 0, 0, .75);
+    margin: 0 auto;
   }
 
   .osw-popup-head {
     @include border-top-radius(3px);
-    padding: 10px;
     background: $grey-lighter;
     color: $grey-darker;
     font-size: 16px;
     font-weight: bold;
+    padding: 10px;
   }
 
   .osw-popup-title {
@@ -31,17 +30,18 @@
 
   .osw-popup-body {
     @include border-bottom-radius(3px);
-    background: white;
+    background: #fff;
     overflow: hidden;
   }
 
   .osw-popup-close-button {
-    float: right;
     cursor: pointer;
+    float: right;
+    margin-top: -2px;
 
     &:hover {
-      color: $grey-darkest;
       border-color: $grey-darkest;
+      color: $grey-darkest;
     }
   }
 }

@@ -3,31 +3,28 @@
 .orgsync-widget {
   .osw-accounts-list-item {
     @include clearfix;
+  }
 
-    .osw-picture {
-      float: left;
-      margin-right: 5px;
+  .osw-accounts-list-item-picture {
+    display: block;
+    float: left;
+    height: 64px;
+    margin-right: 5px;
+    width: 64px;
+  }
 
-      img {
-        display: block;
-        width: 64px;
-        height: 64px;
-      }
-    }
+  .osw-accounts-list-item-first-name,
+  .osw-accounts-list-item-last-name {
+    @include ellipsis;
+  }
 
-    .osw-first-name,
-    .osw-last-name {
-      @include ellipsis;
-    }
+  .osw-accounts-list-item-first-name {
+    font-size: 20px;
+  }
 
-    .osw-first-name {
-      font-size: 20px;
-    }
-
-    .osw-last-name {
-      font-size: 18px;
-      font-weight: bold;
-    }
+  .osw-accounts-list-item-last-name {
+    font-size: 18px;
+    font-weight: bold;
   }
 
   &[min-width~='461px'] .osw-accounts-list-item {

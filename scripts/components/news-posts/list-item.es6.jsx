@@ -1,45 +1,96 @@
 /** @jsx React.DOM */
 
+import $ from 'jquery';
+import _str from 'underscore.string';
+import Cursors from 'cursors';
 import Icon from 'components/icon';
+import moment from 'moment';
+import Show from 'components/news-posts/show';
+import Popup from 'components/popup';
 import React from 'react';
 
 export default React.createClass({
+  mixins: [Cursors],
+
   getDefaultProps: function () {
     return {
-      truncateLength: 0
+      truncateLength: 200
+    };
+  },
+
+  getInitialState: function () {
+    return {
+      isOpen: false
     };
   },
 
   onTitleClick: function (ev) {
     if (this.props.redirect) return;
     ev.preventDefault();
-    if (this.props.onTitleClick) this.props.onTitleClick(this.props.newsPost);
+    this.open();
+  },
+
+  open: function () {
+    this.update({isOpen: {$set: true}});
+  },
+
+  close: function () {
+    this.update({isOpen: {$set: false}});
+  },
+
+  getStrippedBody: function () {
+    return $($.parseHTML(this.state.newsPost.body)).text();
+  },
+
+  renderCount: function () {
+    var count = this.state.newsPost.comments_count;
+    if (!count) return;
+    return (
+      <div className={'osw-news-posts-list-item-comment-count'}>
+        {count} <Icon name='communication' />
+      </div>
+    );
+  },
+
+  renderShow: function () {
+    if (!this.state.isOpen) return;
+    return (
+      <Show
+        cursors={{newsPost: this.getCursor('newsPost')}}
+      />
+    );
   },
 
   render: function () {
-    var newsPost = this.props.newsPost;
-    var count = newsPost.get('comments_count');
+    var newsPost = this.state.newsPost;
     return (
       <div className='osw-news-posts-list-item'>
-        <div className='osw-thumbnail'>
-          <img src={newsPost.get('thumbnail_url')} />
+        <div className='osw-news-posts-list-item-thumbnail'>
+          <img src={newsPost.thumbnail_url} />
         </div>
         <a
-          href={newsPost.get('links').web}
-          className='osw-title'
+          href={newsPost.links.web}
+          className='osw-news-posts-list-item-title'
           onClick={this.onTitleClick}>
-          {newsPost.get('title')}
+          {newsPost.title}
         </a>
-        <div className='osw-creator'>
-          {newsPost.get('creator').get('display_name')}
+        <div className='osw-news-posts-list-item-creator'>
+          {newsPost.creator.display_name}
         </div>
-        <div className='osw-time'>{newsPost.time()}</div>
-        <div className={'osw-comment-count' + (count ? '' : ' osw-none')}>
-          {count} <Icon name='communication' />
+        <div className='osw-news-posts-list-item-time'>
+          {moment(newsPost.created_at).fromNow()}
         </div>
-        <div className='osw-body'>
-          {newsPost.truncatedBody(this.props.truncateLength)}
+        {this.renderCount()}
+        <div className='osw-news-posts-list-item-body'>
+          {_str.prune(this.getStrippedBody(), this.props.truncateLength)}
         </div>
+        <Popup
+          name='news-posts-show'
+          close={this.close}
+          title='News Post Details'
+        >
+          {this.renderShow()}
+        </Popup>
       </div>
     );
   }

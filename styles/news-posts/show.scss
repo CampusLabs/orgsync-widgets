@@ -1,24 +1,65 @@
 @import '../config';
-@import 'shared';
 
 .orgsync-widget {
   .osw-news-posts-show {
-    @include news-posts-show;
+    @include clearfix;
+    margin: 0 auto;
+    text-align: left;
+  }
+
+  .osw-news-posts-show-content {
+    padding: 10px;
+  }
+
+  .osw-news-posts-show-title {
+    display: block;
+    font-size: 20px;
+    font-weight: bold;
+    margin-bottom: 5px;
+  }
+
+  .osw-news-posts-show-creator {
+    display: inline;
+    font-weight: bold;
+
+    &:before {
+      content: ' Posted by ';
+      font-weight: normal;
+    }
+
+    &:after {
+      content: ' ';
+    }
+  }
+
+  .osw-news-posts-show-time {
+    color: $grey-darker;
+    display: inline;
+    white-space: nowrap;
+  }
+
+  .osw-news-posts-show-body {
+    display: block;
+    margin-top: 10px;
+
     img {
       max-width: 100%;
     }
+
     p {
       margin-bottom: 20px;
     }
+
     strong {
       font-weight: bold;
     }
+
     em {
       font-style: italic;
     }
-    .osw-comments-header {
-      font-size: 16px;
-      font-weight: bold;
-    }
+  }
+
+  .osw-news-posts-show-popup {
+    max-width: 500px;
   }
 }

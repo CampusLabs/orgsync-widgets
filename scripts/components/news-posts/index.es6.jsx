@@ -1,44 +1,52 @@
 /** @jsx React.DOM */
 
-import NewsPost from 'entities/news-post';
+import _ from 'underscore';
+import api from 'api';
+import Cursors from 'cursors';
+import List from 'react-list';
 import NewsPostsListItem from 'components/news-posts/list-item';
-import NewsPostsShow from 'components/news-posts/show';
-import CoercedPropsMixin from 'mixins/coerced-props';
-import List from 'components/list';
-import Portal from 'entities/portal';
 import React from 'react';
-import Olay from 'components/olay';
+
+var PER_PAGE = 20;
 
 export default React.createClass({
-  mixins: [CoercedPropsMixin],
+  mixins: [Cursors],
 
-  getCoercedProps: function () {
+  getInitialState: function () {
     return {
-      newsPosts: {
-        type: NewsPost.Collection,
-        alternates: {
-          portalId:
-            (new Portal.Model({id: this.props.portalId})).get('newsPosts')
-        }
-      }
+      newsPosts: []
     };
   },
 
-  openNewsPost: function (newsPost) {
-    Olay.create({
-      olayClassName: 'news-posts-show',
-      component: NewsPostsShow,
-      newsPost: newsPost
-    }).show();
+  fetch: function (cb) {
+    api.get('/portals/:portal_id/news', {
+      portal_id: this.props.portalId,
+      page: Math.floor(this.state.newsPosts.length / PER_PAGE) + 1,
+      per_page: PER_PAGE,
+      strip_html: false
+    }, _.partial(this.handleFetch, cb));
+  },
+
+  handleFetch: function (cb, er, res) {
+    if (er) return cb(er);
+    var newsPosts = _.chain(this.state.newsPosts.concat(res.data))
+      .unique(_.property('id'))
+      .map(function (newsPost) { return _.extend({comments: []}, newsPost); })
+      .sortBy('created_at')
+      .value()
+      .reverse();
+    this.update({newsPosts: {$set: newsPosts}});
+    cb(null, res.data.length < PER_PAGE);
   },
 
   renderListItem: function (newsPost) {
+    var i = this.state.newsPosts.indexOf(newsPost);
     return (
       <NewsPostsListItem
         key={newsPost.id}
-        newsPost={newsPost}
+        redirect={this.props.redirect}
         truncateLength={this.props.truncateLength}
-        onTitleClick={this.openNewsPost}
+        cursors={{newsPost: this.getCursor('newsPosts', i)}}
       />
     );
   },
@@ -47,9 +55,9 @@ export default React.createClass({
     return (
       <List
         className='osw-news-posts-index'
-        collection={this.props.newsPosts}
-        renderListItem={this.renderListItem}
-        fetchData={{strip_html: false}}
+        items={this.state.newsPosts}
+        renderItem={this.renderListItem}
+        fetch={this.fetch}
       />
     );
   }

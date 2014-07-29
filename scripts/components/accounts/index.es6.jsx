@@ -1,25 +1,37 @@
 /** @jsx React.DOM */
 
-import Account from 'entities/account';
+import _ from 'underscore';
+import api from 'api';
 import AccountsListItem from 'components/accounts/list-item';
-import CoercedPropsMixin from 'mixins/coerced-props';
-import List from 'components/list';
-import Portal from 'entities/portal';
+import Cursors from 'cursors';
+import List from 'react-list';
 import React from 'react';
 
-export default React.createClass({
-  mixins: [CoercedPropsMixin],
+var PER_PAGE = 100;
 
-  getCoercedProps: function () {
+export default React.createClass({
+  mixins: [Cursors],
+
+  getInitialState: function () {
     return {
-      accounts: {
-        type: Account.Collection,
-        alternates: {
-          portalId:
-            (new Portal.Model({id: this.props.portalId})).get('accounts')
-        }
-      }
+      accounts: []
     };
+  },
+
+  fetch: function (cb) {
+    api.get('/portals/:portal_id/people', {
+      portal_id: this.props.portalId,
+      page: Math.floor(this.state.accounts.length / PER_PAGE) + 1,
+      per_page: PER_PAGE
+    }, _.partial(this.handleFetch, cb));
+  },
+
+  handleFetch: function (cb, er, res) {
+    if (er) return cb(er);
+    this.update({
+      accounts: {$set: _.unique(this.state.accounts.concat(res.data), 'id')}
+    });
+    cb(null, res.data.length < PER_PAGE);
   },
 
   renderListItem: function (account) {
@@ -30,10 +42,10 @@ export default React.createClass({
     return (
       <List
         className='osw-accounts-index'
-        collection={this.props.accounts}
-        renderListItem={this.renderListItem}
+        items={this.state.accounts}
+        renderItem={this.renderListItem}
+        fetch={this.fetch}
         uniform={true}
-        fetchPageSize={100}
       />
     );
   }

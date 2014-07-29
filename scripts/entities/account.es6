@@ -1,15 +1,5 @@
-import Base from 'entities/base';
+var DEFAULT_PICTURE = 'https://orgsync.com/assets/profile_blank_64.gif';
 
-var Model = Base.Model.extend({
-  defaultPicture: 'https://orgsync.com/assets/profile_blank_64.gif',
-
-  picture: function () {
-    return this.get('picture_url') || this.defaultPicture;
-  }
-});
-
-var Collection = Base.Collection.extend({
-  model: Model
-});
-
-export {Model, Collection};
+export var picture = function (account) {
+  return account.picture_url || DEFAULT_PICTURE;
+};

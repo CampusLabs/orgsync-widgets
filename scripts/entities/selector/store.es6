@@ -88,14 +88,14 @@ export var search = function (options) {
 export var fetch = function (options, cb) {
   var key = getQueryKey(options);
   var cached = cache[getQueryKey(options)] || [];
-  if (done[key]) return cb(null, true);
   options = _.extend({}, options, {
     from: cached.length,
     size: FETCH_SIZE
   });
+  if (done[key]) return cb(null, true, options);
   live.send('search', options, function (er, items) {
     if (er) return cb(er);
     cacheItems(items, options);
-    cb(null, done[key] = items.length < options.size);
+    cb(null, done[key] = items.length < options.size, options);
   });
 };

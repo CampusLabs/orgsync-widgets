@@ -17,7 +17,7 @@ var SelectorIndex = React.createClass({
 
   getDefaultProps: function () {
     return {
-      value: [],
+      value: [{name: 'wat'}],
       query: '',
       scopes: [{
         id: '_all',
@@ -43,27 +43,26 @@ var SelectorIndex = React.createClass({
       hasMouse: false,
       hasFocus: false,
       isActive: false,
-      activeResultIndex: null,
+      activeIndex: 0,
       browseIsOpen: false
     };
   },
 
   componentDidUpdate: function (__, prev) {
     if (this.state.scope !== prev.scope || this.state.query !== prev.query) {
-      this.updateResults();
-    }
-    if (this.state.results !== prev.results) {
-      this.setActiveResultIndex();
+      this.updateResults(true);
     }
   },
 
-  updateResults: function () {
-    var results = this.getResults();
+  updateResults: function (resetActive) {
+    var results = store.search(this.getSearchOptions());
     var query = store.parse(this.state.query);
     if (this.props.allowArbitrary && query) {
       results = [{name: query}].concat(results);
     }
-    this.update({results: {$set: results}});
+    var deltas = {results: {$set: results}};
+    if (resetActive) deltas.activeIndex = {$set: this.restrictIndex(results)};
+    this.update(deltas);
   },
 
   handleScopeClick: function (scope) {
@@ -88,7 +87,7 @@ var SelectorIndex = React.createClass({
       if (!query) return this.removeValue(_.last(this.state.value));
       break;
     case 'Enter':
-      this.handleResultClick(this.state.results[this.state.activeResultIndex]);
+      this.handleResultClick(this.state.results[this.state.activeIndex]);
       this.update({query: {$set: ''}});
       break;
     case 'Escape':
@@ -100,10 +99,10 @@ var SelectorIndex = React.createClass({
       }
       return false;
     case 'ArrowUp':
-      this.incrActiveResultIndex(-1);
+      this.incrActiveIndex(-1);
       return false;
     case 'ArrowDown':
-      this.incrActiveResultIndex(1);
+      this.incrActiveIndex(1);
       return false;
     }
   },
@@ -121,7 +120,7 @@ var SelectorIndex = React.createClass({
   handleBlur: function (ev) {
     ev.stopPropagation();
     this.update({
-      hasFocus: {$set: true},
+      hasFocus: {$set: false},
       isActive: {$set: this.state.hasMouse}
     });
   },
@@ -134,14 +133,14 @@ var SelectorIndex = React.createClass({
   handleMouseLeave: function (ev) {
     ev.stopPropagation();
     this.update({
-      hasMouse: {$set: true},
+      hasMouse: {$set: false},
       isActive: {$set: this.state.hasFocus}
     });
   },
 
   addValue: function (item) {
-    var existing = _.find(this.state.value, _.matches(item));
-    if (!existing) this.update({value: {$push: [item]}});
+    if (_.any(this.state.value, _.matches(item))) return;
+    this.update({value: {$push: [item]}});
   },
 
   removeValue: function (item) {
@@ -151,26 +150,25 @@ var SelectorIndex = React.createClass({
     this.update({value: {$splice: [[value.indexOf(existing), 1]]}});
   },
 
-  incrActiveResultIndex: function (dir) {
-    this.setActiveResultIndex(this.state.activeResultIndex + dir);
+  incrActiveIndex: function (dir) {
+    this.setActiveIndex(this.state.activeIndex + dir);
   },
 
-  setActiveResultIndex: function (i) {
-    var results = this.state.results;
+  restrictIndex: function (results, i) {
     if (i == null) {
-      i = this.props.allowArbitrary && !this.state.query.trim() ? 1 : 0;
+      i = this.props.allowArbitrary && this.state.query.trim() ? 1 : 0;
     }
-    i = Math.max(0, Math.min(i, results.length - 1));
-    this.update({activeResultIndex: {$set: i}});
-    this.refs.results.scrollTo(results[i]);
+    return Math.max(0, Math.min(i, results.length - 1));
+  },
+
+  setActiveIndex: function (i) {
+    i = this.restrictIndex(this.state.results, i);
+    this.update({activeIndex: {$set: i}});
+    if (this.isMounted()) this.refs.results.scrollTo(this.state.results[i]);
   },
 
   asHiddenInputValue: function (item) {
     return _.pick(item, isArbitrary(item) ? ['name'] : ['type', 'id']);
-  },
-
-  getResults: function () {
-    return store.search(this.getSearchOptions());
   },
 
   getClassName: function () {
@@ -185,7 +183,7 @@ var SelectorIndex = React.createClass({
   handleResultClick: function (item) {
     if (_.any(this.state.value, _.matches(item))) this.removeValue(item);
     else this.addValue(item);
-    this.setActiveResultIndex(this.state.results.indexOf(item));
+    this.setActiveIndex(this.state.results.indexOf(item));
   },
 
   handleBrowseButtonClick: function (ev) {
@@ -219,10 +217,10 @@ var SelectorIndex = React.createClass({
     store.fetch(this.getSearchOptions(), _.partial(this.handleFetch, cb));
   },
 
-  handleFetch: function (cb, er, done) {
+  handleFetch: function (cb, er, done, options) {
     if (er) return cb(er);
     cb(null, done);
-    this.updateResults();
+    this.updateResults(options.from === 0);
   },
 
   renderHiddenInput: function () {
@@ -318,7 +316,7 @@ var SelectorIndex = React.createClass({
         item={item}
         onClick={_.partial(this.handleResultClick, item)}
         selected={_.any(this.state.value, _.matches(item))}
-        active={_.isEqual(item, this.state.activeResult)}
+        active={this.state.results.indexOf(item) === this.state.activeIndex}
       />
     );
   },
@@ -347,6 +345,8 @@ var SelectorIndex = React.createClass({
         fetchInitially={!store.cache[key]}
         uniform={true}
         renderPageSize={this.props.renderPageSize}
+        activeIndex={this.state.activeIndex}
+        value={this.state.value}
       />
     );
   },

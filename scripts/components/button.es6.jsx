@@ -11,11 +11,14 @@ export default React.createClass({
   },
 
   render: function () {
-    var component = this.props.href ? React.DOM.a : React.DOM.button;
+    var Component = this.props.href ? React.DOM.a : React.DOM.button;
     return this.transferPropsTo(
-      <component className={this.getClassName()}>
+      <Component
+        type={this.props.type || 'button'}
+        className={this.getClassName()}
+      >
         {this.props.children}
-      </component>
+      </Component>
     );
   }
 });

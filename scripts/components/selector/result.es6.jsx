@@ -1,51 +1,56 @@
 /** @jsx React.DOM */
 
 import _str from 'underscore.string';
+import Cursors from 'cursors';
 import Icon from 'components/icon';
+import {isArbitrary} from 'entities/selector/item';
 import React from 'react';
 
 export default React.createClass({
-  onClick: function () {
-    this.props.onClick(this.props.selectorItem);
-  },
+  mixins: [Cursors],
 
   className: function () {
     var classes = ['osw-selector-result'];
-    if (this.props.selected) classes.push('osw-selected');
-    if (this.props.active) classes.push('osw-active');
+    if (this.props.selected) classes.push('osw-selector-result-selected');
+    if (this.props.active) classes.push('osw-selector-result-active');
     return classes.join(' ');
   },
 
-  imageStyle: function () {
-    var src = this.props.selectorItem.get('image_url');
+  getImageStyle: function () {
+    var src = this.props.item.image_url;
     if (!src) return {};
     if (src[0] === '/') src = 'https://orgsync.com' + src;
     return {backgroundImage: "url('" + src + "')"};
   },
 
-  icon: function () {
-    var selectorItem = this.props.selectorItem;
+  getIcon: function () {
+    var item = this.props.item;
     var name =
       this.props.selected ?
-      'delete' :
-        selectorItem.isArbitrary() ?
-        'add' :
-        _str.dasherize(selectorItem.get('type')).slice(1);
+        'delete' :
+          isArbitrary(item) ?
+          'add' :
+          _str.dasherize(item.type).slice(1);
     return <Icon name={name} />;
   },
 
-  name: function () {
-    var selectorItem = this.props.selectorItem;
-    var name = selectorItem.get('name');
+  getName: function () {
+    var item = this.props.item;
+    var name = item.name;
     var verb = this.props.selected ? 'Remove' : 'Add';
-    return selectorItem.isArbitrary() ? verb + ' "' + name + '"...' : name;
+    return isArbitrary(item) ? verb + ' "' + name + '"...' : name;
   },
 
   render: function () {
     return (
-      <div className={this.className()} onClick={this.onClick}>
-        <div className='osw-image' style={this.imageStyle()} />
-        <div className='osw-name'>{this.icon()}{this.name()}</div>
+      <div className={this.className()} onClick={this.props.onClick}>
+        <div
+          className='osw-selector-result-image'
+          style={this.getImageStyle()}
+        />
+        <div className='osw-selector-result-name'>
+          {this.getIcon()}{this.getName()}
+        </div>
       </div>
     );
   }

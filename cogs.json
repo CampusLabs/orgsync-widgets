@@ -2,10 +2,8 @@
   "options": {
     "basePath": "scripts",
     "names": {
-      "animation-frame-pristine": "bower_components/animation-frame/AnimationFrame.js",
       "async": "bower_components/async/lib/async.js",
-      "backbone-pristine": "bower_components/backbone/backbone.js",
-      "backbone-relations": "bower_components/backbone-relations/backbone-relations.js",
+      "backbone": "bower_components/backbone/backbone.js",
       "cursors": "bower_components/cursors/cursors.js",
       "elementQuery": "bower_components/elementQuery/elementQuery.js",
       "herit": "bower_components/herit/herit.js",
@@ -14,8 +12,6 @@
       "live": "bower_components/live/live.js",
       "moment-timezone": "bower_components/moment-timezone/builds/moment-timezone-with-data.js",
       "moment": "bower_components/moment/moment.js",
-      "mustache": "bower_components/mustache/mustache.js",
-      "olay": "bower_components/olay/olay.js",
       "olay-react": "bower_components/olay-react/olay-react.js",
       "orgsync-api": "bower_components/orgsync-api/orgsync-api.js",
       "react": "bower_components/react/react-with-addons.js",
@@ -36,12 +32,7 @@
       }
     },
     "concatAmd": true,
-    "processors.es6.options.compatFix": true,
-    "processors.tmpl.options.variable": "o",
-    "processors.jst.options.dependencies": {
-      "underscore": "_",
-      "mustache": "Mustache"
-    }
+    "processors.es6.options.compatFix": true
   },
   "targets": {
     "scripts/orgsync-widgets.es6": "dist",

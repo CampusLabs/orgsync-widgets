@@ -2,14 +2,14 @@
 
 .orgsync-widget {
   .osw-selector-scope {
-    padding: 10px;
-    text-align: right;
-    cursor: pointer;
     @include ellipsis;
     @include user-select(none);
+    cursor: pointer;
+    padding: 10px;
+    text-align: right;
+  }
 
-    &.osw-selected {
-      background: #eee;
-    }
+  .osw-selector-scope-selected {
+    background: #eee;
   }
 }

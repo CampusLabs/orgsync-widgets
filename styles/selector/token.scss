@@ -3,22 +3,22 @@
 .orgsync-widget {
   .osw-selector-token {
     @include box-sizing(border-box);
-    display: inline-block;
-    background: #eee;
-    border: 2px solid #fff;
-    padding: 3px;
-    max-width: 100%;
     @include ellipsis;
     @include user-select(none);
+    background: #eee;
+    border: 2px solid #fff;
+    display: inline-block;
+    max-width: 100%;
+    padding: 3px;
+  }
 
-    .osw-name {
-      display: inline;
-    }
+  .osw-selector-token-name {
+    display: inline;
+  }
 
-    .osw-remove {
-      float: right;
-      cursor: pointer;
-      padding-left: 3px;
-    }
+  .osw-selector-token-remove {
+    cursor: pointer;
+    float: right;
+    padding-left: 3px;
   }
 }

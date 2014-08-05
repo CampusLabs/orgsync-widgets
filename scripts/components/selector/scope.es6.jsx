@@ -1,20 +1,21 @@
 /** @jsx React.DOM */
 
+import Cursors from 'cursors';
 import React from 'react';
 
 export default React.createClass({
-  handleClick: function () {
-    this.props.onClick(this.props.scope);
-  },
+  mixins: [Cursors],
 
   getClassName: function () {
-    return 'osw-selector-scope' + (this.props.selected ? ' osw-selected' : '');
+    var classes = ['osw-selector-scope'];
+    if (this.props.selected) classes.push('osw-selector-scope-selected');
+    return classes.join(' ');
   },
 
   render: function () {
     return (
-      <div className={this.getClassName()} onClick={this.handleClick}>
-        {this.props.scope.get('name')}
+      <div className={this.getClassName()} onClick={this.props.onClick}>
+        {this.props.scope.name}
       </div>
     );
   }

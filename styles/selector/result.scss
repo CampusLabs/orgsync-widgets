@@ -3,95 +3,101 @@
 .orgsync-widget {
   .osw-selector-result {
     @include user-select(none);
-    background: white;
+    background: #fff;
     cursor: pointer;
 
-    &.osw-selected {
-      color: $grey-darker;
+    &.osw-selector-result-selected {
       background: $grey-lightest;
+      color: $grey-darker;
     }
 
-    &.osw-active {
-      color: white;
+    &.osw-selector-result-active {
       background: $blue-darkest;
+      color: #fff;
 
-      &.osw-selected {
+      &.osw-selector-result-selected {
         background: $blue;
       }
     }
   }
 
-  .osw-inline .osw-selector-result {
-    border-top: 1px solid #eee;
-    padding: 5px;
+  .osw-selector-index-inline {
+    .osw-selector-result {
+      border-top: 1px solid #eee;
+      padding: 5px;
 
-    &:first-child {
-      border-top: none;
-      padding-top: 6px;
+      &:first-child {
+        border-top: 0;
+        padding-top: 6px;
+      }
     }
 
-    .osw-image {
+    .osw-selector-result-image {
       display: none;
     }
 
-    .osw-name {
+    .osw-selector-result-name {
       @include ellipsis;
+      padding-left: 15px;
+      position: relative;
 
       .oswi {
-        width: 12px;
+        position: absolute;
+        top: -2px;
+        left: 0;
       }
     }
   }
 
-  .osw-browse {
+  .osw-selector-index-browse {
     .osw-selector-result {
-      position: relative;
       @include box-sizing(border-box);
       border: 5px solid #eee;
+      position: relative;
       text-align: center;
       vertical-align: top;
+    }
 
-      .osw-image {
-        background-repeat: no-repeat;
-        background-position: center;
-        background-size: contain;
+    .osw-selector-result-image {
+      background-position: center;
+      background-repeat: no-repeat;
+      background-size: contain;
 
-        &:before {
-          content: "";
-          display: block;
-          padding-top: 100%;
-        }
+      &:before {
+        content: '';
+        display: block;
+        padding-top: 100%;
       }
+    }
 
-      .osw-name {
-        overflow: hidden;
-        margin: 5px;
-        height: 30px;
-        font-weight: bold;
+    .osw-selector-result-name {
+      font-weight: bold;
+      height: 30px;
+      margin: 5px;
+      overflow: hidden;
 
-        .oswi {
-          position: absolute;
-          top: -5px;
-          left: -5px;
-          padding: 5px;
-          font-size: 20px;
-          color: $grey-darkest;
-          background: white;
-        }
+      .oswi {
+        background: #fff;
+        color: $grey-darkest;
+        font-size: 20px;
+        left: -5px;
+        padding: 5px;
+        position: absolute;
+        top: -5px;
       }
     }
   }
 
-  &[min-width~='461px'] .osw-browse .osw-selector-result {
+  &[min-width~='461px'] .osw-selector-index-browse .osw-selector-result {
     display: inline-block;
     width: 50%;
   }
 
-  &[min-width~='691px'] .osw-browse .osw-selector-result {
+  &[min-width~='691px'] .osw-selector-index-browse .osw-selector-result {
     width: 33.3%;
   }
 
-  &[min-width~='921px'] .osw-browse .osw-selector-result {
+  &[min-width~='921px'] .osw-selector-index-browse .osw-selector-result {
     width: 25%;
   }
 }

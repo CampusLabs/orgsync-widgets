@@ -1,90 +1,82 @@
 /** @jsx React.DOM */
 
 import _ from 'underscore';
-import Base from 'entities/base';
-import CoercedPropsMixin from 'mixins/coerced-props';
-import List from 'components/list';
-import ListenersMixin from 'mixins/listeners';
-import Olay from 'components/olay';
+import Button from 'components/button';
+import Cursors from 'cursors';
+import List from 'react-list';
+import Popup from 'components/popup';
 import React from 'react';
-import SelectorItem from 'entities/selector-item';
-import SelectorResult from 'components/selector/result';
-import SelectorScope from 'components/selector/scope';
-import SelectorToken from 'components/selector/token';
+import Result from 'components/selector/result';
+import Scope from 'components/selector/scope';
+import store from 'entities/selector/store';
+import Token from 'components/selector/token';
+import {isArbitrary} from 'entities/selector/item';
 
 var SelectorIndex = React.createClass({
-  mixins: [CoercedPropsMixin, ListenersMixin],
-
-  getCoercedProps: function () {
-    return {
-      initialValue: {type: SelectorItem.Collection},
-      scopes: {type: Base.Collection}
-    };
-  },
-
-  getListeners: function () {
-    return [{
-      model: this.state.value,
-      events: {
-        'add remove': function () {
-          this.forceUpdate();
-          if (this.refs.results) this.refs.results.forceUpdate();
-        }
-      }
-    }];
-  },
+  mixins: [Cursors],
 
   getDefaultProps: function () {
     return {
-      initialValue: [],
-      initialQuery: '',
-      scopes: [],
+      value: [],
+      query: '',
+      scopes: [{
+        id: '_all',
+        name: 'Everything'
+      }],
       hiddenInputName: 'selection',
       allowArbitrary: false,
       allowBrowse: true,
       browseText: 'Browse',
-      browse: false,
+      view: 'inline',
       placeholder: 'Search...',
       renderPageSize: 20,
-      indicies: ['_all']
+      indicies: ['_all'],
+      fields: ['name']
     };
   },
 
   getInitialState: function () {
     return {
-      value: this.props.initialValue.clone(),
-      scope: this.props.scopes.first(),
-      query: this.props.initialQuery,
-      results: null,
+      value: this.props.value,
+      scope: this.props.scopes[0],
+      query: this.props.query,
       hasMouse: false,
       hasFocus: false,
       isActive: false,
-      activeResultId: null
+      activeResultIndex: null,
+      browseIsOpen: false
     };
   },
 
-  componentWillMount: function () {
-    this.cache = {};
-    this.updateResults(this.state.scope, this.state.query);
-  },
-
-  componentDidUpdate: function (prevProps, prevState) {
-    if (prevState.isActive && !this.state.isActive) {
-      this.setActiveResult(this.firstActiveResult(this.state.results));
+  componentDidUpdate: function (__, prev) {
+    if (this.state.scope !== prev.scope || this.state.query !== prev.query) {
+      this.updateResults();
+    }
+    if (this.state.results !== prev.results) {
+      this.setActiveResultIndex();
     }
   },
 
+  updateResults: function () {
+    var results = this.getResults();
+    var query = store.parse(this.state.query);
+    if (this.props.allowArbitrary && query) {
+      results = [{name: query}].concat(results);
+    }
+    this.update({results: {$set: results}});
+  },
+
   handleScopeClick: function (scope) {
-    if (scope === this.state.scope) return;
-    this.updateResults(scope, this.state.query);
-    this.setState({scope: scope});
+    if (scope !== this.state.scope) this.update({scope: {$set: scope}});
   },
 
   handleQueryChange: function (ev) {
-    this.setQuery(ev.target.value);
+    ev.stopPropagation();
+    this.update({query: {$set: ev.target.value}});
   },
 
   handleKeyDown: function (ev) {
+    ev.stopPropagation();
     var query = this.state.query;
     var key = ev.key;
     if (ev.ctrlKey) {
@@ -93,149 +85,107 @@ var SelectorIndex = React.createClass({
     }
     switch (key) {
     case 'Backspace':
-      if (!query) return this.removeValue(this.state.value.last());
+      if (!query) return this.removeValue(_.last(this.state.value));
       break;
     case 'Enter':
-      var selectorItem = this.state.results.get(this.state.activeResultId);
-      if (this.state.value.get(selectorItem)) this.removeValue(selectorItem);
-      else this.addValue(selectorItem);
-      this.setQuery('');
+      this.handleResultClick(this.state.results[this.state.activeResultIndex]);
+      this.update({query: {$set: ''}});
       break;
     case 'Escape':
       if (query) {
-        this.setQuery('');
+        this.update({query: {$set: ''}});
       } else {
         this.refs.query.getDOMNode().blur();
-        this.setState({isActive: false});
+        this.update({isActive: {$set: false}});
       }
       return false;
     case 'ArrowUp':
-      this.incrActiveResult(-1);
+      this.incrActiveResultIndex(-1);
       return false;
     case 'ArrowDown':
-      this.incrActiveResult(1);
+      this.incrActiveResultIndex(1);
       return false;
     }
   },
 
-  handleClick: function () {
+  handleClick: function (ev) {
+    ev.stopPropagation();
     this.refs.query.getDOMNode().focus();
   },
 
-  handleFocus: function () {
-    this.setState({hasFocus: true, isActive: true});
+  handleFocus: function (ev) {
+    ev.stopPropagation();
+    this.update({hasFocus: {$set: true}, isActive: {$set: true}});
   },
 
-  handleBlur: function () {
-    this.setState({hasFocus: false, isActive: this.state.hasMouse});
+  handleBlur: function (ev) {
+    ev.stopPropagation();
+    this.update({
+      hasFocus: {$set: true},
+      isActive: {$set: this.state.hasMouse}
+    });
   },
 
-  handleMouseEnter: function () {
-    this.setState({hasMouse: true});
+  handleMouseEnter: function (ev) {
+    ev.stopPropagation();
+    this.update({hasMouse: {$set: true}});
   },
 
-  handleMouseLeave: function () {
-    this.setState({hasMouse: false, isActive: this.state.hasFocus});
+  handleMouseLeave: function (ev) {
+    ev.stopPropagation();
+    this.update({
+      hasMouse: {$set: true},
+      isActive: {$set: this.state.hasFocus}
+    });
   },
 
-  addValue: function (selectorItem) {
-    this.state.value.add(selectorItem);
+  addValue: function (item) {
+    var existing = _.find(this.state.value, _.matches(item));
+    if (!existing) this.update({value: {$push: [item]}});
   },
 
-  removeValue: function (selectorItem) {
-    this.state.value.remove(selectorItem);
+  removeValue: function (item) {
+    var value = this.state.value;
+    var existing = _.find(value, _.matches(item));
+    if (!existing) return;
+    this.update({value: {$splice: [[value.indexOf(existing), 1]]}});
   },
 
-  setQuery: function (query) {
-    if (query === this.state.query) return;
-    this.updateResults(this.state.scope, query);
-    this.setState({query: query});
+  incrActiveResultIndex: function (dir) {
+    this.setActiveResultIndex(this.state.activeResultIndex + dir);
   },
 
-  updateResults: function (scope, query) {
-    query = query.trim().replace(/\s+/g, ' ');
-
-    // Store current results in cache.
-    var cache = this.cache[this.state.scope.id];
-    if (!cache) cache = this.cache[this.state.scope.id] = {};
-    this.previousResults = cache[this.state.query] = this.state.results;
-
-    // Retrieve new results from cache.
-    cache = this.cache[scope.id];
-    if (!cache) cache = this.cache[scope.id] = {};
-    var results = cache[query];
-    if (!results) {
-      results = cache[query] = new SelectorItem.Collection();
-      results.hasFetched = false;
-      results.once('request:end', function () { this.hasFetched = true; });
-      if (this.props.allowArbitrary && query) results.add({name: query});
-      if (this.previousResults) {
-        var fillers = this.previousResults.reject(function (result) {
-          return result.isArbitrary();
-        });
-        results.add(fillers);
-        results.once('request:end', _.partial(results.remove, fillers));
-      }
-      results.once('request:end add', function () {
-        if (results !== this.state.results) return;
-        this.setActiveResult(this.firstActiveResult(results));
-      }, this);
-    }
-    this.setState({results: results});
-    this.setActiveResult(this.firstActiveResult(results));
-  },
-
-  incrActiveResult: function (dir) {
+  setActiveResultIndex: function (i) {
     var results = this.state.results;
-    var current = results.get(this.state.activeResultId);
-    var next;
-    if (dir) next = results.at(results.indexOf(current) + dir);
-    if (!next) next = current;
-    this.setActiveResult(next);
-    this.refs.results.scrollTo(next);
+    if (i == null) {
+      i = this.props.allowArbitrary && !this.state.query.trim() ? 1 : 0;
+    }
+    i = Math.max(0, Math.min(i, results.length - 1));
+    this.update({activeResultIndex: {$set: i}});
+    this.refs.results.scrollTo(results[i]);
   },
 
-  firstActiveResult: function (results) {
-    var i = results.length > 1 && results.first().isArbitrary() ? 1 : 0;
-    return results.at(i);
+  asHiddenInputValue: function (item) {
+    return _.pick(item, isArbitrary(item) ? ['name'] : ['type', 'id']);
   },
 
-  setActiveResult: function (selectorItem) {
-    this.setState({activeResultId: (selectorItem || {}).id});
-    if (this.refs.results) this.refs.results.forceUpdate();
-  },
-
-  fetchData: function () {
-    var data = {
-      selected: _.pluck(this.state.value.models, 'id'),
-      indicies: this.props.indicies,
-      scopes:
-        this.state.scope.id === '_all' ?
-        this.props.scopes.without(this.props.scopes.get('_all')) :
-        [this.state.scope]
-    };
-    if (this.state.query) data.q = this.state.query;
-    if (!this.state.results.hasFetched) data.page = 1;
-    return data;
-  },
-
-  asHiddenInputValue: function (selectorItem) {
-    var fields = selectorItem.isArbitrary() ? ['name'] : ['type', 'id'];
-    return selectorItem.pick.apply(selectorItem, fields);
+  getResults: function () {
+    return store.search(this.getSearchOptions());
   },
 
   getClassName: function () {
-    var classes = ['osw-selector-index'];
-    classes.push(this.props.browse ? 'osw-browse' : 'osw-inline');
-    if (this.state.isActive) classes.push('osw-active');
+    var classes = [
+      'osw-selector-index',
+      'osw-selector-index-' + this.props.view
+    ];
+    if (this.state.isActive) classes.push('osw-selector-index-active');
     return classes.join(' ');
   },
 
-  handleResultClick: function (selectorItem) {
-    if (this.state.value.get(selectorItem)) this.removeValue(selectorItem);
-    else this.addValue(selectorItem);
-    this.setState({activeResultId: selectorItem.id});
-    this.refs.results.forceUpdate();
+  handleResultClick: function (item) {
+    if (_.any(this.state.value, _.matches(item))) this.removeValue(item);
+    else this.addValue(item);
+    this.setActiveResultIndex(this.state.results.indexOf(item));
   },
 
   handleBrowseButtonClick: function (ev) {
@@ -243,31 +193,36 @@ var SelectorIndex = React.createClass({
     this.openBrowse();
   },
 
-  handleBrowseCancel: function () {
-    this.olay.hide();
-  },
-
-  handleBrowseDone: function (state) {
-    this.state.value.set(state.value.models);
-    this.olay.hide();
-  },
-
   openBrowse: function () {
-    (this.olay = Olay.create(_.extend({}, this.props, {
-      olayClassName: 'selector-index',
-      showHideOlayButton: false,
-      olayOptions: {
-        hideOnKeys: false,
-        hideOnClick: false
-      },
-      component: SelectorIndex,
-      browse: true,
-      initialValue: this.state.value,
-      initialQuery: this.state.query,
-      onCancel: this.handleBrowseCancel,
-      onDone: this.handleBrowseDone
-    }))).show();
-    this.setQuery('');
+    this.update({browseIsOpen: {$set: true}});
+  },
+
+  closeBrowse: function () {
+    this.update({browseIsOpen: {$set: false}});
+  },
+
+  getSearchOptions: function () {
+    var options = {
+      scopes:
+        this.state.scope.id === '_all' ?
+        _.reject(this.props.scopes, _.matches({id: '_all'})) :
+        [this.state.scope],
+      indicies: this.props.indicies,
+      fields: this.props.fields,
+      selected: _.pluck(this.state.value, 'uid')
+    };
+    if (this.state.query) options.q = this.state.query;
+    return options;
+  },
+
+  fetch: function (cb) {
+    store.fetch(this.getSearchOptions(), _.partial(this.handleFetch, cb));
+  },
+
+  handleFetch: function (cb, er, done) {
+    if (er) return cb(er);
+    cb(null, done);
+    this.updateResults();
   },
 
   renderHiddenInput: function () {
@@ -280,37 +235,39 @@ var SelectorIndex = React.createClass({
     );
   },
 
-  renderToken: function (selectorItem, i) {
+  renderToken: function (item, i) {
     return (
-      <SelectorToken
+      <Token
         key={i}
-        selectorItem={selectorItem}
-        onRemoveClick={this.removeValue}
+        item={item}
+        onRemoveClick={_.partial(this.removeValue, item)}
       />
     );
   },
 
   renderTokens: function () {
     return (
-      <div className='osw-tokens'>{this.state.value.map(this.renderToken)}</div>
+      <div className='osw-selector-index-tokens'>
+        {this.state.value.map(this.renderToken)}
+      </div>
     );
   },
 
   renderBrowseButton: function () {
-    if (this.props.browse) return;
+    if (this.props.view === 'browse') return;
     return (
-      <input
-        type='button'
-        className='osw-button osw-browse-button'
-        value={this.props.browseText}
+      <Button
+        className='osw-selector-index-browse-button'
         onClick={this.handleBrowseButtonClick}
-      />
+      >
+        {this.props.browseText}
+      </Button>
     );
   },
 
   renderTokensAndQuery: function () {
     return (
-      <div className='osw-tokens-and-query'>
+      <div className='osw-selector-index-tokens-and-query'>
         {this.renderTokens()}
         {this.renderBrowseButton()}
         {this.renderQuery()}
@@ -320,7 +277,7 @@ var SelectorIndex = React.createClass({
 
   renderQuery: function () {
     return (
-      <div className='osw-query'>
+      <div className='osw-selector-index-query'>
         <input
           ref='query'
           value={this.state.query}
@@ -333,89 +290,89 @@ var SelectorIndex = React.createClass({
 
   renderScope: function (scope, i) {
     return (
-      <SelectorScope
+      <Scope
         key={i}
         scope={scope}
-        onClick={this.handleScopeClick}
+        onClick={_.partial(this.handleScopeClick, scope)}
         selected={scope === this.state.scope}
       />
     );
   },
 
   renderScopes: function () {
-    if (!this.props.browse) return;
+    if (this.props.view === 'inline') return;
     return (
       <List
-        className='osw-scopes'
-        key={this.state.scope.id}
-        collection={this.props.scopes}
-        renderListItem={this.renderScope}
-        shouldFetch={false}
+        className='osw-selector-index-scopes'
+        items={this.props.scopes}
+        renderItem={this.renderScope}
         uniform={true}
       />
     );
   },
 
-  renderResult: function (selectorItem, i) {
+  renderResult: function (item, i) {
     return (
-      <SelectorResult
+      <Result
         key={i}
-        selectorItem={selectorItem}
-        onClick={this.handleResultClick}
-        selected={!!this.state.value.get(selectorItem)}
-        active={selectorItem.id === this.state.activeResultId}
+        item={item}
+        onClick={_.partial(this.handleResultClick, item)}
+        selected={_.any(this.state.value, _.matches(item))}
+        active={_.isEqual(item, this.state.activeResult)}
       />
     );
   },
 
+  renderLoading: function () {
+    return <div className='osw-selector-index-loading'>Loading...</div>;
+  },
+
+  renderEmpty: function () {
+    return <div className='osw-selector-index-empty'>No results found.</div>;
+  },
+
   renderResults: function () {
-    if (!this.props.browse && !this.state.isActive) return;
+    if (this.props.view === 'inline' && !this.state.isActive) return;
+    var key = store.getQueryKey(this.getSearchOptions());
     return (
       <List
-        className='osw-results'
+        key={key}
         ref='results'
-        key={JSON.stringify(_.pick(this.state, 'scope', 'query'))}
-        collection={this.state.results}
-        renderListItem={this.renderResult}
-        fetchData={this.fetchData}
-        fetchInitially={true}
+        className='osw-selector-index-results'
+        items={this.state.results}
+        renderItem={this.renderResult}
+        renderLoading={this.renderLoading}
+        renderEmpty={this.renderEmpty}
+        fetch={this.fetch}
+        fetchInitially={!store.cache[key]}
         uniform={true}
         renderPageSize={this.props.renderPageSize}
       />
     );
   },
 
-  renderCancel: function () {
-    var onCancel = this.props.onCancel;
-    if (!onCancel) return;
-    return (
-      <input
-        type='button'
-        className='osw-button osw-cancel'
-        onClick={onCancel}
-        value='Cancel'
+  renderBrowse: function () {
+    if (!this.state.browseIsOpen) return;
+    return this.transferPropsTo(
+      <SelectorIndex
+        view='browse'
+        query={this.state.query}
+        cursors={{value: this.getCursor('value')}}
       />
     );
   },
 
-  renderDone: function () {
-    var onDone = this.props.onDone;
-    if (!onDone) return;
+  renderPopup: function () {
+    if (this.props.view === 'browse') return;
     return (
-      <input
-        type='button'
-        className='osw-button osw-done'
-        onClick={_.partial(onDone, this.state)}
-        value='Done'
-      />
+      <Popup
+        title={this.props.browseText}
+        name='selector-index'
+        close={this.closeBrowse}
+      >
+        {this.renderBrowse()}
+      </Popup>
     );
-  },
-
-  renderFinishButtons: function () {
-    var cancel = this.renderCancel();
-    var done = this.renderDone();
-    if (!cancel || !done) return;
-    return <div className='osw-finish-buttons'>{cancel}{done}</div>;
   },
 
   render: function () {
@@ -433,7 +390,7 @@ var SelectorIndex = React.createClass({
         {this.renderTokensAndQuery()}
         {this.renderScopes()}
         {this.renderResults()}
-        {this.renderFinishButtons()}
+        {this.renderPopup()}
       </div>
     );
   }

@@ -13,7 +13,7 @@ export default React.createClass({
         <Icon
           className='osw-selector-token-remove'
           name='delete'
-          onClick={this.props.onRemove}
+          onClick={this.props.onRemoveClick}
         />
         <div className='osw-selector-token-name'>{this.props.item.name}</div>
       </div>

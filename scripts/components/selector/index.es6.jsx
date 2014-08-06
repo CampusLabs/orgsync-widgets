@@ -17,7 +17,7 @@ var SelectorIndex = React.createClass({
 
   getDefaultProps: function () {
     return {
-      value: [{name: 'wat'}],
+      value: [],
       query: '',
       scopes: [{
         id: '_all',
@@ -40,9 +40,8 @@ var SelectorIndex = React.createClass({
       value: this.props.value,
       scope: this.props.scopes[0],
       query: this.props.query,
-      hasMouse: false,
-      hasFocus: false,
-      isActive: false,
+      hasMouse: true,
+      hasFocus: true,
       activeIndex: 0,
       browseIsOpen: false
     };
@@ -84,7 +83,8 @@ var SelectorIndex = React.createClass({
     }
     switch (key) {
     case 'Backspace':
-      if (!query) return this.removeValue(_.last(this.state.value));
+      var value = this.state.value;
+      if (!query && value.length) return this.removeValue(_.last(value));
       break;
     case 'Enter':
       this.handleResultClick(this.state.results[this.state.activeIndex]);
@@ -95,7 +95,7 @@ var SelectorIndex = React.createClass({
         this.update({query: {$set: ''}});
       } else {
         this.refs.query.getDOMNode().blur();
-        this.update({isActive: {$set: false}});
+        this.update({hasFocus: {$set: false}, hasMouse: {$set: false}});
       }
       return false;
     case 'ArrowUp':
@@ -114,28 +114,26 @@ var SelectorIndex = React.createClass({
 
   handleFocus: function (ev) {
     ev.stopPropagation();
-    this.update({hasFocus: {$set: true}, isActive: {$set: true}});
+    this.update({hasFocus: {$set: true}});
   },
 
   handleBlur: function (ev) {
     ev.stopPropagation();
-    this.update({
-      hasFocus: {$set: false},
-      isActive: {$set: this.state.hasMouse}
-    });
+    this.update({hasFocus: {$set: false}});
   },
 
   handleMouseEnter: function (ev) {
     ev.stopPropagation();
-    this.update({hasMouse: {$set: true}});
+    if (this.state.hasFocus) this.update({hasMouse: {$set: true}});
   },
 
   handleMouseLeave: function (ev) {
     ev.stopPropagation();
-    this.update({
-      hasMouse: {$set: false},
-      isActive: {$set: this.state.hasFocus}
-    });
+    this.update({hasMouse: {$set: false}});
+  },
+
+  isActive: function () {
+    return this.state.hasFocus || this.state.hasMouse;
   },
 
   addValue: function (item) {
@@ -176,7 +174,7 @@ var SelectorIndex = React.createClass({
       'osw-selector-index',
       'osw-selector-index-' + this.props.view
     ];
-    if (this.state.isActive) classes.push('osw-selector-index-active');
+    if (this.isActive()) classes.push('osw-selector-index-active');
     return classes.join(' ');
   },
 
@@ -330,7 +328,7 @@ var SelectorIndex = React.createClass({
   },
 
   renderResults: function () {
-    if (this.props.view === 'inline' && !this.state.isActive) return;
+    if (this.props.view === 'inline' && !this.isActive()) return;
     var key = store.getQueryKey(this.getSearchOptions());
     return (
       <List

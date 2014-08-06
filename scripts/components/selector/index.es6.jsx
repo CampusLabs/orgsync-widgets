@@ -210,7 +210,8 @@ var SelectorIndex = React.createClass({
         _.reject(this.props.scopes, _.matches({id: '_all'})) :
         [this.state.scope],
       indices: this.props.indices,
-      fields: this.props.fields
+      fields: this.props.fields,
+      indices_boost: this.props.indicesBoost
     };
     if (this.state.query) options.q = this.state.query;
     return options;

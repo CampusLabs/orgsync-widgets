@@ -46,9 +46,11 @@ var filter = function (item, q, options) {
 
 export var getQueryKey = function (options) {
   return _.compact([
-    (_.pluck(options.scopes, 'id') || []).join() || '_all',
-    (options.indices || []).join() || '_all',
-    (options.fields || []).join() || 'name',
+    (_.pluck(options.scopes, 'id') || []).sort().join() || '_all',
+    (options.indices || []).slice().sort().join() || '_all',
+    _.invoke(_.pairs(options.indices_boost), 'join', '=').sort().join() ||
+      'none',
+    (options.fields || []).slice().sort().join() || 'name',
     parse(options.q)
   ]).join(':');
 };

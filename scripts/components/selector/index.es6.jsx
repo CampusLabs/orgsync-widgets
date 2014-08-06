@@ -337,6 +337,10 @@ var SelectorIndex = React.createClass({
     return <div className='osw-selector-index-empty'>No results found.</div>;
   },
 
+  renderError: function (er) {
+    return <div className='osw-selector-index-error'>An error occurred.</div>;
+  },
+
   renderResults: function () {
     if (this.props.view === 'inline' && !this.isActive()) return;
     var key = store.getQueryKey(this.getSearchOptions());
@@ -349,6 +353,7 @@ var SelectorIndex = React.createClass({
         renderItem={this.renderResult}
         renderLoading={this.renderLoading}
         renderEmpty={this.renderEmpty}
+        renderError={this.renderError}
         fetch={this.fetch}
         fetchInitially={!store.cache[key]}
         uniform={true}

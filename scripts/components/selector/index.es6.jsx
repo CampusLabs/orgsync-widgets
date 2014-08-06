@@ -87,7 +87,9 @@ var SelectorIndex = React.createClass({
       if (!query && value.length) return this.removeValue(_.last(value));
       break;
     case 'Enter':
-      this.handleResultClick(this.state.results[this.state.activeIndex]);
+      var activeItem = this.state.results[this.state.activeIndex];
+      if (!activeItem) break;
+      this.handleResultClick(activeItem);
       this.update({query: {$set: ''}});
       break;
     case 'Escape':

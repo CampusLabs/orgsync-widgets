@@ -11,12 +11,12 @@ var update = React.addons.update;
 var FETCH_SIZE = 100;
 
 var live = new Live({
-  url: 'http://orgsync.com.dev/io',
+  url: 'https://orgsync.com/io',
 
   socketConstructor: SockJS,
 
   fetchAuthKey: function (cb) {
-    superagent.post('http://orgsync.com.dev/live_key').end(function (er, res) {
+    superagent.post('https://orgsync.com/live_key').end(function (er, res) {
       if (er || !res.ok) return cb(er || res.body);
       cb(null, res.text);
     });

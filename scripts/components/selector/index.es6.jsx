@@ -10,7 +10,7 @@ import Result from 'components/selector/result';
 import Scope from 'components/selector/scope';
 import store from 'entities/selector/store';
 import Token from 'components/selector/token';
-import {isArbitrary, getToken} from 'entities/selector/item';
+import {isArbitrary} from 'entities/selector/item';
 
 var SelectorIndex = React.createClass({
   mixins: [Cursors],
@@ -43,7 +43,8 @@ var SelectorIndex = React.createClass({
       hasMouse: false,
       hasFocus: false,
       activeIndex: 0,
-      browseIsOpen: false
+      browseIsOpen: false,
+      results: []
     };
   },
 
@@ -51,17 +52,22 @@ var SelectorIndex = React.createClass({
     if (this.state.scope !== prev.scope || this.state.query !== prev.query) {
       this.updateResults(true);
     }
+    if (this.isActive(prev) && !this.isActive()) this.resetActiveIndex();
   },
 
-  updateResults: function (resetActive) {
+  updateResults: function (resetActiveIndex) {
     var results = store.search(this.getSearchOptions());
     var query = store.parse(this.state.query);
     if (this.props.allowArbitrary && query) {
       results = [{name: query}].concat(results);
     }
-    var deltas = {results: {$set: results}};
-    if (resetActive) deltas.activeIndex = {$set: this.restrictIndex(results)};
-    this.update(deltas);
+    this.update({results: {$set: results}});
+    if (resetActiveIndex) this.resetActiveIndex(results);
+  },
+
+  resetActiveIndex: function (results) {
+    if (!results) results = this.state.results;
+    this.update({activeIndex: {$set: this.restrictIndex(results)}});
   },
 
   handleScopeClick: function (scope) {
@@ -124,7 +130,7 @@ var SelectorIndex = React.createClass({
     this.update({hasFocus: {$set: false}});
   },
 
-  handleMouseEnter: function (ev) {
+  handleMouseOver: function (ev) {
     ev.stopPropagation();
     if (this.state.hasFocus) this.update({hasMouse: {$set: true}});
   },
@@ -134,8 +140,9 @@ var SelectorIndex = React.createClass({
     this.update({hasMouse: {$set: false}});
   },
 
-  isActive: function () {
-    return this.state.hasFocus || this.state.hasMouse;
+  isActive: function (state) {
+    if (!state) state = this.state;
+    return state.hasFocus || state.hasMouse;
   },
 
   addValue: function (item) {
@@ -382,6 +389,7 @@ var SelectorIndex = React.createClass({
     if (this.props.view === 'browse') return;
     return (
       <Popup
+        ref='popup'
         title={this.props.browseText}
         name='selector-index'
         close={this.closeBrowse}
@@ -398,7 +406,7 @@ var SelectorIndex = React.createClass({
         onClick={this.handleClick}
         onFocus={this.handleFocus}
         onBlur={this.handleBlur}
-        onMouseEnter={this.handleMouseEnter}
+        onMouseOver={this.handleMouseOver}
         onMouseLeave={this.handleMouseLeave}
         onKeyDown={this.handleKeyDown}
       >

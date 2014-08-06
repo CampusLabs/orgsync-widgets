@@ -1,9 +1,8 @@
 /** @jsx React.DOM */
 
-import _str from 'underscore.string';
 import Cursors from 'cursors';
 import Icon from 'components/icon';
-import {isArbitrary} from 'entities/selector/item';
+import {isArbitrary, getIconName} from 'entities/selector/item';
 import React from 'react';
 
 export default React.createClass({
@@ -24,13 +23,7 @@ export default React.createClass({
   },
 
   getIcon: function () {
-    var item = this.props.item;
-    var name =
-      this.props.selected ?
-        'delete' :
-          isArbitrary(item) ?
-          'add' :
-          _str.dasherize(item.type).slice(1);
+    var name = this.props.selected ? 'delete' : getIconName(this.props.item);
     return <Icon name={name} />;
   },
 

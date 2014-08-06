@@ -10,7 +10,7 @@ import Result from 'components/selector/result';
 import Scope from 'components/selector/scope';
 import store from 'entities/selector/store';
 import Token from 'components/selector/token';
-import {isArbitrary} from 'entities/selector/item';
+import {isArbitrary, getToken} from 'entities/selector/item';
 
 var SelectorIndex = React.createClass({
   mixins: [Cursors],
@@ -20,7 +20,7 @@ var SelectorIndex = React.createClass({
       value: [],
       query: '',
       scopes: [{
-        id: '_all',
+        token: '_all',
         name: 'Everything'
       }],
       hiddenInputName: 'selection',
@@ -206,8 +206,8 @@ var SelectorIndex = React.createClass({
   getSearchOptions: function () {
     var options = {
       scopes:
-        this.state.scope.id === '_all' ?
-        _.reject(this.props.scopes, _.matches({id: '_all'})) :
+        this.state.scope.term === '_all' ?
+        _.reject(this.props.scopes, _.matches({term: '_all'})) :
         [this.state.scope],
       indices: this.props.indices,
       fields: this.props.fields,
@@ -340,7 +340,7 @@ var SelectorIndex = React.createClass({
     return <div className='osw-selector-index-empty'>No results found.</div>;
   },
 
-  renderError: function (er) {
+  renderError: function () {
     return <div className='osw-selector-index-error'>An error occurred.</div>;
   },
 

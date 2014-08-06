@@ -1,7 +1,7 @@
 import _ from 'underscore';
 import _str from 'underscore.string';
 import Live from 'live';
-import {getId} from 'entities/selector/item';
+import {getTerm} from 'entities/selector/item';
 import React from 'react';
 import SockJS from 'sockjs';
 import superagent from 'superagent';
@@ -11,12 +11,12 @@ var update = React.addons.update;
 var FETCH_SIZE = 100;
 
 var live = new Live({
-  url: 'https://orgsync.com/io',
+  url: 'http://orgsync.com.dev/io',
 
   socketConstructor: SockJS,
 
   fetchAuthKey: function (cb) {
-    superagent.post('https://orgsync.com/live_key').end(function (er, res) {
+    superagent.post('http://orgsync.com.dev/live_key').end(function (er, res) {
       if (er || !res.ok) return cb(er || res.body);
       cb(null, res.text);
     });
@@ -46,7 +46,7 @@ var filter = function (item, q, options) {
 
 export var getQueryKey = function (options) {
   return _.compact([
-    (_.pluck(options.scopes, 'id') || []).sort().join() || '_all',
+    (options.scopes || []).map(getTerm).sort().join() || '_all',
     (options.indices || []).slice().sort().join() || '_all',
     _.invoke(_.pairs(options.indices_boost), 'join', '=').sort().join() ||
       'none',
@@ -58,8 +58,8 @@ export var getQueryKey = function (options) {
 var cacheItems = function (items, options) {
   var key = getQueryKey(options);
   var cached = cache[key] ? cache[key].slice() : [];
-  items.forEach(function (item) { cache[getId(item)] = item; });
-  cache[key] = _.unique(cached.concat(items.map(getId)));
+  items.forEach(function (item) { cache[getTerm(item)] = item; });
+  cache[key] = _.unique(cached.concat(items.map(getTerm)));
 };
 
 var getItemFromId = function (id) {

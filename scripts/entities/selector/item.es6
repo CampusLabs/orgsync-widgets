@@ -1,11 +1,34 @@
 import _str from 'underscore.string';
 
-export var isArbitrary = function (item) {
-  return item.id == null || item.type == null;
+var ICON_MAP = {
+  Album: 'photo',
+  CustomPage: 'page',
+  Folder: 'file',
+  FormDescription: 'form',
+  Forum: 'communication',
+  NewsPost: 'news',
+  Opportunity: 'event',
+  PortalBookmark: 'bookmark',
+  PseudoFile: 'file',
+  ServicePartner: 'service',
+  ServiceUmbrella: 'service',
+  VimeoVideo: 'video',
+  YouTubeVideo: 'video'
 };
 
-export var getId = function (item) {
-  return isArbitrary(item) ?
-    'arbitrary_' + item.name :
-    _str.underscored(item.type) + '_' + item.id;
+var ARBITRARY_ICON = 'view';
+
+export var isArbitrary = function (item) {
+  return item.type == null || item.id == null;
+};
+
+export var getTerm = function (item) {
+  if (item.term) return item.term;
+  if (isArbitrary(item)) return 'arbitrary_' + item.name;
+  return _str.underscored(item.type) + '_' + item.id;
+};
+
+export var getIconName = function (item) {
+  if (isArbitrary(item)) return ARBITRARY_ICON;
+  return ICON_MAP[item.type] || _str.dasherize(item.type).slice(1);
 };

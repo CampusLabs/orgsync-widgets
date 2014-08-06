@@ -20,6 +20,11 @@ export default React.createClass({
     if (React.Children.count(this.props.children)) elementQuery();
   },
 
+  handleCloseClick: function (ev) {
+    this.props.close();
+    ev.stopPropagation();
+  },
+
   renderPopup: function () {
     var children = this.props.children;
     if (!React.Children.count(children)) return;
@@ -40,7 +45,7 @@ export default React.createClass({
       <Icon
         name='delete'
         className='osw-popup-close-button'
-        onClick={this.props.close}
+        onClick={this.handleCloseClick}
       />
     );
   },

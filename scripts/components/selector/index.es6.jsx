@@ -30,7 +30,7 @@ var SelectorIndex = React.createClass({
       view: 'inline',
       placeholder: 'Search...',
       renderPageSize: 20,
-      indicies: ['_all'],
+      indices: ['_all'],
       fields: ['name']
     };
   },
@@ -207,9 +207,8 @@ var SelectorIndex = React.createClass({
         this.state.scope.id === '_all' ?
         _.reject(this.props.scopes, _.matches({id: '_all'})) :
         [this.state.scope],
-      indicies: this.props.indicies,
-      fields: this.props.fields,
-      selected: _.pluck(this.state.value, 'uid')
+      indices: this.props.indices,
+      fields: this.props.fields
     };
     if (this.state.query) options.q = this.state.query;
     return options;
@@ -223,6 +222,12 @@ var SelectorIndex = React.createClass({
     if (er) return cb(er);
     cb(null, done);
     this.updateResults(options.from === 0);
+  },
+
+  isSelected: function (item) {
+    var a = this.asHiddenInputValue(item);
+    var predicate = _.compose(_.partial(_.isEqual, a), this.asHiddenInputValue);
+    return _.any(this.state.value, predicate);
   },
 
   renderHiddenInput: function () {
@@ -318,7 +323,7 @@ var SelectorIndex = React.createClass({
         key={i}
         item={item}
         onClick={_.partial(this.handleResultClick, item)}
-        selected={_.any(this.state.value, _.matches(item))}
+        selected={this.isSelected(item)}
         active={this.state.results.indexOf(item) === this.state.activeIndex}
       />
     );

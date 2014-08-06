@@ -47,7 +47,7 @@ var filter = function (item, q, options) {
 export var getQueryKey = function (options) {
   return _.compact([
     (_.pluck(options.scopes, 'id') || []).join() || '_all',
-    (options.indicies || []).join() || '_all',
+    (options.indices || []).join() || '_all',
     (options.fields || []).join() || 'name',
     parse(options.q)
   ]).join(':');

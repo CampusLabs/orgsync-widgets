@@ -40,8 +40,8 @@ var SelectorIndex = React.createClass({
       value: this.props.value,
       scope: this.props.scopes[0],
       query: this.props.query,
-      hasMouse: true,
-      hasFocus: true,
+      hasMouse: false,
+      hasFocus: false,
       activeIndex: 0,
       browseIsOpen: false
     };
@@ -190,7 +190,11 @@ var SelectorIndex = React.createClass({
   },
 
   openBrowse: function () {
-    this.update({browseIsOpen: {$set: true}});
+    this.update({
+      hasFocus: {$set: false},
+      hasMouse: {$set: false},
+      browseIsOpen: {$set: true}
+    });
   },
 
   closeBrowse: function () {
@@ -303,6 +307,7 @@ var SelectorIndex = React.createClass({
         items={this.props.scopes}
         renderItem={this.renderScope}
         uniform={true}
+        scope={this.state.scope}
       />
     );
   },

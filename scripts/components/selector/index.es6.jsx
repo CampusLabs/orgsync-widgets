@@ -322,7 +322,7 @@ var SelectorIndex = React.createClass({
         items={this.props.scopes}
         renderItem={this.renderScope}
         uniform={true}
-        scope={this.state.scope}
+        update-for-scope={this.state.scope}
       />
     );
   },
@@ -368,8 +368,8 @@ var SelectorIndex = React.createClass({
         fetchInitially={!store.cache[key]}
         uniform={true}
         renderPageSize={this.props.renderPageSize}
-        activeIndex={this.state.activeIndex}
-        value={this.state.value}
+        update-for-activeIndex={this.state.activeIndex}
+        update-for-value={this.state.value}
       />
     );
   },

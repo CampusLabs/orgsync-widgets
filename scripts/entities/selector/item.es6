@@ -1,6 +1,7 @@
 import _str from 'underscore.string';
 
 var ICON_MAP = {
+  Account: 'person',
   Album: 'photo',
   CustomPage: 'page',
   Folder: 'file',
@@ -12,6 +13,7 @@ var ICON_MAP = {
   PseudoFile: 'file',
   ServicePartner: 'service',
   ServiceUmbrella: 'service',
+  Student: 'person',
   VimeoVideo: 'video',
   YouTubeVideo: 'video'
 };

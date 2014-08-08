@@ -12,6 +12,8 @@ import store from 'entities/selector/store';
 import Token from 'components/selector/token';
 import {isArbitrary} from 'entities/selector/item';
 
+var FETCH_SIZE = 100;
+
 var SelectorIndex = React.createClass({
   mixins: [Cursors],
 
@@ -31,7 +33,8 @@ var SelectorIndex = React.createClass({
       placeholder: 'Search...',
       renderPageSize: 20,
       indices: ['_all'],
-      fields: ['name']
+      fields: ['name'],
+      limit: Infinity
     };
   },
 
@@ -57,9 +60,10 @@ var SelectorIndex = React.createClass({
 
   updateResults: function (resetActiveIndex) {
     var results = store.search(this.getSearchOptions());
-    var query = store.parse(this.state.query);
-    if (this.props.allowArbitrary && query) {
-      results = [{name: query}].concat(results);
+    var limit = this.props.limit;
+    if (results.length > limit) results = results.slice(0, limit);
+    if (this.props.allowArbitrary && store.parse(this.state.query)) {
+      results = [{name: this.state.query}].concat(results);
     }
     this.update({results: {$set: results}});
     if (resetActiveIndex) this.resetActiveIndex(results);
@@ -218,7 +222,8 @@ var SelectorIndex = React.createClass({
         [this.state.scope],
       indices: this.props.indices,
       fields: this.props.fields,
-      indices_boost: this.props.indicesBoost
+      indices_boost: this.props.indicesBoost,
+      limit: this.props.limit
     };
     if (this.state.query) options.q = this.state.query;
     return options;
@@ -309,6 +314,7 @@ var SelectorIndex = React.createClass({
         key={i}
         scope={scope}
         onClick={_.partial(this.handleScopeClick, scope)}
+        onResultClick={this.handleResultClick}
         selected={scope === this.state.scope}
       />
     );
@@ -322,7 +328,7 @@ var SelectorIndex = React.createClass({
         items={this.props.scopes}
         renderItem={this.renderScope}
         uniform={true}
-        update-for-scope={this.state.scope}
+        updateForScope={this.state.scope}
       />
     );
   },
@@ -368,8 +374,8 @@ var SelectorIndex = React.createClass({
         fetchInitially={!store.cache[key]}
         uniform={true}
         renderPageSize={this.props.renderPageSize}
-        update-for-activeIndex={this.state.activeIndex}
-        update-for-value={this.state.value}
+        updateForActiveIndex={this.state.activeIndex}
+        updateForValue={this.state.value}
       />
     );
   },

@@ -38,9 +38,7 @@ var filter = function (item, q, options) {
     _.values(_.pick(item, options.fields || 'name')).join(' ').toLowerCase()
   );
   return _.every(_str.words(q), function (wordA) {
-    return _.any(searchableWords, function (wordB) {
-      return _str.startsWith(wordB, wordA);
-    });
+    return _.any(searchableWords, _.partial(_str.startsWith, _, wordA));
   });
 };
 

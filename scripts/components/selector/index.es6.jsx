@@ -12,8 +12,6 @@ import store from 'entities/selector/store';
 import Token from 'components/selector/token';
 import {isArbitrary} from 'entities/selector/item';
 
-var FETCH_SIZE = 100;
-
 var SelectorIndex = React.createClass({
   mixins: [Cursors],
 

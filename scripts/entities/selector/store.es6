@@ -1,10 +1,10 @@
 import _ from 'underscore';
 import _str from 'underscore.string';
+import api from 'api';
 import Live from 'live';
 import {getTerm} from 'entities/selector/item';
 import React from 'react';
 import SockJS from 'sockjs';
-import superagent from 'superagent';
 
 var update = React.addons.update;
 
@@ -12,15 +12,8 @@ var FETCH_SIZE = 100;
 
 var live = new Live({
   url: 'https://orgsync.com/io',
-
   socketConstructor: SockJS,
-
-  fetchAuthKey: function (cb) {
-    superagent.post('https://orgsync.com/live_key').end(function (er, res) {
-      if (er || !res.ok) return cb(er || res.body);
-      cb(null, res.text);
-    });
-  }
+  fetchAuthKey: function (cb) { cb(null, api.key); }
 });
 
 export var cache = {};

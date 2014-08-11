@@ -19,10 +19,7 @@ var SelectorIndex = React.createClass({
     return {
       value: [],
       query: '',
-      scopes: [{
-        token: '_all',
-        name: 'Everything'
-      }],
+      scopes: [],
       hiddenInputName: 'selection',
       allowArbitrary: false,
       allowBrowse: true,
@@ -221,15 +218,18 @@ var SelectorIndex = React.createClass({
 
   getSearchOptions: function () {
     var options = {
-      scopes:
-        this.state.scope.term === '_all' ?
-        _.reject(this.props.scopes, _.matches({term: '_all'})) :
-        [this.state.scope],
       indices: this.props.indices,
       fields: this.props.fields,
       indices_boost: this.props.indicesBoost,
       limit: this.props.limit
     };
+    var scope = this.state.scope;
+    if (scope) {
+      options.scopes =
+        scope.term === '_all' ?
+        _.reject(this.props.scopes, _.matches({term: '_all'})) :
+        [scope];
+    }
     if (this.state.query) options.q = this.state.query;
     return options;
   },

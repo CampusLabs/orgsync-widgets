@@ -51,12 +51,12 @@ var SelectorIndex = React.createClass({
 
   componentDidUpdate: function (__, prev) {
     if (this.state.scope !== prev.scope || this.state.query !== prev.query) {
-      this.updateResults(true);
+      this.updateResults();
     }
     if (this.isActive(prev) && !this.isActive()) this.resetActiveIndex();
   },
 
-  updateResults: function (resetActiveIndex) {
+  updateResults: function () {
     var results = store.search(this.getSearchOptions());
     var limit = this.props.limit;
     if (results.length > limit) results = results.slice(0, limit);
@@ -64,7 +64,14 @@ var SelectorIndex = React.createClass({
       results = [{name: this.state.query}].concat(results);
     }
     this.update({results: {$set: results}});
-    if (resetActiveIndex) this.resetActiveIndex(results);
+
+    // Only reset the active index if the results at or before the current
+    // active index were changed. This improves the UX by only forcing the
+    // user's selection to change when it's necessary.
+    var end = this.state.activeIndex + 1;
+    if (!_.isEqual(results.slice(0, end), this.state.results.slice(0, end))) {
+      this.resetActiveIndex(results);
+    }
   },
 
   resetActiveIndex: function (results) {
@@ -234,7 +241,7 @@ var SelectorIndex = React.createClass({
   handleFetch: function (cb, er, done, options) {
     if (er) return cb(er);
     cb(null, done);
-    this.updateResults(options.from === 0);
+    this.updateResults();
   },
 
   isSelected: function (item) {

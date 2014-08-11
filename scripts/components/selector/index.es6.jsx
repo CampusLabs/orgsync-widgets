@@ -326,7 +326,7 @@ var SelectorIndex = React.createClass({
   },
 
   renderScopes: function () {
-    if (this.props.view === 'inline') return;
+    if (this.props.view === 'inline' || this.props.scopes.length < 2) return;
     return (
       <List
         className='osw-selector-index-scopes'

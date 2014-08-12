@@ -238,7 +238,7 @@ var SelectorIndex = React.createClass({
     store.fetch(this.getSearchOptions(), _.partial(this.handleFetch, cb));
   },
 
-  handleFetch: function (cb, er, done, options) {
+  handleFetch: function (cb, er, done) {
     if (er) return cb(er);
     cb(null, done);
     this.updateResults();

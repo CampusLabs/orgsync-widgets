@@ -34,7 +34,8 @@ export default React.createClass({
       letter: '',
       query: '',
       searchableAttributes: ['name', 'short_name', 'keywords'],
-      portals: []
+      portals: [],
+      filtersAreShowing: true
     };
   },
 
@@ -124,7 +125,7 @@ export default React.createClass({
   },
 
   renderFilters: function (portals) {
-    if (!this.state.portals.length) return;
+    if (!this.state.portals.length || !this.props.filtersAreShowing) return;
     return (
       <Filters
         portals={portals}

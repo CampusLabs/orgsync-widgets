@@ -100,13 +100,13 @@ export default React.createClass({
     var tz = this.props.tz;
     var startMom = getMoment(event.starts_at, tz);
     var endMom = getMoment(event.ends_at, tz);
-    var isMultiDay = startMom.clone().add('day', 1).startOf('day') < endMom;
+    var isMultiDay = startMom.clone().add(1, 'day').startOf('day') < endMom;
     var start = startMom.format(DATE_FORMAT);
     var end, time;
     if (isAllDay(event, tz)) {
       if (isMultiDay) {
         start += ' -';
-        end = endMom.clone().subtract('day', 1).format(DATE_FORMAT);
+        end = endMom.clone().subtract(1, 'day').format(DATE_FORMAT);
       }
       time = 'All Day';
     } else {

@@ -21,7 +21,7 @@ export default React.createClass({
   getEventsForDate: function (date) {
     var dateMom = getMoment(date, this.props.tz);
     var iso = dateMom.toISOString();
-    dateMom.add('day', 1);
+    dateMom.add(1, 'day');
     var endIso = dateMom.toISOString();
     var endDate = dateMom.format('YYYY-MM-DD');
     return _.filter(this.props.events, function (event) {

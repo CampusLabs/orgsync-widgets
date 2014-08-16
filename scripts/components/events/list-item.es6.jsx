@@ -42,7 +42,7 @@ export default React.createClass({
     var eventStart = getMoment(event.starts_at, tz);
     var eventEnd = getMoment(event.ends_at, tz);
     var dateStart = getMoment(date, tz);
-    var dateEnd = dateStart.clone().add('day', 1);
+    var dateEnd = dateStart.clone().add(1, 'day');
     var startsBefore = eventStart <= dateStart;
     var endsAfter = eventEnd >= dateEnd;
     if (startsBefore && endsAfter) return 'All Day';

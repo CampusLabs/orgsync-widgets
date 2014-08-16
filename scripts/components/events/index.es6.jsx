@@ -121,7 +121,7 @@ export default React.createClass({
   },
 
   incrMonth: function (dir) {
-    var dateMom = getMoment(this.state.date, this.state.tz).add('month', dir);
+    var dateMom = getMoment(this.state.date, this.state.tz).add(dir, 'month');
     this.update({date: {$set: dateMom.format('YYYY-MM-DD')}});
   },
 

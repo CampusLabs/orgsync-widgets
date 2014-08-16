@@ -61,7 +61,7 @@ export default React.createClass({
 
   getEndTime: function () {
     var endIso = getMoment(this.props.date, this.props.tz)
-      .add('days', this.props.colSpan).toISOString();
+      .add(this.props.colSpan, 'days').toISOString();
     var event = this.state.event;
     if (event.ends_at >= endIso) return;
     return 'ends ' + this.getFormattedTime(event.ends_at);
@@ -92,7 +92,7 @@ export default React.createClass({
     var event = this.state.event;
     var tz = this.props.tz;
     var start = this.props.date;
-    var endMom = getMoment(start, tz).add('days', this.props.colSpan);
+    var endMom = getMoment(start, tz).add(this.props.colSpan, 'days');
     var end =
       event.is_all_day ?
       endMom.format('YYYY-MM-DD') :

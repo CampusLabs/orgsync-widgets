@@ -28,7 +28,7 @@ export default React.createClass({
     var now = getMoment(void 0, this.props.tz);
     options[past ? 'before' : 'after'] = now.toISOString();
     options[past ? 'after' : 'before'] =
-      now.add('years', (past ? -1 : 1) * YEAR_LIMIT).toISOString();
+      now.add((past ? -1 : 1) * YEAR_LIMIT, 'years').toISOString();
     if (past) options.direction = 'backwards';
     fetch(options, _.partial(this.handleFetch, cb));
   },
@@ -63,7 +63,7 @@ export default React.createClass({
           var key = start.format('YYYY-MM-DD');
           if (!dates[key]) dates[key] = [];
           dates[key].push(event);
-          start.add('day', 1).startOf('day');
+          start.add(1, 'day').startOf('day');
         }
         return dates;
       }, {})

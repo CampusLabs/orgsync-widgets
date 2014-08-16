@@ -55,13 +55,13 @@ export default React.createClass({
   },
 
   getEndMom: function () {
-    return this.getStartMom().add('weeks', this.props.weeks);
+    return this.getStartMom().add(this.props.weeks, 'weeks');
   },
 
   getDates: function () {
     var startMom = this.getStartMom();
     return _.times(this.props.weeks, function (n) {
-      return startMom.clone().add('weeks', n).format('YYYY-MM-DD');
+      return startMom.clone().add(n, 'weeks').format('YYYY-MM-DD');
     });
   },
 

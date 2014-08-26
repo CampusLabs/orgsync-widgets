@@ -5,11 +5,9 @@ import moment from 'moment-timezone';
 
 var PER_PAGE = 100;
 
-var cache = _.memoize(function (date, tz) {
-  return date && date.length === 10 ?
-    moment.tz(date, tz) :
-    moment.utc(date).tz(tz);
-}, function (date, tz) { return date + '/' + tz; });
+var cache = _.memoize(moment.tz, function (date, tz) {
+  return date + '/' + tz;
+});
 
 export var getMoment = function (date, tz) { return cache(date, tz).clone(); };
 

@@ -391,9 +391,17 @@ var SelectorIndex = React.createClass({
       <SelectorIndex
         view='browse'
         query={this.state.query}
-        cursors={{value: this.getCursor('value')}}
+        cursors={{
+          value: this.getCursor('value'),
+          browseIsOpen: this.getCursor('browseIsOpen')
+        }}
       />
     );
+  },
+
+  renderDoneButton: function () {
+    if (!this.state.browseIsOpen || this.props.view !== 'browse') return;
+    return <Button onClick={this.closeBrowse}>Done</Button>;
   },
 
   renderPopup: function () {
@@ -425,6 +433,7 @@ var SelectorIndex = React.createClass({
         {this.renderTokensAndQuery()}
         {this.renderScopes()}
         {this.renderResults()}
+        {this.renderDoneButton()}
         {this.renderPopup()}
       </div>
     );

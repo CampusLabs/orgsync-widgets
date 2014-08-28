@@ -11,6 +11,7 @@ var ICON_MAP = {
   Opportunity: 'event',
   PortalBookmark: 'bookmark',
   PseudoFile: 'file',
+  Search: 'magnify',
   ServicePartner: 'service',
   ServiceUmbrella: 'service',
   Student: 'person',

@@ -75,7 +75,7 @@ export var search = function (options) {
     if (!options.q) break;
     options = update(options, {q: {$set: parse(options.q.slice(0, -1))}});
   }
-  return _.unique(results);
+  return _.unique(results).slice(0, options.limit);
 };
 
 export var fetch = function (options, cb) {

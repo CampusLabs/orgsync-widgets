@@ -23,13 +23,15 @@ var SelectorIndex = React.createClass({
       hiddenInputName: 'selection',
       allowArbitrary: false,
       allowBrowse: true,
+      allowEmptyQuery: true,
       browseText: 'Browse',
       view: 'inline',
       placeholder: 'Search...',
       renderPageSize: 20,
       indices: ['_all'],
       fields: ['name'],
-      limit: Infinity
+      limit: Infinity,
+      search: store.search
     };
   },
 
@@ -46,6 +48,10 @@ var SelectorIndex = React.createClass({
     };
   },
 
+  componentDidMount: function () {
+    this.updateResults();
+  },
+
   componentDidUpdate: function (__, prev) {
     if (this.state.scope !== prev.scope || this.state.query !== prev.query) {
       this.updateResults();
@@ -54,9 +60,7 @@ var SelectorIndex = React.createClass({
   },
 
   updateResults: function () {
-    var results = store.search(this.getSearchOptions());
-    var limit = this.props.limit;
-    if (results.length > limit) results = results.slice(0, limit);
+    var results = this.props.search(this.getSearchOptions());
     if (this.props.allowArbitrary && store.parse(this.state.query)) {
       results = [{name: this.state.query}].concat(results);
     }
@@ -279,7 +283,7 @@ var SelectorIndex = React.createClass({
   },
 
   renderBrowseButton: function () {
-    if (this.props.view === 'browse') return;
+    if (this.props.view === 'browse' || !this.props.allowBrowse) return;
     return (
       <Button
         className='osw-selector-index-browse-button'
@@ -363,7 +367,10 @@ var SelectorIndex = React.createClass({
   },
 
   renderResults: function () {
-    if (this.props.view === 'inline' && !this.isActive()) return;
+    if (this.props.view === 'inline' && (
+          !this.isActive() ||
+          (!this.state.query.trim() && !this.props.allowEmptyQuery)
+        )) return;
     var key = store.getQueryKey(this.getSearchOptions());
     return (
       <List

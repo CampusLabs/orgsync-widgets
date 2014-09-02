@@ -225,7 +225,8 @@ var SelectorIndex = React.createClass({
       indices: this.props.indices,
       fields: this.props.fields,
       indices_boost: this.props.indicesBoost,
-      limit: this.props.limit
+      limit: this.props.limit,
+      school_id: this.props.schoolId
     };
     var scope = this.state.scope;
     if (scope) {

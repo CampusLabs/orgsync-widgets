@@ -37,6 +37,7 @@ var filter = function (item, q, options) {
 
 export var getQueryKey = function (options) {
   return _.compact([
+    (options.school_id || '_all'),
     (options.scopes || []).map(getTerm).sort().join() || '_all',
     (options.indices || []).slice().sort().join() || '_all',
     _.invoke(_.pairs(options.indices_boost), 'join', '=').sort().join() ||

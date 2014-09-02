@@ -4,15 +4,13 @@ import api from 'api';
 import Live from 'live';
 import {getTerm} from 'entities/selector/item';
 import React from 'react';
-import SockJS from 'sockjs';
 
 var update = React.addons.update;
 
 var FETCH_SIZE = 100;
 
 var live = new Live({
-  url: 'https://orgsync.com/io',
-  socketConstructor: SockJS,
+  url: 'wss://orgsync.com/io/websocket',
   fetchAuthKey: function (cb) { cb(null, api.key); }
 });
 

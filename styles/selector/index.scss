@@ -75,12 +75,14 @@
   .osw-selector-index-loading,
   .osw-selector-index-empty {
     background: #eee;
+    font-size: 14px;
     padding: 5px;
   }
 
   .osw-selector-index-error {
     background: $red;
     color: #fff;
+    font-size: 14px;
     padding: 5px;
   }
 

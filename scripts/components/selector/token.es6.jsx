@@ -9,9 +9,14 @@ import {getIconName} from 'entities/selector/item';
 export default React.createClass({
   mixins: [Cursors],
 
+  getClassName: function () {
+    return 'osw-selector-token osw-selector-token-type-' +
+      getIconName(this.props.item);
+  },
+
   render: function () {
     return (
-      <div className='osw-selector-token'>
+      <div className={this.getClassName()}>
         <Icon
           className='osw-selector-token-remove'
           name='delete'

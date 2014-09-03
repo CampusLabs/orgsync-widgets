@@ -8,11 +8,12 @@
   }
 
   .osw-selector-index-inline .osw-selector-index-results {
+    @include border-bottom-radius($border-radius);
     background: #fff;
     border: 1px solid #eee;
     border-top: 0;
     left: 10px;
-    max-height: 250px;
+    max-height: 264px;
     position: absolute;
     right: 10px;
     z-index: 1;
@@ -31,7 +32,13 @@
 
   .osw-selector-index-tokens-and-query {
     border: 1px solid #eee;
+    border-radius: $border-radius;
     padding: 5px;
+  }
+
+  .osw-selector-index-inline.osw-selector-index-results-visible
+  .osw-selector-index-tokens-and-query {
+    @include border-bottom-radius(0);
   }
 
   .osw-selector-index-browse-button {

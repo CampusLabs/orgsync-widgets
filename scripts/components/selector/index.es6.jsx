@@ -194,6 +194,9 @@ var SelectorIndex = React.createClass({
       'osw-selector-index-' + this.props.view
     ];
     if (this.isActive()) classes.push('osw-selector-index-active');
+    if (this.shouldShowResults()) {
+      classes.push('osw-selector-index-results-visible');
+    }
     return classes.join(' ');
   },
 
@@ -247,6 +250,12 @@ var SelectorIndex = React.createClass({
     if (er) return cb(er);
     cb(null, done);
     this.updateResults();
+  },
+
+  shouldShowResults: function () {
+    return this.props.view === 'browse' || (
+      this.isActive() && (this.state.query.trim() || this.props.allowEmptyQuery)
+    );
   },
 
   isSelected: function (item) {
@@ -364,10 +373,7 @@ var SelectorIndex = React.createClass({
   },
 
   renderResults: function () {
-    if (this.props.view === 'inline' && (
-          !this.isActive() ||
-          (!this.state.query.trim() && !this.props.allowEmptyQuery)
-        )) return;
+    if (!this.shouldShowResults()) return;
     var key = store.getQueryKey(this.getSearchOptions());
     return (
       <List

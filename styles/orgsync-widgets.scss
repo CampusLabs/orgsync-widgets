@@ -6,7 +6,6 @@
 @import 'bower_components/velcro/styles/syncdings';
 
 .orgsync-widget {
-  color: $grey-darkest;
   font-size: 12px;
   word-wrap: break-word;
 
@@ -14,7 +13,8 @@
   input,
   select,
   textarea {
-    font-family: Helvetica, Arial, FreeSans, Clean, sans-serif;
+    color: $global-font-color;
+    font-family: $global-font-family;
   }
 
   *, *:before, *:after {

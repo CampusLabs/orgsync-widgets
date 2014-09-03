@@ -5,26 +5,34 @@
     @include user-select(none);
     background: #fff;
     cursor: pointer;
+    font-size: 14px;
 
     &.osw-selector-result-selected {
-      background: $grey-lightest;
-      color: $grey-darker;
+      background: $highlight-color;
     }
 
     &.osw-selector-result-active {
-      background: $blue-darkest;
-      color: #fff;
-
-      &.osw-selector-result-selected {
-        background: $blue;
-      }
+      background: $grey-lighter;
     }
+  }
+
+  .osw-selector-result-icon {
+    background: $slate-darkest;
+    border-radius: $border-radius;
+    color: #fff;
+    float: left;
+    font-size: 18px;
+    line-height: 20px;
+    padding-bottom: 2px;
+    text-align: center;
+    width: 22px;
   }
 
   .osw-selector-index-inline {
     .osw-selector-result {
       border-top: 1px solid #eee;
       padding: 5px;
+      white-space: nowrap;
 
       &:first-child {
         border-top: 0;
@@ -38,14 +46,9 @@
 
     .osw-selector-result-name {
       @include ellipsis;
-      padding-left: 15px;
+      line-height: 22px;
+      padding-left: 5px;
       position: relative;
-
-      .oswi {
-        position: absolute;
-        top: -2px;
-        left: 0;
-      }
     }
   }
 

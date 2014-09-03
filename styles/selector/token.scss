@@ -5,8 +5,10 @@
     @include box-sizing(border-box);
     @include ellipsis;
     @include user-select(none);
-    background: #eee;
+    background: $slate-darkest;
     border: 2px solid #fff;
+    border-radius: $border-radius;
+    color: #fff;
     display: inline-block;
     max-width: 100%;
     padding: 3px;

@@ -1,0 +1,89 @@
+@import '../config';
+
+.orgsync-widget {
+
+  .osw-selector-token-type-bookmark,
+  .osw-selector-result-type-bookmark .osw-selector-result-icon {
+    background: $color-bookmarks;
+  }
+
+  .osw-selector-token-type-contact-book,
+  .osw-selector-result-type-contact-book .osw-selector-result-icon {
+    background: $color-contact-books;
+  }
+
+  .osw-selector-token-type-communication,
+  .osw-selector-result-type-communication .osw-selector-result-icon {
+    background: $color-discussions;
+  }
+
+  .osw-selector-token-type-event,
+  .osw-selector-result-type-event .osw-selector-result-icon {
+    background: $color-events;
+  }
+
+  .osw-selector-token-type-file,
+  .osw-selector-result-type-file .osw-selector-result-icon {
+    background: $color-files;
+  }
+
+  .osw-selector-token-type-form,
+  .osw-selector-result-type-form .osw-selector-result-icon {
+    background: $color-forms;
+  }
+
+  .osw-selector-token-type-messaging,
+  .osw-selector-result-type-messaging .osw-selector-result-icon {
+    background: $color-messaging;
+  }
+
+  .osw-selector-token-type-news,
+  .osw-selector-result-type-news .osw-selector-result-icon {
+    background: $color-news;
+  }
+
+  .osw-selector-token-type-page,
+  .osw-selector-result-type-page .osw-selector-result-icon {
+    background: $color-pages;
+  }
+
+  .osw-selector-token-type-payment,
+  .osw-selector-result-type-payment .osw-selector-result-icon {
+    background: $color-payments;
+  }
+
+  .osw-selector-token-type-people,
+  .osw-selector-result-type-people .osw-selector-result-icon {
+    background: $color-people;
+  }
+
+  .osw-selector-token-type-photo,
+  .osw-selector-result-type-photo .osw-selector-result-icon {
+    background: $color-photos;
+  }
+
+  .osw-selector-token-type-poll,
+  .osw-selector-result-type-poll .osw-selector-result-icon {
+    background: $color-polls;
+  }
+
+  .osw-selector-token-type-organization,
+  .osw-selector-result-type-organization .osw-selector-result-icon {
+    background: $color-portal;
+  }
+
+  .osw-selector-token-type-service,
+  .osw-selector-result-type-service .osw-selector-result-icon {
+    background: $color-service;
+  }
+
+  .osw-selector-token-type-video,
+  .osw-selector-result-type-video .osw-selector-result-icon {
+    background: $color-videos;
+  }
+
+  .osw-selector-token-type-website,
+  .osw-selector-result-type-website .osw-selector-result-icon {
+    background: $color-website;
+  }
+}

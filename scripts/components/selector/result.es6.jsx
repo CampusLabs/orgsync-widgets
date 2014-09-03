@@ -1,6 +1,5 @@
 /** @jsx React.DOM */
 
-import _str from 'underscore.string';
 import Cursors from 'cursors';
 import Icon from 'components/icon';
 import {isArbitrary, getIconName} from 'entities/selector/item';
@@ -10,10 +9,9 @@ export default React.createClass({
   mixins: [Cursors],
 
   className: function () {
-    var type = this.props.item.type || 'Arbitrary';
     var classes = [
       'osw-selector-result',
-      'osw-selector-result-type' + _str.dasherize(type)
+      'osw-selector-result-type-' + getIconName(this.props.item)
     ];
     if (this.props.selected) classes.push('osw-selector-result-selected');
     if (this.props.active) classes.push('osw-selector-result-active');
@@ -46,9 +44,8 @@ export default React.createClass({
           className='osw-selector-result-image'
           style={this.getImageStyle()}
         />
-        <div className='osw-selector-result-name'>
-          {this.getIcon()}{this.getName()}
-        </div>
+        <div className='osw-selector-result-icon'>{this.getIcon()}</div>
+        <div className='osw-selector-result-name'>{this.getName()}</div>
       </div>
     );
   }

@@ -21,7 +21,7 @@
     "tinycolor": "1.0.0",
     "underscore": "1.7.0",
     "underscore.string": "2.3.3",
-    "velcro": "d51e7f01d5"
+    "velcro": "d73b13b83c636aec5f151804e255af789db6c165"
   },
   "ignore": [
     "images",

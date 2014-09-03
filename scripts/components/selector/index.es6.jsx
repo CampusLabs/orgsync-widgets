@@ -364,6 +364,10 @@ var SelectorIndex = React.createClass({
     );
   },
 
+  renderLoading: function () {
+    return <div className='osw-selector-index-loading'>Loading...</div>;
+  },
+
   renderEmpty: function () {
     return <div className='osw-selector-index-empty'>No results found.</div>;
   },
@@ -382,7 +386,7 @@ var SelectorIndex = React.createClass({
         className='osw-selector-index-results'
         items={this.state.results}
         renderItem={this.renderResult}
-        renderLoading={_.noop}
+        renderLoading={this.renderLoading}
         renderEmpty={this.renderEmpty}
         renderError={this.renderError}
         fetch={this.fetch}

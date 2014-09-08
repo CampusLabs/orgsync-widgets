@@ -17,17 +17,19 @@ export default React.createClass({
   render: function () {
     return (
       <div className={this.getClassName()}>
-        <Icon
-          className='osw-selector-token-remove'
-          name='delete'
-          onClick={this.props.onRemoveClick}
-        />
-        <div className='osw-selector-token-name'>
+        <div className='osw-selector-token-content'>
           <Icon
-            className='osw-selector-token-icon'
-            name={getIconName(this.props.item)}
+            className='osw-selector-token-remove'
+            name='delete'
+            onClick={this.props.onRemoveClick}
           />
-          {this.props.item.name}
+          <div className='osw-selector-token-name'>
+            <Icon
+              className='osw-selector-token-icon'
+              name={getIconName(this.props.item)}
+            />
+            {this.props.item.name}
+          </div>
         </div>
       </div>
     );

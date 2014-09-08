@@ -4,23 +4,25 @@
   .osw-selector-token {
     @include box-sizing(border-box);
     @include user-select(none);
-    background: $slate-darkest;
-    border: 2px solid #fff;
     border-radius: $border-radius;
     color: #fff;
     display: inline-block;
     max-width: 33.3%;
-    padding: 3px 6px;
+    padding: 2px;
     vertical-align: bottom;
+  }
 
-    .oswi {
-      position: relative;
-      top: -1px;
-    }
+  .osw-selector-token-content {
+    background: $slate-darkest;
+    border-radius: $border-radius;
+    color: #fff;
+    padding: 3px 6px;
   }
 
   .osw-selector-token-icon {
     margin-right: 3px;
+    position: relative;
+    top: -1px;
   }
 
   .osw-selector-token-name {
@@ -31,5 +33,7 @@
     cursor: pointer;
     float: right;
     padding-left: 3px;
+    position: relative;
+    top: -1px;
   }
 }

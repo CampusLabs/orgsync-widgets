@@ -57,8 +57,8 @@
     > .osw-selector-index-results {
       .osw-selector-result {
         @include box-sizing(border-box);
-        vertical-align: bottom;
         padding: 5px;
+        vertical-align: bottom;
 
         &.osw-selector-result-active .osw-selector-result-content {
           background: $grey-lighter;

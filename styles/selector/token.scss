@@ -11,7 +11,13 @@
     color: #fff;
     display: inline-block;
     max-width: 33.3%;
-    padding: 3px;
+    padding: 3px 6px;
+    vertical-align: bottom;
+
+    .oswi {
+      position: relative;
+      top: -1px;
+    }
   }
 
   .osw-selector-token-icon {

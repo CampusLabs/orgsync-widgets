@@ -25,11 +25,6 @@ export default React.createClass({
     return {backgroundImage: "url('" + src + "')"};
   },
 
-  getIcon: function () {
-    var name = this.props.selected ? 'delete' : getIconName(this.props.item);
-    return <Icon name={name} />;
-  },
-
   getName: function () {
     var item = this.props.item;
     var name = item.name;
@@ -37,15 +32,28 @@ export default React.createClass({
     return isArbitrary(item) ? verb + ' "' + name + '"...' : name;
   },
 
+  renderIcon: function () {
+    var name = this.props.selected ? 'delete' : getIconName(this.props.item);
+    return <div className='osw-selector-result-icon'><Icon name={name} /></div>;
+  },
+
   render: function () {
     return (
       <div className={this.className()} onClick={this.props.onClick}>
-        <div
-          className='osw-selector-result-image'
-          style={this.getImageStyle()}
-        />
-        <div className='osw-selector-result-icon'>{this.getIcon()}</div>
-        <div className='osw-selector-result-name'>{this.getName()}</div>
+        <div className='osw-selector-result-content'>
+          <div
+            className='osw-selector-result-image'
+            style={this.getImageStyle()}
+          >
+            {this.props.item.image_url ? null : this.renderIcon()}
+          </div>
+          <div className='osw-selector-result-info'>
+            <div className='osw-selector-result-name'>{this.getName()}</div>
+            <div className='osw-selector-result-type'>
+              {this.props.item.type}
+            </div>
+          </div>
+        </div>
       </div>
     );
   }

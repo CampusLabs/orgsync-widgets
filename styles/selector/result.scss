@@ -1,106 +1,135 @@
 @import '../config';
 
 .orgsync-widget {
-  .osw-selector-result {
+  .osw-selector-result-content {
+    @include clearfix;
     @include user-select(none);
     background: #fff;
     cursor: pointer;
     font-size: 14px;
-
-    &.osw-selector-result-selected {
-      background: $highlight-color;
-    }
-
-    &.osw-selector-result-active {
-      background: $grey-lighter;
-    }
-  }
-
-  .osw-selector-result-icon {
-    background: $slate-darkest;
-    border-radius: $border-radius;
-    color: #fff;
-    float: left;
-    font-size: 18px;
-    line-height: 20px;
-    padding-bottom: 2px;
-    text-align: center;
-    width: 22px;
   }
 
   .osw-selector-index-inline {
-    .osw-selector-result {
-      border-top: 1px solid #eee;
-      padding: 5px;
-      white-space: nowrap;
-
-      &:first-child {
-        border-top: 0;
-        padding-top: 6px;
+    > .osw-selector-index-results {
+      .osw-selector-result-content {
+        border-top: 1px solid #eee;
+        padding: 5px;
+        white-space: nowrap;
       }
-    }
 
-    .osw-selector-result-image {
-      display: none;
-    }
+      .osw-selector-result {
+        &:first-child .osw-selector-result-content {
+          border-top: 0;
+          padding-top: 6px;
+        }
 
-    .osw-selector-result-name {
-      @include ellipsis;
-      line-height: 22px;
-      padding-left: 5px;
-      position: relative;
+        &.osw-selector-result-selected .osw-selector-result-content {
+          background: $highlight-color;
+        }
+
+        &.osw-selector-result-active .osw-selector-result-content {
+          background: $grey-lighter;
+        }
+      }
+
+      .osw-selector-result-image {
+        width: 22px;
+      }
+
+      .osw-selector-result-icon {
+        font-size: 18px;
+        text-align: center;
+      }
+
+      .osw-selector-result-name {
+        @include ellipsis;
+        line-height: 22px;
+        position: relative;
+      }
+
+      .osw-selector-result-type {
+        display: none;
+      }
     }
   }
 
   .osw-selector-index-browse {
-    .osw-selector-result {
-      @include box-sizing(border-box);
-      border: 5px solid #eee;
-      position: relative;
-      text-align: center;
-      vertical-align: top;
-    }
-
-    .osw-selector-result-image {
-      background-position: center;
-      background-repeat: no-repeat;
-      background-size: contain;
-
-      &:before {
-        content: '';
-        display: block;
-        padding-top: 100%;
-      }
-    }
-
-    .osw-selector-result-name {
-      font-weight: bold;
-      height: 30px;
-      margin: 5px;
-      overflow: hidden;
-
-      .oswi {
-        background: #fff;
-        color: $grey-darkest;
-        font-size: 20px;
-        left: -5px;
+    > .osw-selector-index-results {
+      .osw-selector-result {
+        @include box-sizing(border-box);
+        vertical-align: bottom;
         padding: 5px;
-        position: absolute;
-        top: -5px;
+
+        &.osw-selector-result-active .osw-selector-result-content {
+          background: $grey-lighter;
+        }
+      }
+
+      .osw-selector-result-content {
+        border-radius: $border-radius;
+        padding: 10px;
+      }
+
+      .osw-selector-result-image {
+        font-size: 30px;
+        width: 44px;
+        margin-right: 5px;
+      }
+
+      .osw-selector-result-icon {
+        top: 3px;
+      }
+
+      .osw-selector-result-name {
+        @include ellipsis;
+        font-weight: bold;
+        overflow: hidden;
+      }
+
+      .osw-selector-result-info {
+        padding-top: 4px;
+        line-height: 18px;
       }
     }
   }
 
-  &[min-width~='461px'] .osw-selector-index-browse .osw-selector-result {
+  .osw-selector-result-info {
+    margin-left: 5px;
+    overflow: hidden;
+  }
+
+  .osw-selector-result-image {
+    background-color: $slate-darkest;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+    border-radius: $border-radius;
+    color: #fff;
+    float: left;
+    margin-right: 5px;
+    position: relative;
+
+    &:before {
+      content: '';
+      display: block;
+      padding-top: 100%;
+    }
+  }
+
+  .osw-selector-result-icon {
+    color: #fff;
+    position: absolute;
+    text-align: center;
+    top: 0;
+    width: 100%;
+  }
+
+  &[min-width~='691px'] .osw-selector-index-browse .osw-selector-result {
     display: inline-block;
     width: 50%;
   }
 
-  &[min-width~='691px'] .osw-selector-index-browse .osw-selector-result {
-    width: 33.3%;
-  }
-
   &[min-width~='921px'] .osw-selector-index-browse .osw-selector-result {
-    width: 25%;
+    width: 33.3%;
   }
 }

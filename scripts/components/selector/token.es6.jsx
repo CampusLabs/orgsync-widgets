@@ -22,11 +22,13 @@ export default React.createClass({
           name='delete'
           onClick={this.props.onRemoveClick}
         />
-        <Icon
-          className='osw-selector-token-icon'
-          name={getIconName(this.props.item)}
-        />
-        <div className='osw-selector-token-name'>{this.props.item.name}</div>
+        <div className='osw-selector-token-name'>
+          <Icon
+            className='osw-selector-token-icon'
+            name={getIconName(this.props.item)}
+          />
+          {this.props.item.name}
+        </div>
       </div>
     );
   }

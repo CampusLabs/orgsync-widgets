@@ -3,7 +3,6 @@
 .orgsync-widget {
   .osw-selector-token {
     @include box-sizing(border-box);
-    @include ellipsis;
     @include user-select(none);
     background: $slate-darkest;
     border: 2px solid #fff;
@@ -25,7 +24,7 @@
   }
 
   .osw-selector-token-name {
-    display: inline;
+    @include ellipsis;
   }
 
   .osw-selector-token-remove {

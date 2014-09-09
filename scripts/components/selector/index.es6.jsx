@@ -65,7 +65,9 @@ var SelectorIndex = React.createClass({
     if (this.props.allowArbitrary && q) {
       results = [{name: this.state.query}].concat(results);
     }
-    if (!q) results = _.reject(this.props.scopes, isArbitrary).concat(results);
+    if (this.props.view === 'inline' && !q) {
+      results = _.reject(this.props.scopes, isArbitrary).concat(results);
+    }
     this.update({results: {$set: results}});
 
     // Only reset the active index if the results at or before the current
@@ -236,7 +238,7 @@ var SelectorIndex = React.createClass({
     var scope = this.state.scope;
     if (scope) {
       options.scopes =
-        scope.term === '_all' ?
+        this.props.view === 'inline' || scope.term === '_all' ?
         _.reject(this.props.scopes, _.matches({term: '_all'})) :
         [scope];
     }

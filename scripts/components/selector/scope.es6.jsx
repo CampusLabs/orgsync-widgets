@@ -5,23 +5,33 @@ import React from 'react';
 
 import {isArbitrary} from 'entities/selector/item';
 
+var STOP_PROPAGATION = function (ev) {
+  ev.stopPropagation();
+};
+
 export default React.createClass({
   mixins: [Cursors],
 
-  handleToggleClick: function (ev) {
-    ev.stopPropagation();
+  handleChange: function () {
     this.props.onResultClick(this.props.scope);
   },
 
   getClassName: function () {
     var classes = ['osw-selector-scope'];
-    if (this.props.selected) classes.push('osw-selector-scope-selected');
+    if (this.props.isActive) classes.push('osw-selector-scope-active');
     return classes.join(' ');
   },
 
   renderToggle: function () {
     if (isArbitrary(this.props.scope)) return;
-    return <span onClick={this.handleToggleClick}>Toggle</span>;
+    return (
+      <input
+        type='checkbox'
+        checked={this.props.isSelected}
+        onChange={this.handleChange}
+        onClick={STOP_PROPAGATION}
+      />
+    );
   },
 
   render: function () {

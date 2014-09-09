@@ -339,13 +339,14 @@ var SelectorIndex = React.createClass({
         scope={scope}
         onClick={_.partial(this.handleScopeClick, scope)}
         onResultClick={this.handleResultClick}
-        selected={scope === this.state.scope}
+        isSelected={this.isSelected(scope)}
+        isActive={scope === this.state.scope}
       />
     );
   },
 
   renderScopes: function () {
-    if (this.props.view === 'inline' || this.props.scopes.length < 2) return;
+    if (this.props.view === 'inline') return;
     return (
       <List
         className='osw-selector-index-scopes'
@@ -353,6 +354,7 @@ var SelectorIndex = React.createClass({
         renderItem={this.renderScope}
         uniform={true}
         updateForScope={this.state.scope}
+        updateForValue={this.state.value}
       />
     );
   },
@@ -363,8 +365,8 @@ var SelectorIndex = React.createClass({
         key={i}
         item={item}
         onClick={_.partial(this.handleResultClick, item)}
-        selected={this.isSelected(item)}
-        active={this.state.results.indexOf(item) === this.state.activeIndex}
+        isSelected={this.isSelected(item)}
+        isActive={this.state.results.indexOf(item) === this.state.activeIndex}
       />
     );
   },

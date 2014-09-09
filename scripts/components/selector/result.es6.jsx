@@ -13,8 +13,8 @@ export default React.createClass({
       'osw-selector-result',
       'osw-selector-result-type-' + getIconName(this.props.item)
     ];
-    if (this.props.selected) classes.push('osw-selector-result-selected');
-    if (this.props.active) classes.push('osw-selector-result-active');
+    if (this.props.isSelected) classes.push('osw-selector-result-selected');
+    if (this.props.isActive) classes.push('osw-selector-result-active');
     return classes.join(' ');
   },
 
@@ -28,12 +28,12 @@ export default React.createClass({
   getName: function () {
     var item = this.props.item;
     var name = item.name;
-    var verb = this.props.selected ? 'Remove' : 'Add';
+    var verb = this.props.isSelected ? 'Remove' : 'Add';
     return isArbitrary(item) ? verb + ' "' + name + '"...' : name;
   },
 
   renderIcon: function () {
-    var name = this.props.selected ? 'delete' : getIconName(this.props.item);
+    var name = this.props.isSelected ? 'delete' : getIconName(this.props.item);
     return <div className='osw-selector-result-icon'><Icon name={name} /></div>;
   },
 

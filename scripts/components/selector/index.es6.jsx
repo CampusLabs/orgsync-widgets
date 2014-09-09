@@ -61,9 +61,11 @@ var SelectorIndex = React.createClass({
 
   updateResults: function () {
     var results = this.props.search(this.getSearchOptions());
-    if (this.props.allowArbitrary && store.parse(this.state.query)) {
+    var q = store.parse(this.state.query);
+    if (this.props.allowArbitrary && q) {
       results = [{name: this.state.query}].concat(results);
     }
+    if (!q) results = _.reject(this.props.scopes, isArbitrary).concat(results);
     this.update({results: {$set: results}});
 
     // Only reset the active index if the results at or before the current

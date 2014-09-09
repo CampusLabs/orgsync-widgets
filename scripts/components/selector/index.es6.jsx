@@ -289,6 +289,7 @@ var SelectorIndex = React.createClass({
   },
 
   renderTokens: function () {
+    if (this.props.view === 'browse') return;
     return (
       <div className='osw-selector-index-tokens'>
         {this.state.value.map(this.renderToken)}

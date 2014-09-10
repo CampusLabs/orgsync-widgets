@@ -22,11 +22,11 @@
     }
 
     .osw-selector-result-selected .osw-selector-result-content {
-      background: $highlight-color;
+      opacity: .5;
     }
 
     .osw-selector-result-active .osw-selector-result-content {
-      background: $grey-lighter;
+      background: $highlight-color;
     }
 
     .osw-selector-result-image {
@@ -56,8 +56,13 @@
       vertical-align: bottom;
     }
 
+    .osw-selector-result-selected .osw-selector-result-content {
+      opacity: .5;
+    }
+
     .osw-selector-result-active .osw-selector-result-content {
-      background: $grey-lighter;
+      padding: 8px;
+      border: 2px solid $blue-darkest;
     }
 
     .osw-selector-result-content {

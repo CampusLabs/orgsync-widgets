@@ -42,7 +42,7 @@
   .osw-selector-index-browse {
     .osw-selector-index-right {
       padding: 5px;
-      background: $grey;
+      background: $grey-lighter;
     }
 
     .osw-selector-index-tokens-and-query {
@@ -51,7 +51,7 @@
 
     .osw-selector-index-results {
       @include box-sizing(border-box);
-      background: $grey;
+      background: $grey-lighter;
       height: 500px;
     }
   }
@@ -101,10 +101,6 @@
   .osw-selector-index-finish-buttons {
     margin-top: 10px;
     text-align: right;
-  }
-
-  .osw-selector-index-done {
-    margin-left: 10px;
   }
 
   .osw-selector-index-popup {

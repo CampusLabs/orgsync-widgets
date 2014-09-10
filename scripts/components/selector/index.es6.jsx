@@ -346,7 +346,6 @@ var SelectorIndex = React.createClass({
   },
 
   renderScopes: function () {
-    if (this.props.view === 'inline') return;
     return (
       <List
         className='osw-selector-index-scopes'
@@ -421,7 +420,7 @@ var SelectorIndex = React.createClass({
   },
 
   renderDoneButton: function () {
-    if (!this.state.browseIsOpen || this.props.view !== 'browse') return;
+    if (!this.state.browseIsOpen) return;
     return <Button onClick={this.closeBrowse}>Done</Button>;
   },
 
@@ -439,22 +438,41 @@ var SelectorIndex = React.createClass({
     );
   },
 
-  render: function () {
+  renderLeft: function () {
+    if (this.props.view === 'inline') return;
     return (
-      <div
-        className={this.getClassName()}
-        onClick={this.handleClick}
-        onFocus={this.handleFocus}
-        onBlur={this.handleBlur}
-        onMouseOver={this.handleMouseOver}
-        onMouseLeave={this.handleMouseLeave}
-        onKeyDown={this.handleKeyDown}
-      >
+      <div className='osw-selector-index-left'>
+        {this.renderScopes()}
+        {this.renderDoneButton()}
+      </div>
+    );
+  },
+
+  renderRight: function () {
+    return (
+      <div className='osw-selector-index-right'>
         {this.renderHiddenInput()}
         {this.renderTokensAndQuery()}
-        {this.renderScopes()}
         {this.renderResults()}
-        {this.renderDoneButton()}
+      </div>
+    );
+  },
+
+  render: function () {
+    return (
+      <div>
+        <div
+          className={this.getClassName()}
+          onClick={this.handleClick}
+          onFocus={this.handleFocus}
+          onBlur={this.handleBlur}
+          onMouseOver={this.handleMouseOver}
+          onMouseLeave={this.handleMouseLeave}
+          onKeyDown={this.handleKeyDown}
+        >
+          {this.renderLeft()}
+          {this.renderRight()}
+        </div>
         {this.renderPopup()}
       </div>
     );

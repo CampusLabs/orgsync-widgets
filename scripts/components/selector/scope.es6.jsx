@@ -38,7 +38,6 @@ export default React.createClass({
     return (
       <div className={this.getClassName()} onClick={this.props.onClick}>
         {this.renderToggle()}
-        {' '}
         {this.props.scope.name}
       </div>
     );

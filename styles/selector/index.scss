@@ -2,43 +2,64 @@
 
 .orgsync-widget {
   .osw-selector-index {
-    padding: 10px;
     position: relative;
     text-align: left;
   }
 
-  .osw-selector-index-inline .osw-selector-index-results {
-    @include border-bottom-radius($border-radius);
-    background: #fff;
-    border: 1px solid #eee;
-    border-top: 0;
-    left: 10px;
-    max-height: 264px;
-    position: absolute;
-    right: 10px;
-    z-index: 1;
+  .osw-selector-index-left {
+    float: left;
+    width: 200px;
   }
 
-  .osw-selector-index-browse .osw-selector-index-results {
-    @include box-sizing(border-box);
-    background: #eee;
-    border: 5px solid #eee;
-    display: inline-block;
-    height: 500px;
-    position: relative;
-    vertical-align: top;
-    width: 75%;
+  .osw-selector-index-right {
+    overflow: auto;
+  }
+
+  .osw-selector-index-inline {
+    padding: 10px;
+
+    &.osw-selector-index-results-visible .osw-selector-index-tokens-and-query {
+      @include border-bottom-radius(0);
+    }
+
+    .osw-selector-index-results {
+      @include border-bottom-radius($border-radius);
+      background: #fff;
+      border: 1px solid #eee;
+      border-top: 0;
+      left: 10px;
+      max-height: 264px;
+      position: absolute;
+      right: 10px;
+      z-index: 1;
+    }
+
+    .osw-selector-index-tokens-and-query {
+      border: 1px solid #eee;
+    }
+  }
+
+  .osw-selector-index-browse {
+    .osw-selector-index-right {
+      padding: 5px;
+      background: $grey;
+    }
+
+    .osw-selector-index-tokens-and-query {
+      margin: 5px;
+    }
+
+    .osw-selector-index-results {
+      @include box-sizing(border-box);
+      background: $grey;
+      height: 500px;
+    }
   }
 
   .osw-selector-index-tokens-and-query {
-    border: 1px solid #eee;
+    background: #fff;
     border-radius: $border-radius;
     padding: 5px;
-  }
-
-  .osw-selector-index-inline.osw-selector-index-results-visible
-  .osw-selector-index-tokens-and-query {
-    @include border-bottom-radius(0);
   }
 
   .osw-selector-index-browse-button {
@@ -57,15 +78,6 @@
       padding: 5px;
       width: 100%;
     }
-  }
-
-  .osw-selector-index-scopes {
-    display: inline-block;
-    height: 500px;
-    overflow: auto;
-    position: relative;
-    vertical-align: top;
-    width: 25%;
   }
 
   .osw-selector-index-results {

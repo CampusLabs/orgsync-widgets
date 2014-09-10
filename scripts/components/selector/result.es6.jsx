@@ -33,8 +33,11 @@ export default React.createClass({
   },
 
   renderIcon: function () {
-    var name = this.props.isSelected ? 'delete' : getIconName(this.props.item);
-    return <div className='osw-selector-result-icon'><Icon name={name} /></div>;
+    return (
+      <div className='osw-selector-result-icon'>
+        <Icon name={getIconName(this.props.item)} />
+      </div>
+    );
   },
 
   render: function () {

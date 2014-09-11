@@ -108,10 +108,6 @@ var SelectorIndex = React.createClass({
       if (ev.which === 78) key = 'ArrowDown';
     }
     switch (key) {
-    case 'Backspace':
-      var value = this.state.value;
-      if (!query && value.length) return this.removeValue(_.last(value));
-      break;
     case 'Enter':
       var activeItem = this.state.results[this.state.activeIndex];
       if (!activeItem) break;

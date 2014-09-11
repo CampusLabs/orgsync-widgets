@@ -14,6 +14,10 @@ import {isArbitrary} from 'entities/selector/item';
 
 var SELECTED_SCOPE = {name: 'Selected', term: '_selected'};
 
+var DOWNCASE = function (str) { return str.toLowerCase(); };
+
+var NAME_COMPARATOR = _.compose(DOWNCASE, _.property('name'));
+
 var SelectorIndex = React.createClass({
   mixins: [Cursors],
 
@@ -46,7 +50,7 @@ var SelectorIndex = React.createClass({
       query: this.props.query,
       results: [],
       scope: this.props.scopes[0],
-      value: _.sortBy(this.props.value, 'name')
+      value: _.sortBy(this.props.value, NAME_COMPARATOR)
     };
   },
 
@@ -164,7 +168,7 @@ var SelectorIndex = React.createClass({
   addValue: function (item) {
     var value = this.state.value;
     if (_.any(value, _.matches(item))) return;
-    this.update({value: {$set: _.sortBy(value.concat(item), 'name')}});
+    this.update({value: {$set: _.sortBy(value.concat(item), NAME_COMPARATOR)}});
   },
 
   removeValue: function (item) {

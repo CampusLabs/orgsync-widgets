@@ -37,12 +37,23 @@
     .osw-selector-index-tokens-and-query {
       border: 1px solid #eee;
     }
+
+    .osw-selector-index-loading,
+    .osw-selector-index-empty,
+    .osw-selector-index-error {
+      padding: 5px;
+    }
+
+    .osw-selector-index-loading,
+    .osw-selector-index-empty {
+      background: #eee;
+    }
   }
 
   .osw-selector-index-browse {
     .osw-selector-index-right {
-      padding: 5px;
       background: $grey-lighter;
+      padding: 5px;
     }
 
     .osw-selector-index-tokens-and-query {
@@ -53,6 +64,19 @@
       @include box-sizing(border-box);
       background: $grey-lighter;
       height: 500px;
+    }
+
+    .osw-selector-index-loading,
+    .osw-selector-index-empty,
+    .osw-selector-index-error {
+      border-radius: $border-radius;
+      margin: 5px;
+      padding: 10px;
+    }
+
+    .osw-selector-index-loading,
+    .osw-selector-index-empty {
+      background: #fff;
     }
   }
 
@@ -85,17 +109,14 @@
   }
 
   .osw-selector-index-loading,
-  .osw-selector-index-empty {
-    background: #eee;
+  .osw-selector-index-empty,
+  .osw-selector-index-error {
     font-size: 14px;
-    padding: 5px;
   }
 
   .osw-selector-index-error {
     background: $red;
     color: #fff;
-    font-size: 14px;
-    padding: 5px;
   }
 
   .osw-selector-index-finish-buttons {

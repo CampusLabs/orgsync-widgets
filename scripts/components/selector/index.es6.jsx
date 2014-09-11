@@ -391,7 +391,15 @@ var SelectorIndex = React.createClass({
   },
 
   renderEmpty: function () {
-    return <div className='osw-selector-index-empty'>No results found.</div>;
+    return (
+      <div className='osw-selector-index-empty'>
+        {
+          this.state.scope === SELECTED_SCOPE ?
+          'Nothing selected.' :
+          'No results found.'
+        }
+      </div>
+    );
   },
 
   renderError: function () {

@@ -2,7 +2,7 @@
 
 import Cursors from 'cursors';
 import Icon from 'components/icon';
-import {isArbitrary, getIconName} from 'entities/selector/item';
+import {getIconName} from 'entities/selector/item';
 import React from 'react';
 
 export default React.createClass({
@@ -25,13 +25,6 @@ export default React.createClass({
     return {backgroundImage: "url('" + src + "')"};
   },
 
-  getName: function () {
-    var item = this.props.item;
-    var name = item.name;
-    var verb = this.props.isSelected ? 'Remove' : 'Add';
-    return isArbitrary(item) ? verb + ' "' + name + '"...' : name;
-  },
-
   renderIcon: function () {
     return (
       <div className='osw-selector-result-icon'>
@@ -41,6 +34,7 @@ export default React.createClass({
   },
 
   render: function () {
+    var item = this.props.item;
     return (
       <div className={this.className()} onClick={this.props.onClick}>
         <div className='osw-selector-result-content'>
@@ -48,12 +42,12 @@ export default React.createClass({
             className='osw-selector-result-image'
             style={this.getImageStyle()}
           >
-            {this.props.item.image_url ? null : this.renderIcon()}
+            {item.image_url ? null : this.renderIcon()}
           </div>
           <div className='osw-selector-result-info'>
-            <div className='osw-selector-result-name'>{this.getName()}</div>
+            <div className='osw-selector-result-name'>{item.name}</div>
             <div className='osw-selector-result-type'>
-              {this.props.item.type}
+              {item.type}
             </div>
           </div>
         </div>

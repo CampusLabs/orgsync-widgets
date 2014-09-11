@@ -12,39 +12,41 @@ import store from 'entities/selector/store';
 import Token from 'components/selector/token';
 import {isArbitrary} from 'entities/selector/item';
 
+var SELECTED_SCOPE = {name: 'Selected', term: '_selected'};
+
 var SelectorIndex = React.createClass({
   mixins: [Cursors],
 
   getDefaultProps: function () {
     return {
-      value: [],
-      query: '',
-      scopes: [],
-      hiddenInputName: 'selection',
       allowArbitrary: false,
       allowBrowse: true,
       allowEmptyQuery: true,
       browseText: 'Browse',
-      view: 'inline',
-      placeholder: 'Search...',
-      renderPageSize: 20,
-      indices: ['_all'],
       fields: ['name'],
+      hiddenInputName: 'selection',
+      indices: ['_all'],
       limit: Infinity,
-      search: store.search
+      placeholder: 'Search...',
+      query: '',
+      renderPageSize: 20,
+      scopes: [{name: 'Everything', term: '_all'}],
+      search: store.search,
+      value: [],
+      view: 'inline'
     };
   },
 
   getInitialState: function () {
     return {
-      value: this.props.value,
-      scope: this.props.scopes[0],
-      query: this.props.query,
-      hasMouse: false,
-      hasFocus: false,
       activeIndex: 0,
       browseIsOpen: false,
-      results: []
+      hasFocus: false,
+      hasMouse: false,
+      query: this.props.query,
+      results: [],
+      scope: this.props.scopes[0],
+      value: _.sortBy(this.props.value, 'name')
     };
   },
 
@@ -160,8 +162,9 @@ var SelectorIndex = React.createClass({
   },
 
   addValue: function (item) {
-    if (_.any(this.state.value, _.matches(item))) return;
-    this.update({value: {$push: [item]}});
+    var value = this.state.value;
+    if (_.any(value, _.matches(item))) return;
+    this.update({value: {$set: _.sortBy(value.concat(item), 'name')}});
   },
 
   removeValue: function (item) {
@@ -309,16 +312,6 @@ var SelectorIndex = React.createClass({
     );
   },
 
-  renderTokensAndQuery: function () {
-    return (
-      <div className='osw-selector-index-tokens-and-query'>
-        {this.renderTokens()}
-        {this.renderBrowseButton()}
-        {this.renderQuery()}
-      </div>
-    );
-  },
-
   renderQuery: function () {
     return (
       <div className='osw-selector-index-query'>
@@ -328,6 +321,17 @@ var SelectorIndex = React.createClass({
           onChange={this.handleQueryChange}
           placeholder={this.props.placeholder}
         />
+      </div>
+    );
+  },
+
+  renderTokensAndQuery: function () {
+    if (this.state.scope === SELECTED_SCOPE) return;
+    return (
+      <div className='osw-selector-index-tokens-and-query'>
+        {this.renderTokens()}
+        {this.renderBrowseButton()}
+        {this.renderQuery()}
       </div>
     );
   },
@@ -358,13 +362,25 @@ var SelectorIndex = React.createClass({
     );
   },
 
+  renderSelected: function () {
+    return (
+      <Scope
+        scope={SELECTED_SCOPE}
+        onClick={_.partial(this.handleScopeClick, SELECTED_SCOPE)}
+        isActive={SELECTED_SCOPE === this.state.scope}
+      />
+    );
+  },
+
   renderResult: function (item, i) {
     return (
       <Result
         key={i}
         item={item}
         onClick={_.partial(this.handleResultClick, item)}
-        isSelected={this.isSelected(item)}
+        isSelected={
+          this.state.scope !== SELECTED_SCOPE && this.isSelected(item)
+        }
         isActive={this.state.results.indexOf(item) === this.state.activeIndex}
       />
     );
@@ -384,18 +400,19 @@ var SelectorIndex = React.createClass({
 
   renderResults: function () {
     if (!this.shouldShowResults()) return;
+    var selected = this.state.scope === SELECTED_SCOPE;
     var key = store.getQueryKey(this.getSearchOptions());
     return (
       <List
         key={key}
         ref='results'
         className='osw-selector-index-results'
-        items={this.state.results}
+        items={selected ? this.state.value : this.state.results}
         renderItem={this.renderResult}
         renderLoading={this.renderLoading}
         renderEmpty={this.renderEmpty}
         renderError={this.renderError}
-        fetch={this.fetch}
+        fetch={selected ? null : this.fetch}
         fetchInitially={!store.cache[key]}
         uniform={true}
         renderPageSize={this.props.renderPageSize}
@@ -443,6 +460,7 @@ var SelectorIndex = React.createClass({
     return (
       <div className='osw-selector-index-left'>
         {this.renderScopes()}
+        {this.renderSelected()}
         {this.renderDoneButton()}
       </div>
     );

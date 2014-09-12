@@ -7,8 +7,20 @@
   }
 
   .osw-selector-index-left {
-    float: left;
-    width: 200px;
+    hr {
+      background: $grey-lighter;
+      border: 0;
+      height: 1px;
+    }
+  }
+
+  .osw-selector-index-done-container {
+    border-top: 1px solid $grey-lighter;
+    padding: 10px;
+  }
+
+  .osw-selector-index-done {
+    width: 100%;
   }
 
   .osw-selector-index-right {
@@ -104,6 +116,10 @@
     }
   }
 
+  .osw-selector-index-tokens-and-query-disabled {
+    opacity: .5;
+  }
+
   .osw-selector-index-results {
     overflow: auto;
   }
@@ -126,5 +142,10 @@
 
   .osw-selector-index-popup {
     max-width: 1000px;
+  }
+
+  &[min-width~='401px'] .osw-selector-index-left {
+    float: left;
+    width: 200px;
   }
 }

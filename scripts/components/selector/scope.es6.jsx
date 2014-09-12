@@ -27,6 +27,7 @@ export default React.createClass({
     return (
       <input
         type='checkbox'
+        className='osw-selector-scope-toggle'
         checked={this.props.isSelected}
         onChange={this.handleChange}
         onClick={STOP_PROPAGATION}

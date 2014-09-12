@@ -162,16 +162,16 @@ var SelectorIndex = React.createClass({
   },
 
   addValue: function (item) {
-    var value = this.state.value;
-    if (_.any(value, _.matches(item))) return;
-    this.update({value: {$set: _.sortBy(value.concat(item), NAME_COMPARATOR)}});
+    if (this.isSelected(item)) return;
+    var value = _.sortBy(this.state.value.concat(item), NAME_COMPARATOR);
+    this.update({value: {$set: value}});
   },
 
   removeValue: function (item) {
-    var value = this.state.value;
-    var existing = _.find(value, _.matches(item));
+    var existing = this.getSelected(item);
     if (!existing) return;
-    this.update({value: {$splice: [[value.indexOf(existing), 1]]}});
+    var i = _.indexOf(this.state.value, existing);
+    this.update({value: {$splice: [[i, 1]]}});
   },
 
   incrActiveIndex: function (dir) {
@@ -208,8 +208,7 @@ var SelectorIndex = React.createClass({
   },
 
   handleResultClick: function (item) {
-    if (_.any(this.state.value, _.matches(item))) this.removeValue(item);
-    else this.addValue(item);
+    this.isSelected(item) ? this.removeValue(item) : this.addValue(item);
     this.setActiveIndex(this.state.results.indexOf(item));
   },
 
@@ -265,10 +264,14 @@ var SelectorIndex = React.createClass({
     );
   },
 
-  isSelected: function (item) {
+  getSelected: function (item) {
     var a = this.asHiddenInputValue(item);
     var predicate = _.compose(_.partial(_.isEqual, a), this.asHiddenInputValue);
-    return _.any(this.state.value, predicate);
+    return _.find(this.state.value, predicate);
+  },
+
+  isSelected: function (item) {
+    return !!this.getSelected(item);
   },
 
   renderHiddenInput: function () {
@@ -320,15 +323,19 @@ var SelectorIndex = React.createClass({
           value={this.state.query}
           onChange={this.handleQueryChange}
           placeholder={this.props.placeholder}
+          disabled={this.state.scope === SELECTED_SCOPE}
         />
       </div>
     );
   },
 
   renderTokensAndQuery: function () {
-    if (this.state.scope === SELECTED_SCOPE) return;
+    var classes = ['osw-selector-index-tokens-and-query'];
+    if (this.state.scope === SELECTED_SCOPE) {
+      classes.push('osw-selector-index-tokens-and-query-disabled');
+    }
     return (
-      <div className='osw-selector-index-tokens-and-query'>
+      <div className={classes.join(' ')}>
         {this.renderTokens()}
         {this.renderBrowseButton()}
         {this.renderQuery()}
@@ -446,7 +453,16 @@ var SelectorIndex = React.createClass({
 
   renderDoneButton: function () {
     if (!this.state.browseIsOpen) return;
-    return <Button onClick={this.closeBrowse}>Done</Button>;
+    return (
+      <div className='osw-selector-index-done-container'>
+        <Button
+          className='osw-selector-index-done'
+          onClick={this.closeBrowse}
+        >
+          Done
+        </Button>
+      </div>
+    );
   },
 
   renderPopup: function () {
@@ -468,6 +484,7 @@ var SelectorIndex = React.createClass({
     return (
       <div className='osw-selector-index-left'>
         {this.renderScopes()}
+        <hr />
         {this.renderSelected()}
         {this.renderDoneButton()}
       </div>

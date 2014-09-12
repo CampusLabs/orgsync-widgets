@@ -4,13 +4,19 @@
   .osw-selector-scope {
     @include ellipsis;
     @include user-select(none);
+    border-radius: $border-radius;
     cursor: pointer;
     font-size: 14px;
+    margin: 10px;
     padding: 10px;
     text-align: right;
   }
 
   .osw-selector-scope-active {
     background: $grey-lighter;
+  }
+
+  .osw-selector-scope-toggle {
+    float: left;
   }
 }

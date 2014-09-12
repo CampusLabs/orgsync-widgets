@@ -17,9 +17,11 @@
     font-family: $global-font-family;
   }
 
-  *, *:before, *:after {
-    -webkit-box-sizing: content-box;
+  *,
+  *:before,
+  *:after {
     -moz-box-sizing: content-box;
+    -webkit-box-sizing: content-box;
     box-sizing: content-box;
   }
 
@@ -35,21 +37,23 @@
   input {
     @include transition(none);
     font-size: inherit;
-    height: inherit;
+    height: auto;
     margin: 0;
     padding: 0;
-    width: inherit;
+    width: auto;
   }
 
-  ul, ol, dl {
+  ul,
+  ol,
+  dl {
     font-size: inherit;
     line-height: inherit;
     list-style-position: inherit;
   }
 
   table {
-    margin: inherit;
     border: inherit;
+    margin: inherit;
 
     thead,
     tbody {

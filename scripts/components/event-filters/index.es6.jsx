@@ -6,6 +6,7 @@ import Cursors from 'cursors';
 import EventFilterListItem from 'components/event-filters/list-item';
 import React from 'react';
 import tinycolor from 'tinycolor';
+import velcroConfig from 'velcro-config';
 
 var update = React.addons.update;
 
@@ -65,7 +66,8 @@ export default React.createClass({
   },
 
   getEventFilterColor: function (filter, i, filters) {
-    return filter.color || (
+    var color = _.find(velcroConfig.colors, {id: filter.color});
+    return color ? color.hex : (
       filter.type === 'rsvp' ?
       RSVP_COLOR :
       tinycolor({h: i * (360 / filters.length), s: 1, l: 0.4}).toHex()

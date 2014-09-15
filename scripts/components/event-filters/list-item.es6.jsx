@@ -5,12 +5,13 @@ import Icon from 'components/icon';
 import React from 'react';
 
 var ICON_MAP = {
-  organization: 'organization',
-  service_partner: 'service',
-  umbrella: 'umbrella',
-  service_umbrella: 'service',
+  category: 'invoice',
   featured: 'promote',
-  rsvp: 'check'
+  organization: 'organization',
+  rsvp: 'check',
+  service_partner: 'service',
+  service_umbrella: 'service',
+  umbrella: 'umbrella'
 };
 
 export default React.createClass({

@@ -19,7 +19,8 @@
       "superagent": "bower_components/superagent/superagent.js",
       "tinycolor": "bower_components/tinycolor/tinycolor.js",
       "underscore.string": "bower_components/underscore.string/lib/underscore.string.js",
-      "underscore": "bower_components/underscore/underscore.js"
+      "underscore": "bower_components/underscore/underscore.js",
+      "velcro-config": "bower_components/velcro/config.json"
     },
     "shims": {
       "elementQuery": {

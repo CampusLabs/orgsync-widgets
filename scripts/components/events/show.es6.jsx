@@ -124,9 +124,11 @@ export default React.createClass({
         {end ? <div>{end}</div> : null}
         {time ? <div className='osw-events-show-time'>{time}</div> : null}
         <div className='osw-events-show-add-to-calendar'>
-          <a href={this.getIcsUrl()}>Add to iCal/Outlook</a>
+          <a href={this.getIcsUrl()} target='_parent'>Add to iCal/Outlook</a>
           {' | '}
-          <a href={this.getGcalUrl()}>Add to Google Calendar</a>
+          <a href={this.getGcalUrl()} target='_parent'>
+            Add to Google Calendar
+          </a>
         </div>
       </Section>
     );
@@ -151,7 +153,9 @@ export default React.createClass({
         {event.attendees_sample.map(this.renderAttendee)}
         {
           more ?
-          <div><a href={event.links.web}>And {more} more...</a></div> :
+          <div>
+            <a href={event.links.web} target='_parent'>And {more} more...</a>
+          </div> :
           null
         }
       </div>
@@ -164,7 +168,10 @@ export default React.createClass({
     if (!_.size(actions)) return;
     var buttons;
     if (actions[0] === 'Register') {
-      buttons = <Button href={event.pre_event_form}>Yes, Register Now</Button>;
+      buttons =
+        <Button href={event.pre_event_form} target='_parent'>
+          Yes, Register Now
+        </Button>;
 
     // HACK: Remove this condition once IE9 support is dropped.
     // https://hacks.mozilla.org/2009/07/cross-site-xmlhttprequest-with-cors/
@@ -184,7 +191,7 @@ export default React.createClass({
         );
       }, this);
     } else {
-      buttons = <Button href={event.links.web}>RSVP</Button>;
+      buttons = <Button href={event.links.web} target='_parent'>RSVP</Button>;
     }
     return (
       <div className='osw-events-show-rsvp-action'>
@@ -215,7 +222,11 @@ export default React.createClass({
     if (!location) return;
     return (
       <Section icon='location'>
-        <a className='osw-events-show-location' href={this.getLocationUrl()}>
+        <a
+          className='osw-events-show-location'
+          href={this.getLocationUrl()}
+          target='_parent'
+        >
           {location}
         </a>
       </Section>
@@ -226,7 +237,11 @@ export default React.createClass({
     var portal = this.state.event.portal;
     return (
       <Section icon='organization'>
-        <a className='osw-events-show-portal-name' href={portal.links.web}>
+        <a
+          className='osw-events-show-portal-name'
+          href={portal.links.web}
+          target='_parent'
+        >
           {portal.name}
         </a>
       </Section>
@@ -255,7 +270,11 @@ export default React.createClass({
           {src ? <img src={src} /> : this.renderDefaultPicture()}
         </div>
         <div className='osw-events-show-info'>
-          <a href={event.links.web} className='osw-events-show-title'>
+          <a
+            className='osw-events-show-title'
+            href={event.links.web}
+            target='_parent'
+          >
             {event.title}
           </a>
           {this.renderTime()}
@@ -264,7 +283,9 @@ export default React.createClass({
           {this.renderPortalName()}
           {this.renderDescription()}
           <div className='osw-events-show-see-full-details'>
-            <Button href={event.links.web}>See Full Details</Button>
+            <Button href={event.links.web} target='_parent'>
+              See Full Details
+            </Button>
           </div>
         </div>
       </div>

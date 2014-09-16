@@ -206,12 +206,15 @@ export default React.createClass({
   },
 
   renderRsvp: function () {
+    var attendees = this.renderAttendees();
+    var rsvpAction = this.renderRsvpAction();
     var message = this.state.event.rsvp_message;
     if (message) message = <div>{message}</div>;
+    if (!_.any([attendees, rsvpAction, message])) return;
     return (
       <Section icon='rsvp'>
-        {this.renderAttendees()}
-        {this.renderRsvpAction()}
+        {attendees}
+        {rsvpAction}
         {message}
       </Section>
     );

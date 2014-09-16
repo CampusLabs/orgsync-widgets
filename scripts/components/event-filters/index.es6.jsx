@@ -74,34 +74,28 @@ export default React.createClass({
     );
   },
 
-  handleChange: function (ev) {
-    var active = ev.target.checked;
+  handleChange: function (section, ev) {
     var eventFilters = this.state.eventFilters;
-    var first = eventFilters.slice(0, 1);
-    var setActive = _.partial(update, _, {active: {$set: active}});
-    var rest = _.map(eventFilters.slice(1), setActive);
-    this.update({eventFilters: {$set: first.concat(rest)}});
+    this.update(_.reduce(section, function (deltas, eventFilter) {
+      var i = _.indexOf(eventFilters, eventFilter);
+      deltas.eventFilters[i] = {active: {$set: ev.target.checked}};
+      return deltas;
+    }, {eventFilters: {}}));
   },
 
-  renderHeader: function () {
-    var header = this.props.header;
-    var checked =
-       _.every(this.state.eventFilters.slice(1), _.matches({active: true}));
+  renderHeader: function (section) {
     return (
-      <div>
-        <hr />
-        <div className='osw-event-filters-list-item osw-header'>
-          <label>
-            <div className='osw-name'>
-              <input
-                type='checkbox'
-                checked={checked}
-                onChange={this.handleChange}
-              />
-              {header}
-            </div>
-          </label>
-        </div>
+      <div className='osw-event-filters-list-item osw-header'>
+        <label>
+          <div className='osw-name'>
+            <input
+              type='checkbox'
+              checked={_.every(section, 'active')}
+              onChange={_.partial(this.handleChange, section)}
+            />
+            {this.props.header}
+          </div>
+        </label>
       </div>
     );
   },
@@ -117,19 +111,26 @@ export default React.createClass({
     );
   },
 
-  renderEventFilters: function () {
-    if (this.state.isLoading) {
-      return <div className='osw-loading'>Loading...</div>;
-    }
-    if (this.state.error) {
-      return <div className='osw-error'>{this.state.error}</div>;
-    }
-    var eventFilters = this.state.eventFilters;
+  renderSection: function (section, i, sections) {
+    return (
+      <div key={i}>
+        {i ? <hr /> : null}
+        {i === sections.length - 1 ? this.renderHeader(section) : null}
+        {_.map(section, this.renderEventFilter)}
+      </div>
+    );
+  },
+
+  renderSections: function () {
+    var sections = _.chain(this.state.eventFilters)
+      .partition(function (eventFilter) {
+        return eventFilter.type === 'rsvp' || eventFilter.type === 'featured';
+      })
+      .filter('length')
+      .value();
     return (
       <div className='osw-event-filters'>
-        {_.map(eventFilters.slice(0, 1), this.renderEventFilter)}
-        {this.renderHeader()}
-        {_.map(eventFilters.slice(1), this.renderEventFilter)}
+        {_.map(sections, this.renderSection)}
       </div>
     );
   },
@@ -137,7 +138,13 @@ export default React.createClass({
   render: function () {
     return (
       <div className='osw-inset-block osw-event-filters-index'>
-       {this.renderEventFilters()}
+        {
+          this.state.isLoading ?
+          <div className='osw-loading'>Loading...</div> :
+          this.state.error ?
+          <div className='osw-error'>{this.state.error}</div> :
+          this.renderSections()
+        }
       </div>
     );
   }

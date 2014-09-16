@@ -22,26 +22,27 @@ export default React.createClass({
 
   getDefaultProps: function () {
     return {
-      events: [],
-      query: '',
+      activeEventFilterIds: [],
+      date: getMoment(void 0, tz).format('YYYY-MM-DD'),
       eventFilters: [],
-      tz: tz,
-      view: 'calendar',
+      events: [],
       filtersAreShowing: true,
-      date: getMoment(void 0, tz).format('YYYY-MM-DD')
+      query: '',
+      tz: tz,
+      view: 'calendar'
     };
   },
 
   getInitialState: function () {
     return {
-      events: this.props.events,
-      query: this.props.query,
+      date: getMoment(this.props.date, this.props.tz).format('YYYY-MM-DD'),
       eventFilters: this.props.eventFilters,
-      tz: this.props.tz,
-      view: this.props.view,
-      ranges: [],
+      events: this.props.events,
       filtersAreShowing: this.props.filtersAreShowing,
-      date: getMoment(this.props.date, this.props.tz).format('YYYY-MM-DD')
+      query: this.props.query,
+      ranges: [],
+      tz: this.props.tz,
+      view: this.props.view
     };
   },
 
@@ -278,6 +279,7 @@ export default React.createClass({
           <EventFiltersIndex
             url={this.getEventsUrl() + '/filters'}
             header={this.props.filtersHeader}
+            activeIds={this.props.activeEventFilterIds}
             cursors={{eventFilters: this.getCursor('eventFilters')}}
           />
         </div>

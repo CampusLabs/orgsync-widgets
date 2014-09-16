@@ -8,8 +8,6 @@ import React from 'react';
 import tinycolor from 'tinycolor';
 import velcroConfig from 'velcro-config';
 
-var update = React.addons.update;
-
 var RSVP_COLOR = '94b363';
 
 export default React.createClass({
@@ -17,6 +15,7 @@ export default React.createClass({
 
   getDefaultProps: function () {
     return {
+      activeIds: [],
       eventFilters: [],
       header: 'Filters'
     };
@@ -44,11 +43,12 @@ export default React.createClass({
     if (er) return this.update({error: {$set: er}});
     var getEventFilterColor = this.getEventFilterColor;
     var eventFilters = res.data.slice().sort(this.comparator);
+    var activeIds = this.props.activeIds;
     this.update({eventFilters: {
       $set: _.map(eventFilters, function (eventFilter, i) {
         return _.extend({}, eventFilter, {
           color: getEventFilterColor(eventFilter, i, eventFilters),
-          active: true
+          active: !activeIds.length || _.contains(activeIds, eventFilter.id)
         });
       })
     }});

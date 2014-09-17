@@ -142,7 +142,7 @@ export default React.createClass({
           this.state.isLoading ?
           <div className='osw-loading'>Loading...</div> :
           this.state.error ?
-          <div className='osw-error'>{this.state.error}</div> :
+          <div className='osw-error'>{this.state.error.toString()}</div> :
           this.renderSections()
         }
       </div>

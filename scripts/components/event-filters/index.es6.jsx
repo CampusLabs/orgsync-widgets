@@ -45,10 +45,7 @@ export default React.createClass({
   },
 
   componentDidUpdate: function (__, prevState) {
-    if (this.state.eventFilters.length &&
-        this.state.events !== prevState.events) {
-      this.fillEventFilters();
-    }
+    if (this.state.events !== prevState.events) this.fillEventFilters();
   },
 
   handleFetch: function (er, res) {

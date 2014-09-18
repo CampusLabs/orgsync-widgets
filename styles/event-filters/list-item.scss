@@ -2,31 +2,28 @@
 
 .orgsync-widget {
   .osw-event-filters-list-item {
-    label {
-      display: block;
-      cursor: pointer;
-      padding: 2px;
-      line-height: 1.5;
-    }
+    cursor: pointer;
+    display: block;
+    line-height: 1.5;
+    padding: 2px;
+  }
 
-    .osw-name {
-      @include ellipsis;
-      color: $grey-darker;
+  .osw-event-filters-list-item-name {
+    @include ellipsis;
+    color: $grey-darker;
+  }
 
-      input {
-        margin-right: 5px;
-      }
-    }
+  .osw-event-filters-list-item-checkbox {
+    margin-right: 5px;
+  }
 
-    &.osw-header .osw-name {
-      font-weight: bold;
-      text-transform: uppercase;
-    }
+  .osw-event-filters-list-item-header .osw-event-filters-list-item-name {
+    font-weight: bold;
+  }
 
-    .oswi {
-      float: right;
-      margin-top: -1px;
-      font-size: 16px;
-    }
+  .osw-event-filters-list-item-icon {
+    float: right;
+    font-size: 16px;
+    margin-top: -1px;
   }
 }

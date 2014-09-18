@@ -8,95 +8,121 @@ import React from 'react';
 import tinycolor from 'tinycolor';
 import velcroConfig from 'velcro-config';
 
-var RSVP_COLOR = '94b363';
+var RSVP_HEX = '94b363';
+
+var NOTHING_HEADER = '';
+var CATEGORIES_HEADER = 'Categories';
+var PORTALS_HEADER = 'Portals';
+
+var SECTION_MAP = {
+  category: CATEGORIES_HEADER,
+  featured: NOTHING_HEADER,
+  organization: PORTALS_HEADER,
+  rsvp: NOTHING_HEADER,
+  service_partner: PORTALS_HEADER,
+  service_umbrella: PORTALS_HEADER,
+  umbrella: PORTALS_HEADER
+};
 
 export default React.createClass({
   mixins: [Cursors],
 
   getDefaultProps: function () {
     return {
-      activeIds: [],
-      eventFilters: [],
-      header: 'Filters'
+      activeIds: []
     };
   },
 
   getInitialState: function () {
     return {
-      isLoading: false,
-      error: null,
-      eventFilters: this.props.eventFilters
+      isLoading: true,
+      error: null
     };
   },
 
   componentDidMount: function () {
-    if (!this.state.eventFilters.length) this.fetch();
+    api.get(this.props.url, this.handleFetch);
   },
 
-  fetch: function () {
-    this.update({isLoading: {$set: true}, error: {$set: null}});
-    api.get(this.props.url, this.handleFetch);
+  componentDidUpdate: function (__, prevState) {
+    if (this.state.eventFilters.length &&
+        this.state.events !== prevState.events) {
+      this.fillEventFilters();
+    }
   },
 
   handleFetch: function (er, res) {
     this.update({isLoading: {$set: false}});
     if (er) return this.update({error: {$set: er}});
-    var getEventFilterColor = this.getEventFilterColor;
-    var eventFilters = res.data.slice().sort(this.comparator);
     var activeIds = this.props.activeIds;
-    this.update({eventFilters: {
-      $set: _.map(eventFilters, function (eventFilter, i) {
-        return _.extend({}, eventFilter, {
-          color: getEventFilterColor(eventFilter, i, eventFilters),
-          active: !activeIds.length || _.contains(activeIds, eventFilter.id)
-        });
-      })
+    this.fillEventFilters(_.map(res.data, function (eventFilter) {
+      return _.extend({}, eventFilter, {
+        active: !activeIds.length || _.contains(activeIds, eventFilter.id)
+      });
+    }));
+  },
+
+  fillEventFilters: function (eventFilters) {
+    if (!eventFilters) eventFilters = this.state.eventFilters;
+    var activeIds = this.props.activeIds;
+    this.update({eventFilters: {$set: _.chain(this.state.events)
+      .reduce(function (eventFilters, event) {
+        var eventFilterIds = _.pluck(eventFilters, 'id');
+        var inEventFilters = _.partial(_.include, event.filters);
+        if (!_.any(eventFilterIds, inEventFilters)) {
+          var id = _.find(event.filters, function (id) {
+            return SECTION_MAP[id.split('-')[0]] === PORTALS_HEADER;
+          });
+          var type = id.split('-')[0];
+          return eventFilters.concat({
+            id: id,
+            type: type,
+            name: event.portal.name,
+            active: !activeIds.length || _.contains(activeIds, id)
+          });
+        }
+        return eventFilters;
+      }, eventFilters)
+      .sortBy('name')
+      .each(this.setEventFilterHex)
+      .value()
     }});
   },
 
-  comparator: function (a, b) {
-    if (a.type !== b.type) {
-      if (a.type === 'rsvp') return -1;
-      if (b.type === 'rsvp') return 1;
-      if (a.type === 'featured') return -1;
-      if (b.type === 'featured') return 1;
-    }
-    if (a.name !== b.name) return a.name < b.name ? -1 : 1;
-    return 0;
-  },
-
-  getEventFilterColor: function (filter, i, filters) {
+  setEventFilterHex: function (filter, i, filters) {
     var color = _.find(velcroConfig.colors, {id: filter.color});
-    return color ? color.hex : (
+    filter.hex =
+      color ?
+      color.hex :
       filter.type === 'rsvp' ?
-      RSVP_COLOR :
-      tinycolor({h: i * (360 / filters.length), s: 1, l: 0.4}).toHex()
-    );
+      RSVP_HEX :
+      tinycolor({h: i * (360 / filters.length), s: 1, l: 0.4}).toHex();
   },
 
-  handleChange: function (section, ev) {
-    var eventFilters = this.state.eventFilters;
-    this.update(_.reduce(section, function (deltas, eventFilter) {
-      var i = _.indexOf(eventFilters, eventFilter);
+  toggle: function (eventFilters, ev) {
+    this.update(_.reduce(eventFilters, function (deltas, eventFilter) {
+      var i = _.indexOf(this.state.eventFilters, eventFilter);
       deltas.eventFilters[i] = {active: {$set: ev.target.checked}};
       return deltas;
-    }, {eventFilters: {}}));
+    }, {eventFilters: {}}, this));
   },
 
   renderHeader: function (section) {
+    if (!section.header) return;
     return (
-      <div className='osw-event-filters-list-item osw-header'>
-        <label>
-          <div className='osw-name'>
-            <input
-              type='checkbox'
-              checked={_.every(section, 'active')}
-              onChange={_.partial(this.handleChange, section)}
-            />
-            {this.props.header}
-          </div>
-        </label>
-      </div>
+      <label className=
+        'osw-event-filters-list-item osw-event-filters-list-item-header'
+      >
+        <div className='osw-event-filters-list-item-name'>
+          <input
+            className='osw-event-filters-list-item-checkbox'
+            type='checkbox'
+            checked={_.every(section.eventFilters, 'active')}
+            onChange={_.partial(this.toggle, section.eventFilters)}
+          />
+          {section.header}
+        </div>
+      </label>
     );
   },
 
@@ -105,28 +131,27 @@ export default React.createClass({
     return (
       <EventFilterListItem
         key={eventFilter.id}
-        header={this.props.header}
         cursors={{eventFilter: this.getCursor('eventFilters', i)}}
       />
     );
   },
 
-  renderSection: function (section, i, sections) {
+  renderSection: function (section, i) {
     return (
       <div key={i}>
         {i ? <hr /> : null}
-        {i === sections.length - 1 ? this.renderHeader(section) : null}
-        {_.map(section, this.renderEventFilter)}
+        {this.renderHeader(section)}
+        {_.map(section.eventFilters, this.renderEventFilter)}
       </div>
     );
   },
 
   renderSections: function () {
     var sections = _.chain(this.state.eventFilters)
-      .partition(function (eventFilter) {
-        return eventFilter.type === 'rsvp' || eventFilter.type === 'featured';
-      })
-      .filter('length')
+      .groupBy(function (eventFilter) { return SECTION_MAP[eventFilter.type]; })
+      .pairs()
+      .map(_.partial(_.object, ['header', 'eventFilters']))
+      .sortBy('header')
       .value();
     return (
       <div className='osw-event-filters'>
@@ -140,9 +165,9 @@ export default React.createClass({
       <div className='osw-inset-block osw-event-filters-index'>
         {
           this.state.isLoading ?
-          <div className='osw-loading'>Loading...</div> :
+          <div>Loading...</div> :
           this.state.error ?
-          <div className='osw-error'>{this.state.error.toString()}</div> :
+          <div>{this.state.error.toString()}</div> :
           this.renderSections()
         }
       </div>

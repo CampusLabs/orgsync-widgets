@@ -278,9 +278,11 @@ export default React.createClass({
           </div>
           <EventFiltersIndex
             url={this.getEventsUrl() + '/filters'}
-            header={this.props.filtersHeader}
             activeIds={this.props.activeEventFilterIds}
-            cursors={{eventFilters: this.getCursor('eventFilters')}}
+            cursors={{
+              events: this.getCursor('events'),
+              eventFilters: this.getCursor('eventFilters')
+            }}
           />
         </div>
         <div className={this.getMainClassName()}>

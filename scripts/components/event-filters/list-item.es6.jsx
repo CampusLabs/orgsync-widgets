@@ -24,22 +24,22 @@ export default React.createClass({
   render: function () {
     var eventFilter = this.state.eventFilter;
     return (
-      <div className='osw-event-filters-list-item'>
-        <label>
-          <Icon
-            name={ICON_MAP[eventFilter.type]}
-            style={{color: '#' + eventFilter.color}}
+      <label className='osw-event-filters-list-item'>
+        <Icon
+          className='osw-event-filters-list-item-icon'
+          name={ICON_MAP[eventFilter.type]}
+          style={{color: '#' + eventFilter.hex}}
+        />
+        <div className='osw-event-filters-list-item-name'>
+          <input
+            className='osw-event-filters-list-item-checkbox'
+            type='checkbox'
+            checked={eventFilter.active}
+            onChange={this.handleChange}
           />
-          <div className='osw-name'>
-            <input
-              type='checkbox'
-              checked={eventFilter.active}
-              onChange={this.handleChange}
-            />
-            {eventFilter.name}
-          </div>
-        </label>
-      </div>
+          {eventFilter.name}
+        </div>
+      </label>
     );
   }
 });

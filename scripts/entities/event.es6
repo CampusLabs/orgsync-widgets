@@ -54,7 +54,7 @@ export var getColor = function(event, filters) {
   var match = _.find(filters, function (filter) {
     return _.contains(event.filters, filter.id);
   });
-  return match && match.color;
+  return match && match.hex;
 };
 
 var fixDate = function (date, isAllDay) {
@@ -124,12 +124,12 @@ var handleFetch = function (options, cb, er, res) {
     }
   }
   var ranges = options.ranges.concat([[after, before]]);
-  var events = merge(options.events, events);
+  events = merge(options.events, events);
   cb(null, ranges, events);
 };
 
 export var fetch = function (options, cb) {
-  var options = _.clone(options);
+  options = _.clone(options);
   var ranges = options.ranges;
   options.after = getNextContiguous(options.after, ranges);
   options.before = getPrevContiguous(options.before, ranges);

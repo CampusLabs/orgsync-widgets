@@ -93,7 +93,7 @@ export default React.createClass({
       color.hex :
       filter.type === 'rsvp' ?
       RSVP_HEX :
-      tinycolor({h: i * (360 / filters.length), s: 1, l: 0.4}).toHex();
+      tinycolor({h: i * (360 / filters.length), s: 0.75, l: 0.55}).toHex();
   },
 
   toggle: function (eventFilters, ev) {

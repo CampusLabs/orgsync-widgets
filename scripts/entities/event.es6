@@ -139,6 +139,7 @@ export var fetch = function (options, cb) {
     per_page: PER_PAGE,
     after: options.after,
     before: options.before,
-    direction: options.direction
+    direction: options.direction,
+    restrict_to_portal: false
   }, _.partial(handleFetch, options, cb));
 };

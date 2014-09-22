@@ -14,7 +14,7 @@
     "moment": "2.8.3",
     "moment-timezone": "0.2.2",
     "olay-react": "0.3.1",
-    "orgsync-api": "0.1.2",
+    "orgsync-api": "0.1.3",
     "react": "0.11.2",
     "react-list": "0.1.3",
     "superagent": "0.18.2",

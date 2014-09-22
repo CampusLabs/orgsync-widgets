@@ -5,7 +5,7 @@ import Icon from 'components/icon';
 import React from 'react';
 
 var ICON_MAP = {
-  category: 'invoice',
+  category: 'book',
   featured: 'promote',
   organization: 'organization',
   rsvp: 'check',

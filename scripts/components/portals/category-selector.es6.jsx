@@ -15,7 +15,7 @@ export default React.createClass({
         name='category'
         allOption='All Categories'
         getFacet={this.getFacet}
-        className='oswi-invoice'
+        className='oswi-book'
       />
     );
   }

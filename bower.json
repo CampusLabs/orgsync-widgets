@@ -15,7 +15,7 @@
     "moment-timezone": "0.2.2",
     "olay-react": "0.3.1",
     "orgsync-api": "0.1.2",
-    "react": "0.11.1",
+    "react": "0.11.2",
     "react-list": "0.1.2",
     "superagent": "0.18.2",
     "tinycolor": "1.0.0",

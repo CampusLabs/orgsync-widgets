@@ -2,6 +2,7 @@
   "name": "orgsync-widgets",
   "private": true,
   "version": "0.0.0",
+  "main": ["dist/orgsync-widgets.js", "dist/orgsync-widgets.css"],
   "devDependencies": {
     "amdainty": "0.1.0",
     "async": "0.9.0",

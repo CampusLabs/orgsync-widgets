@@ -106,6 +106,10 @@ export default React.createClass({
 
   renderHeader: function (section) {
     if (!section.header) return;
+    var header = section.header;
+    if (this.props.useSharedHeader && header === PORTALS_HEADER) {
+      header = 'Shared';
+    }
     return (
       <label className=
         'osw-event-filters-list-item osw-event-filters-list-item-header'
@@ -117,7 +121,7 @@ export default React.createClass({
             checked={_.every(section.eventFilters, 'active')}
             onChange={_.partial(this.toggle, section.eventFilters)}
           />
-          {section.header}
+          {header}
         </div>
       </label>
     );

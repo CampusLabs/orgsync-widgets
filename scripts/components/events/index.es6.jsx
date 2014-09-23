@@ -279,6 +279,7 @@ export default React.createClass({
           <EventFiltersIndex
             url={this.getEventsUrl() + '/filters'}
             activeIds={this.props.activeEventFilterIds}
+            useSharedHeader={!!this.props.portalId}
             cursors={{
               events: this.getCursor('events'),
               eventFilters: this.getCursor('eventFilters')

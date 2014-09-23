@@ -1,6 +1,5 @@
 {
   "name": "orgsync-widgets",
-  "private": true,
   "version": "0.0.0",
   "main": ["dist/orgsync-widgets.js", "dist/orgsync-widgets.css"],
   "devDependencies": {

@@ -40,7 +40,7 @@ export default React.createClass({
     var event = this.state.event;
     var color = getColor(event, this.props.eventFilters);
     if (!color) return;
-    var style = {borderLeftColor: '#' + color};
+    var style = {borderColor: '#' + color};
     var tz = this.props.tz;
     if (isAllDay(event, tz) || this.isContinued() || this.doesContinue()) {
       style.background = tinycolor(color).lighten(40).toHexString();

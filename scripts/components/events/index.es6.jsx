@@ -27,6 +27,7 @@ export default React.createClass({
       eventFilters: [],
       events: [],
       filtersAreShowing: true,
+      lockView: false,
       query: '',
       tz: tz,
       view: 'calendar'
@@ -207,6 +208,27 @@ export default React.createClass({
     );
   },
 
+  renderViewTabs: function () {
+    if (this.props.lockView) return;
+    var view = this.state.view;
+    return (
+      <ButtonGroup className='osw-events-index-view-tabs'>
+        <Button
+          isSelected={view === 'calendar'}
+          onClick={_.partial(this.update, {view: {$set: 'calendar'}})}
+        >
+          Calendar
+        </Button>
+        <Button
+          isSelected={view === 'upcoming' || view === 'past'}
+          onClick={_.partial(this.update, {view: {$set: 'upcoming'}})}
+        >
+          List
+        </Button>
+      </ButtonGroup>
+    );
+  },
+
   renderViewControls: function () {
     return this.state.view === 'calendar' ?
       this.renderCalendarControls() :
@@ -264,7 +286,6 @@ export default React.createClass({
   },
 
   render: function () {
-    var view = this.state.view;
     return (
       <div className='osw-events-index'>
         <div className='osw-events-index-sidebar'>
@@ -297,20 +318,7 @@ export default React.createClass({
                 <Icon name='office-shortcuts' />{' '}
                 {this.state.filtersAreShowing ? 'Hide Filters' : 'Show Filters'}
               </Button>
-              <ButtonGroup className='osw-events-index-view-tabs'>
-                <Button
-                  isSelected={view === 'calendar'}
-                  onClick={_.partial(this.update, {view: {$set: 'calendar'}})}
-                >
-                  Calendar
-                </Button>
-                <Button
-                  isSelected={view === 'upcoming' || view === 'past'}
-                  onClick={_.partial(this.update, {view: {$set: 'upcoming'}})}
-                >
-                  List
-                </Button>
-              </ButtonGroup>
+              {this.renderViewTabs()}
             </div>
             {this.renderViewControls()}
           </div>

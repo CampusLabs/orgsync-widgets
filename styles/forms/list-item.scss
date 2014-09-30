@@ -8,7 +8,6 @@
       background-color: $grey-lightest;
       @include clearfix;
       padding: 5px;
-      border-radius: 5px;
 
       &:hover .osw-forms-name {
         color: $blue-darkest;
@@ -20,9 +19,9 @@
       width: 25px;
       padding: 0px;
       border-radius: 25px;
-      border: 2px solid $grey-darkest;
+      border: 3px solid $grey-darkest;
       position: absolute;
-      right: 18px;
+      right: 16px;
       top: 12px;
     }
   }
@@ -40,12 +39,9 @@
   .osw-forms-icon {
     float: left;
     position: relative;
-
-    img {
-      height: 45px;
-      width: 45px;
-      padding: 5px;
-    }
+    width: 45px;
+    height: 45px;
+    overflow: hidden;
   }
 
   .osw-forms-creator {
@@ -62,6 +58,7 @@
       display: block;
       text-decoration: none;
       background-color: $grey-lightest;
+      border-top: 1px solid $grey;
 
       &:hover .osw-forms-name {
         color: $blue-darkest;
@@ -74,6 +71,9 @@
     width: 100%;
     .osw-forms-list-item-inner {
       margin: 0px;
+      > a {
+        border-top: 1px solid $grey;
+      }
     }
   }
 

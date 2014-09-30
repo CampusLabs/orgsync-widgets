@@ -10,7 +10,7 @@ import FormsListItem from 'components/forms/list-item';
 import Empty from 'components/forms/empty';
 import React from 'react';
 
-var PER_PAGE = 100;
+var PER_PAGE = 10;
 
 export default React.createClass({
   mixins: [Cursors],
@@ -55,8 +55,10 @@ export default React.createClass({
   handleFetch: function (cb, er, res) {
     console.log(res);
     if (er) return cb(er);
-    this.sortAndUpdate(res.data);
-    cb(null, true);
+    this.update({
+      forms: {$set: _.unique(this.state.forms.concat(res.data), 'id')}
+    });
+    cb(null, res.data.length < PER_PAGE);
   },
 
   sortAndUpdate: function (forms) {
@@ -114,7 +116,14 @@ export default React.createClass({
   },
 
   renderListItem: function (form) {
-    return <FormsListItem key={form.id} form={form} />;
+    var i = this.state.forms.indexOf(form);
+    return (
+      <FormsListItem
+        key={form.id}
+        redirect={this.props.redirect}
+        cursors={{form: this.getCursor('forms', i)}}
+      />
+    );
   },
 
   renderLoading: function () {
@@ -138,7 +147,6 @@ export default React.createClass({
 
   render: function () {
     var forms = this.getFilteredForms();
-    console.log("the forms are as follows: " + forms);
     return (
       <div className='osw-forms-index'>
         {this.renderFilters(forms)}

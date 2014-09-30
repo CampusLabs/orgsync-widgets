@@ -1,0 +1,50 @@
+@import '../config';
+
+.orgsync-widget {
+  .osw-forms-show {
+    padding: 10px 10px 0;
+
+    > .osw-button-row {
+      margin-bottom: 10px;
+    }
+  }
+
+  .osw-forms-show-name {
+    font-size: 18px;
+    font-weight: bold;
+  }
+
+  .osw-forms-show-description,
+  .osw-forms-show-button,
+  .osw-forms-show-creator {
+    margin-bottom: 10px;
+  }
+
+  .osw-forms-show-creator {
+    font-weight: lighter;
+    color: $grey;
+    font-size: 8pt;
+  }
+
+  .osw-forms-show-category {
+    font-size: 10pt;
+    color: $grey-darker;
+  }
+
+  .osw-forms-show-description {
+    font-size: 10pt;
+    padding: 5px;
+    background-color: $grey-lightest;
+    border-radius: 5px;
+  }
+
+  .osw-forms-show-popup {
+    max-width: 400px;
+
+    &[min-width~='480px'] {
+      .osw-forms-show {
+        @include clearfix;
+      }
+    }
+  }
+}

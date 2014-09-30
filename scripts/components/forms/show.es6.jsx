@@ -32,6 +32,20 @@ export default React.createClass({
     this.update(deltas);
   },
 
+  showDescription: function(form) {
+    if(form.description === "") {
+      return "No description provided.";
+    } else {
+      return form.description;
+    }
+  },
+
+  showCreator: function(form) {
+    return (
+      "Created by " + form.creator.display_name
+    );
+  },
+
   render: function () {
     var form = this.state.form;
     return (
@@ -42,8 +56,15 @@ export default React.createClass({
         <div className='osw-forms-show-category'>
           {form.category.name}
         </div>
+        <div className='osw-forms-show-creator'>
+          {this.showCreator(form)}
+        </div>
+        <div className='osw-forms-show-description'>
+          {form.description}
+        </div>
         <ButtonRow>
           <Button href={form.links.web}>On OrgSync.com</Button>
+          <Button href={form.links.pdf_link}>PDF</Button>
         </ButtonRow>
       </div>
     );

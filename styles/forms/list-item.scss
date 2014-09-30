@@ -1,0 +1,27 @@
+@import '../config';
+
+.orgsync-widget {
+  .osw-forms-list-item {
+    background-color: pink;
+  }
+
+  .osw-forms-index {
+    background-color: yellow;
+  }
+
+  &[min-width~='480px'] .osw-portals-list-item {
+
+  }
+
+  &[min-width~='640px'] .osw-portals-list-item {
+
+  }
+
+  &[min-width~='800px'] .osw-portals-list-item {
+
+  }
+
+  &[min-width~='960px'] .osw-portals-list-item {
+    
+  }
+}

@@ -17,7 +17,7 @@ export default React.createClass({
 
   render: function () {
     return (
-      <div className='osw-portals-filters'>
+      <div className='osw-forms-filters'>
         <Query value={this.state.query} onChange={this.handleChange} />
         <CategorySelector
           forms={this.props.forms}

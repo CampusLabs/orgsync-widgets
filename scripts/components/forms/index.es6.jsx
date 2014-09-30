@@ -53,6 +53,7 @@ export default React.createClass({
   },
 
   handleFetch: function (cb, er, res) {
+    console.log(res);
     if (er) return cb(er);
     this.sortAndUpdate(res.data);
     cb(null, true);
@@ -139,7 +140,7 @@ export default React.createClass({
     var forms = this.getFilteredForms();
     console.log("the forms are as follows: " + forms);
     return (
-      <div className='osw-portals-index'>
+      <div className='osw-forms-index'>
         {this.renderFilters(forms)}
         <List
           items={forms}

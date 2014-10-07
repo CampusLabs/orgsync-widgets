@@ -2,7 +2,7 @@ import _ from 'underscore';
 import _str from 'underscore.string';
 import api from 'api';
 import Live from 'live';
-import {getTerm} from 'entities/selector/item';
+import {getTerm, getName} from 'entities/selector/item';
 import React from 'react';
 
 var update = React.addons.update;
@@ -10,7 +10,7 @@ var update = React.addons.update;
 var FETCH_SIZE = 100;
 
 var live = new Live({
-  url: 'wss://orgsync.com/io/websocket',
+  url: 'ws://orgsync.com.dev/io/websocket',
   fetchAuthKey: function (cb) { cb(null, api.key); }
 });
 
@@ -25,8 +25,10 @@ export var parse = function (q) {
 var filter = function (item, q, options) {
   q = parse(q);
   if (!q) return true;
+  var fields = options.fields;
   var searchableWords = _.str.words(
-    _.values(_.pick(item, options.fields || 'name')).join(' ').toLowerCase()
+    (fields ? _.values(_.pick(item, fields)).join(' ') : getName(item))
+      .toLowerCase()
   );
   return _.every(_str.words(q), function (wordA) {
     return _.any(searchableWords, _.partial(_str.startsWith, _, wordA));
@@ -85,8 +87,11 @@ export var fetch = function (options, cb) {
   var size = Math.max(0, Math.min(limit - from, FETCH_SIZE));
   options = _.extend({}, options, {from: from, size: size});
   if (done[key] || !size) return cb(null, true, options);
-  live.send('search', options, function (er, items) {
+  live.send('search', options, function (er, res) {
     if (er) return cb(er);
+    var items = _.map(res.hits.hits, function (hit) {
+      return _.extend({_type: hit._type}, hit._source);
+    });
     cacheItems(items, options);
     cb(null, done[key] = items.length < options.size, options);
   });

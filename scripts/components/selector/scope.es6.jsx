@@ -3,7 +3,7 @@
 import Cursors from 'cursors';
 import React from 'react';
 
-import {isArbitrary} from 'entities/selector/item';
+import {isArbitrary, getName} from 'entities/selector/item';
 
 var STOP_PROPAGATION = function (ev) {
   ev.stopPropagation();
@@ -39,7 +39,7 @@ export default React.createClass({
     return (
       <div className={this.getClassName()} onClick={this.props.onClick}>
         {this.renderToggle()}
-        {this.props.scope.name}
+        {getName(this.props.scope)}
       </div>
     );
   }

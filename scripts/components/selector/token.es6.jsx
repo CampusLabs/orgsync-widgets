@@ -4,7 +4,7 @@ import Cursors from 'cursors';
 import Icon from 'components/icon';
 import React from 'react';
 
-import {getIconName} from 'entities/selector/item';
+import {getIconName, getName} from 'entities/selector/item';
 
 export default React.createClass({
   mixins: [Cursors],
@@ -28,7 +28,7 @@ export default React.createClass({
               className='osw-selector-token-icon'
               name={getIconName(this.props.item)}
             />
-            {this.props.item.name}
+            {getName(this.props.item)}
           </div>
         </div>
       </div>

@@ -1,8 +1,9 @@
 /** @jsx React.DOM */
 
+import _str from 'underscore.string';
 import Cursors from 'cursors';
 import Icon from 'components/icon';
-import {getIconName} from 'entities/selector/item';
+import {getIconName, getName} from 'entities/selector/item';
 import React from 'react';
 
 export default React.createClass({
@@ -45,9 +46,9 @@ export default React.createClass({
             {item.image_url ? null : this.renderIcon()}
           </div>
           <div className='osw-selector-result-info'>
-            <div className='osw-selector-result-name'>{item.name}</div>
+            <div className='osw-selector-result-name'>{getName(item)}</div>
             <div className='osw-selector-result-type'>
-              {item.type}
+              {_str.titleize(_str.humanize(item._type))}
             </div>
           </div>
         </div>

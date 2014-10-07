@@ -10,13 +10,13 @@ import Result from 'components/selector/result';
 import Scope from 'components/selector/scope';
 import store from 'entities/selector/store';
 import Token from 'components/selector/token';
-import {isArbitrary} from 'entities/selector/item';
+import {isArbitrary, getName} from 'entities/selector/item';
 
 var SELECTED_SCOPE = {name: 'Selected', term: '_selected'};
 
 var DOWNCASE = function (str) { return str.toLowerCase(); };
 
-var NAME_COMPARATOR = _.compose(DOWNCASE, _.property('name'));
+var NAME_COMPARATOR = _.compose(DOWNCASE, getName);
 
 var SelectorIndex = React.createClass({
   mixins: [Cursors],
@@ -27,9 +27,8 @@ var SelectorIndex = React.createClass({
       allowBrowse: true,
       allowEmptyQuery: true,
       browseText: 'Browse',
-      fields: ['name'],
       hiddenInputName: 'selection',
-      indices: ['_all'],
+      types: [],
       limit: Infinity,
       placeholder: 'Search...',
       query: '',
@@ -231,11 +230,9 @@ var SelectorIndex = React.createClass({
 
   getSearchOptions: function () {
     var options = {
-      indices: this.props.indices,
+      types: this.props.types,
       fields: this.props.fields,
-      indices_boost: this.props.indicesBoost,
-      limit: this.props.limit,
-      school_id: this.props.schoolId
+      limit: this.props.limit
     };
     var scope = this.state.scope;
     if (scope) {

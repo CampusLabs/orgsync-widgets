@@ -1,3 +1,5 @@
+import _str from 'underscore.string';
+
 var ICON_MAP = {
   account: 'person',
   album: 'photo',
@@ -29,5 +31,5 @@ export var getName = function (item) {
 
 export var getIconName = function (item) {
   if (isArbitrary(item)) return ARBITRARY_ICON;
-  return ICON_MAP[item._type] || item._type;
+  return ICON_MAP[item._type] || _str.dasherize(item._type);
 };

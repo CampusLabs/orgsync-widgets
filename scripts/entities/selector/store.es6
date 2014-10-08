@@ -25,9 +25,13 @@ export var parse = function (q) {
 var filter = function (item, q, options) {
   q = parse(q);
   if (!q) return true;
-  var fields = options.fields;
-  var values =  _.values(_.pick(item, fields));
-  if (!fields || _.contains(fields, 'name')) values.push(getName(item));
+  var values = _.map(options.fields || ['name'], function (field) {
+    if (field === 'name') return getName(item);
+    var path = field.split('.');
+    var value = item;
+    while (path.length) value = value[path.shift()];
+    return value;
+  });
   var searchableWords = _.unique(_.str.words(values.join(' ').toLowerCase()));
   return _.every(_str.words(q), function (wordA) {
     return _.any(searchableWords, _.partial(_str.startsWith, _, wordA));

@@ -19,7 +19,8 @@ export default React.createClass({
       allowEmptyQuery: false,
       fields: ['name', 'portal.name', 'portal.short_name', '_type'],
       boostTypes: ['portal'],
-      limit: 7
+      limit: 7,
+      placeholder: 'Search for anything...'
     };
   },
 
@@ -62,6 +63,7 @@ export default React.createClass({
   render: function () {
     return this.transferPropsTo(
       <Selector
+        className='osw-global-nav-search'
         search={this.search}
         cursors={{value: this.getCursor('value')}}
       />

@@ -3,7 +3,7 @@
 import _str from 'underscore.string';
 import Cursors from 'cursors';
 import Icon from 'components/icon';
-import {getIconName, getName} from 'entities/selector/item';
+import {getIconName, getName, getPictureUrl} from 'entities/selector/item';
 import React from 'react';
 
 export default React.createClass({
@@ -20,7 +20,7 @@ export default React.createClass({
   },
 
   getImageStyle: function () {
-    var src = this.props.item.image_url;
+    var src = getPictureUrl(this.props.item);
     if (!src) return {};
     if (src[0] === '/') src = 'https://orgsync.com' + src;
     return {backgroundImage: "url('" + src + "')"};
@@ -43,7 +43,7 @@ export default React.createClass({
             className='osw-selector-result-image'
             style={this.getImageStyle()}
           >
-            {item.image_url ? null : this.renderIcon()}
+            {getPictureUrl(item) ? null : this.renderIcon()}
           </div>
           <div className='osw-selector-result-info'>
             <div className='osw-selector-result-name'>{getName(item)}</div>

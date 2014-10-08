@@ -4,6 +4,7 @@ var ICON_MAP = {
   account: 'person',
   album: 'photo',
   custom_page: 'page',
+  email_list: 'email',
   forum: 'communication',
   link: 'bookmark',
   news_post: 'news',
@@ -27,6 +28,10 @@ export var getTerm = function (item) {
 
 export var getName = function (item) {
   return item.name || item.title || item.display_name;
+};
+
+export var getPictureUrl = function (item) {
+  return item.picture_url || item.image_url || item.thumbnail_url;
 };
 
 export var getIconName = function (item) {

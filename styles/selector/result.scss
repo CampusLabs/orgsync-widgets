@@ -33,10 +33,10 @@
       width: 22px;
     }
 
-    .osw-selector-result-icon {
+    .osw-selector-result-icon .oswi {
       font-size: 18px;
-      margin-top: -1px;
       text-align: center;
+      margin-left: 1px;
     }
 
     .osw-selector-result-name {
@@ -78,7 +78,8 @@
     }
 
     .osw-selector-result-icon {
-      margin-top: 2px;
+      @include box-sizing(border-box);
+      padding-top: 2px;
     }
 
     .osw-selector-result-name {
@@ -99,10 +100,9 @@
   }
 
   .osw-selector-result-image {
-    background-color: $slate-darkest;
     background-position: center;
     background-repeat: no-repeat;
-    background-size: cover;
+    background-size: contain;
     border-radius: $border-radius;
     color: #fff;
     float: left;
@@ -117,7 +117,10 @@
   }
 
   .osw-selector-result-icon {
+    background-color: $slate-darkest;
+    border-radius: $border-radius;
     color: #fff;
+    height: 100%;
     position: absolute;
     text-align: center;
     top: 0;

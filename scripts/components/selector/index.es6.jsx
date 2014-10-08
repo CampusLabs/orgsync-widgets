@@ -27,6 +27,7 @@ var SelectorIndex = React.createClass({
       allowBrowse: true,
       allowEmptyQuery: true,
       browseText: 'Browse',
+      fields: ['name'],
       hiddenInputName: 'selection',
       types: [],
       limit: Infinity,

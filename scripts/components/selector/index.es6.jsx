@@ -230,9 +230,10 @@ var SelectorIndex = React.createClass({
 
   getSearchOptions: function () {
     var options = {
-      types: this.props.types,
+      boost_types: this.props.boostTypes,
       fields: this.props.fields,
-      limit: this.props.limit
+      limit: this.props.limit,
+      types: this.props.types
     };
     var scope = this.state.scope;
     if (scope) {

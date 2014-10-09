@@ -3,6 +3,7 @@
 .orgsync-widget {
   .osw-events-calendar {
     background: white;
+    border-top: 1px solid $grey;
   }
   .osw-events-calendar-day-names {
     border-collapse: collapse;
@@ -13,7 +14,6 @@
     }
   }
   .osw-events-calendar-day-name {
-    border-top: 1px solid $grey;
     color: $grey-darker;
     font-weight: bold;
     padding: 2px 2px 0;

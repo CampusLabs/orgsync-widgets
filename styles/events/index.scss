@@ -20,7 +20,6 @@
 
   .osw-events-index-main {
     @include transition(all .5s $ease-out-expo);
-    background: #fff;
     left: 20%;
     position: absolute;
     top: 0;
@@ -58,7 +57,7 @@
   }
 
   .osw-events-index-view {
-    height: 605px;
+    height: 640px;
     overflow: auto;
   }
 

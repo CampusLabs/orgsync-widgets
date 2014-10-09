@@ -240,7 +240,7 @@ var SelectorIndex = React.createClass({
     if (scope) {
       options.scopes =
         this.props.view === 'inline' || scope.term === '_all' ?
-        _.reject(this.props.scopes, _.matches({term: '_all'})) :
+        _.reject(this.props.scopes, {term: '_all'}) :
         [scope];
     }
     if (this.state.query) options.q = this.state.query;

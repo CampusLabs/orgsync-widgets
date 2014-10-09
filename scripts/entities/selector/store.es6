@@ -27,6 +27,12 @@ var filter = function (item, q, options) {
   if (!q) return true;
   var values = _.map(options.fields || ['name'], function (field) {
     if (field === 'name') return getName(item);
+
+    // HACK: This is necessary because of an ES bug, see
+    // https://github.com/elasticsearch/elasticsearch/issues/8030
+    if (field === 'portal_name') field = 'portal.name';
+    if (field === 'portal_short_name') field = 'portal.short_name';
+
     var path = field.split('.');
     var value = item;
     while (value && path.length) value = value[path.shift()];

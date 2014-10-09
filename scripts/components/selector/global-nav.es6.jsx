@@ -17,7 +17,16 @@ export default React.createClass({
       allowArbitrary: false,
       allowBrowse: false,
       allowEmptyQuery: false,
-      fields: ['name', 'portal.name', 'portal.short_name', '_type'],
+      fields: [
+        '_type',
+        'name',
+        'short_name',
+
+        // HACK: These should really be portal.name and portal.short_name, see
+        // https://github.com/elasticsearch/elasticsearch/issues/8030
+        'portal_name',
+        'portal_short_name'
+      ],
       boostTypes: ['portal'],
       limit: 7,
       placeholder: 'Search for anything...'

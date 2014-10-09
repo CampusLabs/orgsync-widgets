@@ -309,7 +309,6 @@ export default React.createClass({
         </div>
         <div className={this.getMainClassName()}>
           <div className='osw-events-index-header'>
-            {this.renderTz()}
             <div className='osw-events-index-left'>
               <Button
                 className='osw-events-index-toggle-filters'
@@ -323,6 +322,7 @@ export default React.createClass({
             {this.renderViewControls()}
           </div>
           <div className='osw-events-index-view'>{this.renderView()}</div>
+          {this.renderTz()}
         </div>
       </div>
     );

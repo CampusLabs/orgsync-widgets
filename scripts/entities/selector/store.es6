@@ -29,7 +29,7 @@ var filter = function (item, q, options) {
     if (field === 'name') return getName(item);
     var path = field.split('.');
     var value = item;
-    while (path.length) value = value[path.shift()];
+    while (value && path.length) value = value[path.shift()];
     return value;
   });
   var searchableWords = _.unique(_.str.words(values.join(' ').toLowerCase()));

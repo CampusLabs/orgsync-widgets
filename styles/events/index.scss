@@ -7,7 +7,7 @@
   }
 
   .osw-events-index-sidebar {
-    padding-top: 31px;
+    padding-top: 36px;
     width: 20%;
   }
 
@@ -33,13 +33,15 @@
   }
 
   .osw-events-index-header {
+    height: 30px;
     padding: 5px;
     @include clearfix;
   }
 
   .osw-events-index-tz {
     color: $grey-darker;
-    padding-top: 5px;
+    font-size: 11px;
+    padding: 5px 10px 0 0;
     text-align: right;
   }
 
@@ -58,6 +60,7 @@
   }
 
   .osw-events-index-view {
+    border-top: 1px solid $grey;
     border-bottom: 1px solid $grey;
     height: 640px;
     overflow: auto;

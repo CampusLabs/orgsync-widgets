@@ -1,18 +1,18 @@
 @import '../config';
 
 .orgsync-widget {
+  .osw-events-calendar {
+    background: white;
+  }
   .osw-events-calendar-day-names {
     border-collapse: collapse;
     table-layout: fixed;
     width: 100%;
-
     th {
       padding: 2px;
     }
   }
-
   .osw-events-calendar-day-name {
-    border-top: 1px solid $grey;
     color: $grey-darker;
     font-weight: bold;
     padding: 2px 2px 0;

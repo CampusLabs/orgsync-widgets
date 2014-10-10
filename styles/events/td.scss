@@ -2,9 +2,9 @@
 
 .orgsync-widget {
   .osw-events-td {
-    font-size: 11px;
+    font-size: 12px;
     height: 18px;
-    padding: 1px 2px 0;
+    padding: 0 2px;
   }
 
   .osw-events-td-all-day,
@@ -65,6 +65,7 @@
   .osw-events-td-time {
     color: $grey-darker;
     float: right;
+    font-size: 10px;
     padding-left: 5px;
   }
 
@@ -75,7 +76,8 @@
   }
 
   .osw-events-td-more {
+    color: $grey-darker;
     cursor: pointer;
-    text-align: center;
+    padding-left: 6px;
   }
 }

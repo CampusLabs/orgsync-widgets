@@ -19,14 +19,17 @@
 
   .osw-popup-head {
     @include border-top-radius(3px);
-    background: $grey-lighter;
+    background: #f2f3f6;
     color: $grey-darker;
-    font-size: 16px;
-    font-weight: bold;
-    padding: 10px;
   }
 
   .osw-popup-title {
+    color: #60666d;
+    font-size: 15px;
+    font-weight: bold;
+    line-height: 21px;
+    margin: 0;
+    padding: 16px;
     text-align: center;
   }
 
@@ -37,9 +40,12 @@
   }
 
   .osw-popup-close-button {
+    color: $grey;
     cursor: pointer;
+    font-size: 18px;
     float: right;
-    margin-top: -2px;
+    line-height: 15px;
+    padding: 16px;
 
     &:hover {
       border-color: $grey-darkest;

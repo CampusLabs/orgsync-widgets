@@ -21,7 +21,6 @@
     border-radius: 3px;
     font-weight: bold;
     text-align: center;
-    box-shadow: 0 1px 2px $grey;
     @include user-select(none);
 
     > img {
@@ -49,18 +48,19 @@
 
   .osw-events-show-info {
     overflow: hidden;
+    a {
+      color: $grey-darker;
+    }
   }
 
   .osw-events-show-title {
     display: block;
     padding-bottom: 10px;
-    font-size: 26px;
-    color: $blue-darkest;
+    font-size: 21px;
   }
 
   .osw-events-show-time,
   .osw-events-show-portal-name {
-    margin-right: 5px;
     margin-right: 5px;
   }
 
@@ -82,10 +82,10 @@
 
     > .oswi {
       float: left;
-      margin-top: 2px;
+      margin-top: 5px;
       text-align: center;
       width: 30px;
-      font-size: 25px;
+      font-size: 21px;
       color: $grey;
     }
   }
@@ -93,11 +93,12 @@
   .osw-events-show-section-main {
     padding: 10px 0 10px 5px;
     overflow: hidden;
-    font-size: 16px;
+    font-size: 15px;
+    line-height: 1.4em;
   }
 
   .osw-events-show-time {
-    font-size: 14px;
+    @include subtle-text;
   }
 
   .osw-events-show-location,

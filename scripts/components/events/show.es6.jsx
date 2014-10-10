@@ -7,6 +7,7 @@ import Button from 'components/button';
 import Cursors from 'cursors';
 import Icon from 'components/icon';
 import React from 'react';
+import Sep from 'components/sep';
 
 import {getMoment, isAllDay, mergeResponse} from 'entities/event';
 
@@ -125,7 +126,7 @@ export default React.createClass({
         {time ? <div className='osw-events-show-time'>{time}</div> : null}
         <div className='osw-events-show-add-to-calendar'>
           <a href={this.getIcsUrl()} target='_parent'>Add to iCal/Outlook</a>
-          {' | '}
+          <Sep />
           <a href={this.getGcalUrl()} target='_parent'>
             Add to Google Calendar
           </a>

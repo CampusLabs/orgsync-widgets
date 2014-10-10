@@ -7,10 +7,4 @@ $sd-css-prefix: oswi;
 @import 'bower_components/bourbon/dist/bourbon';
 @import 'bower_components/velcro/styles/colors';
 @import 'bower_components/velcro/styles/variables';
-
-@mixin ellipsis {
-  word-wrap: normal;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
+@import 'bower_components/velcro/styles/mixins';

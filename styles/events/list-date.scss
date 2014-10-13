@@ -2,14 +2,15 @@
 
 .orgsync-widget {
   .osw-events-list-date-header {
-    background: $grey-lightest;
-    border-bottom: 1px solid $grey;
-    color: $grey-darker;
-    font-size: 14px;
-    font-weight: bold;
-    padding: 10px;
+    background: $slate-lightest;
+    border-left: 1px solid $table-border-color;
+    color: $slate-darker;
+    font-size: 12px;
+    letter-spacing: .05em;
+    padding: 8px;
     position: -webkit-sticky;
     position: sticky;
+    text-transform: uppercase;
     top: 0;
   }
 

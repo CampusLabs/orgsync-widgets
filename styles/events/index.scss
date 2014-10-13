@@ -61,7 +61,8 @@
   }
 
   .osw-events-index-view {
-    border: $table-border-size $table-border-style $table-border-color;
+    border: 1px $table-border-style $table-border-color;
+    border-left: 0;
     height: 640px;
     overflow: auto;
   }

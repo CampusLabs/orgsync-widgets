@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "main": ["dist/orgsync-widgets.js", "dist/orgsync-widgets.css"],
   "devDependencies": {
-    "amdainty": "0.1.0",
+    "amdainty": "0.2.0",
     "async": "0.9.0",
     "bourbon": "3.2.1",
     "cursors": "0.4.0",

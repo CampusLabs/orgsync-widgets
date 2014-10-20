@@ -1,5 +1,5 @@
 //= require ./start.frag
-//= require ./amd-shim.js
+//= require bower_components/amdainty/amdainty.js
 //= requireSelf
 //= require ./components/**/*
 //= require ./end.frag

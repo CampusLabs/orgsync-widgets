@@ -9,6 +9,7 @@ import _ from 'underscore';
 import api from 'api';
 import config from 'config';
 import elementQuery from 'elementQuery';
+import Live from 'live';
 import React from 'react';
 import require from 'require';
 
@@ -39,6 +40,11 @@ export var unmount = function (el) {
 };
 
 export var unmountAll = _.partial(eachEl, unmount);
+
+export var live = new Live({
+  url: 'wss://orgsync.com/io/websocket',
+  fetchAuthKey: function (cb) { cb(null, api.key); }
+});
 
 export {require};
 

@@ -1,18 +1,12 @@
 import _ from 'underscore';
 import _str from 'underscore.string';
-import api from 'api';
-import Live from 'live';
+import app from 'orgsync-widgets';
 import {getTerm, getName} from 'entities/selector/item';
 import React from 'react';
 
 var update = React.addons.update;
 
 var FETCH_SIZE = 100;
-
-var live = new Live({
-  url: 'ws://orgsync.com.dev/io/websocket',
-  fetchAuthKey: function (cb) { cb(null, api.key); }
-});
 
 export var cache = {};
 
@@ -94,7 +88,7 @@ export var fetch = function (options, cb) {
   var size = Math.max(0, Math.min(limit - from, FETCH_SIZE));
   options = _.extend({}, options, {from: from, size: size});
   if (done[key] || !size) return cb(null, true, options);
-  live.send('search', options, function (er, res) {
+  app.live.send('search', options, function (er, res) {
     if (er) return cb(er);
     var items = _.map(res.hits.hits, function (hit) {
       return _.extend({_type: hit._type}, hit._source);

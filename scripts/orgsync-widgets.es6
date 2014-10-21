@@ -25,6 +25,7 @@ var eachEl = function (fn) {
 export var mount = function (el) {
   if (el.widgetIsMounted) return;
   var data = $(el).data();
+  if (!data.moduleName) return;
   var component = require('components/' + data.moduleName).default;
   if (data.apiKey) api.key = data.apiKey;
   if (data.apiUrlRoot) api.urlRoot = data.apiUrlRoot;

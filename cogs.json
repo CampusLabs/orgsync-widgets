@@ -4,6 +4,7 @@
     "names": {
       "async": "bower_components/async/lib/async.js",
       "backbone": "bower_components/backbone/backbone.js",
+      "cache": "bower_components/cache/cache.js",
       "cursors": "bower_components/cursors/cursors.js",
       "elementQuery": "bower_components/elementQuery/elementQuery.js",
       "herit": "bower_components/herit/herit.js",

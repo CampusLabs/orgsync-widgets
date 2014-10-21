@@ -5,6 +5,7 @@
   "devDependencies": {
     "amdainty": "0.2.0",
     "async": "0.9.0",
+    "cache": "0.0.3",
     "bourbon": "3.2.1",
     "cursors": "0.4.0",
     "elementQuery": "tysonmatanich/elementQuery#47e310efbe8661d00c63d8c3267e34a66a0d2ee5",

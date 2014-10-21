@@ -7,6 +7,7 @@
 import $ from 'jquery';
 import _ from 'underscore';
 import api from 'api';
+import Cache from 'cache';
 import config from 'config';
 import elementQuery from 'elementQuery';
 import Live from 'live';
@@ -46,6 +47,8 @@ export var live = new Live({
   url: 'wss://orgsync.com/io/websocket',
   fetchAuthKey: function (cb) { cb(null, api.key); }
 });
+
+export var cache = new Cache({prefix: 'osw:'});
 
 export {require};
 

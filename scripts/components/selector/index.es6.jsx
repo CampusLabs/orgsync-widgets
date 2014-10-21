@@ -1,6 +1,7 @@
 /** @jsx React.DOM */
 
 import _ from 'underscore';
+import app from 'orgsync-widgets';
 import Button from 'components/button';
 import Cursors from 'cursors';
 import List from 'react-list';
@@ -427,7 +428,7 @@ var SelectorIndex = React.createClass({
         renderEmpty={this.renderEmpty}
         renderError={this.renderError}
         fetch={selected ? null : this.fetch}
-        fetchInitially={!store.cache[key]}
+        fetchInitially={!app.cache[key]}
         uniform={true}
         renderPageSize={this.props.renderPageSize}
         updateForActiveIndex={this.state.activeIndex}

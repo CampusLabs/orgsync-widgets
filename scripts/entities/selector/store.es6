@@ -8,8 +8,6 @@ var update = React.addons.update;
 
 var FETCH_SIZE = 100;
 
-export var cache = {};
-
 var done = {};
 
 export var parse = function (q) {
@@ -50,13 +48,13 @@ export var getQueryKey = function (options) {
 
 var cacheItems = function (items, options) {
   var key = getQueryKey(options);
-  var cached = cache[key] ? cache[key].slice() : [];
-  items.forEach(function (item) { cache[getTerm(item)] = item; });
-  cache[key] = _.unique(cached.concat(items.map(getTerm)));
+  var cached = app.cache.get(key) ? app.cache.get(key).slice() : [];
+  items.forEach(function (item) { app.cache.set(getTerm(item), item); });
+  app.cache.set(key, _.unique(cached.concat(items.map(getTerm))));
 };
 
 var getItemFromId = function (id) {
-  return cache[id];
+  return app.cache.get(id);
 };
 
 export var search = function (options) {
@@ -65,7 +63,7 @@ export var search = function (options) {
   var q = options.q;
   var results = [];
   while (true) {
-    var cached = cache[getQueryKey(options)];
+    var cached = app.cache.get(getQueryKey(options));
     if (cached) {
       cached = cached.map(getItemFromId);
 
@@ -82,7 +80,7 @@ export var search = function (options) {
 
 export var fetch = function (options, cb) {
   var key = getQueryKey(options);
-  var cached = cache[getQueryKey(options)] || [];
+  var cached = app.cache.get(getQueryKey(options)) || [];
   var from = cached.length;
   var limit = options.limit || Infinity;
   var size = Math.max(0, Math.min(limit - from, FETCH_SIZE));

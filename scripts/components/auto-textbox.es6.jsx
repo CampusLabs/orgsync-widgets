@@ -1,9 +1,12 @@
 /** @jsx React.DOM */
 
 import $ from 'jquery';
+import Cursors from 'cursors';
 import React from 'react';
 
 export default React.createClass({
+  mixins: [Cursors],
+
   componentDidMount: function () {
     $(window).on('resize', this.resize);
     this.resize();
@@ -17,18 +20,14 @@ export default React.createClass({
     this.resize();
   },
 
-  shouldComponentUpdate: function (nextProps) {
-    return this.props.value !== nextProps.value;
-  },
-
   resize: function () {
     var el = this.getDOMNode();
     var $el = $(el);
     var minHeight = el.style.minHeight;
     $el.css({minHeight: 0, height: 0});
-    var targetHeight = el.scrollHeight;
-    var clientHeight = el.clientHeight;
-    var innerHeight = $el.innerHeight();
+    var targetHeight = Math.round(el.scrollHeight);
+    var clientHeight = Math.round(el.clientHeight);
+    var innerHeight = Math.round($el.innerHeight());
     if (clientHeight === innerHeight) targetHeight -= el.clientHeight;
     if ($el.css('boxSizing') === 'border-box') targetHeight += el.offsetHeight;
     $el.css({minHeight: minHeight, height: targetHeight});

@@ -11,5 +11,6 @@
     @include box-sizing(border-box);
     border: 5px solid transparent;
     border-collapse: collapse;
+    table-layout: fixed;
   }
 }

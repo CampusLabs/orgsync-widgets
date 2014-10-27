@@ -5,6 +5,7 @@ import Cursors from 'cursors';
 import Icon from 'components/icon';
 import Popup from 'components/popup';
 import React from 'react';
+import Sep from 'components/sep';
 import Show from 'components/events/show';
 
 import {getMoment, getColor} from 'entities/event';
@@ -122,6 +123,7 @@ export default React.createClass({
               <span className='osw-events-list-item-time'>
                 {this.getTime()}
               </span>
+              <Sep />
               <span className='osw-events-list-item-portal-name'>
                 {event.portal.name}
               </span>

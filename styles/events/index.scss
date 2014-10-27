@@ -60,9 +60,13 @@
     text-align: center;
   }
 
+  .osw-events-index-list-controls {
+    float: right;
+  }
+
   .osw-events-index-view {
-    border-top: 1px solid $grey;
-    border-bottom: 1px solid $grey;
+    border: 1px $table-border-style $table-border-color;
+    border-left: 0;
     height: 640px;
     overflow: auto;
   }

@@ -3,6 +3,7 @@
 .orgsync-widget {
   .osw-portals-letter-cell {
     padding: 0;
+    width: 2%;
 
     &:not(:first-child) > .osw-button {
       @include border-left-radius(0);

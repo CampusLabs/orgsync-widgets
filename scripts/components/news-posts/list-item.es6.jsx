@@ -1,5 +1,3 @@
-/** @jsx React.DOM */
-
 import $ from 'jquery';
 import _str from 'underscore.string';
 import Cursors from 'cursors';

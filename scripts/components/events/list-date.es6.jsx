@@ -1,5 +1,3 @@
-/** @jsx React.DOM */
-
 import Cursors from 'cursors';
 import List from 'react-list';
 import ListItem from 'components/events/list-item';

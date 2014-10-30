@@ -1,5 +1,3 @@
-/** @jsx React.DOM */
-
 import _ from 'underscore';
 import Cursors from 'cursors';
 import React from 'react';
@@ -28,8 +26,6 @@ export default React.createClass({
   },
 
   render: function () {
-    return this.transferPropsTo(
-      <Selector renderOptions={this.renderOptions} />
-    );
+    return <Selector {...this.props} renderOptions={this.renderOptions} />;
   }
 });

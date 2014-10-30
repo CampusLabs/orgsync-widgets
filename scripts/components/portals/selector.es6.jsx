@@ -1,6 +1,5 @@
-/** @jsx React.DOM */
-
 import Cursors from 'cursors';
+import joinClassNames from 'utils/join-class-names';
 import React from 'react';
 
 export default React.createClass({
@@ -10,8 +9,16 @@ export default React.createClass({
     var options = this.props.renderOptions();
     var value = this.props.value;
     if (options.length === 2) value = options[1].props.value;
-    return this.transferPropsTo(
-      <div className='osw-big osw-field oswi osw-dropdown'>
+    return (
+      <div
+        {...this.props}
+        className={
+          joinClassNames(
+            'osw-big osw-field oswi osw-dropdown',
+            this.props.className
+          )
+        }
+      >
         <select
           name={this.props.name}
           value={value}

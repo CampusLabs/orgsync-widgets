@@ -1,7 +1,6 @@
-/** @jsx React.DOM */
-
 import Cursors from 'cursors';
 import FacetedSelector from 'components/portals/faceted-selector';
+import joinClassNames from 'utils/join-class-names';
 import React from 'react';
 
 export default React.createClass({
@@ -12,12 +11,13 @@ export default React.createClass({
   },
 
   render: function () {
-    return this.transferPropsTo(
+    return (
       <FacetedSelector
+        {...this.props}
+        className={joinClassNames('oswi-umbrella', this.props.className)}
         name='umbrella'
         allOption='All Umbrellas'
         getFacet={this.getFacet}
-        className='oswi-umbrella'
       />
     );
   }

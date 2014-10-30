@@ -1,5 +1,3 @@
-/** @jsx React.DOM */
-
 import $ from 'jquery';
 import Cursors from 'cursors';
 import React from 'react';
@@ -34,6 +32,6 @@ export default React.createClass({
   },
 
   render: function () {
-    return this.transferPropsTo(<textarea />);
+    return <textarea {...this.props} />;
   }
 });

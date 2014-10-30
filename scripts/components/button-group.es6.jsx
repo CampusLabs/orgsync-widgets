@@ -1,11 +1,18 @@
-/** @jsx React.DOM */
-
+import Cursors from 'cursors';
+import joinClassNames from 'utils/join-class-names';
 import React from 'react';
 
 export default React.createClass({
+  mixins: [Cursors],
+
   render: function () {
-    return this.transferPropsTo(
-      <div className='osw-button-group'>{this.props.children}</div>
+    return (
+      <div
+        {...this.props}
+        className={joinClassNames('osw-button-group', this.props.className)}
+      >
+        {this.props.children}
+      </div>
     );
   }
 });

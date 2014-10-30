@@ -1,5 +1,3 @@
-/** @jsx React.DOM */
-
 import CategorySelector from 'components/portals/category-selector';
 import Cursors from 'cursors';
 import LetterTable from 'components/portals/letter-table';
@@ -32,7 +30,7 @@ export default React.createClass({
           onChange={this.handleChange}
         />
         <LetterTable cursors={{letter: this.getCursor('letter')}} />
-        {this.transferPropsTo(<Summary />)}
+        <Summary {...this.props} />
       </div>
     );
   }

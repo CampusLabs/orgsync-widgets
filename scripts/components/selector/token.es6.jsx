@@ -1,5 +1,3 @@
-/** @jsx React.DOM */
-
 import Cursors from 'cursors';
 import Icon from 'components/icon';
 import React from 'react';

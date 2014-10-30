@@ -1,5 +1,3 @@
-/** @jsx React.DOM */
-
 import _ from 'underscore';
 import Cursors from 'cursors';
 import Td from 'components/events/td';

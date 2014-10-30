@@ -1,5 +1,3 @@
-/** @jsx React.DOM */
-
 import PhotosIndex from 'components/photos/index';
 import Cursors from 'cursors';
 import React from 'react';

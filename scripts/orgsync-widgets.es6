@@ -31,7 +31,7 @@ export var mount = function (el) {
   if (data.apiKey) api.key = data.apiKey;
   if (data.apiUrlRoot) api.urlRoot = data.apiUrlRoot;
   el.widgetIsMounted = true;
-  React.renderComponent(component(_.clone(data)), el);
+  React.render(React.createFactory(component)(_.clone(data)), el);
   elementQuery();
 };
 

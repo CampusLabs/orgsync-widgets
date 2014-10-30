@@ -1,5 +1,3 @@
-/** @jsx React.DOM */
-
 import _ from 'underscore';
 import Button from 'components/button';
 import Cursors from 'cursors';

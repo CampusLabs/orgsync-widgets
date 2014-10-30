@@ -1,5 +1,3 @@
-/** @jsx React.DOM */
-
 import CommentsIndex from 'components/comments/index';
 import Cursors from 'cursors';
 import React from 'react';

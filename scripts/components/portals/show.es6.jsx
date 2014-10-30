@@ -1,5 +1,3 @@
-/** @jsx React.DOM */
-
 import api from 'api';
 import Cursors from 'cursors';
 import Button from 'components/button';

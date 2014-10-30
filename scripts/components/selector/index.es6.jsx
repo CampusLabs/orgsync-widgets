@@ -1,5 +1,3 @@
-/** @jsx React.DOM */
-
 import _ from 'underscore';
 import app from 'orgsync-widgets';
 import Button from 'components/button';
@@ -439,8 +437,9 @@ var SelectorIndex = React.createClass({
 
   renderBrowse: function () {
     if (!this.state.browseIsOpen) return;
-    return this.transferPropsTo(
+    return (
       <SelectorIndex
+        {...this.props}
         view='browse'
         query={this.state.query}
         cursors={{

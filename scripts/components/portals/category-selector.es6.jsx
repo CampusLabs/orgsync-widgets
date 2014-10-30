@@ -1,7 +1,6 @@
-/** @jsx React.DOM */
-
 import Cursors from 'cursors';
 import FacetedSelector from 'components/portals/faceted-selector';
+import joinClassNames from 'utils/join-class-names';
 import React from 'react';
 
 export default React.createClass({
@@ -10,12 +9,13 @@ export default React.createClass({
   getFacet: function (portal) { return portal.category.name; },
 
   render: function () {
-    return this.transferPropsTo(
+    return (
       <FacetedSelector
+        {...this.props}
+        className={joinClassNames('oswi-book', this.props.className)}
         name='category'
         allOption='All Categories'
         getFacet={this.getFacet}
-        className='oswi-book'
       />
     );
   }

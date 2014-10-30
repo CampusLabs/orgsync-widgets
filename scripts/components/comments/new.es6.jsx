@@ -1,5 +1,3 @@
-/** @jsx React.DOM */
-
 import Button from 'components/button';
 import React from 'react';
 

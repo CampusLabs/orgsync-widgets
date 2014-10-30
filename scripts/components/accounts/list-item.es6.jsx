@@ -1,5 +1,3 @@
-/** @jsx React.DOM */
-
 import {getPictureUrl} from 'entities/account';
 import React from 'react';
 

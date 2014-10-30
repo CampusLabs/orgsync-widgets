@@ -1,5 +1,3 @@
-/** @jsx React.DOM */
-
 import _str from 'underscore.string';
 import Cursors from 'cursors';
 import Icon from 'components/icon';

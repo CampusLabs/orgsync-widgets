@@ -1,5 +1,3 @@
-/** @jsx React.DOM */
-
 import $ from 'jquery';
 import _ from 'underscore';
 import api from 'api';

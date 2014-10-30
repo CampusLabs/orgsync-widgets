@@ -1,5 +1,3 @@
-/** @jsx React.DOM */
-
 import elementQuery from 'elementQuery';
 import Icon from 'components/icon';
 import Olay from 'olay-react';

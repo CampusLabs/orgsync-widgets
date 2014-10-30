@@ -1,5 +1,3 @@
-/** @jsx React.DOM */
-
 import Cursors from 'cursors';
 import Popup from 'components/popup';
 import React from 'react';

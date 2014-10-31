@@ -502,7 +502,7 @@ var SelectorIndex = React.createClass({
 
   render: function () {
     return (
-      <div>
+      <div {...this.props}>
         <div
           className={this.getClassName()}
           onClick={this.handleClick}

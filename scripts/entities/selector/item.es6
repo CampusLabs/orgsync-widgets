@@ -1,3 +1,4 @@
+import _ from 'underscore';
 import _str from 'underscore.string';
 
 var ICON_MAP = {
@@ -16,6 +17,19 @@ var ICON_MAP = {
 
 var ARBITRARY_ICON = 'view';
 
+var NAME_FIELDS = ['name', 'title', 'display_name'];
+
+var PICTURE_URL_FIELDS = [
+  'picture_url',
+  'image_url',
+  'thumbnail_url',
+  'cover_photo'
+];
+
+var getBestFit = function (fields, item) {
+  return item[_.find(fields, _.partial(_.has, item))];
+};
+
 export var isArbitrary = function (item) {
   return item._type == null || item.id == null;
 };
@@ -26,13 +40,9 @@ export var getTerm = function (item) {
   return item._type + '_' + item.id;
 };
 
-export var getName = function (item) {
-  return item.name || item.title || item.display_name;
-};
+export var getName = _.partial(getBestFit, NAME_FIELDS);
 
-export var getPictureUrl = function (item) {
-  return item.picture_url || item.image_url || item.thumbnail_url;
-};
+export var getPictureUrl = _.partial(getBestFit, PICTURE_URL_FIELDS);
 
 export var getIconName = function (item) {
   if (isArbitrary(item)) return ARBITRARY_ICON;

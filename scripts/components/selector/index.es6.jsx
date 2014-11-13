@@ -120,13 +120,13 @@ var SelectorIndex = React.createClass({
         this.refs.query.getDOMNode().blur();
         this.update({hasFocus: {$set: false}, hasMouse: {$set: false}});
       }
-      return false;
+      return ev.preventDefault();
     case 'ArrowUp':
       this.incrActiveIndex(-1);
-      return false;
+      return ev.preventDefault();
     case 'ArrowDown':
       this.incrActiveIndex(1);
-      return false;
+      return ev.preventDefault();
     }
   },
 

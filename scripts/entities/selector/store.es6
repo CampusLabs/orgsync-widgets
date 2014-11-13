@@ -14,22 +14,29 @@ export var parse = function (q) {
   return ((q || '') + '').replace(/\s+/g, ' ').trim().toLowerCase();
 };
 
+var filterValue = function (item, field) {
+  if (item._type === 'portal') {
+    if (field === 'portal_name') field = 'name';
+    if (field === 'portal_short_name') field = 'short_name';
+  }
+
+  // HACK: This is necessary because of an ES bug, see
+  // https://github.com/elasticsearch/elasticsearch/issues/8030
+  if (field === 'portal_name') field = 'portal.name';
+  if (field === 'portal_short_name') field = 'portal.short_name';
+
+  if (field === 'name') return getName(item);
+
+  var path = field.split('.');
+  var value = item;
+  while (value && path.length) value = value[path.shift()];
+  return value;
+};
+
 var filter = function (item, q, options) {
   q = parse(q);
   if (!q) return true;
-  var values = _.map(options.fields || ['name'], function (field) {
-    if (field === 'name') return getName(item);
-
-    // HACK: This is necessary because of an ES bug, see
-    // https://github.com/elasticsearch/elasticsearch/issues/8030
-    if (field === 'portal_name') field = 'portal.name';
-    if (field === 'portal_short_name') field = 'portal.short_name';
-
-    var path = field.split('.');
-    var value = item;
-    while (value && path.length) value = value[path.shift()];
-    return value;
-  });
+  var values = _.map(options.fields || ['name'], _.partial(filterValue, item));
   var searchableWords = _.unique(_.str.words(values.join(' ').toLowerCase()));
   return _.every(_str.words(q), function (wordA) {
     return _.any(searchableWords, _.partial(_str.startsWith, _, wordA));

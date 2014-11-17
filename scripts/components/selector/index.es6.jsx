@@ -26,6 +26,7 @@ var SelectorIndex = React.createClass({
       allowBrowse: true,
       allowEmptyQuery: true,
       browseText: 'Browse',
+      dataset: null,
       fields: ['name'],
       hiddenInputName: 'selection',
       types: [],
@@ -242,6 +243,7 @@ var SelectorIndex = React.createClass({
         _.reject(this.props.scopes, {term: '_all'}) :
         [scope];
     }
+    if (this.props.dataset) options.dataset = this.props.dataset;
     if (this.state.query) options.q = this.state.query;
     return options;
   },

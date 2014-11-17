@@ -93,7 +93,7 @@ export var fetch = function (options, cb) {
   var limit = options.limit || Infinity;
   options.from = cached.length;
   options.size = Math.max(0, Math.min(limit - options.from, FETCH_SIZE));
-  if (options.dataset) {
+  if (options.dataset && !done[key]) {
     cacheItems(options.dataset, options);
     done[key] = true;
   }

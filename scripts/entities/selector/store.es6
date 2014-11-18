@@ -49,15 +49,16 @@ export var getQueryKey = function (options) {
     (options.types || []).slice().sort().join() || '_all',
     (options.boost_types || []).slice().sort().join() || 'none',
     (options.fields || []).slice().sort().join() || 'name',
-    parse(options.q)
+    (options.dataset ? '' : parse(options.q))
   ]).join(':');
 };
 
 var cacheItems = function (items, options) {
   var key = getQueryKey(options);
-  var cached = app.cache.get(key) ? app.cache.get(key).slice() : [];
-  items.forEach(function (item) { app.cache.set(getTerm(item), item); });
-  app.cache.set(key, _.unique(cached.concat(items.map(getTerm))));
+  var cached = (app.cache.get(key) || []).slice();
+  if (options.overwrite) cached = [];
+  _.each(items, function (item) { app.cache.set(getTerm(item), item); });
+  app.cache.set(key, _.unique(cached.concat(_.map(items, getTerm))));
 };
 
 var getItemFromId = function (id) {
@@ -86,19 +87,18 @@ export var search = function (options) {
 };
 
 export var fetch = function (options, cb) {
-  options = _.clone(options);
-  if (options.dataset) options.q = '';
   var key = getQueryKey(options);
-  var cached = app.cache.get(getQueryKey(options)) || [];
+  var cached = app.cache.get(key) || [];
   var limit = options.limit || Infinity;
+  options = _.clone(options);
   options.from = cached.length;
   options.size = Math.max(0, Math.min(limit - options.from, FETCH_SIZE));
   if (options.dataset && !done[key]) {
-    cacheItems(options.dataset, options);
+    cacheItems(options.dataset, _.extend({overwrite: true}, options));
     done[key] = true;
   }
   if (done[key] || !options.size) return cb(null, true, options);
-  app.live.send('search', options, function (er, res) {
+  app.io.emit('search', options, function (er, res) {
     if (er) return cb(er);
     var items = _.map(res.hits.hits, function (hit) {
       return _.extend({_type: hit._type}, hit._source);

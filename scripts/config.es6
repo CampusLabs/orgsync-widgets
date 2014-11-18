@@ -1,4 +1,9 @@
 export default {
+  api: {
+    key: window.OSW_API_KEY,
+    urlRoot: window.OSW_URL_ROOT
+  },
+
   elementQuery: {
     '.orgsync-widget, .osw-popup': {
       'min-width': [
@@ -17,5 +22,10 @@ export default {
         '1001px'
       ]
     }
+  },
+
+  io: {
+    path: '/io',
+    uri: window.OSW_IO_URL || 'https://orgsync.com'
   }
 };

@@ -428,7 +428,7 @@ var SelectorIndex = React.createClass({
         renderEmpty={this.renderEmpty}
         renderError={this.renderError}
         fetch={selected ? null : this.fetch}
-        fetchInitially={!app.cache[key]}
+        fetchInitially={!app.cache.get(key)}
         uniform={true}
         renderPageSize={this.props.renderPageSize}
         updateForActiveIndex={this.state.activeIndex}
@@ -456,10 +456,7 @@ var SelectorIndex = React.createClass({
     if (!this.state.browseIsOpen) return;
     return (
       <div className='osw-selector-index-done-container'>
-        <Button
-          className='osw-selector-index-done'
-          onClick={this.closeBrowse}
-        >
+        <Button className='osw-selector-index-done' onClick={this.closeBrowse}>
           Done
         </Button>
       </div>

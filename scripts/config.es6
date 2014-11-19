@@ -1,7 +1,7 @@
 export default {
   api: {
     key: window.OSW_API_KEY,
-    urlRoot: window.OSW_URL_ROOT
+    urlRoot: window.OSW_API_URL_ROOT
   },
 
   elementQuery: {

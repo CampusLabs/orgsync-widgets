@@ -7,6 +7,7 @@ var ICON_MAP = {
   custom_page: 'page',
   email_list: 'email',
   forum: 'communication',
+  group: 'organization',
   link: 'bookmark',
   news_post: 'news',
   opportunity: 'event',

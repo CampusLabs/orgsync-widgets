@@ -49,7 +49,7 @@ export var getQueryKey = function (options) {
     (options.types || []).slice().sort().join() || '_all',
     (options.boost_types || []).slice().sort().join() || 'none',
     (options.fields || []).slice().sort().join() || 'name',
-    (options.dataset ? '' : parse(options.q))
+    parse(options.q)
   ]).join(':');
 };
 
@@ -87,6 +87,7 @@ export var search = function (options) {
 };
 
 export var fetch = function (options, cb) {
+  if (options.dataset) options = _.omit(options, 'q');
   var key = getQueryKey(options);
   var cached = app.cache.get(key) || [];
   var limit = options.limit || Infinity;

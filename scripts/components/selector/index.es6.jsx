@@ -416,10 +416,10 @@ var SelectorIndex = React.createClass({
   renderResults: function () {
     if (!this.shouldShowResults()) return;
     var selected = this.state.scope === SELECTED_SCOPE;
-    var key = store.getQueryKey(this.getSearchOptions());
+    var options = this.getSearchOptions();
     return (
       <List
-        key={key}
+        key={store.getQueryKey(_.omit(options, 'dataset'))}
         ref='results'
         className='osw-selector-index-results'
         items={selected ? this.state.value : this.state.results}
@@ -428,7 +428,7 @@ var SelectorIndex = React.createClass({
         renderEmpty={this.renderEmpty}
         renderError={this.renderError}
         fetch={selected ? null : this.fetch}
-        fetchInitially={!app.cache.get(key)}
+        fetchInitially={!app.cache.get(store.getQueryKey(options))}
         uniform={true}
         renderPageSize={this.props.renderPageSize}
         updateForActiveIndex={this.state.activeIndex}

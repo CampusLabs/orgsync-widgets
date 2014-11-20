@@ -110,10 +110,11 @@ var SelectorIndex = React.createClass({
     switch (key) {
     case 'Enter':
       var activeItem = this.state.results[this.state.activeIndex];
-      if (!activeItem) break;
-      this.handleResultClick(activeItem);
-      this.update({query: {$set: ''}});
-      break;
+      if (activeItem) {
+        this.handleResultClick(activeItem);
+        this.update({query: {$set: ''}});
+      }
+      return ev.preventDefault();
     case 'Escape':
       if (query) {
         this.update({query: {$set: ''}});

@@ -24,22 +24,27 @@ export default React.createClass({
     if (isArbitrary(this.props.scope)) return;
     return (
       <input
-        type='checkbox'
-        className='osw-selector-scope-toggle'
         checked={this.props.isSelected}
+        className='osw-selector-scope-toggle'
         onChange={this.handleChange}
         onClick={STOP_PROPAGATION}
+        type='checkbox'
       />
     );
+  },
+
+  renderName: function () {
+    var name = getName(this.props.scope);
+    var count = this.props.count;
+    if (!count) return name;
+    return <strong>{name} ({count})</strong>;
   },
 
   render: function () {
     return (
       <div className={this.getClassName()} onClick={this.props.onClick}>
         {this.renderToggle()}
-        <div className='osw-selector-scope-name'>
-          {getName(this.props.scope)}
-        </div>
+        <div className='osw-selector-scope-name'>{this.renderName()}</div>
       </div>
     );
   }

@@ -349,12 +349,12 @@ var SelectorIndex = React.createClass({
   renderScope: function (scope, i) {
     return (
       <Scope
+        isActive={scope === this.state.scope}
+        isSelected={this.isSelected(scope)}
         key={i}
-        scope={scope}
         onClick={_.partial(this.handleScopeClick, scope)}
         onResultClick={this.handleResultClick}
-        isSelected={this.isSelected(scope)}
-        isActive={scope === this.state.scope}
+        scope={scope}
       />
     );
   },
@@ -368,16 +368,6 @@ var SelectorIndex = React.createClass({
         uniform={true}
         updateForScope={this.state.scope}
         updateForValue={this.state.value}
-      />
-    );
-  },
-
-  renderSelected: function () {
-    return (
-      <Scope
-        scope={SELECTED_SCOPE}
-        onClick={_.partial(this.handleScopeClick, SELECTED_SCOPE)}
-        isActive={SELECTED_SCOPE === this.state.scope}
       />
     );
   },
@@ -486,7 +476,12 @@ var SelectorIndex = React.createClass({
       <div className='osw-selector-index-left'>
         {this.renderScopes()}
         <hr />
-        {this.renderSelected()}
+        <Scope
+          count={this.state.value.length}
+          isActive={SELECTED_SCOPE === this.state.scope}
+          onClick={_.partial(this.handleScopeClick, SELECTED_SCOPE)}
+          scope={SELECTED_SCOPE}
+        />
         {this.renderDoneButton()}
       </div>
     );

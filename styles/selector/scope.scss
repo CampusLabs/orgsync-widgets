@@ -7,7 +7,7 @@
     cursor: pointer;
     font-size: 14px;
     margin: 10px;
-    padding: 10px;
+    padding: 0 10px;
     text-align: right;
   }
 
@@ -17,10 +17,11 @@
 
   .osw-selector-scope-toggle {
     float: left;
-    margin-right: 5px;
+    margin: 10px 5px 0 0;
   }
 
   .osw-selector-scope-name {
     @include ellipsis;
+    padding: 10px 0;
   }
 }

@@ -37,7 +37,9 @@ export default React.createClass({
     return (
       <div className={this.getClassName()} onClick={this.props.onClick}>
         {this.renderToggle()}
-        {getName(this.props.scope)}
+        <div className='osw-selector-scope-name'>
+          {getName(this.props.scope)}
+        </div>
       </div>
     );
   }

@@ -2,7 +2,6 @@
 
 .orgsync-widget {
   .osw-selector-scope {
-    @include ellipsis;
     @include user-select(none);
     border-radius: $border-radius;
     cursor: pointer;
@@ -18,5 +17,10 @@
 
   .osw-selector-scope-toggle {
     float: left;
+    margin-right: 5px;
+  }
+
+  .osw-selector-scope-name {
+    @include ellipsis;
   }
 }

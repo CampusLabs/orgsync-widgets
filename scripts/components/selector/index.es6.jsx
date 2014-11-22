@@ -238,14 +238,10 @@ var SelectorIndex = React.createClass({
       types: this.props.types
     };
     var scope = this.state.scope;
-    if (this.props.view === 'inline' || scope.term === '_all') {
-      options.scopes = _.reject(this.props.scopes, {term: '_all'});
-    } else {
-      options.scopes = [scope];
-      if (scope.boost_types) options.boost_types = scope.boostTypes;
-      if (scope.fields) options.fields = scope.fields;
-      if (scope.types) options.types = scope.types;
-    }
+    options.scopes = scope.term === '_all' ? [] : [scope];
+    if (scope.boost_types) options.boost_types = scope.boostTypes;
+    if (scope.fields) options.fields = scope.fields;
+    if (scope.types) options.types = scope.types;
     if (this.props.dataset) options.dataset = this.props.dataset;
     if (this.state.query) options.q = this.state.query;
     return options;

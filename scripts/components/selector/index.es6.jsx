@@ -34,7 +34,7 @@ var SelectorIndex = React.createClass({
       placeholder: 'Search...',
       query: '',
       renderPageSize: 20,
-      scopes: [{name: 'Everything', term: '_all'}],
+      scopes: [{name: 'Everything'}],
       search: store.search,
       value: [],
       view: 'inline'
@@ -72,7 +72,7 @@ var SelectorIndex = React.createClass({
       results = [{name: this.state.query}].concat(results);
     }
     if (this.props.view === 'inline' && !q) {
-      results = _.reject(this.props.scopes, isArbitrary).concat(results);
+      results = _.filter(this.props.scopes, 'selectable').concat(results);
     }
     this.update({results: {$set: results}});
 
@@ -230,20 +230,18 @@ var SelectorIndex = React.createClass({
     this.update({browseIsOpen: {$set: false}});
   },
 
+  pluckOptionsFrom: function (obj) {
+    return _.extend(_.pick(obj, 'fields', 'limit', 'types', 'dataset'), {
+      boost_types: obj.boostTypes
+    });
+  },
+
   getSearchOptions: function () {
-    var options = {
-      boost_types: this.props.boostTypes,
-      fields: this.props.fields,
-      limit: this.props.limit,
-      types: this.props.types
-    };
-    var scope = this.state.scope;
-    options.scopes = scope.term === '_all' ? [] : [scope];
-    if (scope.boost_types) options.boost_types = scope.boostTypes;
-    if (scope.fields) options.fields = scope.fields;
-    if (scope.types) options.types = scope.types;
-    if (this.props.dataset) options.dataset = this.props.dataset;
+    var options = this.pluckOptionsFrom(this.props);
     if (this.state.query) options.q = this.state.query;
+    var scope = this.state.scope;
+    options.scopes = [scope];
+    _.extend(options, this.pluckOptionsFrom(scope));
     return options;
   },
 

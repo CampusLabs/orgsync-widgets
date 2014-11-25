@@ -1,7 +1,7 @@
 import Cursors from 'cursors';
 import React from 'react';
 
-import {isArbitrary, getName} from 'entities/selector/item';
+import {getName} from 'entities/selector/item';
 
 var STOP_PROPAGATION = function (ev) {
   ev.stopPropagation();
@@ -21,7 +21,7 @@ export default React.createClass({
   },
 
   renderToggle: function () {
-    if (isArbitrary(this.props.scope)) return;
+    if (!this.props.scope.selectable) return;
     return (
       <input
         checked={this.props.isSelected}

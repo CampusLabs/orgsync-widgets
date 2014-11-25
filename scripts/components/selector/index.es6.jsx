@@ -193,7 +193,7 @@ var SelectorIndex = React.createClass({
   },
 
   asHiddenInputValue: function (item) {
-    return _.pick(item, isArbitrary(item) ? ['name'] : ['type', 'id']);
+    return _.pick(item, isArbitrary(item) ? ['name'] : ['_type', 'id']);
   },
 
   getClassName: function () {

@@ -230,18 +230,18 @@ var SelectorIndex = React.createClass({
     this.update({browseIsOpen: {$set: false}});
   },
 
-  pluckOptionsFrom: function (obj) {
-    return _.extend(_.pick(obj, 'fields', 'limit', 'types', 'dataset'), {
-      boost_types: obj.boostTypes
-    });
+  pluckSearchOptionsFrom: function (obj) {
+    var options = _.pick(obj, 'fields', 'limit', 'types', 'dataset');
+    if (obj.boostTypes) options.boost_types = obj.boostTypes;
+    return options;
   },
 
   getSearchOptions: function () {
-    var options = this.pluckOptionsFrom(this.props);
+    var options = this.pluckSearchOptionsFrom(this.props);
     if (this.state.query) options.q = this.state.query;
     var scope = this.state.scope;
     options.scopes = [scope];
-    _.extend(options, this.pluckOptionsFrom(scope));
+    _.extend(options, this.pluckSearchOptionsFrom(scope));
     return options;
   },
 

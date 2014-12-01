@@ -1,3 +1,4 @@
+import _ from 'underscore';
 import _str from 'underscore.string';
 import Cursors from 'cursors';
 import Icon from 'components/icon';
@@ -34,8 +35,9 @@ export default React.createClass({
 
   render: function () {
     var item = this.props.item;
+    var eventHandlers = _.pick(this.props, 'onMouseOver', 'onClick');
     return (
-      <div className={this.className()} onClick={this.props.onClick}>
+      <div {...eventHandlers} className={this.className()}>
         <div className='osw-selector-result-content'>
           <div
             className='osw-selector-result-image'

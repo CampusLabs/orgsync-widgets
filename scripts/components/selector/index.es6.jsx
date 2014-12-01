@@ -17,6 +17,16 @@ var DOWNCASE = function (str) { return str.toLowerCase(); };
 
 var NAME_COMPARATOR = _.compose(DOWNCASE, getName);
 
+var lastMouse;
+
+var updateLastMouse = function (ev) {
+  lastMouse = _.pick(ev, 'screenX', 'screenY');
+};
+
+var mouseMoved = function (ev) {
+  return !_.isEqual(lastMouse, _.pick(ev, 'screenX', 'screenY'));
+};
+
 var SelectorIndex = React.createClass({
   mixins: [Cursors],
 
@@ -54,6 +64,10 @@ var SelectorIndex = React.createClass({
     };
   },
 
+  componentWillMount: function () {
+    document.addEventListener('mousemove', updateLastMouse);
+  },
+
   componentDidMount: function () {
     this.updateResults();
   },
@@ -63,6 +77,10 @@ var SelectorIndex = React.createClass({
       this.updateResults();
     }
     if (this.isActive(prev) && !this.isActive()) this.resetActiveIndex();
+  },
+
+  componentWillUnmount: function () {
+    document.removeEventListener('mousemove', updateLastMouse);
   },
 
   updateResults: function () {
@@ -208,9 +226,14 @@ var SelectorIndex = React.createClass({
     return classes.join(' ');
   },
 
+  handleResultMouseOver: function (item, ev) {
+    if (!mouseMoved(ev)) return;
+    this.setActiveIndex(_.indexOf(this.state.results, item));
+  },
+
   handleResultClick: function (item) {
     this.isSelected(item) ? this.removeValue(item) : this.addValue(item);
-    this.setActiveIndex(this.state.results.indexOf(item));
+    this.setActiveIndex(_.indexOf(this.state.results, item));
   },
 
   handleBrowseButtonClick: function (ev) {
@@ -372,10 +395,13 @@ var SelectorIndex = React.createClass({
         key={i}
         item={item}
         onClick={_.partial(this.handleResultClick, item)}
+        onMouseOver={_.partial(this.handleResultMouseOver, item)}
         isSelected={
           this.state.scope !== SELECTED_SCOPE && this.isSelected(item)
         }
-        isActive={this.state.results.indexOf(item) === this.state.activeIndex}
+        isActive={
+          _.indexOf(this.state.results, item) === this.state.activeIndex
+        }
       />
     );
   },

@@ -25,10 +25,6 @@
       opacity: .5;
     }
 
-    .osw-selector-result-active .osw-selector-result-content {
-      background: $highlight-color;
-    }
-
     .osw-selector-result-image {
       width: 22px;
     }
@@ -58,11 +54,23 @@
     }
 
     .osw-selector-result-selected .osw-selector-result-content {
-      opacity: .5;
+      position: relative;
+      &:before{
+        background: $green;
+        border: 2px solid white;
+        border-radius: 50%;
+        content: "\f075";
+        left: 40px;
+        font-size: 16px;
+        padding: 2px 4px 4px 4px;
+        position: absolute;
+        top: 40px;
+        z-index: 5;
+      }
     }
 
     .osw-selector-result-active .osw-selector-result-content {
-      border: 2px solid $blue-darkest;
+      border: 2px solid $green;
       padding: 8px;
     }
 
@@ -125,14 +133,5 @@
     text-align: center;
     top: 0;
     width: 100%;
-  }
-
-  &[min-width~='501px'] .osw-selector-index-browse .osw-selector-result {
-    display: inline-block;
-    width: 50%;
-  }
-
-  &[min-width~='751px'] .osw-selector-index-browse .osw-selector-result {
-    width: 33.3%;
   }
 }

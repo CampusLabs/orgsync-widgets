@@ -29,8 +29,6 @@
   }
 
   .osw-selector-index-inline {
-    padding: 10px;
-
     &.osw-selector-index-results-visible .osw-selector-index-tokens-and-query {
       @include border-bottom-radius(0);
     }

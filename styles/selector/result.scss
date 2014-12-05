@@ -48,6 +48,10 @@
       width: 22px;
     }
 
+    .osw-selector-result-active .osw-selector-result-content {
+      background: $highlight-color;
+    }
+
     .osw-selector-result-icon .oswi {
       font-size: 18px;
       text-align: center;

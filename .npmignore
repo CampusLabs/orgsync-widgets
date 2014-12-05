@@ -1,0 +1,10 @@
+/*.sublime-*
+/.gitignore
+/.jshintrc
+/bower.json
+/bower_components
+/cogs.json
+/index.html
+/Makefile
+/scripts
+/styles

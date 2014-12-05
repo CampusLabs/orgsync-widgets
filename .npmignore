@@ -1,6 +1,7 @@
 /*.sublime-*
 /.gitignore
 /.jshintrc
+/.npmignore
 /bower.json
 /bower_components
 /cogs.json

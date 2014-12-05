@@ -1811,6 +1811,8 @@
     content: "";
     display: table;
     clear: both; }
+.orgsync-widget .osw-selector-result-active .osw-selector-result-content {
+  background: #f2f3f6; }
 .orgsync-widget .osw-selector-result-selected .osw-selector-result-content {
   position: relative; }
   .orgsync-widget .osw-selector-result-selected .osw-selector-result-content:before {
@@ -1857,7 +1859,6 @@
   padding: 5px;
   vertical-align: bottom; }
 .orgsync-widget .osw-selector-index-browse .osw-selector-result-active .osw-selector-result-content {
-  background: #f2f3f6;
   border: 2px solid #87d361;
   padding: 8px; }
 .orgsync-widget .osw-selector-index-browse .osw-selector-result-content {

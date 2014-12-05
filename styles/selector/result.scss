@@ -9,6 +9,9 @@
     font-size: 14px;
   }
 
+  .osw-selector-result-active .osw-selector-result-content {
+    background: $highlight-color;
+  }
 
   .osw-selector-result-selected .osw-selector-result-content {
     position: relative;
@@ -63,6 +66,7 @@
     .osw-selector-result-type {
       display: none;
     }
+
   }
 
   .osw-selector-index-browse {
@@ -73,7 +77,6 @@
     }
 
     .osw-selector-result-active .osw-selector-result-content {
-      background: $highlight-color;
       border: 2px solid $green;
       padding: 8px;
     }

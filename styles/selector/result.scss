@@ -15,20 +15,6 @@
 
   .osw-selector-result-selected .osw-selector-result-content {
     position: relative;
-    &:before{
-      background: $green;
-      border: 2px solid white;
-      border-radius: 50%;
-      color: white;
-      content: "\f075";
-      font-family: 'SyncDings';
-      left: 40px;
-      font-size: 16px;
-      padding: 2px 4px 4px 4px;
-      position: absolute;
-      top: 40px;
-      z-index: 5;
-    }
   }
 
   .osw-selector-index-inline {
@@ -70,6 +56,24 @@
   }
 
   .osw-selector-index-browse {
+
+    .osw-selector-result-selected .osw-selector-result-content {
+      &:before{
+        background: $green;
+        border: 2px solid white;
+        border-radius: 50%;
+        color: white;
+        content: "\f075";
+        font-family: 'SyncDings';
+        left: 40px;
+        font-size: 16px;
+        padding: 2px 4px 4px 4px;
+        position: absolute;
+        top: 40px;
+        z-index: 5;
+      }
+    }
+
     .osw-selector-result {
       @include box-sizing(border-box);
       padding: 5px;

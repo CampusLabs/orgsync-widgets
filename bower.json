@@ -1,18 +1,14 @@
 {
   "name": "orgsync-widgets",
-  "version": "0.0.0",
-  "main": ["dist/orgsync-widgets.js", "dist/orgsync-widgets.css"],
+  "version": "0.0.1",
+  "main": [
+    "dist/orgsync-widgets.js",
+    "dist/orgsync-widgets.css"
+  ],
   "ignore": [
-    "/.gitignore",
-    "/.jshintrc",
-    "/.npmignore",
-    "/cogs.json",
-    "/index.html",
-    "/Makefile",
-    "/node_modules",
-    "/package.json",
-    "/scripts",
-    "/styles"
+    "images",
+    "scripts",
+    "styles"
   ],
   "devDependencies": {
     "amdainty": "0.2.0",
@@ -35,10 +31,5 @@
     "underscore": "1.7.0",
     "underscore.string": "2.4.0",
     "velcro": "829f310a5db2f5747111f63dd8874dc91b931751"
-  },
-  "ignore": [
-    "images",
-    "scripts",
-    "styles"
-  ]
+  }
 }

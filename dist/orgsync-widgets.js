@@ -50432,9 +50432,9 @@ define(
         return React.createElement("div", {className: "osw-selector-index-error"}, "An error occurred.");
       },
 
-      renderResults: function () {
+      renderResults: function (scope) {
         if (!this.shouldShowResults()) return;
-        var selected = this.state.scope === SELECTED_SCOPE;
+        var selected = scope ? scope === SELECTED_SCOPE : this.state.scope === SELECTED_SCOPE;
         var options = this.getSearchOptions();
         return (
           React.createElement(List, {
@@ -50501,14 +50501,17 @@ define(
         return (
           React.createElement("div", {className: "osw-selector-index-left"}, 
             this.renderScopes(), 
-            React.createElement("hr", null), 
-            React.createElement(Scope, {
-              count: this.state.value.length, 
-              isActive: SELECTED_SCOPE === this.state.scope, 
-              onClick: _.partial(this.handleScopeClick, SELECTED_SCOPE), 
-              scope: SELECTED_SCOPE}
-            ), 
             this.renderDoneButton()
+          )
+        );
+      },
+
+      renderMiddle: function () {
+        return (
+          React.createElement("div", {className: "osw-selector-index-middle"}, 
+            this.renderHiddenInput(), 
+            this.renderTokensAndQuery(), 
+            this.renderResults()
           )
         );
       },
@@ -50516,9 +50519,7 @@ define(
       renderRight: function () {
         return (
           React.createElement("div", {className: "osw-selector-index-right"}, 
-            this.renderHiddenInput(), 
-            this.renderTokensAndQuery(), 
-            this.renderResults()
+            this.renderResults(SELECTED_SCOPE)
           )
         );
       },
@@ -50536,6 +50537,7 @@ define(
               onKeyDown: this.handleKeyDown
             }, 
               this.renderLeft(), 
+              this.renderMiddle(), 
               this.renderRight()
             ), 
             this.renderPopup()
@@ -50543,6 +50545,7 @@ define(
         );
       }
     });
+
 
     __exports__["default"] = SelectorIndex;
   });

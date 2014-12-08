@@ -426,9 +426,9 @@ var SelectorIndex = React.createClass({
     return <div className='osw-selector-index-error'>An error occurred.</div>;
   },
 
-  renderResults: function () {
+  renderResults: function (scope) {
     if (!this.shouldShowResults()) return;
-    var selected = this.state.scope === SELECTED_SCOPE;
+    var selected = scope ? scope === SELECTED_SCOPE : this.state.scope === SELECTED_SCOPE;
     var options = this.getSearchOptions();
     return (
       <List
@@ -495,14 +495,17 @@ var SelectorIndex = React.createClass({
     return (
       <div className='osw-selector-index-left'>
         {this.renderScopes()}
-        <hr />
-        <Scope
-          count={this.state.value.length}
-          isActive={SELECTED_SCOPE === this.state.scope}
-          onClick={_.partial(this.handleScopeClick, SELECTED_SCOPE)}
-          scope={SELECTED_SCOPE}
-        />
         {this.renderDoneButton()}
+      </div>
+    );
+  },
+
+  renderMiddle: function () {
+    return (
+      <div className='osw-selector-index-middle'>
+        {this.renderHiddenInput()}
+        {this.renderTokensAndQuery()}
+        {this.renderResults()}
       </div>
     );
   },
@@ -510,9 +513,7 @@ var SelectorIndex = React.createClass({
   renderRight: function () {
     return (
       <div className='osw-selector-index-right'>
-        {this.renderHiddenInput()}
-        {this.renderTokensAndQuery()}
-        {this.renderResults()}
+        {this.renderResults(SELECTED_SCOPE)}
       </div>
     );
   },
@@ -530,6 +531,7 @@ var SelectorIndex = React.createClass({
           onKeyDown={this.handleKeyDown}
         >
           {this.renderLeft()}
+          {this.renderMiddle()}
           {this.renderRight()}
         </div>
         {this.renderPopup()}
@@ -537,5 +539,6 @@ var SelectorIndex = React.createClass({
     );
   }
 });
+
 
 export default SelectorIndex;

@@ -1714,7 +1714,7 @@
   padding: 10px; }
 .orgsync-widget .osw-selector-index-done {
   width: 100%; }
-.orgsync-widget .osw-selector-index-right {
+.orgsync-widget .osw-selector-index-middle {
   overflow: auto; }
 .orgsync-widget .osw-selector-index-inline.osw-selector-index-results-visible .osw-selector-index-tokens-and-query {
   border-bottom-left-radius: 0;
@@ -1736,9 +1736,13 @@
   padding: 5px; }
 .orgsync-widget .osw-selector-index-inline .osw-selector-index-loading, .orgsync-widget .osw-selector-index-inline .osw-selector-index-empty {
   background: #eee; }
-.orgsync-widget .osw-selector-index-browse .osw-selector-index-right {
-  background: #e2e2e2;
-  padding: 5px; }
+.orgsync-widget .osw-selector-index-browse .osw-selector-index-middle {
+  border: 1px solid #ccc;
+  border-bottom: 0;
+  border-top: 0;
+  box-sizing: border-box;
+  float: left;
+  width: 50%; }
 .orgsync-widget .osw-selector-index-browse .osw-selector-index-tokens-and-query {
   margin: 5px; }
 .orgsync-widget .osw-selector-index-browse .osw-selector-index-results {
@@ -1797,6 +1801,14 @@
   float: left;
   min-width: 200px;
   width: 25%; }
+.orgsync-widget .osw-selector-index-right {
+  float: right;
+  width: 25%; }
+
+.orgsync-widget .osw-selector-index-browse .osw-selector-index-right .osw-selector-result-image {
+  width: 20px; }
+.orgsync-widget .osw-selector-index-browse .osw-selector-index-right .osw-selector-result-type {
+  display: none; }
 
 /* styles/selector/result.scss */
 .orgsync-widget .osw-selector-result-content {
@@ -1839,6 +1851,12 @@
   position: relative; }
 .orgsync-widget .osw-selector-index-inline .osw-selector-result-type {
   display: none; }
+.orgsync-widget .osw-selector-index-browse .osw-selector-index-right .osw-selector-result-selected .osw-selector-result-content {
+  border: 0; }
+  .orgsync-widget .osw-selector-index-browse .osw-selector-index-right .osw-selector-result-selected .osw-selector-result-content:before {
+    display: none; }
+.orgsync-widget .osw-selector-index-browse .osw-selector-index-right .osw-selector-result-name {
+  font-weight: normal; }
 .orgsync-widget .osw-selector-index-browse .osw-selector-result-selected .osw-selector-result-content:before {
   background: #87d361;
   border: 2px solid white;
@@ -1846,23 +1864,20 @@
   color: white;
   content: "\f075";
   font-family: 'SyncDings';
-  left: 40px;
   font-size: 16px;
   padding: 2px 4px 4px 4px;
   position: absolute;
-  top: 40px;
+  right: 10px;
+  top: 20px;
   z-index: 5; }
 .orgsync-widget .osw-selector-index-browse .osw-selector-result {
   -webkit-box-sizing: border-box;
   -moz-box-sizing: border-box;
   box-sizing: border-box;
-  padding: 5px;
+  border-bottom: 1px solid #dedede;
+  padding: 0px;
   vertical-align: bottom; }
-.orgsync-widget .osw-selector-index-browse .osw-selector-result-active .osw-selector-result-content {
-  border: 2px solid #87d361;
-  padding: 8px; }
 .orgsync-widget .osw-selector-index-browse .osw-selector-result-content {
-  border-radius: 3px;
   padding: 10px; }
 .orgsync-widget .osw-selector-index-browse .osw-selector-result-image {
   font-size: 30px;

@@ -24,7 +24,7 @@
     width: 100%;
   }
 
-  .osw-selector-index-right {
+  .osw-selector-index-middle {
     overflow: auto;
   }
 
@@ -62,9 +62,13 @@
   }
 
   .osw-selector-index-browse {
-    .osw-selector-index-right {
-      background: $grey-lighter;
-      padding: 5px;
+    .osw-selector-index-middle{
+      border: 1px solid #ccc;
+      border-bottom: 0;
+      border-top: 0;
+      box-sizing: border-box;
+      float: left;
+      width: 50%;
     }
 
     .osw-selector-index-tokens-and-query {
@@ -148,5 +152,20 @@
     float: left;
     min-width: 200px;
     width: 25%;
+  }
+
+  .osw-selector-index-right{
+    float: right;
+    width: 25%;
+  }
+}
+
+// Currently selected objects
+.orgsync-widget .osw-selector-index-browse .osw-selector-index-right{
+  .osw-selector-result-image{
+    width: 20px;
+  }
+  .osw-selector-result-type{
+    display: none;
   }
 }

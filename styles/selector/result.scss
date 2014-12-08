@@ -55,6 +55,17 @@
 
   }
 
+  .osw-selector-index-browse .osw-selector-index-right .osw-selector-result-selected .osw-selector-result-content{
+    border: 0;
+    &:before{
+      display: none;
+    }
+  }
+
+  .osw-selector-index-browse .osw-selector-index-right .osw-selector-result-name{
+    font-weight: normal;
+  }
+
   .osw-selector-index-browse {
 
     .osw-selector-result-selected .osw-selector-result-content {
@@ -65,28 +76,23 @@
         color: white;
         content: "\f075";
         font-family: 'SyncDings';
-        left: 40px;
         font-size: 16px;
         padding: 2px 4px 4px 4px;
         position: absolute;
-        top: 40px;
+        right: 10px;
+        top: 20px;
         z-index: 5;
       }
     }
 
     .osw-selector-result {
       @include box-sizing(border-box);
-      padding: 5px;
+      border-bottom: 1px solid #dedede;
+      padding: 0px;
       vertical-align: bottom;
     }
 
-    .osw-selector-result-active .osw-selector-result-content {
-      border: 2px solid $green;
-      padding: 8px;
-    }
-
     .osw-selector-result-content {
-      border-radius: $border-radius;
       padding: 10px;
     }
 

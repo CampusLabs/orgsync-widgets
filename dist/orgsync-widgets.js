@@ -50519,6 +50519,7 @@ define(
       renderRight: function () {
         return (
           React.createElement("div", {className: "osw-selector-index-right"}, 
+            React.createElement("h5", null, "Selected"), 
             this.renderResults(SELECTED_SCOPE)
           )
         );

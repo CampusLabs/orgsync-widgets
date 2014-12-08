@@ -159,13 +159,22 @@
     width: 25%;
   }
 
-  .osw-selector-index-right{
-    float: right;
-    width: 25%;
+}
+
+.osw-selector-index-right h5 { display: none; }
+// Currently selected objects
+
+.osw-selector-index-browse .osw-selector-index-right{
+  float: right;
+  width: 25%;
+  h5{
+    border-bottom: 1px solid #ccc;
+    display: block;
+    margin: 0;
+    padding: 10px;
   }
 }
 
-// Currently selected objects
 .orgsync-widget .osw-selector-index-browse .osw-selector-index-right{
   .osw-selector-result-image{
     width: 20px;

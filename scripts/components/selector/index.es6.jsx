@@ -513,6 +513,7 @@ var SelectorIndex = React.createClass({
   renderRight: function () {
     return (
       <div className='osw-selector-index-right'>
+        <h5>Selected</h5>
         {this.renderResults(SELECTED_SCOPE)}
       </div>
     );

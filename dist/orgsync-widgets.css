@@ -1805,9 +1805,18 @@
   float: left;
   min-width: 200px;
   width: 25%; }
-.orgsync-widget .osw-selector-index-right {
+
+.osw-selector-index-right h5 {
+  display: none; }
+
+.osw-selector-index-browse .osw-selector-index-right {
   float: right;
   width: 25%; }
+  .osw-selector-index-browse .osw-selector-index-right h5 {
+    border-bottom: 1px solid #ccc;
+    display: block;
+    margin: 0;
+    padding: 10px; }
 
 .orgsync-widget .osw-selector-index-browse .osw-selector-index-right .osw-selector-result-image {
   width: 20px; }

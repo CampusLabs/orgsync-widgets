@@ -5,6 +5,7 @@
     @include clearfix;
     @include user-select(none);
     background: #fff;
+    border-bottom: 1px solid #eee;
     cursor: pointer;
     font-size: 14px;
   }
@@ -17,16 +18,15 @@
     position: relative;
   }
 
+  .osw-selector-result:last-child .osw-selector-result-content {
+    border-bottom: 0;
+    padding-bottom: 6px;
+  }
+
   .osw-selector-index-inline {
     .osw-selector-result-content {
-      border-top: 1px solid #eee;
       padding: 5px;
       white-space: nowrap;
-    }
-
-    .osw-selector-result:first-child .osw-selector-result-content {
-      border-top: 0;
-      padding-top: 6px;
     }
 
     .osw-selector-result-selected .osw-selector-result-content {
@@ -52,7 +52,6 @@
     .osw-selector-result-type {
       display: none;
     }
-
   }
 
   .osw-selector-index-browse .osw-selector-index-right .osw-selector-result-selected .osw-selector-result-content{
@@ -69,27 +68,19 @@
   .osw-selector-index-browse {
 
     .osw-selector-result-selected .osw-selector-result-content {
-      &:before{
+      &:before {
+        @include clearfix;
         background: $green;
-        border: 2px solid white;
+        border: 2px solid #fff;
         border-radius: 50%;
-        color: white;
-        content: "\f075";
+        color: #fff;
+        content: '\f075';
+        float: right;
         font-family: 'SyncDings';
         font-size: 16px;
-        padding: 2px 4px 4px 4px;
-        position: absolute;
-        right: 10px;
-        top: 20px;
-        z-index: 5;
+        margin-top: 10px;
+        padding: 2px 4px 4px;
       }
-    }
-
-    .osw-selector-result {
-      @include box-sizing(border-box);
-      border-bottom: 1px solid #dedede;
-      padding: 0px;
-      vertical-align: bottom;
     }
 
     .osw-selector-result-content {

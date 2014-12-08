@@ -3,7 +3,6 @@
 .orgsync-widget {
   .osw-selector-scope {
     @include user-select(none);
-    border-radius: $border-radius;
     cursor: pointer;
     font-size: 14px;
     padding: 0 10px;

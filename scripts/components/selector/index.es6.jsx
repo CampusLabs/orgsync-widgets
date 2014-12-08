@@ -510,6 +510,7 @@ var SelectorIndex = React.createClass({
   },
 
   renderRight: function () {
+    if (this.props.view === 'inline') return;
     return (
       <div className='osw-selector-index-right'>
         <h5>Selected</h5>

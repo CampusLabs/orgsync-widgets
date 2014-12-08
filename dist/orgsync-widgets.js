@@ -50516,6 +50516,7 @@ define(
       },
 
       renderRight: function () {
+        if (this.props.view === 'inline') return;
         return (
           React.createElement("div", {className: "osw-selector-index-right"}, 
             React.createElement("h5", null, "Selected"), 

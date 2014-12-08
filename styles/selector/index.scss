@@ -72,7 +72,9 @@
     }
 
     .osw-selector-index-tokens-and-query {
-      margin: 5px;
+      border-bottom: 1px solid #ccc;
+      border-radius: 0;
+      padding: 10px;
     }
 
     .osw-selector-index-results {
@@ -84,8 +86,8 @@
     .osw-selector-index-loading,
     .osw-selector-index-empty,
     .osw-selector-index-error {
-      border-radius: $border-radius;
-      margin: 5px;
+      background: white;
+      color: #999;
       padding: 10px;
     }
 
@@ -146,6 +148,9 @@
 
   .osw-selector-index-popup {
     max-width: 1000px;
+    .osw-popup-title{
+      border-bottom: 1px solid #ccc;
+    }
   }
 
   &[min-width~='401px'] .osw-selector-index-left {

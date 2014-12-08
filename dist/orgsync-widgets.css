@@ -1744,7 +1744,9 @@
   float: left;
   width: 50%; }
 .orgsync-widget .osw-selector-index-browse .osw-selector-index-tokens-and-query {
-  margin: 5px; }
+  border-bottom: 1px solid #ccc;
+  border-radius: 0;
+  padding: 10px; }
 .orgsync-widget .osw-selector-index-browse .osw-selector-index-results {
   -webkit-box-sizing: border-box;
   -moz-box-sizing: border-box;
@@ -1752,8 +1754,8 @@
   background: #e2e2e2;
   height: 500px; }
 .orgsync-widget .osw-selector-index-browse .osw-selector-index-loading, .orgsync-widget .osw-selector-index-browse .osw-selector-index-empty, .orgsync-widget .osw-selector-index-browse .osw-selector-index-error {
-  border-radius: 3px;
-  margin: 5px;
+  background: white;
+  color: #999;
   padding: 10px; }
 .orgsync-widget .osw-selector-index-browse .osw-selector-index-loading, .orgsync-widget .osw-selector-index-browse .osw-selector-index-empty {
   background: #fff; }
@@ -1797,6 +1799,8 @@
   text-align: right; }
 .orgsync-widget .osw-selector-index-popup {
   max-width: 1000px; }
+  .orgsync-widget .osw-selector-index-popup .osw-popup-title {
+    border-bottom: 1px solid #ccc; }
 .orgsync-widget[min-width~='401px'] .osw-selector-index-left {
   float: left;
   min-width: 200px;
@@ -1933,11 +1937,10 @@
   border-radius: 3px;
   cursor: pointer;
   font-size: 14px;
-  margin: 10px;
   padding: 0 10px;
   text-align: right; }
 .orgsync-widget .osw-selector-scope-active {
-  background: #e2e2e2; }
+  background: #f2f3f6; }
 .orgsync-widget .osw-selector-scope-toggle {
   float: left;
   margin: 10px 5px 0 0; }

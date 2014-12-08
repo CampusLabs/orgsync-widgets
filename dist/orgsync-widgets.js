@@ -50357,6 +50357,16 @@ define(
         );
       },
 
+      renderSelectedResult: function (item, i) {
+        return (
+          React.createElement(Result, {
+            key: i, 
+            item: item, 
+            onClick: _.partial(this.removeValue, item)}
+          )
+        );
+      },
+
       renderLoading: function () {
         return React.createElement("div", {className: "osw-selector-index-loading"}, "Loading...");
       },
@@ -50481,11 +50491,11 @@ define(
         if (this.props.view === 'inline') return;
         return (
           React.createElement("div", {className: "osw-selector-index-right"}, 
-            React.createElement("h5", null, "Selected"), 
+            React.createElement("div", {className: "osw-selector-index-right-header"}, "Selected"), 
             React.createElement(List, {
-              className: "osw-selector-index-results", 
+              className: "osw-selector-index-selected-results", 
               items: this.state.value, 
-              renderItem: this.renderResult, 
+              renderItem: this.renderSelectedResult, 
               renderEmpty: this.renderSelectedEmpty, 
               uniform: true, 
               renderPageSize: this.props.renderPageSize, 

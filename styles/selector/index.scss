@@ -6,17 +6,8 @@
     text-align: left;
   }
 
-  .osw-selector-index-left {
-    hr {
-      background: $grey-lighter;
-      border: 0;
-      height: 1px;
-      margin: 0;
-    }
-  }
-
   .osw-selector-index-done-container {
-    border-top: 1px solid $grey-lighter;
+    border-top: 1px solid #ccc;
     padding: 10px;
   }
 
@@ -69,12 +60,14 @@
     .osw-selector-index-tokens-and-query {
       border-bottom: 1px solid #ccc;
       border-radius: 0;
-      padding: 10px;
     }
 
     .osw-selector-index-results {
-      @include box-sizing(border-box);
       height: 500px;
+    }
+
+    .osw-selector-index-selected-results {
+      height: 450px;
     }
   }
 
@@ -96,7 +89,7 @@
       @include appearance(none);
       @include box-sizing(border-box);
       border: 0;
-      font-size: 15px;
+      font-size: 12px;
       outline: none;
       padding: 5px;
       width: 100%;
@@ -107,7 +100,8 @@
     opacity: .5;
   }
 
-  .osw-selector-index-results {
+  .osw-selector-index-results,
+  .osw-selector-index-selected-results {
     overflow: auto;
   }
 
@@ -115,7 +109,7 @@
   .osw-selector-index-empty,
   .osw-selector-index-error {
     background: #fff;
-    color: #999;
+    color: $grey-darker;
     font-size: 14px;
     padding: 10px;
   }
@@ -138,32 +132,23 @@
     }
   }
 
-  &[min-width~='401px'] .osw-selector-index-left {
-    float: left;
-    min-width: 200px;
-    width: 25%;
-  }
-}
-
-.osw-selector-index-right h5 { display: none; }
-// Currently selected objects
-
-.osw-selector-index-browse .osw-selector-index-right{
-  float: right;
-  width: 25%;
-  h5{
+  .osw-selector-index-right-header {
     border-bottom: 1px solid #ccc;
-    display: block;
-    margin: 0;
+    color: $grey-darkest;
+    font-size: 14px;
+    font-weight: bold;
     padding: 10px;
   }
-}
 
-.orgsync-widget .osw-selector-index-browse .osw-selector-index-right{
-  .osw-selector-result-image{
-    width: 20px;
-  }
-  .osw-selector-result-type{
-    display: none;
+  &[min-width~='401px'] {
+    .osw-selector-index-left {
+      float: left;
+      width: 25%;
+    }
+
+    .osw-selector-index-right {
+      float: left;
+      width: 25%;
+    }
   }
 }

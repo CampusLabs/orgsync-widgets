@@ -5,7 +5,7 @@
     @include clearfix;
     @include user-select(none);
     background: #fff;
-    border-bottom: 1px solid #eee;
+    border-top: 1px solid #eee;
     cursor: pointer;
     font-size: 14px;
   }
@@ -18,12 +18,13 @@
     position: relative;
   }
 
-  .osw-selector-result:last-child .osw-selector-result-content {
-    border-bottom: 0;
-    padding-bottom: 6px;
-  }
+  .osw-selector-index-inline,
+  .osw-selector-index-browse .osw-selector-index-right {
+    .osw-selector-result:first-child .osw-selector-result-content {
+      border-top: 0;
+      padding-top: 6px;
+    }
 
-  .osw-selector-index-inline {
     .osw-selector-result-content {
       padding: 5px;
       white-space: nowrap;
@@ -54,33 +55,24 @@
     }
   }
 
-  .osw-selector-index-browse .osw-selector-index-right .osw-selector-result-selected .osw-selector-result-content{
-    border: 0;
-    &:before{
-      display: none;
+  .osw-selector-index-browse .osw-selector-index-middle {
+    .osw-selector-result-selected .osw-selector-result-content:before {
+      @include clearfix;
+      background: $green;
+      border: 2px solid #fff;
+      border-radius: 50%;
+      color: #fff;
+      content: '\f075';
+      float: right;
+      font-family: 'SyncDings';
+      font-size: 16px;
+      margin-top: 10px;
+      padding: 2px 4px 4px;
     }
-  }
 
-  .osw-selector-index-browse .osw-selector-index-right .osw-selector-result-name{
-    font-weight: normal;
-  }
-
-  .osw-selector-index-browse {
-
-    .osw-selector-result-selected .osw-selector-result-content {
-      &:before {
-        @include clearfix;
-        background: $green;
-        border: 2px solid #fff;
-        border-radius: 50%;
-        color: #fff;
-        content: '\f075';
-        float: right;
-        font-family: 'SyncDings';
-        font-size: 16px;
-        margin-top: 10px;
-        padding: 2px 4px 4px;
-      }
+    .osw-selector-result:first-child .osw-selector-result-content {
+      border-top: 0;
+      padding-top: 11px;
     }
 
     .osw-selector-result-content {
@@ -107,6 +99,25 @@
     .osw-selector-result-info {
       line-height: 18px;
       padding-top: 4px;
+    }
+  }
+
+  .osw-selector-index-right .osw-selector-result-content {
+    &:hover {
+      background: $highlight-color;
+    }
+
+    &:before {
+      @include clearfix;
+      background: $red;
+      border: 2px solid #fff;
+      border-radius: 50%;
+      color: #fff;
+      content: '\f071';
+      float: right;
+      font-family: 'SyncDings';
+      font-size: 12px;
+      padding: 1px 4px 4px;
     }
   }
 

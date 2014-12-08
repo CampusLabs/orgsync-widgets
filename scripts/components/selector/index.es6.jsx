@@ -351,6 +351,16 @@ var SelectorIndex = React.createClass({
     );
   },
 
+  renderSelectedResult: function (item, i) {
+    return (
+      <Result
+        key={i}
+        item={item}
+        onClick={_.partial(this.removeValue, item)}
+      />
+    );
+  },
+
   renderLoading: function () {
     return <div className='osw-selector-index-loading'>Loading...</div>;
   },
@@ -475,11 +485,11 @@ var SelectorIndex = React.createClass({
     if (this.props.view === 'inline') return;
     return (
       <div className='osw-selector-index-right'>
-        <h5>Selected</h5>
+        <div className='osw-selector-index-right-header'>Selected</div>
         <List
-          className='osw-selector-index-results'
+          className='osw-selector-index-selected-results'
           items={this.state.value}
-          renderItem={this.renderResult}
+          renderItem={this.renderSelectedResult}
           renderEmpty={this.renderSelectedEmpty}
           uniform={true}
           renderPageSize={this.props.renderPageSize}

@@ -495,7 +495,6 @@ var SelectorIndex = React.createClass({
     return (
       <div className='osw-selector-index-left'>
         {this.renderScopes()}
-        {this.renderDoneButton()}
       </div>
     );
   },
@@ -515,6 +514,7 @@ var SelectorIndex = React.createClass({
       <div className='osw-selector-index-right'>
         <h5>Selected</h5>
         {this.renderResults(SELECTED_SCOPE)}
+        {this.renderDoneButton()}
       </div>
     );
   },

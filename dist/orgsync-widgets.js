@@ -50500,8 +50500,7 @@ define(
         if (this.props.view === 'inline') return;
         return (
           React.createElement("div", {className: "osw-selector-index-left"}, 
-            this.renderScopes(), 
-            this.renderDoneButton()
+            this.renderScopes()
           )
         );
       },
@@ -50520,7 +50519,8 @@ define(
         return (
           React.createElement("div", {className: "osw-selector-index-right"}, 
             React.createElement("h5", null, "Selected"), 
-            this.renderResults(SELECTED_SCOPE)
+            this.renderResults(SELECTED_SCOPE), 
+            this.renderDoneButton()
           )
         );
       },

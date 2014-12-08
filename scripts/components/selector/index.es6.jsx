@@ -11,8 +11,6 @@ import store from 'entities/selector/store';
 import Token from 'components/selector/token';
 import {isArbitrary, getName} from 'entities/selector/item';
 
-var SELECTED_SCOPE = {name: 'Selected', term: '_selected'};
-
 var DOWNCASE = function (str) { return str.toLowerCase(); };
 
 var NAME_COMPARATOR = _.compose(DOWNCASE, getName);
@@ -294,16 +292,6 @@ var SelectorIndex = React.createClass({
     return !!this.getSelected(item);
   },
 
-  renderHiddenInput: function () {
-    return (
-      <input
-        name={this.props.hiddenInputName}
-        type='hidden'
-        value={JSON.stringify(this.state.value.map(this.asHiddenInputValue))}
-      />
-    );
-  },
-
   renderToken: function (item, i) {
     return (
       <Token
@@ -335,34 +323,6 @@ var SelectorIndex = React.createClass({
     );
   },
 
-  renderQuery: function () {
-    return (
-      <div className='osw-selector-index-query'>
-        <input
-          ref='query'
-          value={this.state.query}
-          onChange={this.handleQueryChange}
-          placeholder={this.props.placeholder}
-          disabled={this.state.scope === SELECTED_SCOPE}
-        />
-      </div>
-    );
-  },
-
-  renderTokensAndQuery: function () {
-    var classes = ['osw-selector-index-tokens-and-query'];
-    if (this.state.scope === SELECTED_SCOPE) {
-      classes.push('osw-selector-index-tokens-and-query-disabled');
-    }
-    return (
-      <div className={classes.join(' ')}>
-        {this.renderTokens()}
-        {this.renderBrowseButton()}
-        {this.renderQuery()}
-      </div>
-    );
-  },
-
   renderScope: function (scope, i) {
     return (
       <Scope
@@ -376,19 +336,6 @@ var SelectorIndex = React.createClass({
     );
   },
 
-  renderScopes: function () {
-    return (
-      <List
-        className='osw-selector-index-scopes'
-        items={this.props.scopes}
-        renderItem={this.renderScope}
-        uniform={true}
-        updateForScope={this.state.scope}
-        updateForValue={this.state.value}
-      />
-    );
-  },
-
   renderResult: function (item, i) {
     return (
       <Result
@@ -396,9 +343,7 @@ var SelectorIndex = React.createClass({
         item={item}
         onClick={_.partial(this.handleResultClick, item)}
         onMouseOver={_.partial(this.handleResultMouseOver, item)}
-        isSelected={
-          this.state.scope !== SELECTED_SCOPE && this.isSelected(item)
-        }
+        isSelected={this.isSelected(item)}
         isActive={
           _.indexOf(this.state.results, item) === this.state.activeIndex
         }
@@ -411,36 +356,31 @@ var SelectorIndex = React.createClass({
   },
 
   renderEmpty: function () {
-    return (
-      <div className='osw-selector-index-empty'>
-        {
-          this.state.scope === SELECTED_SCOPE ?
-          'Nothing selected.' :
-          'No results found.'
-        }
-      </div>
-    );
+    return <div className='osw-selector-index-empty'>No results found.</div>;
+  },
+
+  renderSelectedEmpty: function () {
+    return <div className='osw-selector-index-empty'>Nothing selected.</div>;
   },
 
   renderError: function () {
     return <div className='osw-selector-index-error'>An error occurred.</div>;
   },
 
-  renderResults: function (scope) {
+  renderResults: function () {
     if (!this.shouldShowResults()) return;
-    var selected = scope ? scope === SELECTED_SCOPE : this.state.scope === SELECTED_SCOPE;
     var options = this.getSearchOptions();
     return (
       <List
         key={store.getQueryKey(_.omit(options, 'dataset'))}
         ref='results'
         className='osw-selector-index-results'
-        items={selected ? this.state.value : this.state.results}
+        items={this.state.results}
         renderItem={this.renderResult}
         renderLoading={this.renderLoading}
         renderEmpty={this.renderEmpty}
         renderError={this.renderError}
-        fetch={selected ? null : this.fetch}
+        fetch={this.fetch}
         fetchInitially={!app.cache.get(store.getQueryKey(options))}
         uniform={true}
         renderPageSize={this.props.renderPageSize}
@@ -494,7 +434,14 @@ var SelectorIndex = React.createClass({
     if (this.props.view === 'inline') return;
     return (
       <div className='osw-selector-index-left'>
-        {this.renderScopes()}
+        <List
+          className='osw-selector-index-scopes'
+          items={this.props.scopes}
+          renderItem={this.renderScope}
+          uniform={true}
+          updateForScope={this.state.scope}
+          updateForValue={this.state.value}
+        />
       </div>
     );
   },
@@ -502,8 +449,23 @@ var SelectorIndex = React.createClass({
   renderMiddle: function () {
     return (
       <div className='osw-selector-index-middle'>
-        {this.renderHiddenInput()}
-        {this.renderTokensAndQuery()}
+        <input
+          name={this.props.hiddenInputName}
+          type='hidden'
+          value={JSON.stringify(this.state.value.map(this.asHiddenInputValue))}
+        />
+        <div className='osw-selector-index-tokens-and-query'>
+          {this.renderTokens()}
+          {this.renderBrowseButton()}
+          <div className='osw-selector-index-query'>
+            <input
+              ref='query'
+              value={this.state.query}
+              onChange={this.handleQueryChange}
+              placeholder={this.props.placeholder}
+            />
+          </div>
+        </div>
         {this.renderResults()}
       </div>
     );
@@ -514,7 +476,15 @@ var SelectorIndex = React.createClass({
     return (
       <div className='osw-selector-index-right'>
         <h5>Selected</h5>
-        {this.renderResults(SELECTED_SCOPE)}
+        <List
+          className='osw-selector-index-results'
+          items={this.state.value}
+          renderItem={this.renderResult}
+          renderEmpty={this.renderSelectedEmpty}
+          uniform={true}
+          renderPageSize={this.props.renderPageSize}
+          updateForValue={this.state.value}
+        />
         {this.renderDoneButton()}
       </div>
     );

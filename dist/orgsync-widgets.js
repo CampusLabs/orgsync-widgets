@@ -50017,8 +50017,6 @@ define(
     var isArbitrary = __dependency12__.isArbitrary;
     var getName = __dependency12__.getName;
 
-    var SELECTED_SCOPE = {name: 'Selected', term: '_selected'};
-
     var DOWNCASE = function (str) { return str.toLowerCase(); };
 
     var NAME_COMPARATOR = _.compose(DOWNCASE, getName);
@@ -50300,16 +50298,6 @@ define(
         return !!this.getSelected(item);
       },
 
-      renderHiddenInput: function () {
-        return (
-          React.createElement("input", {
-            name: this.props.hiddenInputName, 
-            type: "hidden", 
-            value: JSON.stringify(this.state.value.map(this.asHiddenInputValue))}
-          )
-        );
-      },
-
       renderToken: function (item, i) {
         return (
           React.createElement(Token, {
@@ -50341,34 +50329,6 @@ define(
         );
       },
 
-      renderQuery: function () {
-        return (
-          React.createElement("div", {className: "osw-selector-index-query"}, 
-            React.createElement("input", {
-              ref: "query", 
-              value: this.state.query, 
-              onChange: this.handleQueryChange, 
-              placeholder: this.props.placeholder, 
-              disabled: this.state.scope === SELECTED_SCOPE}
-            )
-          )
-        );
-      },
-
-      renderTokensAndQuery: function () {
-        var classes = ['osw-selector-index-tokens-and-query'];
-        if (this.state.scope === SELECTED_SCOPE) {
-          classes.push('osw-selector-index-tokens-and-query-disabled');
-        }
-        return (
-          React.createElement("div", {className: classes.join(' ')}, 
-            this.renderTokens(), 
-            this.renderBrowseButton(), 
-            this.renderQuery()
-          )
-        );
-      },
-
       renderScope: function (scope, i) {
         return (
           React.createElement(Scope, {
@@ -50382,19 +50342,6 @@ define(
         );
       },
 
-      renderScopes: function () {
-        return (
-          React.createElement(List, {
-            className: "osw-selector-index-scopes", 
-            items: this.props.scopes, 
-            renderItem: this.renderScope, 
-            uniform: true, 
-            updateForScope: this.state.scope, 
-            updateForValue: this.state.value}
-          )
-        );
-      },
-
       renderResult: function (item, i) {
         return (
           React.createElement(Result, {
@@ -50402,9 +50349,7 @@ define(
             item: item, 
             onClick: _.partial(this.handleResultClick, item), 
             onMouseOver: _.partial(this.handleResultMouseOver, item), 
-            isSelected: 
-              this.state.scope !== SELECTED_SCOPE && this.isSelected(item), 
-            
+            isSelected: this.isSelected(item), 
             isActive: 
               _.indexOf(this.state.results, item) === this.state.activeIndex
             }
@@ -50417,36 +50362,31 @@ define(
       },
 
       renderEmpty: function () {
-        return (
-          React.createElement("div", {className: "osw-selector-index-empty"}, 
-            
-              this.state.scope === SELECTED_SCOPE ?
-              'Nothing selected.' :
-              'No results found.'
-            
-          )
-        );
+        return React.createElement("div", {className: "osw-selector-index-empty"}, "No results found.");
+      },
+
+      renderSelectedEmpty: function () {
+        return React.createElement("div", {className: "osw-selector-index-empty"}, "Nothing selected.");
       },
 
       renderError: function () {
         return React.createElement("div", {className: "osw-selector-index-error"}, "An error occurred.");
       },
 
-      renderResults: function (scope) {
+      renderResults: function () {
         if (!this.shouldShowResults()) return;
-        var selected = scope ? scope === SELECTED_SCOPE : this.state.scope === SELECTED_SCOPE;
         var options = this.getSearchOptions();
         return (
           React.createElement(List, {
             key: store.getQueryKey(_.omit(options, 'dataset')), 
             ref: "results", 
             className: "osw-selector-index-results", 
-            items: selected ? this.state.value : this.state.results, 
+            items: this.state.results, 
             renderItem: this.renderResult, 
             renderLoading: this.renderLoading, 
             renderEmpty: this.renderEmpty, 
             renderError: this.renderError, 
-            fetch: selected ? null : this.fetch, 
+            fetch: this.fetch, 
             fetchInitially: !app.cache.get(store.getQueryKey(options)), 
             uniform: true, 
             renderPageSize: this.props.renderPageSize, 
@@ -50500,7 +50440,14 @@ define(
         if (this.props.view === 'inline') return;
         return (
           React.createElement("div", {className: "osw-selector-index-left"}, 
-            this.renderScopes()
+            React.createElement(List, {
+              className: "osw-selector-index-scopes", 
+              items: this.props.scopes, 
+              renderItem: this.renderScope, 
+              uniform: true, 
+              updateForScope: this.state.scope, 
+              updateForValue: this.state.value}
+            )
           )
         );
       },
@@ -50508,8 +50455,23 @@ define(
       renderMiddle: function () {
         return (
           React.createElement("div", {className: "osw-selector-index-middle"}, 
-            this.renderHiddenInput(), 
-            this.renderTokensAndQuery(), 
+            React.createElement("input", {
+              name: this.props.hiddenInputName, 
+              type: "hidden", 
+              value: JSON.stringify(this.state.value.map(this.asHiddenInputValue))}
+            ), 
+            React.createElement("div", {className: "osw-selector-index-tokens-and-query"}, 
+              this.renderTokens(), 
+              this.renderBrowseButton(), 
+              React.createElement("div", {className: "osw-selector-index-query"}, 
+                React.createElement("input", {
+                  ref: "query", 
+                  value: this.state.query, 
+                  onChange: this.handleQueryChange, 
+                  placeholder: this.props.placeholder}
+                )
+              )
+            ), 
             this.renderResults()
           )
         );
@@ -50520,7 +50482,15 @@ define(
         return (
           React.createElement("div", {className: "osw-selector-index-right"}, 
             React.createElement("h5", null, "Selected"), 
-            this.renderResults(SELECTED_SCOPE), 
+            React.createElement(List, {
+              className: "osw-selector-index-results", 
+              items: this.state.value, 
+              renderItem: this.renderResult, 
+              renderEmpty: this.renderSelectedEmpty, 
+              uniform: true, 
+              renderPageSize: this.props.renderPageSize, 
+              updateForValue: this.state.value}
+            ), 
             this.renderDoneButton()
           )
         );

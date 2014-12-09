@@ -15,16 +15,6 @@ var DOWNCASE = function (str) { return str.toLowerCase(); };
 
 var NAME_COMPARATOR = _.compose(DOWNCASE, getName);
 
-var lastMouse;
-
-var updateLastMouse = function (ev) {
-  lastMouse = _.pick(ev, 'screenX', 'screenY');
-};
-
-var mouseMoved = function (ev) {
-  return !_.isEqual(lastMouse, _.pick(ev, 'screenX', 'screenY'));
-};
-
 var SelectorIndex = React.createClass({
   mixins: [Cursors],
 
@@ -63,7 +53,7 @@ var SelectorIndex = React.createClass({
   },
 
   componentWillMount: function () {
-    document.addEventListener('mousemove', updateLastMouse);
+    document.addEventListener('mousemove', this.updateLastMouse);
   },
 
   componentDidMount: function () {
@@ -78,7 +68,15 @@ var SelectorIndex = React.createClass({
   },
 
   componentWillUnmount: function () {
-    document.removeEventListener('mousemove', updateLastMouse);
+    document.removeEventListener('mousemove', this.updateLastMouse);
+  },
+
+  updateLastMouse: function (ev) {
+    this.lastMouse = _.pick(ev, 'screenX', 'screenY');
+  },
+
+  mouseMoved: function (ev) {
+    return !_.isEqual(this.lastMouse, _.pick(ev, 'screenX', 'screenY'));
   },
 
   updateResults: function () {
@@ -225,7 +223,7 @@ var SelectorIndex = React.createClass({
   },
 
   handleResultMouseOver: function (item, ev) {
-    if (!mouseMoved(ev)) return;
+    if (!this.mouseMoved(ev)) return;
     this.setActiveIndex(_.indexOf(this.state.results, item));
   },
 

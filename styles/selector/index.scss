@@ -66,7 +66,7 @@
     }
 
     .osw-selector-index-results {
-      max-height: 465px;
+      height: 465px;
     }
 
     .osw-selector-index-selected-results {
@@ -138,12 +138,6 @@
 
     .osw-selector-index-browse {
       border: 0;
-
-      .osw-selector-index-left,
-      .osw-selector-index-middle,
-      .osw-selector-index-right {
-        border-right: 0;
-      }
     }
   }
 
@@ -185,14 +179,9 @@
       width: 50%;
     }
 
-    .osw-selector-index-scopes,
-    .osw-selector-index-results,
-    .osw-selector-index-selected-results {
-      max-height: none;
-    }
-
     .osw-selector-index-scopes {
       height: 500px;
+      max-height: none;
     }
 
     .osw-selector-index-results,

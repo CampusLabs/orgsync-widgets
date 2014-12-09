@@ -1,6 +1,6 @@
 {
   "name": "orgsync-widgets",
-  "version": "0.0.5",
+  "version": "0.0.6",
   "author": "Casey Foster <c@sey.me>",
   "main": "dist/orgsync-widgets.js",
   "repository": {

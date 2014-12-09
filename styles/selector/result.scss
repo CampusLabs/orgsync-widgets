@@ -14,10 +14,6 @@
     background: $highlight-color;
   }
 
-  .osw-selector-result-selected .osw-selector-result-content {
-    position: relative;
-  }
-
   .osw-selector-index-inline,
   .osw-selector-index-browse .osw-selector-index-right {
     .osw-selector-result:first-child .osw-selector-result-content {
@@ -30,8 +26,17 @@
       white-space: nowrap;
     }
 
-    .osw-selector-result-selected .osw-selector-result-content {
-      opacity: .5;
+    .osw-selector-result-selected .osw-selector-result-content:before {
+      @include clearfix;
+      background: $green;
+      border: 2px solid #fff;
+      border-radius: 50%;
+      color: #fff;
+      content: '\f075';
+      float: right;
+      font-family: 'SyncDings';
+      font-size: 12px;
+      padding: 2px 4px 4px;
     }
 
     .osw-selector-result-image {

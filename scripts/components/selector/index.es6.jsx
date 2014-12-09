@@ -403,23 +403,20 @@ var SelectorIndex = React.createClass({
   renderBrowse: function () {
     if (!this.state.browseIsOpen) return;
     return (
-      <SelectorIndex
-        {...this.props}
-        view='browse'
-        query={this.state.query}
-        cursors={{
-          value: this.getCursor('value'),
-          browseIsOpen: this.getCursor('browseIsOpen')
-        }}
-      />
-    );
-  },
-
-  renderPopupFooter: function () {
-    return (
-      <Button className='osw-selector-index-done' onClick={this.closeBrowse}>
-        Done
-      </Button>
+      <div>
+        <SelectorIndex
+          {...this.props}
+          view='browse'
+          query={this.state.query}
+          cursors={{
+            value: this.getCursor('value'),
+            browseIsOpen: this.getCursor('browseIsOpen')
+          }}
+        />
+        <div className='osw-selector-index-done-container'>
+          <Button onClick={this.closeBrowse}>Done</Button>
+        </div>
+      </div>
     );
   },
 
@@ -431,7 +428,6 @@ var SelectorIndex = React.createClass({
         title={this.props.browseText}
         name='selector-index'
         close={this.closeBrowse}
-        renderFooter={this.renderPopupFooter}
       >
         {this.renderBrowse()}
       </Popup>

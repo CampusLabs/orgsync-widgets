@@ -20,8 +20,8 @@
     .osw-selector-index-results {
       @include border-bottom-radius($border-radius);
       background: #fff;
-      border: 1px solid #eee;
       border-top: 0;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, .5);
       left: 0;
       max-height: 264px;
       position: absolute;
@@ -44,13 +44,11 @@
     @include box-sizing(border-box);
     @include clearfix;
     border: 1px solid #ccc;
-    border-right: 0;
 
     .osw-selector-index-left,
     .osw-selector-index-middle,
     .osw-selector-index-right {
       @include box-sizing(border-box);
-      border-right: 1px solid #ccc;
     }
 
     .osw-selector-index-left,
@@ -149,6 +147,14 @@
     }
   }
 
+  .osw-selector-index-done-container {
+    background: #eee;
+    border-top: 1px solid #ccc;
+    color: $grey-darker;
+    padding: 5px;
+    text-align: right;
+  }
+
   .osw-selector-index-right-header {
     @include box-sizing(border-box);
     background: $grey-lightest;
@@ -160,42 +166,38 @@
     padding: 5px 10px;
   }
 
-  &[min-width~='640px'] {
-    .osw-selector-index-popup .osw-selector-index-browse {
-      .osw-selector-index-left,
-      .osw-selector-index-middle {
-        border-right: 1px solid #ccc;
-      }
+  &[min-width~='640px'] .osw-selector-index-browse {
+    .osw-selector-index-left,
+    .osw-selector-index-middle {
+      border-right: 1px solid #ccc;
     }
 
-    .osw-selector-index-browse {
-      .osw-selector-index-left,
-      .osw-selector-index-right {
-        border-bottom: 0;
-        float: left;
-        width: 25%;
-      }
+    .osw-selector-index-left,
+    .osw-selector-index-right {
+      border-bottom: 0;
+      float: left;
+      width: 25%;
+    }
 
-      .osw-selector-index-middle {
-        border-bottom: 0;
-        float: left;
-        width: 50%;
-      }
+    .osw-selector-index-middle {
+      border-bottom: 0;
+      float: left;
+      width: 50%;
+    }
 
-      .osw-selector-index-scopes,
-      .osw-selector-index-results,
-      .osw-selector-index-selected-results {
-        max-height: none;
-      }
+    .osw-selector-index-scopes,
+    .osw-selector-index-results,
+    .osw-selector-index-selected-results {
+      max-height: none;
+    }
 
-      .osw-selector-index-scopes {
-        height: 500px;
-      }
+    .osw-selector-index-scopes {
+      height: 500px;
+    }
 
-      .osw-selector-index-results,
-      .osw-selector-index-selected-results {
-        height: 465px;
-      }
+    .osw-selector-index-results,
+    .osw-selector-index-selected-results {
+      height: 465px;
     }
   }
 }

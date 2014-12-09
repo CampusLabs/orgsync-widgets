@@ -17,22 +17,11 @@
     margin: 0 auto;
   }
 
-  .osw-popup-head,
-  .osw-popup-footer {
-    background: #eee;
-    color: $grey-darker;
-  }
-
   .osw-popup-head {
     @include border-top-radius(3px);
+    background: #eee;
     border-bottom: 1px solid #ccc;
-  }
-
-  .osw-popup-footer {
-    @include border-bottom-radius(3px);
-    border-top: 1px solid #ccc;
-    padding: 5px;
-    text-align: right;
+    color: $grey-darker;
   }
 
   .osw-popup-title {
@@ -46,6 +35,7 @@
   }
 
   .osw-popup-body {
+    @include border-bottom-radius(3px);
     background: #fff;
     overflow: hidden;
   }

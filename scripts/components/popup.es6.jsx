@@ -23,11 +23,6 @@ export default React.createClass({
     ev.stopPropagation();
   },
 
-  renderFooter: function () {
-    if (!this.props.renderFooter) return;
-    return <div className='osw-popup-footer'>{this.props.renderFooter()}</div>;
-  },
-
   renderPopup: function () {
     var children = this.props.children;
     if (!React.Children.count(children)) return;
@@ -38,7 +33,6 @@ export default React.createClass({
           <div className='osw-popup-title'>{this.props.title}</div>
         </div>
         <div className='osw-popup-body'>{children}</div>
-        {this.renderFooter()}
       </div>
     );
   },

@@ -1746,9 +1746,9 @@
   .orgsync-widget .osw-selector-index-browse .osw-selector-index-scopes {
     max-height: 300px; }
   .orgsync-widget .osw-selector-index-browse .osw-selector-index-results {
-    height: 465px; }
+    height: 462px; }
   .orgsync-widget .osw-selector-index-browse .osw-selector-index-selected-results {
-    max-height: 265px; }
+    max-height: 231px; }
 .orgsync-widget .osw-selector-index-tokens-and-query {
   background: #fff;
   border-radius: 3px;
@@ -1829,10 +1829,11 @@
   float: left;
   width: 50%; }
 .orgsync-widget[min-width~='640px'] .osw-selector-index-browse .osw-selector-index-scopes {
-  height: 500px;
+  height: 497px;
   max-height: none; }
-.orgsync-widget[min-width~='640px'] .osw-selector-index-browse .osw-selector-index-results, .orgsync-widget[min-width~='640px'] .osw-selector-index-browse .osw-selector-index-selected-results {
-  height: 465px; }
+.orgsync-widget[min-width~='640px'] .osw-selector-index-browse .osw-selector-index-selected-results {
+  height: 462px;
+  max-height: none; }
 
 /* styles/selector/result.scss */
 .orgsync-widget .osw-selector-result-content {
@@ -1908,7 +1909,7 @@
 .orgsync-widget .osw-selector-index-browse .osw-selector-index-middle .osw-selector-result-image {
   font-size: 30px;
   margin-right: 10px;
-  width: 44px; }
+  width: 45px; }
 .orgsync-widget .osw-selector-index-browse .osw-selector-index-middle .osw-selector-result-icon {
   -webkit-box-sizing: border-box;
   -moz-box-sizing: border-box;
@@ -1972,18 +1973,20 @@
   -moz-user-select: none;
   -ms-user-select: none;
   user-select: none;
-  border-top: 1px solid #eee;
+  border-bottom: 1px solid #eee;
   cursor: pointer;
   font-size: 14px;
   padding: 0 10px;
   text-align: right; }
-  .orgsync-widget .osw-selector-scope:first-child {
-    border-top: 0; }
+  .orgsync-widget .osw-selector-scope:last-child {
+    border-bottom: 0; }
+    .orgsync-widget .osw-selector-scope:last-child .osw-selector-scope-name {
+      line-height: 35px; }
 .orgsync-widget .osw-selector-scope-active {
   background: #f2f3f6; }
 .orgsync-widget .osw-selector-scope-toggle {
   float: left;
-  margin: 10px 5px 0 0; }
+  margin: 11px 5px 0 0; }
 .orgsync-widget .osw-selector-scope-name {
   word-wrap: normal;
   overflow: hidden;

@@ -66,11 +66,11 @@
     }
 
     .osw-selector-index-results {
-      height: 465px;
+      height: 462px;
     }
 
     .osw-selector-index-selected-results {
-      max-height: 265px;
+      max-height: 231px;
     }
   }
 
@@ -180,13 +180,13 @@
     }
 
     .osw-selector-index-scopes {
-      height: 500px;
+      height: 497px;
       max-height: none;
     }
 
-    .osw-selector-index-results,
     .osw-selector-index-selected-results {
-      height: 465px;
+      height: 462px;
+      max-height: none;
     }
   }
 }

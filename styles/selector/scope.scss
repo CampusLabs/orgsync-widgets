@@ -3,14 +3,18 @@
 .orgsync-widget {
   .osw-selector-scope {
     @include user-select(none);
-    border-top: 1px solid #eee;
+    border-bottom: 1px solid #eee;
     cursor: pointer;
     font-size: 14px;
     padding: 0 10px;
     text-align: right;
 
-    &:first-child {
-      border-top: 0;
+    &:last-child {
+      border-bottom: 0;
+
+      .osw-selector-scope-name {
+        line-height: 35px;
+      }
     }
   }
 
@@ -20,7 +24,7 @@
 
   .osw-selector-scope-toggle {
     float: left;
-    margin: 10px 5px 0 0;
+    margin: 11px 5px 0 0;
   }
 
   .osw-selector-scope-name {

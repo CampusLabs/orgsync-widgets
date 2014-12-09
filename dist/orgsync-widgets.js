@@ -49686,6 +49686,10 @@ define(
       'cover_photo'
     ];
 
+    var BASIC_FIELDS = ['_type', 'id']
+      .concat(NAME_FIELDS)
+      .concat(PICTURE_URL_FIELDS);
+
     var getBestFit = function (fields, item) {
       return item[_.find(fields, _.partial(_.has, item))];
     };
@@ -49709,6 +49713,8 @@ define(
       return ICON_MAP[item._type] || _str.dasherize(item._type);
     };
     __exports__.getIconName = getIconName;
+    var getBasicFields = _.partial(_.pick, _, BASIC_FIELDS);
+    __exports__.getBasicFields = getBasicFields;
   });
 
 // scripts/components/selector/result.es6.jsx
@@ -50014,8 +50020,9 @@ define(
     var Scope = __dependency9__["default"] || __dependency9__;
     var store = __dependency10__["default"] || __dependency10__;
     var Token = __dependency11__["default"] || __dependency11__;
-    var isArbitrary = __dependency12__.isArbitrary;
+    var getBasicFields = __dependency12__.getBasicFields;
     var getName = __dependency12__.getName;
+    var getTerm = __dependency12__.getTerm;
 
     var DOWNCASE = function (str) { return str.toLowerCase(); };
 
@@ -50212,10 +50219,6 @@ define(
         if (this.isMounted()) this.refs.results.scrollTo(this.state.results[i]);
       },
 
-      asHiddenInputValue: function (item) {
-        return _.pick(item, isArbitrary(item) ? ['name'] : ['_type', 'id']);
-      },
-
       getClassName: function () {
         var classes = [
           'osw-selector-index',
@@ -50287,9 +50290,10 @@ define(
       },
 
       getSelected: function (item) {
-        var a = this.asHiddenInputValue(item);
-        var predicate = _.compose(_.partial(_.isEqual, a), this.asHiddenInputValue);
-        return _.find(this.state.value, predicate);
+        return _.find(
+          this.state.value,
+          _.compose(_.partial(_.isEqual, getTerm(item)), getTerm)
+        );
       },
 
       isSelected: function (item) {
@@ -50460,7 +50464,7 @@ define(
             React.createElement("input", {
               name: this.props.hiddenInputName, 
               type: "hidden", 
-              value: JSON.stringify(this.state.value.map(this.asHiddenInputValue))}
+              value: JSON.stringify(_.map(this.state.value, getBasicFields))}
             ), 
             React.createElement("div", {className: "osw-selector-index-tokens-and-query"}, 
               this.renderTokens(), 

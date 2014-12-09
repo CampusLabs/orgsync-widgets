@@ -27,6 +27,10 @@ var PICTURE_URL_FIELDS = [
   'cover_photo'
 ];
 
+var BASIC_FIELDS = ['_type', 'id']
+  .concat(NAME_FIELDS)
+  .concat(PICTURE_URL_FIELDS);
+
 var getBestFit = function (fields, item) {
   return item[_.find(fields, _.partial(_.has, item))];
 };
@@ -49,3 +53,5 @@ export var getIconName = function (item) {
   if (isArbitrary(item)) return ARBITRARY_ICON;
   return ICON_MAP[item._type] || _str.dasherize(item._type);
 };
+
+export var getBasicFields = _.partial(_.pick, _, BASIC_FIELDS);

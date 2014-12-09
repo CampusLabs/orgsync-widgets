@@ -9,7 +9,7 @@ import Result from 'components/selector/result';
 import Scope from 'components/selector/scope';
 import store from 'entities/selector/store';
 import Token from 'components/selector/token';
-import {isArbitrary, getName} from 'entities/selector/item';
+import {getBasicFields, getName, getTerm} from 'entities/selector/item';
 
 var DOWNCASE = function (str) { return str.toLowerCase(); };
 
@@ -206,10 +206,6 @@ var SelectorIndex = React.createClass({
     if (this.isMounted()) this.refs.results.scrollTo(this.state.results[i]);
   },
 
-  asHiddenInputValue: function (item) {
-    return _.pick(item, isArbitrary(item) ? ['name'] : ['_type', 'id']);
-  },
-
   getClassName: function () {
     var classes = [
       'osw-selector-index',
@@ -281,9 +277,10 @@ var SelectorIndex = React.createClass({
   },
 
   getSelected: function (item) {
-    var a = this.asHiddenInputValue(item);
-    var predicate = _.compose(_.partial(_.isEqual, a), this.asHiddenInputValue);
-    return _.find(this.state.value, predicate);
+    return _.find(
+      this.state.value,
+      _.compose(_.partial(_.isEqual, getTerm(item)), getTerm)
+    );
   },
 
   isSelected: function (item) {
@@ -454,7 +451,7 @@ var SelectorIndex = React.createClass({
         <input
           name={this.props.hiddenInputName}
           type='hidden'
-          value={JSON.stringify(this.state.value.map(this.asHiddenInputValue))}
+          value={JSON.stringify(_.map(this.state.value, getBasicFields))}
         />
         <div className='osw-selector-index-tokens-and-query'>
           {this.renderTokens()}

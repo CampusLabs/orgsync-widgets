@@ -43198,6 +43198,11 @@ define(
         ev.stopPropagation();
       },
 
+      renderFooter: function () {
+        if (!this.props.renderFooter) return;
+        return React.createElement("div", {className: "osw-popup-footer"}, this.props.renderFooter());
+      },
+
       renderPopup: function () {
         var children = this.props.children;
         if (!React.Children.count(children)) return;
@@ -43207,7 +43212,8 @@ define(
               this.renderCloseButton(), 
               React.createElement("div", {className: "osw-popup-title"}, this.props.title)
             ), 
-            React.createElement("div", {className: "osw-popup-body"}, children)
+            React.createElement("div", {className: "osw-popup-body"}, children), 
+            this.renderFooter()
           )
         );
       },
@@ -50421,13 +50427,10 @@ define(
         );
       },
 
-      renderDoneButton: function () {
-        if (!this.state.browseIsOpen) return;
+      renderPopupFooter: function () {
         return (
-          React.createElement("div", {className: "osw-selector-index-done-container"}, 
-            React.createElement(Button, {className: "osw-selector-index-done", onClick: this.closeBrowse}, 
-              "Done"
-            )
+          React.createElement(Button, {className: "osw-selector-index-done", onClick: this.closeBrowse}, 
+            "Done"
           )
         );
       },
@@ -50439,7 +50442,8 @@ define(
             ref: "popup", 
             title: this.props.browseText, 
             name: "selector-index", 
-            close: this.closeBrowse
+            close: this.closeBrowse, 
+            renderFooter: this.renderPopupFooter
           }, 
             this.renderBrowse()
           )
@@ -50500,8 +50504,7 @@ define(
               uniform: true, 
               renderPageSize: this.props.renderPageSize, 
               updateForValue: this.state.value}
-            ), 
-            this.renderDoneButton()
+            )
           )
         );
       },

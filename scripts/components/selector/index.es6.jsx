@@ -415,14 +415,11 @@ var SelectorIndex = React.createClass({
     );
   },
 
-  renderDoneButton: function () {
-    if (!this.state.browseIsOpen) return;
+  renderPopupFooter: function () {
     return (
-      <div className='osw-selector-index-done-container'>
-        <Button className='osw-selector-index-done' onClick={this.closeBrowse}>
-          Done
-        </Button>
-      </div>
+      <Button className='osw-selector-index-done' onClick={this.closeBrowse}>
+        Done
+      </Button>
     );
   },
 
@@ -434,6 +431,7 @@ var SelectorIndex = React.createClass({
         title={this.props.browseText}
         name='selector-index'
         close={this.closeBrowse}
+        renderFooter={this.renderPopupFooter}
       >
         {this.renderBrowse()}
       </Popup>
@@ -495,7 +493,6 @@ var SelectorIndex = React.createClass({
           renderPageSize={this.props.renderPageSize}
           updateForValue={this.state.value}
         />
-        {this.renderDoneButton()}
       </div>
     );
   },

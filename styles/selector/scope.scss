@@ -3,10 +3,15 @@
 .orgsync-widget {
   .osw-selector-scope {
     @include user-select(none);
+    border-top: 1px solid #eee;
     cursor: pointer;
     font-size: 14px;
     padding: 0 10px;
     text-align: right;
+
+    &:first-child {
+      border-top: 0;
+    }
   }
 
   .osw-selector-scope-active {
@@ -20,6 +25,6 @@
 
   .osw-selector-scope-name {
     @include ellipsis;
-    padding: 10px 0;
+    line-height: 34px;
   }
 }

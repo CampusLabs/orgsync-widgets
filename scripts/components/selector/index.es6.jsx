@@ -462,6 +462,7 @@ var SelectorIndex = React.createClass({
               value={this.state.query}
               onChange={this.handleQueryChange}
               placeholder={this.props.placeholder}
+              aria-label={this.props.placeholder}
             />
           </div>
         </div>

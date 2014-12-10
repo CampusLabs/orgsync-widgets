@@ -39284,9 +39284,8 @@ require.alias("superagent/lib/client.js", "superagent/index.js");if (typeof expo
       var self = this;
       data = extend({device_info: 'OrgSync API JavaScript Client'}, data);
       return this.post(path, data, function (er, res) {
-        if (er) return cb(er);
-        self.key = res.body.key;
-        cb(null, res);
+        if (!er) self.key = res.key;
+        cb(er, res);
       });
     },
 
@@ -50481,7 +50480,8 @@ define(
                   ref: "query", 
                   value: this.state.query, 
                   onChange: this.handleQueryChange, 
-                  placeholder: this.props.placeholder}
+                  placeholder: this.props.placeholder, 
+                  'aria-label': this.props.placeholder}
                 )
               )
             ), 

@@ -1,6 +1,6 @@
 {
   "name": "orgsync-widgets",
-  "version": "0.0.10",
+  "version": "0.0.11",
   "main": [
     "dist/orgsync-widgets.js",
     "dist/orgsync-widgets.css"
@@ -29,7 +29,7 @@
     "moment": "2.8.4",
     "moment-timezone": "0.2.5",
     "olay-react": "0.4.0",
-    "orgsync-api": "0.1.6",
+    "orgsync-api": "0.1.7",
     "react": "0.12.1",
     "react-list": "0.2.6",
     "socket.io-client": "1.2.1",

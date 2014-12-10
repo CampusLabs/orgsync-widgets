@@ -39260,10 +39260,9 @@ require.alias("superagent/lib/client.js", "superagent/index.js");if (typeof expo
         superagent[method](url)
           [method === 'get' ? 'query' : 'send'](data)
           .end(function (er, res) {
-            if (er) return cb(er);
-            var body = res.body || {};
+            var body = (res || {}).body || {};
             if (body.data) return cb(null, body);
-            cb(new Error(body.error || res.text || 'Unknown'));
+            cb(new Error(er || body.error || res.text || 'Unknown'), body);
           });
       } catch (er) {
         if (typeof jQuery === 'undefined') throw er;
@@ -39281,14 +39280,22 @@ require.alias("superagent/lib/client.js", "superagent/index.js");if (typeof expo
       return this;
     },
 
-    login: function (data, cb) {
+    auth: function (path, data, cb) {
       var self = this;
       data = extend({device_info: 'OrgSync API JavaScript Client'}, data);
-      return this.post('/authentication/login', data, function (er, res) {
+      return this.post(path, data, function (er, res) {
         if (er) return cb(er);
         self.key = res.body.key;
         cb(null, res);
       });
+    },
+
+    login: function (data, cb) {
+      this.auth('/authentication/login', data, cb);
+    },
+
+    register: function (data, cb) {
+      this.auth('/accounts/create', data, cb);
     }
   };
 

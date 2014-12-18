@@ -50083,6 +50083,7 @@ define(
 
       componentDidMount: function () {
         this.updateResults();
+        if (this.state.browseIsOpen) this.refs.query.getDOMNode().focus();
       },
 
       componentDidUpdate: function (__, prev) {
@@ -50169,11 +50170,6 @@ define(
           this.incrActiveIndex(1);
           return ev.preventDefault();
         }
-      },
-
-      handleClick: function (ev) {
-        ev.stopPropagation();
-        this.refs.query.getDOMNode().focus();
       },
 
       handleFocus: function (ev) {
@@ -50519,7 +50515,6 @@ define(
           React.createElement("div", React.__spread({},  this.props), 
             React.createElement("div", {
               className: this.getClassName(), 
-              onClick: this.handleClick, 
               onFocus: this.handleFocus, 
               onBlur: this.handleBlur, 
               onMouseOver: this.handleMouseOver, 

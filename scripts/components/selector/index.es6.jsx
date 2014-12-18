@@ -58,6 +58,7 @@ var SelectorIndex = React.createClass({
 
   componentDidMount: function () {
     this.updateResults();
+    if (this.state.browseIsOpen) this.refs.query.getDOMNode().focus();
   },
 
   componentDidUpdate: function (__, prev) {
@@ -144,11 +145,6 @@ var SelectorIndex = React.createClass({
       this.incrActiveIndex(1);
       return ev.preventDefault();
     }
-  },
-
-  handleClick: function (ev) {
-    ev.stopPropagation();
-    this.refs.query.getDOMNode().focus();
   },
 
   handleFocus: function (ev) {
@@ -494,7 +490,6 @@ var SelectorIndex = React.createClass({
       <div {...this.props}>
         <div
           className={this.getClassName()}
-          onClick={this.handleClick}
           onFocus={this.handleFocus}
           onBlur={this.handleBlur}
           onMouseOver={this.handleMouseOver}

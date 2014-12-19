@@ -1,6 +1,6 @@
 {
   "name": "orgsync-widgets",
-  "version": "0.0.13",
+  "version": "0.0.14",
   "author": "Casey Foster <c@sey.me>",
   "main": "dist/orgsync-widgets.js",
   "repository": {
@@ -11,7 +11,7 @@
     "cogs": "0.26.2",
     "es6-module-transpiler": "0.4.0",
     "node-sass": "1.2.3",
-    "react-tools": "0.12.1",
+    "react-tools": "0.12.2",
     "watchy": "0.5.6"
   }
 }

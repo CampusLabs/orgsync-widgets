@@ -1411,6 +1411,64 @@
 .orgsync-widget .osw-news-posts-show-popup {
   max-width: 500px; }
 
+/* styles/people/list-item.scss */
+.orgsync-widget .osw-people-list-item {
+  border-bottom: 1px solid #ccc;
+  display: block;
+  overflow: hidden;
+  padding: 0.5rem;
+  position: relative; }
+.orgsync-widget .osw-people-list-item-picture {
+  border-radius: 50%;
+  float: left;
+  height: 64px;
+  margin-right: 10px;
+  width: 64px; }
+.orgsync-widget .osw-people-list-item-first-name, .orgsync-widget .osw-people-list-item-last-name {
+  word-wrap: normal;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap; }
+.orgsync-widget .osw-people-list-item-first-name {
+  color: #111;
+  font-size: 20px;
+  font-weight: bold;
+  padding-top: 13px; }
+.orgsync-widget .osw-people-list-item-last-name {
+  color: #333;
+  font-size: 18px;
+  font-weight: normal; }
+.orgsync-widget .osw-people-list-item-title {
+  color: #aaa;
+  font-size: 16px;
+  position: absolute;
+  right: 10px;
+  top: 35px; }
+
+/* styles/people/show.scss */
+.orgsync-widget .osw-person-show-popup {
+  max-width: 400px; }
+.orgsync-widget .osw-people-show {
+  text-align: center;
+  padding: 10px; }
+.orgsync-widget .osw-people-show-picture {
+  border-radius: 50%;
+  display: block;
+  margin: 0 auto; }
+.orgsync-widget .osw-people-show-name, .orgsync-widget .osw-people-show-title {
+  line-height: 25px;
+  text-align: center; }
+.orgsync-widget .osw-people-show-name {
+  color: #111;
+  font-size: 20px;
+  font-weight: bold;
+  padding-top: 13px; }
+.orgsync-widget .osw-people-show-title {
+  color: #aaa;
+  font-size: 16px; }
+.orgsync-widget .button-row {
+  padding: 10px; }
+
 /* styles/photos/index.scss */
 .orgsync-widget .osw-photos-index {
   margin: 0 auto;

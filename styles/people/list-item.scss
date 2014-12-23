@@ -1,0 +1,40 @@
+@import '../config';
+
+.orgsync-widget {
+  .osw-people-list-item{
+    border-bottom: 1px solid #ccc;
+    display: block;
+    overflow: hidden;
+    padding: .5rem;
+    position: relative;
+  }
+  .osw-people-list-item-picture{
+    border-radius: 50%;
+    float: left;
+    height: 64px;
+    margin-right: 10px;
+    width: 64px;
+  }
+  .osw-people-list-item-first-name,
+  .osw-people-list-item-last-name {
+    @include ellipsis;
+  }
+  .osw-people-list-item-first-name {
+    color: #111;
+    font-size: 20px;
+    font-weight: bold;
+    padding-top: 13px;
+  }
+  .osw-people-list-item-last-name {
+    color: #333;
+    font-size: 18px;
+    font-weight: normal;
+  }
+  .osw-people-list-item-title{
+    color: #aaa;
+    font-size: 16px;
+    position: absolute;
+    right: 10px;
+    top: 35px;
+  }
+}

@@ -39296,15 +39296,10 @@ require.alias("superagent/lib/client.js", "superagent/index.js");if (typeof expo
         superagent[method](url)
           [method === 'get' ? 'query' : 'send'](data)
           .end(function (er, res) {
-            var body = (res || {}).body || {};
+            if (er) return cb(er);
+            var body = res.body || {};
             if (body.data) return cb(null, body);
-            if (!er) {
-              if (body.error) er = new Error(body.error);
-              else if (res.error) er = res.error;
-              else er = new Error('Unknown');
-            }
-            er.fields = body.error_fields || {};
-            cb(er, body);
+            cb(new Error(body.error || res.text || 'Unknown'));
           });
       } catch (er) {
         if (typeof jQuery === 'undefined') throw er;
@@ -39322,21 +39317,14 @@ require.alias("superagent/lib/client.js", "superagent/index.js");if (typeof expo
       return this;
     },
 
-    auth: function (path, data, cb) {
+    login: function (data, cb) {
       var self = this;
       data = extend({device_info: 'OrgSync API JavaScript Client'}, data);
-      return this.post(path, data, function (er, res) {
-        if (!er) self.key = res.key;
-        cb(er, res);
+      return this.post('/authentication/login', data, function (er, res) {
+        if (er) return cb(er);
+        self.key = res.body.key;
+        cb(null, res);
       });
-    },
-
-    login: function (data, cb) {
-      this.auth('/authentication/login', data, cb);
-    },
-
-    register: function (data, cb) {
-      this.auth('/accounts/create', data, cb);
     }
   };
 
@@ -48958,6 +48946,169 @@ define(
             items: this.state.newsPosts, 
             renderItem: this.renderListItem, 
             fetch: this.fetch}
+          )
+        );
+      }
+    });
+  });
+
+// scripts/components/people/show.es6.jsx
+define(
+  'components/people/show', ["entities/account","components/button","react","exports"],
+  function(__dependency1__, __dependency2__, __dependency3__, __exports__) {
+    "use strict";
+    var getPictureUrl = __dependency1__.getPictureUrl;
+    var Button = __dependency2__["default"] || __dependency2__;
+    var React = __dependency3__["default"] || __dependency3__;
+
+    __exports__["default"] = React.createClass({
+
+      render: function () {
+        var account = this.props.account;
+        return (
+          React.createElement("div", {className: "osw-people-show"}, 
+            React.createElement("img", {
+              className: "osw-people-show-picture", 
+              src: getPictureUrl(account)}
+            ), 
+            React.createElement("div", {className: "osw-people-show-name"}, 
+              account.display_name
+            ), 
+            React.createElement("div", {className: "osw-people-show-title"}, 
+              account.title
+            ), 
+            React.createElement("div", {className: "button-row"}, 
+              React.createElement(Button, null, "Send a Message")
+            )
+          )
+        );
+      }
+    });
+  });
+
+// scripts/components/people/list-item.es6.jsx
+define(
+  'components/people/list-item', ["entities/account","cursors","components/popup","react","components/people/show","exports"],
+  function(__dependency1__, __dependency2__, __dependency3__, __dependency4__, __dependency5__, __exports__) {
+    "use strict";
+    var getPictureUrl = __dependency1__.getPictureUrl;
+    var Cursors = __dependency2__["default"] || __dependency2__;
+    var Popup = __dependency3__["default"] || __dependency3__;
+    var React = __dependency4__["default"] || __dependency4__;
+    var Show = __dependency5__["default"] || __dependency5__;
+
+    __exports__["default"] = React.createClass({
+      mixins: [Cursors],
+
+      getInitialState: function () {
+        return {
+          isOpen: false
+        };
+      },
+
+      onPersonClick: function (ev) {
+        ev.preventDefault();
+        this.open();
+      },
+
+      open: function () {
+        this.update({isOpen: {$set: true}});
+      },
+
+      close: function () {
+        this.update({isOpen: {$set: false}});
+      },
+
+      renderShow: function () {
+        if (!this.state.isOpen) return;
+        return (
+          React.createElement(Show, {account: this.props.account})
+        );
+      },
+
+      render: function () {
+        var account = this.props.account;
+        return (
+          React.createElement("div", {className: "osw-people-list-item"}, 
+            React.createElement("a", {onClick: this.onPersonClick}, 
+              React.createElement("img", {
+                className: "osw-people-list-item-picture", 
+                src: getPictureUrl(account)}
+              ), 
+              React.createElement("div", {className: "osw-people-list-item-first-name"}, 
+                account.first_name
+              ), 
+              React.createElement("div", {className: "osw-people-list-item-last-name"}, 
+                account.last_name
+              ), 
+              React.createElement("div", {className: "osw-people-list-item-title"}, 
+                account.title
+              )
+            ), 
+            React.createElement(Popup, {
+              name: "person-show", 
+              close: this.close, 
+              title: account.display_name
+            }, 
+              this.renderShow()
+            )
+          )
+        );
+      }
+    });
+  });
+
+// scripts/components/people/index.es6.jsx
+define(
+  'components/people/index', ["underscore","api","components/people/list-item","cursors","react-list","react","exports"],
+  function(__dependency1__, __dependency2__, __dependency3__, __dependency4__, __dependency5__, __dependency6__, __exports__) {
+    "use strict";
+    var _ = __dependency1__["default"] || __dependency1__;
+    var api = __dependency2__["default"] || __dependency2__;
+    var PeopleListItem = __dependency3__["default"] || __dependency3__;
+    var Cursors = __dependency4__["default"] || __dependency4__;
+    var List = __dependency5__["default"] || __dependency5__;
+    var React = __dependency6__["default"] || __dependency6__;
+
+    var PER_PAGE = 100;
+
+    __exports__["default"] = React.createClass({
+      mixins: [Cursors],
+
+      getInitialState: function () {
+        return {
+          accounts: []
+        };
+      },
+
+      fetch: function (cb) {
+        api.get('/portals/:portal_id/people', {
+          portal_id: this.props.portalId,
+          page: Math.floor(this.state.accounts.length / PER_PAGE) + 1,
+          per_page: PER_PAGE
+        }, _.partial(this.handleFetch, cb));
+      },
+
+      handleFetch: function (cb, er, res) {
+        if (er) return cb(er);
+        this.update({
+          accounts: {$set: _.unique(this.state.accounts.concat(res.data), 'id')}
+        });
+        cb(null, res.data.length < PER_PAGE);
+      },
+
+      renderListItem: function (account) {
+        return React.createElement(PeopleListItem, {key: account.id, account: account});
+      },
+
+      render: function () {
+        return (
+          React.createElement(List, {
+            className: "osw-people-index", 
+            items: this.state.accounts, 
+            renderItem: this.renderListItem, 
+            fetch: this.fetch, 
+            uniform: true}
           )
         );
       }

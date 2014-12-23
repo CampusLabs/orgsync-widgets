@@ -1,0 +1,34 @@
+@import '../config';
+
+.orgsync-widget {
+  .osw-person-show-popup{
+    max-width: 400px;
+  }
+  .osw-people-show{
+    text-align: center;
+    padding: 10px;
+  }
+  .osw-people-show-picture{
+    border-radius: 50%;
+    display: block;
+    margin: 0 auto;
+  }
+  .osw-people-show-name,
+  .osw-people-show-title{
+    line-height: 25px;
+    text-align: center;
+  }
+  .osw-people-show-name {
+    color: #111;
+    font-size: 20px;
+    font-weight: bold;
+    padding-top: 13px;
+  }
+  .osw-people-show-title{
+    color: #aaa;
+    font-size: 16px;
+  }
+  .button-row{
+    padding: 10px;
+  }
+}

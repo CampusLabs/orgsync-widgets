@@ -20,7 +20,7 @@
   "devDependencies": {
     "amdainty": "0.2.0",
     "cache": "0.0.4",
-    "bourbon": "3.2.1",
+    "bourbon": "4.0.2",
     "cursors": "0.5.0",
     "elementQuery": "tysonmatanich/elementQuery#47e310efbe8661d00c63d8c3267e34a66a0d2ee5",
     "jquery": "2.1.3",

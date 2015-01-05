@@ -32,7 +32,7 @@
       }
     },
     "concatAmd": true,
-    "processors.es6.options.compatFix": true
+    "processors.es6.options.modules": "amd"
   },
   "targets": {
     "scripts/orgsync-widgets.es6": "dist",

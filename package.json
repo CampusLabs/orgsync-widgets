@@ -8,9 +8,9 @@
     "url": "https://github.com/orgsync/widgets"
   },
   "devDependencies": {
-    "cogs": "0.26.2",
-    "es6-module-transpiler": "0.4.0",
-    "node-sass": "1.2.3",
+    "cogs": "0.27.1",
+    "6to5": "2.5.0",
+    "node-sass": "2.0.0-beta",
     "react-tools": "0.12.2",
     "watchy": "0.5.6"
   }

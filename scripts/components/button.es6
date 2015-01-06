@@ -5,8 +5,14 @@ import React from 'react';
 export default React.createClass({
   mixins: [Cursors],
 
+  getDefaultProps: function () {
+    return {
+      baseClassName: 'osw-button'
+    };
+  },
+
   getClassName: function () {
-    var classes = ['osw-button'];
+    var classes = [this.props.baseClassName];
     if (this.props.isSelected) classes.push('osw-button-selected');
     if (this.props.disabled) classes.push('osw-button-disabled');
     return joinClassNames(classes.join(' '), this.props.className);

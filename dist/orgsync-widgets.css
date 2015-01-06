@@ -2065,3 +2065,32 @@
   background-color: #fdae50; }
 .orgsync-widget .osw-selector-token-type-website .osw-selector-token-content, .orgsync-widget .osw-selector-result-type-website .osw-selector-result-icon {
   background-color: #efc24f; }
+
+/* styles/text-button.scss */
+.orgsync-widget .osw-text-button {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  -ms-appearance: none;
+  -o-appearance: none;
+  appearance: none;
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  background: none;
+  border: 0;
+  border-radius: 0;
+  color: #333;
+  cursor: pointer;
+  display: inline-block;
+  font-size: 1rem;
+  font-weight: 400;
+  margin: 0;
+  outline: none;
+  padding: 0;
+  text-decoration: none; }
+  .orgsync-widget .osw-text-button:hover, .orgsync-widget .osw-text-button:focus {
+    text-decoration: underline; }

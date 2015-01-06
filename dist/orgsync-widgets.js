@@ -42964,8 +42964,14 @@ define('components/button', ["exports", "cursors", "utils/join-class-names", "re
   exports["default"] = React.createClass({
     mixins: [Cursors],
 
+    getDefaultProps: function () {
+      return {
+        baseClassName: "osw-button"
+      };
+    },
+
     getClassName: function () {
-      var classes = ["osw-button"];
+      var classes = [this.props.baseClassName];
       if (this.props.isSelected) classes.push("osw-button-selected");
       if (this.props.disabled) classes.push("osw-button-disabled");
       return joinClassNames(classes.join(" "), this.props.className);
@@ -50523,6 +50529,31 @@ define('components/selector/index', ["exports", "underscore", "orgsync-widgets",
 
 
   exports["default"] = SelectorIndex;
+});
+
+// scripts/components/text-button.es6
+"use strict";
+
+define('components/text-button', ["exports", "components/button", "cursors", "react"], function (exports, _componentsButton, _cursors, _react) {
+  var _interopRequire = function (obj) {
+    return obj && (obj["default"] || obj);
+  };
+
+  var Button = _interopRequire(_componentsButton);
+
+  var Cursors = _interopRequire(_cursors);
+
+  var React = _interopRequire(_react);
+
+  exports["default"] = React.createClass({
+    mixins: [Cursors],
+
+    render: function () {
+      return React.createElement(Button, React.__spread({}, this.props, {
+        baseClassName: "osw-text-button"
+      }));
+    }
+  });
 });
 
 window.jQuery.noConflict(true);

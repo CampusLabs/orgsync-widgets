@@ -10844,9 +10844,9 @@ return jQuery;
 });
 
 // scripts/config.es6
-"use strict";
-
 define('config', ["exports"], function (exports) {
+  "use strict";
+
   exports["default"] = {
     api: {
       key: window.OSW_API_KEY,
@@ -37670,9 +37670,9 @@ module.exports = warning;
 });
 
 // scripts/orgsync-widgets.es6
-"use strict";
-
 define('orgsync-widgets', ["exports", "jquery", "underscore", "cache", "config", "elementQuery", "socket.io", "react", "require"], function (exports, _jquery, _underscore, _cache, _config, _elementQuery, _socketIo, _react, _require) {
+  "use strict";
+
   var _interopRequire = function (obj) {
     return obj && (obj["default"] || obj);
   };
@@ -39346,9 +39346,9 @@ require.alias("superagent/lib/client.js", "superagent/index.js");if (typeof expo
 });
 
 // scripts/api.es6
-"use strict";
-
 define('api', ["exports", "config", "orgsync-api"], function (exports, _config, _orgsyncApi) {
+  "use strict";
+
   var _interopRequire = function (obj) {
     return obj && (obj["default"] || obj);
   };
@@ -39363,9 +39363,9 @@ define('api', ["exports", "config", "orgsync-api"], function (exports, _config, 
 });
 
 // scripts/entities/account.es6
-"use strict";
-
 define('entities/account', ["exports"], function (exports) {
+  "use strict";
+
   var DEFAULT_PICTURE = "https://orgsync.com/assets/profile_blank_64.gif";
 
   var getPictureUrl = exports.getPictureUrl = function (account) {
@@ -39374,9 +39374,9 @@ define('entities/account', ["exports"], function (exports) {
 });
 
 // scripts/components/accounts/list-item.es6
-"use strict";
-
 define('components/accounts/list-item', ["exports", "entities/account", "react"], function (exports, _entitiesAccount, _react) {
+  "use strict";
+
   var _interopRequire = function (obj) {
     return obj && (obj["default"] || obj);
   };
@@ -39775,9 +39775,9 @@ define('components/accounts/list-item', ["exports", "entities/account", "react"]
 });
 
 // scripts/components/accounts/index.es6
-"use strict";
-
 define('components/accounts/index', ["exports", "underscore", "api", "components/accounts/list-item", "cursors", "react-list", "react"], function (exports, _underscore, _api, _componentsAccountsListItem, _cursors, _reactList, _react) {
+  "use strict";
+
   var _interopRequire = function (obj) {
     return obj && (obj["default"] || obj);
   };
@@ -39841,9 +39841,9 @@ define('components/accounts/index', ["exports", "underscore", "api", "components
 });
 
 // scripts/utils/join-class-names.es6
-"use strict";
-
 define('utils/join-class-names', ["exports", "underscore"], function (exports, _underscore) {
+  "use strict";
+
   var _interopRequire = function (obj) {
     return obj && (obj["default"] || obj);
   };
@@ -39856,9 +39856,9 @@ define('utils/join-class-names', ["exports", "underscore"], function (exports, _
 });
 
 // scripts/components/ui/button.es6
-"use strict";
-
 define('components/ui/button', ["exports", "cursors", "utils/join-class-names", "react"], function (exports, _cursors, _utilsJoinClassNames, _react) {
+  "use strict";
+
   var _interopRequire = function (obj) {
     return obj && (obj["default"] || obj);
   };
@@ -39906,9 +39906,9 @@ define('components/ui/button', ["exports", "cursors", "utils/join-class-names", 
 });
 
 // scripts/components/ui/button-row.es6
-"use strict";
-
 define('components/ui/button-row', ["exports", "cursors", "utils/join-class-names", "react"], function (exports, _cursors, _utilsJoinClassNames, _react) {
+  "use strict";
+
   var _interopRequire = function (obj) {
     return obj && (obj["default"] || obj);
   };
@@ -39931,9 +39931,9 @@ define('components/ui/button-row', ["exports", "cursors", "utils/join-class-name
 });
 
 // scripts/components/accounts/show.es6
-"use strict";
-
 define('components/accounts/show', ["exports", "underscore", "api", "components/ui/button", "components/ui/button-row", "cursors", "react", "entities/account"], function (exports, _underscore, _api, _componentsUiButton, _componentsUiButtonRow, _cursors, _react, _entitiesAccount) {
+  "use strict";
+
   var _interopRequire = function (obj) {
     return obj && (obj["default"] || obj);
   };
@@ -40003,9 +40003,9 @@ define('components/accounts/show', ["exports", "underscore", "api", "components/
 });
 
 // scripts/components/albums/list-item.es6
-"use strict";
-
 define('components/albums/list-item', ["exports", "underscore", "cursors", "react"], function (exports, _underscore, _cursors, _react) {
+  "use strict";
+
   var _interopRequire = function (obj) {
     return obj && (obj["default"] || obj);
   };
@@ -40050,9 +40050,9 @@ define('components/albums/list-item', ["exports", "underscore", "cursors", "reac
 });
 
 // scripts/components/ui/icon.es6
-"use strict";
-
 define('components/ui/icon', ["exports", "cursors", "utils/join-class-names", "react"], function (exports, _cursors, _utilsJoinClassNames, _react) {
+  "use strict";
+
   var _interopRequire = function (obj) {
     return obj && (obj["default"] || obj);
   };
@@ -40075,9 +40075,9 @@ define('components/ui/icon', ["exports", "cursors", "utils/join-class-names", "r
 });
 
 // scripts/components/photos/list-item.es6
-"use strict";
-
 define('components/photos/list-item', ["exports", "cursors", "components/ui/icon", "react"], function (exports, _cursors, _componentsUiIcon, _react) {
+  "use strict";
+
   var _interopRequire = function (obj) {
     return obj && (obj["default"] || obj);
   };
@@ -43061,9 +43061,9 @@ define('components/photos/list-item', ["exports", "cursors", "components/ui/icon
 }).call(this);
 
 // scripts/components/comments/list-item.es6
-"use strict";
-
 define('components/comments/list-item', ["exports", "moment", "react"], function (exports, _moment, _react) {
+  "use strict";
+
   var _interopRequire = function (obj) {
     return obj && (obj["default"] || obj);
   };
@@ -43095,9 +43095,9 @@ define('components/comments/list-item', ["exports", "moment", "react"], function
 });
 
 // scripts/components/comments/new.es6
-"use strict";
-
 define('components/comments/new', ["exports", "components/ui/button", "react"], function (exports, _componentsUiButton, _react) {
+  "use strict";
+
   var _interopRequire = function (obj) {
     return obj && (obj["default"] || obj);
   };
@@ -43118,9 +43118,9 @@ define('components/comments/new', ["exports", "components/ui/button", "react"], 
 });
 
 // scripts/components/comments/index.es6
-"use strict";
-
 define('components/comments/index', ["exports", "jquery", "underscore", "api", "cursors", "react-list", "components/comments/list-item", "components/comments/new", "react"], function (exports, _jquery, _underscore, _api, _cursors, _reactList, _componentsCommentsListItem, _componentsCommentsNew, _react) {
+  "use strict";
+
   var _interopRequire = function (obj) {
     return obj && (obj["default"] || obj);
   };
@@ -43192,9 +43192,9 @@ define('components/comments/index', ["exports", "jquery", "underscore", "api", "
 });
 
 // scripts/components/photos/show.es6
-"use strict";
-
 define('components/photos/show', ["exports", "components/comments/index", "cursors", "react"], function (exports, _componentsCommentsIndex, _cursors, _react) {
+  "use strict";
+
   var _interopRequire = function (obj) {
     return obj && (obj["default"] || obj);
   };
@@ -43349,9 +43349,9 @@ define('components/photos/show', ["exports", "components/comments/index", "curso
 });
 
 // scripts/components/ui/popup.es6
-"use strict";
-
 define('components/ui/popup', ["exports", "elementQuery", "components/ui/icon", "olay-react", "react"], function (exports, _elementQuery, _componentsUiIcon, _olayReact, _react) {
+  "use strict";
+
   var _interopRequire = function (obj) {
     return obj && (obj["default"] || obj);
   };
@@ -43416,9 +43416,9 @@ define('components/ui/popup', ["exports", "elementQuery", "components/ui/icon", 
 });
 
 // scripts/components/photos/index.es6
-"use strict";
-
 define('components/photos/index', ["exports", "jquery", "underscore", "api", "components/photos/list-item", "components/photos/show", "cursors", "react-list", "react", "components/ui/popup"], function (exports, _jquery, _underscore, _api, _componentsPhotosListItem, _componentsPhotosShow, _cursors, _reactList, _react, _componentsUiPopup) {
+  "use strict";
+
   var _interopRequire = function (obj) {
     return obj && (obj["default"] || obj);
   };
@@ -43546,9 +43546,9 @@ define('components/photos/index', ["exports", "jquery", "underscore", "api", "co
 });
 
 // scripts/components/albums/show.es6
-"use strict";
-
 define('components/albums/show', ["exports", "components/photos/index", "cursors", "react"], function (exports, _componentsPhotosIndex, _cursors, _react) {
+  "use strict";
+
   var _interopRequire = function (obj) {
     return obj && (obj["default"] || obj);
   };
@@ -43584,9 +43584,9 @@ define('components/albums/show', ["exports", "components/photos/index", "cursors
 });
 
 // scripts/components/albums/index.es6
-"use strict";
-
 define('components/albums/index', ["exports", "jquery", "underscore", "api", "components/albums/list-item", "components/albums/show", "cursors", "react-list", "react", "components/ui/popup"], function (exports, _jquery, _underscore, _api, _componentsAlbumsListItem, _componentsAlbumsShow, _cursors, _reactList, _react, _componentsUiPopup) {
+  "use strict";
+
   var _interopRequire = function (obj) {
     return obj && (obj["default"] || obj);
   };
@@ -43711,9 +43711,9 @@ define('components/albums/index', ["exports", "jquery", "underscore", "api", "co
 });
 
 // scripts/components/event-filters/list-item.es6
-"use strict";
-
 define('components/event-filters/list-item', ["exports", "cursors", "components/ui/icon", "react"], function (exports, _cursors, _componentsUiIcon, _react) {
+  "use strict";
+
   var _interopRequire = function (obj) {
     return obj && (obj["default"] || obj);
   };
@@ -44940,9 +44940,9 @@ return {
 });
 
 // scripts/components/event-filters/index.es6
-"use strict";
-
 define('components/event-filters/index', ["exports", "underscore", "api", "cursors", "components/event-filters/list-item", "react", "tinycolor", "velcro-config"], function (exports, _underscore, _api, _cursors, _componentsEventFiltersListItem, _react, _tinycolor, _velcroConfig) {
+  "use strict";
+
   var _interopRequire = function (obj) {
     return obj && (obj["default"] || obj);
   };
@@ -46765,9 +46765,9 @@ define('components/event-filters/index', ["exports", "underscore", "api", "curso
 }));
 
 // scripts/entities/event.es6
-"use strict";
-
 define('entities/event', ["exports", "underscore", "underscore.string", "api", "moment-timezone"], function (exports, _underscore, _underscoreString, _api, _momentTimezone) {
+  "use strict";
+
   var _interopRequire = function (obj) {
     return obj && (obj["default"] || obj);
   };
@@ -46920,9 +46920,9 @@ define('entities/event', ["exports", "underscore", "underscore.string", "api", "
 });
 
 // scripts/components/ui/sep.es6
-"use strict";
-
 define('components/ui/sep', ["exports", "react"], function (exports, _react) {
+  "use strict";
+
   var _interopRequire = function (obj) {
     return obj && (obj["default"] || obj);
   };
@@ -46939,9 +46939,9 @@ define('components/ui/sep', ["exports", "react"], function (exports, _react) {
 });
 
 // scripts/components/events/show.es6
-"use strict";
-
 define('components/events/show', ["exports", "underscore", "underscore.string", "api", "components/ui/button", "cursors", "components/ui/icon", "react", "components/ui/sep", "entities/event"], function (exports, _underscore, _underscoreString, _api, _componentsUiButton, _cursors, _componentsUiIcon, _react, _componentsUiSep, _entitiesEvent) {
+  "use strict";
+
   var _interopRequire = function (obj) {
     return obj && (obj["default"] || obj);
   };
@@ -47228,9 +47228,9 @@ define('components/events/show', ["exports", "underscore", "underscore.string", 
 });
 
 // scripts/components/events/td.es6
-"use strict";
-
 define('components/events/td', ["exports", "cursors", "components/ui/popup", "react", "components/events/show", "tinycolor", "entities/event"], function (exports, _cursors, _componentsUiPopup, _react, _componentsEventsShow, _tinycolor, _entitiesEvent) {
+  "use strict";
+
   var _interopRequire = function (obj) {
     return obj && (obj["default"] || obj);
   };
@@ -47393,9 +47393,9 @@ define('components/events/td', ["exports", "cursors", "components/ui/popup", "re
 });
 
 // scripts/components/events/list-item.es6
-"use strict";
-
 define('components/events/list-item', ["exports", "underscore.string", "cursors", "components/ui/icon", "components/ui/popup", "react", "components/ui/sep", "components/events/show", "entities/event"], function (exports, _underscoreString, _cursors, _componentsUiIcon, _componentsUiPopup, _react, _componentsUiSep, _componentsEventsShow, _entitiesEvent) {
+  "use strict";
+
   var _interopRequire = function (obj) {
     return obj && (obj["default"] || obj);
   };
@@ -47532,9 +47532,9 @@ define('components/events/list-item', ["exports", "underscore.string", "cursors"
 });
 
 // scripts/components/events/list-date.es6
-"use strict";
-
 define('components/events/list-date', ["exports", "cursors", "react-list", "components/events/list-item", "react", "entities/event"], function (exports, _cursors, _reactList, _componentsEventsListItem, _react, _entitiesEvent) {
+  "use strict";
+
   var _interopRequire = function (obj) {
     return obj && (obj["default"] || obj);
   };
@@ -47592,9 +47592,9 @@ define('components/events/list-date', ["exports", "cursors", "react-list", "comp
 });
 
 // scripts/components/events/week.es6
-"use strict";
-
 define('components/events/week', ["exports", "underscore", "cursors", "components/events/td", "components/events/list-date", "components/ui/popup", "react", "entities/event"], function (exports, _underscore, _cursors, _componentsEventsTd, _componentsEventsListDate, _componentsUiPopup, _react, _entitiesEvent) {
+  "use strict";
+
   var _interopRequire = function (obj) {
     return obj && (obj["default"] || obj);
   };
@@ -47797,9 +47797,9 @@ define('components/events/week', ["exports", "underscore", "cursors", "component
 });
 
 // scripts/components/events/calendar.es6
-"use strict";
-
 define('components/events/calendar', ["exports", "underscore", "cursors", "entities/event", "react", "components/events/week"], function (exports, _underscore, _cursors, _entitiesEvent, _react, _componentsEventsWeek) {
+  "use strict";
+
   var _interopRequire = function (obj) {
     return obj && (obj["default"] || obj);
   };
@@ -47907,9 +47907,9 @@ define('components/events/calendar', ["exports", "underscore", "cursors", "entit
 });
 
 // scripts/components/ui/button-group.es6
-"use strict";
-
 define('components/ui/button-group', ["exports", "cursors", "utils/join-class-names", "react"], function (exports, _cursors, _utilsJoinClassNames, _react) {
+  "use strict";
+
   var _interopRequire = function (obj) {
     return obj && (obj["default"] || obj);
   };
@@ -47932,9 +47932,9 @@ define('components/ui/button-group', ["exports", "cursors", "utils/join-class-na
 });
 
 // scripts/components/events/list.es6
-"use strict";
-
 define('components/events/list', ["exports", "underscore", "cursors", "react-list", "components/events/list-date", "react", "entities/event"], function (exports, _underscore, _cursors, _reactList, _componentsEventsListDate, _react, _entitiesEvent) {
+  "use strict";
+
   var _interopRequire = function (obj) {
     return obj && (obj["default"] || obj);
   };
@@ -48417,9 +48417,9 @@ define('components/events/list', ["exports", "underscore", "cursors", "react-lis
 })(this);
 
 // scripts/tz.es6
-"use strict";
-
 define('tz', ["exports", "jstz"], function (exports, _jstz) {
+  "use strict";
+
   var _interopRequire = function (obj) {
     return obj && (obj["default"] || obj);
   };
@@ -48430,9 +48430,9 @@ define('tz', ["exports", "jstz"], function (exports, _jstz) {
 });
 
 // scripts/components/events/index.es6
-"use strict";
-
 define('components/events/index', ["exports", "underscore", "components/ui/button", "components/ui/button-group", "components/events/calendar", "components/events/list", "cursors", "components/event-filters/index", "components/ui/icon", "react", "tz", "entities/event"], function (exports, _underscore, _componentsUiButton, _componentsUiButtonGroup, _componentsEventsCalendar, _componentsEventsList, _cursors, _componentsEventFiltersIndex, _componentsUiIcon, _react, _tz, _entitiesEvent) {
+  "use strict";
+
   var _interopRequire = function (obj) {
     return obj && (obj["default"] || obj);
   };
@@ -48728,9 +48728,9 @@ define('components/events/index', ["exports", "underscore", "components/ui/butto
 });
 
 // scripts/components/news-posts/show.es6
-"use strict";
-
 define('components/news-posts/show', ["exports", "components/comments/index", "cursors", "moment", "react"], function (exports, _componentsCommentsIndex, _cursors, _moment, _react) {
+  "use strict";
+
   var _interopRequire = function (obj) {
     return obj && (obj["default"] || obj);
   };
@@ -48771,9 +48771,9 @@ define('components/news-posts/show', ["exports", "components/comments/index", "c
 });
 
 // scripts/components/news-posts/list-item.es6
-"use strict";
-
 define('components/news-posts/list-item', ["exports", "jquery", "underscore.string", "cursors", "components/ui/icon", "moment", "components/news-posts/show", "components/ui/popup", "react"], function (exports, _jquery, _underscoreString, _cursors, _componentsUiIcon, _moment, _componentsNewsPostsShow, _componentsUiPopup, _react) {
+  "use strict";
+
   var _interopRequire = function (obj) {
     return obj && (obj["default"] || obj);
   };
@@ -48872,9 +48872,9 @@ define('components/news-posts/list-item', ["exports", "jquery", "underscore.stri
 });
 
 // scripts/components/news-posts/index.es6
-"use strict";
-
 define('components/news-posts/index', ["exports", "underscore", "api", "cursors", "react-list", "components/news-posts/list-item", "react"], function (exports, _underscore, _api, _cursors, _reactList, _componentsNewsPostsListItem, _react) {
+  "use strict";
+
   var _interopRequire = function (obj) {
     return obj && (obj["default"] || obj);
   };
@@ -48942,9 +48942,9 @@ define('components/news-posts/index', ["exports", "underscore", "api", "cursors"
 });
 
 // scripts/components/portals/selector.es6
-"use strict";
-
 define('components/portals/selector', ["exports", "cursors", "utils/join-class-names", "react"], function (exports, _cursors, _utilsJoinClassNames, _react) {
+  "use strict";
+
   var _interopRequire = function (obj) {
     return obj && (obj["default"] || obj);
   };
@@ -48974,9 +48974,9 @@ define('components/portals/selector', ["exports", "cursors", "utils/join-class-n
 });
 
 // scripts/components/portals/faceted-selector.es6
-"use strict";
-
 define('components/portals/faceted-selector', ["exports", "underscore", "cursors", "react", "components/portals/selector"], function (exports, _underscore, _cursors, _react, _componentsPortalsSelector) {
+  "use strict";
+
   var _interopRequire = function (obj) {
     return obj && (obj["default"] || obj);
   };
@@ -49016,9 +49016,9 @@ define('components/portals/faceted-selector', ["exports", "underscore", "cursors
 });
 
 // scripts/components/portals/category-selector.es6
-"use strict";
-
 define('components/portals/category-selector', ["exports", "cursors", "components/portals/faceted-selector", "utils/join-class-names", "react"], function (exports, _cursors, _componentsPortalsFacetedSelector, _utilsJoinClassNames, _react) {
+  "use strict";
+
   var _interopRequire = function (obj) {
     return obj && (obj["default"] || obj);
   };
@@ -49050,9 +49050,9 @@ define('components/portals/category-selector', ["exports", "cursors", "component
 });
 
 // scripts/components/portals/empty.es6
-"use strict";
-
 define('components/portals/empty', ["exports", "components/ui/button", "cursors", "react"], function (exports, _componentsUiButton, _cursors, _react) {
+  "use strict";
+
   var _interopRequire = function (obj) {
     return obj && (obj["default"] || obj);
   };
@@ -49092,9 +49092,9 @@ define('components/portals/empty', ["exports", "components/ui/button", "cursors"
 });
 
 // scripts/components/portals/letter-cell.es6
-"use strict";
-
 define('components/portals/letter-cell', ["exports", "components/ui/button", "cursors", "react"], function (exports, _componentsUiButton, _cursors, _react) {
+  "use strict";
+
   var _interopRequire = function (obj) {
     return obj && (obj["default"] || obj);
   };
@@ -49130,9 +49130,9 @@ define('components/portals/letter-cell', ["exports", "components/ui/button", "cu
 });
 
 // scripts/components/portals/letter-table.es6
-"use strict";
-
 define('components/portals/letter-table', ["exports", "underscore", "cursors", "components/portals/letter-cell", "react"], function (exports, _underscore, _cursors, _componentsPortalsLetterCell, _react) {
+  "use strict";
+
   var _interopRequire = function (obj) {
     return obj && (obj["default"] || obj);
   };
@@ -49173,9 +49173,9 @@ define('components/portals/letter-table', ["exports", "underscore", "cursors", "
 });
 
 // scripts/components/portals/query.es6
-"use strict";
-
 define('components/portals/query', ["exports", "cursors", "react"], function (exports, _cursors, _react) {
+  "use strict";
+
   var _interopRequire = function (obj) {
     return obj && (obj["default"] || obj);
   };
@@ -49203,9 +49203,9 @@ define('components/portals/query', ["exports", "cursors", "react"], function (ex
 });
 
 // scripts/components/portals/summary.es6
-"use strict";
-
 define('components/portals/summary', ["exports", "underscore", "components/ui/button", "cursors", "components/ui/icon", "react"], function (exports, _underscore, _componentsUiButton, _cursors, _componentsUiIcon, _react) {
+  "use strict";
+
   var _interopRequire = function (obj) {
     return obj && (obj["default"] || obj);
   };
@@ -49260,9 +49260,9 @@ define('components/portals/summary', ["exports", "underscore", "components/ui/bu
 });
 
 // scripts/components/portals/umbrella-selector.es6
-"use strict";
-
 define('components/portals/umbrella-selector', ["exports", "cursors", "components/portals/faceted-selector", "utils/join-class-names", "react"], function (exports, _cursors, _componentsPortalsFacetedSelector, _utilsJoinClassNames, _react) {
+  "use strict";
+
   var _interopRequire = function (obj) {
     return obj && (obj["default"] || obj);
   };
@@ -49294,9 +49294,9 @@ define('components/portals/umbrella-selector', ["exports", "cursors", "component
 });
 
 // scripts/components/portals/filters.es6
-"use strict";
-
 define('components/portals/filters', ["exports", "components/portals/category-selector", "cursors", "components/portals/letter-table", "components/portals/query", "react", "components/portals/summary", "components/portals/umbrella-selector"], function (exports, _componentsPortalsCategorySelector, _cursors, _componentsPortalsLetterTable, _componentsPortalsQuery, _react, _componentsPortalsSummary, _componentsPortalsUmbrellaSelector) {
+  "use strict";
+
   var _interopRequire = function (obj) {
     return obj && (obj["default"] || obj);
   };
@@ -49346,9 +49346,9 @@ define('components/portals/filters', ["exports", "components/portals/category-se
 });
 
 // scripts/components/portals/show.es6
-"use strict";
-
 define('components/portals/show', ["exports", "api", "cursors", "components/ui/button", "components/ui/button-row", "react"], function (exports, _api, _cursors, _componentsUiButton, _componentsUiButtonRow, _react) {
+  "use strict";
+
   var _interopRequire = function (obj) {
     return obj && (obj["default"] || obj);
   };
@@ -49429,9 +49429,9 @@ define('components/portals/show', ["exports", "api", "cursors", "components/ui/b
 });
 
 // scripts/components/portals/list-item.es6
-"use strict";
-
 define('components/portals/list-item', ["exports", "cursors", "components/ui/popup", "react", "components/portals/show"], function (exports, _cursors, _componentsUiPopup, _react, _componentsPortalsShow) {
+  "use strict";
+
   var _interopRequire = function (obj) {
     return obj && (obj["default"] || obj);
   };
@@ -49519,9 +49519,9 @@ define('components/portals/list-item', ["exports", "cursors", "components/ui/pop
 });
 
 // scripts/components/portals/index.es6
-"use strict";
-
 define('components/portals/index', ["exports", "underscore", "underscore.string", "api", "cursors", "react-list", "components/portals/filters", "components/portals/list-item", "components/portals/empty", "react"], function (exports, _underscore, _underscoreString, _api, _cursors, _reactList, _componentsPortalsFilters, _componentsPortalsListItem, _componentsPortalsEmpty, _react) {
+  "use strict";
+
   var _interopRequire = function (obj) {
     return obj && (obj["default"] || obj);
   };
@@ -49712,9 +49712,9 @@ define('components/portals/index', ["exports", "underscore", "underscore.string"
 });
 
 // scripts/entities/selector/item.es6
-"use strict";
-
 define('entities/selector/item', ["exports", "underscore", "underscore.string"], function (exports, _underscore, _underscoreString) {
+  "use strict";
+
   var _interopRequire = function (obj) {
     return obj && (obj["default"] || obj);
   };
@@ -49773,9 +49773,9 @@ define('entities/selector/item', ["exports", "underscore", "underscore.string"],
 });
 
 // scripts/components/selector/result.es6
-"use strict";
-
 define('components/selector/result', ["exports", "underscore", "underscore.string", "cursors", "components/ui/icon", "entities/selector/item", "react"], function (exports, _underscore, _underscoreString, _cursors, _componentsUiIcon, _entitiesSelectorItem, _react) {
+  "use strict";
+
   var _interopRequire = function (obj) {
     return obj && (obj["default"] || obj);
   };
@@ -49840,9 +49840,9 @@ define('components/selector/result', ["exports", "underscore", "underscore.strin
 });
 
 // scripts/components/selector/scope.es6
-"use strict";
-
 define('components/selector/scope', ["exports", "cursors", "react", "entities/selector/item"], function (exports, _cursors, _react, _entitiesSelectorItem) {
+  "use strict";
+
   var _interopRequire = function (obj) {
     return obj && (obj["default"] || obj);
   };
@@ -49901,9 +49901,9 @@ define('components/selector/scope', ["exports", "cursors", "react", "entities/se
 });
 
 // scripts/entities/selector/store.es6
-"use strict";
-
 define('entities/selector/store', ["exports", "underscore", "underscore.string", "orgsync-widgets", "entities/selector/item", "react"], function (exports, _underscore, _underscoreString, _orgsyncWidgets, _entitiesSelectorItem, _react) {
+  "use strict";
+
   var _interopRequire = function (obj) {
     return obj && (obj["default"] || obj);
   };
@@ -50020,9 +50020,9 @@ define('entities/selector/store', ["exports", "underscore", "underscore.string",
 });
 
 // scripts/components/selector/token.es6
-"use strict";
-
 define('components/selector/token', ["exports", "cursors", "components/ui/icon", "react", "entities/selector/item"], function (exports, _cursors, _componentsUiIcon, _react, _entitiesSelectorItem) {
+  "use strict";
+
   var _interopRequire = function (obj) {
     return obj && (obj["default"] || obj);
   };
@@ -50062,9 +50062,9 @@ define('components/selector/token', ["exports", "cursors", "components/ui/icon",
 });
 
 // scripts/components/selector/index.es6
-"use strict";
-
 define('components/selector/index', ["exports", "underscore", "orgsync-widgets", "components/ui/button", "cursors", "react-list", "components/ui/popup", "react", "components/selector/result", "components/selector/scope", "entities/selector/store", "components/selector/token", "entities/selector/item"], function (exports, _underscore, _orgsyncWidgets, _componentsUiButton, _cursors, _reactList, _componentsUiPopup, _react, _componentsSelectorResult, _componentsSelectorScope, _entitiesSelectorStore, _componentsSelectorToken, _entitiesSelectorItem) {
+  "use strict";
+
   var _interopRequire = function (obj) {
     return obj && (obj["default"] || obj);
   };
@@ -50555,9 +50555,9 @@ define('components/selector/index', ["exports", "underscore", "orgsync-widgets",
 });
 
 // scripts/components/ui/auto-textbox.es6
-"use strict";
-
 define('components/ui/auto-textbox', ["exports", "jquery", "cursors", "react"], function (exports, _jquery, _cursors, _react) {
+  "use strict";
+
   var _interopRequire = function (obj) {
     return obj && (obj["default"] || obj);
   };
@@ -50604,9 +50604,9 @@ define('components/ui/auto-textbox', ["exports", "jquery", "cursors", "react"], 
 });
 
 // scripts/components/ui/text-button.es6
-"use strict";
-
 define('components/ui/text-button', ["exports", "components/ui/button", "cursors", "react"], function (exports, _componentsUiButton, _cursors, _react) {
+  "use strict";
+
   var _interopRequire = function (obj) {
     return obj && (obj["default"] || obj);
   };

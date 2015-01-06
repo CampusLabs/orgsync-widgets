@@ -1,7 +1,7 @@
 import api from 'api';
 import Cursors from 'cursors';
-import Button from 'components/button';
-import ButtonRow from 'components/button-row';
+import Button from 'components/ui/button';
+import ButtonRow from 'components/ui/button-row';
 import React from 'react';
 
 var DEFAULT_SRC = 'https://orgsync.com/assets/no_org_profile_150.png';

@@ -6,7 +6,7 @@ import Show from 'components/photos/show';
 import Cursors from 'cursors';
 import List from 'react-list';
 import React from 'react';
-import Popup from 'components/popup';
+import Popup from 'components/ui/popup';
 
 var keyDirMap = {'37': -1, '39': 1};
 

@@ -1,9 +1,9 @@
 import _str from 'underscore.string';
 import Cursors from 'cursors';
-import Icon from 'components/icon';
-import Popup from 'components/popup';
+import Icon from 'components/ui/icon';
+import Popup from 'components/ui/popup';
 import React from 'react';
-import Sep from 'components/sep';
+import Sep from 'components/ui/sep';
 import Show from 'components/events/show';
 
 import {getMoment, getColor} from 'entities/event';

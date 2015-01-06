@@ -1,5 +1,5 @@
 import elementQuery from 'elementQuery';
-import Icon from 'components/icon';
+import Icon from 'components/ui/icon';
 import Olay from 'olay-react';
 import React from 'react';
 

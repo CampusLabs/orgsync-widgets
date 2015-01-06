@@ -39902,10 +39902,10 @@ define('utils/join-class-names', ["exports", "underscore"], function (exports, _
   };
 });
 
-// scripts/components/icon.es6
+// scripts/components/ui/icon.es6
 "use strict";
 
-define('components/icon', ["exports", "cursors", "utils/join-class-names", "react"], function (exports, _cursors, _utilsJoinClassNames, _react) {
+define('components/ui/icon', ["exports", "cursors", "utils/join-class-names", "react"], function (exports, _cursors, _utilsJoinClassNames, _react) {
   var _interopRequire = function (obj) {
     return obj && (obj["default"] || obj);
   };
@@ -39930,14 +39930,14 @@ define('components/icon', ["exports", "cursors", "utils/join-class-names", "reac
 // scripts/components/photos/list-item.es6
 "use strict";
 
-define('components/photos/list-item', ["exports", "cursors", "components/icon", "react"], function (exports, _cursors, _componentsIcon, _react) {
+define('components/photos/list-item', ["exports", "cursors", "components/ui/icon", "react"], function (exports, _cursors, _componentsUiIcon, _react) {
   var _interopRequire = function (obj) {
     return obj && (obj["default"] || obj);
   };
 
   var Cursors = _interopRequire(_cursors);
 
-  var Icon = _interopRequire(_componentsIcon);
+  var Icon = _interopRequire(_componentsUiIcon);
 
   var React = _interopRequire(_react);
 
@@ -42947,10 +42947,10 @@ define('components/comments/list-item', ["exports", "moment", "react"], function
   });
 });
 
-// scripts/components/button.es6
+// scripts/components/ui/button.es6
 "use strict";
 
-define('components/button', ["exports", "cursors", "utils/join-class-names", "react"], function (exports, _cursors, _utilsJoinClassNames, _react) {
+define('components/ui/button', ["exports", "cursors", "utils/join-class-names", "react"], function (exports, _cursors, _utilsJoinClassNames, _react) {
   var _interopRequire = function (obj) {
     return obj && (obj["default"] || obj);
   };
@@ -43000,12 +43000,12 @@ define('components/button', ["exports", "cursors", "utils/join-class-names", "re
 // scripts/components/comments/new.es6
 "use strict";
 
-define('components/comments/new', ["exports", "components/button", "react"], function (exports, _componentsButton, _react) {
+define('components/comments/new', ["exports", "components/ui/button", "react"], function (exports, _componentsUiButton, _react) {
   var _interopRequire = function (obj) {
     return obj && (obj["default"] || obj);
   };
 
-  var Button = _interopRequire(_componentsButton);
+  var Button = _interopRequire(_componentsUiButton);
 
   var React = _interopRequire(_react);
 
@@ -43251,17 +43251,17 @@ define('components/photos/show', ["exports", "components/comments/index", "curso
   });
 });
 
-// scripts/components/popup.es6
+// scripts/components/ui/popup.es6
 "use strict";
 
-define('components/popup', ["exports", "elementQuery", "components/icon", "olay-react", "react"], function (exports, _elementQuery, _componentsIcon, _olayReact, _react) {
+define('components/ui/popup', ["exports", "elementQuery", "components/ui/icon", "olay-react", "react"], function (exports, _elementQuery, _componentsUiIcon, _olayReact, _react) {
   var _interopRequire = function (obj) {
     return obj && (obj["default"] || obj);
   };
 
   var elementQuery = _interopRequire(_elementQuery);
 
-  var Icon = _interopRequire(_componentsIcon);
+  var Icon = _interopRequire(_componentsUiIcon);
 
   var Olay = _interopRequire(_olayReact);
 
@@ -43321,7 +43321,7 @@ define('components/popup', ["exports", "elementQuery", "components/icon", "olay-
 // scripts/components/photos/index.es6
 "use strict";
 
-define('components/photos/index', ["exports", "jquery", "underscore", "api", "components/photos/list-item", "components/photos/show", "cursors", "react-list", "react", "components/popup"], function (exports, _jquery, _underscore, _api, _componentsPhotosListItem, _componentsPhotosShow, _cursors, _reactList, _react, _componentsPopup) {
+define('components/photos/index', ["exports", "jquery", "underscore", "api", "components/photos/list-item", "components/photos/show", "cursors", "react-list", "react", "components/ui/popup"], function (exports, _jquery, _underscore, _api, _componentsPhotosListItem, _componentsPhotosShow, _cursors, _reactList, _react, _componentsUiPopup) {
   var _interopRequire = function (obj) {
     return obj && (obj["default"] || obj);
   };
@@ -43342,7 +43342,7 @@ define('components/photos/index', ["exports", "jquery", "underscore", "api", "co
 
   var React = _interopRequire(_react);
 
-  var Popup = _interopRequire(_componentsPopup);
+  var Popup = _interopRequire(_componentsUiPopup);
 
   var keyDirMap = { "37": -1, "39": 1 };
 
@@ -43489,7 +43489,7 @@ define('components/albums/show', ["exports", "components/photos/index", "cursors
 // scripts/components/albums/index.es6
 "use strict";
 
-define('components/albums/index', ["exports", "jquery", "underscore", "api", "components/albums/list-item", "components/albums/show", "cursors", "react-list", "react", "components/popup"], function (exports, _jquery, _underscore, _api, _componentsAlbumsListItem, _componentsAlbumsShow, _cursors, _reactList, _react, _componentsPopup) {
+define('components/albums/index', ["exports", "jquery", "underscore", "api", "components/albums/list-item", "components/albums/show", "cursors", "react-list", "react", "components/ui/popup"], function (exports, _jquery, _underscore, _api, _componentsAlbumsListItem, _componentsAlbumsShow, _cursors, _reactList, _react, _componentsUiPopup) {
   var _interopRequire = function (obj) {
     return obj && (obj["default"] || obj);
   };
@@ -43510,7 +43510,7 @@ define('components/albums/index', ["exports", "jquery", "underscore", "api", "co
 
   var React = _interopRequire(_react);
 
-  var Popup = _interopRequire(_componentsPopup);
+  var Popup = _interopRequire(_componentsUiPopup);
 
   var keyDirMap = { "37": -1, "39": 1 };
 
@@ -43613,116 +43613,17 @@ define('components/albums/index', ["exports", "jquery", "underscore", "api", "co
   });
 });
 
-// scripts/components/auto-textbox.es6
-"use strict";
-
-define('components/auto-textbox', ["exports", "jquery", "cursors", "react"], function (exports, _jquery, _cursors, _react) {
-  var _interopRequire = function (obj) {
-    return obj && (obj["default"] || obj);
-  };
-
-  var $ = _interopRequire(_jquery);
-
-  var Cursors = _interopRequire(_cursors);
-
-  var React = _interopRequire(_react);
-
-  exports["default"] = React.createClass({
-    mixins: [Cursors],
-
-    componentDidMount: function () {
-      $(window).on("resize", this.resize);
-      this.resize();
-    },
-
-    componentWillUnmount: function () {
-      $(window).off("resize", this.resize);
-    },
-
-    componentDidUpdate: function () {
-      this.resize();
-    },
-
-    resize: function () {
-      var el = this.getDOMNode();
-      var $el = $(el);
-      var minHeight = el.style.minHeight;
-      $el.css({ minHeight: 0, height: 0 });
-      var targetHeight = Math.round(el.scrollHeight);
-      var clientHeight = Math.round(el.clientHeight);
-      var innerHeight = Math.round($el.innerHeight());
-      if (clientHeight === innerHeight) targetHeight -= el.clientHeight;
-      if ($el.css("boxSizing") === "border-box") targetHeight += el.offsetHeight;
-      $el.css({ minHeight: minHeight, height: targetHeight });
-    },
-
-    render: function () {
-      return React.createElement("textarea", this.props);
-    }
-  });
-});
-
-// scripts/components/button-group.es6
-"use strict";
-
-define('components/button-group', ["exports", "cursors", "utils/join-class-names", "react"], function (exports, _cursors, _utilsJoinClassNames, _react) {
-  var _interopRequire = function (obj) {
-    return obj && (obj["default"] || obj);
-  };
-
-  var Cursors = _interopRequire(_cursors);
-
-  var joinClassNames = _interopRequire(_utilsJoinClassNames);
-
-  var React = _interopRequire(_react);
-
-  exports["default"] = React.createClass({
-    mixins: [Cursors],
-
-    render: function () {
-      return React.createElement("div", React.__spread({}, this.props, {
-        className: joinClassNames("osw-button-group", this.props.className)
-      }), this.props.children);
-    }
-  });
-});
-
-// scripts/components/button-row.es6
-"use strict";
-
-define('components/button-row', ["exports", "cursors", "utils/join-class-names", "react"], function (exports, _cursors, _utilsJoinClassNames, _react) {
-  var _interopRequire = function (obj) {
-    return obj && (obj["default"] || obj);
-  };
-
-  var Cursors = _interopRequire(_cursors);
-
-  var joinClassNames = _interopRequire(_utilsJoinClassNames);
-
-  var React = _interopRequire(_react);
-
-  exports["default"] = React.createClass({
-    mixins: [Cursors],
-
-    render: function () {
-      return React.createElement("div", React.__spread({}, this.props, {
-        className: joinClassNames("osw-button-row", this.props.classname)
-      }), this.props.children);
-    }
-  });
-});
-
 // scripts/components/event-filters/list-item.es6
 "use strict";
 
-define('components/event-filters/list-item', ["exports", "cursors", "components/icon", "react"], function (exports, _cursors, _componentsIcon, _react) {
+define('components/event-filters/list-item', ["exports", "cursors", "components/ui/icon", "react"], function (exports, _cursors, _componentsUiIcon, _react) {
   var _interopRequire = function (obj) {
     return obj && (obj["default"] || obj);
   };
 
   var Cursors = _interopRequire(_cursors);
 
-  var Icon = _interopRequire(_componentsIcon);
+  var Icon = _interopRequire(_componentsUiIcon);
 
   var React = _interopRequire(_react);
 
@@ -46921,10 +46822,10 @@ define('entities/event', ["exports", "underscore", "underscore.string", "api", "
   };
 });
 
-// scripts/components/sep.es6
+// scripts/components/ui/sep.es6
 "use strict";
 
-define('components/sep', ["exports", "react"], function (exports, _react) {
+define('components/ui/sep', ["exports", "react"], function (exports, _react) {
   var _interopRequire = function (obj) {
     return obj && (obj["default"] || obj);
   };
@@ -46943,7 +46844,7 @@ define('components/sep', ["exports", "react"], function (exports, _react) {
 // scripts/components/events/show.es6
 "use strict";
 
-define('components/events/show', ["exports", "underscore", "underscore.string", "api", "components/button", "cursors", "components/icon", "react", "components/sep", "entities/event"], function (exports, _underscore, _underscoreString, _api, _componentsButton, _cursors, _componentsIcon, _react, _componentsSep, _entitiesEvent) {
+define('components/events/show', ["exports", "underscore", "underscore.string", "api", "components/ui/button", "cursors", "components/ui/icon", "react", "components/ui/sep", "entities/event"], function (exports, _underscore, _underscoreString, _api, _componentsUiButton, _cursors, _componentsUiIcon, _react, _componentsUiSep, _entitiesEvent) {
   var _interopRequire = function (obj) {
     return obj && (obj["default"] || obj);
   };
@@ -46954,15 +46855,15 @@ define('components/events/show', ["exports", "underscore", "underscore.string", 
 
   var api = _interopRequire(_api);
 
-  var Button = _interopRequire(_componentsButton);
+  var Button = _interopRequire(_componentsUiButton);
 
   var Cursors = _interopRequire(_cursors);
 
-  var Icon = _interopRequire(_componentsIcon);
+  var Icon = _interopRequire(_componentsUiIcon);
 
   var React = _interopRequire(_react);
 
-  var Sep = _interopRequire(_componentsSep);
+  var Sep = _interopRequire(_componentsUiSep);
 
   var getMoment = _entitiesEvent.getMoment;
   var isAllDay = _entitiesEvent.isAllDay;
@@ -47232,14 +47133,14 @@ define('components/events/show', ["exports", "underscore", "underscore.string", 
 // scripts/components/events/td.es6
 "use strict";
 
-define('components/events/td', ["exports", "cursors", "components/popup", "react", "components/events/show", "tinycolor", "entities/event"], function (exports, _cursors, _componentsPopup, _react, _componentsEventsShow, _tinycolor, _entitiesEvent) {
+define('components/events/td', ["exports", "cursors", "components/ui/popup", "react", "components/events/show", "tinycolor", "entities/event"], function (exports, _cursors, _componentsUiPopup, _react, _componentsEventsShow, _tinycolor, _entitiesEvent) {
   var _interopRequire = function (obj) {
     return obj && (obj["default"] || obj);
   };
 
   var Cursors = _interopRequire(_cursors);
 
-  var Popup = _interopRequire(_componentsPopup);
+  var Popup = _interopRequire(_componentsUiPopup);
 
   var React = _interopRequire(_react);
 
@@ -47397,7 +47298,7 @@ define('components/events/td', ["exports", "cursors", "components/popup", "react
 // scripts/components/events/list-item.es6
 "use strict";
 
-define('components/events/list-item', ["exports", "underscore.string", "cursors", "components/icon", "components/popup", "react", "components/sep", "components/events/show", "entities/event"], function (exports, _underscoreString, _cursors, _componentsIcon, _componentsPopup, _react, _componentsSep, _componentsEventsShow, _entitiesEvent) {
+define('components/events/list-item', ["exports", "underscore.string", "cursors", "components/ui/icon", "components/ui/popup", "react", "components/ui/sep", "components/events/show", "entities/event"], function (exports, _underscoreString, _cursors, _componentsUiIcon, _componentsUiPopup, _react, _componentsUiSep, _componentsEventsShow, _entitiesEvent) {
   var _interopRequire = function (obj) {
     return obj && (obj["default"] || obj);
   };
@@ -47406,13 +47307,13 @@ define('components/events/list-item', ["exports", "underscore.string", "cursors"
 
   var Cursors = _interopRequire(_cursors);
 
-  var Icon = _interopRequire(_componentsIcon);
+  var Icon = _interopRequire(_componentsUiIcon);
 
-  var Popup = _interopRequire(_componentsPopup);
+  var Popup = _interopRequire(_componentsUiPopup);
 
   var React = _interopRequire(_react);
 
-  var Sep = _interopRequire(_componentsSep);
+  var Sep = _interopRequire(_componentsUiSep);
 
   var Show = _interopRequire(_componentsEventsShow);
 
@@ -47596,7 +47497,7 @@ define('components/events/list-date', ["exports", "cursors", "react-list", "comp
 // scripts/components/events/week.es6
 "use strict";
 
-define('components/events/week', ["exports", "underscore", "cursors", "components/events/td", "components/events/list-date", "components/popup", "react", "entities/event"], function (exports, _underscore, _cursors, _componentsEventsTd, _componentsEventsListDate, _componentsPopup, _react, _entitiesEvent) {
+define('components/events/week', ["exports", "underscore", "cursors", "components/events/td", "components/events/list-date", "components/ui/popup", "react", "entities/event"], function (exports, _underscore, _cursors, _componentsEventsTd, _componentsEventsListDate, _componentsUiPopup, _react, _entitiesEvent) {
   var _interopRequire = function (obj) {
     return obj && (obj["default"] || obj);
   };
@@ -47609,7 +47510,7 @@ define('components/events/week', ["exports", "underscore", "cursors", "component
 
   var ListDate = _interopRequire(_componentsEventsListDate);
 
-  var Popup = _interopRequire(_componentsPopup);
+  var Popup = _interopRequire(_componentsUiPopup);
 
   var React = _interopRequire(_react);
 
@@ -47904,6 +47805,31 @@ define('components/events/calendar', ["exports", "underscore", "cursors", "entit
       return React.createElement("div", {
         className: "osw-events-calendar"
       }, this.renderDayNames(), this.getDates().map(this.renderWeek));
+    }
+  });
+});
+
+// scripts/components/ui/button-group.es6
+"use strict";
+
+define('components/ui/button-group', ["exports", "cursors", "utils/join-class-names", "react"], function (exports, _cursors, _utilsJoinClassNames, _react) {
+  var _interopRequire = function (obj) {
+    return obj && (obj["default"] || obj);
+  };
+
+  var Cursors = _interopRequire(_cursors);
+
+  var joinClassNames = _interopRequire(_utilsJoinClassNames);
+
+  var React = _interopRequire(_react);
+
+  exports["default"] = React.createClass({
+    mixins: [Cursors],
+
+    render: function () {
+      return React.createElement("div", React.__spread({}, this.props, {
+        className: joinClassNames("osw-button-group", this.props.className)
+      }), this.props.children);
     }
   });
 });
@@ -48409,16 +48335,16 @@ define('tz', ["exports", "jstz"], function (exports, _jstz) {
 // scripts/components/events/index.es6
 "use strict";
 
-define('components/events/index', ["exports", "underscore", "components/button", "components/button-group", "components/events/calendar", "components/events/list", "cursors", "components/event-filters/index", "components/icon", "react", "tz", "entities/event"], function (exports, _underscore, _componentsButton, _componentsButtonGroup, _componentsEventsCalendar, _componentsEventsList, _cursors, _componentsEventFiltersIndex, _componentsIcon, _react, _tz, _entitiesEvent) {
+define('components/events/index', ["exports", "underscore", "components/ui/button", "components/ui/button-group", "components/events/calendar", "components/events/list", "cursors", "components/event-filters/index", "components/ui/icon", "react", "tz", "entities/event"], function (exports, _underscore, _componentsUiButton, _componentsUiButtonGroup, _componentsEventsCalendar, _componentsEventsList, _cursors, _componentsEventFiltersIndex, _componentsUiIcon, _react, _tz, _entitiesEvent) {
   var _interopRequire = function (obj) {
     return obj && (obj["default"] || obj);
   };
 
   var _ = _interopRequire(_underscore);
 
-  var Button = _interopRequire(_componentsButton);
+  var Button = _interopRequire(_componentsUiButton);
 
-  var ButtonGroup = _interopRequire(_componentsButtonGroup);
+  var ButtonGroup = _interopRequire(_componentsUiButtonGroup);
 
   var Calendar = _interopRequire(_componentsEventsCalendar);
 
@@ -48428,7 +48354,7 @@ define('components/events/index', ["exports", "underscore", "components/button",
 
   var EventFiltersIndex = _interopRequire(_componentsEventFiltersIndex);
 
-  var Icon = _interopRequire(_componentsIcon);
+  var Icon = _interopRequire(_componentsUiIcon);
 
   var React = _interopRequire(_react);
 
@@ -48750,7 +48676,7 @@ define('components/news-posts/show', ["exports", "components/comments/index", "c
 // scripts/components/news-posts/list-item.es6
 "use strict";
 
-define('components/news-posts/list-item', ["exports", "jquery", "underscore.string", "cursors", "components/icon", "moment", "components/news-posts/show", "components/popup", "react"], function (exports, _jquery, _underscoreString, _cursors, _componentsIcon, _moment, _componentsNewsPostsShow, _componentsPopup, _react) {
+define('components/news-posts/list-item', ["exports", "jquery", "underscore.string", "cursors", "components/ui/icon", "moment", "components/news-posts/show", "components/ui/popup", "react"], function (exports, _jquery, _underscoreString, _cursors, _componentsUiIcon, _moment, _componentsNewsPostsShow, _componentsUiPopup, _react) {
   var _interopRequire = function (obj) {
     return obj && (obj["default"] || obj);
   };
@@ -48761,13 +48687,13 @@ define('components/news-posts/list-item', ["exports", "jquery", "underscore.stri
 
   var Cursors = _interopRequire(_cursors);
 
-  var Icon = _interopRequire(_componentsIcon);
+  var Icon = _interopRequire(_componentsUiIcon);
 
   var moment = _interopRequire(_moment);
 
   var Show = _interopRequire(_componentsNewsPostsShow);
 
-  var Popup = _interopRequire(_componentsPopup);
+  var Popup = _interopRequire(_componentsUiPopup);
 
   var React = _interopRequire(_react);
 
@@ -49029,12 +48955,12 @@ define('components/portals/category-selector', ["exports", "cursors", "component
 // scripts/components/portals/empty.es6
 "use strict";
 
-define('components/portals/empty', ["exports", "components/button", "cursors", "react"], function (exports, _componentsButton, _cursors, _react) {
+define('components/portals/empty', ["exports", "components/ui/button", "cursors", "react"], function (exports, _componentsUiButton, _cursors, _react) {
   var _interopRequire = function (obj) {
     return obj && (obj["default"] || obj);
   };
 
-  var Button = _interopRequire(_componentsButton);
+  var Button = _interopRequire(_componentsUiButton);
 
   var Cursors = _interopRequire(_cursors);
 
@@ -49071,12 +48997,12 @@ define('components/portals/empty', ["exports", "components/button", "cursors", "
 // scripts/components/portals/letter-cell.es6
 "use strict";
 
-define('components/portals/letter-cell', ["exports", "components/button", "cursors", "react"], function (exports, _componentsButton, _cursors, _react) {
+define('components/portals/letter-cell', ["exports", "components/ui/button", "cursors", "react"], function (exports, _componentsUiButton, _cursors, _react) {
   var _interopRequire = function (obj) {
     return obj && (obj["default"] || obj);
   };
 
-  var Button = _interopRequire(_componentsButton);
+  var Button = _interopRequire(_componentsUiButton);
 
   var Cursors = _interopRequire(_cursors);
 
@@ -49182,18 +49108,18 @@ define('components/portals/query', ["exports", "cursors", "react"], function (ex
 // scripts/components/portals/summary.es6
 "use strict";
 
-define('components/portals/summary', ["exports", "underscore", "components/button", "cursors", "components/icon", "react"], function (exports, _underscore, _componentsButton, _cursors, _componentsIcon, _react) {
+define('components/portals/summary', ["exports", "underscore", "components/ui/button", "cursors", "components/ui/icon", "react"], function (exports, _underscore, _componentsUiButton, _cursors, _componentsUiIcon, _react) {
   var _interopRequire = function (obj) {
     return obj && (obj["default"] || obj);
   };
 
   var _ = _interopRequire(_underscore);
 
-  var Button = _interopRequire(_componentsButton);
+  var Button = _interopRequire(_componentsUiButton);
 
   var Cursors = _interopRequire(_cursors);
 
-  var Icon = _interopRequire(_componentsIcon);
+  var Icon = _interopRequire(_componentsUiIcon);
 
   var React = _interopRequire(_react);
 
@@ -49322,10 +49248,35 @@ define('components/portals/filters', ["exports", "components/portals/category-se
   });
 });
 
+// scripts/components/ui/button-row.es6
+"use strict";
+
+define('components/ui/button-row', ["exports", "cursors", "utils/join-class-names", "react"], function (exports, _cursors, _utilsJoinClassNames, _react) {
+  var _interopRequire = function (obj) {
+    return obj && (obj["default"] || obj);
+  };
+
+  var Cursors = _interopRequire(_cursors);
+
+  var joinClassNames = _interopRequire(_utilsJoinClassNames);
+
+  var React = _interopRequire(_react);
+
+  exports["default"] = React.createClass({
+    mixins: [Cursors],
+
+    render: function () {
+      return React.createElement("div", React.__spread({}, this.props, {
+        className: joinClassNames("osw-button-row", this.props.classname)
+      }), this.props.children);
+    }
+  });
+});
+
 // scripts/components/portals/show.es6
 "use strict";
 
-define('components/portals/show', ["exports", "api", "cursors", "components/button", "components/button-row", "react"], function (exports, _api, _cursors, _componentsButton, _componentsButtonRow, _react) {
+define('components/portals/show', ["exports", "api", "cursors", "components/ui/button", "components/ui/button-row", "react"], function (exports, _api, _cursors, _componentsUiButton, _componentsUiButtonRow, _react) {
   var _interopRequire = function (obj) {
     return obj && (obj["default"] || obj);
   };
@@ -49334,9 +49285,9 @@ define('components/portals/show', ["exports", "api", "cursors", "components/butt
 
   var Cursors = _interopRequire(_cursors);
 
-  var Button = _interopRequire(_componentsButton);
+  var Button = _interopRequire(_componentsUiButton);
 
-  var ButtonRow = _interopRequire(_componentsButtonRow);
+  var ButtonRow = _interopRequire(_componentsUiButtonRow);
 
   var React = _interopRequire(_react);
 
@@ -49408,14 +49359,14 @@ define('components/portals/show', ["exports", "api", "cursors", "components/butt
 // scripts/components/portals/list-item.es6
 "use strict";
 
-define('components/portals/list-item', ["exports", "cursors", "components/popup", "react", "components/portals/show"], function (exports, _cursors, _componentsPopup, _react, _componentsPortalsShow) {
+define('components/portals/list-item', ["exports", "cursors", "components/ui/popup", "react", "components/portals/show"], function (exports, _cursors, _componentsUiPopup, _react, _componentsPortalsShow) {
   var _interopRequire = function (obj) {
     return obj && (obj["default"] || obj);
   };
 
   var Cursors = _interopRequire(_cursors);
 
-  var Popup = _interopRequire(_componentsPopup);
+  var Popup = _interopRequire(_componentsUiPopup);
 
   var React = _interopRequire(_react);
 
@@ -49752,7 +49703,7 @@ define('entities/selector/item', ["exports", "underscore", "underscore.string"],
 // scripts/components/selector/result.es6
 "use strict";
 
-define('components/selector/result', ["exports", "underscore", "underscore.string", "cursors", "components/icon", "entities/selector/item", "react"], function (exports, _underscore, _underscoreString, _cursors, _componentsIcon, _entitiesSelectorItem, _react) {
+define('components/selector/result', ["exports", "underscore", "underscore.string", "cursors", "components/ui/icon", "entities/selector/item", "react"], function (exports, _underscore, _underscoreString, _cursors, _componentsUiIcon, _entitiesSelectorItem, _react) {
   var _interopRequire = function (obj) {
     return obj && (obj["default"] || obj);
   };
@@ -49763,7 +49714,7 @@ define('components/selector/result', ["exports", "underscore", "underscore.strin
 
   var Cursors = _interopRequire(_cursors);
 
-  var Icon = _interopRequire(_componentsIcon);
+  var Icon = _interopRequire(_componentsUiIcon);
 
   var getIconName = _entitiesSelectorItem.getIconName;
   var getName = _entitiesSelectorItem.getName;
@@ -49999,14 +49950,14 @@ define('entities/selector/store', ["exports", "underscore", "underscore.string",
 // scripts/components/selector/token.es6
 "use strict";
 
-define('components/selector/token', ["exports", "cursors", "components/icon", "react", "entities/selector/item"], function (exports, _cursors, _componentsIcon, _react, _entitiesSelectorItem) {
+define('components/selector/token', ["exports", "cursors", "components/ui/icon", "react", "entities/selector/item"], function (exports, _cursors, _componentsUiIcon, _react, _entitiesSelectorItem) {
   var _interopRequire = function (obj) {
     return obj && (obj["default"] || obj);
   };
 
   var Cursors = _interopRequire(_cursors);
 
-  var Icon = _interopRequire(_componentsIcon);
+  var Icon = _interopRequire(_componentsUiIcon);
 
   var React = _interopRequire(_react);
 
@@ -50041,7 +49992,7 @@ define('components/selector/token', ["exports", "cursors", "components/icon", "r
 // scripts/components/selector/index.es6
 "use strict";
 
-define('components/selector/index', ["exports", "underscore", "orgsync-widgets", "components/button", "cursors", "react-list", "components/popup", "react", "components/selector/result", "components/selector/scope", "entities/selector/store", "components/selector/token", "entities/selector/item"], function (exports, _underscore, _orgsyncWidgets, _componentsButton, _cursors, _reactList, _componentsPopup, _react, _componentsSelectorResult, _componentsSelectorScope, _entitiesSelectorStore, _componentsSelectorToken, _entitiesSelectorItem) {
+define('components/selector/index', ["exports", "underscore", "orgsync-widgets", "components/ui/button", "cursors", "react-list", "components/ui/popup", "react", "components/selector/result", "components/selector/scope", "entities/selector/store", "components/selector/token", "entities/selector/item"], function (exports, _underscore, _orgsyncWidgets, _componentsUiButton, _cursors, _reactList, _componentsUiPopup, _react, _componentsSelectorResult, _componentsSelectorScope, _entitiesSelectorStore, _componentsSelectorToken, _entitiesSelectorItem) {
   var _interopRequire = function (obj) {
     return obj && (obj["default"] || obj);
   };
@@ -50050,13 +50001,13 @@ define('components/selector/index', ["exports", "underscore", "orgsync-widgets",
 
   var app = _interopRequire(_orgsyncWidgets);
 
-  var Button = _interopRequire(_componentsButton);
+  var Button = _interopRequire(_componentsUiButton);
 
   var Cursors = _interopRequire(_cursors);
 
   var List = _interopRequire(_reactList);
 
-  var Popup = _interopRequire(_componentsPopup);
+  var Popup = _interopRequire(_componentsUiPopup);
 
   var React = _interopRequire(_react);
 
@@ -50531,15 +50482,64 @@ define('components/selector/index', ["exports", "underscore", "orgsync-widgets",
   exports["default"] = SelectorIndex;
 });
 
-// scripts/components/text-button.es6
+// scripts/components/ui/auto-textbox.es6
 "use strict";
 
-define('components/text-button', ["exports", "components/button", "cursors", "react"], function (exports, _componentsButton, _cursors, _react) {
+define('components/ui/auto-textbox', ["exports", "jquery", "cursors", "react"], function (exports, _jquery, _cursors, _react) {
   var _interopRequire = function (obj) {
     return obj && (obj["default"] || obj);
   };
 
-  var Button = _interopRequire(_componentsButton);
+  var $ = _interopRequire(_jquery);
+
+  var Cursors = _interopRequire(_cursors);
+
+  var React = _interopRequire(_react);
+
+  exports["default"] = React.createClass({
+    mixins: [Cursors],
+
+    componentDidMount: function () {
+      $(window).on("resize", this.resize);
+      this.resize();
+    },
+
+    componentWillUnmount: function () {
+      $(window).off("resize", this.resize);
+    },
+
+    componentDidUpdate: function () {
+      this.resize();
+    },
+
+    resize: function () {
+      var el = this.getDOMNode();
+      var $el = $(el);
+      var minHeight = el.style.minHeight;
+      $el.css({ minHeight: 0, height: 0 });
+      var targetHeight = Math.round(el.scrollHeight);
+      var clientHeight = Math.round(el.clientHeight);
+      var innerHeight = Math.round($el.innerHeight());
+      if (clientHeight === innerHeight) targetHeight -= el.clientHeight;
+      if ($el.css("boxSizing") === "border-box") targetHeight += el.offsetHeight;
+      $el.css({ minHeight: minHeight, height: targetHeight });
+    },
+
+    render: function () {
+      return React.createElement("textarea", this.props);
+    }
+  });
+});
+
+// scripts/components/ui/text-button.es6
+"use strict";
+
+define('components/ui/text-button', ["exports", "components/ui/button", "cursors", "react"], function (exports, _componentsUiButton, _cursors, _react) {
+  var _interopRequire = function (obj) {
+    return obj && (obj["default"] || obj);
+  };
+
+  var Button = _interopRequire(_componentsUiButton);
 
   var Cursors = _interopRequire(_cursors);
 

@@ -1,10 +1,10 @@
 import $ from 'jquery';
 import _str from 'underscore.string';
 import Cursors from 'cursors';
-import Icon from 'components/icon';
+import Icon from 'components/ui/icon';
 import moment from 'moment';
 import Show from 'components/news-posts/show';
-import Popup from 'components/popup';
+import Popup from 'components/ui/popup';
 import React from 'react';
 
 export default React.createClass({

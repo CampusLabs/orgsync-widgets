@@ -1,7 +1,7 @@
 import _ from 'underscore';
 import _str from 'underscore.string';
 import Cursors from 'cursors';
-import Icon from 'components/icon';
+import Icon from 'components/ui/icon';
 import {getIconName, getName, getPictureUrl} from 'entities/selector/item';
 import React from 'react';
 

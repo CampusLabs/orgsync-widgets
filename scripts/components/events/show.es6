@@ -1,11 +1,11 @@
 import _ from 'underscore';
 import _str from 'underscore.string';
 import api from 'api';
-import Button from 'components/button';
+import Button from 'components/ui/button';
 import Cursors from 'cursors';
-import Icon from 'components/icon';
+import Icon from 'components/ui/icon';
 import React from 'react';
-import Sep from 'components/sep';
+import Sep from 'components/ui/sep';
 
 import {getMoment, isAllDay, mergeResponse} from 'entities/event';
 

@@ -1,5 +1,5 @@
 import Cursors from 'cursors';
-import Popup from 'components/popup';
+import Popup from 'components/ui/popup';
 import React from 'react';
 import Show from 'components/events/show';
 import tinycolor from 'tinycolor';

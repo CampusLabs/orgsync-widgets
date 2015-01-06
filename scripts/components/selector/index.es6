@@ -242,7 +242,8 @@ var SelectorIndex = React.createClass({
   },
 
   pluckSearchOptionsFrom: function (obj) {
-    var options = _.pick(obj, 'fields', 'limit', 'types', 'dataset');
+    var options = _.pick(obj, 'fields', 'limit', 'types', 'dataset', 'scopes');
+    if (obj.unionScopes != null) options.union_scopes = obj.unionScopes;
     if (obj.boostTypes) options.boost_types = obj.boostTypes;
     return options;
   },
@@ -250,9 +251,14 @@ var SelectorIndex = React.createClass({
   getSearchOptions: function () {
     var options = this.pluckSearchOptionsFrom(this.props);
     if (this.state.query) options.q = this.state.query;
-    var scope = this.state.scope;
-    options.scopes = [scope];
-    _.extend(options, this.pluckSearchOptionsFrom(scope));
+    if (this.state.view === 'inline') {
+      options.scopes = this.props.scopes;
+      options.union_scopes = true;
+    } else {
+      var scope = this.state.scope;
+      options.scopes = [scope];
+      _.extend(options, this.pluckSearchOptionsFrom(scope));
+    }
     return options;
   },
 

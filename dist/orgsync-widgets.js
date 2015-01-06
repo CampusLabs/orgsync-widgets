@@ -49958,7 +49958,7 @@ define('entities/selector/store', ["exports", "underscore", "underscore.string",
   };
 
   var getQueryKey = exports.getQueryKey = function (options) {
-    return _.compact([(options.scopes || []).map(getTerm).sort().join() || "_all", (options.types || []).slice().sort().join() || "_all", (options.boost_types || []).slice().sort().join() || "none", (options.fields || []).slice().sort().join() || "name", parse(options.q)]).join(":");
+    return _.compact([(options.scopes || []).map(getTerm).sort().join(options.union_scopes ? "+" : "-") || "_all", (options.types || []).slice().sort().join() || "_all", (options.boost_types || []).slice().sort().join() || "none", (options.fields || []).slice().sort().join() || "name", parse(options.q)]).join(":");
   };
 
   var cacheItems = function (items, options) {
@@ -50327,7 +50327,8 @@ define('components/selector/index', ["exports", "underscore", "orgsync-widgets",
     },
 
     pluckSearchOptionsFrom: function (obj) {
-      var options = _.pick(obj, "fields", "limit", "types", "dataset");
+      var options = _.pick(obj, "fields", "limit", "types", "dataset", "scopes");
+      if (obj.unionScopes != null) options.union_scopes = obj.unionScopes;
       if (obj.boostTypes) options.boost_types = obj.boostTypes;
       return options;
     },
@@ -50335,9 +50336,14 @@ define('components/selector/index', ["exports", "underscore", "orgsync-widgets",
     getSearchOptions: function () {
       var options = this.pluckSearchOptionsFrom(this.props);
       if (this.state.query) options.q = this.state.query;
-      var scope = this.state.scope;
-      options.scopes = [scope];
-      _.extend(options, this.pluckSearchOptionsFrom(scope));
+      if (this.state.view === "inline") {
+        options.scopes = this.props.scopes;
+        options.union_scopes = true;
+      } else {
+        var scope = this.state.scope;
+        options.scopes = [scope];
+        _.extend(options, this.pluckSearchOptionsFrom(scope));
+      }
       return options;
     },
 

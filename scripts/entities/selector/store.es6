@@ -45,7 +45,9 @@ var filter = function (item, q, options) {
 
 export var getQueryKey = function (options) {
   return _.compact([
-    (options.scopes || []).map(getTerm).sort().join() || '_all',
+    (options.scopes || []).map(getTerm).sort().join(
+      options.union_scopes ? '+' : '-'
+    ) || '_all',
     (options.types || []).slice().sort().join() || '_all',
     (options.boost_types || []).slice().sort().join() || 'none',
     (options.fields || []).slice().sort().join() || 'name',

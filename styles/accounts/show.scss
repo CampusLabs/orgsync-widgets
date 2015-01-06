@@ -1,0 +1,32 @@
+@import '../config';
+
+.orgsync-widget {
+  .osw-accounts-show {
+    padding: 10px;
+    text-align: center;
+  }
+
+  .osw-accounts-show-picture {
+    border-radius: 50%;
+    display: block;
+    margin: 0 auto;
+  }
+
+  .osw-accounts-show-name,
+  .osw-accounts-show-title {
+    line-height: 25px;
+    text-align: center;
+  }
+
+  .osw-accounts-show-name {
+    color: $grey-darkest;
+    font-size: 20px;
+    font-weight: bold;
+    padding-top: 13px;
+  }
+
+  .osw-accounts-show-title {
+    color: $grey;
+    font-size: 16px;
+  }
+}

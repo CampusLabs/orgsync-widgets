@@ -679,6 +679,26 @@
 .orgsync-widget[min-width~='921px'] .osw-accounts-list-item {
   width: 25%; }
 
+/* styles/accounts/show.scss */
+.orgsync-widget .osw-accounts-show {
+  padding: 10px;
+  text-align: center; }
+.orgsync-widget .osw-accounts-show-picture {
+  border-radius: 50%;
+  display: block;
+  margin: 0 auto; }
+.orgsync-widget .osw-accounts-show-name, .orgsync-widget .osw-accounts-show-title {
+  line-height: 25px;
+  text-align: center; }
+.orgsync-widget .osw-accounts-show-name {
+  color: #2b2b2b;
+  font-size: 20px;
+  font-weight: bold;
+  padding-top: 13px; }
+.orgsync-widget .osw-accounts-show-title {
+  color: #ccc;
+  font-size: 16px; }
+
 /* styles/albums/index.scss */
 .orgsync-widget .osw-albums-index {
   max-width: 1250px;

@@ -39840,6 +39840,168 @@ define('components/accounts/index', ["exports", "underscore", "api", "components
   });
 });
 
+// scripts/utils/join-class-names.es6
+"use strict";
+
+define('utils/join-class-names', ["exports", "underscore"], function (exports, _underscore) {
+  var _interopRequire = function (obj) {
+    return obj && (obj["default"] || obj);
+  };
+
+  var _ = _interopRequire(_underscore);
+
+  exports["default"] = function (a, b) {
+    return _.compact(_.unique((a || "").split(/\s+/).concat((b || "").split(/\s+/)))).join(" ");
+  };
+});
+
+// scripts/components/ui/button.es6
+"use strict";
+
+define('components/ui/button', ["exports", "cursors", "utils/join-class-names", "react"], function (exports, _cursors, _utilsJoinClassNames, _react) {
+  var _interopRequire = function (obj) {
+    return obj && (obj["default"] || obj);
+  };
+
+  var Cursors = _interopRequire(_cursors);
+
+  var joinClassNames = _interopRequire(_utilsJoinClassNames);
+
+  var React = _interopRequire(_react);
+
+  exports["default"] = React.createClass({
+    mixins: [Cursors],
+
+    getDefaultProps: function () {
+      return {
+        baseClassName: "osw-button"
+      };
+    },
+
+    getClassName: function () {
+      var classes = [this.props.baseClassName];
+      if (this.props.isSelected) classes.push("osw-button-selected");
+      if (this.props.disabled) classes.push("osw-button-disabled");
+      return joinClassNames(classes.join(" "), this.props.className);
+    },
+
+    renderAnchor: function () {
+      return React.createElement("a", React.__spread({}, this.props, {
+        className: this.getClassName()
+      }), this.props.children);
+    },
+
+    renderButton: function () {
+      return React.createElement("button", React.__spread({
+        type: "button"
+      }, this.props, {
+        className: this.getClassName()
+      }), this.props.children);
+    },
+
+    render: function () {
+      return this.props.href ? this.renderAnchor() : this.renderButton();
+    }
+  });
+});
+
+// scripts/components/ui/button-row.es6
+"use strict";
+
+define('components/ui/button-row', ["exports", "cursors", "utils/join-class-names", "react"], function (exports, _cursors, _utilsJoinClassNames, _react) {
+  var _interopRequire = function (obj) {
+    return obj && (obj["default"] || obj);
+  };
+
+  var Cursors = _interopRequire(_cursors);
+
+  var joinClassNames = _interopRequire(_utilsJoinClassNames);
+
+  var React = _interopRequire(_react);
+
+  exports["default"] = React.createClass({
+    mixins: [Cursors],
+
+    render: function () {
+      return React.createElement("div", React.__spread({}, this.props, {
+        className: joinClassNames("osw-button-row", this.props.classname)
+      }), this.props.children);
+    }
+  });
+});
+
+// scripts/components/accounts/show.es6
+"use strict";
+
+define('components/accounts/show', ["exports", "underscore", "api", "components/ui/button", "components/ui/button-row", "cursors", "react", "entities/account"], function (exports, _underscore, _api, _componentsUiButton, _componentsUiButtonRow, _cursors, _react, _entitiesAccount) {
+  var _interopRequire = function (obj) {
+    return obj && (obj["default"] || obj);
+  };
+
+  var _ = _interopRequire(_underscore);
+
+  var api = _interopRequire(_api);
+
+  var Button = _interopRequire(_componentsUiButton);
+
+  var ButtonRow = _interopRequire(_componentsUiButtonRow);
+
+  var Cursors = _interopRequire(_cursors);
+
+  var React = _interopRequire(_react);
+
+  var getPictureUrl = _entitiesAccount.getPictureUrl;
+  exports["default"] = React.createClass({
+    mixins: [Cursors],
+
+    getInitialState: function () {
+      return {
+        isLoading: false,
+        error: null,
+        account: this.props.account
+      };
+    },
+
+    componentDidMount: function () {
+      if (!this.state.account) this.fetchAccount();
+    },
+
+    fetchAccount: function () {
+      this.update({ isLoading: { $set: true }, error: { $set: null } });
+      api.get("/accounts/:id", {
+        id: this.props.accountId,
+        portal_id: this.props.portalId
+      }, this.handleAccount);
+    },
+
+    handleAccount: function (er, res) {
+      this.update({
+        isLoading: { $set: false },
+        error: { $set: er },
+        account: { $set: er ? null : res.data }
+      });
+    },
+
+    renderAccount: function () {
+      var account = this.state.account;
+      return React.createElement("div", null, React.createElement("img", {
+        className: "osw-accounts-show-picture",
+        src: getPictureUrl(account)
+      }), React.createElement("div", {
+        className: "osw-accounts-show-name"
+      }, account.display_name), React.createElement("div", {
+        className: "osw-accounts-show-title"
+      }, account.title), React.createElement(ButtonRow, null, React.createElement(Button, null, "Send a Message")));
+    },
+
+    render: function () {
+      return React.createElement("div", {
+        className: "osw-accounts-show"
+      }, this.state.account ? this.renderAccount() : this.state.error ? this.state.error.toString() : "Loading...");
+    }
+  });
+});
+
 // scripts/components/albums/list-item.es6
 "use strict";
 
@@ -39885,21 +40047,6 @@ define('components/albums/list-item', ["exports", "underscore", "cursors", "reac
       }, album.photo_count + " Photos"));
     }
   });
-});
-
-// scripts/utils/join-class-names.es6
-"use strict";
-
-define('utils/join-class-names', ["exports", "underscore"], function (exports, _underscore) {
-  var _interopRequire = function (obj) {
-    return obj && (obj["default"] || obj);
-  };
-
-  var _ = _interopRequire(_underscore);
-
-  exports["default"] = function (a, b) {
-    return _.compact(_.unique((a || "").split(/\s+/).concat((b || "").split(/\s+/)))).join(" ");
-  };
 });
 
 // scripts/components/ui/icon.es6
@@ -42943,56 +43090,6 @@ define('components/comments/list-item', ["exports", "moment", "react"], function
       }, comment.content), React.createElement("div", {
         className: "osw-comments-list-item-time"
       }, moment(comment.created_at).fromNow())));
-    }
-  });
-});
-
-// scripts/components/ui/button.es6
-"use strict";
-
-define('components/ui/button', ["exports", "cursors", "utils/join-class-names", "react"], function (exports, _cursors, _utilsJoinClassNames, _react) {
-  var _interopRequire = function (obj) {
-    return obj && (obj["default"] || obj);
-  };
-
-  var Cursors = _interopRequire(_cursors);
-
-  var joinClassNames = _interopRequire(_utilsJoinClassNames);
-
-  var React = _interopRequire(_react);
-
-  exports["default"] = React.createClass({
-    mixins: [Cursors],
-
-    getDefaultProps: function () {
-      return {
-        baseClassName: "osw-button"
-      };
-    },
-
-    getClassName: function () {
-      var classes = [this.props.baseClassName];
-      if (this.props.isSelected) classes.push("osw-button-selected");
-      if (this.props.disabled) classes.push("osw-button-disabled");
-      return joinClassNames(classes.join(" "), this.props.className);
-    },
-
-    renderAnchor: function () {
-      return React.createElement("a", React.__spread({}, this.props, {
-        className: this.getClassName()
-      }), this.props.children);
-    },
-
-    renderButton: function () {
-      return React.createElement("button", React.__spread({
-        type: "button"
-      }, this.props, {
-        className: this.getClassName()
-      }), this.props.children);
-    },
-
-    render: function () {
-      return this.props.href ? this.renderAnchor() : this.renderButton();
     }
   });
 });
@@ -49244,31 +49341,6 @@ define('components/portals/filters', ["exports", "components/portals/category-se
       }), React.createElement(LetterTable, {
         cursors: { letter: this.getCursor("letter") }
       }), React.createElement(Summary, this.props));
-    }
-  });
-});
-
-// scripts/components/ui/button-row.es6
-"use strict";
-
-define('components/ui/button-row', ["exports", "cursors", "utils/join-class-names", "react"], function (exports, _cursors, _utilsJoinClassNames, _react) {
-  var _interopRequire = function (obj) {
-    return obj && (obj["default"] || obj);
-  };
-
-  var Cursors = _interopRequire(_cursors);
-
-  var joinClassNames = _interopRequire(_utilsJoinClassNames);
-
-  var React = _interopRequire(_react);
-
-  exports["default"] = React.createClass({
-    mixins: [Cursors],
-
-    render: function () {
-      return React.createElement("div", React.__spread({}, this.props, {
-        className: joinClassNames("osw-button-row", this.props.classname)
-      }), this.props.children);
     }
   });
 });

@@ -1,6 +1,6 @@
 {
   "name": "orgsync-widgets",
-  "version": "0.0.18",
+  "version": "0.0.19",
   "main": [
     "dist/orgsync-widgets.js",
     "dist/orgsync-widgets.css"

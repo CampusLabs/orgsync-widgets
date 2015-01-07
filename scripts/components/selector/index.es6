@@ -251,7 +251,7 @@ var SelectorIndex = React.createClass({
   getSearchOptions: function () {
     var options = this.pluckSearchOptionsFrom(this.props);
     if (this.state.query) options.q = this.state.query;
-    if (this.state.view === 'inline') {
+    if (this.props.view === 'inline') {
       options.scopes = this.props.scopes;
       options.union_scopes = true;
     } else {

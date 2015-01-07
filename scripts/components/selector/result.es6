@@ -2,8 +2,13 @@ import _ from 'underscore';
 import _str from 'underscore.string';
 import Cursors from 'cursors';
 import Icon from 'components/ui/icon';
-import {getIconName, getName, getPictureUrl} from 'entities/selector/item';
 import React from 'react';
+
+import {
+  getIconName,
+  getDisplayName,
+  getPictureUrl
+} from 'entities/selector/item';
 
 export default React.createClass({
   mixins: [Cursors],
@@ -46,7 +51,9 @@ export default React.createClass({
             {getPictureUrl(item) ? null : this.renderIcon()}
           </div>
           <div className='osw-selector-result-info'>
-            <div className='osw-selector-result-name'>{getName(item)}</div>
+            <div className='osw-selector-result-name'>
+              {getDisplayName(item)}
+            </div>
             <div className='osw-selector-result-type'>
               {_str.titleize(_str.humanize(item._type))}
             </div>

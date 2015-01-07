@@ -49762,6 +49762,12 @@ define('entities/selector/item', ["exports", "underscore", "underscore.string"],
 
   var getName = exports.getName = _.partial(getBestFit, NAME_FIELDS);
 
+  var getDisplayName = exports.getDisplayName = function (item) {
+    var name = getName(item);
+    if (item._type === "group") name += " (" + getDisplayName(item.portal) + ")";
+    return name;
+  };
+
   var getPictureUrl = exports.getPictureUrl = _.partial(getBestFit, PICTURE_URL_FIELDS);
 
   var getIconName = exports.getIconName = function (item) {
@@ -49773,7 +49779,7 @@ define('entities/selector/item', ["exports", "underscore", "underscore.string"],
 });
 
 // scripts/components/selector/result.es6
-define('components/selector/result', ["exports", "underscore", "underscore.string", "cursors", "components/ui/icon", "entities/selector/item", "react"], function (exports, _underscore, _underscoreString, _cursors, _componentsUiIcon, _entitiesSelectorItem, _react) {
+define('components/selector/result', ["exports", "underscore", "underscore.string", "cursors", "components/ui/icon", "react", "entities/selector/item"], function (exports, _underscore, _underscoreString, _cursors, _componentsUiIcon, _react, _entitiesSelectorItem) {
   "use strict";
 
   var _interopRequire = function (obj) {
@@ -49788,11 +49794,11 @@ define('components/selector/result', ["exports", "underscore", "underscore.strin
 
   var Icon = _interopRequire(_componentsUiIcon);
 
-  var getIconName = _entitiesSelectorItem.getIconName;
-  var getName = _entitiesSelectorItem.getName;
-  var getPictureUrl = _entitiesSelectorItem.getPictureUrl;
   var React = _interopRequire(_react);
 
+  var getIconName = _entitiesSelectorItem.getIconName;
+  var getDisplayName = _entitiesSelectorItem.getDisplayName;
+  var getPictureUrl = _entitiesSelectorItem.getPictureUrl;
   exports["default"] = React.createClass({
     mixins: [Cursors],
 
@@ -49832,7 +49838,7 @@ define('components/selector/result', ["exports", "underscore", "underscore.strin
         className: "osw-selector-result-info"
       }, React.createElement("div", {
         className: "osw-selector-result-name"
-      }, getName(item)), React.createElement("div", {
+      }, getDisplayName(item)), React.createElement("div", {
         className: "osw-selector-result-type"
       }, _str.titleize(_str.humanize(item._type))))));
     }
@@ -49851,7 +49857,7 @@ define('components/selector/scope', ["exports", "cursors", "react", "entities/se
 
   var React = _interopRequire(_react);
 
-  var getName = _entitiesSelectorItem.getName;
+  var getDisplayName = _entitiesSelectorItem.getDisplayName;
 
 
   var STOP_PROPAGATION = function (ev) {
@@ -49883,7 +49889,7 @@ define('components/selector/scope', ["exports", "cursors", "react", "entities/se
     },
 
     renderName: function () {
-      var name = getName(this.props.scope);
+      var name = getDisplayName(this.props.scope);
       var count = this.props.count;
       if (!count) return name;
       return React.createElement("strong", null, name, " (", count, ")");
@@ -50034,7 +50040,7 @@ define('components/selector/token', ["exports", "cursors", "components/ui/icon",
   var React = _interopRequire(_react);
 
   var getIconName = _entitiesSelectorItem.getIconName;
-  var getName = _entitiesSelectorItem.getName;
+  var getDisplayName = _entitiesSelectorItem.getDisplayName;
   exports["default"] = React.createClass({
     mixins: [Cursors],
 
@@ -50056,7 +50062,7 @@ define('components/selector/token', ["exports", "cursors", "components/ui/icon",
       }, React.createElement(Icon, {
         className: "osw-selector-token-icon",
         name: getIconName(this.props.item)
-      }), getName(this.props.item))));
+      }), getDisplayName(this.props.item))));
     }
   });
 });
@@ -50092,7 +50098,7 @@ define('components/selector/index', ["exports", "underscore", "orgsync-widgets",
   var Token = _interopRequire(_componentsSelectorToken);
 
   var getBasicFields = _entitiesSelectorItem.getBasicFields;
-  var getName = _entitiesSelectorItem.getName;
+  var getDisplayName = _entitiesSelectorItem.getDisplayName;
   var getTerm = _entitiesSelectorItem.getTerm;
 
 
@@ -50100,7 +50106,7 @@ define('components/selector/index', ["exports", "underscore", "orgsync-widgets",
     return str.toLowerCase();
   };
 
-  var NAME_COMPARATOR = _.compose(DOWNCASE, getName);
+  var NAME_COMPARATOR = _.compose(DOWNCASE, getDisplayName);
 
   var SelectorIndex = React.createClass({
     displayName: "SelectorIndex",

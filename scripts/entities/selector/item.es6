@@ -47,6 +47,12 @@ export var getTerm = function (item) {
 
 export var getName = _.partial(getBestFit, NAME_FIELDS);
 
+export var getDisplayName = function (item) {
+  var name = getName(item);
+  if (item._type === 'group') name += ` (${getDisplayName(item.portal)})`;
+  return name;
+};
+
 export var getPictureUrl = _.partial(getBestFit, PICTURE_URL_FIELDS);
 
 export var getIconName = function (item) {

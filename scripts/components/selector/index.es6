@@ -9,11 +9,11 @@ import Result from 'components/selector/result';
 import Scope from 'components/selector/scope';
 import store from 'entities/selector/store';
 import Token from 'components/selector/token';
-import {getBasicFields, getName, getTerm} from 'entities/selector/item';
+import {getBasicFields, getDisplayName, getTerm} from 'entities/selector/item';
 
 var DOWNCASE = function (str) { return str.toLowerCase(); };
 
-var NAME_COMPARATOR = _.compose(DOWNCASE, getName);
+var NAME_COMPARATOR = _.compose(DOWNCASE, getDisplayName);
 
 var SelectorIndex = React.createClass({
   mixins: [Cursors],

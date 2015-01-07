@@ -1,7 +1,7 @@
 import Cursors from 'cursors';
 import React from 'react';
 
-import {getName} from 'entities/selector/item';
+import {getDisplayName} from 'entities/selector/item';
 
 var STOP_PROPAGATION = function (ev) {
   ev.stopPropagation();
@@ -34,7 +34,7 @@ export default React.createClass({
   },
 
   renderName: function () {
-    var name = getName(this.props.scope);
+    var name = getDisplayName(this.props.scope);
     var count = this.props.count;
     if (!count) return name;
     return <strong>{name} ({count})</strong>;

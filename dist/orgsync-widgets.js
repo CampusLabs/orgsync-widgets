@@ -48980,6 +48980,10 @@ define('components/events/index', ["exports", "module", "underscore", "component
   var comparator = _entitiesEvent.comparator;
   var getMoment = _entitiesEvent.getMoment;
   var matchesQueryAndFilters = _entitiesEvent.matchesQueryAndFilters;
+
+
+  var LIST_LOCK_BREAKPOINT = 600;
+
   module.exports = React.createClass({
     mixins: [Cursors],
 
@@ -49006,8 +49010,23 @@ define('components/events/index', ["exports", "module", "underscore", "component
         query: this.props.query,
         ranges: [],
         tz: this.props.tz,
-        view: this.props.view
+        view: this.props.view,
+        width: Infinity
       };
+    },
+
+    componentDidMount: function () {
+      this.setWidth();
+      window.addEventListener("resize", this.setWidth);
+    },
+
+    componentWillUnmount: function () {
+      window.removeEventListener("resize", this.setWidth);
+    },
+
+    setWidth: function () {
+      var rect = this.getDOMNode().getBoundingClientRect();
+      this.update({ width: { $set: rect.width } });
     },
 
     getFilteredEvents: function () {
@@ -49086,6 +49105,15 @@ define('components/events/index', ["exports", "module", "underscore", "component
       this.update({ date: { $set: dateMom.format("YYYY-MM-DD") } });
     },
 
+    isListLocked: function () {
+      return this.state.width < LIST_LOCK_BREAKPOINT;
+    },
+
+    getView: function () {
+      var view = this.state.view;
+      return this.isListLocked() && view === "calendar" ? "upcoming" : view;
+    },
+
     renderMonthOption: function (month) {
       return React.createElement(
         "option",
@@ -49162,7 +49190,7 @@ define('components/events/index', ["exports", "module", "underscore", "component
     },
 
     renderListControls: function () {
-      var view = this.state.view;
+      var view = this.getView();
       return React.createElement(
         ButtonGroup,
         { className: "osw-events-index-list-controls" },
@@ -49186,8 +49214,8 @@ define('components/events/index', ["exports", "module", "underscore", "component
     },
 
     renderViewTabs: function () {
-      if (this.props.lockView) return;
-      var view = this.state.view;
+      if (this.props.lockView || this.isListLocked()) return;
+      var view = this.getView();
       return React.createElement(
         ButtonGroup,
         { className: "osw-events-index-view-tabs" },
@@ -49211,11 +49239,11 @@ define('components/events/index', ["exports", "module", "underscore", "component
     },
 
     renderViewControls: function () {
-      return this.state.view === "calendar" ? this.renderCalendarControls() : this.renderListControls();
+      return this.getView() === "calendar" ? this.renderCalendarControls() : this.renderListControls();
     },
 
     renderView: function () {
-      switch (this.state.view) {
+      switch (this.getView()) {
         case "calendar":
           return React.createElement(Calendar, {
             key: "calendar",

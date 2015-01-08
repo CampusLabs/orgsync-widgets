@@ -15,6 +15,8 @@ import {
   matchesQueryAndFilters
 } from 'entities/event';
 
+var LIST_LOCK_BREAKPOINT = 600;
+
 export default React.createClass({
   mixins: [Cursors],
 
@@ -41,8 +43,23 @@ export default React.createClass({
       query: this.props.query,
       ranges: [],
       tz: this.props.tz,
-      view: this.props.view
+      view: this.props.view,
+      width: Infinity
     };
+  },
+
+  componentDidMount: function () {
+    this.setWidth();
+    window.addEventListener('resize', this.setWidth);
+  },
+
+  componentWillUnmount: function () {
+    window.removeEventListener('resize', this.setWidth);
+  },
+
+  setWidth: function () {
+    var rect = this.getDOMNode().getBoundingClientRect();
+    this.update({width: {$set: rect.width}});
   },
 
   getFilteredEvents: function () {
@@ -125,6 +142,15 @@ export default React.createClass({
     this.update({date: {$set: dateMom.format('YYYY-MM-DD')}});
   },
 
+  isListLocked: function () {
+    return this.state.width < LIST_LOCK_BREAKPOINT;
+  },
+
+  getView: function () {
+    var view = this.state.view;
+    return this.isListLocked() && view === 'calendar' ? 'upcoming' : view;
+  },
+
   renderMonthOption: function (month) {
     return (
       <option key={month} value={month}>
@@ -187,7 +213,7 @@ export default React.createClass({
   },
 
   renderListControls: function () {
-    var view = this.state.view;
+    var view = this.getView();
     return (
       <ButtonGroup className='osw-events-index-list-controls'>
         <Button
@@ -207,8 +233,8 @@ export default React.createClass({
   },
 
   renderViewTabs: function () {
-    if (this.props.lockView) return;
-    var view = this.state.view;
+    if (this.props.lockView || this.isListLocked()) return;
+    var view = this.getView();
     return (
       <ButtonGroup className='osw-events-index-view-tabs'>
         <Button
@@ -228,13 +254,13 @@ export default React.createClass({
   },
 
   renderViewControls: function () {
-    return this.state.view === 'calendar' ?
+    return this.getView() === 'calendar' ?
       this.renderCalendarControls() :
       this.renderListControls();
   },
 
   renderView: function () {
-    switch (this.state.view) {
+    switch (this.getView()) {
     case 'calendar':
       return (
         <Calendar

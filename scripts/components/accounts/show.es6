@@ -1,7 +1,8 @@
 import _ from 'underscore';
+import _str from 'underscore.string';
 import api from 'api';
 import Button from 'components/ui/button';
-import ButtonRow from 'components/ui/button-row';
+import config from 'config';
 import Cursors from 'cursors';
 import React from 'react';
 
@@ -38,6 +39,45 @@ export default React.createClass({
     });
   },
 
+  renderTitle: function () {
+    var title = this.state.account.title;
+    if (title) return <div className='osw-accounts-show-title'>{title}</div>;
+  },
+
+  renderSimpleField: function (key, title) {
+    var content = this.state.account[key];
+    if (!content) return;
+    content =
+      key === 'email_address' ?
+      <a href={`mailto:${content}`}>{content}</a> :
+      this.renderInLines(content);
+    return this.renderField(title, content);
+  },
+
+  renderAddress: function () {
+    var address = this.state.account.address;
+    if (!address) return;
+    var content = _.compact([
+      address.street,
+      `${address.city}, ${address.state} ${address.zip}`,
+      address.country
+    ]).join('\n');
+    return this.renderField('Address', this.renderInLines(content));
+  },
+
+  renderInLines: function (str) {
+    return _.map(_str.lines(str), (line, i) => <div key={i}>{line}</div>);
+  },
+
+  renderField: function (title, content) {
+    return (
+      <div className='osw-accounts-show-field'>
+        <div className='osw-accounts-show-field-title'>{title}</div>
+        <div className='osw-accounts-show-field-content'>{content}</div>
+      </div>
+    );
+  },
+
   renderAccount: function () {
     var account = this.state.account;
     return (
@@ -46,15 +86,17 @@ export default React.createClass({
           className='osw-accounts-show-picture'
           src={getPictureUrl(account)}
         />
-        <div className='osw-accounts-show-name'>
-          {account.display_name}
+        <div className='osw-accounts-show-name'>{account.display_name}</div>
+        {this.renderTitle()}
+        {this.renderSimpleField('email_address', 'Email')}
+        {this.renderSimpleField('phone_number', 'Phone')}
+        {this.renderAddress()}
+        {this.renderSimpleField('about_me', 'About Me')}
+        <div className='osw-accounts-show-send-a-message'>
+          <Button href={`${config.io.uri}/messages/new?account=${account.id}`}>
+            Send a Message
+          </Button>
         </div>
-        <div className='osw-accounts-show-title'>
-          {account.title}
-        </div>
-        <ButtonRow>
-          <Button>Send a Message</Button>
-        </ButtonRow>
       </div>
     );
   },

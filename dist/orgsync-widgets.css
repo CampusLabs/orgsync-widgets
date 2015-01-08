@@ -679,25 +679,58 @@
 .orgsync-widget[min-width~='921px'] .osw-accounts-list-item {
   width: 25%; }
 
+/* styles/accounts/show-popup.scss */
+.orgsync-widget .osw-accounts-show-popup {
+  background: #fff;
+  border-radius: 3px;
+  box-shadow: 0 1px 5px rgba(0, 0, 0, 0.75);
+  margin: 32px auto 0;
+  max-width: 320px;
+  position: relative; }
+  .orgsync-widget .osw-accounts-show-popup:after {
+    content: "";
+    display: table;
+    clear: both; }
+.orgsync-widget .osw-accounts-show-popup-close-button {
+  color: #ccc;
+  cursor: pointer;
+  float: right;
+  font-size: 18px;
+  line-height: 15px;
+  padding: 16px; }
+  .orgsync-widget .osw-accounts-show-popup-close-button:hover {
+    border-color: #2b2b2b;
+    color: #2b2b2b; }
+
 /* styles/accounts/show.scss */
 .orgsync-widget .osw-accounts-show {
-  padding: 10px;
-  text-align: center; }
+  padding: 25px; }
 .orgsync-widget .osw-accounts-show-picture {
   border-radius: 50%;
+  box-shadow: 0 1px 1px rgba(0, 0, 0, 0.5);
   display: block;
-  margin: 0 auto; }
+  left: 50%;
+  margin-left: -32px;
+  position: absolute;
+  top: -32px; }
 .orgsync-widget .osw-accounts-show-name, .orgsync-widget .osw-accounts-show-title {
-  line-height: 25px;
-  text-align: center; }
+  line-height: 25px; }
 .orgsync-widget .osw-accounts-show-name {
   color: #2b2b2b;
-  font-size: 20px;
-  font-weight: bold;
-  padding-top: 13px; }
+  font-size: 24px;
+  margin-top: 20px; }
 .orgsync-widget .osw-accounts-show-title {
-  color: #ccc;
+  color: #797979;
   font-size: 16px; }
+.orgsync-widget .osw-accounts-show-field {
+  margin: 20px 0; }
+.orgsync-widget .osw-accounts-show-field-title {
+  color: #797979; }
+.orgsync-widget .osw-accounts-show-field-content {
+  color: #2b2b2b;
+  font-size: 14px; }
+.orgsync-widget .osw-accounts-show-send-a-message {
+  text-align: center; }
 
 /* styles/albums/index.scss */
 .orgsync-widget .osw-albums-index {
@@ -2062,6 +2095,10 @@
   background: #eee;
   border-bottom: 1px solid #ccc;
   color: #797979; }
+  .orgsync-widget .osw-popup-head:after {
+    content: "";
+    display: table;
+    clear: both; }
 .orgsync-widget .osw-popup-title {
   color: #60666d;
   font-size: 15px;

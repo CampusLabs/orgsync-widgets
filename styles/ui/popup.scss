@@ -12,13 +12,14 @@
   }
 
   .osw-popup {
-    border-radius: 3px;
+    border-radius: $border-radius;
     box-shadow: 0 1px 5px rgba(0, 0, 0, .75);
     margin: 0 auto;
   }
 
   .osw-popup-head {
     @include border-top-radius(3px);
+    @include clearfix;
     background: #eee;
     border-bottom: 1px solid #ccc;
     color: $grey-darker;

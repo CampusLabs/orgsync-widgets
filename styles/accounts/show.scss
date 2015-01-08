@@ -2,31 +2,49 @@
 
 .orgsync-widget {
   .osw-accounts-show {
-    padding: 10px;
-    text-align: center;
+    padding: 25px;
   }
 
   .osw-accounts-show-picture {
     border-radius: 50%;
+    box-shadow: 0 1px 1px rgba(0, 0, 0, .5);
     display: block;
-    margin: 0 auto;
+    left: 50%;
+    margin-left: -32px;
+    position: absolute;
+    top: -32px;
   }
 
   .osw-accounts-show-name,
   .osw-accounts-show-title {
     line-height: 25px;
-    text-align: center;
   }
 
   .osw-accounts-show-name {
     color: $grey-darkest;
-    font-size: 20px;
-    font-weight: bold;
-    padding-top: 13px;
+    font-size: 24px;
+    margin-top: 20px;
   }
 
   .osw-accounts-show-title {
-    color: $grey;
+    color: $grey-darker;
     font-size: 16px;
+  }
+
+  .osw-accounts-show-field {
+    margin: 20px 0;
+  }
+
+  .osw-accounts-show-field-title {
+    color: $grey-darker;
+  }
+
+  .osw-accounts-show-field-content {
+    color: $grey-darkest;
+    font-size: 14px;
+  }
+
+  .osw-accounts-show-send-a-message {
+    text-align: center;
   }
 }

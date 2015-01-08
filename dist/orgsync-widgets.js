@@ -40653,7 +40653,8 @@ define('components/accounts/show', ["exports", "underscore", "underscore.string"
     renderAddress: function () {
       var address = this.state.account.address;
       if (!address) return;
-      var content = _.compact([address.street, "" + address.city + ", " + address.state + " " + address.zip, address.country]).join("\n");
+      var content = _.compact([address.street, _.compact([_.compact([address.city, address.state]).join(", "), address.zip]).join(" "), address.country]).join("\n");
+      if (!content) return;
       return this.renderField("Address", this.renderInLines(content));
     },
 

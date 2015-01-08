@@ -59,9 +59,13 @@ export default React.createClass({
     if (!address) return;
     var content = _.compact([
       address.street,
-      `${address.city}, ${address.state} ${address.zip}`,
+      _.compact([
+        _.compact([address.city, address.state]).join(', '),
+        address.zip
+      ]).join(' '),
       address.country
     ]).join('\n');
+    if (!content) return;
     return this.renderField('Address', this.renderInLines(content));
   },
 

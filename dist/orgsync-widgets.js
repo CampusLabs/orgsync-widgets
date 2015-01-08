@@ -49047,7 +49047,7 @@ define('components/events/index', ["exports", "module", "underscore", "component
 
     getMainClassName: function () {
       var classes = ["osw-events-index-main"];
-      if (!this.state.filtersAreShowing) {
+      if (!this.state.filtersAreShowing || this.isListLocked()) {
         classes.push("osw-events-index-full-width");
       }
       return classes.join(" ");
@@ -49152,6 +49152,20 @@ define('components/events/index', ["exports", "module", "underscore", "component
           onChange: this.handleYearChange
         },
         _.map(_.range(year - 3, year + 4), this.renderYearOption)
+      );
+    },
+
+    renderFiltersToggle: function () {
+      if (this.isListLocked()) return;
+      return React.createElement(
+        Button,
+        {
+          className: "osw-events-index-toggle-filters",
+          onClick: this.toggleFiltersAreShowing
+        },
+        React.createElement(Icon, { name: "office-shortcuts" }),
+        " ",
+        this.state.filtersAreShowing ? "Hide Filters" : "Show Filters"
       );
     },
 
@@ -49324,16 +49338,7 @@ define('components/events/index', ["exports", "module", "underscore", "component
             React.createElement(
               "div",
               { className: "osw-events-index-left" },
-              React.createElement(
-                Button,
-                {
-                  className: "osw-events-index-toggle-filters",
-                  onClick: this.toggleFiltersAreShowing
-                },
-                React.createElement(Icon, { name: "office-shortcuts" }),
-                " ",
-                this.state.filtersAreShowing ? "Hide Filters" : "Show Filters"
-              ),
+              this.renderFiltersToggle(),
               this.renderViewTabs()
             ),
             this.renderViewControls()

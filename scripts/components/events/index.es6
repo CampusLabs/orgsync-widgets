@@ -84,7 +84,7 @@ export default React.createClass({
 
   getMainClassName: function () {
     var classes = ['osw-events-index-main'];
-    if (!this.state.filtersAreShowing) {
+    if (!this.state.filtersAreShowing || this.isListLocked()) {
       classes.push('osw-events-index-full-width');
     }
     return classes.join(' ');
@@ -185,6 +185,19 @@ export default React.createClass({
       >
         {_.map(_.range(year - 3, year + 4), this.renderYearOption)}
       </select>
+    );
+  },
+
+  renderFiltersToggle: function () {
+    if (this.isListLocked()) return;
+    return (
+      <Button
+        className='osw-events-index-toggle-filters'
+        onClick={this.toggleFiltersAreShowing}
+      >
+        <Icon name='office-shortcuts' />{' '}
+        {this.state.filtersAreShowing ? 'Hide Filters' : 'Show Filters'}
+      </Button>
     );
   },
 
@@ -334,13 +347,7 @@ export default React.createClass({
         <div className={this.getMainClassName()}>
           <div className='osw-events-index-header'>
             <div className='osw-events-index-left'>
-              <Button
-                className='osw-events-index-toggle-filters'
-                onClick={this.toggleFiltersAreShowing}
-              >
-                <Icon name='office-shortcuts' />{' '}
-                {this.state.filtersAreShowing ? 'Hide Filters' : 'Show Filters'}
-              </Button>
+              {this.renderFiltersToggle()}
               {this.renderViewTabs()}
             </div>
             {this.renderViewControls()}

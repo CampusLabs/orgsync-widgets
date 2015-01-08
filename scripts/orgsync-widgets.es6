@@ -26,7 +26,7 @@ export var mount = function (el) {
   if (el.widgetIsMounted) return;
   var data = $(el).data();
   if (!data.moduleName) return;
-  var component = require('components/' + data.moduleName).default;
+  var component = require('components/' + data.moduleName);
   el.widgetIsMounted = true;
   React.render(React.createFactory(component)(_.clone(data)), el);
   elementQuery();

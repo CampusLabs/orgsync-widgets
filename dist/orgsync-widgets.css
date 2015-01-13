@@ -522,6 +522,7 @@
 
 .orgsync-widget {
   font-size: 12px;
+  line-height: 1.2;
   word-wrap: break-word; }
   .orgsync-widget, .orgsync-widget input, .orgsync-widget select, .orgsync-widget textarea {
     color: #222;

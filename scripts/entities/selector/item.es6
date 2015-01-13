@@ -49,7 +49,9 @@ export var getName = _.partial(getBestFit, NAME_FIELDS);
 
 export var getDisplayName = function (item) {
   var name = getName(item);
-  if (item._type === 'group') name += ` (${getDisplayName(item.portal)})`;
+  if (item._type === 'group' && item.portal) {
+    name += ` (${getDisplayName(item.portal)})`;
+  }
   return name;
 };
 

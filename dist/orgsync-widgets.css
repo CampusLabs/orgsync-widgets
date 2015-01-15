@@ -1315,7 +1315,7 @@
   color: #797979;
   cursor: pointer;
   font-size: 16px;
-  padding: 6px 4px 1px 4px;
+  padding: 5px 4px 1px;
   text-align: right; }
 .orgsync-widget .osw-events-week-current-day .osw-events-week-day-wrapper {
   border-top-left-radius: 3px;

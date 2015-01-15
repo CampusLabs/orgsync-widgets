@@ -3,6 +3,7 @@
 .orgsync-widget {
   .osw-events-week {
     padding-bottom: 5px;
+
     table {
       border-collapse: collapse;
       table-layout: fixed;
@@ -21,7 +22,7 @@
     color: $grey-darker;
     cursor: pointer;
     font-size: 16px;
-    padding: 6px 4px 1px 4px;
+    padding: 5px 4px 1px;
     text-align: right;
   }
 

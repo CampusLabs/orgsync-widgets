@@ -4,7 +4,7 @@ import Button from 'components/ui/button';
 import ButtonRow from 'components/ui/button-row';
 import React from 'react';
 
-var DEFAULT_SRC = 'https://orgsync.com/assets/no_org_profile_150.png';
+var DEFAULT_SRC = 'https://orgsync.com/assets/icons/portals/no_org_profile_150.png';
 
 export default React.createClass({
   mixins: [Cursors],

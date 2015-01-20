@@ -50114,7 +50114,7 @@ define('components/portals/show', ["exports", "module", "api", "cursors", "compo
 
   var React = _interopRequire(_react);
 
-  var DEFAULT_SRC = "https://orgsync.com/assets/no_org_profile_150.png";
+  var DEFAULT_SRC = "https://orgsync.com/assets/icons/portals/no_org_profile_150.png";
 
   module.exports = React.createClass({
     mixins: [Cursors],
@@ -50219,7 +50219,7 @@ define('components/portals/list-item', ["exports", "module", "cursors", "compone
 
   var Show = _interopRequire(_componentsPortalsShow);
 
-  var DEFAULT_SRC = "https://orgsync.com/assets/no_org_profile_150.png";
+  var DEFAULT_SRC = "https://orgsync.com/assets/icons/portals/no_org_profile_150.png";
 
   module.exports = React.createClass({
     mixins: [Cursors],

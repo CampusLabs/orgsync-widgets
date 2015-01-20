@@ -3,7 +3,7 @@ import Popup from 'components/ui/popup';
 import React from 'react';
 import Show from 'components/portals/show';
 
-var DEFAULT_SRC = 'https://orgsync.com/assets/no_org_profile_150.png';
+var DEFAULT_SRC = 'https://orgsync.com/assets/icons/portals/no_org_profile_150.png';
 
 export default React.createClass({
   mixins: [Cursors],

@@ -1,4 +1,4 @@
-var DEFAULT_PICTURE = 'https://orgsync.com/assets/profile_blank_64.gif';
+var DEFAULT_PICTURE = 'https://orgsync.com/assets/icons/accounts/profile_blank_64.gif';
 
 export var getPictureUrl = function (account) {
   return account.picture_url || DEFAULT_PICTURE;

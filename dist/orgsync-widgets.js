@@ -39366,7 +39366,7 @@ define('api', ["exports", "module", "config", "orgsync-api"], function (exports,
 define('entities/account', ["exports"], function (exports) {
   "use strict";
 
-  var DEFAULT_PICTURE = "https://orgsync.com/assets/profile_blank_64.gif";
+  var DEFAULT_PICTURE = "https://orgsync.com/assets/icons/accounts/profile_pic_blank_64.gif";
 
   var getPictureUrl = exports.getPictureUrl = function (account) {
     return account.picture_url || DEFAULT_PICTURE;

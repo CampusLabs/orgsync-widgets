@@ -6,30 +6,13 @@
     text-align: left;
   }
 
-  .osw-selector-index-left {
-    hr {
-      background: $grey-lighter;
-      border: 0;
-      height: 1px;
-    }
-  }
-
-  .osw-selector-index-done-container {
-    border-top: 1px solid $grey-lighter;
-    padding: 10px;
-  }
-
-  .osw-selector-index-done {
-    width: 100%;
-  }
-
-  .osw-selector-index-right {
+  .osw-selector-index-scopes,
+  .osw-selector-index-results,
+  .osw-selector-index-selected-results {
     overflow: auto;
   }
 
   .osw-selector-index-inline {
-    padding: 10px;
-
     &.osw-selector-index-results-visible .osw-selector-index-tokens-and-query {
       @include border-bottom-radius(0);
     }
@@ -37,12 +20,12 @@
     .osw-selector-index-results {
       @include border-bottom-radius($border-radius);
       background: #fff;
-      border: 1px solid #eee;
       border-top: 0;
-      left: 10px;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, .5);
+      left: 0;
       max-height: 264px;
       position: absolute;
-      right: 10px;
+      right: 0;
       z-index: 1;
     }
 
@@ -55,40 +38,39 @@
     .osw-selector-index-error {
       padding: 5px;
     }
-
-    .osw-selector-index-loading,
-    .osw-selector-index-empty {
-      background: #eee;
-    }
   }
 
   .osw-selector-index-browse {
+    @include box-sizing(border-box);
+    @include clearfix;
+    border: 1px solid #ccc;
+
+    .osw-selector-index-left,
+    .osw-selector-index-middle,
     .osw-selector-index-right {
-      background: $grey-lighter;
-      padding: 5px;
+      @include box-sizing(border-box);
+    }
+
+    .osw-selector-index-left,
+    .osw-selector-index-middle {
+      border-bottom: 1px solid #ccc;
     }
 
     .osw-selector-index-tokens-and-query {
-      margin: 5px;
+      border-bottom: 1px solid #ccc;
+      border-radius: 0;
+    }
+
+    .osw-selector-index-scopes {
+      max-height: 300px;
     }
 
     .osw-selector-index-results {
-      @include box-sizing(border-box);
-      background: $grey-lighter;
-      height: 500px;
+      height: 462px;
     }
 
-    .osw-selector-index-loading,
-    .osw-selector-index-empty,
-    .osw-selector-index-error {
-      border-radius: $border-radius;
-      margin: 5px;
-      padding: 10px;
-    }
-
-    .osw-selector-index-loading,
-    .osw-selector-index-empty {
-      background: #fff;
+    .osw-selector-index-selected-results {
+      max-height: 231px;
     }
   }
 
@@ -105,13 +87,25 @@
   .osw-selector-index-query {
     @include clearfix;
     overflow: hidden;
+    position: relative;
+
+    &:before {
+      color: $grey-darker;
+      content: '\f098';
+      font-family: SyncDings;
+      font-size: 16px;
+      position: absolute;
+      top: 2px;
+    }
 
     input {
       @include appearance(none);
       @include box-sizing(border-box);
       border: 0;
+      font-size: 14px;
+      line-height: 24px;
       outline: none;
-      padding: 5px;
+      padding: 0 5px 0 18px;
       width: 100%;
     }
   }
@@ -120,14 +114,13 @@
     opacity: .5;
   }
 
-  .osw-selector-index-results {
-    overflow: auto;
-  }
-
   .osw-selector-index-loading,
   .osw-selector-index-empty,
   .osw-selector-index-error {
+    background: #fff;
+    color: $grey-darker;
     font-size: 14px;
+    padding: 10px;
   }
 
   .osw-selector-index-error {
@@ -142,10 +135,58 @@
 
   .osw-selector-index-popup {
     max-width: 1000px;
+
+    .osw-selector-index-browse {
+      border: 0;
+    }
   }
 
-  &[min-width~='401px'] .osw-selector-index-left {
-    float: left;
-    width: 200px;
+  .osw-selector-index-done-container {
+    background: #eee;
+    border-top: 1px solid #ccc;
+    color: $grey-darker;
+    padding: 5px;
+    text-align: right;
+  }
+
+  .osw-selector-index-right-header {
+    @include box-sizing(border-box);
+    background: $grey-lightest;
+    border-bottom: 1px solid #ccc;
+    color: $grey-darker;
+    font-size: 14px;
+    font-weight: bold;
+    line-height: 24px;
+    padding: 5px 10px;
+  }
+
+  &[min-width~='640px'] .osw-selector-index-browse {
+    .osw-selector-index-left,
+    .osw-selector-index-middle {
+      border-right: 1px solid #ccc;
+    }
+
+    .osw-selector-index-left,
+    .osw-selector-index-right {
+      border-bottom: 0;
+      float: left;
+      width: 25%;
+    }
+
+    .osw-selector-index-middle {
+      border-bottom: 0;
+      float: left;
+      width: 50%;
+    }
+
+    .osw-selector-index-scopes {
+      height: 497px;
+      max-height: none;
+    }
+
+    .osw-selector-index-selected-results {
+      height: 462px;
+      max-height: none;
+    }
   }
 }

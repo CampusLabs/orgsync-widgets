@@ -4,25 +4,21 @@
   .osw-events-list-item-content {
     @include clearfix;
     background: #fff;
-    border-bottom: 1px solid $grey;
     border-left: 5px solid $grey;
+    border-bottom: 1px solid $grey;
     cursor: pointer;
-    padding: 10px;
+    padding: 10px 10px 10px 20px;
   }
 
   .osw-events-list-item-picture-container {
     @include user-select(none);
-    border-radius: 3px;
-    box-shadow: 0 1px 2px $grey;
     float: left;
     font-weight: bold;
-    height: 45px;
-    margin-right: 10px;
+    height: 50px;
+    margin-right: 15px;
     text-align: center;
-    width: 45px;
-
+    width: 50px;
     > img {
-      border-radius: 3px;
       width: 100%;
     }
   }
@@ -49,18 +45,13 @@
   }
 
   .osw-events-list-item-title {
-    color: $grey-darkest;
-    font-size: 14px;
+    color: $global-link-color;
+    font-size: 16px;
+    line-height: 22px;
   }
 
   .osw-events-list-item-subtext {
-    color: $grey-darker;
-    font-size: 11px;
-  }
-
-  .osw-events-list-item-time,
-  .osw-events-list-item-portal-name {
-    margin-right: 5px;
+    @include subtle-text;
   }
 
   .osw-events-list-item-maybe-attending {
@@ -72,7 +63,7 @@
   }
 
   .osw-events-list-item-portal-name {
-    color: #000;
+    @include subtle-text;
   }
 
   .osw-events-list-item-title,

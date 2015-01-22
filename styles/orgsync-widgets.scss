@@ -7,6 +7,7 @@
 
 .orgsync-widget {
   font-size: 12px;
+  line-height: 1.2;
   word-wrap: break-word;
 
   &,
@@ -71,6 +72,10 @@
         }
       }
     }
+  }
+
+  a {
+    color: $global-link-color;
   }
 
   .osw-hide-button {

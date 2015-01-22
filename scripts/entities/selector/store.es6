@@ -1,20 +1,12 @@
 import _ from 'underscore';
 import _str from 'underscore.string';
-import api from 'api';
-import Live from 'live';
-import {getTerm} from 'entities/selector/item';
+import app from 'orgsync-widgets';
+import {getTerm, getName} from 'entities/selector/item';
 import React from 'react';
 
 var update = React.addons.update;
 
 var FETCH_SIZE = 100;
-
-var live = new Live({
-  url: 'wss://orgsync.com/io/websocket',
-  fetchAuthKey: function (cb) { cb(null, api.key); }
-});
-
-export var cache = {};
 
 var done = {};
 
@@ -22,12 +14,30 @@ export var parse = function (q) {
   return ((q || '') + '').replace(/\s+/g, ' ').trim().toLowerCase();
 };
 
+var filterValue = function (item, field) {
+  if (item._type === 'portal') {
+    if (field === 'portal_name') field = 'name';
+    if (field === 'portal_short_name') field = 'short_name';
+  }
+
+  // HACK: This is necessary because of an ES bug, see
+  // https://github.com/elasticsearch/elasticsearch/issues/8030
+  if (field === 'portal_name') field = 'portal.name';
+  if (field === 'portal_short_name') field = 'portal.short_name';
+
+  if (field === 'name') return getName(item);
+
+  var path = field.split('.');
+  var value = item;
+  while (value && path.length) value = value[path.shift()];
+  return value;
+};
+
 var filter = function (item, q, options) {
   q = parse(q);
   if (!q) return true;
-  var searchableWords = _.str.words(
-    _.values(_.pick(item, options.fields || 'name')).join(' ').toLowerCase()
-  );
+  var values = _.map(options.fields || ['name'], _.partial(filterValue, item));
+  var searchableWords = _.unique(_.str.words(values.join(' ').toLowerCase()));
   return _.every(_str.words(q), function (wordA) {
     return _.any(searchableWords, _.partial(_str.startsWith, _, wordA));
   });
@@ -35,11 +45,11 @@ var filter = function (item, q, options) {
 
 export var getQueryKey = function (options) {
   return _.compact([
-    (options.school_id || '_all'),
-    (options.scopes || []).map(getTerm).sort().join() || '_all',
-    (options.indices || []).slice().sort().join() || '_all',
-    _.invoke(_.pairs(options.indices_boost), 'join', '=').sort().join() ||
-      'none',
+    (options.scopes || []).map(getTerm).sort().join(
+      options.union_scopes ? '+' : '-'
+    ) || '_all',
+    (options.types || []).slice().sort().join() || '_all',
+    (options.boost_types || []).slice().sort().join() || 'none',
     (options.fields || []).slice().sort().join() || 'name',
     parse(options.q)
   ]).join(':');
@@ -47,13 +57,14 @@ export var getQueryKey = function (options) {
 
 var cacheItems = function (items, options) {
   var key = getQueryKey(options);
-  var cached = cache[key] ? cache[key].slice() : [];
-  items.forEach(function (item) { cache[getTerm(item)] = item; });
-  cache[key] = _.unique(cached.concat(items.map(getTerm)));
+  var cached = (app.cache.get(key) || []).slice();
+  if (options.overwrite) cached = [];
+  _.each(items, function (item) { app.cache.set(getTerm(item), item); });
+  app.cache.set(key, _.unique(cached.concat(_.map(items, getTerm))));
 };
 
 var getItemFromId = function (id) {
-  return cache[id];
+  return app.cache.get(id);
 };
 
 export var search = function (options) {
@@ -62,7 +73,7 @@ export var search = function (options) {
   var q = options.q;
   var results = [];
   while (true) {
-    var cached = cache[getQueryKey(options)];
+    var cached = app.cache.get(getQueryKey(options));
     if (cached) {
       cached = cached.map(getItemFromId);
 
@@ -78,15 +89,23 @@ export var search = function (options) {
 };
 
 export var fetch = function (options, cb) {
+  if (options.dataset) options = _.omit(options, 'q');
   var key = getQueryKey(options);
-  var cached = cache[getQueryKey(options)] || [];
-  var from = cached.length;
+  var cached = app.cache.get(key) || [];
   var limit = options.limit || Infinity;
-  var size = Math.max(0, Math.min(limit - from, FETCH_SIZE));
-  options = _.extend({}, options, {from: from, size: size});
-  if (done[key] || !size) return cb(null, true, options);
-  live.send('search', options, function (er, items) {
+  options = _.clone(options);
+  options.from = cached.length;
+  options.size = Math.max(0, Math.min(limit - options.from, FETCH_SIZE));
+  if (options.dataset && !done[key]) {
+    cacheItems(options.dataset, _.extend({overwrite: true}, options));
+    done[key] = true;
+  }
+  if (done[key] || !options.size) return cb(null, true, options);
+  app.io.emit('search', options, function (er, res) {
     if (er) return cb(er);
+    var items = _.map(res.hits.hits, function (hit) {
+      return _.extend({_type: hit._type}, hit._source);
+    });
     cacheItems(items, options);
     cb(null, done[key] = items.length < options.size, options);
   });

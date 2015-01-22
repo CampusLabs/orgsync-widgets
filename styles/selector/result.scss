@@ -5,37 +5,51 @@
     @include clearfix;
     @include user-select(none);
     background: #fff;
+    border-top: 1px solid #eee;
     cursor: pointer;
     font-size: 14px;
   }
 
-  .osw-selector-index-inline {
-    .osw-selector-result-content {
-      border-top: 1px solid #eee;
-      padding: 5px;
-      white-space: nowrap;
-    }
+  .osw-selector-result-active .osw-selector-result-content {
+    background: $highlight-color;
+  }
 
+  .osw-selector-index-inline,
+  .osw-selector-index-browse .osw-selector-index-right {
     .osw-selector-result:first-child .osw-selector-result-content {
       border-top: 0;
       padding-top: 6px;
     }
 
-    .osw-selector-result-selected .osw-selector-result-content {
-      opacity: .5;
+    .osw-selector-result-content {
+      padding: 5px;
+      white-space: nowrap;
     }
 
-    .osw-selector-result-active .osw-selector-result-content {
-      background: $highlight-color;
+    .osw-selector-result-selected .osw-selector-result-content:before {
+      @include clearfix;
+      background: $green;
+      border: 2px solid #fff;
+      border-radius: 50%;
+      color: #fff;
+      content: '\f075';
+      float: right;
+      font-family: 'SyncDings';
+      font-size: 12px;
+      height: 18px;
+      line-height: 15px;
+      padding-left: 4px;
+      width: 14px;
     }
 
     .osw-selector-result-image {
       width: 22px;
     }
 
-    .osw-selector-result-icon {
+    .osw-selector-result-icon .oswi {
       font-size: 18px;
       text-align: center;
+      margin-left: 1px;
     }
 
     .osw-selector-result-name {
@@ -49,35 +63,42 @@
     }
   }
 
-  .osw-selector-index-browse {
-    .osw-selector-result {
-      @include box-sizing(border-box);
-      padding: 5px;
-      vertical-align: bottom;
+  .osw-selector-index-browse .osw-selector-index-middle {
+    .osw-selector-result-selected .osw-selector-result-content:before {
+      @include clearfix;
+      background: $green;
+      border: 2px solid #fff;
+      border-radius: 50%;
+      color: #fff;
+      content: '\f075';
+      float: right;
+      font-family: 'SyncDings';
+      font-size: 16px;
+      height: 24px;
+      line-height: 20px;
+      margin-top: 8px;
+      padding-left: 5px;
+      width: 19px;
     }
 
-    .osw-selector-result-selected .osw-selector-result-content {
-      opacity: .5;
-    }
-
-    .osw-selector-result-active .osw-selector-result-content {
-      padding: 8px;
-      border: 2px solid $blue-darkest;
+    .osw-selector-result:first-child .osw-selector-result-content {
+      border-top: 0;
+      padding-top: 11px;
     }
 
     .osw-selector-result-content {
-      border-radius: $border-radius;
       padding: 10px;
     }
 
     .osw-selector-result-image {
       font-size: 30px;
       margin-right: 10px;
-      width: 44px;
+      width: 45px;
     }
 
     .osw-selector-result-icon {
-      top: 3px;
+      @include box-sizing(border-box);
+      padding-top: 2px;
     }
 
     .osw-selector-result-name {
@@ -92,16 +113,37 @@
     }
   }
 
+  .osw-selector-index-right .osw-selector-result-content {
+    &:hover {
+      background: $highlight-color;
+    }
+
+    &:before {
+      @include clearfix;
+      background: $red;
+      border: 2px solid #fff;
+      border-radius: 50%;
+      color: #fff;
+      content: '\f071';
+      float: right;
+      font-family: 'SyncDings';
+      font-size: 12px;
+      height: 18px;
+      line-height: 16px;
+      padding-left: 4px;
+      width: 14px;
+    }
+  }
+
   .osw-selector-result-info {
     margin-left: 5px;
     overflow: hidden;
   }
 
   .osw-selector-result-image {
-    background-color: $slate-darkest;
     background-position: center;
     background-repeat: no-repeat;
-    background-size: cover;
+    background-size: contain;
     border-radius: $border-radius;
     color: #fff;
     float: left;
@@ -116,19 +158,13 @@
   }
 
   .osw-selector-result-icon {
+    background-color: $slate-darkest;
+    border-radius: $border-radius;
     color: #fff;
+    height: 100%;
     position: absolute;
     text-align: center;
     top: 0;
     width: 100%;
-  }
-
-  &[min-width~='691px'] .osw-selector-index-browse .osw-selector-result {
-    display: inline-block;
-    width: 50%;
-  }
-
-  &[min-width~='921px'] .osw-selector-index-browse .osw-selector-result {
-    width: 33.3%;
   }
 }

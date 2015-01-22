@@ -1,0 +1,42 @@
+@import '../config';
+
+.orgsync-widget {
+  .osw-button {
+    @include appearance(none);
+    @include box-sizing(border-box);
+    @include linear-gradient(#fff, $grey-lightest);
+    @include user-select(none);
+    border: 1px solid $grey;
+    border-radius: 3px;
+    color: $grey-darkest;
+    cursor: pointer;
+    display: inline-block;
+    line-height: 2;
+    padding: 0 10px;
+    text-align: center;
+    text-decoration: none;
+
+    &:not(.osw-button-disabled) {
+      &:hover {
+        border-color: #b2b2b2;
+        @include linear-gradient($grey-lightest, $grey-lighter);
+      }
+
+      &:active,
+      &.osw-button-selected {
+        background: $blue-darkest;
+        border-color: $blue-darkest;
+        color: #fff;
+      }
+    }
+
+    &.osw-button-disabled {
+      background: $grey-lighter;
+
+      &.osw-button-selected {
+        background: $grey;
+        color: #fff;
+      }
+    }
+  }
+}

@@ -1,17 +1,17 @@
 {
   "name": "orgsync-widgets",
-  "private": true,
-  "version": "0.0.0",
+  "version": "0.0.33",
   "author": "Casey Foster <c@sey.me>",
+  "main": "dist/orgsync-widgets.js",
   "repository": {
     "type": "git",
     "url": "https://github.com/orgsync/widgets"
   },
   "devDependencies": {
-    "cogs": "0.25.4",
-    "es6-module-transpiler": "0.4.0",
-    "node-sass": "0.9.4",
-    "react-tools": "0.11.2",
-    "watchy": "0.5.3"
+    "cogs": "0.27.1",
+    "6to5": "2.8.2",
+    "node-sass": "2.0.0-beta",
+    "react-tools": "0.12.2",
+    "watchy": "0.5.6"
   }
 }

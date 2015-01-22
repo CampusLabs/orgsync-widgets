@@ -7,6 +7,7 @@
   }
 
   .osw-events-index-sidebar {
+    padding-top: 36px;
     width: 20%;
   }
 
@@ -20,7 +21,6 @@
 
   .osw-events-index-main {
     @include transition(all .5s $ease-out-expo);
-    background: #fff;
     left: 20%;
     position: absolute;
     top: 0;
@@ -33,13 +33,15 @@
   }
 
   .osw-events-index-header {
+    height: 30px;
     padding: 5px;
     @include clearfix;
   }
 
   .osw-events-index-tz {
     color: $grey-darker;
-    padding-bottom: 5px;
+    font-size: 11px;
+    padding: 5px 10px 0 0;
     text-align: right;
   }
 
@@ -57,8 +59,14 @@
     text-align: center;
   }
 
+  .osw-events-index-list-controls {
+    float: right;
+  }
+
   .osw-events-index-view {
-    height: 605px;
+    background: #fff;
+    border: 1px $table-border-style $table-border-color;
+    height: 640px;
     overflow: auto;
   }
 

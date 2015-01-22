@@ -2,21 +2,33 @@
 
 .orgsync-widget {
   .osw-selector-scope {
-    @include ellipsis;
     @include user-select(none);
-    border-radius: $border-radius;
+    border-bottom: 1px solid #eee;
     cursor: pointer;
     font-size: 14px;
-    margin: 10px;
-    padding: 10px;
+    padding: 0 10px;
     text-align: right;
+
+    &:last-child {
+      border-bottom: 0;
+
+      .osw-selector-scope-name {
+        line-height: 35px;
+      }
+    }
   }
 
   .osw-selector-scope-active {
-    background: $grey-lighter;
+    background: $highlight-color;
   }
 
   .osw-selector-scope-toggle {
     float: left;
+    margin: 11px 5px 0 0;
+  }
+
+  .osw-selector-scope-name {
+    @include ellipsis;
+    line-height: 34px;
   }
 }

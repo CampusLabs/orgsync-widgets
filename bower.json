@@ -1,31 +1,41 @@
 {
   "name": "orgsync-widgets",
-  "version": "0.0.0",
-  "main": ["dist/orgsync-widgets.js", "dist/orgsync-widgets.css"],
-  "devDependencies": {
-    "amdainty": "0.1.0",
-    "async": "0.9.0",
-    "bourbon": "3.2.1",
-    "cursors": "0.4.0",
-    "elementQuery": "tysonmatanich/elementQuery#47e310efbe8661d00c63d8c3267e34a66a0d2ee5",
-    "jquery": "2.1.1",
-    "jstz": "https://bitbucket.org/pellepim/jstimezonedetect/get/f9e3e30e1e1f.zip",
-    "live": "0.5.0",
-    "moment": "2.8.3",
-    "moment-timezone": "0.2.2",
-    "olay-react": "0.3.1",
-    "orgsync-api": "0.1.3",
-    "react": "0.11.2",
-    "react-list": "0.1.3",
-    "superagent": "0.18.2",
-    "tinycolor": "1.0.0",
-    "underscore": "1.7.0",
-    "underscore.string": "2.3.3",
-    "velcro": "ebe42cd233472d3962a18214b921aa9d41f1a950"
-  },
+  "version": "0.0.33",
+  "main": [
+    "dist/orgsync-widgets.js",
+    "dist/orgsync-widgets.css"
+  ],
   "ignore": [
-    "images",
-    "scripts",
-    "styles"
-  ]
+    "/.gitignore",
+    "/.jshintrc",
+    "/.npmignore",
+    "/cogs.json",
+    "/index.html",
+    "/Makefile",
+    "/node_modules",
+    "/package.json",
+    "/scripts",
+    "/styles"
+  ],
+  "devDependencies": {
+    "amdainty": "0.2.0",
+    "cache": "0.0.4",
+    "bourbon": "4.0.2",
+    "cursors": "0.5.0",
+    "elementQuery": "tysonmatanich/elementQuery#47e310efbe8661d00c63d8c3267e34a66a0d2ee5",
+    "jquery": "2.1.3",
+    "jstz": "https://bitbucket.org/pellepim/jstimezonedetect/get/f9e3e30e1e1f.zip",
+    "moment": "2.9.0",
+    "moment-timezone": "0.2.5",
+    "olay-react": "0.4.0",
+    "orgsync-api": "0.1.8",
+    "react": "0.12.2",
+    "react-list": "0.2.8",
+    "socket.io-client": "1.2.1",
+    "superagent": "0.21.0",
+    "tinycolor": "1.1.1",
+    "underscore": "1.7.0",
+    "underscore.string": "2.4.0",
+    "velcro": "e522d1d01f443d8b5a6335e1f7fa97d0f60aa7b1"
+  }
 }

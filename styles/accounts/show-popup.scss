@@ -1,0 +1,27 @@
+@import '../config';
+
+.orgsync-widget {
+  .osw-accounts-show-popup {
+    @include clearfix;
+    background: #fff;
+    border-radius: $border-radius;
+    box-shadow: 0 1px 5px rgba(0, 0, 0, .75);
+    margin: 32px auto 0;
+    max-width: 320px;
+    position: relative;
+  }
+
+  .osw-accounts-show-popup-close-button {
+    color: $grey;
+    cursor: pointer;
+    float: right;
+    font-size: 18px;
+    line-height: 15px;
+    padding: 16px;
+
+    &:hover {
+      border-color: $grey-darkest;
+      color: $grey-darkest;
+    }
+  }
+}

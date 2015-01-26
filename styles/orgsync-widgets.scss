@@ -1,8 +1,8 @@
-//= requireSelf
+//= require bower_components/olay-react/olay-react.css
+//= requireself
 //= require ./**/*
 
 @import 'config';
-
 @import 'bower_components/velcro/styles/syncdings';
 
 .orgsync-widget {

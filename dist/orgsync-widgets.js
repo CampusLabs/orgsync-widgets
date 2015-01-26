@@ -68,7 +68,6 @@ var require;
     exports: require
   };
 })();
-
 // bower_components/jquery/dist/jquery.js
 /*!
  * jQuery JavaScript Library v2.1.3
@@ -9235,7 +9234,7 @@ jQuery.fn.andSelf = jQuery.fn.addBack;
 // https://github.com/jrburke/requirejs/wiki/Updating-existing-libraries#wiki-anon
 
 if ( typeof define === "function" && define.amd ) {
-	define( "jquery", [], function() {
+	define( "../bower_components/jquery/dist/jquery", [], function() {
 		return jQuery;
 	});
 }
@@ -9275,7 +9274,18 @@ if ( typeof noGlobal === strundefined ) {
 return jQuery;
 
 }));
+// scripts/jquery.es6
+define('jquery', ["exports", "module", "../bower_components/jquery/dist/jquery"], function (exports, module, _bowerComponentsJqueryDistJquery) {
+  "use strict";
 
+  var _interopRequire = function (obj) {
+    return obj && (obj["default"] || obj);
+  };
+
+  var $ = _interopRequire(_bowerComponentsJqueryDistJquery);
+
+  module.exports = $;
+});
 // bower_components/underscore/underscore.js
 //     Underscore.js 1.7.0
 //     http://underscorejs.org
@@ -10685,17 +10695,28 @@ return jQuery;
   // as a named module because, like jQuery, it is a base library that is
   // popular enough to be bundled in a third party lib, but not be part of
   // an AMD load request. Those cases could generate an error when an
-  // anonymous define('underscore', ) is called outside of a loader request.
+  // anonymous define() is called outside of a loader request.
   if (typeof define === 'function' && define.amd) {
-    define('underscore', [], function() {
+    define('../bower_components/underscore/underscore', [], function() {
       return _;
     });
   }
 }.call(this));
+// scripts/underscore.es6
+define('underscore', ["exports", "module", "../bower_components/underscore/underscore"], function (exports, module, _bowerComponentsUnderscoreUnderscore) {
+  "use strict";
 
+  var _interopRequire = function (obj) {
+    return obj && (obj["default"] || obj);
+  };
+
+  var _ = _interopRequire(_bowerComponentsUnderscoreUnderscore);
+
+  module.exports = _;
+});
 // bower_components/cache/cache.js
 (function (root, factory) {
-  if (typeof define === 'function' && define.amd) define('cache', factory);
+  if (typeof define === 'function' && define.amd) define('../bower_components/cache/cache', factory);
   else if (typeof exports !== 'undefined') module.exports = factory();
   else root.Cache = factory();
 })(this, function () {
@@ -10842,7 +10863,18 @@ return jQuery;
 
   return Cache;
 });
+// scripts/cache.es6
+define('cache', ["exports", "module", "../bower_components/cache/cache"], function (exports, module, _bowerComponentsCacheCache) {
+  "use strict";
 
+  var _interopRequire = function (obj) {
+    return obj && (obj["default"] || obj);
+  };
+
+  var cache = _interopRequire(_bowerComponentsCacheCache);
+
+  module.exports = cache;
+});
 // scripts/config.es6
 define('config', ["exports", "module"], function (exports, module) {
   "use strict";
@@ -10865,9 +10897,8 @@ define('config', ["exports", "module"], function (exports, module) {
     }
   };
 });
-
 // bower_components/elementQuery/elementQuery.js
-/*! elementQuery | Author: Tyson Matanich (http://matanich.com), 2013 | License: MIT */
+﻿/*! elementQuery | Author: Tyson Matanich (http://matanich.com), 2013 | License: MIT */
 (function (window, document, undefined) {
     // Enable strict mode
     "use strict";
@@ -11120,18 +11151,14 @@ define('config', ["exports", "module"], function (exports, module) {
         return value;
     };
 }(document, document.documentElement));
+// scripts/elementQuery.js
 
-(function (root) {
-  var value = root['elementQuery'];
-  if (typeof define === 'function' && define.amd) {
-    define('elementQuery', ['jquery'], function () { return value; });
-  } else if (typeof exports !== 'undefined') {
-    module.exports = value;
-  }
-})(this);
 
+
+var root = this;
+define('elementQuery', function () { return root.elementQuery; });
 // bower_components/socket.io-client/socket.io.js
-!function(e){if("object"==typeof exports&&"undefined"!=typeof module)module.exports=e();else if("function"==typeof define&&define.amd)define('socket.io', [],e);else{var f;"undefined"!=typeof window?f=window:"undefined"!=typeof global?f=global:"undefined"!=typeof self&&(f=self),f.io=e()}}(function(){var define,module,exports;return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);throw new Error("Cannot find module '"+o+"'")}var f=n[o]={exports:{}};t[o][0].call(f.exports,function(e){var n=t[o][1][e];return s(n?n:e)},f,f.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(_dereq_,module,exports){
+!function(e){if("object"==typeof exports&&"undefined"!=typeof module)module.exports=e();else if("function"==typeof define&&define.amd)define('../bower_components/socket.io-client/socket.io', [],e);else{var f;"undefined"!=typeof window?f=window:"undefined"!=typeof global?f=global:"undefined"!=typeof self&&(f=self),f.io=e()}}(function(){var define,module,exports;return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);throw new Error("Cannot find module '"+o+"'")}var f=n[o]={exports:{}};t[o][0].call(f.exports,function(e){var n=t[o][1][e];return s(n?n:e)},f,f.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(_dereq_,module,exports){
 
 module.exports = _dereq_('./lib/');
 
@@ -17844,12 +17871,23 @@ function toArray(list, index) {
 },{}]},{},[1])
 (1)
 });
+// scripts/socket.io.es6
+define('socket.io', ["exports", "module", "../bower_components/socket.io-client/socket.io"], function (exports, module, _bowerComponentsSocketIoClientSocketIo) {
+  "use strict";
 
+  var _interopRequire = function (obj) {
+    return obj && (obj["default"] || obj);
+  };
+
+  var socketIo = _interopRequire(_bowerComponentsSocketIoClientSocketIo);
+
+  module.exports = socketIo;
+});
 // bower_components/react/react-with-addons.js
 /**
  * React (with addons) v0.12.2
  */
-!function(e){if("object"==typeof exports&&"undefined"!=typeof module)module.exports=e();else if("function"==typeof define&&define.amd)define('react', [],e);else{var f;"undefined"!=typeof window?f=window:"undefined"!=typeof global?f=global:"undefined"!=typeof self&&(f=self),f.React=e()}}(function(){var define,module,exports;return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(_dereq_,module,exports){
+!function(e){if("object"==typeof exports&&"undefined"!=typeof module)module.exports=e();else if("function"==typeof define&&define.amd)define('../bower_components/react/react-with-addons', [],e);else{var f;"undefined"!=typeof window?f=window:"undefined"!=typeof global?f=global:"undefined"!=typeof self&&(f=self),f.React=e()}}(function(){var define,module,exports;return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(_dereq_,module,exports){
 /**
  * Copyright 2013-2014, Facebook, Inc.
  * All rights reserved.
@@ -37667,8 +37705,18 @@ if ("production" !== "development") {
 module.exports = warning;
 
 },{"./emptyFunction":121}]},{},[1])(1)
-});
+});// scripts/react.es6
+define('react', ["exports", "module", "../bower_components/react/react-with-addons"], function (exports, module, _bowerComponentsReactReactWithAddons) {
+  "use strict";
 
+  var _interopRequire = function (obj) {
+    return obj && (obj["default"] || obj);
+  };
+
+  var React = _interopRequire(_bowerComponentsReactReactWithAddons);
+
+  module.exports = React;
+});
 // scripts/orgsync-widgets.es6
 define('orgsync-widgets', ["exports", "jquery", "underscore", "cache", "config", "elementQuery", "socket.io", "react", "require"], function (exports, _jquery, _underscore, _cache, _config, _elementQuery, _socketIo, _react, _require) {
   "use strict";
@@ -37734,7 +37782,6 @@ define('orgsync-widgets', ["exports", "jquery", "underscore", "cache", "config",
 
   $(mountAll);
 });
-
 // bower_components/superagent/superagent.js
 ;(function(){
 
@@ -39228,15 +39275,25 @@ require.alias("component-reduce/index.js", "reduce/index.js");
 require.alias("superagent/lib/client.js", "superagent/index.js");if (typeof exports == "object") {
   module.exports = require("superagent");
 } else if (typeof define == "function" && define.amd) {
-  define('superagent', [], function(){ return require("superagent"); });
+  define('../bower_components/superagent/superagent', [], function(){ return require("superagent"); });
 } else {
   this["superagent"] = require("superagent");
-}})();
+}})();// scripts/superagent.es6
+define('superagent', ["exports", "module", "../bower_components/superagent/superagent"], function (exports, module, _bowerComponentsSuperagentSuperagent) {
+  "use strict";
 
+  var _interopRequire = function (obj) {
+    return obj && (obj["default"] || obj);
+  };
+
+  var superagent = _interopRequire(_bowerComponentsSuperagentSuperagent);
+
+  module.exports = superagent;
+});
 // bower_components/orgsync-api/orgsync-api.js
 (function (root, factory) {
   if (typeof define === 'function' && define.amd) {
-    define('orgsync-api', ['superagent'], factory);
+    define('../bower_components/orgsync-api/orgsync-api', ['superagent'], factory);
   } else if (typeof exports !== 'undefined') {
     module.exports = factory(require('superagent'));
   } else {
@@ -39344,7 +39401,18 @@ require.alias("superagent/lib/client.js", "superagent/index.js");if (typeof expo
 
   return OrgSyncApi;
 });
+// scripts/orgsync-api.es6
+define('orgsync-api', ["exports", "module", "../bower_components/orgsync-api/orgsync-api"], function (exports, module, _bowerComponentsOrgsyncApiOrgsyncApi) {
+  "use strict";
 
+  var _interopRequire = function (obj) {
+    return obj && (obj["default"] || obj);
+  };
+
+  var OrgSyncApi = _interopRequire(_bowerComponentsOrgsyncApiOrgsyncApi);
+
+  module.exports = OrgSyncApi;
+});
 // scripts/api.es6
 define('api', ["exports", "module", "config", "orgsync-api"], function (exports, module, _config, _orgsyncApi) {
   "use strict";
@@ -39361,7 +39429,6 @@ define('api', ["exports", "module", "config", "orgsync-api"], function (exports,
 
   module.exports = api;
 });
-
 // scripts/entities/account.es6
 define('entities/account', ["exports"], function (exports) {
   "use strict";
@@ -39372,7 +39439,6 @@ define('entities/account', ["exports"], function (exports) {
     return account.picture_url || DEFAULT_PICTURE;
   };
 });
-
 // scripts/components/accounts/list-item.es6
 define('components/accounts/list-item', ["exports", "module", "entities/account", "react"], function (exports, module, _entitiesAccount, _react) {
   "use strict";
@@ -39408,11 +39474,10 @@ define('components/accounts/list-item', ["exports", "module", "entities/account"
     }
   });
 });
-
 // bower_components/cursors/cursors.js
 (function (root, factory) {
   if (typeof define === 'function' && define.amd) {
-    define('cursors', ['react'], factory);
+    define('../bower_components/cursors/cursors', ['react'], factory);
   } else if (typeof exports !== 'undefined') {
     module.exports = factory(require('react'));
   } else {
@@ -39528,11 +39593,22 @@ define('components/accounts/list-item', ["exports", "module", "entities/account"
     }
   };
 });
+// scripts/cursors.es6
+define('cursors', ["exports", "module", "../bower_components/cursors/cursors"], function (exports, module, _bowerComponentsCursorsCursors) {
+  "use strict";
 
+  var _interopRequire = function (obj) {
+    return obj && (obj["default"] || obj);
+  };
+
+  var Cursors = _interopRequire(_bowerComponentsCursorsCursors);
+
+  module.exports = Cursors;
+});
 // bower_components/react-list/react-list.js
 (function (root, factory) {
   if (typeof define === 'function' && define.amd) {
-    define('react-list', ['react'], factory);
+    define('../bower_components/react-list/react-list', ['react'], factory);
   } else if (typeof exports !== 'undefined') {
     module.exports = factory(require('react'));
   } else {
@@ -39782,7 +39858,18 @@ define('components/accounts/list-item', ["exports", "module", "entities/account"
     }
   });
 });
+// scripts/react-list.es6
+define('react-list', ["exports", "module", "../bower_components/react-list/react-list"], function (exports, module, _bowerComponentsReactListReactList) {
+  "use strict";
 
+  var _interopRequire = function (obj) {
+    return obj && (obj["default"] || obj);
+  };
+
+  var ReactList = _interopRequire(_bowerComponentsReactListReactList);
+
+  module.exports = ReactList;
+});
 // scripts/components/accounts/index.es6
 define('components/accounts/index', ["exports", "module", "underscore", "api", "components/accounts/list-item", "cursors", "react-list", "react"], function (exports, module, _underscore, _api, _componentsAccountsListItem, _cursors, _reactList, _react) {
   "use strict";
@@ -39845,7 +39932,6 @@ define('components/accounts/index', ["exports", "module", "underscore", "api", "
     }
   });
 });
-
 // bower_components/underscore.string/lib/underscore.string.js
 //  Underscore.string
 //  (c) 2010 Esa-Matti Suuronen <esa-matti aet suuronen dot org>
@@ -40512,7 +40598,7 @@ define('components/accounts/index', ["exports", "module", "underscore", "api", "
 
   // Register as a named module with AMD.
   if (typeof define === 'function' && define.amd)
-    define('underscore.string', [], function(){ return _s; });
+    define('../bower_components/underscore.string/lib/underscore.string', [], function(){ return _s; });
 
 
   // Integrate with Underscore.js if defined
@@ -40520,7 +40606,18 @@ define('components/accounts/index', ["exports", "module", "underscore", "api", "
   root._ = root._ || {};
   root._.string = root._.str = _s;
 }(this, String);
+// scripts/underscore.string.es6
+define('underscore.string', ["exports", "module", "../bower_components/underscore.string/lib/underscore.string"], function (exports, module, _bowerComponentsUnderscoreStringLibUnderscoreString) {
+  "use strict";
 
+  var _interopRequire = function (obj) {
+    return obj && (obj["default"] || obj);
+  };
+
+  var _str = _interopRequire(_bowerComponentsUnderscoreStringLibUnderscoreString);
+
+  module.exports = _str;
+});
 // scripts/utils/join-class-names.es6
 define('utils/join-class-names', ["exports", "module", "underscore"], function (exports, module, _underscore) {
   "use strict";
@@ -40535,7 +40632,6 @@ define('utils/join-class-names', ["exports", "module", "underscore"], function (
     return _.compact(_.unique((a || "").split(/\s+/).concat((b || "").split(/\s+/)))).join(" ");
   };
 });
-
 // scripts/components/ui/button.es6
 define('components/ui/button', ["exports", "module", "cursors", "utils/join-class-names", "react"], function (exports, module, _cursors, _utilsJoinClassNames, _react) {
   "use strict";
@@ -40587,7 +40683,6 @@ define('components/ui/button', ["exports", "module", "cursors", "utils/join-clas
     }
   });
 });
-
 // scripts/components/accounts/show.es6
 define('components/accounts/show', ["exports", "module", "underscore", "underscore.string", "api", "components/ui/button", "config", "cursors", "react", "entities/account"], function (exports, module, _underscore, _underscoreString, _api, _componentsUiButton, _config, _cursors, _react, _entitiesAccount) {
   "use strict";
@@ -40737,7 +40832,6 @@ define('components/accounts/show', ["exports", "module", "underscore", "undersco
     }
   });
 });
-
 // scripts/components/ui/icon.es6
 define('components/ui/icon', ["exports", "module", "cursors", "utils/join-class-names", "react"], function (exports, module, _cursors, _utilsJoinClassNames, _react) {
   "use strict";
@@ -40762,7 +40856,6 @@ define('components/ui/icon', ["exports", "module", "cursors", "utils/join-class-
     }
   });
 });
-
 // scripts/components/accounts/show-popup.es6
 define('components/accounts/show-popup', ["exports", "module", "components/accounts/show", "cursors", "components/ui/icon", "react"], function (exports, module, _componentsAccountsShow, _cursors, _componentsUiIcon, _react) {
   "use strict";
@@ -40801,7 +40894,6 @@ define('components/accounts/show-popup', ["exports", "module", "components/accou
     }
   });
 });
-
 // scripts/components/albums/list-item.es6
 define('components/albums/list-item', ["exports", "module", "underscore", "cursors", "react"], function (exports, module, _underscore, _cursors, _react) {
   "use strict";
@@ -40859,7 +40951,6 @@ define('components/albums/list-item', ["exports", "module", "underscore", "curso
     }
   });
 });
-
 // scripts/components/photos/list-item.es6
 define('components/photos/list-item', ["exports", "module", "cursors", "components/ui/icon", "react"], function (exports, module, _cursors, _componentsUiIcon, _react) {
   "use strict";
@@ -40914,7 +41005,6 @@ define('components/photos/list-item', ["exports", "module", "cursors", "componen
     }
   });
 });
-
 // bower_components/moment/moment.js
 //! moment.js
 //! version : 2.9.0
@@ -43946,7 +44036,7 @@ define('components/photos/list-item', ["exports", "module", "cursors", "componen
     if (hasModule) {
         module.exports = moment;
     } else if (typeof define === 'function' && define.amd) {
-        define('moment', function (require, exports, module) {
+        define('../bower_components/moment/moment', function (require, exports, module) {
             if (module.config && module.config() && module.config().noGlobal === true) {
                 // release the global variable
                 globalScope.moment = oldGlobalMoment;
@@ -43959,7 +44049,18 @@ define('components/photos/list-item', ["exports", "module", "cursors", "componen
         makeGlobal();
     }
 }).call(this);
+// scripts/moment.es6
+define('moment', ["exports", "module", "../bower_components/moment/moment"], function (exports, module, _bowerComponentsMomentMoment) {
+  "use strict";
 
+  var _interopRequire = function (obj) {
+    return obj && (obj["default"] || obj);
+  };
+
+  var moment = _interopRequire(_bowerComponentsMomentMoment);
+
+  module.exports = moment;
+});
 // scripts/components/comments/list-item.es6
 define('components/comments/list-item', ["exports", "module", "moment", "react"], function (exports, module, _moment, _react) {
   "use strict";
@@ -44006,7 +44107,6 @@ define('components/comments/list-item', ["exports", "module", "moment", "react"]
     }
   });
 });
-
 // scripts/components/comments/new.es6
 define('components/comments/new', ["exports", "module", "components/ui/button", "react"], function (exports, module, _componentsUiButton, _react) {
   "use strict";
@@ -44033,7 +44133,6 @@ define('components/comments/new', ["exports", "module", "components/ui/button", 
     }
   });
 });
-
 // scripts/components/comments/index.es6
 define('components/comments/index', ["exports", "module", "jquery", "underscore", "api", "cursors", "react-list", "components/comments/list-item", "components/comments/new", "react"], function (exports, module, _jquery, _underscore, _api, _cursors, _reactList, _componentsCommentsListItem, _componentsCommentsNew, _react) {
   "use strict";
@@ -44107,7 +44206,6 @@ define('components/comments/index', ["exports", "module", "jquery", "underscore"
     }
   });
 });
-
 // scripts/components/photos/show.es6
 define('components/photos/show', ["exports", "module", "components/comments/index", "cursors", "react"], function (exports, module, _componentsCommentsIndex, _cursors, _react) {
   "use strict";
@@ -44162,11 +44260,10 @@ define('components/photos/show', ["exports", "module", "components/comments/inde
     }
   });
 });
-
 // bower_components/olay-react/olay-react.js
 (function (root, factory) {
   if (typeof define === 'function' && define.amd) {
-    define('olay-react', ['react'], factory);
+    define('../bower_components/olay-react/olay-react', ['react'], factory);
   } else if (typeof exports !== 'undefined') {
     module.exports = factory(require('react'));
   } else {
@@ -44273,7 +44370,18 @@ define('components/photos/show', ["exports", "module", "components/comments/inde
     }
   });
 });
+// scripts/olay-react.es6
+define('olay-react', ["exports", "module", "../bower_components/olay-react/olay-react"], function (exports, module, _bowerComponentsOlayReactOlayReact) {
+  "use strict";
 
+  var _interopRequire = function (obj) {
+    return obj && (obj["default"] || obj);
+  };
+
+  var OlayReact = _interopRequire(_bowerComponentsOlayReactOlayReact);
+
+  module.exports = OlayReact;
+});
 // scripts/components/ui/popup.es6
 define('components/ui/popup', ["exports", "module", "elementQuery", "components/ui/icon", "olay-react", "react"], function (exports, module, _elementQuery, _componentsUiIcon, _olayReact, _react) {
   "use strict";
@@ -44352,7 +44460,6 @@ define('components/ui/popup', ["exports", "module", "elementQuery", "components/
     }
   });
 });
-
 // scripts/components/photos/index.es6
 define('components/photos/index', ["exports", "module", "jquery", "underscore", "api", "components/photos/list-item", "components/photos/show", "cursors", "react-list", "react", "components/ui/popup"], function (exports, module, _jquery, _underscore, _api, _componentsPhotosListItem, _componentsPhotosShow, _cursors, _reactList, _react, _componentsUiPopup) {
   "use strict";
@@ -44489,7 +44596,6 @@ define('components/photos/index', ["exports", "module", "jquery", "underscore", 
     }
   });
 });
-
 // scripts/components/albums/show.es6
 define('components/albums/show', ["exports", "module", "components/photos/index", "cursors", "react"], function (exports, module, _componentsPhotosIndex, _cursors, _react) {
   "use strict";
@@ -44538,7 +44644,6 @@ define('components/albums/show', ["exports", "module", "components/photos/index"
     }
   });
 });
-
 // scripts/components/albums/index.es6
 define('components/albums/index', ["exports", "module", "jquery", "underscore", "api", "components/albums/list-item", "components/albums/show", "cursors", "react-list", "react", "components/ui/popup"], function (exports, module, _jquery, _underscore, _api, _componentsAlbumsListItem, _componentsAlbumsShow, _cursors, _reactList, _react, _componentsUiPopup) {
   "use strict";
@@ -44672,7 +44777,6 @@ define('components/albums/index', ["exports", "module", "jquery", "underscore", 
     }
   });
 });
-
 // scripts/components/event-filters/list-item.es6
 define('components/event-filters/list-item', ["exports", "module", "cursors", "components/ui/icon", "react"], function (exports, module, _cursors, _componentsUiIcon, _react) {
   "use strict";
@@ -44729,7 +44833,6 @@ define('components/event-filters/list-item', ["exports", "module", "cursors", "c
     }
   });
 });
-
 // bower_components/tinycolor/tinycolor.js
 // TinyColor v1.1.1
 // https://github.com/bgrins/TinyColor
@@ -45839,7 +45942,7 @@ if (typeof module !== "undefined" && module.exports) {
 }
 // AMD/requirejs: Define the module
 else if (typeof define === 'function' && define.amd) {
-    define('tinycolor', function () {return tinycolor;});
+    define('../bower_components/tinycolor/tinycolor', function () {return tinycolor;});
 }
 // Browser: Expose to window
 else {
@@ -45847,69 +45950,28 @@ else {
 }
 
 })();
+// scripts/tinycolor.es6
+define('tinycolor', ["exports", "module", "../bower_components/tinycolor/tinycolor"], function (exports, module, _bowerComponentsTinycolorTinycolor) {
+  "use strict";
 
-// bower_components/velcro/config.json
-(function (root, factory) {
-  if (typeof define === 'function' && define.amd) {
-    define('velcro-config', [], factory);
-  } else if (typeof exports !== 'undefined') {
-    module.exports = factory();
-  } else {
-    root['velcro-config'] = factory();
-  }
-})(this, function () {
-return {
-  "colors": [
-    {"id": 0, "name": "nothing", "hex": "ffffff"},
-    {"id": 1, "name": "red-lightest", "hex": "edab9b"},
-    {"id": 2, "name": "purple", "hex": "a95bbf"},
-    {"id": 3, "name": "teal-lightest", "hex": "a4dcca"},
-    {"id": 4, "name": "pink-lightest", "hex": "e29ce1"},
-    {"id": 5, "name": "green", "hex": "87d361"},
-    {"id": 6, "name": "orange", "hex": "e57d02"},
-    {"id": 7, "name": "purple-lightest", "hex": "cfa4dc"},
-    {"id": 8, "name": "yellow-lightest", "hex": "f8e2ac"},
-    {"id": 9, "name": "grey", "hex": "cccccc"},
-    {"id": 10, "name": "yellow", "hex": "efc24f"},
-    {"id": 11, "name": "indigo-lightest", "hex": "ced9ef"},
-    {"id": 12, "name": "blue-lightest", "hex": "8cd1e6"},
-    {"id": 13, "name": "red", "hex": "de6444"},
-    {"id": 14, "name": "white", "hex": "ffffff"},
-    {"id": 15, "name": "indigo", "hex": "819dd5"},
-    {"id": 16, "name": "teal", "hex": "5bbfa1"},
-    {"id": 17, "name": "grey-lighter", "hex": "e2e2e2"},
-    {"id": 18, "name": "pink", "hex": "cb4dc7"},
-    {"id": 19, "name": "green-lightest", "hex": "c5e9b1"},
-    {"id": 20, "name": "blue", "hex": "38afd4"},
-    {"id": 21, "name": "orange-lightest", "hex": "fdac50"},
-    {"id": 100, "name": "nothing", "hex": "ffffff"},
-    {"id": 101, "name": "red-lightest", "hex": "edab9b"},
-    {"id": 102, "name": "purple", "hex": "a95bbf"},
-    {"id": 103, "name": "teal-lightest", "hex": "a4dcca"},
-    {"id": 104, "name": "pink-lightest", "hex": "e29ce1"},
-    {"id": 105, "name": "green", "hex": "87d361"},
-    {"id": 106, "name": "orange", "hex": "e57d02"},
-    {"id": 107, "name": "purple-lightest", "hex": "cfa4dc"},
-    {"id": 108, "name": "yellow-lightest", "hex": "f8e2ac"},
-    {"id": 109, "name": "grey", "hex": "cccccc"},
-    {"id": 110, "name": "yellow", "hex": "efc24f"},
-    {"id": 111, "name": "indigo-lightest", "hex": "ced9ef"},
-    {"id": 112, "name": "blue-lightest", "hex": "8cd1e6"},
-    {"id": 113, "name": "red", "hex": "de6444"},
-    {"id": 114, "name": "white", "hex": "ffffff"},
-    {"id": 115, "name": "indigo", "hex": "819dd5"},
-    {"id": 116, "name": "teal", "hex": "5bbfa1"},
-    {"id": 117, "name": "grey-lighter", "hex": "e2e2e2"},
-    {"id": 118, "name": "pink", "hex": "cb4dc7"},
-    {"id": 119, "name": "green-lightest", "hex": "c5e9b1"},
-    {"id": 120, "name": "blue", "hex": "38afd4"},
-    {"id": 121, "name": "orange-lightest", "hex": "fdac50"}
-  ]
-};
+  var _interopRequire = function (obj) {
+    return obj && (obj["default"] || obj);
+  };
+
+  var tinycolor = _interopRequire(_bowerComponentsTinycolorTinycolor);
+
+  module.exports = tinycolor;
 });
+// bower_components/velcro/config.json
+define('../bower_components/velcro/config', ["exports", "module"], function (exports, module) {
+  "use strict";
 
+  module.exports = {
+    colors: [{ id: 0, name: "nothing", hex: "ffffff" }, { id: 1, name: "red-lightest", hex: "edab9b" }, { id: 2, name: "purple", hex: "a95bbf" }, { id: 3, name: "teal-lightest", hex: "a4dcca" }, { id: 4, name: "pink-lightest", hex: "e29ce1" }, { id: 5, name: "green", hex: "87d361" }, { id: 6, name: "orange", hex: "e57d02" }, { id: 7, name: "purple-lightest", hex: "cfa4dc" }, { id: 8, name: "yellow-lightest", hex: "f8e2ac" }, { id: 9, name: "grey", hex: "cccccc" }, { id: 10, name: "yellow", hex: "efc24f" }, { id: 11, name: "indigo-lightest", hex: "ced9ef" }, { id: 12, name: "blue-lightest", hex: "8cd1e6" }, { id: 13, name: "red", hex: "de6444" }, { id: 14, name: "white", hex: "ffffff" }, { id: 15, name: "indigo", hex: "819dd5" }, { id: 16, name: "teal", hex: "5bbfa1" }, { id: 17, name: "grey-lighter", hex: "e2e2e2" }, { id: 18, name: "pink", hex: "cb4dc7" }, { id: 19, name: "green-lightest", hex: "c5e9b1" }, { id: 20, name: "blue", hex: "38afd4" }, { id: 21, name: "orange-lightest", hex: "fdac50" }, { id: 100, name: "nothing", hex: "ffffff" }, { id: 101, name: "red-lightest", hex: "edab9b" }, { id: 102, name: "purple", hex: "a95bbf" }, { id: 103, name: "teal-lightest", hex: "a4dcca" }, { id: 104, name: "pink-lightest", hex: "e29ce1" }, { id: 105, name: "green", hex: "87d361" }, { id: 106, name: "orange", hex: "e57d02" }, { id: 107, name: "purple-lightest", hex: "cfa4dc" }, { id: 108, name: "yellow-lightest", hex: "f8e2ac" }, { id: 109, name: "grey", hex: "cccccc" }, { id: 110, name: "yellow", hex: "efc24f" }, { id: 111, name: "indigo-lightest", hex: "ced9ef" }, { id: 112, name: "blue-lightest", hex: "8cd1e6" }, { id: 113, name: "red", hex: "de6444" }, { id: 114, name: "white", hex: "ffffff" }, { id: 115, name: "indigo", hex: "819dd5" }, { id: 116, name: "teal", hex: "5bbfa1" }, { id: 117, name: "grey-lighter", hex: "e2e2e2" }, { id: 118, name: "pink", hex: "cb4dc7" }, { id: 119, name: "green-lightest", hex: "c5e9b1" }, { id: 120, name: "blue", hex: "38afd4" }, { id: 121, name: "orange-lightest", hex: "fdac50" }]
+  };
+});
 // scripts/components/event-filters/index.es6
-define('components/event-filters/index', ["exports", "module", "underscore", "api", "cursors", "components/event-filters/list-item", "react", "tinycolor", "velcro-config"], function (exports, module, _underscore, _api, _cursors, _componentsEventFiltersListItem, _react, _tinycolor, _velcroConfig) {
+define('components/event-filters/index', ["exports", "module", "underscore", "api", "cursors", "components/event-filters/list-item", "react", "tinycolor", "../bower_components/velcro/config"], function (exports, module, _underscore, _api, _cursors, _componentsEventFiltersListItem, _react, _tinycolor, _bowerComponentsVelcroConfig) {
   "use strict";
 
   var _interopRequire = function (obj) {
@@ -45928,7 +45990,7 @@ define('components/event-filters/index', ["exports", "module", "underscore", "ap
 
   var tinycolor = _interopRequire(_tinycolor);
 
-  var velcroConfig = _interopRequire(_velcroConfig);
+  var velcroConfig = _interopRequire(_bowerComponentsVelcroConfig);
 
   var RSVP_HEX = "94b363";
 
@@ -46087,7 +46149,6 @@ define('components/event-filters/index', ["exports", "module", "underscore", "ap
     }
   });
 });
-
 // bower_components/moment-timezone/builds/moment-timezone-with-data.js
 //! moment-timezone.js
 //! version : 0.2.5
@@ -46100,7 +46161,7 @@ define('components/event-filters/index', ["exports", "module", "underscore", "ap
 
 	/*global define*/
 	if (typeof define === 'function' && define.amd) {
-		define('moment-timezone', ['moment'], factory);                 // AMD
+		define('../bower_components/moment-timezone/builds/moment-timezone-with-data', ['moment'], factory);                 // AMD
 	} else if (typeof exports === 'object') {
 		module.exports = factory(require('moment')); // Node
 	} else {
@@ -47079,7 +47140,18 @@ define('components/event-filters/index', ["exports", "module", "underscore", "ap
 
 	return moment;
 }));
+// scripts/moment-timezone.es6
+define('moment-timezone', ["exports", "module", "../bower_components/moment-timezone/builds/moment-timezone-with-data"], function (exports, module, _bowerComponentsMomentTimezoneBuildsMomentTimezoneWithData) {
+  "use strict";
 
+  var _interopRequire = function (obj) {
+    return obj && (obj["default"] || obj);
+  };
+
+  var moment = _interopRequire(_bowerComponentsMomentTimezoneBuildsMomentTimezoneWithData);
+
+  module.exports = moment;
+});
 // scripts/entities/event.es6
 define('entities/event', ["exports", "underscore", "underscore.string", "api", "moment-timezone"], function (exports, _underscore, _underscoreString, _api, _momentTimezone) {
   "use strict";
@@ -47185,8 +47257,7 @@ define('entities/event', ["exports", "underscore", "underscore.string", "api", "
 
   var getNextContiguous = exports.getNextContiguous = function (after, ranges) {
     ranges = _.sortBy(ranges, 0);
-    for (var i = 0,
-        l = ranges.length; i < l; ++i) {
+    for (var i = 0, l = ranges.length; i < l; ++i) {
       var range = ranges[i];
       if (after >= range[0] && after < range[1]) after = range[1];
     }
@@ -47235,7 +47306,6 @@ define('entities/event', ["exports", "underscore", "underscore.string", "api", "
     }, _.partial(handleFetch, options, cb));
   };
 });
-
 // scripts/components/ui/sep.es6
 define('components/ui/sep', ["exports", "module", "react"], function (exports, module, _react) {
   "use strict";
@@ -47252,7 +47322,6 @@ define('components/ui/sep', ["exports", "module", "react"], function (exports, m
     }
   });
 });
-
 // scripts/components/events/show.es6
 define('components/events/show', ["exports", "module", "underscore", "underscore.string", "api", "components/ui/button", "cursors", "components/ui/icon", "react", "components/ui/sep", "entities/event"], function (exports, module, _underscore, _underscoreString, _api, _componentsUiButton, _cursors, _componentsUiIcon, _react, _componentsUiSep, _entitiesEvent) {
   "use strict";
@@ -47635,7 +47704,6 @@ define('components/events/show', ["exports", "module", "underscore", "underscore
     }
   });
 });
-
 // scripts/components/events/td.es6
 define('components/events/td', ["exports", "module", "cursors", "components/ui/popup", "react", "components/events/show", "tinycolor", "entities/event"], function (exports, module, _cursors, _componentsUiPopup, _react, _componentsEventsShow, _tinycolor, _entitiesEvent) {
   "use strict";
@@ -47815,7 +47883,6 @@ define('components/events/td', ["exports", "module", "cursors", "components/ui/p
     }
   });
 });
-
 // scripts/components/events/list-item.es6
 define('components/events/list-item', ["exports", "module", "underscore.string", "cursors", "components/ui/icon", "components/ui/popup", "react", "components/ui/sep", "components/events/show", "entities/event"], function (exports, module, _underscoreString, _cursors, _componentsUiIcon, _componentsUiPopup, _react, _componentsUiSep, _componentsEventsShow, _entitiesEvent) {
   "use strict";
@@ -47986,7 +48053,6 @@ define('components/events/list-item', ["exports", "module", "underscore.string",
     }
   });
 });
-
 // scripts/components/events/list-date.es6
 define('components/events/list-date', ["exports", "module", "cursors", "react-list", "components/events/list-item", "react", "entities/event"], function (exports, module, _cursors, _reactList, _componentsEventsListItem, _react, _entitiesEvent) {
   "use strict";
@@ -48053,7 +48119,6 @@ define('components/events/list-date', ["exports", "module", "cursors", "react-li
     }
   });
 });
-
 // scripts/components/events/week.es6
 define('components/events/week', ["exports", "module", "underscore", "cursors", "components/events/td", "components/events/list-date", "components/ui/popup", "react", "entities/event"], function (exports, module, _underscore, _cursors, _componentsEventsTd, _componentsEventsListDate, _componentsUiPopup, _react, _entitiesEvent) {
   "use strict";
@@ -48290,7 +48355,6 @@ define('components/events/week', ["exports", "module", "underscore", "cursors", 
     }
   });
 });
-
 // scripts/components/events/calendar.es6
 define('components/events/calendar', ["exports", "module", "underscore", "cursors", "entities/event", "react", "components/events/week"], function (exports, module, _underscore, _cursors, _entitiesEvent, _react, _componentsEventsWeek) {
   "use strict";
@@ -48417,7 +48481,6 @@ define('components/events/calendar', ["exports", "module", "underscore", "cursor
     }
   });
 });
-
 // scripts/components/ui/button-group.es6
 define('components/ui/button-group', ["exports", "module", "cursors", "utils/join-class-names", "react"], function (exports, module, _cursors, _utilsJoinClassNames, _react) {
   "use strict";
@@ -48446,7 +48509,6 @@ define('components/ui/button-group', ["exports", "module", "cursors", "utils/joi
     }
   });
 });
-
 // scripts/components/events/list.es6
 define('components/events/list', ["exports", "module", "underscore", "cursors", "react-list", "components/events/list-date", "react", "entities/event"], function (exports, module, _underscore, _cursors, _reactList, _componentsEventsListDate, _react, _entitiesEvent) {
   "use strict";
@@ -48566,7 +48628,6 @@ define('components/events/list', ["exports", "module", "underscore", "cursors", 
     }
   });
 });
-
 // bower_components/jstz/jstz.js
 /**
  * This script gives you the zone info key representing your device's time zone setting.
@@ -48926,16 +48987,11 @@ define('components/events/list', ["exports", "module", "underscore", "cursors", 
     root.jstz = jstz;
   }
 })(this);
+// scripts/jstz.js
 
-(function (root) {
-  var value = root['jstz'];
-  if (typeof define === 'function' && define.amd) {
-    define('jstz', [], function () { return value; });
-  } else if (typeof exports !== 'undefined') {
-    module.exports = value;
-  }
-})(this);
 
+var root = this;
+define('jstz', function () { return root.jstz; });
 // scripts/tz.es6
 define('tz', ["exports", "module", "jstz"], function (exports, module, _jstz) {
   "use strict";
@@ -48948,7 +49004,6 @@ define('tz', ["exports", "module", "jstz"], function (exports, module, _jstz) {
 
   module.exports = jstz.determine().name();
 });
-
 // scripts/components/events/index.es6
 define('components/events/index', ["exports", "module", "underscore", "components/ui/button", "components/ui/button-group", "components/events/calendar", "components/events/list", "cursors", "components/event-filters/index", "components/ui/icon", "react", "tz", "entities/event"], function (exports, module, _underscore, _componentsUiButton, _componentsUiButtonGroup, _componentsEventsCalendar, _componentsEventsList, _cursors, _componentsEventFiltersIndex, _componentsUiIcon, _react, _tz, _entitiesEvent) {
   "use strict";
@@ -49354,7 +49409,6 @@ define('components/events/index', ["exports", "module", "underscore", "component
     }
   });
 });
-
 // scripts/components/news-posts/show.es6
 define('components/news-posts/show', ["exports", "module", "components/comments/index", "cursors", "moment", "react"], function (exports, module, _componentsCommentsIndex, _cursors, _moment, _react) {
   "use strict";
@@ -49411,7 +49465,6 @@ define('components/news-posts/show', ["exports", "module", "components/comments/
     }
   });
 });
-
 // scripts/components/news-posts/list-item.es6
 define('components/news-posts/list-item', ["exports", "module", "jquery", "underscore.string", "cursors", "components/ui/icon", "moment", "components/news-posts/show", "components/ui/popup", "react"], function (exports, module, _jquery, _underscoreString, _cursors, _componentsUiIcon, _moment, _componentsNewsPostsShow, _componentsUiPopup, _react) {
   "use strict";
@@ -49535,7 +49588,6 @@ define('components/news-posts/list-item', ["exports", "module", "jquery", "under
     }
   });
 });
-
 // scripts/components/news-posts/index.es6
 define('components/news-posts/index', ["exports", "module", "underscore", "api", "cursors", "react-list", "components/news-posts/list-item", "react"], function (exports, module, _underscore, _api, _cursors, _reactList, _componentsNewsPostsListItem, _react) {
   "use strict";
@@ -49605,7 +49657,6 @@ define('components/news-posts/index', ["exports", "module", "underscore", "api",
     }
   });
 });
-
 // scripts/components/portals/selector.es6
 define('components/portals/selector', ["exports", "module", "cursors", "utils/join-class-names", "react"], function (exports, module, _cursors, _utilsJoinClassNames, _react) {
   "use strict";
@@ -49645,7 +49696,6 @@ define('components/portals/selector', ["exports", "module", "cursors", "utils/jo
     }
   });
 });
-
 // scripts/components/portals/faceted-selector.es6
 define('components/portals/faceted-selector', ["exports", "module", "underscore", "cursors", "react", "components/portals/selector"], function (exports, module, _underscore, _cursors, _react, _componentsPortalsSelector) {
   "use strict";
@@ -49686,7 +49736,6 @@ define('components/portals/faceted-selector', ["exports", "module", "underscore"
     }
   });
 });
-
 // scripts/components/portals/category-selector.es6
 define('components/portals/category-selector', ["exports", "module", "cursors", "components/portals/faceted-selector", "utils/join-class-names", "react"], function (exports, module, _cursors, _componentsPortalsFacetedSelector, _utilsJoinClassNames, _react) {
   "use strict";
@@ -49720,7 +49769,6 @@ define('components/portals/category-selector', ["exports", "module", "cursors", 
     }
   });
 });
-
 // scripts/components/portals/empty.es6
 define('components/portals/empty', ["exports", "module", "components/ui/button", "cursors", "react"], function (exports, module, _componentsUiButton, _cursors, _react) {
   "use strict";
@@ -49789,7 +49837,6 @@ define('components/portals/empty', ["exports", "module", "components/ui/button",
     }
   });
 });
-
 // scripts/components/portals/letter-cell.es6
 define('components/portals/letter-cell', ["exports", "module", "components/ui/button", "cursors", "react"], function (exports, module, _componentsUiButton, _cursors, _react) {
   "use strict";
@@ -49830,7 +49877,6 @@ define('components/portals/letter-cell', ["exports", "module", "components/ui/bu
     }
   });
 });
-
 // scripts/components/portals/letter-table.es6
 define('components/portals/letter-table', ["exports", "module", "underscore", "cursors", "components/portals/letter-cell", "react"], function (exports, module, _underscore, _cursors, _componentsPortalsLetterCell, _react) {
   "use strict";
@@ -49883,7 +49929,6 @@ define('components/portals/letter-table', ["exports", "module", "underscore", "c
     }
   });
 });
-
 // scripts/components/portals/query.es6
 define('components/portals/query', ["exports", "module", "cursors", "react"], function (exports, module, _cursors, _react) {
   "use strict";
@@ -49915,7 +49960,6 @@ define('components/portals/query', ["exports", "module", "cursors", "react"], fu
     }
   });
 });
-
 // scripts/components/portals/summary.es6
 define('components/portals/summary', ["exports", "module", "underscore", "components/ui/button", "cursors", "components/ui/icon", "react"], function (exports, module, _underscore, _componentsUiButton, _cursors, _componentsUiIcon, _react) {
   "use strict";
@@ -49979,7 +50023,6 @@ define('components/portals/summary', ["exports", "module", "underscore", "compon
     }
   });
 });
-
 // scripts/components/portals/umbrella-selector.es6
 define('components/portals/umbrella-selector', ["exports", "module", "cursors", "components/portals/faceted-selector", "utils/join-class-names", "react"], function (exports, module, _cursors, _componentsPortalsFacetedSelector, _utilsJoinClassNames, _react) {
   "use strict";
@@ -50013,7 +50056,6 @@ define('components/portals/umbrella-selector', ["exports", "module", "cursors", 
     }
   });
 });
-
 // scripts/components/portals/filters.es6
 define('components/portals/filters', ["exports", "module", "components/portals/category-selector", "cursors", "components/portals/letter-table", "components/portals/query", "react", "components/portals/summary", "components/portals/umbrella-selector"], function (exports, module, _componentsPortalsCategorySelector, _cursors, _componentsPortalsLetterTable, _componentsPortalsQuery, _react, _componentsPortalsSummary, _componentsPortalsUmbrellaSelector) {
   "use strict";
@@ -50066,7 +50108,6 @@ define('components/portals/filters', ["exports", "module", "components/portals/c
     }
   });
 });
-
 // scripts/components/ui/button-row.es6
 define('components/ui/button-row', ["exports", "module", "cursors", "utils/join-class-names", "react"], function (exports, module, _cursors, _utilsJoinClassNames, _react) {
   "use strict";
@@ -50095,7 +50136,6 @@ define('components/ui/button-row', ["exports", "module", "cursors", "utils/join-
     }
   });
 });
-
 // scripts/components/portals/show.es6
 define('components/portals/show', ["exports", "module", "api", "cursors", "components/ui/button", "components/ui/button-row", "react"], function (exports, module, _api, _cursors, _componentsUiButton, _componentsUiButtonRow, _react) {
   "use strict";
@@ -50202,7 +50242,6 @@ define('components/portals/show', ["exports", "module", "api", "cursors", "compo
     }
   });
 });
-
 // scripts/components/portals/list-item.es6
 define('components/portals/list-item', ["exports", "module", "cursors", "components/ui/popup", "react", "components/portals/show"], function (exports, module, _cursors, _componentsUiPopup, _react, _componentsPortalsShow) {
   "use strict";
@@ -50305,7 +50344,6 @@ define('components/portals/list-item', ["exports", "module", "cursors", "compone
     }
   });
 });
-
 // scripts/components/portals/index.es6
 define('components/portals/index', ["exports", "module", "underscore", "underscore.string", "api", "cursors", "react-list", "components/portals/filters", "components/portals/list-item", "components/portals/empty", "react"], function (exports, module, _underscore, _underscoreString, _api, _cursors, _reactList, _componentsPortalsFilters, _componentsPortalsListItem, _componentsPortalsEmpty, _react) {
   "use strict";
@@ -50505,7 +50543,6 @@ define('components/portals/index', ["exports", "module", "underscore", "undersco
     }
   });
 });
-
 // scripts/entities/selector/item.es6
 define('entities/selector/item', ["exports", "underscore", "underscore.string"], function (exports, _underscore, _underscoreString) {
   "use strict";
@@ -50574,7 +50611,6 @@ define('entities/selector/item', ["exports", "underscore", "underscore.string"],
 
   var getBasicFields = exports.getBasicFields = _.partial(_.pick, _, BASIC_FIELDS);
 });
-
 // scripts/components/selector/result.es6
 define('components/selector/result', ["exports", "module", "underscore", "underscore.string", "cursors", "components/ui/icon", "react", "entities/selector/item"], function (exports, module, _underscore, _underscoreString, _cursors, _componentsUiIcon, _react, _entitiesSelectorItem) {
   "use strict";
@@ -50657,7 +50693,6 @@ define('components/selector/result', ["exports", "module", "underscore", "unders
     }
   });
 });
-
 // scripts/components/selector/scope.es6
 define('components/selector/scope', ["exports", "module", "cursors", "react", "entities/selector/item"], function (exports, module, _cursors, _react, _entitiesSelectorItem) {
   "use strict";
@@ -50729,7 +50764,6 @@ define('components/selector/scope', ["exports", "module", "cursors", "react", "e
     }
   });
 });
-
 // scripts/entities/selector/store.es6
 define('entities/selector/store', ["exports", "underscore", "underscore.string", "orgsync-widgets", "entities/selector/item", "react"], function (exports, _underscore, _underscoreString, _orgsyncWidgets, _entitiesSelectorItem, _react) {
   "use strict";
@@ -50848,7 +50882,6 @@ define('entities/selector/store', ["exports", "underscore", "underscore.string",
     });
   };
 });
-
 // scripts/components/selector/token.es6
 define('components/selector/token', ["exports", "module", "cursors", "components/ui/icon", "react", "entities/selector/item"], function (exports, module, _cursors, _componentsUiIcon, _react, _entitiesSelectorItem) {
   "use strict";
@@ -50898,7 +50931,6 @@ define('components/selector/token', ["exports", "module", "cursors", "components
     }
   });
 });
-
 // scripts/components/selector/index.es6
 define('components/selector/index', ["exports", "module", "underscore", "orgsync-widgets", "components/ui/button", "cursors", "react-list", "components/ui/popup", "react", "components/selector/result", "components/selector/scope", "entities/selector/store", "components/selector/token", "entities/selector/item"], function (exports, module, _underscore, _orgsyncWidgets, _componentsUiButton, _cursors, _reactList, _componentsUiPopup, _react, _componentsSelectorResult, _componentsSelectorScope, _entitiesSelectorStore, _componentsSelectorToken, _entitiesSelectorItem) {
   "use strict";
@@ -51452,7 +51484,6 @@ define('components/selector/index', ["exports", "module", "underscore", "orgsync
 
   module.exports = SelectorIndex;
 });
-
 // scripts/components/ui/auto-textbox.es6
 define('components/ui/auto-textbox', ["exports", "module", "jquery", "cursors", "react"], function (exports, module, _jquery, _cursors, _react) {
   "use strict";
@@ -51501,7 +51532,6 @@ define('components/ui/auto-textbox', ["exports", "module", "jquery", "cursors", 
     }
   });
 });
-
 // scripts/components/ui/text-button.es6
 define('components/ui/text-button', ["exports", "module", "components/ui/button", "cursors", "react"], function (exports, module, _componentsUiButton, _cursors, _react) {
   "use strict";
@@ -51524,8 +51554,7 @@ define('components/ui/text-button', ["exports", "module", "components/ui/button"
     }
   });
 });
-
-window.jQuery.noConflict(true);
+    window.jQuery.noConflict(true);
 
     return require('orgsync-widgets');
   }).call({});

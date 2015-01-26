@@ -8,10 +8,6 @@
     "url": "https://github.com/orgsync/widgets"
   },
   "devDependencies": {
-    "cogs": "0.27.1",
-    "6to5": "2.8.2",
-    "node-sass": "2.0.0-beta",
-    "react-tools": "0.12.2",
-    "watchy": "0.5.6"
+    "cogs": "0.32.5"
   }
 }

@@ -1,0 +1,13 @@
+$pin-url: 'https://orgsync.com/assets/elements/pin.png';
+
+.orgsync-widget {
+  .osw-files-list-item-pin {
+    background: url($pin-url);
+    height: 25px;
+    width: 25px;
+
+    &.osw-files-list-item-pin-hidden {
+      visibility: hidden;
+    }
+  }
+}

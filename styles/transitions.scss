@@ -1,0 +1,28 @@
+@import 'config';
+
+.orgsync-widget {
+  .osw-slide-forward-enter-active,
+  .osw-slide-forward-leave-active,
+  .osw-slide-back-enter-active,
+  .osw-slide-back-leave-active {
+    @include transition(all .5s $ease-out-expo);
+    pointer-events: none;
+  }
+
+  .osw-slide-back-enter,
+  .osw-slide-forward-leave.osw-slide-forward-leave-active {
+    @include transform(translateX(-100%));
+  }
+
+  .osw-slide-forward-enter.osw-slide-forward-enter-active,
+  .osw-slide-forward-leave,
+  .osw-slide-back-enter.osw-slide-back-enter-active,
+  .osw-slide-back-leave {
+    @include transform(translateX(0%));
+  }
+
+  .osw-slide-forward-enter,
+  .osw-slide-back-leave.osw-slide-back-leave-active {
+    @include transform(translateX(100%));
+  }
+}

@@ -49409,6 +49409,413 @@ define('components/events/index', ["exports", "module", "underscore", "component
     }
   });
 });
+// scripts/components/ui/text-button.es6
+define('components/ui/text-button', ["exports", "module", "components/ui/button", "cursors", "react"], function (exports, module, _componentsUiButton, _cursors, _react) {
+  "use strict";
+
+  var _interopRequire = function (obj) {
+    return obj && (obj["default"] || obj);
+  };
+
+  var Button = _interopRequire(_componentsUiButton);
+
+  var Cursors = _interopRequire(_cursors);
+
+  var React = _interopRequire(_react);
+
+  module.exports = React.createClass({
+    mixins: [Cursors],
+
+    render: function () {
+      return React.createElement(Button, React.__spread({}, this.props, { baseClassName: "osw-text-button" }));
+    }
+  });
+});
+// scripts/components/files/breadcrumb.es6
+define('components/files/breadcrumb', ["exports", "module", "cursors", "react", "components/ui/text-button"], function (exports, module, _cursors, _react, _componentsUiTextButton) {
+  "use strict";
+
+  var _interopRequire = function (obj) {
+    return obj && (obj["default"] || obj);
+  };
+
+  var Cursors = _interopRequire(_cursors);
+
+  var React = _interopRequire(_react);
+
+  var TextButton = _interopRequire(_componentsUiTextButton);
+
+  module.exports = React.createClass({
+    mixins: [Cursors],
+
+    goToFile: function () {
+      this.update({
+        direction: { $set: "back" },
+        currentFile: { $set: this.props.file }
+      });
+    },
+
+    render: function () {
+      var file = this.props.file;
+      return React.createElement(
+        "span",
+        null,
+        file.id ? " > " : "",
+        React.createElement(
+          TextButton,
+          { onClick: this.goToFile },
+          file.name
+        )
+      );
+    }
+  });
+
+
+  // https://github.com/orgsync/orgsync/pull/6129#issuecomment-52841135
+});
+// scripts/entities/file.es6
+define('entities/file', ["exports"], function (exports) {
+  "use strict";
+
+  var ALIASES = {
+    Document: "doc",
+    JavaScript: "js",
+    File: "other"
+  };
+  var SLUG_PREFIX = "https://orgsync.com/assets/icons/file-type-icons/file-";
+  var SLUG_SUFFIX = "-128.svg";
+
+  var getPictureUrl = exports.getPictureUrl = function (file) {
+    var category = file.category || "folder";
+    var slug = ALIASES[category] || category.toLowerCase();
+    return SLUG_PREFIX + slug + SLUG_SUFFIX;
+  };
+});
+// scripts/components/files/list-item.es6
+define('components/files/list-item', ["exports", "module", "cursors", "entities/file", "moment", "react", "components/ui/sep", "components/ui/text-button"], function (exports, module, _cursors, _entitiesFile, _moment, _react, _componentsUiSep, _componentsUiTextButton) {
+  "use strict";
+
+  var _interopRequire = function (obj) {
+    return obj && (obj["default"] || obj);
+  };
+
+  var Cursors = _interopRequire(_cursors);
+
+  var File = _interopRequire(_entitiesFile);
+
+  var moment = _interopRequire(_moment);
+
+  var React = _interopRequire(_react);
+
+  var Sep = _interopRequire(_componentsUiSep);
+
+  var TextButton = _interopRequire(_componentsUiTextButton);
+
+  var FORMAT = "MMM D, YYYY, h:mm A";
+
+  module.exports = React.createClass({
+    mixins: [Cursors],
+
+    goToFile: function () {
+      this.update({
+        direction: { $set: "forward" },
+        currentFile: { $set: this.state.file }
+      });
+    },
+
+    renderPin: function () {
+      var classes = ["osw-files-list-item-pin"];
+      if (!this.state.file.is_pinned) {
+        classes.push("osw-files-list-item-pin-hidden");
+      }
+      return React.createElement("div", { className: classes.join(" ") });
+    },
+
+    renderCount: function () {
+      return React.createElement(
+        TextButton,
+        { onClick: this.goToFile },
+        this.state.file.file_count
+      );
+    },
+
+    renderDownload: function () {
+      return React.createElement(
+        TextButton,
+        { href: this.state.file.links.download },
+        "Download"
+      );
+    },
+
+    render: function () {
+      var file = this.state.file;
+      return React.createElement(
+        "div",
+        { className: "osw-files-list-item" },
+        React.createElement(
+          "pre",
+          null,
+          JSON.stringify(file, null, 2)
+        ),
+        this.renderPin(),
+        React.createElement("img", { src: File.getPictureUrl(file), onClick: this.goToFile }),
+        React.createElement(
+          "div",
+          { onClick: this.goToFile },
+          file.name
+        ),
+        React.createElement(
+          "div",
+          null,
+          React.createElement(
+            "span",
+            null,
+            moment(file.updated_at).format(FORMAT)
+          ),
+          React.createElement(Sep, null),
+          file.type === "folder" ? this.renderCount() : this.renderDownload()
+        )
+      );
+    }
+  });
+});
+// scripts/components/files/file-show.es6
+define('components/files/file-show', ["exports", "module", "underscore", "api", "cursors", "react-list", "components/files/list-item", "react"], function (exports, module, _underscore, _api, _cursors, _reactList, _componentsFilesListItem, _react) {
+  "use strict";
+
+  var _interopRequire = function (obj) {
+    return obj && (obj["default"] || obj);
+  };
+
+  var _ = _interopRequire(_underscore);
+
+  var api = _interopRequire(_api);
+
+  var Cursors = _interopRequire(_cursors);
+
+  var List = _interopRequire(_reactList);
+
+  var FilesListItem = _interopRequire(_componentsFilesListItem);
+
+  var React = _interopRequire(_react);
+
+  var PER_PAGE = 100;
+
+  module.exports = React.createClass({
+    mixins: [Cursors],
+
+    getFiles: function () {
+      return this.state.folder.files || [];
+    },
+
+    fetch: function (cb) {
+      var id = this.state.folder.id;
+      var path = "/portals/:portal_id/files";
+      if (id) path += "/:id/contents";
+      api.get("/portals/:portal_id/files", {
+        portal_id: this.props.portalId,
+        id: id,
+        page: Math.floor(this.getFiles().length / PER_PAGE) + 1,
+        per_page: PER_PAGE
+      }, _.partial(this.handleFetch, cb));
+    },
+
+    handleFetch: function (cb, er, res) {
+      if (er) return cb(er);
+      var parent = this.state.file;
+      var files = _.chain(this.getFiles().concat(res.data)).unique("id").map(function (file) {
+        return _.extend({}, file, { parent: parent });
+      }).value();
+      this.update({ folder: { files: { $set: files } } });
+      cb(null, res.data.length < PER_PAGE);
+    },
+
+    renderListItem: function (file) {
+      var i = this.getFiles().indexOf(file);
+      return React.createElement(FilesListItem, {
+        key: file.id,
+        cursors: {
+          direction: this.getCursor("direction"),
+          file: this.getCursor("folder", ["files", i])
+        }
+      });
+    },
+
+    render: function () {
+      return React.createElement(
+        "div",
+        null,
+        this.state.file.name
+      );
+    }
+  });
+
+
+  // https://github.com/orgsync/orgsync/pull/6129#issuecomment-52841135
+});
+// scripts/components/files/folder-show.es6
+define('components/files/folder-show', ["exports", "module", "underscore", "api", "cursors", "react-list", "components/files/list-item", "react"], function (exports, module, _underscore, _api, _cursors, _reactList, _componentsFilesListItem, _react) {
+  "use strict";
+
+  var _interopRequire = function (obj) {
+    return obj && (obj["default"] || obj);
+  };
+
+  var _ = _interopRequire(_underscore);
+
+  var api = _interopRequire(_api);
+
+  var Cursors = _interopRequire(_cursors);
+
+  var List = _interopRequire(_reactList);
+
+  var FilesListItem = _interopRequire(_componentsFilesListItem);
+
+  var React = _interopRequire(_react);
+
+  var PER_PAGE = 100;
+
+  module.exports = React.createClass({
+    mixins: [Cursors],
+
+    getFiles: function () {
+      return this.state.file.files || [];
+    },
+
+    fetch: function (cb) {
+      var folder = this.state.file;
+      var path = "/portals/:portal_id/files";
+      if (folder.id) path += "/:id/contents";
+      api.get(path, _.extend({
+        portal_id: folder.portal.id,
+        id: folder.id || void 0,
+        page: Math.floor(this.getFiles().length / PER_PAGE) + 1,
+        per_page: PER_PAGE
+      }), _.partial(this.handleFetch, cb));
+    },
+
+    handleFetch: function (cb, er, res) {
+      if (er) return cb(er);
+      var parent = this.state.file;
+      var files = _.chain(this.getFiles().concat(res.data)).unique("id").map(function (file) {
+        return _.extend({}, file, { parent: parent, portal: parent.portal });
+      }).value();
+      this.update({ file: { files: { $set: files } } });
+      cb(null, res.data.length < PER_PAGE);
+    },
+
+    renderListItem: function (file) {
+      var i = this.getFiles().indexOf(file);
+      return React.createElement(FilesListItem, {
+        key: file.id,
+        cursors: {
+          direction: this.getCursor("direction"),
+          currentFile: this.getCursor("file"),
+          file: this.getCursor("file", ["files", i])
+        }
+      });
+    },
+
+    render: function () {
+      return React.createElement(List, {
+        className: "osw-files-index",
+        items: this.getFiles(),
+        renderItem: this.renderListItem,
+        fetch: this.fetch
+      });
+    }
+  });
+
+
+  // https://github.com/orgsync/orgsync/pull/6129#issuecomment-52841135
+});
+// scripts/components/files/index.es6
+define('components/files/index', ["exports", "module", "underscore", "components/files/breadcrumb", "cursors", "components/files/file-show", "components/files/folder-show", "react"], function (exports, module, _underscore, _componentsFilesBreadcrumb, _cursors, _componentsFilesFileShow, _componentsFilesFolderShow, _react) {
+  "use strict";
+
+  var _interopRequire = function (obj) {
+    return obj && (obj["default"] || obj);
+  };
+
+  var _ = _interopRequire(_underscore);
+
+  var Breadcrumb = _interopRequire(_componentsFilesBreadcrumb);
+
+  var Cursors = _interopRequire(_cursors);
+
+  var FileShow = _interopRequire(_componentsFilesFileShow);
+
+  var FolderShow = _interopRequire(_componentsFilesFolderShow);
+
+  var React = _interopRequire(_react);
+
+  var CSSTransitionGroup = React.addons.CSSTransitionGroup;
+
+  module.exports = React.createClass({
+    mixins: [Cursors],
+
+    getInitialState: function () {
+      return {
+        direction: "forward",
+        currentFile: {
+          id: 0,
+          type: "folder",
+          name: "Files",
+          portal: {
+            id: this.props.portalId
+          }
+        }
+      };
+    },
+
+    renderBreadCrumb: function (file) {
+      return React.createElement(Breadcrumb, {
+        key: file.id,
+        file: file,
+        cursors: {
+          direction: this.getCursor("direction"),
+          currentFile: this.getCursor("currentFile")
+        }
+      });
+    },
+
+    renderBreadCrumbs: function () {
+      var files = [];
+      var file = this.state.currentFile;
+      while (file) {
+        files = [file].concat(files);
+        file = file.parent;
+      }
+      return _.map(files, this.renderBreadCrumb);
+    },
+
+    render: function () {
+      var file = this.state.currentFile;
+      var Show = file.type === "folder" ? FolderShow : FileShow;
+      return React.createElement(
+        "div",
+        { className: "osw-files-index" },
+        this.renderBreadCrumbs(),
+        React.createElement(
+          CSSTransitionGroup,
+          {
+            transitionName: "osw-slide-" + this.state.direction
+          },
+          React.createElement(Show, {
+            key: file.id,
+            cursors: {
+              direction: this.getCursor("direction"),
+              file: this.getCursor("currentFile")
+            }
+          })
+        )
+      );
+    }
+  });
+
+
+  // https://github.com/orgsync/orgsync/pull/6129#issuecomment-52841135
+});
 // scripts/components/news-posts/show.es6
 define('components/news-posts/show', ["exports", "module", "components/comments/index", "cursors", "moment", "react"], function (exports, module, _componentsCommentsIndex, _cursors, _moment, _react) {
   "use strict";
@@ -51529,28 +51936,6 @@ define('components/ui/auto-textbox', ["exports", "module", "jquery", "cursors", 
 
     render: function () {
       return React.createElement("textarea", this.props);
-    }
-  });
-});
-// scripts/components/ui/text-button.es6
-define('components/ui/text-button', ["exports", "module", "components/ui/button", "cursors", "react"], function (exports, module, _componentsUiButton, _cursors, _react) {
-  "use strict";
-
-  var _interopRequire = function (obj) {
-    return obj && (obj["default"] || obj);
-  };
-
-  var Button = _interopRequire(_componentsUiButton);
-
-  var Cursors = _interopRequire(_cursors);
-
-  var React = _interopRequire(_react);
-
-  module.exports = React.createClass({
-    mixins: [Cursors],
-
-    render: function () {
-      return React.createElement(Button, React.__spread({}, this.props, { baseClassName: "osw-text-button" }));
     }
   });
 });

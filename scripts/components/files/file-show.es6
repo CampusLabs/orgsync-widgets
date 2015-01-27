@@ -10,51 +10,28 @@ var PER_PAGE = 100;
 export default React.createClass({
   mixins: [Cursors],
 
-  getFiles: function () {
-    return this.state.folder.files || [];
+  componentWillMount: function () {
+    this.fetch();
   },
 
-  fetch: function (cb) {
-    var id = this.state.folder.id;
-    var path = '/portals/:portal_id/files';
-    if (id) path += '/:id/contents';
-    api.get('/portals/:portal_id/files', {
-      portal_id: this.props.portalId,
-      id: id,
-      page: Math.floor(this.getFiles().length / PER_PAGE) + 1,
-      per_page: PER_PAGE
-    }, _.partial(this.handleFetch, cb));
+  fetch: function () {
+    this.update({isLoading: {$set: true}, error: {$set: null}});
+    api.get(this.state.file.links.show, this.handleFetch);
   },
 
-  handleFetch: function (cb, er, res) {
-    if (er) return cb(er);
-    var parent = this.state.file;
-    var files = _.chain(this.getFiles().concat(res.data))
-      .unique('id')
-      .map(function (file) { return _.extend({}, file, {parent: parent}); })
-      .value();
-    this.update({folder: {files: {$set: files}}});
-    cb(null, res.data.length < PER_PAGE);
-  },
-
-  renderListItem: function (file) {
-    var i = this.getFiles().indexOf(file);
-    return (
-      <FilesListItem
-        key={file.id}
-        cursors={{
-          direction: this.getCursor('direction'),
-          file: this.getCursor('folder', ['files', i])
-        }}
-      />
-    );
+  handleFetch: function (er, res) {
+    this.update({
+      isLoading: {$set: false},
+      error: {$set: er},
+      file: {$merge: er ? {} : res.data}
+    });
   },
 
   render: function () {
     return (
-      <div>{this.state.file.name}</div>
+      this.state.isLoading ? <div>Loading...</div> :
+      this.state.error ? <div>{this.state.error.toString()}</div> :
+      <pre>{JSON.stringify(this.state.file, null, 2)}</pre>
     );
   }
 });
-
-// https://github.com/orgsync/orgsync/pull/6129#issuecomment-52841135

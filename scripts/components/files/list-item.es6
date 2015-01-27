@@ -17,6 +17,10 @@ export default React.createClass({
     });
   },
 
+  stopPropagation: function (ev) {
+    ev.stopPropagation();
+  },
+
   renderPin: function () {
     let classes = ['osw-files-list-item-pin'];
     if (!this.state.file.is_pinned) {
@@ -26,31 +30,43 @@ export default React.createClass({
   },
 
   renderCount: function () {
-    return (
-      <TextButton onClick={this.goToFile}>
-        {this.state.file.file_count}
-      </TextButton>
-    );
+    return `${this.state.file.file_count || 'No'} Items`;
   },
 
   renderDownload: function () {
     return (
-      <TextButton href={this.state.file.links.download}>Download</TextButton>
+      <TextButton
+        className='osw-files-list-item-download'
+        href={this.state.file.links.download}
+        onClick={this.stopPropagation}
+      >
+        Download
+      </TextButton>
     );
   },
 
   render: function () {
     let file = this.state.file;
     return (
-      <div className='osw-files-list-item'>
-        <pre>{JSON.stringify(file, null, 2)}</pre>
-        {this.renderPin()}
-        <img src={File.getPictureUrl(file)} onClick={this.goToFile} />
-        <div onClick={this.goToFile}>{file.name}</div>
-        <div>
-          <span>{moment(file.updated_at).format(FORMAT)}</span>
-          <Sep />
-          {file.type === 'folder' ? this.renderCount() : this.renderDownload()}
+      <div className='osw-files-list-item' onClick={this.goToFile}>
+        <div className='osw-files-list-item-left'>
+          {this.renderPin()}
+          <div
+            className='osw-files-list-item-picture'
+            style={{backgroundImage: `url('${File.getPictureUrl(file)}')`}}
+          />
+        </div>
+        <div className='osw-files-list-item-info'>
+          <div className='osw-files-list-item-name'>{file.name}</div>
+          <div className='osw-files-list-item-date'>
+            <span>{moment(file.updated_at).format(FORMAT)}</span>
+            <Sep />
+            {
+              file.type === 'folder' ?
+              this.renderCount() :
+              this.renderDownload()
+            }
+          </div>
         </div>
       </div>
     );

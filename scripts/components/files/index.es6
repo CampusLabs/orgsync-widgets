@@ -24,6 +24,12 @@ export default React.createClass({
     };
   },
 
+  componentDidUpdate: function (__, prevState) {
+    if (this.state.currentFile.id !== prevState.currentFile.id) {
+      window.scrollTo(0, this.getDOMNode().offsetTop);
+    }
+  },
+
   renderBreadCrumb: function (file) {
     return (
       <Breadcrumb
@@ -54,19 +60,20 @@ export default React.createClass({
       <div className='osw-files-index'>
         {this.renderBreadCrumbs()}
         <CSSTransitionGroup
-          transitionName={'osw-slide-' + this.state.direction}
+          component='div'
+          transitionName={'osw-files-slide-' + this.state.direction}
+          className='osw-files-index-pages'
         >
-          <Show
-            key={file.id}
-            cursors={{
-              direction: this.getCursor('direction'),
-              file: this.getCursor('currentFile')
-            }}
-          />
+          <div key={file.id} className='osw-files-index-page'>
+            <Show
+              cursors={{
+                direction: this.getCursor('direction'),
+                file: this.getCursor('currentFile')
+              }}
+            />
+          </div>
         </CSSTransitionGroup>
       </div>
     );
   }
 });
-
-// https://github.com/orgsync/orgsync/pull/6129#issuecomment-52841135

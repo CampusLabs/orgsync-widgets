@@ -56,7 +56,7 @@ export default React.createClass({
   render: function () {
     return (
       <List
-        className='osw-files-index'
+        className='osw-files-folder-show'
         items={this.getFiles()}
         renderItem={this.renderListItem}
         fetch={this.fetch}
@@ -64,5 +64,3 @@ export default React.createClass({
     );
   }
 });
-
-// https://github.com/orgsync/orgsync/pull/6129#issuecomment-52841135

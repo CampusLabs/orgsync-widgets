@@ -1,13 +1,59 @@
+@import '../config';
+
 $pin-url: 'https://orgsync.com/assets/elements/pin.png';
 
 .orgsync-widget {
+  .osw-files-list-item {
+    @include clearfix;
+    border-top: 1px solid $grey;
+    cursor: pointer;
+    padding: 5px;
+  }
+
+  .osw-files-list-item-left {
+    float: left;
+    white-space: nowrap;
+  }
+
   .osw-files-list-item-pin {
     background: url($pin-url);
+    display: inline-block;
     height: 25px;
+    vertical-align: middle;
     width: 25px;
+  }
 
-    &.osw-files-list-item-pin-hidden {
-      visibility: hidden;
+  .osw-files-list-item-pin-hidden {
+    visibility: hidden;
+  }
+
+  .osw-files-list-item-picture {
+    background: center no-repeat;
+    background-size: contain;
+    display: inline-block;
+    height: 50px;
+    margin-right: 5px;
+    vertical-align: middle;
+    width: 50px;
+  }
+
+  .osw-files-list-item-info {
+    padding-top: 7px;
+  }
+
+  .osw-files-list-item-name {
+    @include ellipsis;
+    color: $blue;
+    font-size: 16px;
+  }
+
+  .osw-files-list-item-date {
+    @include ellipsis;
+
+    &,
+    .osw-files-list-item-download {
+      color: $grey-darker;
+      font-size: 14px;
     }
   }
 }

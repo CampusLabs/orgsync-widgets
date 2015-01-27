@@ -10898,7 +10898,7 @@ define('config', ["exports", "module"], function (exports, module) {
   };
 });
 // bower_components/elementQuery/elementQuery.js
-﻿/*! elementQuery | Author: Tyson Matanich (http://matanich.com), 2013 | License: MIT */
+/*! elementQuery | Author: Tyson Matanich (http://matanich.com), 2013 | License: MIT */
 (function (window, document, undefined) {
     // Enable strict mode
     "use strict";
@@ -10910,6 +10910,14 @@ define('config', ["exports", "module"], function (exports, module) {
     //sizzle.selectors.cacheLength = 50;
 
     var queryData = {};
+
+    var cssRules = null;
+
+    var setCssRules = function () {
+        if (document.styleSheets[0]) {
+            cssRules = (document.styleSheets[0].cssRules !== undefined) ? "cssRules" : "rules";
+        }
+    }
 
     var addQueryDataValue = function (selector, type, pair, number, value) {
 
@@ -10966,6 +10974,106 @@ define('config', ["exports", "module"], function (exports, module) {
         }
     };
 
+    var processSelector = function (selectorText) {
+
+        if (selectorText) {
+
+            var regex = /(\[(min\-width|max\-width|min\-height|max\-height)\~\=(\'|\")([0-9]*.?[0-9]+)(px|em)(\'|\")\])(\[(min\-width|max\-width|min\-height|max\-height)\~\=(\'|\")([0-9]*.?[0-9]+)(px|em)(\'|\")\])?/gi;
+
+            // Split out the full selectors separated by a comma ','
+            var selectors = selectorText.split(",");
+            var i, selector, result, number, prevIndex, k, tail, t;
+            for (i = 0; i < selectors.length; i++) {
+
+                selector = null;
+                prevIndex = 0;
+                k = 0;
+                while (k == 0 || result != null) {
+                    result = regex.exec(selectors[i]);
+                    if (result != null) {
+
+                        // result[2] = min-width|max-width|min-height|max-height
+                        // result[4] = number
+                        // result[5] = px|em
+                        // result[7] = has another
+
+                        // Ensure that it contains a valid numeric value to compare against
+                        number = Number(result[4]);
+                        if (number + "" != "NaN") {
+
+                            if (selector == null) {
+                                // New set: update the current selector
+                                selector = selectors[i].substring(prevIndex, result.index);
+
+                                // Append second half of the selector
+                                tail = selectors[i].substring(result.index + result[1].length);
+                                if (tail.length > 0) {
+                                    
+                                    t = tail.indexOf(" ");
+                                    if (t != 0) {
+                                        if (t > 0) {
+                                            // Take only the current part
+                                            tail = tail.substring(0, t);
+                                        }
+
+                                        // Remove any sibling element queries
+                                        tail = tail.replace(/(\[(min\-width|max\-width|min\-height|max\-height)\~\=(\'|\")([0-9]*.?[0-9]+)(px|em)(\'|\")\])/gi, "");
+                                        selector += tail;
+                                    }
+                                }
+                            }
+
+                            // Update the queryData object
+                            addQueryDataValue(selector, result[2], result[4] + result[5], number, result[5]);
+                        }
+
+                        if (result[7] === undefined || result[7] == "") {
+                            // Reached the end of the set
+                            prevIndex = result.index + result[1].length;
+                            selector = null;
+                        }
+                        else {
+                            // Update result index to process next item in the set
+                            regex.lastIndex = result.index + result[1].length;
+                        }
+                    }
+                    k++;
+                }
+            }
+        }
+    };
+
+    var processStyleSheet = function (styleSheet, force) {
+        
+        if (cssRules == null) {
+            setCssRules();
+        }
+        if (styleSheet[cssRules] && styleSheet[cssRules].length > 0) {
+
+            var ownerNode = styleSheet.ownerNode || styleSheet.owningElement;
+            if (force || (ownerNode.getAttribute("data-elementquery-bypass") === null && ownerNode.getAttribute("data-elementquery-processed") === null)) {
+
+                var i, j, rule;
+
+                for (i = 0; i < styleSheet[cssRules].length; i++) {
+                    rule = styleSheet[cssRules][i];
+
+                    // Check nested rules in media queries etc
+                    if (rule[cssRules] && rule[cssRules].length > 0) {
+                        for (j = 0; j < rule[cssRules].length; j++) {
+                            processSelector(rule[cssRules][j].selectorText);
+                        }
+                    }
+                    else {
+                        processSelector(rule.selectorText);
+                    }
+                }
+
+                // Flag the style sheet as processed
+                ownerNode.setAttribute("data-elementquery-processed", "");
+            }
+        }
+    };
 
     // Refactor from jQuery.trim()
     var trim = function (text) {
@@ -11027,6 +11135,17 @@ define('config', ["exports", "module"], function (exports, module) {
         }
     };
 
+    var init = function () {
+
+        // Process the style sheets
+        var i;
+        for (i = 0; i < document.styleSheets.length; i++) {
+            processStyleSheet(document.styleSheets[i]);
+        }
+
+        refresh();
+    }
+
     var refresh = function () {
 
         var i, ei, j, k, elements, element, val;
@@ -11087,26 +11206,60 @@ define('config', ["exports", "module"], function (exports, module) {
     // Expose some public functions
     window.elementQuery = function (arg1, arg2) {
 
-        if (arg1 && typeof arg1 == "object" && !(arg1.cssRules || arg1.rules)) {
-            // Add new selector queries
-            updateQueryData(arg1, arg2);
+        if (arg1 && typeof arg1 == "object") {
+            if (arg1.cssRules || arg1.rules) {
+                // Process a new style sheet
+                processStyleSheet(arg1, true);
+
+                if (arg2 == true) {
+                    refresh();
+                }
+            } else {
+                // Add new selector queries
+                updateQueryData(arg1, arg2);
+            }
         }
         else if (!arg1 && !arg2) {
             refresh();
         }
     };
 
-    //NOTE: For development purposes only! Added stub to prevent errors.
-    window.elementQuery.selectors = function () { };
+    //NOTE: For development purposes only!
+    window.elementQuery.selectors = function () {
+
+        var data = {};
+        var i, j, k;
+
+        // For each selector
+        for (i in queryData) {
+
+            // For each min|max-width|height string
+            for (j in queryData[i]) {
+
+                // For each number px|em value pair
+                for (k in queryData[i][j]) {
+
+                    if (data[i] === undefined) {
+                        data[i] = {};
+                    }
+                    if (data[i][j] === undefined) {
+                        data[i][j] = [];
+                    }
+                    data[i][j][data[i][j].length] = k;
+                }
+            }
+        }
+        return data;
+    };
 
     if (window.addEventListener) {
         window.addEventListener("resize", refresh, false);
-        window.addEventListener("DOMContentLoaded", refresh, false);
-        window.addEventListener("load", refresh, false);
+        window.addEventListener("DOMContentLoaded", init, false);
+        window.addEventListener("load", init, false);
     }
     else if (window.attachEvent) {
         window.attachEvent("onresize", refresh);
-        window.attachEvent("onload", refresh);
+        window.attachEvent("onload", init);
     }
 }(this, document, undefined));
 
@@ -11150,8 +11303,7 @@ define('config', ["exports", "module"], function (exports, module) {
         // Return the em value in pixels
         return value;
     };
-}(document, document.documentElement));
-// scripts/elementQuery.js
+}(document, document.documentElement));// scripts/elementQuery.js
 
 
 
@@ -47318,7 +47470,7 @@ define('components/ui/sep', ["exports", "module", "react"], function (exports, m
 
   module.exports = React.createClass({
     render: function () {
-      return React.createElement("span", { dangerouslySetInnerHTML: { __html: " • " } });
+      return React.createElement("span", { dangerouslySetInnerHTML: { __html: " &#x2022; " } });
     }
   });
 });
@@ -49523,6 +49675,10 @@ define('components/files/list-item', ["exports", "module", "cursors", "entities/
       });
     },
 
+    stopPropagation: function (ev) {
+      ev.stopPropagation();
+    },
+
     renderPin: function () {
       var classes = ["osw-files-list-item-pin"];
       if (!this.state.file.is_pinned) {
@@ -49532,17 +49688,17 @@ define('components/files/list-item', ["exports", "module", "cursors", "entities/
     },
 
     renderCount: function () {
-      return React.createElement(
-        TextButton,
-        { onClick: this.goToFile },
-        this.state.file.file_count
-      );
+      return "" + (this.state.file.file_count || "No") + " Items";
     },
 
     renderDownload: function () {
       return React.createElement(
         TextButton,
-        { href: this.state.file.links.download },
+        {
+          className: "osw-files-list-item-download",
+          href: this.state.file.links.download,
+          onClick: this.stopPropagation
+        },
         "Download"
       );
     },
@@ -49551,29 +49707,35 @@ define('components/files/list-item', ["exports", "module", "cursors", "entities/
       var file = this.state.file;
       return React.createElement(
         "div",
-        { className: "osw-files-list-item" },
-        React.createElement(
-          "pre",
-          null,
-          JSON.stringify(file, null, 2)
-        ),
-        this.renderPin(),
-        React.createElement("img", { src: File.getPictureUrl(file), onClick: this.goToFile }),
+        { className: "osw-files-list-item", onClick: this.goToFile },
         React.createElement(
           "div",
-          { onClick: this.goToFile },
-          file.name
+          { className: "osw-files-list-item-left" },
+          this.renderPin(),
+          React.createElement("div", {
+            className: "osw-files-list-item-picture",
+            style: { backgroundImage: "url('" + File.getPictureUrl(file) + "')" }
+          })
         ),
         React.createElement(
           "div",
-          null,
+          { className: "osw-files-list-item-info" },
           React.createElement(
-            "span",
-            null,
-            moment(file.updated_at).format(FORMAT)
+            "div",
+            { className: "osw-files-list-item-name" },
+            file.name
           ),
-          React.createElement(Sep, null),
-          file.type === "folder" ? this.renderCount() : this.renderDownload()
+          React.createElement(
+            "div",
+            { className: "osw-files-list-item-date" },
+            React.createElement(
+              "span",
+              null,
+              moment(file.updated_at).format(FORMAT)
+            ),
+            React.createElement(Sep, null),
+            file.type === "folder" ? this.renderCount() : this.renderDownload()
+          )
         )
       );
     }
@@ -49604,54 +49766,39 @@ define('components/files/file-show', ["exports", "module", "underscore", "api", 
   module.exports = React.createClass({
     mixins: [Cursors],
 
-    getFiles: function () {
-      return this.state.folder.files || [];
+    componentWillMount: function () {
+      this.fetch();
     },
 
-    fetch: function (cb) {
-      var id = this.state.folder.id;
-      var path = "/portals/:portal_id/files";
-      if (id) path += "/:id/contents";
-      api.get("/portals/:portal_id/files", {
-        portal_id: this.props.portalId,
-        id: id,
-        page: Math.floor(this.getFiles().length / PER_PAGE) + 1,
-        per_page: PER_PAGE
-      }, _.partial(this.handleFetch, cb));
+    fetch: function () {
+      this.update({ isLoading: { $set: true }, error: { $set: null } });
+      api.get(this.state.file.links.show, this.handleFetch);
     },
 
-    handleFetch: function (cb, er, res) {
-      if (er) return cb(er);
-      var parent = this.state.file;
-      var files = _.chain(this.getFiles().concat(res.data)).unique("id").map(function (file) {
-        return _.extend({}, file, { parent: parent });
-      }).value();
-      this.update({ folder: { files: { $set: files } } });
-      cb(null, res.data.length < PER_PAGE);
-    },
-
-    renderListItem: function (file) {
-      var i = this.getFiles().indexOf(file);
-      return React.createElement(FilesListItem, {
-        key: file.id,
-        cursors: {
-          direction: this.getCursor("direction"),
-          file: this.getCursor("folder", ["files", i])
-        }
+    handleFetch: function (er, res) {
+      this.update({
+        isLoading: { $set: false },
+        error: { $set: er },
+        file: { $merge: er ? {} : res.data }
       });
     },
 
     render: function () {
-      return React.createElement(
+      return this.state.isLoading ? React.createElement(
         "div",
         null,
-        this.state.file.name
+        "Loading..."
+      ) : this.state.error ? React.createElement(
+        "div",
+        null,
+        this.state.error.toString()
+      ) : React.createElement(
+        "pre",
+        null,
+        JSON.stringify(this.state.file, null, 2)
       );
     }
   });
-
-
-  // https://github.com/orgsync/orgsync/pull/6129#issuecomment-52841135
 });
 // scripts/components/files/folder-show.es6
 define('components/files/folder-show', ["exports", "module", "underscore", "api", "cursors", "react-list", "components/files/list-item", "react"], function (exports, module, _underscore, _api, _cursors, _reactList, _componentsFilesListItem, _react) {
@@ -49718,16 +49865,13 @@ define('components/files/folder-show', ["exports", "module", "underscore", "api"
 
     render: function () {
       return React.createElement(List, {
-        className: "osw-files-index",
+        className: "osw-files-folder-show",
         items: this.getFiles(),
         renderItem: this.renderListItem,
         fetch: this.fetch
       });
     }
   });
-
-
-  // https://github.com/orgsync/orgsync/pull/6129#issuecomment-52841135
 });
 // scripts/components/files/index.es6
 define('components/files/index', ["exports", "module", "underscore", "components/files/breadcrumb", "cursors", "components/files/file-show", "components/files/folder-show", "react"], function (exports, module, _underscore, _componentsFilesBreadcrumb, _cursors, _componentsFilesFileShow, _componentsFilesFolderShow, _react) {
@@ -49768,6 +49912,12 @@ define('components/files/index', ["exports", "module", "underscore", "components
       };
     },
 
+    componentDidUpdate: function (__, prevState) {
+      if (this.state.currentFile.id !== prevState.currentFile.id) {
+        window.scrollTo(0, this.getDOMNode().offsetTop);
+      }
+    },
+
     renderBreadCrumb: function (file) {
       return React.createElement(Breadcrumb, {
         key: file.id,
@@ -49799,22 +49949,24 @@ define('components/files/index', ["exports", "module", "underscore", "components
         React.createElement(
           CSSTransitionGroup,
           {
-            transitionName: "osw-slide-" + this.state.direction
+            component: "div",
+            transitionName: "osw-files-slide-" + this.state.direction,
+            className: "osw-files-index-pages"
           },
-          React.createElement(Show, {
-            key: file.id,
-            cursors: {
-              direction: this.getCursor("direction"),
-              file: this.getCursor("currentFile")
-            }
-          })
+          React.createElement(
+            "div",
+            { key: file.id, className: "osw-files-index-page" },
+            React.createElement(Show, {
+              cursors: {
+                direction: this.getCursor("direction"),
+                file: this.getCursor("currentFile")
+              }
+            })
+          )
         )
       );
     }
   });
-
-
-  // https://github.com/orgsync/orgsync/pull/6129#issuecomment-52841135
 });
 // scripts/components/news-posts/show.es6
 define('components/news-posts/show', ["exports", "module", "components/comments/index", "cursors", "moment", "react"], function (exports, module, _componentsCommentsIndex, _cursors, _moment, _react) {

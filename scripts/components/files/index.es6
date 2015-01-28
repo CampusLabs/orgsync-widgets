@@ -58,7 +58,9 @@ export default React.createClass({
     var Show = file.type === 'folder' ? FolderShow : FileShow;
     return (
       <div className='osw-files-index'>
-        {this.renderBreadCrumbs()}
+        <div className='osw-files-index-header'>
+          {this.renderBreadCrumbs()}
+        </div>
         <CSSTransitionGroup
           component='div'
           transitionName={'osw-files-slide-' + this.state.direction}

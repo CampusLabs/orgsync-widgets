@@ -1,11 +1,8 @@
-import _ from 'underscore';
 import api from 'api';
 import Cursors from 'cursors';
-import List from 'react-list';
-import FilesListItem from 'components/files/list-item';
 import React from 'react';
 
-var PER_PAGE = 100;
+import {getPictureUrl} from 'entities/file';
 
 export default React.createClass({
   mixins: [Cursors],
@@ -27,11 +24,31 @@ export default React.createClass({
     });
   },
 
+  renderFile: function () {
+    var file = this.state.file;
+    return (
+      <div className='osw-files-file-show'>
+        <div className='osw-files-list-item-left'>
+          <div
+            className='osw-files-list-item-picture'
+            style={{backgroundImage: `url('${getPictureUrl(file)}')`}}
+          />
+        </div>
+        <div className='osw-files-list-item-info'>
+          <div className='osw-files-list-item-name'>{file.name}</div>
+          <div className='osw-files-list-item-date'>
+            {file.updated_at}
+          </div>
+        </div>
+      </div>
+    );
+  },
+
   render: function () {
     return (
       this.state.isLoading ? <div>Loading...</div> :
       this.state.error ? <div>{this.state.error.toString()}</div> :
-      <pre>{JSON.stringify(this.state.file, null, 2)}</pre>
+      this.renderFile()
     );
   }
 });

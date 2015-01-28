@@ -49612,7 +49612,7 @@ define('components/files/breadcrumb', ["exports", "module", "cursors", "react", 
       return React.createElement(
         "span",
         null,
-        file.id ? " > " : "",
+        file.id ? " / " : "",
         React.createElement(
           TextButton,
           { onClick: this.goToFile },
@@ -49642,6 +49642,84 @@ define('entities/file', ["exports"], function (exports) {
     var slug = ALIASES[category] || category.toLowerCase();
     return SLUG_PREFIX + slug + SLUG_SUFFIX;
   };
+});
+// scripts/components/files/file-show.es6
+define('components/files/file-show', ["exports", "module", "api", "cursors", "react", "entities/file"], function (exports, module, _api, _cursors, _react, _entitiesFile) {
+  "use strict";
+
+  var _interopRequire = function (obj) {
+    return obj && (obj["default"] || obj);
+  };
+
+  var api = _interopRequire(_api);
+
+  var Cursors = _interopRequire(_cursors);
+
+  var React = _interopRequire(_react);
+
+  var getPictureUrl = _entitiesFile.getPictureUrl;
+  module.exports = React.createClass({
+    mixins: [Cursors],
+
+    componentWillMount: function () {
+      this.fetch();
+    },
+
+    fetch: function () {
+      this.update({ isLoading: { $set: true }, error: { $set: null } });
+      api.get(this.state.file.links.show, this.handleFetch);
+    },
+
+    handleFetch: function (er, res) {
+      this.update({
+        isLoading: { $set: false },
+        error: { $set: er },
+        file: { $merge: er ? {} : res.data }
+      });
+    },
+
+    renderFile: function () {
+      var file = this.state.file;
+      return React.createElement(
+        "div",
+        { className: "osw-files-file-show" },
+        React.createElement(
+          "div",
+          { className: "osw-files-list-item-left" },
+          React.createElement("div", {
+            className: "osw-files-list-item-picture",
+            style: { backgroundImage: "url('" + getPictureUrl(file) + "')" }
+          })
+        ),
+        React.createElement(
+          "div",
+          { className: "osw-files-list-item-info" },
+          React.createElement(
+            "div",
+            { className: "osw-files-list-item-name" },
+            file.name
+          ),
+          React.createElement(
+            "div",
+            { className: "osw-files-list-item-date" },
+            file.updated_at
+          )
+        )
+      );
+    },
+
+    render: function () {
+      return this.state.isLoading ? React.createElement(
+        "div",
+        null,
+        "Loading..."
+      ) : this.state.error ? React.createElement(
+        "div",
+        null,
+        this.state.error.toString()
+      ) : this.renderFile();
+    }
+  });
 });
 // scripts/components/files/list-item.es6
 define('components/files/list-item', ["exports", "module", "cursors", "entities/file", "moment", "react", "components/ui/sep", "components/ui/text-button"], function (exports, module, _cursors, _entitiesFile, _moment, _react, _componentsUiSep, _componentsUiTextButton) {
@@ -49741,65 +49819,6 @@ define('components/files/list-item', ["exports", "module", "cursors", "entities/
     }
   });
 });
-// scripts/components/files/file-show.es6
-define('components/files/file-show', ["exports", "module", "underscore", "api", "cursors", "react-list", "components/files/list-item", "react"], function (exports, module, _underscore, _api, _cursors, _reactList, _componentsFilesListItem, _react) {
-  "use strict";
-
-  var _interopRequire = function (obj) {
-    return obj && (obj["default"] || obj);
-  };
-
-  var _ = _interopRequire(_underscore);
-
-  var api = _interopRequire(_api);
-
-  var Cursors = _interopRequire(_cursors);
-
-  var List = _interopRequire(_reactList);
-
-  var FilesListItem = _interopRequire(_componentsFilesListItem);
-
-  var React = _interopRequire(_react);
-
-  var PER_PAGE = 100;
-
-  module.exports = React.createClass({
-    mixins: [Cursors],
-
-    componentWillMount: function () {
-      this.fetch();
-    },
-
-    fetch: function () {
-      this.update({ isLoading: { $set: true }, error: { $set: null } });
-      api.get(this.state.file.links.show, this.handleFetch);
-    },
-
-    handleFetch: function (er, res) {
-      this.update({
-        isLoading: { $set: false },
-        error: { $set: er },
-        file: { $merge: er ? {} : res.data }
-      });
-    },
-
-    render: function () {
-      return this.state.isLoading ? React.createElement(
-        "div",
-        null,
-        "Loading..."
-      ) : this.state.error ? React.createElement(
-        "div",
-        null,
-        this.state.error.toString()
-      ) : React.createElement(
-        "pre",
-        null,
-        JSON.stringify(this.state.file, null, 2)
-      );
-    }
-  });
-});
 // scripts/components/files/folder-show.es6
 define('components/files/folder-show', ["exports", "module", "underscore", "api", "cursors", "react-list", "components/files/list-item", "react"], function (exports, module, _underscore, _api, _cursors, _reactList, _componentsFilesListItem, _react) {
   "use strict";
@@ -49868,7 +49887,8 @@ define('components/files/folder-show', ["exports", "module", "underscore", "api"
         className: "osw-files-folder-show",
         items: this.getFiles(),
         renderItem: this.renderListItem,
-        fetch: this.fetch
+        fetch: this.fetch,
+        uniform: true
       });
     }
   });
@@ -49945,7 +49965,11 @@ define('components/files/index', ["exports", "module", "underscore", "components
       return React.createElement(
         "div",
         { className: "osw-files-index" },
-        this.renderBreadCrumbs(),
+        React.createElement(
+          "div",
+          { className: "osw-files-index-header" },
+          this.renderBreadCrumbs()
+        ),
         React.createElement(
           CSSTransitionGroup,
           {

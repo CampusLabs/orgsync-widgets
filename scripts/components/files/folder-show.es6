@@ -60,6 +60,7 @@ export default React.createClass({
         items={this.getFiles()}
         renderItem={this.renderListItem}
         fetch={this.fetch}
+        uniform={true}
       />
     );
   }

@@ -1306,6 +1306,14 @@
   font-weight: bold;
   padding-top: 3px; }
 /* styles/files/index.scss */
+.orgsync-widget .osw-files-index-header {
+  background: #fff;
+  padding: 5px;
+  position: -webkit-sticky;
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  border-bottom: 1px solid #ccc; }
 .orgsync-widget .osw-files-slide-forward-enter-active, .orgsync-widget .osw-files-slide-forward-leave-active, .orgsync-widget .osw-files-slide-back-enter-active, .orgsync-widget .osw-files-slide-back-leave-active {
   -webkit-transition: all .5s cubic-bezier(0.19, 1, 0.22, 1);
   -moz-transition: all .5s cubic-bezier(0.19, 1, 0.22, 1);
@@ -1376,6 +1384,9 @@
     content: "";
     display: table;
     clear: both; }
+  .orgsync-widget .osw-files-list-item:first-child {
+    border-top: 0;
+    padding-top: 6px; }
 .orgsync-widget .osw-files-list-item-left {
   float: left;
   white-space: nowrap; }

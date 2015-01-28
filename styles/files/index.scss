@@ -1,6 +1,16 @@
 @import '../config';
 
 .orgsync-widget {
+  .osw-files-index-header {
+    background: #fff;
+    padding: 5px;
+    position: -webkit-sticky;
+    position: sticky;
+    top: 0;
+    z-index: 1;
+    border-bottom: 1px solid $grey;
+  };
+
   .osw-files-slide-forward-enter-active,
   .osw-files-slide-forward-leave-active,
   .osw-files-slide-back-enter-active,

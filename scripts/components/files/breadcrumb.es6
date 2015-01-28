@@ -16,7 +16,7 @@ export default React.createClass({
     var file = this.props.file;
     return (
       <span>
-        {file.id ? ' > ' : ''}
+        {file.id ? ' / ' : ''}
         <TextButton onClick={this.goToFile}>{file.name}</TextButton>
       </span>
     );

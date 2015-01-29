@@ -39,7 +39,7 @@ var filter = function (item, q, options) {
   var values = _.map(options.fields || ['name'], _.partial(filterValue, item));
   var searchableWords = _.unique(_str.words(values.join(' ').toLowerCase()));
   return _.every(_str.words(q), function (wordA) {
-    return _.any(searchableWords, _.partial(_str.startsWith, _, wordA));
+    return _.any(searchableWords, _.partial(_str.startsWith, _, wordA, 0));
   });
 };
 

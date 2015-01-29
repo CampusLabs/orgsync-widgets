@@ -51542,7 +51542,7 @@ define('entities/selector/store', ["exports", "underscore", "underscore.string",
     q = parse(q);
     if (!q) return true;
     var values = _.map(options.fields || ["name"], _.partial(filterValue, item));
-    var searchableWords = _.unique(_.str.words(values.join(" ").toLowerCase()));
+    var searchableWords = _.unique(_str.words(values.join(" ").toLowerCase()));
     return _.every(_str.words(q), function (wordA) {
       return _.any(searchableWords, _.partial(_str.startsWith, _, wordA));
     });

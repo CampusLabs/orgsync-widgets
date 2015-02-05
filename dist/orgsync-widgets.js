@@ -9275,14 +9275,12 @@ return jQuery;
 
 }));
 // scripts/jquery.es6
-define('jquery', ["exports", "module", "../bower_components/jquery/dist/jquery"], function (exports, module, _bowerComponentsJqueryDistJquery) {
+define('jquery', ["exports", "module", "../bower_components/jquery/dist/jquery"], function (exports, module, _bower_componentsJqueryDistJquery) {
   "use strict";
 
-  var _interopRequire = function (obj) {
-    return obj && (obj["default"] || obj);
-  };
+  var _interopRequire = function (obj) { return obj && obj.__esModule ? obj["default"] : obj; };
 
-  var $ = _interopRequire(_bowerComponentsJqueryDistJquery);
+  var $ = _interopRequire(_bower_componentsJqueryDistJquery);
 
   module.exports = $;
 });
@@ -10703,14 +10701,12 @@ define('jquery', ["exports", "module", "../bower_components/jquery/dist/jquery"]
   }
 }.call(this));
 // scripts/underscore.es6
-define('underscore', ["exports", "module", "../bower_components/underscore/underscore"], function (exports, module, _bowerComponentsUnderscoreUnderscore) {
+define('underscore', ["exports", "module", "../bower_components/underscore/underscore"], function (exports, module, _bower_componentsUnderscoreUnderscore) {
   "use strict";
 
-  var _interopRequire = function (obj) {
-    return obj && (obj["default"] || obj);
-  };
+  var _interopRequire = function (obj) { return obj && obj.__esModule ? obj["default"] : obj; };
 
-  var _ = _interopRequire(_bowerComponentsUnderscoreUnderscore);
+  var _ = _interopRequire(_bower_componentsUnderscoreUnderscore);
 
   module.exports = _;
 });
@@ -10864,14 +10860,12 @@ define('underscore', ["exports", "module", "../bower_components/underscore/under
   return Cache;
 });
 // scripts/cache.es6
-define('cache', ["exports", "module", "../bower_components/cache/cache"], function (exports, module, _bowerComponentsCacheCache) {
+define('cache', ["exports", "module", "../bower_components/cache/cache"], function (exports, module, _bower_componentsCacheCache) {
   "use strict";
 
-  var _interopRequire = function (obj) {
-    return obj && (obj["default"] || obj);
-  };
+  var _interopRequire = function (obj) { return obj && obj.__esModule ? obj["default"] : obj; };
 
-  var cache = _interopRequire(_bowerComponentsCacheCache);
+  var cache = _interopRequire(_bower_componentsCacheCache);
 
   module.exports = cache;
 });
@@ -18243,14 +18237,12 @@ function toArray(list, index) {
 (1)
 });
 // scripts/socket.io.es6
-define('socket.io', ["exports", "module", "../bower_components/socket.io-client/socket.io"], function (exports, module, _bowerComponentsSocketIoClientSocketIo) {
+define('socket.io', ["exports", "module", "../bower_components/socket.io-client/socket.io"], function (exports, module, _bower_componentsSocketIoClientSocketIo) {
   "use strict";
 
-  var _interopRequire = function (obj) {
-    return obj && (obj["default"] || obj);
-  };
+  var _interopRequire = function (obj) { return obj && obj.__esModule ? obj["default"] : obj; };
 
-  var socketIo = _interopRequire(_bowerComponentsSocketIoClientSocketIo);
+  var socketIo = _interopRequire(_bower_componentsSocketIoClientSocketIo);
 
   module.exports = socketIo;
 });
@@ -38077,14 +38069,12 @@ module.exports = warning;
 
 },{"./emptyFunction":121}]},{},[1])(1)
 });// scripts/react.es6
-define('react', ["exports", "module", "../bower_components/react/react-with-addons"], function (exports, module, _bowerComponentsReactReactWithAddons) {
+define('react', ["exports", "module", "../bower_components/react/react-with-addons"], function (exports, module, _bower_componentsReactReactWithAddons) {
   "use strict";
 
-  var _interopRequire = function (obj) {
-    return obj && (obj["default"] || obj);
-  };
+  var _interopRequire = function (obj) { return obj && obj.__esModule ? obj["default"] : obj; };
 
-  var React = _interopRequire(_bowerComponentsReactReactWithAddons);
+  var React = _interopRequire(_bower_componentsReactReactWithAddons);
 
   module.exports = React;
 });
@@ -38092,9 +38082,7 @@ define('react', ["exports", "module", "../bower_components/react/react-with-addo
 define('orgsync-widgets', ["exports", "jquery", "underscore", "cache", "config", "elementQuery", "socket.io", "react", "require"], function (exports, _jquery, _underscore, _cache, _config, _elementQuery, _socketIo, _react, _require) {
   "use strict";
 
-  var _interopRequire = function (obj) {
-    return obj && (obj["default"] || obj);
-  };
+  var _interopRequire = function (obj) { return obj && obj.__esModule ? obj["default"] : obj; };
 
   var $ = _interopRequire(_jquery);
 
@@ -38152,6 +38140,7 @@ define('orgsync-widgets', ["exports", "jquery", "underscore", "cache", "config",
 
 
   $(mountAll);
+  exports.__esModule = true;
 });
 // bower_components/superagent/superagent.js
 ;(function(){
@@ -39650,14 +39639,12 @@ require.alias("superagent/lib/client.js", "superagent/index.js");if (typeof expo
 } else {
   this["superagent"] = require("superagent");
 }})();// scripts/superagent.es6
-define('superagent', ["exports", "module", "../bower_components/superagent/superagent"], function (exports, module, _bowerComponentsSuperagentSuperagent) {
+define('superagent', ["exports", "module", "../bower_components/superagent/superagent"], function (exports, module, _bower_componentsSuperagentSuperagent) {
   "use strict";
 
-  var _interopRequire = function (obj) {
-    return obj && (obj["default"] || obj);
-  };
+  var _interopRequire = function (obj) { return obj && obj.__esModule ? obj["default"] : obj; };
 
-  var superagent = _interopRequire(_bowerComponentsSuperagentSuperagent);
+  var superagent = _interopRequire(_bower_componentsSuperagentSuperagent);
 
   module.exports = superagent;
 });
@@ -39773,14 +39760,12 @@ define('superagent', ["exports", "module", "../bower_components/superagent/super
   return OrgSyncApi;
 });
 // scripts/orgsync-api.es6
-define('orgsync-api', ["exports", "module", "../bower_components/orgsync-api/orgsync-api"], function (exports, module, _bowerComponentsOrgsyncApiOrgsyncApi) {
+define('orgsync-api', ["exports", "module", "../bower_components/orgsync-api/orgsync-api"], function (exports, module, _bower_componentsOrgsyncApiOrgsyncApi) {
   "use strict";
 
-  var _interopRequire = function (obj) {
-    return obj && (obj["default"] || obj);
-  };
+  var _interopRequire = function (obj) { return obj && obj.__esModule ? obj["default"] : obj; };
 
-  var OrgSyncApi = _interopRequire(_bowerComponentsOrgsyncApiOrgsyncApi);
+  var OrgSyncApi = _interopRequire(_bower_componentsOrgsyncApiOrgsyncApi);
 
   module.exports = OrgSyncApi;
 });
@@ -39788,9 +39773,7 @@ define('orgsync-api', ["exports", "module", "../bower_components/orgsync-api/org
 define('api', ["exports", "module", "config", "orgsync-api"], function (exports, module, _config, _orgsyncApi) {
   "use strict";
 
-  var _interopRequire = function (obj) {
-    return obj && (obj["default"] || obj);
-  };
+  var _interopRequire = function (obj) { return obj && obj.__esModule ? obj["default"] : obj; };
 
   var config = _interopRequire(_config);
 
@@ -39809,19 +39792,19 @@ define('entities/account', ["exports"], function (exports) {
   var getPictureUrl = exports.getPictureUrl = function (account) {
     return account.picture_url || DEFAULT_PICTURE;
   };
+  exports.__esModule = true;
 });
 // scripts/components/accounts/list-item.es6
 define('components/accounts/list-item', ["exports", "module", "entities/account", "react"], function (exports, module, _entitiesAccount, _react) {
   "use strict";
 
-  var _interopRequire = function (obj) {
-    return obj && (obj["default"] || obj);
-  };
+  var _interopRequire = function (obj) { return obj && obj.__esModule ? obj["default"] : obj; };
 
   var getPictureUrl = _entitiesAccount.getPictureUrl;
   var React = _interopRequire(_react);
 
   module.exports = React.createClass({
+    displayName: "list-item",
     render: function () {
       var account = this.props.account;
       return React.createElement(
@@ -39965,14 +39948,12 @@ define('components/accounts/list-item', ["exports", "module", "entities/account"
   };
 });
 // scripts/cursors.es6
-define('cursors', ["exports", "module", "../bower_components/cursors/cursors"], function (exports, module, _bowerComponentsCursorsCursors) {
+define('cursors', ["exports", "module", "../bower_components/cursors/cursors"], function (exports, module, _bower_componentsCursorsCursors) {
   "use strict";
 
-  var _interopRequire = function (obj) {
-    return obj && (obj["default"] || obj);
-  };
+  var _interopRequire = function (obj) { return obj && obj.__esModule ? obj["default"] : obj; };
 
-  var Cursors = _interopRequire(_bowerComponentsCursorsCursors);
+  var Cursors = _interopRequire(_bower_componentsCursorsCursors);
 
   module.exports = Cursors;
 });
@@ -40230,14 +40211,12 @@ define('cursors', ["exports", "module", "../bower_components/cursors/cursors"], 
   });
 });
 // scripts/react-list.es6
-define('react-list', ["exports", "module", "../bower_components/react-list/react-list"], function (exports, module, _bowerComponentsReactListReactList) {
+define('react-list', ["exports", "module", "../bower_components/react-list/react-list"], function (exports, module, _bower_componentsReactListReactList) {
   "use strict";
 
-  var _interopRequire = function (obj) {
-    return obj && (obj["default"] || obj);
-  };
+  var _interopRequire = function (obj) { return obj && obj.__esModule ? obj["default"] : obj; };
 
-  var ReactList = _interopRequire(_bowerComponentsReactListReactList);
+  var ReactList = _interopRequire(_bower_componentsReactListReactList);
 
   module.exports = ReactList;
 });
@@ -40245,9 +40224,7 @@ define('react-list', ["exports", "module", "../bower_components/react-list/react
 define('components/accounts/index', ["exports", "module", "underscore", "api", "components/accounts/list-item", "cursors", "react-list", "react"], function (exports, module, _underscore, _api, _componentsAccountsListItem, _cursors, _reactList, _react) {
   "use strict";
 
-  var _interopRequire = function (obj) {
-    return obj && (obj["default"] || obj);
-  };
+  var _interopRequire = function (obj) { return obj && obj.__esModule ? obj["default"] : obj; };
 
   var _ = _interopRequire(_underscore);
 
@@ -40264,6 +40241,7 @@ define('components/accounts/index', ["exports", "module", "underscore", "api", "
   var PER_PAGE = 100;
 
   module.exports = React.createClass({
+    displayName: "index",
     mixins: [Cursors],
 
     getInitialState: function () {
@@ -41317,14 +41295,12 @@ module.exports = function words(str, delimiter) {
 },{"./isBlank":25,"./trim":60}]},{},[14])
 (14)
 });// scripts/underscore.string.es6
-define('underscore.string', ["exports", "module", "../bower_components/underscore.string/dist/underscore.string"], function (exports, module, _bowerComponentsUnderscoreStringDistUnderscoreString) {
+define('underscore.string', ["exports", "module", "../bower_components/underscore.string/dist/underscore.string"], function (exports, module, _bower_componentsUnderscoreStringDistUnderscoreString) {
   "use strict";
 
-  var _interopRequire = function (obj) {
-    return obj && (obj["default"] || obj);
-  };
+  var _interopRequire = function (obj) { return obj && obj.__esModule ? obj["default"] : obj; };
 
-  var _str = _interopRequire(_bowerComponentsUnderscoreStringDistUnderscoreString);
+  var _str = _interopRequire(_bower_componentsUnderscoreStringDistUnderscoreString);
 
   module.exports = _str;
 });
@@ -41332,9 +41308,7 @@ define('underscore.string', ["exports", "module", "../bower_components/underscor
 define('utils/join-class-names', ["exports", "module", "underscore"], function (exports, module, _underscore) {
   "use strict";
 
-  var _interopRequire = function (obj) {
-    return obj && (obj["default"] || obj);
-  };
+  var _interopRequire = function (obj) { return obj && obj.__esModule ? obj["default"] : obj; };
 
   var _ = _interopRequire(_underscore);
 
@@ -41346,9 +41320,9 @@ define('utils/join-class-names', ["exports", "module", "underscore"], function (
 define('components/ui/button', ["exports", "module", "cursors", "utils/join-class-names", "react"], function (exports, module, _cursors, _utilsJoinClassNames, _react) {
   "use strict";
 
-  var _interopRequire = function (obj) {
-    return obj && (obj["default"] || obj);
-  };
+  var _interopRequire = function (obj) { return obj && obj.__esModule ? obj["default"] : obj; };
+
+  var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
 
   var Cursors = _interopRequire(_cursors);
 
@@ -41357,6 +41331,7 @@ define('components/ui/button', ["exports", "module", "cursors", "utils/join-clas
   var React = _interopRequire(_react);
 
   module.exports = React.createClass({
+    displayName: "button",
     mixins: [Cursors],
 
     getDefaultProps: function () {
@@ -41375,7 +41350,7 @@ define('components/ui/button', ["exports", "module", "cursors", "utils/join-clas
     renderAnchor: function () {
       return React.createElement(
         "a",
-        React.__spread({}, this.props, { className: this.getClassName() }),
+        _extends({}, this.props, { className: this.getClassName() }),
         this.props.children
       );
     },
@@ -41383,7 +41358,7 @@ define('components/ui/button', ["exports", "module", "cursors", "utils/join-clas
     renderButton: function () {
       return React.createElement(
         "button",
-        React.__spread({ type: "button" }, this.props, { className: this.getClassName() }),
+        _extends({ type: "button" }, this.props, { className: this.getClassName() }),
         this.props.children
       );
     },
@@ -41397,9 +41372,7 @@ define('components/ui/button', ["exports", "module", "cursors", "utils/join-clas
 define('components/accounts/show', ["exports", "module", "underscore", "underscore.string", "api", "components/ui/button", "config", "cursors", "react", "entities/account"], function (exports, module, _underscore, _underscoreString, _api, _componentsUiButton, _config, _cursors, _react, _entitiesAccount) {
   "use strict";
 
-  var _interopRequire = function (obj) {
-    return obj && (obj["default"] || obj);
-  };
+  var _interopRequire = function (obj) { return obj && obj.__esModule ? obj["default"] : obj; };
 
   var _ = _interopRequire(_underscore);
 
@@ -41417,6 +41390,7 @@ define('components/accounts/show', ["exports", "module", "underscore", "undersco
 
   var getPictureUrl = _entitiesAccount.getPictureUrl;
   module.exports = React.createClass({
+    displayName: "show",
     mixins: [Cursors],
 
     getInitialState: function () {
@@ -41546,9 +41520,9 @@ define('components/accounts/show', ["exports", "module", "underscore", "undersco
 define('components/ui/icon', ["exports", "module", "cursors", "utils/join-class-names", "react"], function (exports, module, _cursors, _utilsJoinClassNames, _react) {
   "use strict";
 
-  var _interopRequire = function (obj) {
-    return obj && (obj["default"] || obj);
-  };
+  var _interopRequire = function (obj) { return obj && obj.__esModule ? obj["default"] : obj; };
+
+  var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
 
   var Cursors = _interopRequire(_cursors);
 
@@ -41557,10 +41531,11 @@ define('components/ui/icon', ["exports", "module", "cursors", "utils/join-class-
   var React = _interopRequire(_react);
 
   module.exports = React.createClass({
+    displayName: "icon",
     mixins: [Cursors],
 
     render: function () {
-      return React.createElement("i", React.__spread({}, this.props, {
+      return React.createElement("i", _extends({}, this.props, {
         className: joinClassNames("oswi oswi-" + this.props.name, this.props.className)
       }));
     }
@@ -41570,9 +41545,7 @@ define('components/ui/icon', ["exports", "module", "cursors", "utils/join-class-
 define('components/accounts/show-popup', ["exports", "module", "components/accounts/show", "cursors", "components/ui/icon", "react"], function (exports, module, _componentsAccountsShow, _cursors, _componentsUiIcon, _react) {
   "use strict";
 
-  var _interopRequire = function (obj) {
-    return obj && (obj["default"] || obj);
-  };
+  var _interopRequire = function (obj) { return obj && obj.__esModule ? obj["default"] : obj; };
 
   var AccountsShow = _interopRequire(_componentsAccountsShow);
 
@@ -41583,6 +41556,7 @@ define('components/accounts/show-popup', ["exports", "module", "components/accou
   var React = _interopRequire(_react);
 
   module.exports = React.createClass({
+    displayName: "show-popup",
     mixins: [Cursors],
 
     handleCloseClick: function (ev) {
@@ -41608,9 +41582,7 @@ define('components/accounts/show-popup', ["exports", "module", "components/accou
 define('components/albums/list-item', ["exports", "module", "underscore", "cursors", "react"], function (exports, module, _underscore, _cursors, _react) {
   "use strict";
 
-  var _interopRequire = function (obj) {
-    return obj && (obj["default"] || obj);
-  };
+  var _interopRequire = function (obj) { return obj && obj.__esModule ? obj["default"] : obj; };
 
   var _ = _interopRequire(_underscore);
 
@@ -41619,6 +41591,7 @@ define('components/albums/list-item', ["exports", "module", "underscore", "curso
   var React = _interopRequire(_react);
 
   module.exports = React.createClass({
+    displayName: "list-item",
     mixins: [Cursors],
 
     handleClick: function (ev) {
@@ -41665,9 +41638,7 @@ define('components/albums/list-item', ["exports", "module", "underscore", "curso
 define('components/photos/list-item', ["exports", "module", "cursors", "components/ui/icon", "react"], function (exports, module, _cursors, _componentsUiIcon, _react) {
   "use strict";
 
-  var _interopRequire = function (obj) {
-    return obj && (obj["default"] || obj);
-  };
+  var _interopRequire = function (obj) { return obj && obj.__esModule ? obj["default"] : obj; };
 
   var Cursors = _interopRequire(_cursors);
 
@@ -41676,6 +41647,7 @@ define('components/photos/list-item', ["exports", "module", "cursors", "componen
   var React = _interopRequire(_react);
 
   module.exports = React.createClass({
+    displayName: "list-item",
     mixins: [Cursors],
 
     handleClick: function (ev) {
@@ -44760,14 +44732,12 @@ define('components/photos/list-item', ["exports", "module", "cursors", "componen
     }
 }).call(this);
 // scripts/moment.es6
-define('moment', ["exports", "module", "../bower_components/moment/moment"], function (exports, module, _bowerComponentsMomentMoment) {
+define('moment', ["exports", "module", "../bower_components/moment/moment"], function (exports, module, _bower_componentsMomentMoment) {
   "use strict";
 
-  var _interopRequire = function (obj) {
-    return obj && (obj["default"] || obj);
-  };
+  var _interopRequire = function (obj) { return obj && obj.__esModule ? obj["default"] : obj; };
 
-  var moment = _interopRequire(_bowerComponentsMomentMoment);
+  var moment = _interopRequire(_bower_componentsMomentMoment);
 
   module.exports = moment;
 });
@@ -44775,15 +44745,14 @@ define('moment', ["exports", "module", "../bower_components/moment/moment"], fun
 define('components/comments/list-item', ["exports", "module", "moment", "react"], function (exports, module, _moment, _react) {
   "use strict";
 
-  var _interopRequire = function (obj) {
-    return obj && (obj["default"] || obj);
-  };
+  var _interopRequire = function (obj) { return obj && obj.__esModule ? obj["default"] : obj; };
 
   var moment = _interopRequire(_moment);
 
   var React = _interopRequire(_react);
 
   module.exports = React.createClass({
+    displayName: "list-item",
     render: function () {
       var comment = this.props.comment;
       var creator = comment.creator;
@@ -44821,15 +44790,14 @@ define('components/comments/list-item', ["exports", "module", "moment", "react"]
 define('components/comments/new', ["exports", "module", "components/ui/button", "react"], function (exports, module, _componentsUiButton, _react) {
   "use strict";
 
-  var _interopRequire = function (obj) {
-    return obj && (obj["default"] || obj);
-  };
+  var _interopRequire = function (obj) { return obj && obj.__esModule ? obj["default"] : obj; };
 
   var Button = _interopRequire(_componentsUiButton);
 
   var React = _interopRequire(_react);
 
   module.exports = React.createClass({
+    displayName: "new",
     render: function () {
       return React.createElement(
         "div",
@@ -44847,9 +44815,7 @@ define('components/comments/new', ["exports", "module", "components/ui/button", 
 define('components/comments/index', ["exports", "module", "jquery", "underscore", "api", "cursors", "react-list", "components/comments/list-item", "components/comments/new", "react"], function (exports, module, _jquery, _underscore, _api, _cursors, _reactList, _componentsCommentsListItem, _componentsCommentsNew, _react) {
   "use strict";
 
-  var _interopRequire = function (obj) {
-    return obj && (obj["default"] || obj);
-  };
+  var _interopRequire = function (obj) { return obj && obj.__esModule ? obj["default"] : obj; };
 
   var $ = _interopRequire(_jquery);
 
@@ -44870,6 +44836,7 @@ define('components/comments/index', ["exports", "module", "jquery", "underscore"
   var PER_PAGE = 100;
 
   module.exports = React.createClass({
+    displayName: "index",
     mixins: [Cursors],
 
     fetch: function (cb) {
@@ -44920,9 +44887,7 @@ define('components/comments/index', ["exports", "module", "jquery", "underscore"
 define('components/photos/show', ["exports", "module", "components/comments/index", "cursors", "react"], function (exports, module, _componentsCommentsIndex, _cursors, _react) {
   "use strict";
 
-  var _interopRequire = function (obj) {
-    return obj && (obj["default"] || obj);
-  };
+  var _interopRequire = function (obj) { return obj && obj.__esModule ? obj["default"] : obj; };
 
   var CommentsIndex = _interopRequire(_componentsCommentsIndex);
 
@@ -44931,6 +44896,7 @@ define('components/photos/show', ["exports", "module", "components/comments/inde
   var React = _interopRequire(_react);
 
   module.exports = React.createClass({
+    displayName: "show",
     mixins: [Cursors],
 
     handleImageClick: function () {
@@ -45081,14 +45047,12 @@ define('components/photos/show', ["exports", "module", "components/comments/inde
   });
 });
 // scripts/olay-react.es6
-define('olay-react', ["exports", "module", "../bower_components/olay-react/olay-react"], function (exports, module, _bowerComponentsOlayReactOlayReact) {
+define('olay-react', ["exports", "module", "../bower_components/olay-react/olay-react"], function (exports, module, _bower_componentsOlayReactOlayReact) {
   "use strict";
 
-  var _interopRequire = function (obj) {
-    return obj && (obj["default"] || obj);
-  };
+  var _interopRequire = function (obj) { return obj && obj.__esModule ? obj["default"] : obj; };
 
-  var OlayReact = _interopRequire(_bowerComponentsOlayReactOlayReact);
+  var OlayReact = _interopRequire(_bower_componentsOlayReactOlayReact);
 
   module.exports = OlayReact;
 });
@@ -45096,9 +45060,7 @@ define('olay-react', ["exports", "module", "../bower_components/olay-react/olay-
 define('components/ui/popup', ["exports", "module", "elementQuery", "components/ui/icon", "olay-react", "react"], function (exports, module, _elementQuery, _componentsUiIcon, _olayReact, _react) {
   "use strict";
 
-  var _interopRequire = function (obj) {
-    return obj && (obj["default"] || obj);
-  };
+  var _interopRequire = function (obj) { return obj && obj.__esModule ? obj["default"] : obj; };
 
   var elementQuery = _interopRequire(_elementQuery);
 
@@ -45109,6 +45071,7 @@ define('components/ui/popup', ["exports", "module", "elementQuery", "components/
   var React = _interopRequire(_react);
 
   module.exports = React.createClass({
+    displayName: "popup",
     getDefaultProps: function () {
       return {
         displayCloseButton: true
@@ -45174,9 +45137,7 @@ define('components/ui/popup', ["exports", "module", "elementQuery", "components/
 define('components/photos/index', ["exports", "module", "jquery", "underscore", "api", "components/photos/list-item", "components/photos/show", "cursors", "react-list", "react", "components/ui/popup"], function (exports, module, _jquery, _underscore, _api, _componentsPhotosListItem, _componentsPhotosShow, _cursors, _reactList, _react, _componentsUiPopup) {
   "use strict";
 
-  var _interopRequire = function (obj) {
-    return obj && (obj["default"] || obj);
-  };
+  var _interopRequire = function (obj) { return obj && obj.__esModule ? obj["default"] : obj; };
 
   var $ = _interopRequire(_jquery);
 
@@ -45201,6 +45162,7 @@ define('components/photos/index', ["exports", "module", "jquery", "underscore", 
   var PER_PAGE = 100;
 
   module.exports = React.createClass({
+    displayName: "index",
     mixins: [Cursors],
 
     getInitialState: function () {
@@ -45310,9 +45272,7 @@ define('components/photos/index', ["exports", "module", "jquery", "underscore", 
 define('components/albums/show', ["exports", "module", "components/photos/index", "cursors", "react"], function (exports, module, _componentsPhotosIndex, _cursors, _react) {
   "use strict";
 
-  var _interopRequire = function (obj) {
-    return obj && (obj["default"] || obj);
-  };
+  var _interopRequire = function (obj) { return obj && obj.__esModule ? obj["default"] : obj; };
 
   var PhotosIndex = _interopRequire(_componentsPhotosIndex);
 
@@ -45321,6 +45281,7 @@ define('components/albums/show', ["exports", "module", "components/photos/index"
   var React = _interopRequire(_react);
 
   module.exports = React.createClass({
+    displayName: "show",
     mixins: [Cursors],
 
     render: function () {
@@ -45358,9 +45319,7 @@ define('components/albums/show', ["exports", "module", "components/photos/index"
 define('components/albums/index', ["exports", "module", "jquery", "underscore", "api", "components/albums/list-item", "components/albums/show", "cursors", "react-list", "react", "components/ui/popup"], function (exports, module, _jquery, _underscore, _api, _componentsAlbumsListItem, _componentsAlbumsShow, _cursors, _reactList, _react, _componentsUiPopup) {
   "use strict";
 
-  var _interopRequire = function (obj) {
-    return obj && (obj["default"] || obj);
-  };
+  var _interopRequire = function (obj) { return obj && obj.__esModule ? obj["default"] : obj; };
 
   var $ = _interopRequire(_jquery);
 
@@ -45385,6 +45344,7 @@ define('components/albums/index', ["exports", "module", "jquery", "underscore", 
   var PER_PAGE = 100;
 
   module.exports = React.createClass({
+    displayName: "index",
     mixins: [Cursors],
 
     getInitialState: function () {
@@ -45487,13 +45447,175 @@ define('components/albums/index', ["exports", "module", "jquery", "underscore", 
     }
   });
 });
+// scripts/components/builder/index.es6
+define('components/builder/index', ["exports", "module", "underscore", "underscore.string", "api", "cursors", "react"], function (exports, module, _underscore, _underscoreString, _api, _cursors, _react) {
+  "use strict";
+
+  var _interopRequire = function (obj) { return obj && obj.__esModule ? obj["default"] : obj; };
+
+  var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+
+  var _ = _interopRequire(_underscore);
+
+  var _str = _interopRequire(_underscoreString);
+
+  var api = _interopRequire(_api);
+
+  var Cursors = _interopRequire(_cursors);
+
+  var React = _interopRequire(_react);
+
+  var PERSIST_KEY = "OSW_BUILDER";
+
+  var WIDGETS = {
+    Albums: {
+      moduleName: "albums/index",
+      props: ["portalId"]
+    },
+    Events: {
+      moduleName: "events/index",
+      props: ["communityId", "portalId", "view", "lockView", "tz", "activeEventFilterIds"]
+    },
+    News: {
+      moduleName: "news-posts/index",
+      props: ["portalId", "truncateLength", "redirect"]
+    },
+    Portals: {
+      moduleName: "portals/index",
+      props: ["communityId", "umbrella", "category", "letter", "filtersAreShowing", "redirect"]
+    }
+  };
+
+  var DEFAULT_STATE = {
+    widget: _.keys(WIDGETS)[0],
+    props: {}
+  };
+
+  module.exports = React.createClass({
+    displayName: "index",
+    mixins: [Cursors],
+
+    getInitialState: function () {
+      var state = undefined;
+      try {
+        state = JSON.parse(localStorage.getItem(PERSIST_KEY));
+      } catch (er) {}
+      return state || DEFAULT_STATE;
+    },
+
+    componentDidUpdate: function () {
+      localStorage.setItem(PERSIST_KEY, JSON.stringify(this.state));
+    },
+
+    handleWidgetChange: function (ev) {
+      this.update({ widget: { $set: ev.target.value }, props: { $set: {} } });
+    },
+
+    handlePropChange: function (prop, ev) {
+      var deltas = { props: {} };
+      deltas.props[prop] = { $set: ev.target.value || void 0 };
+      this.update(deltas);
+    },
+
+    renderWidgetOptions: function () {
+      return _.map(WIDGETS, function (__, widget) {
+        return React.createElement(
+          "option",
+          { key: widget },
+          widget
+        );
+      });
+    },
+
+    renderProps: function () {
+      var _this = this;
+      return _.map(WIDGETS[this.state.widget].props, function (prop) {
+        return React.createElement(
+          "div",
+          { key: prop },
+          prop,
+          React.createElement("br", null),
+          React.createElement(
+            "div",
+            { className: "osw-field" },
+            React.createElement("input", {
+              value: _this.state.props[prop],
+              onChange: _.partial(_this.handlePropChange, prop)
+            })
+          )
+        );
+      });
+    },
+
+    getDataAttrs: function () {
+      return _.compact(_.map(_.extend({
+        moduleName: WIDGETS[this.state.widget].moduleName
+      }, this.state.props), function (val, key) {
+        if (!val) return;
+        var stringified = JSON.stringify(val).replace(/\\(.)/g, "$1");
+        if (_.isString(val)) stringified = stringified.slice(1, -1);
+        return "data-" + _str.dasherize(key) + "='" + _.escape(stringified) + "'";
+      }));
+    },
+
+    renderHtml: function () {
+      return React.createElement(
+        "pre",
+        { className: "osw-inset-block" },
+        "\n<link href='https://orgsync.com/assets/orgsync-widgets.css' rel='stylesheet'>\n<script>window.OSW_API_KEY = '" + api.key + "';</script>\n<script src='https://orgsync.com/assets/orgsync-widgets.js' async></script>\n<div\n  class='orgsync-widget'\n  " + this.getDataAttrs().join("\n  ") + "\n></div>\n"
+      );
+    },
+
+    renderPreview: function () {
+      var moduleName = "components/" + WIDGETS[this.state.widget].moduleName;
+      var Component = require(moduleName);
+      var props = _.reduce(this.state.props, function (props, val, key) {
+        try {
+          val = JSON.parse(val);
+        } catch (er) {}
+        props[key] = val;
+        return props;
+      }, {});
+      var key = JSON.stringify(props);
+      return React.createElement(Component, _extends({ key: key }, props));
+    },
+
+    render: function () {
+      return React.createElement(
+        "div",
+        { className: "osw-builder-index" },
+        React.createElement(
+          "div",
+          { className: "osw-builder-index-left" },
+          React.createElement(
+            "div",
+            { className: "osw-field osw-dropdown" },
+            React.createElement(
+              "select",
+              {
+                value: this.state.widget,
+                onChange: this.handleWidgetChange
+              },
+              this.renderWidgetOptions()
+            )
+          ),
+          this.renderProps(),
+          this.renderHtml()
+        ),
+        React.createElement(
+          "div",
+          { className: "osw-builder-index-right orgsync-widget" },
+          this.renderPreview()
+        )
+      );
+    }
+  });
+});
 // scripts/components/event-filters/list-item.es6
 define('components/event-filters/list-item', ["exports", "module", "cursors", "components/ui/icon", "react"], function (exports, module, _cursors, _componentsUiIcon, _react) {
   "use strict";
 
-  var _interopRequire = function (obj) {
-    return obj && (obj["default"] || obj);
-  };
+  var _interopRequire = function (obj) { return obj && obj.__esModule ? obj["default"] : obj; };
 
   var Cursors = _interopRequire(_cursors);
 
@@ -45512,6 +45634,7 @@ define('components/event-filters/list-item', ["exports", "module", "cursors", "c
   };
 
   module.exports = React.createClass({
+    displayName: "list-item",
     mixins: [Cursors],
 
     handleChange: function (ev) {
@@ -46661,14 +46784,12 @@ else {
 
 })();
 // scripts/tinycolor.es6
-define('tinycolor', ["exports", "module", "../bower_components/tinycolor/tinycolor"], function (exports, module, _bowerComponentsTinycolorTinycolor) {
+define('tinycolor', ["exports", "module", "../bower_components/tinycolor/tinycolor"], function (exports, module, _bower_componentsTinycolorTinycolor) {
   "use strict";
 
-  var _interopRequire = function (obj) {
-    return obj && (obj["default"] || obj);
-  };
+  var _interopRequire = function (obj) { return obj && obj.__esModule ? obj["default"] : obj; };
 
-  var tinycolor = _interopRequire(_bowerComponentsTinycolorTinycolor);
+  var tinycolor = _interopRequire(_bower_componentsTinycolorTinycolor);
 
   module.exports = tinycolor;
 });
@@ -46681,12 +46802,10 @@ define('../bower_components/velcro/config', ["exports", "module"], function (exp
   };
 });
 // scripts/components/event-filters/index.es6
-define('components/event-filters/index', ["exports", "module", "underscore", "api", "cursors", "components/event-filters/list-item", "react", "tinycolor", "../bower_components/velcro/config"], function (exports, module, _underscore, _api, _cursors, _componentsEventFiltersListItem, _react, _tinycolor, _bowerComponentsVelcroConfig) {
+define('components/event-filters/index', ["exports", "module", "underscore", "api", "cursors", "components/event-filters/list-item", "react", "tinycolor", "../bower_components/velcro/config"], function (exports, module, _underscore, _api, _cursors, _componentsEventFiltersListItem, _react, _tinycolor, _bower_componentsVelcroConfig) {
   "use strict";
 
-  var _interopRequire = function (obj) {
-    return obj && (obj["default"] || obj);
-  };
+  var _interopRequire = function (obj) { return obj && obj.__esModule ? obj["default"] : obj; };
 
   var _ = _interopRequire(_underscore);
 
@@ -46700,7 +46819,7 @@ define('components/event-filters/index', ["exports", "module", "underscore", "ap
 
   var tinycolor = _interopRequire(_tinycolor);
 
-  var velcroConfig = _interopRequire(_bowerComponentsVelcroConfig);
+  var velcroConfig = _interopRequire(_bower_componentsVelcroConfig);
 
   var RSVP_HEX = "94b363";
 
@@ -46719,6 +46838,7 @@ define('components/event-filters/index', ["exports", "module", "underscore", "ap
   };
 
   module.exports = React.createClass({
+    displayName: "index",
     mixins: [Cursors],
 
     getDefaultProps: function () {
@@ -47868,14 +47988,12 @@ define('components/event-filters/index', ["exports", "module", "underscore", "ap
 	return moment;
 }));
 // scripts/moment-timezone.es6
-define('moment-timezone', ["exports", "module", "../bower_components/moment-timezone/builds/moment-timezone-with-data"], function (exports, module, _bowerComponentsMomentTimezoneBuildsMomentTimezoneWithData) {
+define('moment-timezone', ["exports", "module", "../bower_components/moment-timezone/builds/moment-timezone-with-data"], function (exports, module, _bower_componentsMomentTimezoneBuildsMomentTimezoneWithData) {
   "use strict";
 
-  var _interopRequire = function (obj) {
-    return obj && (obj["default"] || obj);
-  };
+  var _interopRequire = function (obj) { return obj && obj.__esModule ? obj["default"] : obj; };
 
-  var moment = _interopRequire(_bowerComponentsMomentTimezoneBuildsMomentTimezoneWithData);
+  var moment = _interopRequire(_bower_componentsMomentTimezoneBuildsMomentTimezoneWithData);
 
   module.exports = moment;
 });
@@ -47883,9 +48001,7 @@ define('moment-timezone', ["exports", "module", "../bower_components/moment-time
 define('entities/event', ["exports", "underscore", "underscore.string", "api", "moment-timezone"], function (exports, _underscore, _underscoreString, _api, _momentTimezone) {
   "use strict";
 
-  var _interopRequire = function (obj) {
-    return obj && (obj["default"] || obj);
-  };
+  var _interopRequire = function (obj) { return obj && obj.__esModule ? obj["default"] : obj; };
 
   var _ = _interopRequire(_underscore);
 
@@ -48032,18 +48148,18 @@ define('entities/event', ["exports", "underscore", "underscore.string", "api", "
       restrict_to_portal: false
     }, _.partial(handleFetch, options, cb));
   };
+  exports.__esModule = true;
 });
 // scripts/components/ui/sep.es6
 define('components/ui/sep', ["exports", "module", "react"], function (exports, module, _react) {
   "use strict";
 
-  var _interopRequire = function (obj) {
-    return obj && (obj["default"] || obj);
-  };
+  var _interopRequire = function (obj) { return obj && obj.__esModule ? obj["default"] : obj; };
 
   var React = _interopRequire(_react);
 
   module.exports = React.createClass({
+    displayName: "sep",
     render: function () {
       return React.createElement("span", { dangerouslySetInnerHTML: { __html: " • " } });
     }
@@ -48053,9 +48169,7 @@ define('components/ui/sep', ["exports", "module", "react"], function (exports, m
 define('components/events/show', ["exports", "module", "underscore", "underscore.string", "api", "components/ui/button", "cursors", "components/ui/icon", "react", "components/ui/sep", "entities/event"], function (exports, module, _underscore, _underscoreString, _api, _componentsUiButton, _cursors, _componentsUiIcon, _react, _componentsUiSep, _entitiesEvent) {
   "use strict";
 
-  var _interopRequire = function (obj) {
-    return obj && (obj["default"] || obj);
-  };
+  var _interopRequire = function (obj) { return obj && obj.__esModule ? obj["default"] : obj; };
 
   var _ = _interopRequire(_underscore);
 
@@ -48113,6 +48227,7 @@ define('components/events/show', ["exports", "module", "underscore", "underscore
   });
 
   module.exports = React.createClass({
+    displayName: "show",
     mixins: [Cursors],
 
     getInitialState: function () {
@@ -48435,9 +48550,7 @@ define('components/events/show', ["exports", "module", "underscore", "underscore
 define('components/events/td', ["exports", "module", "cursors", "components/ui/popup", "react", "components/events/show", "tinycolor", "entities/event"], function (exports, module, _cursors, _componentsUiPopup, _react, _componentsEventsShow, _tinycolor, _entitiesEvent) {
   "use strict";
 
-  var _interopRequire = function (obj) {
-    return obj && (obj["default"] || obj);
-  };
+  var _interopRequire = function (obj) { return obj && obj.__esModule ? obj["default"] : obj; };
 
   var Cursors = _interopRequire(_cursors);
 
@@ -48453,6 +48566,7 @@ define('components/events/td', ["exports", "module", "cursors", "components/ui/p
   var getColor = _entitiesEvent.getColor;
   var isAllDay = _entitiesEvent.isAllDay;
   module.exports = React.createClass({
+    displayName: "td",
     mixins: [Cursors],
 
     getInitialState: function () {
@@ -48614,9 +48728,7 @@ define('components/events/td', ["exports", "module", "cursors", "components/ui/p
 define('components/events/list-item', ["exports", "module", "underscore.string", "cursors", "components/ui/icon", "components/ui/popup", "react", "components/ui/sep", "components/events/show", "entities/event"], function (exports, module, _underscoreString, _cursors, _componentsUiIcon, _componentsUiPopup, _react, _componentsUiSep, _componentsEventsShow, _entitiesEvent) {
   "use strict";
 
-  var _interopRequire = function (obj) {
-    return obj && (obj["default"] || obj);
-  };
+  var _interopRequire = function (obj) { return obj && obj.__esModule ? obj["default"] : obj; };
 
   var _str = _interopRequire(_underscoreString);
 
@@ -48639,6 +48751,7 @@ define('components/events/list-item', ["exports", "module", "underscore.string",
   var FORMAT = "h:mm A";
 
   module.exports = React.createClass({
+    displayName: "list-item",
     mixins: [Cursors],
 
     getInitialState: function () {
@@ -48693,6 +48806,7 @@ define('components/events/list-item', ["exports", "module", "underscore.string",
         "span",
         { className: "osw-events-list-item-" + _str.slugify(rsvp) },
         React.createElement(Icon, { name: icon }),
+        " ",
         rsvp
       );
     },
@@ -48784,9 +48898,7 @@ define('components/events/list-item', ["exports", "module", "underscore.string",
 define('components/events/list-date', ["exports", "module", "cursors", "react-list", "components/events/list-item", "react", "entities/event"], function (exports, module, _cursors, _reactList, _componentsEventsListItem, _react, _entitiesEvent) {
   "use strict";
 
-  var _interopRequire = function (obj) {
-    return obj && (obj["default"] || obj);
-  };
+  var _interopRequire = function (obj) { return obj && obj.__esModule ? obj["default"] : obj; };
 
   var Cursors = _interopRequire(_cursors);
 
@@ -48802,6 +48914,7 @@ define('components/events/list-date', ["exports", "module", "cursors", "react-li
   var PREFIX_RE = /^(Yesterday|Today|Tomorrow)/;
 
   module.exports = React.createClass({
+    displayName: "list-date",
     mixins: [Cursors],
 
     renderEvent: function (event) {
@@ -48850,9 +48963,7 @@ define('components/events/list-date', ["exports", "module", "cursors", "react-li
 define('components/events/week', ["exports", "module", "underscore", "cursors", "components/events/td", "components/events/list-date", "components/ui/popup", "react", "entities/event"], function (exports, module, _underscore, _cursors, _componentsEventsTd, _componentsEventsListDate, _componentsUiPopup, _react, _entitiesEvent) {
   "use strict";
 
-  var _interopRequire = function (obj) {
-    return obj && (obj["default"] || obj);
-  };
+  var _interopRequire = function (obj) { return obj && obj.__esModule ? obj["default"] : obj; };
 
   var _ = _interopRequire(_underscore);
 
@@ -48869,6 +48980,7 @@ define('components/events/week', ["exports", "module", "underscore", "cursors", 
   var getMoment = _entitiesEvent.getMoment;
   var getDaySpan = _entitiesEvent.getDaySpan;
   module.exports = React.createClass({
+    displayName: "week",
     mixins: [Cursors],
 
     getInitialState: function () {
@@ -49086,9 +49198,7 @@ define('components/events/week', ["exports", "module", "underscore", "cursors", 
 define('components/events/calendar', ["exports", "module", "underscore", "cursors", "entities/event", "react", "components/events/week"], function (exports, module, _underscore, _cursors, _entitiesEvent, _react, _componentsEventsWeek) {
   "use strict";
 
-  var _interopRequire = function (obj) {
-    return obj && (obj["default"] || obj);
-  };
+  var _interopRequire = function (obj) { return obj && obj.__esModule ? obj["default"] : obj; };
 
   var _ = _interopRequire(_underscore);
 
@@ -49101,6 +49211,7 @@ define('components/events/calendar', ["exports", "module", "underscore", "cursor
   var Week = _interopRequire(_componentsEventsWeek);
 
   module.exports = React.createClass({
+    displayName: "calendar",
     mixins: [Cursors],
 
     getInitialState: function () {
@@ -49212,9 +49323,9 @@ define('components/events/calendar', ["exports", "module", "underscore", "cursor
 define('components/ui/button-group', ["exports", "module", "cursors", "utils/join-class-names", "react"], function (exports, module, _cursors, _utilsJoinClassNames, _react) {
   "use strict";
 
-  var _interopRequire = function (obj) {
-    return obj && (obj["default"] || obj);
-  };
+  var _interopRequire = function (obj) { return obj && obj.__esModule ? obj["default"] : obj; };
+
+  var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
 
   var Cursors = _interopRequire(_cursors);
 
@@ -49223,12 +49334,13 @@ define('components/ui/button-group', ["exports", "module", "cursors", "utils/joi
   var React = _interopRequire(_react);
 
   module.exports = React.createClass({
+    displayName: "button-group",
     mixins: [Cursors],
 
     render: function () {
       return React.createElement(
         "div",
-        React.__spread({}, this.props, {
+        _extends({}, this.props, {
           className: joinClassNames("osw-button-group", this.props.className)
         }),
         this.props.children
@@ -49240,9 +49352,7 @@ define('components/ui/button-group', ["exports", "module", "cursors", "utils/joi
 define('components/events/list', ["exports", "module", "underscore", "cursors", "react-list", "components/events/list-date", "react", "entities/event"], function (exports, module, _underscore, _cursors, _reactList, _componentsEventsListDate, _react, _entitiesEvent) {
   "use strict";
 
-  var _interopRequire = function (obj) {
-    return obj && (obj["default"] || obj);
-  };
+  var _interopRequire = function (obj) { return obj && obj.__esModule ? obj["default"] : obj; };
 
   var _ = _interopRequire(_underscore);
 
@@ -49263,6 +49373,7 @@ define('components/events/list', ["exports", "module", "underscore", "cursors", 
   var YEAR_LIMIT = 2;
 
   module.exports = React.createClass({
+    displayName: "list",
     mixins: [Cursors],
 
     fetch: function (cb) {
@@ -49723,9 +49834,7 @@ define('jstz', function () { return root.jstz; });
 define('tz', ["exports", "module", "jstz"], function (exports, module, _jstz) {
   "use strict";
 
-  var _interopRequire = function (obj) {
-    return obj && (obj["default"] || obj);
-  };
+  var _interopRequire = function (obj) { return obj && obj.__esModule ? obj["default"] : obj; };
 
   var jstz = _interopRequire(_jstz);
 
@@ -49735,9 +49844,7 @@ define('tz', ["exports", "module", "jstz"], function (exports, module, _jstz) {
 define('components/events/index', ["exports", "module", "underscore", "components/ui/button", "components/ui/button-group", "components/events/calendar", "components/events/list", "cursors", "components/event-filters/index", "components/ui/icon", "react", "tz", "entities/event"], function (exports, module, _underscore, _componentsUiButton, _componentsUiButtonGroup, _componentsEventsCalendar, _componentsEventsList, _cursors, _componentsEventFiltersIndex, _componentsUiIcon, _react, _tz, _entitiesEvent) {
   "use strict";
 
-  var _interopRequire = function (obj) {
-    return obj && (obj["default"] || obj);
-  };
+  var _interopRequire = function (obj) { return obj && obj.__esModule ? obj["default"] : obj; };
 
   var _ = _interopRequire(_underscore);
 
@@ -49767,6 +49874,7 @@ define('components/events/index', ["exports", "module", "underscore", "component
   var LIST_LOCK_BREAKPOINT = 600;
 
   module.exports = React.createClass({
+    displayName: "index",
     mixins: [Cursors],
 
     getDefaultProps: function () {
@@ -50140,9 +50248,7 @@ define('components/events/index', ["exports", "module", "underscore", "component
 define('components/news-posts/show', ["exports", "module", "components/comments/index", "cursors", "moment", "react"], function (exports, module, _componentsCommentsIndex, _cursors, _moment, _react) {
   "use strict";
 
-  var _interopRequire = function (obj) {
-    return obj && (obj["default"] || obj);
-  };
+  var _interopRequire = function (obj) { return obj && obj.__esModule ? obj["default"] : obj; };
 
   var CommentsIndex = _interopRequire(_componentsCommentsIndex);
 
@@ -50153,6 +50259,7 @@ define('components/news-posts/show', ["exports", "module", "components/comments/
   var React = _interopRequire(_react);
 
   module.exports = React.createClass({
+    displayName: "show",
     mixins: [Cursors],
 
     render: function () {
@@ -50196,9 +50303,7 @@ define('components/news-posts/show', ["exports", "module", "components/comments/
 define('components/news-posts/list-item', ["exports", "module", "jquery", "underscore.string", "cursors", "components/ui/icon", "moment", "components/news-posts/show", "components/ui/popup", "react"], function (exports, module, _jquery, _underscoreString, _cursors, _componentsUiIcon, _moment, _componentsNewsPostsShow, _componentsUiPopup, _react) {
   "use strict";
 
-  var _interopRequire = function (obj) {
-    return obj && (obj["default"] || obj);
-  };
+  var _interopRequire = function (obj) { return obj && obj.__esModule ? obj["default"] : obj; };
 
   var $ = _interopRequire(_jquery);
 
@@ -50217,6 +50322,7 @@ define('components/news-posts/list-item', ["exports", "module", "jquery", "under
   var React = _interopRequire(_react);
 
   module.exports = React.createClass({
+    displayName: "list-item",
     mixins: [Cursors],
 
     getDefaultProps: function () {
@@ -50261,6 +50367,16 @@ define('components/news-posts/list-item', ["exports", "module", "jquery", "under
       );
     },
 
+    renderBody: function () {
+      var pruned = _str.prune(this.getStrippedBody(), this.props.truncateLength);
+      if (pruned === "...") return;
+      return React.createElement(
+        "div",
+        { className: "osw-news-posts-list-item-body" },
+        pruned
+      );
+    },
+
     renderShow: function () {
       if (!this.state.isOpen) return;
       return React.createElement(Show, {
@@ -50297,11 +50413,7 @@ define('components/news-posts/list-item', ["exports", "module", "jquery", "under
           moment(newsPost.created_at).fromNow()
         ),
         this.renderCount(),
-        React.createElement(
-          "div",
-          { className: "osw-news-posts-list-item-body" },
-          _str.prune(this.getStrippedBody(), this.props.truncateLength)
-        ),
+        this.renderBody(),
         React.createElement(
           Popup,
           {
@@ -50319,9 +50431,7 @@ define('components/news-posts/list-item', ["exports", "module", "jquery", "under
 define('components/news-posts/index', ["exports", "module", "underscore", "api", "cursors", "react-list", "components/news-posts/list-item", "react"], function (exports, module, _underscore, _api, _cursors, _reactList, _componentsNewsPostsListItem, _react) {
   "use strict";
 
-  var _interopRequire = function (obj) {
-    return obj && (obj["default"] || obj);
-  };
+  var _interopRequire = function (obj) { return obj && obj.__esModule ? obj["default"] : obj; };
 
   var _ = _interopRequire(_underscore);
 
@@ -50338,6 +50448,7 @@ define('components/news-posts/index', ["exports", "module", "underscore", "api",
   var PER_PAGE = 20;
 
   module.exports = React.createClass({
+    displayName: "index",
     mixins: [Cursors],
 
     getInitialState: function () {
@@ -50388,9 +50499,9 @@ define('components/news-posts/index', ["exports", "module", "underscore", "api",
 define('components/portals/selector', ["exports", "module", "cursors", "utils/join-class-names", "react"], function (exports, module, _cursors, _utilsJoinClassNames, _react) {
   "use strict";
 
-  var _interopRequire = function (obj) {
-    return obj && (obj["default"] || obj);
-  };
+  var _interopRequire = function (obj) { return obj && obj.__esModule ? obj["default"] : obj; };
+
+  var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
 
   var Cursors = _interopRequire(_cursors);
 
@@ -50399,6 +50510,7 @@ define('components/portals/selector', ["exports", "module", "cursors", "utils/jo
   var React = _interopRequire(_react);
 
   module.exports = React.createClass({
+    displayName: "selector",
     mixins: [Cursors],
 
     render: function () {
@@ -50407,7 +50519,7 @@ define('components/portals/selector', ["exports", "module", "cursors", "utils/jo
       if (options.length === 2) value = options[1].props.value;
       return React.createElement(
         "div",
-        React.__spread({}, this.props, {
+        _extends({}, this.props, {
           className: joinClassNames("osw-big osw-field oswi osw-dropdown", this.props.className)
         }),
         React.createElement(
@@ -50427,9 +50539,9 @@ define('components/portals/selector', ["exports", "module", "cursors", "utils/jo
 define('components/portals/faceted-selector', ["exports", "module", "underscore", "cursors", "react", "components/portals/selector"], function (exports, module, _underscore, _cursors, _react, _componentsPortalsSelector) {
   "use strict";
 
-  var _interopRequire = function (obj) {
-    return obj && (obj["default"] || obj);
-  };
+  var _interopRequire = function (obj) { return obj && obj.__esModule ? obj["default"] : obj; };
+
+  var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
 
   var _ = _interopRequire(_underscore);
 
@@ -50440,6 +50552,7 @@ define('components/portals/faceted-selector', ["exports", "module", "underscore"
   var Selector = _interopRequire(_componentsPortalsSelector);
 
   module.exports = React.createClass({
+    displayName: "faceted-selector",
     mixins: [Cursors],
 
     toOption: function (matches, name) {
@@ -50459,7 +50572,7 @@ define('components/portals/faceted-selector', ["exports", "module", "underscore"
     },
 
     render: function () {
-      return React.createElement(Selector, React.__spread({}, this.props, { renderOptions: this.renderOptions }));
+      return React.createElement(Selector, _extends({}, this.props, { renderOptions: this.renderOptions }));
     }
   });
 });
@@ -50467,9 +50580,9 @@ define('components/portals/faceted-selector', ["exports", "module", "underscore"
 define('components/portals/category-selector', ["exports", "module", "cursors", "components/portals/faceted-selector", "utils/join-class-names", "react"], function (exports, module, _cursors, _componentsPortalsFacetedSelector, _utilsJoinClassNames, _react) {
   "use strict";
 
-  var _interopRequire = function (obj) {
-    return obj && (obj["default"] || obj);
-  };
+  var _interopRequire = function (obj) { return obj && obj.__esModule ? obj["default"] : obj; };
+
+  var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
 
   var Cursors = _interopRequire(_cursors);
 
@@ -50480,6 +50593,7 @@ define('components/portals/category-selector', ["exports", "module", "cursors", 
   var React = _interopRequire(_react);
 
   module.exports = React.createClass({
+    displayName: "category-selector",
     mixins: [Cursors],
 
     getFacet: function (portal) {
@@ -50487,7 +50601,7 @@ define('components/portals/category-selector', ["exports", "module", "cursors", 
     },
 
     render: function () {
-      return React.createElement(FacetedSelector, React.__spread({}, this.props, {
+      return React.createElement(FacetedSelector, _extends({}, this.props, {
         className: joinClassNames("oswi-book", this.props.className),
         name: "category",
         allOption: "All Categories",
@@ -50500,9 +50614,7 @@ define('components/portals/category-selector', ["exports", "module", "cursors", 
 define('components/portals/empty', ["exports", "module", "components/ui/button", "cursors", "react"], function (exports, module, _componentsUiButton, _cursors, _react) {
   "use strict";
 
-  var _interopRequire = function (obj) {
-    return obj && (obj["default"] || obj);
-  };
+  var _interopRequire = function (obj) { return obj && obj.__esModule ? obj["default"] : obj; };
 
   var Button = _interopRequire(_componentsUiButton);
 
@@ -50511,6 +50623,7 @@ define('components/portals/empty', ["exports", "module", "components/ui/button",
   var React = _interopRequire(_react);
 
   module.exports = React.createClass({
+    displayName: "empty",
     mixins: [Cursors],
 
     handleClick: function () {
@@ -50568,9 +50681,7 @@ define('components/portals/empty', ["exports", "module", "components/ui/button",
 define('components/portals/letter-cell', ["exports", "module", "components/ui/button", "cursors", "react"], function (exports, module, _componentsUiButton, _cursors, _react) {
   "use strict";
 
-  var _interopRequire = function (obj) {
-    return obj && (obj["default"] || obj);
-  };
+  var _interopRequire = function (obj) { return obj && obj.__esModule ? obj["default"] : obj; };
 
   var Button = _interopRequire(_componentsUiButton);
 
@@ -50579,6 +50690,7 @@ define('components/portals/letter-cell', ["exports", "module", "components/ui/bu
   var React = _interopRequire(_react);
 
   module.exports = React.createClass({
+    displayName: "letter-cell",
     mixins: [Cursors],
 
     getClassName: function () {
@@ -50608,9 +50720,9 @@ define('components/portals/letter-cell', ["exports", "module", "components/ui/bu
 define('components/portals/letter-table', ["exports", "module", "underscore", "cursors", "components/portals/letter-cell", "react"], function (exports, module, _underscore, _cursors, _componentsPortalsLetterCell, _react) {
   "use strict";
 
-  var _interopRequire = function (obj) {
-    return obj && (obj["default"] || obj);
-  };
+  var _interopRequire = function (obj) { return obj && obj.__esModule ? obj["default"] : obj; };
+
+  var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
 
   var _ = _interopRequire(_underscore);
 
@@ -50621,10 +50733,11 @@ define('components/portals/letter-table', ["exports", "module", "underscore", "c
   var React = _interopRequire(_react);
 
   module.exports = React.createClass({
+    displayName: "letter-table",
     mixins: [Cursors],
 
     renderCell: function (letter, i) {
-      return React.createElement(LetterCell, React.__spread({}, this.props, {
+      return React.createElement(LetterCell, _extends({}, this.props, {
         key: i,
         letter: letter,
         cursors: { currentLetter: this.getCursor("letter") }
@@ -50660,15 +50773,14 @@ define('components/portals/letter-table', ["exports", "module", "underscore", "c
 define('components/portals/query', ["exports", "module", "cursors", "react"], function (exports, module, _cursors, _react) {
   "use strict";
 
-  var _interopRequire = function (obj) {
-    return obj && (obj["default"] || obj);
-  };
+  var _interopRequire = function (obj) { return obj && obj.__esModule ? obj["default"] : obj; };
 
   var Cursors = _interopRequire(_cursors);
 
   var React = _interopRequire(_react);
 
   module.exports = React.createClass({
+    displayName: "query",
     mixins: [Cursors],
 
     render: function () {
@@ -50691,9 +50803,7 @@ define('components/portals/query', ["exports", "module", "cursors", "react"], fu
 define('components/portals/summary', ["exports", "module", "underscore", "components/ui/button", "cursors", "components/ui/icon", "react"], function (exports, module, _underscore, _componentsUiButton, _cursors, _componentsUiIcon, _react) {
   "use strict";
 
-  var _interopRequire = function (obj) {
-    return obj && (obj["default"] || obj);
-  };
+  var _interopRequire = function (obj) { return obj && obj.__esModule ? obj["default"] : obj; };
 
   var _ = _interopRequire(_underscore);
 
@@ -50706,6 +50816,7 @@ define('components/portals/summary', ["exports", "module", "underscore", "compon
   var React = _interopRequire(_react);
 
   module.exports = React.createClass({
+    displayName: "summary",
     mixins: [Cursors],
 
     getFilters: function () {
@@ -50754,9 +50865,9 @@ define('components/portals/summary', ["exports", "module", "underscore", "compon
 define('components/portals/umbrella-selector', ["exports", "module", "cursors", "components/portals/faceted-selector", "utils/join-class-names", "react"], function (exports, module, _cursors, _componentsPortalsFacetedSelector, _utilsJoinClassNames, _react) {
   "use strict";
 
-  var _interopRequire = function (obj) {
-    return obj && (obj["default"] || obj);
-  };
+  var _interopRequire = function (obj) { return obj && obj.__esModule ? obj["default"] : obj; };
+
+  var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
 
   var Cursors = _interopRequire(_cursors);
 
@@ -50767,6 +50878,7 @@ define('components/portals/umbrella-selector', ["exports", "module", "cursors", 
   var React = _interopRequire(_react);
 
   module.exports = React.createClass({
+    displayName: "umbrella-selector",
     mixins: [Cursors],
 
     getFacet: function (portal) {
@@ -50774,7 +50886,7 @@ define('components/portals/umbrella-selector', ["exports", "module", "cursors", 
     },
 
     render: function () {
-      return React.createElement(FacetedSelector, React.__spread({}, this.props, {
+      return React.createElement(FacetedSelector, _extends({}, this.props, {
         className: joinClassNames("oswi-umbrella", this.props.className),
         name: "umbrella",
         allOption: "All Umbrellas",
@@ -50787,9 +50899,7 @@ define('components/portals/umbrella-selector', ["exports", "module", "cursors", 
 define('components/portals/filters', ["exports", "module", "components/portals/category-selector", "cursors", "components/portals/letter-table", "components/portals/query", "react", "components/portals/summary", "components/portals/umbrella-selector"], function (exports, module, _componentsPortalsCategorySelector, _cursors, _componentsPortalsLetterTable, _componentsPortalsQuery, _react, _componentsPortalsSummary, _componentsPortalsUmbrellaSelector) {
   "use strict";
 
-  var _interopRequire = function (obj) {
-    return obj && (obj["default"] || obj);
-  };
+  var _interopRequire = function (obj) { return obj && obj.__esModule ? obj["default"] : obj; };
 
   var CategorySelector = _interopRequire(_componentsPortalsCategorySelector);
 
@@ -50806,6 +50916,7 @@ define('components/portals/filters', ["exports", "module", "components/portals/c
   var UmbrellaSelector = _interopRequire(_componentsPortalsUmbrellaSelector);
 
   module.exports = React.createClass({
+    displayName: "filters",
     mixins: [Cursors],
 
     handleChange: function (ev) {
@@ -50839,9 +50950,9 @@ define('components/portals/filters', ["exports", "module", "components/portals/c
 define('components/ui/button-row', ["exports", "module", "cursors", "utils/join-class-names", "react"], function (exports, module, _cursors, _utilsJoinClassNames, _react) {
   "use strict";
 
-  var _interopRequire = function (obj) {
-    return obj && (obj["default"] || obj);
-  };
+  var _interopRequire = function (obj) { return obj && obj.__esModule ? obj["default"] : obj; };
+
+  var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
 
   var Cursors = _interopRequire(_cursors);
 
@@ -50850,12 +50961,13 @@ define('components/ui/button-row', ["exports", "module", "cursors", "utils/join-
   var React = _interopRequire(_react);
 
   module.exports = React.createClass({
+    displayName: "button-row",
     mixins: [Cursors],
 
     render: function () {
       return React.createElement(
         "div",
-        React.__spread({}, this.props, {
+        _extends({}, this.props, {
           className: joinClassNames("osw-button-row", this.props.classname)
         }),
         this.props.children
@@ -50867,9 +50979,7 @@ define('components/ui/button-row', ["exports", "module", "cursors", "utils/join-
 define('components/portals/show', ["exports", "module", "api", "cursors", "components/ui/button", "components/ui/button-row", "react"], function (exports, module, _api, _cursors, _componentsUiButton, _componentsUiButtonRow, _react) {
   "use strict";
 
-  var _interopRequire = function (obj) {
-    return obj && (obj["default"] || obj);
-  };
+  var _interopRequire = function (obj) { return obj && obj.__esModule ? obj["default"] : obj; };
 
   var api = _interopRequire(_api);
 
@@ -50884,6 +50994,7 @@ define('components/portals/show', ["exports", "module", "api", "cursors", "compo
   var DEFAULT_SRC = "https://orgsync.com/assets/icons/portals/no_org_profile_150.png";
 
   module.exports = React.createClass({
+    displayName: "show",
     mixins: [Cursors],
 
     getInitialState: function () {
@@ -50973,9 +51084,7 @@ define('components/portals/show', ["exports", "module", "api", "cursors", "compo
 define('components/portals/list-item', ["exports", "module", "cursors", "components/ui/popup", "react", "components/portals/show"], function (exports, module, _cursors, _componentsUiPopup, _react, _componentsPortalsShow) {
   "use strict";
 
-  var _interopRequire = function (obj) {
-    return obj && (obj["default"] || obj);
-  };
+  var _interopRequire = function (obj) { return obj && obj.__esModule ? obj["default"] : obj; };
 
   var Cursors = _interopRequire(_cursors);
 
@@ -50988,6 +51097,7 @@ define('components/portals/list-item', ["exports", "module", "cursors", "compone
   var DEFAULT_SRC = "https://orgsync.com/assets/icons/portals/no_org_profile_150.png";
 
   module.exports = React.createClass({
+    displayName: "list-item",
     mixins: [Cursors],
 
     getInitialState: function () {
@@ -51075,9 +51185,7 @@ define('components/portals/list-item', ["exports", "module", "cursors", "compone
 define('components/portals/index', ["exports", "module", "underscore", "underscore.string", "api", "cursors", "react-list", "components/portals/filters", "components/portals/list-item", "components/portals/empty", "react"], function (exports, module, _underscore, _underscoreString, _api, _cursors, _reactList, _componentsPortalsFilters, _componentsPortalsListItem, _componentsPortalsEmpty, _react) {
   "use strict";
 
-  var _interopRequire = function (obj) {
-    return obj && (obj["default"] || obj);
-  };
+  var _interopRequire = function (obj) { return obj && obj.__esModule ? obj["default"] : obj; };
 
   var _ = _interopRequire(_underscore);
 
@@ -51105,6 +51213,7 @@ define('components/portals/index', ["exports", "module", "underscore", "undersco
   }, { "": /.*/, Other: /^[^a-z]/i });
 
   module.exports = React.createClass({
+    displayName: "index",
     mixins: [Cursors],
 
     comparator: function (a, b) {
@@ -51235,8 +51344,8 @@ define('components/portals/index', ["exports", "module", "underscore", "undersco
     renderError: function (er) {
       return React.createElement(
         "div",
-        { className: "osw-inset-block" },
-        er
+        { className: "osw-inset-block osw-inset-block-red" },
+        er.toString()
       );
     },
 
@@ -51274,9 +51383,7 @@ define('components/portals/index', ["exports", "module", "underscore", "undersco
 define('entities/selector/item', ["exports", "underscore", "underscore.string"], function (exports, _underscore, _underscoreString) {
   "use strict";
 
-  var _interopRequire = function (obj) {
-    return obj && (obj["default"] || obj);
-  };
+  var _interopRequire = function (obj) { return obj && obj.__esModule ? obj["default"] : obj; };
 
   var _ = _interopRequire(_underscore);
 
@@ -51337,14 +51444,15 @@ define('entities/selector/item', ["exports", "underscore", "underscore.string"],
   };
 
   var getBasicFields = exports.getBasicFields = _.partial(_.pick, _, BASIC_FIELDS);
+  exports.__esModule = true;
 });
 // scripts/components/selector/result.es6
 define('components/selector/result', ["exports", "module", "underscore", "underscore.string", "cursors", "components/ui/icon", "react", "entities/selector/item"], function (exports, module, _underscore, _underscoreString, _cursors, _componentsUiIcon, _react, _entitiesSelectorItem) {
   "use strict";
 
-  var _interopRequire = function (obj) {
-    return obj && (obj["default"] || obj);
-  };
+  var _interopRequire = function (obj) { return obj && obj.__esModule ? obj["default"] : obj; };
+
+  var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
 
   var _ = _interopRequire(_underscore);
 
@@ -51360,6 +51468,7 @@ define('components/selector/result', ["exports", "module", "underscore", "unders
   var getDisplayName = _entitiesSelectorItem.getDisplayName;
   var getPictureUrl = _entitiesSelectorItem.getPictureUrl;
   module.exports = React.createClass({
+    displayName: "result",
     mixins: [Cursors],
 
     className: function () {
@@ -51389,7 +51498,7 @@ define('components/selector/result', ["exports", "module", "underscore", "unders
       var eventHandlers = _.pick(this.props, "onMouseOver", "onClick");
       return React.createElement(
         "div",
-        React.__spread({}, eventHandlers, { className: this.className() }),
+        _extends({}, eventHandlers, { className: this.className() }),
         React.createElement(
           "div",
           { className: "osw-selector-result-content" },
@@ -51424,9 +51533,7 @@ define('components/selector/result', ["exports", "module", "underscore", "unders
 define('components/selector/scope', ["exports", "module", "cursors", "react", "entities/selector/item"], function (exports, module, _cursors, _react, _entitiesSelectorItem) {
   "use strict";
 
-  var _interopRequire = function (obj) {
-    return obj && (obj["default"] || obj);
-  };
+  var _interopRequire = function (obj) { return obj && obj.__esModule ? obj["default"] : obj; };
 
   var Cursors = _interopRequire(_cursors);
 
@@ -51440,6 +51547,7 @@ define('components/selector/scope', ["exports", "module", "cursors", "react", "e
   };
 
   module.exports = React.createClass({
+    displayName: "scope",
     mixins: [Cursors],
 
     handleChange: function () {
@@ -51495,9 +51603,7 @@ define('components/selector/scope', ["exports", "module", "cursors", "react", "e
 define('entities/selector/store', ["exports", "underscore", "underscore.string", "orgsync-widgets", "entities/selector/item", "react"], function (exports, _underscore, _underscoreString, _orgsyncWidgets, _entitiesSelectorItem, _react) {
   "use strict";
 
-  var _interopRequire = function (obj) {
-    return obj && (obj["default"] || obj);
-  };
+  var _interopRequire = function (obj) { return obj && obj.__esModule ? obj["default"] : obj; };
 
   var _ = _interopRequire(_underscore);
 
@@ -51608,14 +51714,13 @@ define('entities/selector/store', ["exports", "underscore", "underscore.string",
       cb(null, done[key] = items.length < options.size, options);
     });
   };
+  exports.__esModule = true;
 });
 // scripts/components/selector/token.es6
 define('components/selector/token', ["exports", "module", "cursors", "components/ui/icon", "react", "entities/selector/item"], function (exports, module, _cursors, _componentsUiIcon, _react, _entitiesSelectorItem) {
   "use strict";
 
-  var _interopRequire = function (obj) {
-    return obj && (obj["default"] || obj);
-  };
+  var _interopRequire = function (obj) { return obj && obj.__esModule ? obj["default"] : obj; };
 
   var Cursors = _interopRequire(_cursors);
 
@@ -51626,6 +51731,7 @@ define('components/selector/token', ["exports", "module", "cursors", "components
   var getIconName = _entitiesSelectorItem.getIconName;
   var getDisplayName = _entitiesSelectorItem.getDisplayName;
   module.exports = React.createClass({
+    displayName: "token",
     mixins: [Cursors],
 
     getClassName: function () {
@@ -51662,9 +51768,9 @@ define('components/selector/token', ["exports", "module", "cursors", "components
 define('components/selector/index', ["exports", "module", "underscore", "orgsync-widgets", "components/ui/button", "cursors", "react-list", "components/ui/popup", "react", "components/selector/result", "components/selector/scope", "entities/selector/store", "components/selector/token", "entities/selector/item"], function (exports, module, _underscore, _orgsyncWidgets, _componentsUiButton, _cursors, _reactList, _componentsUiPopup, _react, _componentsSelectorResult, _componentsSelectorScope, _entitiesSelectorStore, _componentsSelectorToken, _entitiesSelectorItem) {
   "use strict";
 
-  var _interopRequire = function (obj) {
-    return obj && (obj["default"] || obj);
-  };
+  var _interopRequire = function (obj) { return obj && obj.__esModule ? obj["default"] : obj; };
+
+  var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
 
   var _ = _interopRequire(_underscore);
 
@@ -52083,7 +52189,7 @@ define('components/selector/index', ["exports", "module", "underscore", "orgsync
       return React.createElement(
         "div",
         null,
-        React.createElement(SelectorIndex, React.__spread({}, this.props, {
+        React.createElement(SelectorIndex, _extends({}, this.props, {
           view: "browse",
           query: this.state.query,
           cursors: {
@@ -52215,9 +52321,7 @@ define('components/selector/index', ["exports", "module", "underscore", "orgsync
 define('components/ui/auto-textbox', ["exports", "module", "jquery", "cursors", "react"], function (exports, module, _jquery, _cursors, _react) {
   "use strict";
 
-  var _interopRequire = function (obj) {
-    return obj && (obj["default"] || obj);
-  };
+  var _interopRequire = function (obj) { return obj && obj.__esModule ? obj["default"] : obj; };
 
   var $ = _interopRequire(_jquery);
 
@@ -52226,6 +52330,7 @@ define('components/ui/auto-textbox', ["exports", "module", "jquery", "cursors", 
   var React = _interopRequire(_react);
 
   module.exports = React.createClass({
+    displayName: "auto-textbox",
     mixins: [Cursors],
 
     componentDidMount: function () {
@@ -52263,9 +52368,9 @@ define('components/ui/auto-textbox', ["exports", "module", "jquery", "cursors", 
 define('components/ui/text-button', ["exports", "module", "components/ui/button", "cursors", "react"], function (exports, module, _componentsUiButton, _cursors, _react) {
   "use strict";
 
-  var _interopRequire = function (obj) {
-    return obj && (obj["default"] || obj);
-  };
+  var _interopRequire = function (obj) { return obj && obj.__esModule ? obj["default"] : obj; };
+
+  var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
 
   var Button = _interopRequire(_componentsUiButton);
 
@@ -52274,10 +52379,11 @@ define('components/ui/text-button', ["exports", "module", "components/ui/button"
   var React = _interopRequire(_react);
 
   module.exports = React.createClass({
+    displayName: "text-button",
     mixins: [Cursors],
 
     render: function () {
-      return React.createElement(Button, React.__spread({}, this.props, { baseClassName: "osw-text-button" }));
+      return React.createElement(Button, _extends({}, this.props, { baseClassName: "osw-text-button" }));
     }
   });
 });

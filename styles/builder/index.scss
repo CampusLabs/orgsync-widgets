@@ -1,0 +1,25 @@
+@import '../config';
+
+.orgsync-widget {
+  .osw-builder-index-left {
+    padding: 5px;
+  }
+
+  &[min-width~='640px'] {
+    .osw-builder-index-left {
+      @include box-sizing(border-box);
+      display: inline-block;
+      position: -webkit-sticky;
+      position: sticky;
+      top: 0;
+      vertical-align: top;
+      width: 25%;
+    }
+
+    .osw-builder-index-right {
+      display: inline-block;
+      vertical-align: top;
+      width: 75%;
+    }
+  }
+}

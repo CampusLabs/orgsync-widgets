@@ -8,6 +8,6 @@
     "url": "https://github.com/orgsync/widgets"
   },
   "devDependencies": {
-    "cogs": "0.32.6"
+    "cogs": "0.33.7"
   }
 }

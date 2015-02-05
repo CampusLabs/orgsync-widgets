@@ -657,6 +657,9 @@
     border-radius: 3px;
     background-color: #f9f9f9;
     box-shadow: 0 1px 0 rgba(0, 0, 0, 0.1) inset; }
+  .orgsync-widget .osw-inset-block-red {
+    border: 1px solid #de6444;
+    color: #de6444; }
   .orgsync-widget .osw-field {
     position: relative; }
     .orgsync-widget .osw-field.oswi:before {
@@ -879,14 +882,14 @@
   text-align: center; }
 .orgsync-widget .osw-albums-list-item-photo-count {
   text-align: center; }
-.orgsync-widget[min-width~='251px'] .osw-albums-list-item {
+.orgsync-widget[min-width~='251px'] > .osw-albums-index .osw-albums-list-item {
   display: inline-block;
   width: 50%; }
-.orgsync-widget[min-width~='501px'] .osw-albums-list-item {
+.orgsync-widget[min-width~='501px'] > .osw-albums-index .osw-albums-list-item {
   width: 33.3%; }
-.orgsync-widget[min-width~='751px'] .osw-albums-list-item {
+.orgsync-widget[min-width~='751px'] > .osw-albums-index .osw-albums-list-item {
   width: 25%; }
-.orgsync-widget[min-width~='1001px'] .osw-albums-list-item {
+.orgsync-widget[min-width~='1001px'] > .osw-albums-index .osw-albums-list-item {
   width: 20%; }
 /* styles/albums/show.scss */
 .orgsync-widget .osw-albums-show-info {
@@ -901,6 +904,23 @@
   font-weight: normal; }
 .orgsync-widget .osw-albums-show-popup {
   max-width: 1100px; }
+/* styles/builder/index.scss */
+.orgsync-widget .osw-builder-index-left {
+  padding: 5px; }
+.orgsync-widget[min-width~='640px'] .osw-builder-index-left {
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+  display: inline-block;
+  position: -webkit-sticky;
+  position: sticky;
+  top: 0;
+  vertical-align: top;
+  width: 25%; }
+.orgsync-widget[min-width~='640px'] .osw-builder-index-right {
+  display: inline-block;
+  vertical-align: top;
+  width: 75%; }
 /* styles/comments/list-item.scss */
 .orgsync-widget .osw-comments-list-item {
   background: #f9f9f9;
@@ -1481,7 +1501,7 @@
   -moz-box-sizing: border-box;
   box-sizing: border-box;
   border: 5px solid transparent; }
-.orgsync-widget[min-width~='480px'] .osw-portals-filters .osw-field {
+.orgsync-widget[min-width~='480px'] > .osw-portals-index .osw-portals-filters .osw-field {
   display: inline-block;
   vertical-align: top;
   width: 33.33%; }
@@ -1505,7 +1525,7 @@
 /* styles/portals/letter-table.scss */
 .orgsync-widget .osw-portals-letter-table {
   display: none; }
-.orgsync-widget[min-width~='640px'] .osw-portals-letter-table {
+.orgsync-widget[min-width~='640px'] > .osw-portals-index .osw-portals-letter-table {
   display: table;
   width: 100%;
   -webkit-box-sizing: border-box;
@@ -1562,7 +1582,7 @@
   white-space: nowrap; }
 .orgsync-widget .osw-portals-list-item-umbrella {
   font-weight: bold; }
-.orgsync-widget[min-width~='480px'] .osw-portals-list-item {
+.orgsync-widget[min-width~='480px'] > .osw-portals-index .osw-portals-list-item {
   display: inline-block;
   -webkit-box-sizing: border-box;
   -moz-box-sizing: border-box;
@@ -1570,29 +1590,29 @@
   border: 5px solid transparent;
   width: 33.33%;
   vertical-align: top; }
-  .orgsync-widget[min-width~='480px'] .osw-portals-list-item > a {
+  .orgsync-widget[min-width~='480px'] > .osw-portals-index .osw-portals-list-item > a {
     border: 1px solid #ccc;
     box-shadow: 0 1px 0 rgba(0, 0, 0, 0.1);
     border-radius: 3px; }
-    .orgsync-widget[min-width~='480px'] .osw-portals-list-item > a:hover {
+    .orgsync-widget[min-width~='480px'] > .osw-portals-index .osw-portals-list-item > a:hover {
       border-color: #22809d; }
-  .orgsync-widget[min-width~='480px'] .osw-portals-list-item .osw-portals-list-item-picture {
+  .orgsync-widget[min-width~='480px'] > .osw-portals-index .osw-portals-list-item .osw-portals-list-item-picture {
     float: none;
     overflow: hidden;
     width: 100%; }
-    .orgsync-widget[min-width~='480px'] .osw-portals-list-item .osw-portals-list-item-picture > img {
+    .orgsync-widget[min-width~='480px'] > .osw-portals-index .osw-portals-list-item .osw-portals-list-item-picture > img {
       border-top-left-radius: 3px;
       border-top-right-radius: 3px; }
-  .orgsync-widget[min-width~='480px'] .osw-portals-list-item .osw-portals-list-item-name {
+  .orgsync-widget[min-width~='480px'] > .osw-portals-index .osw-portals-list-item .osw-portals-list-item-name {
     font-size: 16px;
     height: 75px;
     white-space: normal;
     overflow: hidden; }
-.orgsync-widget[min-width~='640px'] .osw-portals-list-item {
+.orgsync-widget[min-width~='640px'] > .osw-portals-index .osw-portals-list-item {
   width: 25%; }
-.orgsync-widget[min-width~='800px'] .osw-portals-list-item {
+.orgsync-widget[min-width~='800px'] > .osw-portals-index .osw-portals-list-item {
   width: 20%; }
-.orgsync-widget[min-width~='960px'] .osw-portals-list-item {
+.orgsync-widget[min-width~='960px'] > .osw-portals-index .osw-portals-list-item {
   width: 16.66%; }
 /* styles/portals/show.scss */
 .orgsync-widget .osw-portals-show {

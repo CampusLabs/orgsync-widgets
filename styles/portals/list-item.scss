@@ -61,7 +61,7 @@
     font-weight: bold;
   }
 
-  &[min-width~='480px'] .osw-portals-list-item {
+  &[min-width~='480px'] > .osw-portals-index .osw-portals-list-item {
     display: inline-block;
     @include box-sizing(border-box);
     border: 5px solid transparent;
@@ -96,15 +96,15 @@
     }
   }
 
-  &[min-width~='640px'] .osw-portals-list-item {
+  &[min-width~='640px'] > .osw-portals-index .osw-portals-list-item {
     width: 25%;
   }
 
-  &[min-width~='800px'] .osw-portals-list-item {
+  &[min-width~='800px'] > .osw-portals-index .osw-portals-list-item {
     width: 20%;
   }
 
-  &[min-width~='960px'] .osw-portals-list-item {
+  &[min-width~='960px'] > .osw-portals-index .osw-portals-list-item {
     width: 16.66%;
   }
 }

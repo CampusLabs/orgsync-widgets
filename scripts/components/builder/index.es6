@@ -61,11 +61,18 @@ export default React.createClass({
     let state;
     try { state = JSON.parse(localStorage.getItem(PERSIST_KEY)); }
     catch (er) {}
-    return state || DEFAULT_STATE;
+    return _.extend({}, state || DEFAULT_STATE, {
+      apiKey: api.key
+    });
   },
 
   componentDidUpdate: function () {
     localStorage.setItem(PERSIST_KEY, JSON.stringify(this.state));
+    localStorage.setItem('OSW_API_KEY', api.key = this.state.apiKey);
+  },
+
+  handleApiKeyChange: function (ev) {
+    this.update({apiKey: {$set: ev.target.value}});
   },
 
   handleWidgetChange: function (ev) {
@@ -140,6 +147,14 @@ export default React.createClass({
     return (
       <div className='osw-builder-index'>
         <div className='osw-builder-index-left'>
+          API Key<br />
+          <div className='osw-field'>
+            <input
+              value={this.state.apiKey}
+              onChange={this.handleApiKeyChange}
+            />
+          </div>
+          Widget<br />
           <div className='osw-field osw-dropdown'>
             <select
               value={this.state.widget}

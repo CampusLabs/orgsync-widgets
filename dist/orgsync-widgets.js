@@ -45504,11 +45504,18 @@ define('components/builder/index', ["exports", "module", "underscore", "undersco
       try {
         state = JSON.parse(localStorage.getItem(PERSIST_KEY));
       } catch (er) {}
-      return state || DEFAULT_STATE;
+      return _.extend({}, state || DEFAULT_STATE, {
+        apiKey: api.key
+      });
     },
 
     componentDidUpdate: function () {
       localStorage.setItem(PERSIST_KEY, JSON.stringify(this.state));
+      localStorage.setItem("OSW_API_KEY", api.key = this.state.apiKey);
+    },
+
+    handleApiKeyChange: function (ev) {
+      this.update({ apiKey: { $set: ev.target.value } });
     },
 
     handleWidgetChange: function (ev) {
@@ -45591,6 +45598,18 @@ define('components/builder/index', ["exports", "module", "underscore", "undersco
         React.createElement(
           "div",
           { className: "osw-builder-index-left" },
+          "API Key",
+          React.createElement("br", null),
+          React.createElement(
+            "div",
+            { className: "osw-field" },
+            React.createElement("input", {
+              value: this.state.apiKey,
+              onChange: this.handleApiKeyChange
+            })
+          ),
+          "Widget",
+          React.createElement("br", null),
           React.createElement(
             "div",
             { className: "osw-field osw-dropdown" },

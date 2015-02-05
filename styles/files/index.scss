@@ -1,0 +1,65 @@
+@import '../config';
+
+.orgsync-widget {
+  .osw-files-index-header {
+    background: #fff;
+    padding: 5px;
+    position: -webkit-sticky;
+    position: sticky;
+    top: 0;
+    z-index: 1;
+    border-bottom: 1px solid $grey;
+  };
+
+  .osw-files-slide-forward-enter-active,
+  .osw-files-slide-forward-leave-active,
+  .osw-files-slide-back-enter-active,
+  .osw-files-slide-back-leave-active {
+    @include transition(all .5s $ease-out-expo);
+    pointer-events: none;
+  }
+
+  .osw-files-slide-forward-enter {
+    @include transform(translateX(100%));
+  }
+
+  .osw-files-slide-forward-enter-active {
+    @include transform(translateX(0));
+  }
+
+  .osw-files-slide-forward-leave {
+    @include transform(translateX(-100%));
+  }
+
+  .osw-files-slide-forward-leave-active {
+    @include transform(translateX(-200%));
+  }
+
+  .osw-files-slide-back-enter {
+    @include transform(translateX(-100%));
+  }
+
+  .osw-files-slide-back-enter-active {
+    @include transform(translateX(0));
+  }
+
+  .osw-files-slide-back-leave {
+    @include transform(translateX(-100%));
+  }
+
+  .osw-files-slide-back-leave-active {
+    @include transform(translateX(0));
+  }
+
+  .osw-files-index-pages {
+    position: relative;
+    white-space: nowrap;
+  }
+
+  .osw-files-index-page {
+    display: inline-block;
+    position: relative;
+    vertical-align: top;
+    width: 100%;
+  }
+}

@@ -1388,6 +1388,7 @@
   -o-transform: translateX(0);
   transform: translateX(0); }
 .orgsync-widget .osw-files-index-pages {
+  overflow: hidden;
   position: relative;
   white-space: nowrap; }
 .orgsync-widget .osw-files-index-page {

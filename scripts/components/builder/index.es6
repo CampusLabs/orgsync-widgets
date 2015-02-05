@@ -22,6 +22,12 @@ const WIDGETS = {
       'activeEventFilterIds'
     ]
   },
+  Files: {
+    moduleName: 'files/index',
+    props: [
+      'portalId'
+    ]
+  },
   News: {
     moduleName: 'news-posts/index',
     props: [

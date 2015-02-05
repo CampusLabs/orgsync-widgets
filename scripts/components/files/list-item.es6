@@ -1,5 +1,5 @@
 import Cursors from 'cursors';
-import File from 'entities/file';
+import {getPictureUrl} from 'entities/file';
 import moment from 'moment';
 import React from 'react';
 import Sep from 'components/ui/sep';
@@ -53,7 +53,7 @@ export default React.createClass({
           {this.renderPin()}
           <div
             className='osw-files-list-item-picture'
-            style={{backgroundImage: `url('${File.getPictureUrl(file)}')`}}
+            style={{backgroundImage: `url('${getPictureUrl(file)}')`}}
           />
         </div>
         <div className='osw-files-list-item-info'>

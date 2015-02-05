@@ -45476,6 +45476,10 @@ define('components/builder/index', ["exports", "module", "underscore", "undersco
       moduleName: "events/index",
       props: ["communityId", "portalId", "view", "lockView", "tz", "activeEventFilterIds"]
     },
+    Files: {
+      moduleName: "files/index",
+      props: ["portalId"]
+    },
     News: {
       moduleName: "news-posts/index",
       props: ["portalId", "truncateLength", "redirect"]
@@ -50412,8 +50416,7 @@ define('components/files/list-item', ["exports", "module", "cursors", "entities/
 
   var Cursors = _interopRequire(_cursors);
 
-  var File = _interopRequire(_entitiesFile);
-
+  var getPictureUrl = _entitiesFile.getPictureUrl;
   var moment = _interopRequire(_moment);
 
   var React = _interopRequire(_react);
@@ -50474,7 +50477,7 @@ define('components/files/list-item', ["exports", "module", "cursors", "entities/
           this.renderPin(),
           React.createElement("div", {
             className: "osw-files-list-item-picture",
-            style: { backgroundImage: "url('" + File.getPictureUrl(file) + "')" }
+            style: { backgroundImage: "url('" + getPictureUrl(file) + "')" }
           })
         ),
         React.createElement(

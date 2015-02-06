@@ -28,6 +28,12 @@ const WIDGETS = {
       'portalId'
     ]
   },
+  Forms: {
+    moduleName: 'forms/index',
+    props: [
+      'portalId'
+    ]
+  },
   News: {
     moduleName: 'news-posts/index',
     props: [

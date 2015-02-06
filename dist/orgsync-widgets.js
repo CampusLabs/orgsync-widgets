@@ -45480,6 +45480,10 @@ define('components/builder/index', ["exports", "module", "underscore", "undersco
       moduleName: "files/index",
       props: ["portalId"]
     },
+    Forms: {
+      moduleName: "forms/index",
+      props: ["portalId"]
+    },
     News: {
       moduleName: "news-posts/index",
       props: ["portalId", "truncateLength", "redirect"]

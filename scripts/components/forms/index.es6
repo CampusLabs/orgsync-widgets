@@ -101,7 +101,7 @@ export default React.createClass({
         forms={forms}
         cursors={{
           query: this.getCursor('query'),
-          category: this.getCursor('category'),
+          category: this.getCursor('category')
         }}
       />
     );

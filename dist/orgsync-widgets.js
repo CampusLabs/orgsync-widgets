@@ -51343,7 +51343,8 @@ define('components/forms/index', ["exports", "module", "underscore", "underscore
         forms: forms,
         cursors: {
           query: this.getCursor("query"),
-          category: this.getCursor("category") }
+          category: this.getCursor("category")
+        }
       });
     },
 

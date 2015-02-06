@@ -1,8 +1,8 @@
-//= requireSelf
+//= require bower_components/olay-react/olay-react.css
+//= requireself
 //= require ./**/*
 
 @import 'config';
-
 @import 'bower_components/velcro/styles/syncdings';
 
 .orgsync-widget {
@@ -110,6 +110,11 @@
     border-radius: 3px;
     background-color: $grey-lightest;
     box-shadow: 0 1px 0 rgba(0, 0, 0, .1) inset;
+  }
+
+  .osw-inset-block-red {
+    border: 1px solid $red;
+    color: $red;
   }
 
   .osw-field {

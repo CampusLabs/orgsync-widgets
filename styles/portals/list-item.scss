@@ -45,6 +45,7 @@
     word-wrap: break-word;
     color: $grey-darkest;
     font-size: 16px;
+    padding-bottom: 3px;
     @include ellipsis;
   }
 
@@ -52,6 +53,7 @@
   .osw-portals-list-item-category {
     @include box-sizing(border-box);
     color: $grey-darker;
+    line-height: 1.4em;
     @include ellipsis;
   }
 
@@ -59,7 +61,7 @@
     font-weight: bold;
   }
 
-  &[min-width~='480px'] .osw-portals-list-item {
+  &[min-width~='480px'] > .osw-portals-index .osw-portals-list-item {
     display: inline-block;
     @include box-sizing(border-box);
     border: 5px solid transparent;
@@ -94,15 +96,15 @@
     }
   }
 
-  &[min-width~='640px'] .osw-portals-list-item {
+  &[min-width~='640px'] > .osw-portals-index .osw-portals-list-item {
     width: 25%;
   }
 
-  &[min-width~='800px'] .osw-portals-list-item {
+  &[min-width~='800px'] > .osw-portals-index .osw-portals-list-item {
     width: 20%;
   }
 
-  &[min-width~='960px'] .osw-portals-list-item {
+  &[min-width~='960px'] > .osw-portals-index .osw-portals-list-item {
     width: 16.66%;
   }
 }

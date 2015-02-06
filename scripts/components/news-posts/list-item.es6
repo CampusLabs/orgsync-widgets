@@ -50,6 +50,12 @@ export default React.createClass({
     );
   },
 
+  renderBody: function () {
+    var pruned = _str.prune(this.getStrippedBody(), this.props.truncateLength);
+    if (pruned === '...') return;
+    return <div className='osw-news-posts-list-item-body'>{pruned}</div>
+  },
+
   renderShow: function () {
     if (!this.state.isOpen) return;
     return (
@@ -79,9 +85,7 @@ export default React.createClass({
           {moment(newsPost.created_at).fromNow()}
         </div>
         {this.renderCount()}
-        <div className='osw-news-posts-list-item-body'>
-          {_str.prune(this.getStrippedBody(), this.props.truncateLength)}
-        </div>
+        {this.renderBody()}
         <Popup
           name='news-posts-show'
           close={this.close}

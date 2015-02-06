@@ -153,7 +153,9 @@ export default React.createClass({
   },
 
   renderError: function (er) {
-    return <div className='osw-inset-block'>{er}</div>;
+    return (
+      <div className='osw-inset-block osw-inset-block-red'>{er.toString()}</div>
+    );
   },
 
   renderEmpty: function () {

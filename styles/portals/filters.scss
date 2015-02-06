@@ -7,7 +7,7 @@
     border: 5px solid transparent;
   }
 
-  &[min-width~='480px'] .osw-portals-filters .osw-field {
+  &[min-width~='480px'] > .osw-portals-index .osw-portals-filters .osw-field {
     display: inline-block;
     vertical-align: top;
     width: 33.33%;

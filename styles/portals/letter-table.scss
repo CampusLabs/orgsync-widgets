@@ -5,7 +5,7 @@
     display: none;
   }
 
-  &[min-width~='640px'] .osw-portals-letter-table {
+  &[min-width~='640px'] > .osw-portals-index .osw-portals-letter-table {
     display: table;
     width: 100%;
     @include box-sizing(border-box);

@@ -1,6 +1,7 @@
 import Cursors from 'cursors';
 import Popup from 'components/ui/popup';
 import React from 'react';
+import Sep from 'components/ui/sep';
 import Show from 'components/forms/show';
 
 export default React.createClass({
@@ -12,7 +13,7 @@ export default React.createClass({
     };
   },
 
-  handleClick: function (ev) {
+  showForm: function (ev) {
     if (this.props.redirect) return;
     ev.preventDefault();
     this.update({showIsOpen: {$set: true}});
@@ -23,7 +24,7 @@ export default React.createClass({
   },
 
   truncate: function(str) {
-    var charLimit = 30;
+    var charLimit = 50;
     if(str.length > charLimit){
       return str.substr(0,charLimit-3)+"...";
     } else {
@@ -47,29 +48,30 @@ export default React.createClass({
     );
   },
 
+  renderPin: function() {
+    let classes = ['osw-files-list-item-pin'];
+    if (!this.state.form.important) {
+      classes.push('osw-files-list-item-pin-hidden');
+    }
+    return <div className={classes.join(' ')} />
+  },
+
   render: function () {
     var form = this.state.form;
     return (
-      <div className='osw-forms-list-item'>
-        <div className='osw-forms-list-item-inner'>
-          <a href={form.links.web} onClick={this.handleClick}>
-            <div className='osw-forms-icon'>
-              <img src={form.important ? 'pin.png' : ''} />
-            </div>
-            <div className='osw-forms-name'>
-              {this.truncate(form.name)}
-            </div>
-            <div className='osw-forms-category-name'>
-              {form.category.name}
-            </div>
-            <div className='osw-forms-creator'>
-              <div className='osw-forms-creator-name'>
-                {form.creator.display_name}
-              </div>
-            </div>
-            </a>
-            {this.renderShowPopup()}
+      <div className='osw-forms-list-item' onClick={this.showForm}>
+        <div className='osw-files-list-item-left'>
+          {this.renderPin()}
         </div>
+        <div className='osw-forms-list-item-info'>
+          <div className='osw-files-list-item-name'>{this.truncate(form.name)}</div>
+          <div className='osw-files-list-item-date'>
+            <span>{form.category.name}</span>
+            <Sep />
+            <span>{form.creator.display_name}</span>
+          </div>
+        </div>
+        {this.renderShowPopup()}
       </div>
     );
   }

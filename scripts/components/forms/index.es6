@@ -14,9 +14,8 @@ export default React.createClass({
   mixins: [Cursors],
 
   comparator: function (a, b) {
-    if (!a.umbrella !== !b.umbrella) return !a.umbrella ? -1 : 1;
-    var aName = (a.name || '').toLowerCase();
-    var bName = (b.name || '').toLowerCase();
+    var aName = (a.important ? '0' : '1') + (a.name || '').toLowerCase();
+    var bName = (b.important ? '0' : '1') + (b.name || '').toLowerCase();
     return aName < bName ? -1 : 1;
   },
 
@@ -51,16 +50,11 @@ export default React.createClass({
   },
 
   handleFetch: function (cb, er, res) {
-    console.log(res);
     if (er) return cb(er);
     this.update({
-      forms: {$set: _.unique(this.state.forms.concat(res.data), 'id')}
+      forms: {$set: _.unique(this.state.forms.concat(res.data), 'id').sort(this.comparator)}
     });
     cb(null, res.data.length < PER_PAGE);
-  },
-
-  sortAndUpdate: function (forms) {
-    this.update({forms: {$set: forms.slice().sort(this.comparator)}});
   },
 
   matchesCategory: function(form) {

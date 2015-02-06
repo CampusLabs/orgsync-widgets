@@ -1,105 +1,15 @@
 @import '../config';
 
 .orgsync-widget {
-  .osw-forms-list-item-inner {
-    > a {
-      display: block;
-      text-decoration: none;
-      background-color: $grey-lightest;
-      @include clearfix;
-      padding: 5px;
-
-      &:hover .osw-forms-name {
-        color: $blue-darkest;
-      }
-    }
-
-    .creator-portrait {
-      height: 25px;
-      width: 25px;
-      padding: 0px;
-      border-radius: 25px;
-      border: 3px solid $grey-darkest;
-      position: absolute;
-      right: 16px;
-      top: 12px;
-    }
-  }
-
-  .osw-forms-category-name {
-    color: $grey-darker;
-  }
-
-  .osw-forms-name {
-    font-size: 16px;
-    color: $grey-darkest;
-    padding-top: 3px;
-  }
-
-  .osw-forms-icon {
-    float: left;
-    position: relative;
-    width: 45px;
-    height: 45px;
-    overflow: hidden;
-  }
-
-  .osw-forms-creator {
-    font-size: 12px;
-    font-weight: lighter;
-    color: $grey-darker;
-  }
-
-  .osw-forms-list-item-inner {
-    vertical-align: top;
+  .osw-forms-list-item {
     @include clearfix;
+    border-top: 1px solid $grey;
+    cursor: pointer;
+    padding: 10px;
 
-    > a {
-      display: block;
-      text-decoration: none;
-      background-color: $grey-lightest;
-      border-top: 1px solid $grey;
-
-      &:hover .osw-forms-name {
-        color: $blue-darkest;
-      }
+    &:first-child {
+      border-top: 0;
+      padding-top: 6px;
     }
-  }
-
-  &[min-width~='480px'] .osw-forms-list-item {
-    display: inline-block;
-    width: 100%;
-    .osw-forms-list-item-inner {
-      margin: 0px;
-      > a {
-        border-top: 1px solid $grey;
-      }
-    }
-  }
-
-  &[min-width~='640px'] .osw-forms-list-item {
-    width: 50%;
-
-    .osw-forms-list-item-inner {
-      margin: 5px;
-
-      > a {
-        border: 1px solid $grey;
-        box-shadow: 0 1px 0 rgba(0, 0, 0, 0.1);
-        border-radius: 3px;
-
-        &:hover {
-          border-color: $blue-darkest;
-        }
-      }
-    }
-  }
-
-  &[min-width~='800px'] .osw-forms-list-item {
-    width: 50%;
-  }
-
-  &[min-width~='960px'] .osw-forms-list-item {
-    width: 33.3%;
   }
 }

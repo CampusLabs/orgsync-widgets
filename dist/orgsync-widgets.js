@@ -51126,7 +51126,7 @@ define('components/forms/show', ["exports", "module", "api", "cursors", "compone
   });
 });
 // scripts/components/forms/list-item.es6
-define('components/forms/list-item', ["exports", "module", "cursors", "components/ui/popup", "react", "components/forms/show"], function (exports, module, _cursors, _componentsUiPopup, _react, _componentsFormsShow) {
+define('components/forms/list-item', ["exports", "module", "cursors", "components/ui/popup", "react", "components/ui/sep", "components/forms/show"], function (exports, module, _cursors, _componentsUiPopup, _react, _componentsUiSep, _componentsFormsShow) {
   "use strict";
 
   var _interopRequire = function (obj) { return obj && obj.__esModule ? obj["default"] : obj; };
@@ -51136,6 +51136,8 @@ define('components/forms/list-item', ["exports", "module", "cursors", "component
   var Popup = _interopRequire(_componentsUiPopup);
 
   var React = _interopRequire(_react);
+
+  var Sep = _interopRequire(_componentsUiSep);
 
   var Show = _interopRequire(_componentsFormsShow);
 
@@ -51149,7 +51151,7 @@ define('components/forms/list-item', ["exports", "module", "cursors", "component
       };
     },
 
-    handleClick: function (ev) {
+    showForm: function (ev) {
       if (this.props.redirect) return;
       ev.preventDefault();
       this.update({ showIsOpen: { $set: true } });
@@ -51160,7 +51162,7 @@ define('components/forms/list-item', ["exports", "module", "cursors", "component
     },
 
     truncate: function (str) {
-      var charLimit = 30;
+      var charLimit = 50;
       if (str.length > charLimit) {
         return str.substr(0, charLimit - 3) + "...";
       } else {
@@ -51184,44 +51186,49 @@ define('components/forms/list-item', ["exports", "module", "cursors", "component
       );
     },
 
+    renderPin: function () {
+      var classes = ["osw-files-list-item-pin"];
+      if (!this.state.form.important) {
+        classes.push("osw-files-list-item-pin-hidden");
+      }
+      return React.createElement("div", { className: classes.join(" ") });
+    },
+
     render: function () {
       var form = this.state.form;
       return React.createElement(
         "div",
-        { className: "osw-forms-list-item" },
+        { className: "osw-forms-list-item", onClick: this.showForm },
         React.createElement(
           "div",
-          { className: "osw-forms-list-item-inner" },
+          { className: "osw-files-list-item-left" },
+          this.renderPin()
+        ),
+        React.createElement(
+          "div",
+          { className: "osw-forms-list-item-info" },
           React.createElement(
-            "a",
-            { href: form.links.web, onClick: this.handleClick },
+            "div",
+            { className: "osw-files-list-item-name" },
+            this.truncate(form.name)
+          ),
+          React.createElement(
+            "div",
+            { className: "osw-files-list-item-date" },
             React.createElement(
-              "div",
-              { className: "osw-forms-icon" },
-              React.createElement("img", { src: form.important ? "pin.png" : "" })
-            ),
-            React.createElement(
-              "div",
-              { className: "osw-forms-name" },
-              this.truncate(form.name)
-            ),
-            React.createElement(
-              "div",
-              { className: "osw-forms-category-name" },
+              "span",
+              null,
               form.category.name
             ),
+            React.createElement(Sep, null),
             React.createElement(
-              "div",
-              { className: "osw-forms-creator" },
-              React.createElement(
-                "div",
-                { className: "osw-forms-creator-name" },
-                form.creator.display_name
-              )
+              "span",
+              null,
+              form.creator.display_name
             )
-          ),
-          this.renderShowPopup()
-        )
+          )
+        ),
+        this.renderShowPopup()
       );
     }
   });
@@ -51257,9 +51264,8 @@ define('components/forms/index', ["exports", "module", "underscore", "underscore
     mixins: [Cursors],
 
     comparator: function (a, b) {
-      if (!a.umbrella !== !b.umbrella) return !a.umbrella ? -1 : 1;
-      var aName = (a.name || "").toLowerCase();
-      var bName = (b.name || "").toLowerCase();
+      var aName = (a.important ? "0" : "1") + (a.name || "").toLowerCase();
+      var bName = (b.important ? "0" : "1") + (b.name || "").toLowerCase();
       return aName < bName ? -1 : 1;
     },
 
@@ -51294,16 +51300,11 @@ define('components/forms/index', ["exports", "module", "underscore", "underscore
     },
 
     handleFetch: function (cb, er, res) {
-      console.log(res);
       if (er) return cb(er);
       this.update({
-        forms: { $set: _.unique(this.state.forms.concat(res.data), "id") }
+        forms: { $set: _.unique(this.state.forms.concat(res.data), "id").sort(this.comparator) }
       });
       cb(null, res.data.length < PER_PAGE);
-    },
-
-    sortAndUpdate: function (forms) {
-      this.update({ forms: { $set: forms.slice().sort(this.comparator) } });
     },
 
     matchesCategory: function (form) {

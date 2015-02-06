@@ -1444,6 +1444,116 @@
   .orgsync-widget .osw-files-list-item-date, .orgsync-widget .osw-files-list-item-date .osw-files-list-item-download {
     color: #797979;
     font-size: 14px; }
+/* styles/forms/filters.scss */
+.orgsync-widget .osw-forms-filters .osw-field {
+  display: block;
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+  border: 5px solid transparent; }
+.orgsync-widget[min-width~='480px'] .osw-forms-filters .osw-field {
+  display: inline-block;
+  vertical-align: top;
+  width: 50%; }
+/* styles/forms/list-item.scss */
+.orgsync-widget .osw-forms-list-item-inner > a {
+  display: block;
+  text-decoration: none;
+  background-color: #f9f9f9;
+  padding: 5px; }
+  .orgsync-widget .osw-forms-list-item-inner > a:after {
+    content: "";
+    display: table;
+    clear: both; }
+  .orgsync-widget .osw-forms-list-item-inner > a:hover .osw-forms-name {
+    color: #22809d; }
+.orgsync-widget .osw-forms-list-item-inner .creator-portrait {
+  height: 25px;
+  width: 25px;
+  padding: 0px;
+  border-radius: 25px;
+  border: 3px solid #2b2b2b;
+  position: absolute;
+  right: 16px;
+  top: 12px; }
+.orgsync-widget .osw-forms-category-name {
+  color: #797979; }
+.orgsync-widget .osw-forms-name {
+  font-size: 16px;
+  color: #2b2b2b;
+  padding-top: 3px; }
+.orgsync-widget .osw-forms-icon {
+  float: left;
+  position: relative;
+  width: 45px;
+  height: 45px;
+  overflow: hidden; }
+.orgsync-widget .osw-forms-creator {
+  font-size: 12px;
+  font-weight: lighter;
+  color: #797979; }
+.orgsync-widget .osw-forms-list-item-inner {
+  vertical-align: top; }
+  .orgsync-widget .osw-forms-list-item-inner:after {
+    content: "";
+    display: table;
+    clear: both; }
+  .orgsync-widget .osw-forms-list-item-inner > a {
+    display: block;
+    text-decoration: none;
+    background-color: #f9f9f9;
+    border-top: 1px solid #ccc; }
+    .orgsync-widget .osw-forms-list-item-inner > a:hover .osw-forms-name {
+      color: #22809d; }
+.orgsync-widget[min-width~='480px'] .osw-forms-list-item {
+  display: inline-block;
+  width: 100%; }
+  .orgsync-widget[min-width~='480px'] .osw-forms-list-item .osw-forms-list-item-inner {
+    margin: 0px; }
+    .orgsync-widget[min-width~='480px'] .osw-forms-list-item .osw-forms-list-item-inner > a {
+      border-top: 1px solid #ccc; }
+.orgsync-widget[min-width~='640px'] .osw-forms-list-item {
+  width: 50%; }
+  .orgsync-widget[min-width~='640px'] .osw-forms-list-item .osw-forms-list-item-inner {
+    margin: 5px; }
+    .orgsync-widget[min-width~='640px'] .osw-forms-list-item .osw-forms-list-item-inner > a {
+      border: 1px solid #ccc;
+      box-shadow: 0 1px 0 rgba(0, 0, 0, 0.1);
+      border-radius: 3px; }
+      .orgsync-widget[min-width~='640px'] .osw-forms-list-item .osw-forms-list-item-inner > a:hover {
+        border-color: #22809d; }
+.orgsync-widget[min-width~='800px'] .osw-forms-list-item {
+  width: 50%; }
+.orgsync-widget[min-width~='960px'] .osw-forms-list-item {
+  width: 33.3%; }
+/* styles/forms/show.scss */
+.orgsync-widget .osw-forms-show {
+  padding: 10px 10px 0; }
+  .orgsync-widget .osw-forms-show > .osw-button-row {
+    margin-bottom: 10px; }
+.orgsync-widget .osw-forms-show-name {
+  font-size: 18px;
+  font-weight: bold; }
+.orgsync-widget .osw-forms-show-description, .orgsync-widget .osw-forms-show-button, .orgsync-widget .osw-forms-show-creator {
+  margin-bottom: 10px; }
+.orgsync-widget .osw-forms-show-creator {
+  font-weight: lighter;
+  color: #ccc;
+  font-size: 8pt; }
+.orgsync-widget .osw-forms-show-category {
+  font-size: 10pt;
+  color: #797979; }
+.orgsync-widget .osw-forms-show-description {
+  font-size: 10pt;
+  padding: 5px;
+  background-color: #f9f9f9;
+  border-radius: 5px; }
+.orgsync-widget .osw-forms-show-popup {
+  max-width: 400px; }
+  .orgsync-widget .osw-forms-show-popup[min-width~='480px'] .osw-forms-show:after {
+    content: "";
+    display: table;
+    clear: both; }
 /* styles/news-posts/list-item.scss */
 .orgsync-widget .osw-news-posts-list-item {
   margin: 0 auto;

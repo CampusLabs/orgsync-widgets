@@ -1,5 +1,3 @@
-/** @jsx React.DOM */
-
 import CategorySelector from 'components/forms/category-selector';
 import Cursors from 'cursors';
 import Query from 'components/forms/query';

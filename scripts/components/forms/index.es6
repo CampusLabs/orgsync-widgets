@@ -1,5 +1,3 @@
-/** @jsx React.DOM */
-
 import _ from 'underscore';
 import _str from 'underscore.string';
 import api from 'api';

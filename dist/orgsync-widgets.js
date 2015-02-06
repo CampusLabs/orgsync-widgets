@@ -50694,6 +50694,707 @@ define('components/files/index', ["exports", "module", "underscore", "components
     }
   });
 });
+// scripts/components/forms/selector.es6
+define('components/forms/selector', ["exports", "module", "cursors", "react"], function (exports, module, _cursors, _react) {
+  "use strict";
+
+  var _interopRequire = function (obj) { return obj && obj.__esModule ? obj["default"] : obj; };
+
+  var Cursors = _interopRequire(_cursors);
+
+  var React = _interopRequire(_react);
+
+  module.exports = React.createClass({
+    displayName: "selector",
+    mixins: [Cursors],
+
+    render: function () {
+      var options = this.props.renderOptions();
+      var value = this.props.value;
+      if (options.length === 2) value = options[1].props.value;
+      return this.transferPropsTo(React.createElement(
+        "div",
+        { className: "osw-big osw-field oswi osw-dropdown" },
+        React.createElement(
+          "select",
+          {
+            name: this.props.name,
+            value: value,
+            onChange: this.props.onChange
+          },
+          options
+        )
+      ));
+    }
+  });
+});
+// scripts/components/forms/faceted-selector.es6
+define('components/forms/faceted-selector', ["exports", "module", "underscore", "cursors", "react", "components/forms/selector"], function (exports, module, _underscore, _cursors, _react, _componentsFormsSelector) {
+  "use strict";
+
+  var _interopRequire = function (obj) { return obj && obj.__esModule ? obj["default"] : obj; };
+
+  var _ = _interopRequire(_underscore);
+
+  var Cursors = _interopRequire(_cursors);
+
+  var React = _interopRequire(_react);
+
+  var Selector = _interopRequire(_componentsFormsSelector);
+
+  module.exports = React.createClass({
+    displayName: "faceted-selector",
+    mixins: [Cursors],
+
+    toOption: function (matches, name) {
+      return { id: name, name: name + " (" + matches.length + ")" };
+    },
+
+    renderOption: function (option) {
+      return React.createElement(
+        "option",
+        { key: option.id, value: option.id },
+        option.name
+      );
+    },
+
+    renderOptions: function () {
+      return [{ id: "", name: this.props.allOption }].concat(_.chain(this.props.forms).map(this.props.getFacet).groupBy().map(this.toOption).sortBy("name").value()).map(this.renderOption);
+    },
+
+    render: function () {
+      return this.transferPropsTo(React.createElement(Selector, { renderOptions: this.renderOptions }));
+    }
+  });
+});
+// scripts/components/forms/category-selector.es6
+define('components/forms/category-selector', ["exports", "module", "cursors", "components/forms/faceted-selector", "react"], function (exports, module, _cursors, _componentsFormsFacetedSelector, _react) {
+  "use strict";
+
+  var _interopRequire = function (obj) { return obj && obj.__esModule ? obj["default"] : obj; };
+
+  var Cursors = _interopRequire(_cursors);
+
+  var FacetedSelector = _interopRequire(_componentsFormsFacetedSelector);
+
+  var React = _interopRequire(_react);
+
+  module.exports = React.createClass({
+    displayName: "category-selector",
+    mixins: [Cursors],
+
+    getFacet: function (form) {
+      return form.category.name;
+    },
+
+    render: function () {
+      return this.transferPropsTo(React.createElement(FacetedSelector, {
+        name: "category",
+        allOption: "All Categories",
+        getFacet: this.getFacet,
+        className: "oswi-book"
+      }));
+    }
+  });
+});
+// scripts/components/forms/empty.es6
+define('components/forms/empty', ["exports", "module", "components/ui/button", "cursors", "react"], function (exports, module, _componentsUiButton, _cursors, _react) {
+  "use strict";
+
+  var _interopRequire = function (obj) { return obj && obj.__esModule ? obj["default"] : obj; };
+
+  var Button = _interopRequire(_componentsUiButton);
+
+  var Cursors = _interopRequire(_cursors);
+
+  var React = _interopRequire(_react);
+
+  module.exports = React.createClass({
+    displayName: "empty",
+    mixins: [Cursors],
+
+    handleClick: function () {
+      this.update({
+        category: { $set: "" },
+        query: { $set: "" }
+      });
+    },
+
+    render: function () {
+      return React.createElement(
+        "div",
+        { className: "osw-portals-empty osw-inset-block" },
+        React.createElement(
+          "div",
+          { className: "osw-portals-empty-apology" },
+          "We're sorry, but no forms match your selected filters."
+        ),
+        React.createElement(
+          "div",
+          { className: "osw-portals-empty-suggestions-header" },
+          "Suggestions"
+        ),
+        React.createElement(
+          "ul",
+          { className: "osw-portals-empty-suggestions" },
+          React.createElement(
+            "li",
+            null,
+            "Make sure all words are spelled correctly"
+          ),
+          React.createElement(
+            "li",
+            null,
+            "Try different, or fewer, keywords"
+          ),
+          React.createElement(
+            "li",
+            null,
+            "Clear all filters to return to all organizations"
+          )
+        ),
+        React.createElement(
+          Button,
+          { onClick: this.handleClick },
+          "Clear All Filters"
+        )
+      );
+    }
+  });
+});
+// scripts/components/forms/query.es6
+define('components/forms/query', ["exports", "module", "cursors", "react"], function (exports, module, _cursors, _react) {
+  "use strict";
+
+  var _interopRequire = function (obj) { return obj && obj.__esModule ? obj["default"] : obj; };
+
+  var Cursors = _interopRequire(_cursors);
+
+  var React = _interopRequire(_react);
+
+  module.exports = React.createClass({
+    displayName: "query",
+    mixins: [Cursors],
+
+    render: function () {
+      return React.createElement(
+        "div",
+        { className: "osw-big osw-field oswi oswi-magnify" },
+        React.createElement("input", {
+          name: "query",
+          type: "text",
+          placeholder: "Search by name or keyword",
+          value: this.props.value,
+          onChange: this.props.onChange,
+          autoComplete: "off"
+        })
+      );
+    }
+  });
+});
+// scripts/components/forms/summary.es6
+define('components/forms/summary', ["exports", "module", "underscore", "components/ui/button", "cursors", "components/ui/icon", "react"], function (exports, module, _underscore, _componentsUiButton, _cursors, _componentsUiIcon, _react) {
+  "use strict";
+
+  var _interopRequire = function (obj) { return obj && obj.__esModule ? obj["default"] : obj; };
+
+  var _ = _interopRequire(_underscore);
+
+  var Button = _interopRequire(_componentsUiButton);
+
+  var Cursors = _interopRequire(_cursors);
+
+  var Icon = _interopRequire(_componentsUiIcon);
+
+  var React = _interopRequire(_react);
+
+  module.exports = React.createClass({
+    displayName: "summary",
+    mixins: [Cursors],
+
+    getFilters: function () {
+      return _.pick(this.state, "query", "category");
+    },
+
+    renderMessage: function () {
+      var any = _.any(this.getFilters());
+      var l = this.props.forms.length;
+      return "Showing " + (any ? "" : "all ") + l + " form" + (l === 1 ? "" : "s") + (any ? " matching " : ".");
+    },
+
+    renderClearButtons: function () {
+      return _.map(this.getFilters(), function (value, name) {
+        if (!value) return null;
+        var deltas = {};
+        deltas[name] = { $set: "" };
+        return React.createElement(
+          Button,
+          { key: name, onClick: _.partial(this.update, deltas) },
+          value,
+          React.createElement(Icon, { name: "delete" })
+        );
+      }, this);
+    },
+
+    render: function () {
+      return React.createElement(
+        "div",
+        { className: "osw-portals-summary" },
+        React.createElement(
+          "div",
+          { className: "osw-portals-summary-message" },
+          this.renderMessage()
+        ),
+        React.createElement(
+          "div",
+          { className: "osw-portals-summary-clear-buttons" },
+          this.renderClearButtons()
+        )
+      );
+    }
+  });
+});
+// scripts/components/forms/filters.es6
+define('components/forms/filters', ["exports", "module", "components/forms/category-selector", "cursors", "components/forms/query", "react", "components/forms/summary"], function (exports, module, _componentsFormsCategorySelector, _cursors, _componentsFormsQuery, _react, _componentsFormsSummary) {
+  "use strict";
+
+  var _interopRequire = function (obj) { return obj && obj.__esModule ? obj["default"] : obj; };
+
+  var CategorySelector = _interopRequire(_componentsFormsCategorySelector);
+
+  var Cursors = _interopRequire(_cursors);
+
+  var Query = _interopRequire(_componentsFormsQuery);
+
+  var React = _interopRequire(_react);
+
+  var Summary = _interopRequire(_componentsFormsSummary);
+
+  module.exports = React.createClass({
+    displayName: "filters",
+    mixins: [Cursors],
+
+    handleChange: function (ev) {
+      var deltas = {};
+      deltas[ev.target.name] = { $set: ev.target.value };
+      this.update(deltas);
+    },
+
+    render: function () {
+      return React.createElement(
+        "div",
+        { className: "osw-forms-filters" },
+        React.createElement(Query, { value: this.state.query, onChange: this.handleChange }),
+        React.createElement(CategorySelector, {
+          forms: this.props.forms,
+          value: this.state.category,
+          onChange: this.handleChange
+        }),
+        this.transferPropsTo(React.createElement(Summary, null))
+      );
+    }
+  });
+});
+// scripts/components/ui/button-row.es6
+define('components/ui/button-row', ["exports", "module", "cursors", "utils/join-class-names", "react"], function (exports, module, _cursors, _utilsJoinClassNames, _react) {
+  "use strict";
+
+  var _interopRequire = function (obj) { return obj && obj.__esModule ? obj["default"] : obj; };
+
+  var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+
+  var Cursors = _interopRequire(_cursors);
+
+  var joinClassNames = _interopRequire(_utilsJoinClassNames);
+
+  var React = _interopRequire(_react);
+
+  module.exports = React.createClass({
+    displayName: "button-row",
+    mixins: [Cursors],
+
+    render: function () {
+      return React.createElement(
+        "div",
+        _extends({}, this.props, {
+          className: joinClassNames("osw-button-row", this.props.classname)
+        }),
+        this.props.children
+      );
+    }
+  });
+});
+// scripts/components/forms/show.es6
+define('components/forms/show', ["exports", "module", "api", "cursors", "components/ui/button", "components/ui/button-row", "react"], function (exports, module, _api, _cursors, _componentsUiButton, _componentsUiButtonRow, _react) {
+  "use strict";
+
+  var _interopRequire = function (obj) { return obj && obj.__esModule ? obj["default"] : obj; };
+
+  var api = _interopRequire(_api);
+
+  var Cursors = _interopRequire(_cursors);
+
+  var Button = _interopRequire(_componentsUiButton);
+
+  var ButtonRow = _interopRequire(_componentsUiButtonRow);
+
+  var React = _interopRequire(_react);
+
+  module.exports = React.createClass({
+    displayName: "show",
+    mixins: [Cursors],
+
+    getInitialState: function () {
+      return {
+        isLoading: false,
+        error: null
+      };
+    },
+
+    componentWillMount: function () {
+      var form = this.state.form;
+      if (form.description != null) return;
+      this.update({ isLoading: { $set: true }, error: { $set: null } });
+      api.get("/portals/:portal_id/forms/:id", { portal_id: form.portal.id, id: form.id }, this.handleFetch);
+    },
+
+    handleFetch: function (er, res) {
+      console.log("Show form:");
+      console.log(res);
+      var deltas = { isLoading: { $set: false } };
+      if (er) deltas.error = { $set: er };else deltas.form = { $set: res.data };
+      this.update(deltas);
+    },
+
+    showDescription: function (form) {
+      if (form.description === "") {
+        return "No description provided.";
+      } else {
+        return form.description;
+      }
+    },
+
+    showCreator: function (form) {
+      return "Created by " + form.creator.display_name;
+    },
+
+    render: function () {
+      var form = this.state.form;
+      return React.createElement(
+        "div",
+        { className: "osw-forms-show" },
+        React.createElement(
+          "div",
+          { className: "osw-forms-show-name" },
+          form.name
+        ),
+        React.createElement(
+          "div",
+          { className: "osw-forms-show-category" },
+          form.category.name
+        ),
+        React.createElement(
+          "div",
+          { className: "osw-forms-show-creator" },
+          this.showCreator(form)
+        ),
+        React.createElement(
+          "div",
+          { className: "osw-forms-show-description" },
+          form.description
+        ),
+        React.createElement(
+          ButtonRow,
+          null,
+          React.createElement(
+            Button,
+            { href: form.links.web },
+            "On OrgSync.com"
+          ),
+          React.createElement(
+            Button,
+            { href: form.links.pdf_link },
+            "PDF"
+          )
+        )
+      );
+    }
+  });
+});
+// scripts/components/forms/list-item.es6
+define('components/forms/list-item', ["exports", "module", "cursors", "components/ui/popup", "react", "components/forms/show"], function (exports, module, _cursors, _componentsUiPopup, _react, _componentsFormsShow) {
+  "use strict";
+
+  var _interopRequire = function (obj) { return obj && obj.__esModule ? obj["default"] : obj; };
+
+  var Cursors = _interopRequire(_cursors);
+
+  var Popup = _interopRequire(_componentsUiPopup);
+
+  var React = _interopRequire(_react);
+
+  var Show = _interopRequire(_componentsFormsShow);
+
+  module.exports = React.createClass({
+    displayName: "list-item",
+    mixins: [Cursors],
+
+    getInitialState: function () {
+      return {
+        showIsOpen: false
+      };
+    },
+
+    handleClick: function (ev) {
+      if (this.props.redirect) return;
+      ev.preventDefault();
+      this.update({ showIsOpen: { $set: true } });
+    },
+
+    closeShow: function () {
+      this.update({ showIsOpen: { $set: false } });
+    },
+
+    truncate: function (str) {
+      var charLimit = 30;
+      if (str.length > charLimit) {
+        return str.substr(0, charLimit - 3) + "...";
+      } else {
+        return str;
+      }
+    },
+
+    renderShow: function () {
+      if (!this.state.showIsOpen) return;
+      return React.createElement(Show, { cursors: { form: this.getCursor("form") } });
+    },
+
+    renderShowPopup: function () {
+      return React.createElement(
+        Popup,
+        {
+          name: "forms-show",
+          close: this.closeShow,
+          title: "Form Details" },
+        this.renderShow()
+      );
+    },
+
+    render: function () {
+      var form = this.state.form;
+      return React.createElement(
+        "div",
+        { className: "osw-forms-list-item" },
+        React.createElement(
+          "div",
+          { className: "osw-forms-list-item-inner" },
+          React.createElement(
+            "a",
+            { href: form.links.web, onClick: this.handleClick },
+            React.createElement(
+              "div",
+              { className: "osw-forms-icon" },
+              React.createElement("img", { src: form.important ? "pin.png" : "" })
+            ),
+            React.createElement(
+              "div",
+              { className: "osw-forms-name" },
+              this.truncate(form.name)
+            ),
+            React.createElement(
+              "div",
+              { className: "osw-forms-category-name" },
+              form.category.name
+            ),
+            React.createElement(
+              "div",
+              { className: "osw-forms-creator" },
+              React.createElement(
+                "div",
+                { className: "osw-forms-creator-name" },
+                form.creator.display_name
+              )
+            )
+          ),
+          this.renderShowPopup()
+        )
+      );
+    }
+  });
+});
+// scripts/components/forms/index.es6
+define('components/forms/index', ["exports", "module", "underscore", "underscore.string", "api", "cursors", "react-list", "components/forms/filters", "components/forms/list-item", "components/forms/empty", "react"], function (exports, module, _underscore, _underscoreString, _api, _cursors, _reactList, _componentsFormsFilters, _componentsFormsListItem, _componentsFormsEmpty, _react) {
+  "use strict";
+
+  var _interopRequire = function (obj) { return obj && obj.__esModule ? obj["default"] : obj; };
+
+  var _ = _interopRequire(_underscore);
+
+  var _str = _interopRequire(_underscoreString);
+
+  var api = _interopRequire(_api);
+
+  var Cursors = _interopRequire(_cursors);
+
+  var List = _interopRequire(_reactList);
+
+  var Filters = _interopRequire(_componentsFormsFilters);
+
+  var FormsListItem = _interopRequire(_componentsFormsListItem);
+
+  var Empty = _interopRequire(_componentsFormsEmpty);
+
+  var React = _interopRequire(_react);
+
+  var PER_PAGE = 10;
+
+  module.exports = React.createClass({
+    displayName: "index",
+    mixins: [Cursors],
+
+    comparator: function (a, b) {
+      if (!a.umbrella !== !b.umbrella) return !a.umbrella ? -1 : 1;
+      var aName = (a.name || "").toLowerCase();
+      var bName = (b.name || "").toLowerCase();
+      return aName < bName ? -1 : 1;
+    },
+
+    getDefaultProps: function () {
+      return {
+        category: "",
+        query: "",
+        searchableAttributes: ["name"],
+        forms: [],
+        filtersAreShowing: true
+      };
+    },
+
+    getInitialState: function () {
+      return {
+        category: this.props.category,
+        query: this.props.query,
+        forms: this.props.forms
+      };
+    },
+
+    componentWillMount: function () {
+      if (this.state.forms.length) this.sortAndUpdate(this.state.forms);
+    },
+
+    fetch: function (cb) {
+      api.get("/portals/:portal_id/forms", {
+        portal_id: this.props.portalId,
+        page: Math.floor(this.state.forms.length / PER_PAGE) + 1,
+        per_page: PER_PAGE
+      }, _.partial(this.handleFetch, cb));
+    },
+
+    handleFetch: function (cb, er, res) {
+      console.log(res);
+      if (er) return cb(er);
+      this.update({
+        forms: { $set: _.unique(this.state.forms.concat(res.data), "id") }
+      });
+      cb(null, res.data.length < PER_PAGE);
+    },
+
+    sortAndUpdate: function (forms) {
+      this.update({ forms: { $set: forms.slice().sort(this.comparator) } });
+    },
+
+    matchesCategory: function (form) {
+      var a = this.state.category;
+      var b = form.category.name;
+      return !a || a === b;
+    },
+
+    matchesQuery: function (form) {
+      var query = this.state.query;
+      if (!query) return true;
+      var words = _str.words(query.toLowerCase());
+      var searchableWords = this.searchableWordsFor(form);
+      return _.every(words, function (wordA) {
+        return _.any(searchableWords, function (wordB) {
+          return _str.startsWith(wordB, wordA);
+        });
+      });
+    },
+
+    searchableWordsFor: function (form) {
+      return _str.words(_.values(_.pick(form, this.props.searchableAttributes)).join(" ").toLowerCase());
+    },
+
+    formMatchesFilters: function (form) {
+      return this.matchesCategory(form) && this.matchesQuery(form);
+    },
+
+    getFilteredForms: function () {
+      return this.state.forms.filter(this.formMatchesFilters);
+    },
+
+    renderFilters: function (forms) {
+      if (!this.state.forms.length || !this.props.filtersAreShowing) return;
+      return React.createElement(Filters, {
+        forms: forms,
+        cursors: {
+          query: this.getCursor("query"),
+          category: this.getCursor("category") }
+      });
+    },
+
+    renderListItem: function (form) {
+      var i = this.state.forms.indexOf(form);
+      return React.createElement(FormsListItem, {
+        key: form.id,
+        redirect: this.props.redirect,
+        cursors: { form: this.getCursor("forms", i) }
+      });
+    },
+
+    renderLoading: function () {
+      return React.createElement(
+        "div",
+        { className: "osw-inset-block" },
+        "Loading..."
+      );
+    },
+
+    renderError: function (er) {
+      return React.createElement(
+        "div",
+        { className: "osw-inset-block" },
+        er
+      );
+    },
+
+    renderEmpty: function () {
+      return React.createElement(Empty, {
+        cursors: {
+          category: this.getCursor("category"),
+          query: this.getCursor("query")
+        }
+      });
+    },
+
+    render: function () {
+      var forms = this.getFilteredForms();
+      return React.createElement(
+        "div",
+        { className: "osw-forms-index" },
+        this.renderFilters(forms),
+        React.createElement(List, {
+          items: forms,
+          fetch: this.fetch,
+          renderLoading: this.renderLoading,
+          renderError: this.renderError,
+          renderItem: this.renderListItem,
+          renderEmpty: this.renderEmpty,
+          uniform: true
+        })
+      );
+    }
+  });
+});
 // scripts/components/news-posts/show.es6
 define('components/news-posts/show', ["exports", "module", "components/comments/index", "cursors", "moment", "react"], function (exports, module, _componentsCommentsIndex, _cursors, _moment, _react) {
   "use strict";
@@ -51392,35 +52093,6 @@ define('components/portals/filters', ["exports", "module", "components/portals/c
         }),
         React.createElement(LetterTable, { cursors: { letter: this.getCursor("letter") } }),
         React.createElement(Summary, this.props)
-      );
-    }
-  });
-});
-// scripts/components/ui/button-row.es6
-define('components/ui/button-row', ["exports", "module", "cursors", "utils/join-class-names", "react"], function (exports, module, _cursors, _utilsJoinClassNames, _react) {
-  "use strict";
-
-  var _interopRequire = function (obj) { return obj && obj.__esModule ? obj["default"] : obj; };
-
-  var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
-
-  var Cursors = _interopRequire(_cursors);
-
-  var joinClassNames = _interopRequire(_utilsJoinClassNames);
-
-  var React = _interopRequire(_react);
-
-  module.exports = React.createClass({
-    displayName: "button-row",
-    mixins: [Cursors],
-
-    render: function () {
-      return React.createElement(
-        "div",
-        _extends({}, this.props, {
-          className: joinClassNames("osw-button-row", this.props.classname)
-        }),
-        this.props.children
       );
     }
   });

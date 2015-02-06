@@ -1,9 +1,7 @@
-/** @jsx React.DOM */
-
 import _ from 'underscore';
-import Button from 'components/button';
+import Button from 'components/ui/button';
 import Cursors from 'cursors';
-import Icon from 'components/icon';
+import Icon from 'components/ui/icon';
 import React from 'react';
 
 export default React.createClass({

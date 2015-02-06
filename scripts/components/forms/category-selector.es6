@@ -1,5 +1,3 @@
-/** @jsx React.DOM */
-
 import Cursors from 'cursors';
 import FacetedSelector from 'components/forms/faceted-selector';
 import React from 'react';

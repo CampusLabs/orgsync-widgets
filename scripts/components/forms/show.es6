@@ -1,9 +1,7 @@
-/** @jsx React.DOM */
-
 import api from 'api';
 import Cursors from 'cursors';
-import Button from 'components/button';
-import ButtonRow from 'components/button-row';
+import Button from 'components/ui/button';
+import ButtonRow from 'components/ui/button-row';
 import React from 'react';
 
 export default React.createClass({

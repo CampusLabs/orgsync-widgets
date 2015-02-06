@@ -51367,8 +51367,8 @@ define('components/forms/index', ["exports", "module", "underscore", "underscore
     renderError: function (er) {
       return React.createElement(
         "div",
-        { className: "osw-inset-block" },
-        er
+        { className: "osw-inset-block osw-inset-block-red" },
+        er.toString()
       );
     },
 

@@ -1,8 +1,13 @@
+import _ from 'underscore';
 import api from 'api';
+import Button from 'components/ui/button';
+import CommentsIndex from 'components/comments/index';
 import Cursors from 'cursors';
+import moment from 'moment';
 import React from 'react';
+import {getPictureUrl, getHumanFileSize} from 'entities/file';
 
-import {getPictureUrl} from 'entities/file';
+const FORMAT = 'MMM D, YYYY, h:mm A';
 
 export default React.createClass({
   mixins: [Cursors],
@@ -24,22 +29,48 @@ export default React.createClass({
     });
   },
 
+  renderDescription: function () {
+    let description = this.state.file.description;
+    if (!description) return;
+    return (
+      <div className='osw-files-file-show-description'>
+        {description}
+      </div>
+    );
+  },
+
   renderFile: function () {
-    var file = this.state.file;
+    let file = this.state.file;
     return (
       <div className='osw-files-file-show'>
-        <div className='osw-files-list-item-left'>
+        <div className='osw-files-file-show-info'>
           <div
-            className='osw-files-list-item-picture'
+            className='osw-files-file-show-picture'
             style={{backgroundImage: `url('${getPictureUrl(file)}')`}}
           />
-        </div>
-        <div className='osw-files-list-item-info'>
-          <div className='osw-files-list-item-name'>{file.name}</div>
-          <div className='osw-files-list-item-date'>
-            {file.updated_at}
+          <div className='osw-files-file-show-name'>{file.name}</div>
+          <div className='osw-files-file-show-date'>
+            <strong>Filename:</strong> {file.file_name}
           </div>
+          <div className='osw-files-file-show-date'>
+            <strong>Created:</strong> {moment(file.created_at).format(FORMAT)}
+          </div>
+          <div className='osw-files-file-show-date'>
+            <strong>Updated:</strong> {moment(file.updated_at).format(FORMAT)}
+          </div>
+          <Button
+            className='osw-files-file-show-download'
+            href={file.links.download}
+          >
+            Download {getHumanFileSize(file)}
+          </Button>
         </div>
+        {this.renderDescription()}
+        <CommentsIndex
+          url={file.links.comments}
+          newUrl={file.links.web}
+          cursors={{comments: this.getCursor('file', 'comments')}}
+        />
       </div>
     );
   },

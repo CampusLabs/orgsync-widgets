@@ -1325,6 +1325,33 @@
   color: #fff;
   font-weight: bold;
   padding-top: 3px; }
+/* styles/files/file-show.scss */
+.orgsync-widget .osw-files-file-show-picture {
+  background: center no-repeat;
+  background-size: contain;
+  display: inline-block;
+  float: left;
+  height: 128px;
+  margin-right: 10px;
+  vertical-align: middle;
+  width: 96px; }
+.orgsync-widget .osw-files-file-show-name {
+  font-size: 24px;
+  margin-bottom: 5px; }
+.orgsync-widget .osw-files-file-show-info {
+  padding: 10px; }
+  .orgsync-widget .osw-files-file-show-info:after {
+    content: "";
+    display: table;
+    clear: both; }
+.orgsync-widget .osw-files-file-show-date {
+  color: #797979;
+  font-size: 14px; }
+.orgsync-widget .osw-files-file-show-download {
+  margin-top: 10px; }
+.orgsync-widget .osw-files-file-show-description {
+  border-top: 1px solid #ccc;
+  padding: 10px; }
 /* styles/files/index.scss */
 .orgsync-widget .osw-files-index-header {
   background: #fff;

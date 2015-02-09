@@ -50332,37 +50332,66 @@ define('components/files/breadcrumb', ["exports", "module", "cursors", "react", 
   // https://github.com/orgsync/orgsync/pull/6129#issuecomment-52841135
 });
 // scripts/entities/file.es6
-define('entities/file', ["exports"], function (exports) {
+define('entities/file', ["exports", "underscore"], function (exports, _underscore) {
   "use strict";
+
+  var _interopRequire = function (obj) { return obj && obj.__esModule ? obj["default"] : obj; };
+
+  var _ = _interopRequire(_underscore);
 
   var ALIASES = {
     Document: "doc",
     JavaScript: "js",
     File: "other"
   };
+
   var SLUG_PREFIX = "https://orgsync.com/assets/icons/file-type-icons/file-";
+
   var SLUG_SUFFIX = "-128.svg";
+
+  var UNITS = [{ name: "GB", bytes: 1 << 30 }, { name: "MB", bytes: 1 << 20 }, { name: "KB", bytes: 1 << 10 }, { name: "bytes", bytes: 1 }];
 
   var getPictureUrl = exports.getPictureUrl = function (file) {
     var category = file.category || "folder";
     var slug = ALIASES[category] || category.toLowerCase();
     return SLUG_PREFIX + slug + SLUG_SUFFIX;
   };
+
+  var getHumanFileSize = exports.getHumanFileSize = function (file) {
+    var bytes = file.file_size || 0;
+    var unit = _.find(UNITS, function (unit) {
+      return bytes >= unit.bytes;
+    }) || _.last(UNITS);
+    return "" + Math.ceil(bytes / unit.bytes * 10) / 10 + " " + unit.name;
+  };
   exports.__esModule = true;
 });
 // scripts/components/files/file-show.es6
-define('components/files/file-show', ["exports", "module", "api", "cursors", "react", "entities/file"], function (exports, module, _api, _cursors, _react, _entitiesFile) {
+define('components/files/file-show', ["exports", "module", "underscore", "api", "components/ui/button", "components/comments/index", "cursors", "moment", "react", "entities/file"], function (exports, module, _underscore, _api, _componentsUiButton, _componentsCommentsIndex, _cursors, _moment, _react, _entitiesFile) {
   "use strict";
 
   var _interopRequire = function (obj) { return obj && obj.__esModule ? obj["default"] : obj; };
 
+  var _ = _interopRequire(_underscore);
+
   var api = _interopRequire(_api);
 
+  var Button = _interopRequire(_componentsUiButton);
+
+  var CommentsIndex = _interopRequire(_componentsCommentsIndex);
+
   var Cursors = _interopRequire(_cursors);
+
+  var moment = _interopRequire(_moment);
 
   var React = _interopRequire(_react);
 
   var getPictureUrl = _entitiesFile.getPictureUrl;
+  var getHumanFileSize = _entitiesFile.getHumanFileSize;
+
+
+  var FORMAT = "MMM D, YYYY, h:mm A";
+
   module.exports = React.createClass({
     displayName: "file-show",
     mixins: [Cursors],
@@ -50384,6 +50413,16 @@ define('components/files/file-show', ["exports", "module", "api", "cursors", "re
       });
     },
 
+    renderDescription: function () {
+      var description = this.state.file.description;
+      if (!description) return;
+      return React.createElement(
+        "div",
+        { className: "osw-files-file-show-description" },
+        description
+      );
+    },
+
     renderFile: function () {
       var file = this.state.file;
       return React.createElement(
@@ -50391,26 +50430,65 @@ define('components/files/file-show', ["exports", "module", "api", "cursors", "re
         { className: "osw-files-file-show" },
         React.createElement(
           "div",
-          { className: "osw-files-list-item-left" },
+          { className: "osw-files-file-show-info" },
           React.createElement("div", {
-            className: "osw-files-list-item-picture",
+            className: "osw-files-file-show-picture",
             style: { backgroundImage: "url('" + getPictureUrl(file) + "')" }
-          })
-        ),
-        React.createElement(
-          "div",
-          { className: "osw-files-list-item-info" },
+          }),
           React.createElement(
             "div",
-            { className: "osw-files-list-item-name" },
+            { className: "osw-files-file-show-name" },
             file.name
           ),
           React.createElement(
             "div",
-            { className: "osw-files-list-item-date" },
-            file.updated_at
+            { className: "osw-files-file-show-date" },
+            React.createElement(
+              "strong",
+              null,
+              "Filename:"
+            ),
+            " ",
+            file.file_name
+          ),
+          React.createElement(
+            "div",
+            { className: "osw-files-file-show-date" },
+            React.createElement(
+              "strong",
+              null,
+              "Created:"
+            ),
+            " ",
+            moment(file.created_at).format(FORMAT)
+          ),
+          React.createElement(
+            "div",
+            { className: "osw-files-file-show-date" },
+            React.createElement(
+              "strong",
+              null,
+              "Updated:"
+            ),
+            " ",
+            moment(file.updated_at).format(FORMAT)
+          ),
+          React.createElement(
+            Button,
+            {
+              className: "osw-files-file-show-download",
+              href: file.links.download
+            },
+            "Download ",
+            getHumanFileSize(file)
           )
-        )
+        ),
+        this.renderDescription(),
+        React.createElement(CommentsIndex, {
+          url: file.links.comments,
+          newUrl: file.links.web,
+          cursors: { comments: this.getCursor("file", "comments") }
+        })
       );
     },
 
@@ -50567,7 +50645,11 @@ define('components/files/folder-show', ["exports", "module", "underscore", "api"
       if (er) return cb(er);
       var parent = this.state.file;
       var files = _.chain(this.getFiles().concat(res.data)).unique("id").map(function (file) {
-        return _.extend({}, file, { parent: parent, portal: parent.portal });
+        return _.extend({}, file, {
+          comments: [],
+          parent: parent,
+          portal: parent.portal
+        });
       }).value();
       this.update({ file: { files: { $set: files } } });
       cb(null, res.data.length < PER_PAGE);

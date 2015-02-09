@@ -1,0 +1,40 @@
+@import '../config';
+
+$pin-url: 'https://orgsync.com/assets/elements/pin.png';
+
+.orgsync-widget {
+  .osw-files-file-show-picture {
+    background: center no-repeat;
+    background-size: contain;
+    display: inline-block;
+    float: left;
+    height: 128px;
+    margin-right: 10px;
+    vertical-align: middle;
+    width: 96px;
+  }
+
+  .osw-files-file-show-name {
+    font-size: 24px;
+    margin-bottom: 5px;
+  }
+
+  .osw-files-file-show-info {
+    @include clearfix;
+    padding: 10px;
+  }
+
+  .osw-files-file-show-date {
+    color: $grey-darker;
+    font-size: 14px;
+  }
+
+  .osw-files-file-show-download {
+    margin-top: 10px;
+  }
+
+  .osw-files-file-show-description {
+    border-top: 1px solid $grey;
+    padding: 10px;
+  }
+}

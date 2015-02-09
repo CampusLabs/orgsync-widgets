@@ -32,7 +32,11 @@ export default React.createClass({
     var files = _.chain(this.getFiles().concat(res.data))
       .unique('id')
       .map(function (file) {
-        return _.extend({}, file, {parent: parent, portal: parent.portal});
+        return _.extend({}, file, {
+          comments: [],
+          parent: parent,
+          portal: parent.portal
+        });
       })
       .value();
     this.update({file: {files: {$set: files}}});

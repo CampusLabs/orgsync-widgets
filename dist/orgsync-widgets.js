@@ -50291,10 +50291,12 @@ define('components/ui/text-button', ["exports", "module", "components/ui/button"
   });
 });
 // scripts/components/files/breadcrumb.es6
-define('components/files/breadcrumb', ["exports", "module", "cursors", "react", "components/ui/text-button"], function (exports, module, _cursors, _react, _componentsUiTextButton) {
+define('components/files/breadcrumb', ["exports", "module", "underscore", "cursors", "react", "components/ui/text-button"], function (exports, module, _underscore, _cursors, _react, _componentsUiTextButton) {
   "use strict";
 
   var _interopRequire = function (obj) { return obj && obj.__esModule ? obj["default"] : obj; };
+
+  var _ = _interopRequire(_underscore);
 
   var Cursors = _interopRequire(_cursors);
 
@@ -50306,30 +50308,27 @@ define('components/files/breadcrumb', ["exports", "module", "cursors", "react", 
     displayName: "breadcrumb",
     mixins: [Cursors],
 
-    goToFile: function () {
-      this.update({
-        direction: { $set: "back" },
-        currentFile: { $set: this.props.file }
-      });
+    getIndex: function () {
+      return _.indexOf(this.state.path, this.props.file);
+    },
+
+    splicePath: function () {
+      this.update({ path: { $splice: [[this.getIndex() + 1, Infinity]] } });
     },
 
     render: function () {
-      var file = this.props.file;
       return React.createElement(
         "span",
         null,
-        file.id ? " / " : "",
+        this.getIndex() > 0 ? " / " : "",
         React.createElement(
           TextButton,
-          { onClick: this.goToFile },
-          file.name
+          { onClick: this.splicePath },
+          this.props.file.name
         )
       );
     }
   });
-
-
-  // https://github.com/orgsync/orgsync/pull/6129#issuecomment-52841135
 });
 // scripts/entities/file.es6
 define('entities/file', ["exports", "underscore"], function (exports, _underscore) {
@@ -50367,12 +50366,10 @@ define('entities/file', ["exports", "underscore"], function (exports, _underscor
   exports.__esModule = true;
 });
 // scripts/components/files/file-show.es6
-define('components/files/file-show', ["exports", "module", "underscore", "api", "components/ui/button", "components/comments/index", "cursors", "moment", "react", "entities/file"], function (exports, module, _underscore, _api, _componentsUiButton, _componentsCommentsIndex, _cursors, _moment, _react, _entitiesFile) {
+define('components/files/file-show', ["exports", "module", "api", "components/ui/button", "components/comments/index", "cursors", "moment", "react", "entities/file"], function (exports, module, _api, _componentsUiButton, _componentsCommentsIndex, _cursors, _moment, _react, _entitiesFile) {
   "use strict";
 
   var _interopRequire = function (obj) { return obj && obj.__esModule ? obj["default"] : obj; };
-
-  var _ = _interopRequire(_underscore);
 
   var api = _interopRequire(_api);
 
@@ -50401,16 +50398,27 @@ define('components/files/file-show', ["exports", "module", "underscore", "api", 
     },
 
     fetch: function () {
-      this.update({ isLoading: { $set: true }, error: { $set: null } });
       api.get(this.state.file.links.show, this.handleFetch);
     },
 
     handleFetch: function (er, res) {
-      this.update({
-        isLoading: { $set: false },
-        error: { $set: er },
-        file: { $merge: er ? {} : res.data }
-      });
+      this.update({ file: { $merge: er ? {} : res.data } });
+    },
+
+    renderDetail: function (label, key, isDate) {
+      var val = this.state.file[key];
+      if (!val) return;
+      if (isDate) val = moment(val).format(FORMAT);
+      return React.createElement(
+        "div",
+        { className: "osw-files-file-show-detail" },
+        React.createElement(
+          "strong",
+          null,
+          "" + label + ":"
+        ),
+        " " + val
+      );
     },
 
     renderDescription: function () {
@@ -50423,7 +50431,7 @@ define('components/files/file-show', ["exports", "module", "underscore", "api", 
       );
     },
 
-    renderFile: function () {
+    render: function () {
       var file = this.state.file;
       return React.createElement(
         "div",
@@ -50440,39 +50448,9 @@ define('components/files/file-show', ["exports", "module", "underscore", "api", 
             { className: "osw-files-file-show-name" },
             file.name
           ),
-          React.createElement(
-            "div",
-            { className: "osw-files-file-show-date" },
-            React.createElement(
-              "strong",
-              null,
-              "Filename:"
-            ),
-            " ",
-            file.file_name
-          ),
-          React.createElement(
-            "div",
-            { className: "osw-files-file-show-date" },
-            React.createElement(
-              "strong",
-              null,
-              "Created:"
-            ),
-            " ",
-            moment(file.created_at).format(FORMAT)
-          ),
-          React.createElement(
-            "div",
-            { className: "osw-files-file-show-date" },
-            React.createElement(
-              "strong",
-              null,
-              "Updated:"
-            ),
-            " ",
-            moment(file.updated_at).format(FORMAT)
-          ),
+          this.renderDetail("Filename", "file_name"),
+          this.renderDetail("Created", "created_at", true),
+          this.renderDetail("Updated", "updated_at", true),
           React.createElement(
             Button,
             {
@@ -50490,18 +50468,6 @@ define('components/files/file-show', ["exports", "module", "underscore", "api", 
           cursors: { comments: this.getCursor("file", "comments") }
         })
       );
-    },
-
-    render: function () {
-      return this.state.isLoading ? React.createElement(
-        "div",
-        null,
-        "Loading..."
-      ) : this.state.error ? React.createElement(
-        "div",
-        null,
-        this.state.error.toString()
-      ) : this.renderFile();
     }
   });
 });
@@ -50528,11 +50494,8 @@ define('components/files/list-item', ["exports", "module", "cursors", "entities/
     displayName: "list-item",
     mixins: [Cursors],
 
-    goToFile: function () {
-      this.update({
-        direction: { $set: "forward" },
-        currentFile: { $set: this.state.file }
-      });
+    pushPath: function () {
+      this.update({ path: { $push: [this.state.file] } });
     },
 
     stopPropagation: function (ev) {
@@ -50567,7 +50530,7 @@ define('components/files/list-item', ["exports", "module", "cursors", "entities/
       var file = this.state.file;
       return React.createElement(
         "div",
-        { className: "osw-files-list-item", onClick: this.goToFile },
+        { className: "osw-files-list-item", onClick: this.pushPath },
         React.createElement(
           "div",
           { className: "osw-files-list-item-left" },
@@ -50642,13 +50605,13 @@ define('components/files/folder-show', ["exports", "module", "underscore", "api"
     },
 
     handleFetch: function (cb, er, res) {
+      var _this = this;
       if (er) return cb(er);
-      var parent = this.state.file;
       var files = _.chain(this.getFiles().concat(res.data)).unique("id").map(function (file) {
         return _.extend({}, file, {
+          portal: _this.state.file.portal,
           comments: [],
-          parent: parent,
-          portal: parent.portal
+          versions: []
         });
       }).value();
       this.update({ file: { files: { $set: files } } });
@@ -50660,8 +50623,7 @@ define('components/files/folder-show', ["exports", "module", "underscore", "api"
       return React.createElement(FilesListItem, {
         key: file.id,
         cursors: {
-          direction: this.getCursor("direction"),
-          currentFile: this.getCursor("file"),
+          path: this.getCursor("path"),
           file: this.getCursor("file", ["files", i])
         }
       });
@@ -50704,47 +50666,46 @@ define('components/files/index', ["exports", "module", "underscore", "components
 
     getInitialState: function () {
       return {
-        direction: "forward",
-        currentFile: {
+        path: [{
           id: 0,
           type: "folder",
           name: "Files",
           portal: {
             id: this.props.portalId
           }
-        }
+        }]
       };
     },
 
+    componentWillMount: function () {
+      this.lastPathLength = 0;
+    },
+
     componentDidUpdate: function (__, prevState) {
-      if (this.state.currentFile.id !== prevState.currentFile.id) {
+      if (this.state.path !== prevState.path) {
         window.scrollTo(0, this.getDOMNode().offsetTop);
+        this.lastPathLength = this.state.path.length;
       }
+    },
+
+    getDirection: function () {
+      return this.state.path.length < this.lastPathLength ? "back" : "forward";
     },
 
     renderBreadCrumb: function (file) {
       return React.createElement(Breadcrumb, {
         key: file.id,
         file: file,
-        cursors: {
-          direction: this.getCursor("direction"),
-          currentFile: this.getCursor("currentFile")
-        }
+        cursors: { path: this.getCursor("path") }
       });
     },
 
     renderBreadCrumbs: function () {
-      var files = [];
-      var file = this.state.currentFile;
-      while (file) {
-        files = [file].concat(files);
-        file = file.parent;
-      }
-      return _.map(files, this.renderBreadCrumb);
+      return _.map(this.state.path, this.renderBreadCrumb);
     },
 
     render: function () {
-      var file = this.state.currentFile;
+      var file = _.last(this.state.path);
       var Show = file.type === "folder" ? FolderShow : FileShow;
       return React.createElement(
         "div",
@@ -50758,18 +50719,16 @@ define('components/files/index', ["exports", "module", "underscore", "components
           CSSTransitionGroup,
           {
             component: "div",
-            transitionName: "osw-files-slide-" + this.state.direction,
+            transitionName: "osw-files-slide-" + this.getDirection(),
             className: "osw-files-index-pages"
           },
           React.createElement(
             "div",
             { key: file.id, className: "osw-files-index-page" },
-            React.createElement(Show, {
-              cursors: {
-                direction: this.getCursor("direction"),
-                file: this.getCursor("currentFile")
-              }
-            })
+            React.createElement(Show, { cursors: {
+                file: this.getCursor("path", this.state.path.length - 1),
+                path: this.getCursor("path")
+              } })
           )
         )
       );

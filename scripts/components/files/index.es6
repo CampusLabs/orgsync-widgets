@@ -12,22 +12,30 @@ export default React.createClass({
 
   getInitialState: function () {
     return {
-      direction: 'forward',
-      currentFile: {
+      path: [{
         id: 0,
         type: 'folder',
         name: 'Files',
         portal: {
           id: this.props.portalId
         }
-      }
+      }]
     };
   },
 
+  componentWillMount: function () {
+    this.lastPathLength = 0;
+  },
+
   componentDidUpdate: function (__, prevState) {
-    if (this.state.currentFile.id !== prevState.currentFile.id) {
+    if (this.state.path !== prevState.path) {
       window.scrollTo(0, this.getDOMNode().offsetTop);
+      this.lastPathLength = this.state.path.length;
     }
+  },
+
+  getDirection: function () {
+    return this.state.path.length < this.lastPathLength ? 'back' : 'forward';
   },
 
   renderBreadCrumb: function (file) {
@@ -35,26 +43,17 @@ export default React.createClass({
       <Breadcrumb
         key={file.id}
         file={file}
-        cursors={{
-          direction: this.getCursor('direction'),
-          currentFile: this.getCursor('currentFile')
-        }}
+        cursors={{path: this.getCursor('path')}}
       />
     );
   },
 
   renderBreadCrumbs: function () {
-    var files = [];
-    var file = this.state.currentFile;
-    while (file) {
-      files = [file].concat(files);
-      file = file.parent;
-    }
-    return _.map(files, this.renderBreadCrumb);
+    return _.map(this.state.path, this.renderBreadCrumb);
   },
 
   render: function () {
-    var file = this.state.currentFile;
+    var file = _.last(this.state.path);
     var Show = file.type === 'folder' ? FolderShow : FileShow;
     return (
       <div className='osw-files-index'>
@@ -63,16 +62,14 @@ export default React.createClass({
         </div>
         <CSSTransitionGroup
           component='div'
-          transitionName={'osw-files-slide-' + this.state.direction}
+          transitionName={'osw-files-slide-' + this.getDirection()}
           className='osw-files-index-pages'
         >
           <div key={file.id} className='osw-files-index-page'>
-            <Show
-              cursors={{
-                direction: this.getCursor('direction'),
-                file: this.getCursor('currentFile')
-              }}
-            />
+            <Show cursors={{
+              file: this.getCursor('path', this.state.path.length - 1),
+              path: this.getCursor('path')
+            }} />
           </div>
         </CSSTransitionGroup>
       </div>

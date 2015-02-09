@@ -28,16 +28,15 @@ export default React.createClass({
 
   handleFetch: function (cb, er, res) {
     if (er) return cb(er);
-    var parent = this.state.file;
     var files = _.chain(this.getFiles().concat(res.data))
       .unique('id')
-      .map(function (file) {
-        return _.extend({}, file, {
+      .map(file =>
+        _.extend({}, file, {
+          portal: this.state.file.portal,
           comments: [],
-          parent: parent,
-          portal: parent.portal
-        });
-      })
+          versions: []
+        })
+      )
       .value();
     this.update({file: {files: {$set: files}}});
     cb(null, res.data.length < PER_PAGE);
@@ -49,8 +48,7 @@ export default React.createClass({
       <FilesListItem
         key={file.id}
         cursors={{
-          direction: this.getCursor('direction'),
-          currentFile: this.getCursor('file'),
+          path: this.getCursor('path'),
           file: this.getCursor('file', ['files', i])
         }}
       />

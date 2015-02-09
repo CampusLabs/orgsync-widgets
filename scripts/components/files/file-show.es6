@@ -1,4 +1,3 @@
-import _ from 'underscore';
 import api from 'api';
 import Button from 'components/ui/button';
 import CommentsIndex from 'components/comments/index';
@@ -17,16 +16,22 @@ export default React.createClass({
   },
 
   fetch: function () {
-    this.update({isLoading: {$set: true}, error: {$set: null}});
     api.get(this.state.file.links.show, this.handleFetch);
   },
 
   handleFetch: function (er, res) {
-    this.update({
-      isLoading: {$set: false},
-      error: {$set: er},
-      file: {$merge: er ? {} : res.data}
-    });
+    this.update({file: {$merge: er ? {} : res.data}});
+  },
+
+  renderDetail: function (label, key, isDate) {
+    let val = this.state.file[key];
+    if (!val) return;
+    if (isDate) val = moment(val).format(FORMAT);
+    return (
+      <div className='osw-files-file-show-detail'>
+        <strong>{`${label}:`}</strong>{` ${val}`}
+      </div>
+    )
   },
 
   renderDescription: function () {
@@ -39,7 +44,7 @@ export default React.createClass({
     );
   },
 
-  renderFile: function () {
+  render: function () {
     let file = this.state.file;
     return (
       <div className='osw-files-file-show'>
@@ -49,15 +54,9 @@ export default React.createClass({
             style={{backgroundImage: `url('${getPictureUrl(file)}')`}}
           />
           <div className='osw-files-file-show-name'>{file.name}</div>
-          <div className='osw-files-file-show-date'>
-            <strong>Filename:</strong> {file.file_name}
-          </div>
-          <div className='osw-files-file-show-date'>
-            <strong>Created:</strong> {moment(file.created_at).format(FORMAT)}
-          </div>
-          <div className='osw-files-file-show-date'>
-            <strong>Updated:</strong> {moment(file.updated_at).format(FORMAT)}
-          </div>
+          {this.renderDetail('Filename', 'file_name')}
+          {this.renderDetail('Created', 'created_at', true)}
+          {this.renderDetail('Updated', 'updated_at', true)}
           <Button
             className='osw-files-file-show-download'
             href={file.links.download}
@@ -72,14 +71,6 @@ export default React.createClass({
           cursors={{comments: this.getCursor('file', 'comments')}}
         />
       </div>
-    );
-  },
-
-  render: function () {
-    return (
-      this.state.isLoading ? <div>Loading...</div> :
-      this.state.error ? <div>{this.state.error.toString()}</div> :
-      this.renderFile()
     );
   }
 });

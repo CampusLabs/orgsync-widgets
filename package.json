@@ -9,6 +9,12 @@
     "url": "https://github.com/orgsync/widgets"
   },
   "devDependencies": {
-    "cogs": "0.33.7"
+    "cogs": "1.0.0",
+    "cogs-transformer-6to5": "1.0.1",
+    "cogs-transformer-concat-amd": "1.0.2",
+    "cogs-transformer-directives": "1.0.1",
+    "cogs-transformer-json": "1.0.0",
+    "cogs-transformer-prepend-path": "1.0.0",
+    "cogs-transformer-sass": "1.0.0"
   }
 }

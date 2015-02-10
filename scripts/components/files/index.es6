@@ -90,10 +90,12 @@ export default React.createClass({
           className='osw-files-index-pages'
         >
           <div key={file.id} className='osw-files-index-page'>
-            <Show cursors={{
-              file: this.getCursor('root', this.getCursorPath()),
-              path: this.getCursor('path')
-            }} />
+            <Show
+              cursors={{
+                file: this.getCursor('root', this.getCursorPath()),
+                path: this.getCursor('path')
+              }}
+            />
           </div>
         </CSSTransitionGroup>
       </div>

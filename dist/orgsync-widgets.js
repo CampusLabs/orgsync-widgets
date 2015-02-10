@@ -50356,8 +50356,7 @@ define('entities/file', ["exports", "underscore"], function (exports, _underscor
     return SLUG_PREFIX + slug + SLUG_SUFFIX;
   };
 
-  var getHumanFileSize = exports.getHumanFileSize = function (file) {
-    var bytes = file.file_size || 0;
+  var getHumanFileSize = exports.getHumanFileSize = function (bytes) {
     var unit = _.find(UNITS, function (unit) {
       return bytes >= unit.bytes;
     }) || _.last(UNITS);
@@ -50366,10 +50365,12 @@ define('entities/file', ["exports", "underscore"], function (exports, _underscor
   exports.__esModule = true;
 });
 // scripts/components/files/file-show.es6
-define('components/files/file-show', ["exports", "module", "api", "components/ui/button", "components/comments/index", "cursors", "moment", "react", "entities/file"], function (exports, module, _api, _componentsUiButton, _componentsCommentsIndex, _cursors, _moment, _react, _entitiesFile) {
+define('components/files/file-show', ["exports", "module", "underscore", "api", "components/ui/button", "components/comments/index", "cursors", "moment", "react", "components/ui/text-button", "entities/file"], function (exports, module, _underscore, _api, _componentsUiButton, _componentsCommentsIndex, _cursors, _moment, _react, _componentsUiTextButton, _entitiesFile) {
   "use strict";
 
   var _interopRequire = function (obj) { return obj && obj.__esModule ? obj["default"] : obj; };
+
+  var _ = _interopRequire(_underscore);
 
   var api = _interopRequire(_api);
 
@@ -50383,11 +50384,15 @@ define('components/files/file-show', ["exports", "module", "api", "components/ui
 
   var React = _interopRequire(_react);
 
+  var TextButton = _interopRequire(_componentsUiTextButton);
+
   var getPictureUrl = _entitiesFile.getPictureUrl;
   var getHumanFileSize = _entitiesFile.getHumanFileSize;
 
 
-  var FORMAT = "MMM D, YYYY, h:mm A";
+  var FORMAT = function (iso) {
+    return moment(iso).format("MMM D, YYYY, h:mm A");
+  };
 
   module.exports = React.createClass({
     displayName: "file-show",
@@ -50399,16 +50404,21 @@ define('components/files/file-show', ["exports", "module", "api", "components/ui
 
     fetch: function () {
       api.get(this.state.file.links.show, this.handleFetch);
+      api.get(this.state.file.links.versions, this.handleVersionsFetch);
     },
 
     handleFetch: function (er, res) {
       this.update({ file: { $merge: er ? {} : res.data } });
     },
 
+    handleVersionsFetch: function (er, res) {
+      this.update({ file: { versions: { $set: er ? [] : res.data } } });
+    },
+
     renderDetail: function (label, key, isDate) {
       var val = this.state.file[key];
       if (!val) return;
-      if (isDate) val = moment(val).format(FORMAT);
+      if (isDate) val = FORMAT(val);
       return React.createElement(
         "div",
         { className: "osw-files-file-show-detail" },
@@ -50426,8 +50436,109 @@ define('components/files/file-show', ["exports", "module", "api", "components/ui
       if (!description) return;
       return React.createElement(
         "div",
-        { className: "osw-files-file-show-description" },
+        { className: "osw-files-file-show-section" },
+        React.createElement(
+          "div",
+          { className: "osw-files-file-show-header" },
+          "Description"
+        ),
         description
+      );
+    },
+
+    renderVersion: function (version) {
+      return [React.createElement(
+        "tr",
+        { key: version.id },
+        React.createElement(
+          "td",
+          null,
+          FORMAT(version.created_at)
+        ),
+        React.createElement(
+          "td",
+          null,
+          version.account.display_name
+        ),
+        React.createElement(
+          "td",
+          null,
+          version.file_name
+        ),
+        React.createElement(
+          "td",
+          null,
+          React.createElement(
+            Button,
+            { href: version.links.download },
+            "Download " + getHumanFileSize(version.file_size)
+          )
+        )
+      )].concat(version.description ? React.createElement(
+        "tr",
+        {
+          key: "" + version.id + "-description",
+          className: "osw-files-file-show-version-description"
+        },
+        React.createElement("td", null),
+        React.createElement(
+          "td",
+          { colSpan: "4" },
+          React.createElement(
+            "strong",
+            null,
+            "Version Notes"
+          ),
+          React.createElement("br", null),
+          version.description
+        )
+      ) : []);
+    },
+
+    renderVersions: function () {
+      var versions = this.state.file.versions;
+      if (!versions.length) return;
+      return React.createElement(
+        "div",
+        { className: "osw-files-file-show-section" },
+        React.createElement(
+          "div",
+          { className: "osw-files-file-show-header" },
+          "Versions"
+        ),
+        React.createElement(
+          "table",
+          { className: "osw-files-file-show-versions" },
+          React.createElement(
+            "thead",
+            null,
+            React.createElement(
+              "tr",
+              null,
+              React.createElement(
+                "th",
+                null,
+                "Created"
+              ),
+              React.createElement(
+                "th",
+                null,
+                "Added by"
+              ),
+              React.createElement(
+                "th",
+                null,
+                "Filename"
+              ),
+              React.createElement("th", null)
+            )
+          ),
+          React.createElement(
+            "tbody",
+            null,
+            _.map(versions, this.renderVersion)
+          )
+        )
       );
     },
 
@@ -50458,15 +50569,25 @@ define('components/files/file-show', ["exports", "module", "api", "components/ui
               href: file.links.download
             },
             "Download ",
-            getHumanFileSize(file)
+            getHumanFileSize(file.file_size)
           )
         ),
         this.renderDescription(),
-        React.createElement(CommentsIndex, {
-          url: file.links.comments,
-          newUrl: file.links.web,
-          cursors: { comments: this.getCursor("file", "comments") }
-        })
+        this.renderVersions(),
+        React.createElement(
+          "div",
+          { className: "osw-files-file-show-section" },
+          React.createElement(
+            "div",
+            { className: "osw-files-file-show-header" },
+            "Comments"
+          ),
+          React.createElement(CommentsIndex, {
+            url: file.links.comments,
+            newUrl: file.links.web,
+            cursors: { comments: this.getCursor("file", "comments") }
+          })
+        )
       );
     }
   });
@@ -50747,10 +50868,12 @@ define('components/files/index', ["exports", "module", "underscore", "components
           React.createElement(
             "div",
             { key: file.id, className: "osw-files-index-page" },
-            React.createElement(Show, { cursors: {
+            React.createElement(Show, {
+              cursors: {
                 file: this.getCursor("root", this.getCursorPath()),
                 path: this.getCursor("path")
-              } })
+              }
+            })
           )
         )
       );

@@ -33,8 +33,44 @@ $pin-url: 'https://orgsync.com/assets/elements/pin.png';
     margin-top: 10px;
   }
 
-  .osw-files-file-show-description {
+  .osw-files-file-show-header {
+    color: $grey-darker;
+    font-size: 20px;
+    margin-bottom: 5px;
+  }
+
+  .osw-files-file-show-section {
     border-top: 1px solid $grey;
     padding: 10px;
+  }
+
+  .osw-files-file-show-versions {
+    border: 0;
+    border-collapse: collapse;
+    width: 100%;
+
+    th {
+      background: $grey-darker;
+      color: #fff;
+      font-size: 16px;
+      padding: 5px;
+      text-align: left;
+
+      &:first-child {
+        border-top-left-radius: $border-radius;
+      }
+
+      &:last-child {
+        border-top-right-radius: $border-radius;
+      }
+    }
+
+    tr:not(.osw-files-file-show-version-description) td {
+      border-top: 1px solid $grey;
+    }
+
+    td {
+      padding: 5px;
+    }
   }
 }

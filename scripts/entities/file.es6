@@ -23,8 +23,7 @@ export var getPictureUrl = file => {
   return SLUG_PREFIX + slug + SLUG_SUFFIX;
 };
 
-export var getHumanFileSize = file => {
-  let bytes = file.file_size || 0;
+export var getHumanFileSize = bytes => {
   let unit = _.find(UNITS, unit => bytes >= unit.bytes) || _.last(UNITS);
   return `${Math.ceil(bytes / unit.bytes * 10) / 10} ${unit.name}`;
 };

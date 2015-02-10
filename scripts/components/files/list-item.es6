@@ -11,7 +11,7 @@ export default React.createClass({
   mixins: [Cursors],
 
   pushPath: function () {
-    this.update({path: {$push: [this.state.file]}});
+    this.update({path: {$push: [this.state.file.id]}});
   },
 
   stopPropagation: function (ev) {

@@ -7,7 +7,7 @@ export default React.createClass({
   mixins: [Cursors],
 
   getIndex: function () {
-    return _.indexOf(this.state.path, this.props.file);
+    return _.indexOf(this.state.path, this.props.file.id);
   },
 
   splicePath: function () {

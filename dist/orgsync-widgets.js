@@ -50309,7 +50309,7 @@ define('components/files/breadcrumb', ["exports", "module", "underscore", "curso
     mixins: [Cursors],
 
     getIndex: function () {
-      return _.indexOf(this.state.path, this.props.file);
+      return _.indexOf(this.state.path, this.props.file.id);
     },
 
     splicePath: function () {
@@ -50495,7 +50495,7 @@ define('components/files/list-item', ["exports", "module", "cursors", "entities/
     mixins: [Cursors],
 
     pushPath: function () {
-      this.update({ path: { $push: [this.state.file] } });
+      this.update({ path: { $push: [this.state.file.id] } });
     },
 
     stopPropagation: function (ev) {
@@ -50666,14 +50666,17 @@ define('components/files/index', ["exports", "module", "underscore", "components
 
     getInitialState: function () {
       return {
-        path: [{
-          id: 0,
-          type: "folder",
-          name: "Files",
-          portal: {
-            id: this.props.portalId
-          }
-        }]
+        root: {
+          files: [{
+            id: 0,
+            type: "folder",
+            name: "Files",
+            portal: {
+              id: this.props.portalId
+            }
+          }]
+        },
+        path: [0]
       };
     },
 
@@ -50700,12 +50703,31 @@ define('components/files/index', ["exports", "module", "underscore", "components
       });
     },
 
+    getFile: function () {
+      return _.reduce(this.state.path, function (file, id) {
+        return _.find(file.files, { id: id });
+      }, this.state.root);
+    },
+
+    getCursorPath: function () {
+      var file = this.state.root;
+      return _.reduce(this.state.path, function (path, id) {
+        var files = file.files;
+        file = _.find(files, { id: id });
+        return path.concat("files", _.indexOf(files, file));
+      }, []);
+    },
+
     renderBreadCrumbs: function () {
-      return _.map(this.state.path, this.renderBreadCrumb);
+      var _this = this;
+      var file = this.state.root;
+      return _.map(this.state.path, function (id) {
+        return _this.renderBreadCrumb(file = _.find(file.files, { id: id }));
+      });
     },
 
     render: function () {
-      var file = _.last(this.state.path);
+      var file = this.getFile();
       var Show = file.type === "folder" ? FolderShow : FileShow;
       return React.createElement(
         "div",
@@ -50726,7 +50748,7 @@ define('components/files/index', ["exports", "module", "underscore", "components
             "div",
             { key: file.id, className: "osw-files-index-page" },
             React.createElement(Show, { cursors: {
-                file: this.getCursor("path", this.state.path.length - 1),
+                file: this.getCursor("root", this.getCursorPath()),
                 path: this.getCursor("path")
               } })
           )

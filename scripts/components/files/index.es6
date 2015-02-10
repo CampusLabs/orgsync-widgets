@@ -12,14 +12,17 @@ export default React.createClass({
 
   getInitialState: function () {
     return {
-      path: [{
-        id: 0,
-        type: 'folder',
-        name: 'Files',
-        portal: {
-          id: this.props.portalId
-        }
-      }]
+      root: {
+        files: [{
+          id: 0,
+          type: 'folder',
+          name: 'Files',
+          portal: {
+            id: this.props.portalId
+          }
+        }]
+      },
+      path: [0]
     };
   },
 
@@ -48,12 +51,33 @@ export default React.createClass({
     );
   },
 
+  getFile: function () {
+    return _.reduce(
+      this.state.path,
+      (file, id) => _.find(file.files, {id: id}),
+      this.state.root
+    );
+  },
+
+  getCursorPath: function () {
+    let file = this.state.root;
+    return _.reduce(this.state.path, (path, id) => {
+      let files = file.files;
+      file = _.find(files, {id: id});
+      return path.concat('files', _.indexOf(files, file));
+    }, []);
+  },
+
   renderBreadCrumbs: function () {
-    return _.map(this.state.path, this.renderBreadCrumb);
+    let file = this.state.root;
+    return _.map(
+      this.state.path,
+      id => this.renderBreadCrumb(file = _.find(file.files, {id: id}))
+    );
   },
 
   render: function () {
-    var file = _.last(this.state.path);
+    var file = this.getFile();
     var Show = file.type === 'folder' ? FolderShow : FileShow;
     return (
       <div className='osw-files-index'>
@@ -67,7 +91,7 @@ export default React.createClass({
         >
           <div key={file.id} className='osw-files-index-page'>
             <Show cursors={{
-              file: this.getCursor('path', this.state.path.length - 1),
+              file: this.getCursor('root', this.getCursorPath()),
               path: this.getCursor('path')
             }} />
           </div>

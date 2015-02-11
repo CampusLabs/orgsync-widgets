@@ -46,6 +46,22 @@ const WIDGETS = {
       'filtersAreShowing',
       'redirect'
     ]
+  },
+  Selector: {
+    moduleName: 'selector/index',
+    props: [
+      'allowArbitrary',
+      'allowEmptyQuery',
+      'allowBrowse',
+      'browseText',
+      'limit',
+      'scopes',
+      'value',
+      'types',
+      'boostTypes',
+      'view',
+      'dataset'
+    ]
   }
 };
 

@@ -45487,6 +45487,10 @@ define('components/builder/index', ["exports", "module", "underscore", "undersco
     Portals: {
       moduleName: "portals/index",
       props: ["communityId", "umbrella", "category", "letter", "filtersAreShowing", "redirect"]
+    },
+    Selector: {
+      moduleName: "selector/index",
+      props: ["allowArbitrary", "allowEmptyQuery", "allowBrowse", "browseText", "limit", "scopes", "value", "types", "boostTypes", "view", "dataset"]
     }
   };
 
@@ -52245,8 +52249,7 @@ define('entities/selector/store', ["exports", "underscore", "underscore.string",
 
   var _str = _interopRequire(_underscoreString);
 
-  var app = _interopRequire(_orgsyncWidgets);
-
+  var app = _orgsyncWidgets;
   var getTerm = _entitiesSelectorItem.getTerm;
   var getName = _entitiesSelectorItem.getName;
   var React = _interopRequire(_react);
@@ -52410,8 +52413,7 @@ define('components/selector/index', ["exports", "module", "underscore", "orgsync
 
   var _ = _interopRequire(_underscore);
 
-  var app = _interopRequire(_orgsyncWidgets);
-
+  var app = _orgsyncWidgets;
   var Button = _interopRequire(_componentsUiButton);
 
   var Cursors = _interopRequire(_cursors);
@@ -52426,8 +52428,7 @@ define('components/selector/index', ["exports", "module", "underscore", "orgsync
 
   var Scope = _interopRequire(_componentsSelectorScope);
 
-  var store = _interopRequire(_entitiesSelectorStore);
-
+  var store = _entitiesSelectorStore;
   var Token = _interopRequire(_componentsSelectorToken);
 
   var getBasicFields = _entitiesSelectorItem.getBasicFields;

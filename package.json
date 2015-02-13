@@ -15,6 +15,6 @@
     "cogs-transformer-directives": "1.0.1",
     "cogs-transformer-json": "1.0.0",
     "cogs-transformer-prepend-path": "1.0.0",
-    "cogs-transformer-sass": "1.0.0"
+    "cogs-transformer-sass": "1.0.1"
   }
 }

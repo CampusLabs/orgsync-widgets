@@ -49276,7 +49276,7 @@ define('components/events/calendar', ["exports", "module", "underscore", "cursor
       } else if (ranges && events) {
         deltas.ranges = { $set: ranges };
         deltas.allEvents = { $set: events };
-        _.defer(this.fetch);
+        if (this.isMounted()) _.defer(this.fetch);
       }
       this.update(deltas);
     },
@@ -49488,7 +49488,8 @@ define('components/events/list', ["exports", "module", "underscore", "cursors", 
         renderItem: this.renderDate,
         renderLoading: this.renderLoading,
         renderEmpty: this.renderEmpty,
-        fetch: this.fetch
+        fetch: this.fetch,
+        fetchInitially: true
       });
     }
   });

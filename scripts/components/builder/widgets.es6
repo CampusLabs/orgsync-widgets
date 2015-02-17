@@ -1,4 +1,4 @@
-export default {
+const WIDGETS = {
   Albums: {
     moduleName: 'albums/index',
     props: ['portalId']
@@ -56,3 +56,5 @@ export default {
     ]
   }
 };
+
+export default WIDGETS;

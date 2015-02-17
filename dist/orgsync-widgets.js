@@ -45451,7 +45451,7 @@ define('components/albums/index', ["exports", "module", "jquery", "underscore", 
 define('components/builder/widgets', ["exports", "module"], function (exports, module) {
   "use strict";
 
-  module.exports = {
+  var WIDGETS = {
     Albums: {
       moduleName: "albums/index",
       props: ["portalId"]
@@ -45477,6 +45477,8 @@ define('components/builder/widgets', ["exports", "module"], function (exports, m
       props: ["allowArbitrary", "allowEmptyQuery", "allowBrowse", "browseText", "limit", "scopes", "value", "types", "boostTypes", "view", "dataset"]
     }
   };
+
+  module.exports = WIDGETS;
 });
 // scripts/components/builder/embed.es6
 define('components/builder/embed', ["exports", "module", "underscore", "underscore.string", "api", "cursors", "react", "components/builder/widgets"], function (exports, module, _underscore, _underscoreString, _api, _cursors, _react, _componentsBuilderWidgets) {

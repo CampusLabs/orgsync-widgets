@@ -10,7 +10,7 @@
     "/.gitignore",
     "/.jshintrc",
     "/.npmignore",
-    "/cogs.json",
+    "/cogs.js",
     "/index.html",
     "/Makefile",
     "/node_modules",

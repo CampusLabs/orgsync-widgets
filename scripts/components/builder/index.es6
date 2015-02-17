@@ -1,69 +1,11 @@
 import _ from 'underscore';
-import _str from 'underscore.string';
 import api from 'api';
 import Cursors from 'cursors';
 import React from 'react';
+import Embed from 'components/builder/embed';
+import WIDGETS from 'components/builder/widgets';
 
 const PERSIST_KEY = 'OSW_BUILDER';
-
-const WIDGETS = {
-  Albums: {
-    moduleName: 'albums/index',
-    props: ['portalId']
-  },
-  Events: {
-    moduleName: 'events/index',
-    props: [
-      'communityId',
-      'portalId',
-      'view',
-      'lockView',
-      'tz',
-      'activeEventFilterIds'
-    ]
-  },
-  Files: {
-    moduleName: 'files/index',
-    props: [
-      'portalId'
-    ]
-  },
-  News: {
-    moduleName: 'news-posts/index',
-    props: [
-      'portalId',
-      'truncateLength',
-      'redirect'
-    ]
-  },
-  Portals: {
-    moduleName: 'portals/index',
-    props: [
-      'communityId',
-      'umbrella',
-      'category',
-      'letter',
-      'filtersAreShowing',
-      'redirect'
-    ]
-  },
-  Selector: {
-    moduleName: 'selector/index',
-    props: [
-      'allowArbitrary',
-      'allowEmptyQuery',
-      'allowBrowse',
-      'browseText',
-      'limit',
-      'scopes',
-      'value',
-      'types',
-      'boostTypes',
-      'view',
-      'dataset'
-    ]
-  }
-};
 
 const DEFAULT_STATE = {
   widget: _.keys(WIDGETS)[0],
@@ -78,8 +20,13 @@ export default React.createClass({
     try { state = JSON.parse(localStorage.getItem(PERSIST_KEY)); }
     catch (er) {}
     return _.extend({}, state || DEFAULT_STATE, {
-      apiKey: api.key
+      apiKey: api.key,
+      apiKeyData: {}
     });
+  },
+
+  componentWillMount: function () {
+    this.fetchApiKeyData();
   },
 
   componentDidUpdate: function () {
@@ -89,6 +36,20 @@ export default React.createClass({
 
   handleApiKeyChange: function (ev) {
     this.update({apiKey: {$set: ev.target.value}});
+    this.fetchApiKeyData();
+  },
+
+  fetchApiKeyData: function () {
+    var data = this.state.apiKeyData[this.state.apiKey];
+    if (!this.state.apiKey || data) return;
+    api.get('/keys/me', {key: this.state.apiKey}, this.handleApiKeyDataFetch);
+  },
+
+  handleApiKeyDataFetch: function (er, res) {
+    if (er) return;
+    var apiKeyData = {};
+    apiKeyData[this.state.apiKey] = {$set: res.data};
+    this.update({apiKeyData: apiKeyData});
   },
 
   handleWidgetChange: function (ev) {
@@ -118,32 +79,6 @@ export default React.createClass({
           />
         </div>
       </div>
-    );
-  },
-
-  getDataAttrs: function () {
-    return _.compact(_.map(_.extend({
-      moduleName: WIDGETS[this.state.widget].moduleName
-    }, this.state.props), (val, key) => {
-      if (!val) return;
-      var stringified = JSON.stringify(val).replace(/\\(.)/g, '$1');
-      if (_.isString(val)) stringified = stringified.slice(1, -1);
-      return `data-${_str.dasherize(key)}='${_.escape(stringified)}'`;
-    }));
-  },
-
-  renderHtml: function () {
-    return (
-      <pre className='osw-inset-block'>{`
-<link href='https://orgsync.com/assets/orgsync-widgets.css' rel='stylesheet'>
-<script>window.OSW_API_KEY = '${api.key}';</script>
-<script src='https://orgsync.com/assets/orgsync-widgets.js' async></script>
-<div
-  class='orgsync-widget'
-  ${this.getDataAttrs().join('\n  ')}
-></div>
-`}
-      </pre>
     );
   },
 
@@ -180,7 +115,12 @@ export default React.createClass({
             </select>
           </div>
           {this.renderProps()}
-          {this.renderHtml()}
+          <Embed cursors={{
+            apiKey: this.getCursor('apiKey'),
+            apiKeyData: this.getCursor('apiKeyData', this.state.apiKey),
+            widget: this.getCursor('widget'),
+            props: this.getCursor('props')
+          }} />
         </div>
         <div className='osw-builder-index-right orgsync-widget'>
           {this.renderPreview()}

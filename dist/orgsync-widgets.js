@@ -45447,27 +45447,11 @@ define('components/albums/index', ["exports", "module", "jquery", "underscore", 
     }
   });
 });
-// scripts/components/builder/index.es6
-define('components/builder/index', ["exports", "module", "underscore", "underscore.string", "api", "cursors", "react"], function (exports, module, _underscore, _underscoreString, _api, _cursors, _react) {
+// scripts/components/builder/widgets.es6
+define('components/builder/widgets', ["exports", "module"], function (exports, module) {
   "use strict";
 
-  var _interopRequire = function (obj) { return obj && obj.__esModule ? obj["default"] : obj; };
-
-  var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
-
-  var _ = _interopRequire(_underscore);
-
-  var _str = _interopRequire(_underscoreString);
-
-  var api = _interopRequire(_api);
-
-  var Cursors = _interopRequire(_cursors);
-
-  var React = _interopRequire(_react);
-
-  var PERSIST_KEY = "OSW_BUILDER";
-
-  var WIDGETS = {
+  module.exports = {
     Albums: {
       moduleName: "albums/index",
       props: ["portalId"]
@@ -45493,6 +45477,101 @@ define('components/builder/index', ["exports", "module", "underscore", "undersco
       props: ["allowArbitrary", "allowEmptyQuery", "allowBrowse", "browseText", "limit", "scopes", "value", "types", "boostTypes", "view", "dataset"]
     }
   };
+});
+// scripts/components/builder/embed.es6
+define('components/builder/embed', ["exports", "module", "underscore", "underscore.string", "api", "cursors", "react", "components/builder/widgets"], function (exports, module, _underscore, _underscoreString, _api, _cursors, _react, _componentsBuilderWidgets) {
+  "use strict";
+
+  var _interopRequire = function (obj) { return obj && obj.__esModule ? obj["default"] : obj; };
+
+  var _ = _interopRequire(_underscore);
+
+  var _str = _interopRequire(_underscoreString);
+
+  var api = _interopRequire(_api);
+
+  var Cursors = _interopRequire(_cursors);
+
+  var React = _interopRequire(_react);
+
+  var WIDGETS = _interopRequire(_componentsBuilderWidgets);
+
+  module.exports = React.createClass({
+    displayName: "embed",
+    mixins: [Cursors],
+
+    getDataAttrs: function () {
+      return _.compact(_.map(_.extend({
+        moduleName: WIDGETS[this.state.widget].moduleName
+      }, this.state.props), function (val, key) {
+        if (!val) return;
+        var stringified = JSON.stringify(val).replace(/\\(.)/g, "$1");
+        if (_.isString(val)) stringified = stringified.slice(1, -1);
+        return "data-" + _str.dasherize(key) + "='" + _.escape(stringified) + "'";
+      }));
+    },
+
+    renderWarnings: function () {
+      var key = this.state.apiKeyData;
+      if (!key) return;
+      var warnings = [];
+      if (key.target.kind !== "anon") {
+        warnings.push("This API key may expose non-public information.");
+      }
+      if (warnings.length === 0) return;
+      return React.createElement(
+        "div",
+        { className: "osw-selector-index-error" },
+        "Warning:",
+        React.createElement(
+          "ul",
+          null,
+          _.map(warnings, function (w) {
+            return React.createElement(
+              "li",
+              { key: w },
+              w
+            );
+          })
+        )
+      );
+    },
+
+    render: function () {
+      return React.createElement(
+        "div",
+        null,
+        this.renderWarnings(),
+        React.createElement(
+          "pre",
+          { className: "osw-inset-block" },
+          "<link href='https://orgsync.com/assets/orgsync-widgets.css' rel='stylesheet'>\n<script>window.OSW_API_KEY = '" + api.key + "';</script>\n<script src='https://orgsync.com/assets/orgsync-widgets.js' async></script>\n<div\n  class='orgsync-widget'\n  " + this.getDataAttrs().join("\n  ") + "\n></div>\n"
+        )
+      );
+    }
+  });
+});
+// scripts/components/builder/index.es6
+define('components/builder/index', ["exports", "module", "underscore", "api", "cursors", "react", "components/builder/embed", "components/builder/widgets"], function (exports, module, _underscore, _api, _cursors, _react, _componentsBuilderEmbed, _componentsBuilderWidgets) {
+  "use strict";
+
+  var _interopRequire = function (obj) { return obj && obj.__esModule ? obj["default"] : obj; };
+
+  var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+
+  var _ = _interopRequire(_underscore);
+
+  var api = _interopRequire(_api);
+
+  var Cursors = _interopRequire(_cursors);
+
+  var React = _interopRequire(_react);
+
+  var Embed = _interopRequire(_componentsBuilderEmbed);
+
+  var WIDGETS = _interopRequire(_componentsBuilderWidgets);
+
+  var PERSIST_KEY = "OSW_BUILDER";
 
   var DEFAULT_STATE = {
     widget: _.keys(WIDGETS)[0],
@@ -45509,8 +45588,13 @@ define('components/builder/index', ["exports", "module", "underscore", "undersco
         state = JSON.parse(localStorage.getItem(PERSIST_KEY));
       } catch (er) {}
       return _.extend({}, state || DEFAULT_STATE, {
-        apiKey: api.key
+        apiKey: api.key,
+        apiKeyData: {}
       });
+    },
+
+    componentWillMount: function () {
+      this.fetchApiKeyData();
     },
 
     componentDidUpdate: function () {
@@ -45520,6 +45604,20 @@ define('components/builder/index', ["exports", "module", "underscore", "undersco
 
     handleApiKeyChange: function (ev) {
       this.update({ apiKey: { $set: ev.target.value } });
+      this.fetchApiKeyData();
+    },
+
+    fetchApiKeyData: function () {
+      var data = this.state.apiKeyData[this.state.apiKey];
+      if (!this.state.apiKey || data) return;
+      api.get("/keys/me", { key: this.state.apiKey }, this.handleApiKeyDataFetch);
+    },
+
+    handleApiKeyDataFetch: function (er, res) {
+      if (er) return;
+      var apiKeyData = {};
+      apiKeyData[this.state.apiKey] = { $set: res.data };
+      this.update({ apiKeyData: apiKeyData });
     },
 
     handleWidgetChange: function (ev) {
@@ -45560,25 +45658,6 @@ define('components/builder/index', ["exports", "module", "underscore", "undersco
           )
         );
       });
-    },
-
-    getDataAttrs: function () {
-      return _.compact(_.map(_.extend({
-        moduleName: WIDGETS[this.state.widget].moduleName
-      }, this.state.props), function (val, key) {
-        if (!val) return;
-        var stringified = JSON.stringify(val).replace(/\\(.)/g, "$1");
-        if (_.isString(val)) stringified = stringified.slice(1, -1);
-        return "data-" + _str.dasherize(key) + "='" + _.escape(stringified) + "'";
-      }));
-    },
-
-    renderHtml: function () {
-      return React.createElement(
-        "pre",
-        { className: "osw-inset-block" },
-        "\n<link href='https://orgsync.com/assets/orgsync-widgets.css' rel='stylesheet'>\n<script>window.OSW_API_KEY = '" + api.key + "';</script>\n<script src='https://orgsync.com/assets/orgsync-widgets.js' async></script>\n<div\n  class='orgsync-widget'\n  " + this.getDataAttrs().join("\n  ") + "\n></div>\n"
-      );
     },
 
     renderPreview: function () {
@@ -45627,7 +45706,12 @@ define('components/builder/index', ["exports", "module", "underscore", "undersco
             )
           ),
           this.renderProps(),
-          this.renderHtml()
+          React.createElement(Embed, { cursors: {
+              apiKey: this.getCursor("apiKey"),
+              apiKeyData: this.getCursor("apiKeyData", this.state.apiKey),
+              widget: this.getCursor("widget"),
+              props: this.getCursor("props")
+            } })
         ),
         React.createElement(
           "div",

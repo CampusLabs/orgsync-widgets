@@ -31,7 +31,7 @@ export default React.createClass({
       <div className='osw-selector-index-error'>
         Warning:
         <ul>
-          {_.map(warnings, (w) => <li key={w}>{w}</li>)}
+          {_.map(warnings, w => <li key={w}>{w}</li>)}
         </ul>
       </div>
     );

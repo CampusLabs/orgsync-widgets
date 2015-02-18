@@ -1,8 +1,8 @@
-import CategorySelector from 'components/forms/category-selector';
+import CategorySelector from 'components/category-selector';
 import Cursors from 'cursors';
-import Query from 'components/forms/query';
+import Query from 'components/query';
 import React from 'react';
-import Summary from 'components/forms/summary';
+import Summary from 'components/summary';
 
 export default React.createClass({
   mixins: [Cursors],
@@ -18,11 +18,14 @@ export default React.createClass({
       <div className='osw-forms-filters'>
         <Query value={this.state.query} onChange={this.handleChange} />
         <CategorySelector
-          forms={this.props.forms}
+          objects={this.props.forms}
           value={this.state.category}
           onChange={this.handleChange}
         />
-        {this.transferPropsTo(<Summary />)}
+        <Summary
+          objects={this.props.forms}
+          filterKeys={['query', 'category']}
+        />
       </div>
     );
   }

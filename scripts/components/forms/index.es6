@@ -5,7 +5,7 @@ import Cursors from 'cursors';
 import List from 'react-list';
 import Filters from 'components/forms/filters';
 import FormsListItem from 'components/forms/list-item';
-import Empty from 'components/forms/empty';
+import Empty from 'components/empty';
 import React from 'react';
 
 var PER_PAGE = 10;
@@ -131,6 +131,7 @@ export default React.createClass({
   renderEmpty: function () {
     return (
       <Empty
+        objectName='forms'
         cursors={{
           category: this.getCursor('category'),
           query: this.getCursor('query')

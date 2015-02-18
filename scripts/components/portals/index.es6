@@ -5,7 +5,7 @@ import Cursors from 'cursors';
 import List from 'react-list';
 import Filters from 'components/portals/filters';
 import ListItem from 'components/portals/list-item';
-import Empty from 'components/portals/empty';
+import Empty from 'components/empty';
 import React from 'react';
 
 var LETTER_REG_EXPS = _.times(26, function (n) {
@@ -161,6 +161,7 @@ export default React.createClass({
   renderEmpty: function () {
     return (
       <Empty
+        objectName='portals'
         cursors={{
           umbrella: this.getCursor('umbrella'),
           category: this.getCursor('category'),

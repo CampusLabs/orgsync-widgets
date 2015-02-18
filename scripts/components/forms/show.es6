@@ -44,6 +44,16 @@ export default React.createClass({
     );
   },
 
+  renderDescription: function(description) {
+    if(description) {
+      return (description);
+    } else {
+      return (
+        'No description provided.'
+      );
+    }
+  },
+
   render: function () {
     var form = this.state.form;
     return (
@@ -58,7 +68,7 @@ export default React.createClass({
           {this.showCreator(form)}
         </div>
         <div className='osw-forms-show-description'>
-          {form.description}
+          {this.renderDescription(form.description)}
         </div>
         <ButtonRow>
           <Button href={form.links.web}>On OrgSync.com</Button>

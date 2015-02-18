@@ -8,12 +8,12 @@ export default React.createClass({
   mixins: [Cursors],
 
   getFilters: function () {
-    return _.pick(this.state, 'query', 'letter', 'umbrella', 'category');
+    return _.pick(this.state, this.props.filterKeys);
   },
 
   renderMessage: function () {
     var any = _.any(this.getFilters());
-    var l = this.props.portals.length;
+    var l = this.props.objects.length;
     return 'Showing ' + (any ? '' : 'all ') + l + ' portal' +
       (l === 1 ? '' : 's') + (any ? ' matching ' : '.');
   },

@@ -1,9 +1,9 @@
-import CategorySelector from 'components/portals/category-selector';
+import CategorySelector from 'components/category-selector';
 import Cursors from 'cursors';
 import LetterTable from 'components/portals/letter-table';
-import Query from 'components/portals/query';
+import Query from 'components/query';
 import React from 'react';
-import Summary from 'components/portals/summary';
+import Summary from 'components/summary';
 import UmbrellaSelector from 'components/portals/umbrella-selector';
 
 export default React.createClass({
@@ -25,12 +25,15 @@ export default React.createClass({
           onChange={this.handleChange}
         />
         <CategorySelector
-          portals={this.props.portals}
+          objects={this.props.portals}
           value={this.state.category}
           onChange={this.handleChange}
         />
         <LetterTable cursors={{letter: this.getCursor('letter')}} />
-        <Summary {...this.props} />
+        <Summary
+          objects={this.props.portals}
+          filterKeys={['query', 'category']}
+        />
       </div>
     );
   }

@@ -45638,6 +45638,196 @@ define('components/builder/index', ["exports", "module", "underscore", "undersco
     }
   });
 });
+// scripts/components/selector.es6
+define('components/selector', ["exports", "module", "cursors", "utils/join-class-names", "react"], function (exports, module, _cursors, _utilsJoinClassNames, _react) {
+  "use strict";
+
+  var _interopRequire = function (obj) { return obj && obj.__esModule ? obj["default"] : obj; };
+
+  var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+
+  var Cursors = _interopRequire(_cursors);
+
+  var joinClassNames = _interopRequire(_utilsJoinClassNames);
+
+  var React = _interopRequire(_react);
+
+  module.exports = React.createClass({
+    displayName: "selector",
+    mixins: [Cursors],
+
+    render: function () {
+      var options = this.props.renderOptions();
+      var value = this.props.value;
+      if (options.length === 2) value = options[1].props.value;
+      return React.createElement(
+        "div",
+        _extends({}, this.props, {
+          className: joinClassNames("osw-big osw-field oswi osw-dropdown", this.props.className)
+        }),
+        React.createElement(
+          "select",
+          {
+            name: this.props.name,
+            value: value,
+            onChange: this.props.onChange
+          },
+          options
+        )
+      );
+    }
+  });
+});
+// scripts/components/faceted-selector.es6
+define('components/faceted-selector', ["exports", "module", "underscore", "cursors", "react", "components/selector"], function (exports, module, _underscore, _cursors, _react, _componentsSelector) {
+  "use strict";
+
+  var _interopRequire = function (obj) { return obj && obj.__esModule ? obj["default"] : obj; };
+
+  var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+
+  var _ = _interopRequire(_underscore);
+
+  var Cursors = _interopRequire(_cursors);
+
+  var React = _interopRequire(_react);
+
+  var Selector = _interopRequire(_componentsSelector);
+
+  module.exports = React.createClass({
+    displayName: "faceted-selector",
+    mixins: [Cursors],
+
+    toOption: function (matches, name) {
+      return { id: name, name: name + " (" + matches.length + ")" };
+    },
+
+    renderOption: function (option) {
+      return React.createElement(
+        "option",
+        { key: option.id, value: option.id },
+        option.name
+      );
+    },
+
+    renderOptions: function () {
+      return [{ id: "", name: this.props.allOption }].concat(_.chain(this.props.objects).map(this.props.getFacet).groupBy().map(this.toOption).sortBy("name").value()).map(this.renderOption);
+    },
+
+    render: function () {
+      return React.createElement(Selector, _extends({}, this.props, { renderOptions: this.renderOptions }));
+    }
+  });
+});
+// scripts/components/category-selector.es6
+define('components/category-selector', ["exports", "module", "cursors", "components/faceted-selector", "utils/join-class-names", "react"], function (exports, module, _cursors, _componentsFacetedSelector, _utilsJoinClassNames, _react) {
+  "use strict";
+
+  var _interopRequire = function (obj) { return obj && obj.__esModule ? obj["default"] : obj; };
+
+  var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+
+  var Cursors = _interopRequire(_cursors);
+
+  var FacetedSelector = _interopRequire(_componentsFacetedSelector);
+
+  var joinClassNames = _interopRequire(_utilsJoinClassNames);
+
+  var React = _interopRequire(_react);
+
+  module.exports = React.createClass({
+    displayName: "category-selector",
+    mixins: [Cursors],
+
+    getFacet: function (object) {
+      return object.category.name;
+    },
+
+    render: function () {
+      return React.createElement(FacetedSelector, _extends({}, this.props, {
+        className: joinClassNames("oswi-book", this.props.className),
+        name: "category",
+        allOption: "All Categories",
+        getFacet: this.getFacet
+      }));
+    }
+  });
+});
+// scripts/components/empty.es6
+define('components/empty', ["exports", "module", "components/ui/button", "cursors", "react"], function (exports, module, _componentsUiButton, _cursors, _react) {
+  "use strict";
+
+  var _interopRequire = function (obj) { return obj && obj.__esModule ? obj["default"] : obj; };
+
+  var Button = _interopRequire(_componentsUiButton);
+
+  var Cursors = _interopRequire(_cursors);
+
+  var React = _interopRequire(_react);
+
+  module.exports = React.createClass({
+    displayName: "empty",
+    mixins: [Cursors],
+
+    getDefaultProps: function () {
+      return {
+        objectName: "items"
+      };
+    },
+
+    handleClick: function () {
+      this.update({
+        umbrella: { $set: "" },
+        category: { $set: "" },
+        letter: { $set: "" },
+        query: { $set: "" }
+      });
+    },
+
+    render: function () {
+      return React.createElement(
+        "div",
+        { className: "osw-portals-empty osw-inset-block" },
+        React.createElement(
+          "div",
+          { className: "osw-portals-empty-apology" },
+          "We're sorry, but no ",
+          this.props.objectName,
+          " match your selected filters."
+        ),
+        React.createElement(
+          "div",
+          { className: "osw-portals-empty-suggestions-header" },
+          "Suggestions"
+        ),
+        React.createElement(
+          "ul",
+          { className: "osw-portals-empty-suggestions" },
+          React.createElement(
+            "li",
+            null,
+            "Make sure all words are spelled correctly"
+          ),
+          React.createElement(
+            "li",
+            null,
+            "Try different, or fewer, keywords"
+          ),
+          React.createElement(
+            "li",
+            null,
+            "Clear all filters to return to all organizations"
+          )
+        ),
+        React.createElement(
+          Button,
+          { onClick: this.handleClick },
+          "Clear All Filters"
+        )
+      );
+    }
+  });
+});
 // scripts/components/event-filters/list-item.es6
 define('components/event-filters/list-item', ["exports", "module", "cursors", "components/ui/icon", "react"], function (exports, module, _cursors, _componentsUiIcon, _react) {
   "use strict";
@@ -50698,176 +50888,8 @@ define('components/files/index', ["exports", "module", "underscore", "components
     }
   });
 });
-// scripts/components/forms/selector.es6
-define('components/forms/selector', ["exports", "module", "cursors", "react"], function (exports, module, _cursors, _react) {
-  "use strict";
-
-  var _interopRequire = function (obj) { return obj && obj.__esModule ? obj["default"] : obj; };
-
-  var Cursors = _interopRequire(_cursors);
-
-  var React = _interopRequire(_react);
-
-  module.exports = React.createClass({
-    displayName: "selector",
-    mixins: [Cursors],
-
-    render: function () {
-      var options = this.props.renderOptions();
-      var value = this.props.value;
-      if (options.length === 2) value = options[1].props.value;
-      return this.transferPropsTo(React.createElement(
-        "div",
-        { className: "osw-big osw-field oswi osw-dropdown" },
-        React.createElement(
-          "select",
-          {
-            name: this.props.name,
-            value: value,
-            onChange: this.props.onChange
-          },
-          options
-        )
-      ));
-    }
-  });
-});
-// scripts/components/forms/faceted-selector.es6
-define('components/forms/faceted-selector', ["exports", "module", "underscore", "cursors", "react", "components/forms/selector"], function (exports, module, _underscore, _cursors, _react, _componentsFormsSelector) {
-  "use strict";
-
-  var _interopRequire = function (obj) { return obj && obj.__esModule ? obj["default"] : obj; };
-
-  var _ = _interopRequire(_underscore);
-
-  var Cursors = _interopRequire(_cursors);
-
-  var React = _interopRequire(_react);
-
-  var Selector = _interopRequire(_componentsFormsSelector);
-
-  module.exports = React.createClass({
-    displayName: "faceted-selector",
-    mixins: [Cursors],
-
-    toOption: function (matches, name) {
-      return { id: name, name: name + " (" + matches.length + ")" };
-    },
-
-    renderOption: function (option) {
-      return React.createElement(
-        "option",
-        { key: option.id, value: option.id },
-        option.name
-      );
-    },
-
-    renderOptions: function () {
-      return [{ id: "", name: this.props.allOption }].concat(_.chain(this.props.forms).map(this.props.getFacet).groupBy().map(this.toOption).sortBy("name").value()).map(this.renderOption);
-    },
-
-    render: function () {
-      return this.transferPropsTo(React.createElement(Selector, { renderOptions: this.renderOptions }));
-    }
-  });
-});
-// scripts/components/forms/category-selector.es6
-define('components/forms/category-selector', ["exports", "module", "cursors", "components/forms/faceted-selector", "react"], function (exports, module, _cursors, _componentsFormsFacetedSelector, _react) {
-  "use strict";
-
-  var _interopRequire = function (obj) { return obj && obj.__esModule ? obj["default"] : obj; };
-
-  var Cursors = _interopRequire(_cursors);
-
-  var FacetedSelector = _interopRequire(_componentsFormsFacetedSelector);
-
-  var React = _interopRequire(_react);
-
-  module.exports = React.createClass({
-    displayName: "category-selector",
-    mixins: [Cursors],
-
-    getFacet: function (form) {
-      return form.category.name;
-    },
-
-    render: function () {
-      return this.transferPropsTo(React.createElement(FacetedSelector, {
-        name: "category",
-        allOption: "All Categories",
-        getFacet: this.getFacet,
-        className: "oswi-book"
-      }));
-    }
-  });
-});
-// scripts/components/forms/empty.es6
-define('components/forms/empty', ["exports", "module", "components/ui/button", "cursors", "react"], function (exports, module, _componentsUiButton, _cursors, _react) {
-  "use strict";
-
-  var _interopRequire = function (obj) { return obj && obj.__esModule ? obj["default"] : obj; };
-
-  var Button = _interopRequire(_componentsUiButton);
-
-  var Cursors = _interopRequire(_cursors);
-
-  var React = _interopRequire(_react);
-
-  module.exports = React.createClass({
-    displayName: "empty",
-    mixins: [Cursors],
-
-    handleClick: function () {
-      this.update({
-        category: { $set: "" },
-        query: { $set: "" }
-      });
-    },
-
-    render: function () {
-      return React.createElement(
-        "div",
-        { className: "osw-portals-empty osw-inset-block" },
-        React.createElement(
-          "div",
-          { className: "osw-portals-empty-apology" },
-          "We're sorry, but no forms match your selected filters."
-        ),
-        React.createElement(
-          "div",
-          { className: "osw-portals-empty-suggestions-header" },
-          "Suggestions"
-        ),
-        React.createElement(
-          "ul",
-          { className: "osw-portals-empty-suggestions" },
-          React.createElement(
-            "li",
-            null,
-            "Make sure all words are spelled correctly"
-          ),
-          React.createElement(
-            "li",
-            null,
-            "Try different, or fewer, keywords"
-          ),
-          React.createElement(
-            "li",
-            null,
-            "Clear all filters to return to all organizations"
-          )
-        ),
-        React.createElement(
-          Button,
-          { onClick: this.handleClick },
-          "Clear All Filters"
-        )
-      );
-    }
-  });
-});
-// scripts/components/forms/query.es6
-define('components/forms/query', ["exports", "module", "cursors", "react"], function (exports, module, _cursors, _react) {
+// scripts/components/query.es6
+define('components/query', ["exports", "module", "cursors", "react"], function (exports, module, _cursors, _react) {
   "use strict";
 
   var _interopRequire = function (obj) { return obj && obj.__esModule ? obj["default"] : obj; };
@@ -50896,8 +50918,8 @@ define('components/forms/query', ["exports", "module", "cursors", "react"], func
     }
   });
 });
-// scripts/components/forms/summary.es6
-define('components/forms/summary', ["exports", "module", "underscore", "components/ui/button", "cursors", "components/ui/icon", "react"], function (exports, module, _underscore, _componentsUiButton, _cursors, _componentsUiIcon, _react) {
+// scripts/components/summary.es6
+define('components/summary', ["exports", "module", "underscore", "components/ui/button", "cursors", "components/ui/icon", "react"], function (exports, module, _underscore, _componentsUiButton, _cursors, _componentsUiIcon, _react) {
   "use strict";
 
   var _interopRequire = function (obj) { return obj && obj.__esModule ? obj["default"] : obj; };
@@ -50917,13 +50939,13 @@ define('components/forms/summary', ["exports", "module", "underscore", "componen
     mixins: [Cursors],
 
     getFilters: function () {
-      return _.pick(this.state, "query", "category");
+      return _.pick(this.state, this.props.filterKeys);
     },
 
     renderMessage: function () {
       var any = _.any(this.getFilters());
-      var l = this.props.forms.length;
-      return "Showing " + (any ? "" : "all ") + l + " form" + (l === 1 ? "" : "s") + (any ? " matching " : ".");
+      var l = this.props.objects.length;
+      return "Showing " + (any ? "" : "all ") + l + " portal" + (l === 1 ? "" : "s") + (any ? " matching " : ".");
     },
 
     renderClearButtons: function () {
@@ -50959,20 +50981,20 @@ define('components/forms/summary', ["exports", "module", "underscore", "componen
   });
 });
 // scripts/components/forms/filters.es6
-define('components/forms/filters', ["exports", "module", "components/forms/category-selector", "cursors", "components/forms/query", "react", "components/forms/summary"], function (exports, module, _componentsFormsCategorySelector, _cursors, _componentsFormsQuery, _react, _componentsFormsSummary) {
+define('components/forms/filters', ["exports", "module", "components/category-selector", "cursors", "components/query", "react", "components/summary"], function (exports, module, _componentsCategorySelector, _cursors, _componentsQuery, _react, _componentsSummary) {
   "use strict";
 
   var _interopRequire = function (obj) { return obj && obj.__esModule ? obj["default"] : obj; };
 
-  var CategorySelector = _interopRequire(_componentsFormsCategorySelector);
+  var CategorySelector = _interopRequire(_componentsCategorySelector);
 
   var Cursors = _interopRequire(_cursors);
 
-  var Query = _interopRequire(_componentsFormsQuery);
+  var Query = _interopRequire(_componentsQuery);
 
   var React = _interopRequire(_react);
 
-  var Summary = _interopRequire(_componentsFormsSummary);
+  var Summary = _interopRequire(_componentsSummary);
 
   module.exports = React.createClass({
     displayName: "filters",
@@ -50990,11 +51012,14 @@ define('components/forms/filters', ["exports", "module", "components/forms/categ
         { className: "osw-forms-filters" },
         React.createElement(Query, { value: this.state.query, onChange: this.handleChange }),
         React.createElement(CategorySelector, {
-          forms: this.props.forms,
+          objects: this.props.forms,
           value: this.state.category,
           onChange: this.handleChange
         }),
-        this.transferPropsTo(React.createElement(Summary, null))
+        React.createElement(Summary, {
+          objects: this.props.forms,
+          filterKeys: ["query", "category"]
+        })
       );
     }
   });
@@ -51082,6 +51107,14 @@ define('components/forms/show', ["exports", "module", "api", "cursors", "compone
       return "Created by " + form.creator.display_name;
     },
 
+    renderDescription: function (description) {
+      if (description) {
+        return description;
+      } else {
+        return "No description provided.";
+      }
+    },
+
     render: function () {
       var form = this.state.form;
       return React.createElement(
@@ -51105,7 +51138,7 @@ define('components/forms/show', ["exports", "module", "api", "cursors", "compone
         React.createElement(
           "div",
           { className: "osw-forms-show-description" },
-          form.description
+          this.renderDescription(form.description)
         ),
         React.createElement(
           ButtonRow,
@@ -51234,7 +51267,7 @@ define('components/forms/list-item', ["exports", "module", "cursors", "component
   });
 });
 // scripts/components/forms/index.es6
-define('components/forms/index', ["exports", "module", "underscore", "underscore.string", "api", "cursors", "react-list", "components/forms/filters", "components/forms/list-item", "components/forms/empty", "react"], function (exports, module, _underscore, _underscoreString, _api, _cursors, _reactList, _componentsFormsFilters, _componentsFormsListItem, _componentsFormsEmpty, _react) {
+define('components/forms/index', ["exports", "module", "underscore", "underscore.string", "api", "cursors", "react-list", "components/forms/filters", "components/forms/list-item", "components/empty", "react"], function (exports, module, _underscore, _underscoreString, _api, _cursors, _reactList, _componentsFormsFilters, _componentsFormsListItem, _componentsEmpty, _react) {
   "use strict";
 
   var _interopRequire = function (obj) { return obj && obj.__esModule ? obj["default"] : obj; };
@@ -51253,7 +51286,7 @@ define('components/forms/index', ["exports", "module", "underscore", "underscore
 
   var FormsListItem = _interopRequire(_componentsFormsListItem);
 
-  var Empty = _interopRequire(_componentsFormsEmpty);
+  var Empty = _interopRequire(_componentsEmpty);
 
   var React = _interopRequire(_react);
 
@@ -51375,6 +51408,7 @@ define('components/forms/index', ["exports", "module", "underscore", "underscore
 
     renderEmpty: function () {
       return React.createElement(Empty, {
+        objectName: "forms",
         cursors: {
           category: this.getCursor("category"),
           query: this.getCursor("query")
@@ -51652,188 +51686,6 @@ define('components/news-posts/index', ["exports", "module", "underscore", "api",
     }
   });
 });
-// scripts/components/portals/selector.es6
-define('components/portals/selector', ["exports", "module", "cursors", "utils/join-class-names", "react"], function (exports, module, _cursors, _utilsJoinClassNames, _react) {
-  "use strict";
-
-  var _interopRequire = function (obj) { return obj && obj.__esModule ? obj["default"] : obj; };
-
-  var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
-
-  var Cursors = _interopRequire(_cursors);
-
-  var joinClassNames = _interopRequire(_utilsJoinClassNames);
-
-  var React = _interopRequire(_react);
-
-  module.exports = React.createClass({
-    displayName: "selector",
-    mixins: [Cursors],
-
-    render: function () {
-      var options = this.props.renderOptions();
-      var value = this.props.value;
-      if (options.length === 2) value = options[1].props.value;
-      return React.createElement(
-        "div",
-        _extends({}, this.props, {
-          className: joinClassNames("osw-big osw-field oswi osw-dropdown", this.props.className)
-        }),
-        React.createElement(
-          "select",
-          {
-            name: this.props.name,
-            value: value,
-            onChange: this.props.onChange
-          },
-          options
-        )
-      );
-    }
-  });
-});
-// scripts/components/portals/faceted-selector.es6
-define('components/portals/faceted-selector', ["exports", "module", "underscore", "cursors", "react", "components/portals/selector"], function (exports, module, _underscore, _cursors, _react, _componentsPortalsSelector) {
-  "use strict";
-
-  var _interopRequire = function (obj) { return obj && obj.__esModule ? obj["default"] : obj; };
-
-  var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
-
-  var _ = _interopRequire(_underscore);
-
-  var Cursors = _interopRequire(_cursors);
-
-  var React = _interopRequire(_react);
-
-  var Selector = _interopRequire(_componentsPortalsSelector);
-
-  module.exports = React.createClass({
-    displayName: "faceted-selector",
-    mixins: [Cursors],
-
-    toOption: function (matches, name) {
-      return { id: name, name: name + " (" + matches.length + ")" };
-    },
-
-    renderOption: function (option) {
-      return React.createElement(
-        "option",
-        { key: option.id, value: option.id },
-        option.name
-      );
-    },
-
-    renderOptions: function () {
-      return [{ id: "", name: this.props.allOption }].concat(_.chain(this.props.portals).map(this.props.getFacet).groupBy().map(this.toOption).sortBy("name").value()).map(this.renderOption);
-    },
-
-    render: function () {
-      return React.createElement(Selector, _extends({}, this.props, { renderOptions: this.renderOptions }));
-    }
-  });
-});
-// scripts/components/portals/category-selector.es6
-define('components/portals/category-selector', ["exports", "module", "cursors", "components/portals/faceted-selector", "utils/join-class-names", "react"], function (exports, module, _cursors, _componentsPortalsFacetedSelector, _utilsJoinClassNames, _react) {
-  "use strict";
-
-  var _interopRequire = function (obj) { return obj && obj.__esModule ? obj["default"] : obj; };
-
-  var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
-
-  var Cursors = _interopRequire(_cursors);
-
-  var FacetedSelector = _interopRequire(_componentsPortalsFacetedSelector);
-
-  var joinClassNames = _interopRequire(_utilsJoinClassNames);
-
-  var React = _interopRequire(_react);
-
-  module.exports = React.createClass({
-    displayName: "category-selector",
-    mixins: [Cursors],
-
-    getFacet: function (portal) {
-      return portal.category.name;
-    },
-
-    render: function () {
-      return React.createElement(FacetedSelector, _extends({}, this.props, {
-        className: joinClassNames("oswi-book", this.props.className),
-        name: "category",
-        allOption: "All Categories",
-        getFacet: this.getFacet
-      }));
-    }
-  });
-});
-// scripts/components/portals/empty.es6
-define('components/portals/empty', ["exports", "module", "components/ui/button", "cursors", "react"], function (exports, module, _componentsUiButton, _cursors, _react) {
-  "use strict";
-
-  var _interopRequire = function (obj) { return obj && obj.__esModule ? obj["default"] : obj; };
-
-  var Button = _interopRequire(_componentsUiButton);
-
-  var Cursors = _interopRequire(_cursors);
-
-  var React = _interopRequire(_react);
-
-  module.exports = React.createClass({
-    displayName: "empty",
-    mixins: [Cursors],
-
-    handleClick: function () {
-      this.update({
-        umbrella: { $set: "" },
-        category: { $set: "" },
-        letter: { $set: "" },
-        query: { $set: "" }
-      });
-    },
-
-    render: function () {
-      return React.createElement(
-        "div",
-        { className: "osw-portals-empty osw-inset-block" },
-        React.createElement(
-          "div",
-          { className: "osw-portals-empty-apology" },
-          "We're sorry, but no portals match your selected filters."
-        ),
-        React.createElement(
-          "div",
-          { className: "osw-portals-empty-suggestions-header" },
-          "Suggestions"
-        ),
-        React.createElement(
-          "ul",
-          { className: "osw-portals-empty-suggestions" },
-          React.createElement(
-            "li",
-            null,
-            "Make sure all words are spelled correctly"
-          ),
-          React.createElement(
-            "li",
-            null,
-            "Try different, or fewer, keywords"
-          ),
-          React.createElement(
-            "li",
-            null,
-            "Clear all filters to return to all organizations"
-          )
-        ),
-        React.createElement(
-          Button,
-          { onClick: this.handleClick },
-          "Clear All Filters"
-        )
-      );
-    }
-  });
-});
 // scripts/components/portals/letter-cell.es6
 define('components/portals/letter-cell', ["exports", "module", "components/ui/button", "cursors", "react"], function (exports, module, _componentsUiButton, _cursors, _react) {
   "use strict";
@@ -51926,100 +51778,8 @@ define('components/portals/letter-table', ["exports", "module", "underscore", "c
     }
   });
 });
-// scripts/components/portals/query.es6
-define('components/portals/query', ["exports", "module", "cursors", "react"], function (exports, module, _cursors, _react) {
-  "use strict";
-
-  var _interopRequire = function (obj) { return obj && obj.__esModule ? obj["default"] : obj; };
-
-  var Cursors = _interopRequire(_cursors);
-
-  var React = _interopRequire(_react);
-
-  module.exports = React.createClass({
-    displayName: "query",
-    mixins: [Cursors],
-
-    render: function () {
-      return React.createElement(
-        "div",
-        { className: "osw-big osw-field oswi oswi-magnify" },
-        React.createElement("input", {
-          name: "query",
-          type: "text",
-          placeholder: "Search by name or keyword",
-          value: this.props.value,
-          onChange: this.props.onChange,
-          autoComplete: "off"
-        })
-      );
-    }
-  });
-});
-// scripts/components/portals/summary.es6
-define('components/portals/summary', ["exports", "module", "underscore", "components/ui/button", "cursors", "components/ui/icon", "react"], function (exports, module, _underscore, _componentsUiButton, _cursors, _componentsUiIcon, _react) {
-  "use strict";
-
-  var _interopRequire = function (obj) { return obj && obj.__esModule ? obj["default"] : obj; };
-
-  var _ = _interopRequire(_underscore);
-
-  var Button = _interopRequire(_componentsUiButton);
-
-  var Cursors = _interopRequire(_cursors);
-
-  var Icon = _interopRequire(_componentsUiIcon);
-
-  var React = _interopRequire(_react);
-
-  module.exports = React.createClass({
-    displayName: "summary",
-    mixins: [Cursors],
-
-    getFilters: function () {
-      return _.pick(this.state, "query", "letter", "umbrella", "category");
-    },
-
-    renderMessage: function () {
-      var any = _.any(this.getFilters());
-      var l = this.props.portals.length;
-      return "Showing " + (any ? "" : "all ") + l + " portal" + (l === 1 ? "" : "s") + (any ? " matching " : ".");
-    },
-
-    renderClearButtons: function () {
-      return _.map(this.getFilters(), function (value, name) {
-        if (!value) return null;
-        var deltas = {};
-        deltas[name] = { $set: "" };
-        return React.createElement(
-          Button,
-          { key: name, onClick: _.partial(this.update, deltas) },
-          value,
-          React.createElement(Icon, { name: "delete" })
-        );
-      }, this);
-    },
-
-    render: function () {
-      return React.createElement(
-        "div",
-        { className: "osw-portals-summary" },
-        React.createElement(
-          "div",
-          { className: "osw-portals-summary-message" },
-          this.renderMessage()
-        ),
-        React.createElement(
-          "div",
-          { className: "osw-portals-summary-clear-buttons" },
-          this.renderClearButtons()
-        )
-      );
-    }
-  });
-});
 // scripts/components/portals/umbrella-selector.es6
-define('components/portals/umbrella-selector', ["exports", "module", "cursors", "components/portals/faceted-selector", "utils/join-class-names", "react"], function (exports, module, _cursors, _componentsPortalsFacetedSelector, _utilsJoinClassNames, _react) {
+define('components/portals/umbrella-selector', ["exports", "module", "cursors", "components/faceted-selector", "utils/join-class-names", "react"], function (exports, module, _cursors, _componentsFacetedSelector, _utilsJoinClassNames, _react) {
   "use strict";
 
   var _interopRequire = function (obj) { return obj && obj.__esModule ? obj["default"] : obj; };
@@ -52028,7 +51788,7 @@ define('components/portals/umbrella-selector', ["exports", "module", "cursors", 
 
   var Cursors = _interopRequire(_cursors);
 
-  var FacetedSelector = _interopRequire(_componentsPortalsFacetedSelector);
+  var FacetedSelector = _interopRequire(_componentsFacetedSelector);
 
   var joinClassNames = _interopRequire(_utilsJoinClassNames);
 
@@ -52053,22 +51813,22 @@ define('components/portals/umbrella-selector', ["exports", "module", "cursors", 
   });
 });
 // scripts/components/portals/filters.es6
-define('components/portals/filters', ["exports", "module", "components/portals/category-selector", "cursors", "components/portals/letter-table", "components/portals/query", "react", "components/portals/summary", "components/portals/umbrella-selector"], function (exports, module, _componentsPortalsCategorySelector, _cursors, _componentsPortalsLetterTable, _componentsPortalsQuery, _react, _componentsPortalsSummary, _componentsPortalsUmbrellaSelector) {
+define('components/portals/filters', ["exports", "module", "components/category-selector", "cursors", "components/portals/letter-table", "components/query", "react", "components/summary", "components/portals/umbrella-selector"], function (exports, module, _componentsCategorySelector, _cursors, _componentsPortalsLetterTable, _componentsQuery, _react, _componentsSummary, _componentsPortalsUmbrellaSelector) {
   "use strict";
 
   var _interopRequire = function (obj) { return obj && obj.__esModule ? obj["default"] : obj; };
 
-  var CategorySelector = _interopRequire(_componentsPortalsCategorySelector);
+  var CategorySelector = _interopRequire(_componentsCategorySelector);
 
   var Cursors = _interopRequire(_cursors);
 
   var LetterTable = _interopRequire(_componentsPortalsLetterTable);
 
-  var Query = _interopRequire(_componentsPortalsQuery);
+  var Query = _interopRequire(_componentsQuery);
 
   var React = _interopRequire(_react);
 
-  var Summary = _interopRequire(_componentsPortalsSummary);
+  var Summary = _interopRequire(_componentsSummary);
 
   var UmbrellaSelector = _interopRequire(_componentsPortalsUmbrellaSelector);
 
@@ -52093,12 +51853,15 @@ define('components/portals/filters', ["exports", "module", "components/portals/c
           onChange: this.handleChange
         }),
         React.createElement(CategorySelector, {
-          portals: this.props.portals,
+          objects: this.props.portals,
           value: this.state.category,
           onChange: this.handleChange
         }),
         React.createElement(LetterTable, { cursors: { letter: this.getCursor("letter") } }),
-        React.createElement(Summary, this.props)
+        React.createElement(Summary, {
+          objects: this.props.portals,
+          filterKeys: ["query", "category"]
+        })
       );
     }
   });
@@ -52310,7 +52073,7 @@ define('components/portals/list-item', ["exports", "module", "cursors", "compone
   });
 });
 // scripts/components/portals/index.es6
-define('components/portals/index', ["exports", "module", "underscore", "underscore.string", "api", "cursors", "react-list", "components/portals/filters", "components/portals/list-item", "components/portals/empty", "react"], function (exports, module, _underscore, _underscoreString, _api, _cursors, _reactList, _componentsPortalsFilters, _componentsPortalsListItem, _componentsPortalsEmpty, _react) {
+define('components/portals/index', ["exports", "module", "underscore", "underscore.string", "api", "cursors", "react-list", "components/portals/filters", "components/portals/list-item", "components/empty", "react"], function (exports, module, _underscore, _underscoreString, _api, _cursors, _reactList, _componentsPortalsFilters, _componentsPortalsListItem, _componentsEmpty, _react) {
   "use strict";
 
   var _interopRequire = function (obj) { return obj && obj.__esModule ? obj["default"] : obj; };
@@ -52329,7 +52092,7 @@ define('components/portals/index', ["exports", "module", "underscore", "undersco
 
   var ListItem = _interopRequire(_componentsPortalsListItem);
 
-  var Empty = _interopRequire(_componentsPortalsEmpty);
+  var Empty = _interopRequire(_componentsEmpty);
 
   var React = _interopRequire(_react);
 
@@ -52479,6 +52242,7 @@ define('components/portals/index', ["exports", "module", "underscore", "undersco
 
     renderEmpty: function () {
       return React.createElement(Empty, {
+        objectName: "portals",
         cursors: {
           umbrella: this.getCursor("umbrella"),
           category: this.getCursor("category"),

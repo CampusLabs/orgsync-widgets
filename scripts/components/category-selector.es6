@@ -1,12 +1,12 @@
 import Cursors from 'cursors';
-import FacetedSelector from 'components/portals/faceted-selector';
+import FacetedSelector from 'components/faceted-selector';
 import joinClassNames from 'utils/join-class-names';
 import React from 'react';
 
 export default React.createClass({
   mixins: [Cursors],
 
-  getFacet: function (portal) { return portal.category.name; },
+  getFacet: function (object) { return object.category.name; },
 
   render: function () {
     return (

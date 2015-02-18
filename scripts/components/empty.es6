@@ -5,9 +5,17 @@ import React from 'react';
 export default React.createClass({
   mixins: [Cursors],
 
+  getDefaultProps: function() {
+    return {
+      objectName: 'items'
+    };
+  },
+
   handleClick: function () {
     this.update({
+      umbrella: {$set: ''},
       category: {$set: ''},
+      letter: {$set: ''},
       query: {$set: ''}
     });
   },
@@ -16,7 +24,7 @@ export default React.createClass({
     return (
       <div className='osw-portals-empty osw-inset-block'>
         <div className='osw-portals-empty-apology'>
-          We're sorry, but no forms match your selected filters.
+          We're sorry, but no {this.props.objectName} match your selected filters.
         </div>
         <div className='osw-portals-empty-suggestions-header'>Suggestions</div>
         <ul className='osw-portals-empty-suggestions'>

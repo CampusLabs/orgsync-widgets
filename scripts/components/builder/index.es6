@@ -115,12 +115,14 @@ export default React.createClass({
             </select>
           </div>
           {this.renderProps()}
-          <Embed cursors={{
-            apiKey: this.getCursor('apiKey'),
-            apiKeyData: this.getCursor('apiKeyData', this.state.apiKey),
-            widget: this.getCursor('widget'),
-            props: this.getCursor('props')
-          }} />
+          <Embed
+            cursors={{
+              apiKey: this.getCursor('apiKey'),
+              apiKeyData: this.getCursor('apiKeyData', this.state.apiKey || ''),
+              widget: this.getCursor('widget'),
+              props: this.getCursor('props')
+            }}
+          />
         </div>
         <div className='osw-builder-index-right orgsync-widget'>
           {this.renderPreview()}

@@ -45708,12 +45708,14 @@ define('components/builder/index', ["exports", "module", "underscore", "api", "c
             )
           ),
           this.renderProps(),
-          React.createElement(Embed, { cursors: {
+          React.createElement(Embed, {
+            cursors: {
               apiKey: this.getCursor("apiKey"),
-              apiKeyData: this.getCursor("apiKeyData", this.state.apiKey),
+              apiKeyData: this.getCursor("apiKeyData", this.state.apiKey || ""),
               widget: this.getCursor("widget"),
               props: this.getCursor("props")
-            } })
+            }
+          })
         ),
         React.createElement(
           "div",

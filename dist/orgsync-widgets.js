@@ -51804,6 +51804,7 @@ define('components/portals/umbrella-selector', ["exports", "module", "cursors", 
 
     render: function () {
       return React.createElement(FacetedSelector, _extends({}, this.props, {
+        objects: this.props.portals,
         className: joinClassNames("oswi-umbrella", this.props.className),
         name: "umbrella",
         allOption: "All Umbrellas",

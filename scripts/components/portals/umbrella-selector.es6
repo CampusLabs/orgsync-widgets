@@ -14,6 +14,7 @@ export default React.createClass({
     return (
       <FacetedSelector
         {...this.props}
+        objects={this.props.portals}
         className={joinClassNames('oswi-umbrella', this.props.className)}
         name='umbrella'
         allOption='All Umbrellas'

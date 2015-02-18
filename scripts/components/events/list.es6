@@ -100,6 +100,7 @@ export default React.createClass({
         renderLoading={this.renderLoading}
         renderEmpty={this.renderEmpty}
         fetch={this.fetch}
+        fetchInitially={true}
       />
     );
   }

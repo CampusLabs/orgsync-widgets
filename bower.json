@@ -1,6 +1,7 @@
 {
   "name": "orgsync-widgets",
-  "version": "0.0.38",
+  "version": "0.0.41",
+  "license": "MIT",
   "main": [
     "dist/orgsync-widgets.js",
     "dist/orgsync-widgets.css"
@@ -9,7 +10,7 @@
     "/.gitignore",
     "/.jshintrc",
     "/.npmignore",
-    "/cogs.json",
+    "/cogs.js",
     "/index.html",
     "/Makefile",
     "/node_modules",

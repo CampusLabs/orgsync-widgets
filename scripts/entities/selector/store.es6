@@ -1,6 +1,6 @@
 import _ from 'underscore';
 import _str from 'underscore.string';
-import app from 'orgsync-widgets';
+import * as app from 'orgsync-widgets';
 import {getTerm, getName} from 'entities/selector/item';
 import React from 'react';
 

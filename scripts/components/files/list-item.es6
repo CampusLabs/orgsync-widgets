@@ -10,11 +10,8 @@ const FORMAT = 'MMM D, YYYY, h:mm A';
 export default React.createClass({
   mixins: [Cursors],
 
-  goToFile: function () {
-    this.update({
-      direction: {$set: 'forward'},
-      currentFile: {$set: this.state.file}
-    });
+  pushPath: function () {
+    this.update({path: {$push: [this.state.file.id]}});
   },
 
   stopPropagation: function (ev) {
@@ -48,7 +45,7 @@ export default React.createClass({
   render: function () {
     let file = this.state.file;
     return (
-      <div className='osw-files-list-item' onClick={this.goToFile}>
+      <div className='osw-files-list-item' onClick={this.pushPath}>
         <div className='osw-files-list-item-left'>
           {this.renderPin()}
           <div

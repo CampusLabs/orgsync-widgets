@@ -1,0 +1,76 @@
+@import '../config';
+
+$pin-url: 'https://orgsync.com/assets/elements/pin.png';
+
+.orgsync-widget {
+  .osw-files-file-show-picture {
+    background: center no-repeat;
+    background-size: contain;
+    display: inline-block;
+    float: left;
+    height: 128px;
+    margin-right: 10px;
+    vertical-align: middle;
+    width: 96px;
+  }
+
+  .osw-files-file-show-name {
+    font-size: 24px;
+    margin-bottom: 5px;
+  }
+
+  .osw-files-file-show-info {
+    @include clearfix;
+    padding: 10px;
+  }
+
+  .osw-files-file-show-detail {
+    color: $grey-darker;
+    font-size: 14px;
+  }
+
+  .osw-files-file-show-download {
+    margin-top: 10px;
+  }
+
+  .osw-files-file-show-header {
+    color: $grey-darker;
+    font-size: 20px;
+    margin-bottom: 5px;
+  }
+
+  .osw-files-file-show-section {
+    border-top: 1px solid $grey;
+    padding: 10px;
+  }
+
+  .osw-files-file-show-versions {
+    border: 0;
+    border-collapse: collapse;
+    width: 100%;
+
+    th {
+      background: $grey-darker;
+      color: #fff;
+      font-size: 16px;
+      padding: 5px;
+      text-align: left;
+
+      &:first-child {
+        border-top-left-radius: $border-radius;
+      }
+
+      &:last-child {
+        border-top-right-radius: $border-radius;
+      }
+    }
+
+    tr:not(.osw-files-file-show-version-description) td {
+      border-top: 1px solid $grey;
+    }
+
+    td {
+      padding: 5px;
+    }
+  }
+}

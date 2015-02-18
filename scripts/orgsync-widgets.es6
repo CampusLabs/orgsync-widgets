@@ -1,8 +1,8 @@
-//= require ./start.frag
+//= require ./start
 //= require bower_components/amdainty/amdainty.js
 //= requireself
 //= require ./components/**/*
-//= require ./end.frag
+//= require ./end
 
 import $ from 'jquery';
 import _ from 'underscore';

@@ -4,7 +4,7 @@
 /.npmignore
 /bower.json
 /bower_components
-/cogs.json
+/cogs.js
 /index.html
 /Makefile
 /scripts

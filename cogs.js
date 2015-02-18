@@ -5,24 +5,27 @@ module.exports = {
     es6: {
       out: 'js',
       transformers: [
-        'extract-directives',
-        {name: '6to5', options: {modules: 'amd'}}
+        'directives',
+        {name: 'babel', options: {modules: 'amd'}}
       ]
     },
     js: {
       transformers: [
-        'extract-directives',
-        {name: 'concat-amd', options: {base: 'scripts'}},
-        {name: 'prepend-path', options: {before: '// '}}
+        'directives',
+        {name: 'prepend-path', options: {before: '// '}},
+        {
+          name: 'concat-amd',
+          options: {base: 'scripts', extensions: ['js', 'es6', 'json']}
+        }
       ]
     },
     scss: {
       out: 'css',
-      transformers: ['extract-directives', 'sass']
+      transformers: ['directives', 'sass']
     },
     css: {
       transformers: [
-        'extract-directives',
+        'directives',
         {name: 'prepend-path', options: {before: '/* ', after: ' */'}}
       ]
     }

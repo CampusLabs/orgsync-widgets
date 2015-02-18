@@ -38140,7 +38140,9 @@ define('orgsync-widgets', ["exports", "jquery", "underscore", "cache", "config",
 
 
   $(mountAll);
-  exports.__esModule = true;
+  Object.defineProperty(exports, "__esModule", {
+    value: true
+  });
 });
 // bower_components/superagent/superagent.js
 ;(function(){
@@ -39792,7 +39794,9 @@ define('entities/account', ["exports"], function (exports) {
   var getPictureUrl = exports.getPictureUrl = function (account) {
     return account.picture_url || DEFAULT_PICTURE;
   };
-  exports.__esModule = true;
+  Object.defineProperty(exports, "__esModule", {
+    value: true
+  });
 });
 // scripts/components/accounts/list-item.es6
 define('components/accounts/list-item', ["exports", "module", "entities/account", "react"], function (exports, module, _entitiesAccount, _react) {
@@ -45491,6 +45495,10 @@ define('components/builder/index', ["exports", "module", "underscore", "undersco
     Portals: {
       moduleName: "portals/index",
       props: ["communityId", "umbrella", "category", "letter", "filtersAreShowing", "redirect"]
+    },
+    Selector: {
+      moduleName: "selector/index",
+      props: ["allowArbitrary", "allowEmptyQuery", "allowBrowse", "browseText", "limit", "scopes", "value", "types", "boostTypes", "view", "dataset"]
     }
   };
 
@@ -48365,7 +48373,9 @@ define('entities/event', ["exports", "underscore", "underscore.string", "api", "
       restrict_to_portal: false
     }, _.partial(handleFetch, options, cb));
   };
-  exports.__esModule = true;
+  Object.defineProperty(exports, "__esModule", {
+    value: true
+  });
 });
 // scripts/components/ui/sep.es6
 define('components/ui/sep', ["exports", "module", "react"], function (exports, module, _react) {
@@ -49466,7 +49476,7 @@ define('components/events/calendar', ["exports", "module", "underscore", "cursor
       } else if (ranges && events) {
         deltas.ranges = { $set: ranges };
         deltas.allEvents = { $set: events };
-        _.defer(this.fetch);
+        if (this.isMounted()) _.defer(this.fetch);
       }
       this.update(deltas);
     },
@@ -49678,7 +49688,8 @@ define('components/events/list', ["exports", "module", "underscore", "cursors", 
         renderItem: this.renderDate,
         renderLoading: this.renderLoading,
         renderEmpty: this.renderEmpty,
-        fetch: this.fetch
+        fetch: this.fetch,
+        fetchInitially: true
       });
     }
   });
@@ -50485,10 +50496,12 @@ define('components/ui/text-button', ["exports", "module", "components/ui/button"
   });
 });
 // scripts/components/files/breadcrumb.es6
-define('components/files/breadcrumb', ["exports", "module", "cursors", "react", "components/ui/text-button"], function (exports, module, _cursors, _react, _componentsUiTextButton) {
+define('components/files/breadcrumb', ["exports", "module", "underscore", "cursors", "react", "components/ui/text-button"], function (exports, module, _underscore, _cursors, _react, _componentsUiTextButton) {
   "use strict";
 
   var _interopRequire = function (obj) { return obj && obj.__esModule ? obj["default"] : obj; };
+
+  var _ = _interopRequire(_underscore);
 
   var Cursors = _interopRequire(_cursors);
 
@@ -50500,63 +50513,94 @@ define('components/files/breadcrumb', ["exports", "module", "cursors", "react", 
     displayName: "breadcrumb",
     mixins: [Cursors],
 
-    goToFile: function () {
-      this.update({
-        direction: { $set: "back" },
-        currentFile: { $set: this.props.file }
-      });
+    getIndex: function () {
+      return _.indexOf(this.state.path, this.props.file.id);
+    },
+
+    splicePath: function () {
+      this.update({ path: { $splice: [[this.getIndex() + 1, Infinity]] } });
     },
 
     render: function () {
-      var file = this.props.file;
       return React.createElement(
         "span",
         null,
-        file.id ? " / " : "",
+        this.getIndex() > 0 ? " / " : "",
         React.createElement(
           TextButton,
-          { onClick: this.goToFile },
-          file.name
+          { onClick: this.splicePath },
+          this.props.file.name
         )
       );
     }
   });
-
-
-  // https://github.com/orgsync/orgsync/pull/6129#issuecomment-52841135
 });
 // scripts/entities/file.es6
-define('entities/file', ["exports"], function (exports) {
+define('entities/file', ["exports", "underscore"], function (exports, _underscore) {
   "use strict";
+
+  var _interopRequire = function (obj) { return obj && obj.__esModule ? obj["default"] : obj; };
+
+  var _ = _interopRequire(_underscore);
 
   var ALIASES = {
     Document: "doc",
     JavaScript: "js",
     File: "other"
   };
+
   var SLUG_PREFIX = "https://orgsync.com/assets/icons/file-type-icons/file-";
+
   var SLUG_SUFFIX = "-128.svg";
+
+  var UNITS = [{ name: "GB", bytes: 1 << 30 }, { name: "MB", bytes: 1 << 20 }, { name: "KB", bytes: 1 << 10 }, { name: "bytes", bytes: 1 }];
 
   var getPictureUrl = exports.getPictureUrl = function (file) {
     var category = file.category || "folder";
     var slug = ALIASES[category] || category.toLowerCase();
     return SLUG_PREFIX + slug + SLUG_SUFFIX;
   };
-  exports.__esModule = true;
+
+  var getHumanFileSize = exports.getHumanFileSize = function (bytes) {
+    var unit = _.find(UNITS, function (unit) {
+      return bytes >= unit.bytes;
+    }) || _.last(UNITS);
+    return "" + Math.ceil(bytes / unit.bytes * 10) / 10 + " " + unit.name;
+  };
+  Object.defineProperty(exports, "__esModule", {
+    value: true
+  });
 });
 // scripts/components/files/file-show.es6
-define('components/files/file-show', ["exports", "module", "api", "cursors", "react", "entities/file"], function (exports, module, _api, _cursors, _react, _entitiesFile) {
+define('components/files/file-show', ["exports", "module", "underscore", "api", "components/ui/button", "components/comments/index", "cursors", "moment", "react", "components/ui/text-button", "entities/file"], function (exports, module, _underscore, _api, _componentsUiButton, _componentsCommentsIndex, _cursors, _moment, _react, _componentsUiTextButton, _entitiesFile) {
   "use strict";
 
   var _interopRequire = function (obj) { return obj && obj.__esModule ? obj["default"] : obj; };
 
+  var _ = _interopRequire(_underscore);
+
   var api = _interopRequire(_api);
+
+  var Button = _interopRequire(_componentsUiButton);
+
+  var CommentsIndex = _interopRequire(_componentsCommentsIndex);
 
   var Cursors = _interopRequire(_cursors);
 
+  var moment = _interopRequire(_moment);
+
   var React = _interopRequire(_react);
 
+  var TextButton = _interopRequire(_componentsUiTextButton);
+
   var getPictureUrl = _entitiesFile.getPictureUrl;
+  var getHumanFileSize = _entitiesFile.getHumanFileSize;
+
+
+  var FORMAT = function (iso) {
+    return moment(iso).format("MMM D, YYYY, h:mm A");
+  };
+
   module.exports = React.createClass({
     displayName: "file-show",
     mixins: [Cursors],
@@ -50566,58 +50610,192 @@ define('components/files/file-show', ["exports", "module", "api", "cursors", "re
     },
 
     fetch: function () {
-      this.update({ isLoading: { $set: true }, error: { $set: null } });
       api.get(this.state.file.links.show, this.handleFetch);
+      api.get(this.state.file.links.versions, this.handleVersionsFetch);
     },
 
     handleFetch: function (er, res) {
-      this.update({
-        isLoading: { $set: false },
-        error: { $set: er },
-        file: { $merge: er ? {} : res.data }
-      });
+      this.update({ file: { $merge: er ? {} : res.data } });
     },
 
-    renderFile: function () {
-      var file = this.state.file;
+    handleVersionsFetch: function (er, res) {
+      this.update({ file: { versions: { $set: er ? [] : res.data } } });
+    },
+
+    renderDetail: function (label, key, isDate) {
+      var val = this.state.file[key];
+      if (!val) return;
+      if (isDate) val = FORMAT(val);
       return React.createElement(
         "div",
-        { className: "osw-files-file-show" },
+        { className: "osw-files-file-show-detail" },
+        React.createElement(
+          "strong",
+          null,
+          "" + label + ":"
+        ),
+        " " + val
+      );
+    },
+
+    renderDescription: function () {
+      var description = this.state.file.description;
+      if (!description) return;
+      return React.createElement(
+        "div",
+        { className: "osw-files-file-show-section" },
         React.createElement(
           "div",
-          { className: "osw-files-list-item-left" },
-          React.createElement("div", {
-            className: "osw-files-list-item-picture",
-            style: { backgroundImage: "url('" + getPictureUrl(file) + "')" }
-          })
+          { className: "osw-files-file-show-header" },
+          "Description"
+        ),
+        description
+      );
+    },
+
+    renderVersion: function (version) {
+      return [React.createElement(
+        "tr",
+        { key: version.id },
+        React.createElement(
+          "td",
+          null,
+          FORMAT(version.created_at)
         ),
         React.createElement(
-          "div",
-          { className: "osw-files-list-item-info" },
+          "td",
+          null,
+          version.account.display_name
+        ),
+        React.createElement(
+          "td",
+          null,
+          version.file_name
+        ),
+        React.createElement(
+          "td",
+          null,
           React.createElement(
-            "div",
-            { className: "osw-files-list-item-name" },
-            file.name
+            Button,
+            { href: version.links.download },
+            "Download " + getHumanFileSize(version.file_size)
+          )
+        )
+      )].concat(version.description ? React.createElement(
+        "tr",
+        {
+          key: "" + version.id + "-description",
+          className: "osw-files-file-show-version-description"
+        },
+        React.createElement("td", null),
+        React.createElement(
+          "td",
+          { colSpan: "4" },
+          React.createElement(
+            "strong",
+            null,
+            "Version Notes"
+          ),
+          React.createElement("br", null),
+          version.description
+        )
+      ) : []);
+    },
+
+    renderVersions: function () {
+      var versions = this.state.file.versions;
+      if (!versions.length) return;
+      return React.createElement(
+        "div",
+        { className: "osw-files-file-show-section" },
+        React.createElement(
+          "div",
+          { className: "osw-files-file-show-header" },
+          "Versions"
+        ),
+        React.createElement(
+          "table",
+          { className: "osw-files-file-show-versions" },
+          React.createElement(
+            "thead",
+            null,
+            React.createElement(
+              "tr",
+              null,
+              React.createElement(
+                "th",
+                null,
+                "Created"
+              ),
+              React.createElement(
+                "th",
+                null,
+                "Added by"
+              ),
+              React.createElement(
+                "th",
+                null,
+                "Filename"
+              ),
+              React.createElement("th", null)
+            )
           ),
           React.createElement(
-            "div",
-            { className: "osw-files-list-item-date" },
-            file.updated_at
+            "tbody",
+            null,
+            _.map(versions, this.renderVersion)
           )
         )
       );
     },
 
     render: function () {
-      return this.state.isLoading ? React.createElement(
+      var file = this.state.file;
+      return React.createElement(
         "div",
-        null,
-        "Loading..."
-      ) : this.state.error ? React.createElement(
-        "div",
-        null,
-        this.state.error.toString()
-      ) : this.renderFile();
+        { className: "osw-files-file-show" },
+        React.createElement(
+          "div",
+          { className: "osw-files-file-show-info" },
+          React.createElement("div", {
+            className: "osw-files-file-show-picture",
+            style: { backgroundImage: "url('" + getPictureUrl(file) + "')" }
+          }),
+          React.createElement(
+            "div",
+            { className: "osw-files-file-show-name" },
+            file.name
+          ),
+          this.renderDetail("Filename", "file_name"),
+          this.renderDetail("Created", "created_at", true),
+          this.renderDetail("Updated", "updated_at", true),
+          React.createElement(
+            Button,
+            {
+              className: "osw-files-file-show-download",
+              href: file.links.download
+            },
+            "Download ",
+            getHumanFileSize(file.file_size)
+          )
+        ),
+        this.renderDescription(),
+        this.renderVersions(),
+        React.createElement(
+          "div",
+          { className: "osw-files-file-show-section" },
+          React.createElement(
+            "div",
+            { className: "osw-files-file-show-header" },
+            "Comments"
+          ),
+          React.createElement(CommentsIndex, {
+            url: file.links.comments,
+            newUrl: file.links.web,
+            cursors: { comments: this.getCursor("file", "comments") }
+          })
+        )
+      );
     }
   });
 });
@@ -50644,11 +50822,8 @@ define('components/files/list-item', ["exports", "module", "cursors", "entities/
     displayName: "list-item",
     mixins: [Cursors],
 
-    goToFile: function () {
-      this.update({
-        direction: { $set: "forward" },
-        currentFile: { $set: this.state.file }
-      });
+    pushPath: function () {
+      this.update({ path: { $push: [this.state.file.id] } });
     },
 
     stopPropagation: function (ev) {
@@ -50683,7 +50858,7 @@ define('components/files/list-item', ["exports", "module", "cursors", "entities/
       var file = this.state.file;
       return React.createElement(
         "div",
-        { className: "osw-files-list-item", onClick: this.goToFile },
+        { className: "osw-files-list-item", onClick: this.pushPath },
         React.createElement(
           "div",
           { className: "osw-files-list-item-left" },
@@ -50758,10 +50933,14 @@ define('components/files/folder-show', ["exports", "module", "underscore", "api"
     },
 
     handleFetch: function (cb, er, res) {
+      var _this = this;
       if (er) return cb(er);
-      var parent = this.state.file;
       var files = _.chain(this.getFiles().concat(res.data)).unique("id").map(function (file) {
-        return _.extend({}, file, { parent: parent, portal: parent.portal });
+        return _.extend({}, file, {
+          portal: _this.state.file.portal,
+          comments: [],
+          versions: []
+        });
       }).value();
       this.update({ file: { files: { $set: files } } });
       cb(null, res.data.length < PER_PAGE);
@@ -50772,8 +50951,7 @@ define('components/files/folder-show', ["exports", "module", "underscore", "api"
       return React.createElement(FilesListItem, {
         key: file.id,
         cursors: {
-          direction: this.getCursor("direction"),
-          currentFile: this.getCursor("file"),
+          path: this.getCursor("path"),
           file: this.getCursor("file", ["files", i])
         }
       });
@@ -50816,47 +50994,68 @@ define('components/files/index', ["exports", "module", "underscore", "components
 
     getInitialState: function () {
       return {
-        direction: "forward",
-        currentFile: {
-          id: 0,
-          type: "folder",
-          name: "Files",
-          portal: {
-            id: this.props.portalId
-          }
-        }
+        root: {
+          files: [{
+            id: 0,
+            type: "folder",
+            name: "Files",
+            portal: {
+              id: this.props.portalId
+            }
+          }]
+        },
+        path: [0]
       };
     },
 
+    componentWillMount: function () {
+      this.lastPathLength = 0;
+    },
+
     componentDidUpdate: function (__, prevState) {
-      if (this.state.currentFile.id !== prevState.currentFile.id) {
+      if (this.state.path !== prevState.path) {
         window.scrollTo(0, this.getDOMNode().offsetTop);
+        this.lastPathLength = this.state.path.length;
       }
+    },
+
+    getDirection: function () {
+      return this.state.path.length < this.lastPathLength ? "back" : "forward";
     },
 
     renderBreadCrumb: function (file) {
       return React.createElement(Breadcrumb, {
         key: file.id,
         file: file,
-        cursors: {
-          direction: this.getCursor("direction"),
-          currentFile: this.getCursor("currentFile")
-        }
+        cursors: { path: this.getCursor("path") }
       });
     },
 
+    getFile: function () {
+      return _.reduce(this.state.path, function (file, id) {
+        return _.find(file.files, { id: id });
+      }, this.state.root);
+    },
+
+    getCursorPath: function () {
+      var file = this.state.root;
+      return _.reduce(this.state.path, function (path, id) {
+        var files = file.files;
+        file = _.find(files, { id: id });
+        return path.concat("files", _.indexOf(files, file));
+      }, []);
+    },
+
     renderBreadCrumbs: function () {
-      var files = [];
-      var file = this.state.currentFile;
-      while (file) {
-        files = [file].concat(files);
-        file = file.parent;
-      }
-      return _.map(files, this.renderBreadCrumb);
+      var _this = this;
+      var file = this.state.root;
+      return _.map(this.state.path, function (id) {
+        return _this.renderBreadCrumb(file = _.find(file.files, { id: id }));
+      });
     },
 
     render: function () {
-      var file = this.state.currentFile;
+      var file = this.getFile();
       var Show = file.type === "folder" ? FolderShow : FileShow;
       return React.createElement(
         "div",
@@ -50870,7 +51069,7 @@ define('components/files/index', ["exports", "module", "underscore", "components
           CSSTransitionGroup,
           {
             component: "div",
-            transitionName: "osw-files-slide-" + this.state.direction,
+            transitionName: "osw-files-slide-" + this.getDirection(),
             className: "osw-files-index-pages"
           },
           React.createElement(
@@ -50878,8 +51077,8 @@ define('components/files/index', ["exports", "module", "underscore", "components
             { key: file.id, className: "osw-files-index-page" },
             React.createElement(Show, {
               cursors: {
-                direction: this.getCursor("direction"),
-                file: this.getCursor("currentFile")
+                file: this.getCursor("root", this.getCursorPath()),
+                path: this.getCursor("path")
               }
             })
           )
@@ -52333,7 +52532,9 @@ define('entities/selector/item', ["exports", "underscore", "underscore.string"],
   };
 
   var getBasicFields = exports.getBasicFields = _.partial(_.pick, _, BASIC_FIELDS);
-  exports.__esModule = true;
+  Object.defineProperty(exports, "__esModule", {
+    value: true
+  });
 });
 // scripts/components/selector/result.es6
 define('components/selector/result', ["exports", "module", "underscore", "underscore.string", "cursors", "components/ui/icon", "react", "entities/selector/item"], function (exports, module, _underscore, _underscoreString, _cursors, _componentsUiIcon, _react, _entitiesSelectorItem) {
@@ -52498,8 +52699,7 @@ define('entities/selector/store', ["exports", "underscore", "underscore.string",
 
   var _str = _interopRequire(_underscoreString);
 
-  var app = _interopRequire(_orgsyncWidgets);
-
+  var app = _orgsyncWidgets;
   var getTerm = _entitiesSelectorItem.getTerm;
   var getName = _entitiesSelectorItem.getName;
   var React = _interopRequire(_react);
@@ -52603,7 +52803,9 @@ define('entities/selector/store', ["exports", "underscore", "underscore.string",
       cb(null, done[key] = items.length < options.size, options);
     });
   };
-  exports.__esModule = true;
+  Object.defineProperty(exports, "__esModule", {
+    value: true
+  });
 });
 // scripts/components/selector/token.es6
 define('components/selector/token', ["exports", "module", "cursors", "components/ui/icon", "react", "entities/selector/item"], function (exports, module, _cursors, _componentsUiIcon, _react, _entitiesSelectorItem) {
@@ -52663,8 +52865,7 @@ define('components/selector/index', ["exports", "module", "underscore", "orgsync
 
   var _ = _interopRequire(_underscore);
 
-  var app = _interopRequire(_orgsyncWidgets);
-
+  var app = _orgsyncWidgets;
   var Button = _interopRequire(_componentsUiButton);
 
   var Cursors = _interopRequire(_cursors);
@@ -52679,8 +52880,7 @@ define('components/selector/index', ["exports", "module", "underscore", "orgsync
 
   var Scope = _interopRequire(_componentsSelectorScope);
 
-  var store = _interopRequire(_entitiesSelectorStore);
-
+  var store = _entitiesSelectorStore;
   var Token = _interopRequire(_componentsSelectorToken);
 
   var getBasicFields = _entitiesSelectorItem.getBasicFields;

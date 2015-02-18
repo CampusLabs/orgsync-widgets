@@ -42,7 +42,7 @@ export default React.createClass({
     } else if (ranges && events) {
       deltas.ranges = {$set: ranges};
       deltas.allEvents = {$set: events};
-      _.defer(this.fetch);
+      if (this.isMounted()) _.defer(this.fetch);
     }
     this.update(deltas);
   },

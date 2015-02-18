@@ -1,5 +1,5 @@
 import _ from 'underscore';
-import app from 'orgsync-widgets';
+import * as app from 'orgsync-widgets';
 import Button from 'components/ui/button';
 import Cursors from 'cursors';
 import List from 'react-list';
@@ -7,7 +7,7 @@ import Popup from 'components/ui/popup';
 import React from 'react';
 import Result from 'components/selector/result';
 import Scope from 'components/selector/scope';
-import store from 'entities/selector/store';
+import * as store from 'entities/selector/store';
 import Token from 'components/selector/token';
 import {getBasicFields, getDisplayName, getTerm} from 'entities/selector/item';
 

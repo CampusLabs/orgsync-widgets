@@ -3,12 +3,12 @@
 .orgsync-widget {
   .osw-files-index-header {
     background: #fff;
+    border-bottom: 1px solid $grey;
     padding: 5px;
     position: -webkit-sticky;
     position: sticky;
     top: 0;
     z-index: 1;
-    border-bottom: 1px solid $grey;
   };
 
   .osw-files-slide-forward-enter-active,
@@ -16,7 +16,6 @@
   .osw-files-slide-back-enter-active,
   .osw-files-slide-back-leave-active {
     @include transition(all .5s $ease-out-expo);
-    pointer-events: none;
   }
 
   .osw-files-slide-forward-enter {

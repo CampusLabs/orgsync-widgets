@@ -51088,8 +51088,6 @@ define('components/forms/show', ["exports", "module", "api", "cursors", "compone
     },
 
     handleFetch: function (er, res) {
-      console.log("Show form:");
-      console.log(res);
       var deltas = { isLoading: { $set: false } };
       if (er) deltas.error = { $set: er };else deltas.form = { $set: res.data };
       this.update(deltas);
@@ -51145,12 +51143,12 @@ define('components/forms/show', ["exports", "module", "api", "cursors", "compone
           null,
           React.createElement(
             Button,
-            { href: form.links.web },
+            { href: form.links.web, target: "_parent" },
             "On OrgSync.com"
           ),
           React.createElement(
             Button,
-            { href: form.links.pdf_link },
+            { href: form.links.pdf_link, target: "_parent" },
             "PDF"
           )
         )
@@ -51184,9 +51182,7 @@ define('components/forms/list-item', ["exports", "module", "cursors", "component
       };
     },
 
-    showForm: function (ev) {
-      if (this.props.redirect) return;
-      ev.preventDefault();
+    openShow: function (ev) {
       this.update({ showIsOpen: { $set: true } });
     },
 
@@ -51231,7 +51227,7 @@ define('components/forms/list-item', ["exports", "module", "cursors", "component
       var form = this.state.form;
       return React.createElement(
         "div",
-        { className: "osw-forms-list-item", onClick: this.showForm },
+        { className: "osw-forms-list-item", onClick: this.openShow },
         React.createElement(
           "div",
           { className: "osw-files-list-item-left" },

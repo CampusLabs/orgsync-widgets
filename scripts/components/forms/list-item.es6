@@ -13,9 +13,7 @@ export default React.createClass({
     };
   },
 
-  showForm: function (ev) {
-    if (this.props.redirect) return;
-    ev.preventDefault();
+  openShow: function (ev) {
     this.update({showIsOpen: {$set: true}});
   },
 
@@ -59,7 +57,7 @@ export default React.createClass({
   render: function () {
     var form = this.state.form;
     return (
-      <div className='osw-forms-list-item' onClick={this.showForm}>
+      <div className='osw-forms-list-item' onClick={this.openShow}>
         <div className='osw-files-list-item-left'>
           {this.renderPin()}
         </div>

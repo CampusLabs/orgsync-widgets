@@ -22,8 +22,6 @@ export default React.createClass({
   },
 
   handleFetch: function (er, res) {
-    console.log("Show form:");
-    console.log(res);
     var deltas = {isLoading: {$set: false}};
     if (er) deltas.error = {$set: er};
     else deltas.form = {$set: res.data};
@@ -71,8 +69,12 @@ export default React.createClass({
           {this.renderDescription(form.description)}
         </div>
         <ButtonRow>
-          <Button href={form.links.web}>On OrgSync.com</Button>
-          <Button href={form.links.pdf_link}>PDF</Button>
+          <Button href={form.links.web} target='_parent'>
+            On OrgSync.com
+          </Button>
+          <Button href={form.links.pdf_link} target='_parent'>
+            PDF
+          </Button>
         </ButtonRow>
       </div>
     );

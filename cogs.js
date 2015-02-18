@@ -6,7 +6,7 @@ module.exports = {
       out: 'js',
       transformers: [
         'directives',
-        {name: '6to5', options: {modules: 'amd'}}
+        {name: 'babel', options: {modules: 'amd'}}
       ]
     },
     js: {

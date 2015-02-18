@@ -38140,7 +38140,9 @@ define('orgsync-widgets', ["exports", "jquery", "underscore", "cache", "config",
 
 
   $(mountAll);
-  exports.__esModule = true;
+  Object.defineProperty(exports, "__esModule", {
+    value: true
+  });
 });
 // bower_components/superagent/superagent.js
 ;(function(){
@@ -39792,7 +39794,9 @@ define('entities/account', ["exports"], function (exports) {
   var getPictureUrl = exports.getPictureUrl = function (account) {
     return account.picture_url || DEFAULT_PICTURE;
   };
-  exports.__esModule = true;
+  Object.defineProperty(exports, "__esModule", {
+    value: true
+  });
 });
 // scripts/components/accounts/list-item.es6
 define('components/accounts/list-item', ["exports", "module", "entities/account", "react"], function (exports, module, _entitiesAccount, _react) {
@@ -48175,7 +48179,9 @@ define('entities/event', ["exports", "underscore", "underscore.string", "api", "
       restrict_to_portal: false
     }, _.partial(handleFetch, options, cb));
   };
-  exports.__esModule = true;
+  Object.defineProperty(exports, "__esModule", {
+    value: true
+  });
 });
 // scripts/components/ui/sep.es6
 define('components/ui/sep', ["exports", "module", "react"], function (exports, module, _react) {
@@ -50367,7 +50373,9 @@ define('entities/file', ["exports", "underscore"], function (exports, _underscor
     }) || _.last(UNITS);
     return "" + Math.ceil(bytes / unit.bytes * 10) / 10 + " " + unit.name;
   };
-  exports.__esModule = true;
+  Object.defineProperty(exports, "__esModule", {
+    value: true
+  });
 });
 // scripts/components/files/file-show.es6
 define('components/files/file-show', ["exports", "module", "underscore", "api", "components/ui/button", "components/comments/index", "cursors", "moment", "react", "components/ui/text-button", "entities/file"], function (exports, module, _underscore, _api, _componentsUiButton, _componentsCommentsIndex, _cursors, _moment, _react, _componentsUiTextButton, _entitiesFile) {
@@ -52085,7 +52093,9 @@ define('entities/selector/item', ["exports", "underscore", "underscore.string"],
   };
 
   var getBasicFields = exports.getBasicFields = _.partial(_.pick, _, BASIC_FIELDS);
-  exports.__esModule = true;
+  Object.defineProperty(exports, "__esModule", {
+    value: true
+  });
 });
 // scripts/components/selector/result.es6
 define('components/selector/result', ["exports", "module", "underscore", "underscore.string", "cursors", "components/ui/icon", "react", "entities/selector/item"], function (exports, module, _underscore, _underscoreString, _cursors, _componentsUiIcon, _react, _entitiesSelectorItem) {
@@ -52354,7 +52364,9 @@ define('entities/selector/store', ["exports", "underscore", "underscore.string",
       cb(null, done[key] = items.length < options.size, options);
     });
   };
-  exports.__esModule = true;
+  Object.defineProperty(exports, "__esModule", {
+    value: true
+  });
 });
 // scripts/components/selector/token.es6
 define('components/selector/token', ["exports", "module", "cursors", "components/ui/icon", "react", "entities/selector/item"], function (exports, module, _cursors, _componentsUiIcon, _react, _entitiesSelectorItem) {

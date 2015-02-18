@@ -10,7 +10,7 @@
   },
   "devDependencies": {
     "cogs": "1.0.1",
-    "cogs-transformer-6to5": "1.0.1",
+    "cogs-transformer-babel": "1.0.2",
     "cogs-transformer-concat-amd": "1.0.2",
     "cogs-transformer-directives": "1.0.1",
     "cogs-transformer-json": "1.0.0",

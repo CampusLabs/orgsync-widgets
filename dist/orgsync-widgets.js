@@ -51137,6 +51137,12 @@ define('components/summary', ["exports", "module", "underscore", "components/ui/
     displayName: "summary",
     mixins: [Cursors],
 
+    getDefaultProps: function () {
+      return {
+        objectName: "item"
+      };
+    },
+
     getFilters: function () {
       return _.pick(this.state, this.props.filterKeys);
     },
@@ -51144,7 +51150,7 @@ define('components/summary', ["exports", "module", "underscore", "components/ui/
     renderMessage: function () {
       var any = _.any(this.getFilters());
       var l = this.props.objects.length;
-      return "Showing " + (any ? "" : "all ") + l + " portal" + (l === 1 ? "" : "s") + (any ? " matching " : ".");
+      return "Showing " + (any ? "" : "all ") + l + " " + this.props.objectName + (l === 1 ? "" : "s") + (any ? " matching " : ".");
     },
 
     renderClearButtons: function () {

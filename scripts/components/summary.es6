@@ -7,6 +7,12 @@ import React from 'react';
 export default React.createClass({
   mixins: [Cursors],
 
+  getDefaultProps: function() {
+    return {
+      objectName: 'item'
+    };
+  },
+
   getFilters: function () {
     return _.pick(this.state, this.props.filterKeys);
   },
@@ -14,7 +20,7 @@ export default React.createClass({
   renderMessage: function () {
     var any = _.any(this.getFilters());
     var l = this.props.objects.length;
-    return 'Showing ' + (any ? '' : 'all ') + l + ' portal' +
+    return 'Showing ' + (any ? '' : 'all ') + l + ' ' + this.props.objectName +
       (l === 1 ? '' : 's') + (any ? ' matching ' : '.');
   },
 

@@ -23,6 +23,7 @@ export default React.createClass({
           onChange={this.handleChange}
         />
         <Summary
+          {...this.props}
           objects={this.props.forms}
           filterKeys={['query', 'category']}
         />

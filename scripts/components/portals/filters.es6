@@ -31,6 +31,7 @@ export default React.createClass({
         />
         <LetterTable cursors={{letter: this.getCursor('letter')}} />
         <Summary
+          {...this.props}
           objects={this.props.portals}
           filterKeys={['query', 'category']}
         />

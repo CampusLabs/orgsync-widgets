@@ -51191,6 +51191,8 @@ define('components/forms/filters', ["exports", "module", "components/category-se
 
   var _interopRequire = function (obj) { return obj && obj.__esModule ? obj["default"] : obj; };
 
+  var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+
   var CategorySelector = _interopRequire(_componentsCategorySelector);
 
   var Cursors = _interopRequire(_cursors);
@@ -51221,10 +51223,10 @@ define('components/forms/filters', ["exports", "module", "components/category-se
           value: this.state.category,
           onChange: this.handleChange
         }),
-        React.createElement(Summary, {
+        React.createElement(Summary, _extends({}, this.props, {
           objects: this.props.forms,
           filterKeys: ["query", "category"]
-        })
+        }))
       );
     }
   });
@@ -52020,6 +52022,8 @@ define('components/portals/filters', ["exports", "module", "components/category-
 
   var _interopRequire = function (obj) { return obj && obj.__esModule ? obj["default"] : obj; };
 
+  var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+
   var CategorySelector = _interopRequire(_componentsCategorySelector);
 
   var Cursors = _interopRequire(_cursors);
@@ -52060,10 +52064,10 @@ define('components/portals/filters', ["exports", "module", "components/category-
           onChange: this.handleChange
         }),
         React.createElement(LetterTable, { cursors: { letter: this.getCursor("letter") } }),
-        React.createElement(Summary, {
+        React.createElement(Summary, _extends({}, this.props, {
           objects: this.props.portals,
           filterKeys: ["query", "category"]
-        })
+        }))
       );
     }
   });

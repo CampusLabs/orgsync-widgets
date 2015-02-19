@@ -9,7 +9,8 @@ export default React.createClass({
 
   getDefaultProps: function() {
     return {
-      objectName: 'item'
+      objectName: 'item',
+      showMessage: true
     };
   },
 
@@ -18,6 +19,7 @@ export default React.createClass({
   },
 
   renderMessage: function () {
+    if (!this.props.showMessage) return '';
     var any = _.any(this.getFilters());
     var l = this.props.objects.length;
     return 'Showing ' + (any ? '' : 'all ') + l + ' ' + this.props.objectName +

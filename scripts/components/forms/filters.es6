@@ -18,6 +18,7 @@ export default React.createClass({
       <div className='osw-forms-filters'>
         <Query value={this.state.query} onChange={this.handleChange} />
         <CategorySelector
+          showMatchCount={false}
           objects={this.props.forms}
           value={this.state.category}
           onChange={this.handleChange}
@@ -25,6 +26,8 @@ export default React.createClass({
         <Summary
           {...this.props}
           objects={this.props.forms}
+          objectName='form'
+          showMessage={false}
           filterKeys={['query', 'category']}
         />
       </div>

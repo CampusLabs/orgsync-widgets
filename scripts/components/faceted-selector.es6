@@ -6,8 +6,19 @@ import Selector from 'components/selector';
 export default React.createClass({
   mixins: [Cursors],
 
+  getDefaultProps: function() {
+    return {
+      showMatchCount: true
+    };
+  },
+
   toOption: function (matches, name) {
-    return {id: name, name: name + ' (' + matches.length + ')'};
+    return {id: name, name: name + this.matchCount(matches)};
+  },
+
+  matchCount: function(matches) {
+    if (!this.props.showMatchCount) return '';
+    return ` (${matches.length})`;
   },
 
   renderOption: function (option) {

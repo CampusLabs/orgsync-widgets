@@ -45706,8 +45706,19 @@ define('components/faceted-selector', ["exports", "module", "underscore", "curso
     displayName: "faceted-selector",
     mixins: [Cursors],
 
+    getDefaultProps: function () {
+      return {
+        showMatchCount: true
+      };
+    },
+
     toOption: function (matches, name) {
-      return { id: name, name: name + " (" + matches.length + ")" };
+      return { id: name, name: name + this.matchCount(matches) };
+    },
+
+    matchCount: function (matches) {
+      if (!this.props.showMatchCount) return "";
+      return " (" + matches.length + ")";
     },
 
     renderOption: function (option) {
@@ -51139,7 +51150,8 @@ define('components/summary', ["exports", "module", "underscore", "components/ui/
 
     getDefaultProps: function () {
       return {
-        objectName: "item"
+        objectName: "item",
+        showMessage: true
       };
     },
 
@@ -51148,6 +51160,7 @@ define('components/summary', ["exports", "module", "underscore", "components/ui/
     },
 
     renderMessage: function () {
+      if (!this.props.showMessage) return "";
       var any = _.any(this.getFilters());
       var l = this.props.objects.length;
       return "Showing " + (any ? "" : "all ") + l + " " + this.props.objectName + (l === 1 ? "" : "s") + (any ? " matching " : ".");
@@ -51219,12 +51232,15 @@ define('components/forms/filters', ["exports", "module", "components/category-se
         { className: "osw-forms-filters" },
         React.createElement(Query, { value: this.state.query, onChange: this.handleChange }),
         React.createElement(CategorySelector, {
+          showMatchCount: false,
           objects: this.props.forms,
           value: this.state.category,
           onChange: this.handleChange
         }),
         React.createElement(Summary, _extends({}, this.props, {
           objects: this.props.forms,
+          objectName: "form",
+          showMessage: false,
           filterKeys: ["query", "category"]
         }))
       );
@@ -52066,6 +52082,7 @@ define('components/portals/filters', ["exports", "module", "components/category-
         React.createElement(LetterTable, { cursors: { letter: this.getCursor("letter") } }),
         React.createElement(Summary, _extends({}, this.props, {
           objects: this.props.portals,
+          objectName: "portal",
           filterKeys: ["query", "category"]
         }))
       );

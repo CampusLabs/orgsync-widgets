@@ -1,8 +1,11 @@
 import Cursors from 'cursors';
+import moment from 'moment';
 import Popup from 'components/ui/popup';
 import React from 'react';
 import Sep from 'components/ui/sep';
 import Show from 'components/forms/show';
+
+const FORMAT = 'MMM D, YYYY';
 
 export default React.createClass({
   mixins: [Cursors],
@@ -56,17 +59,20 @@ export default React.createClass({
 
   render: function () {
     var form = this.state.form;
+    console.debug(form);
     return (
-      <div className='osw-forms-list-item' onClick={this.openShow}>
-        <div className='osw-files-list-item-left'>
+      <div className='osw-files-list-item' onClick={this.openShow}>
+        <div style={{ float: 'left', padding: '10px' }}>
           {this.renderPin()}
         </div>
-        <div className='osw-forms-list-item-info'>
-          <div className='osw-files-list-item-name'>{this.truncate(form.name)}</div>
-          <div className='osw-files-list-item-date'>
-            <span>{form.category.name}</span>
+        <div className='osw-files-list-item-info' style={{ float: 'left' }}>
+          <div className='osw-files-list-item-name'>
+            {this.truncate(form.name)}
             <Sep />
-            <span>{form.creator.display_name}</span>
+            <span className='osw-forms-list-item-category'>{form.category.name}</span>
+          </div>
+          <div className='osw-files-list-item-date'>
+            <span>{moment(form.last_activity_at).format(FORMAT)}</span>
           </div>
         </div>
         {this.renderShowPopup()}

@@ -1,8 +1,8 @@
-import CategorySelector from 'components/category-selector';
+import CategorySelector from 'components/shared/category-selector';
 import Cursors from 'cursors';
-import Query from 'components/query';
+import Query from 'components/shared/query';
 import React from 'react';
-import Summary from 'components/summary';
+import Summary from 'components/shared/summary';
 
 export default React.createClass({
   mixins: [Cursors],

@@ -1504,17 +1504,9 @@
   vertical-align: top;
   width: 50%; }
 /* styles/forms/list-item.scss */
-.orgsync-widget .osw-forms-list-item {
-  border-top: 1px solid #ccc;
-  cursor: pointer;
-  padding: 10px; }
-  .orgsync-widget .osw-forms-list-item:after {
-    content: "";
-    display: table;
-    clear: both; }
-  .orgsync-widget .osw-forms-list-item:first-child {
-    border-top: 0;
-    padding-top: 6px; }
+.orgsync-widget .osw-forms-list-item-category {
+  font-size: 12px;
+  color: #555; }
 /* styles/forms/show.scss */
 .orgsync-widget .osw-forms-show {
   padding: 10px 10px 0; }

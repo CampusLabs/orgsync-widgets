@@ -1,5 +1,5 @@
 import Cursors from 'cursors';
-import FacetedSelector from 'components/faceted-selector';
+import FacetedSelector from 'components/shared/faceted-selector';
 import joinClassNames from 'utils/join-class-names';
 import React from 'react';
 

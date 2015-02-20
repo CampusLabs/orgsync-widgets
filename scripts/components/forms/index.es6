@@ -5,7 +5,7 @@ import Cursors from 'cursors';
 import List from 'react-list';
 import Filters from 'components/forms/filters';
 import FormsListItem from 'components/forms/list-item';
-import Empty from 'components/empty';
+import Empty from 'components/shared/empty';
 import React from 'react';
 
 var PER_PAGE = 10;
@@ -14,9 +14,9 @@ export default React.createClass({
   mixins: [Cursors],
 
   comparator: function (a, b) {
-    var aName = (a.important ? '0' : '1') + (a.name || '').toLowerCase();
-    var bName = (b.important ? '0' : '1') + (b.name || '').toLowerCase();
-    return aName < bName ? -1 : 1;
+    var aDate = new Date(a);
+    var bDate = new Date(b);
+    return aDate < bDate ? -1 : 1;
   },
 
   getDefaultProps: function () {

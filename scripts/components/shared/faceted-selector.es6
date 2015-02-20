@@ -1,7 +1,7 @@
 import _ from 'underscore';
 import Cursors from 'cursors';
 import React from 'react';
-import Selector from 'components/selector';
+import Selector from 'components/shared/selector';
 
 export default React.createClass({
   mixins: [Cursors],

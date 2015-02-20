@@ -36,8 +36,8 @@ export default React.createClass({
   renderShowPopup: function() {
     return (
       <Popup
-        name='forms-show'
         close={this.closeShow}
+        name='forms-show'
         title='Form Details'>
         {this.renderShow()}
       </Popup>

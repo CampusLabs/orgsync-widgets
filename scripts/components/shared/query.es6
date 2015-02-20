@@ -13,12 +13,12 @@ export default React.createClass({
     return (
       <div className='osw-big osw-field oswi oswi-magnify'>
         <input
-          name='query'
-          type='text'
-          placeholder='Search by name or keyword'
-          value={this.props.value}
-          onChange={this.props.onChange}
           autoComplete='off'
+          name='query'
+          onChange={this.props.onChange}
+          placeholder='Search by name or keyword'
+          type='text'
+          value={this.props.value}
         />
       </div>
     );

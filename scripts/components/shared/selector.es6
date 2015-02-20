@@ -9,8 +9,7 @@ export default React.createClass({
     className: React.PropTypes.string,
     name: React.PropTypes.string,
     onChange: React.PropTypes.func.isRequired,
-    renderOptions: React.PropTypes.func.isRequired,
-    value: React.PropTypes.string
+    renderOptions: React.PropTypes.func.isRequired
   },
 
   render: function () {
@@ -29,8 +28,8 @@ export default React.createClass({
       >
         <select
           name={this.props.name}
-          value={value}
           onChange={this.props.onChange}
+          value={value}
         >
           {options}
         </select>

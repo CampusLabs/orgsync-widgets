@@ -18,10 +18,10 @@ export default React.createClass({
     return (
       <FacetedSelector
         {...this.props}
-        className={joinClassNames('oswi-book', this.props.className)}
-        name='category'
         allOption='All Categories'
+        className={joinClassNames('oswi-book', this.props.className)}
         getFacet={this.getFacet}
+        name='category'
       />
     );
   }

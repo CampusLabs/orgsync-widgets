@@ -50919,8 +50919,7 @@ define('components/shared/selector', ["exports", "module", "cursors", "utils/joi
       className: React.PropTypes.string,
       name: React.PropTypes.string,
       onChange: React.PropTypes.func.isRequired,
-      renderOptions: React.PropTypes.func.isRequired,
-      value: React.PropTypes.string
+      renderOptions: React.PropTypes.func.isRequired
     },
 
     render: function () {

@@ -22,16 +22,16 @@ export default React.createClass({
       <div className='osw-forms-filters'>
         <Query value={this.state.query} onChange={this.handleChange} />
         <CategorySelector
-          showMatchCount={false}
           objects={this.props.forms}
-          value={this.state.category}
           onChange={this.handleChange}
+          showMatchCount={false}
+          value={this.state.category}
         />
         <Summary
           {...this.props}
+          filterKeys={['query', 'category']}
           objects={this.props.forms}
           showMessage={false}
-          filterKeys={['query', 'category']}
         />
       </div>
     );

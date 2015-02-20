@@ -2,10 +2,10 @@ import _ from 'underscore';
 import _str from 'underscore.string';
 import api from 'api';
 import Cursors from 'cursors';
-import List from 'react-list';
+import Empty from 'components/shared/empty';
 import Filters from 'components/forms/filters';
 import FormsListItem from 'components/forms/list-item';
-import Empty from 'components/shared/empty';
+import List from 'react-list';
 import React from 'react';
 
 var PER_PAGE = 10;
@@ -20,18 +20,18 @@ export default React.createClass({
   getDefaultProps: function () {
     return {
       category: '',
-      query: '',
-      searchableAttributes: ['name'],
       forms: [],
       filtersAreShowing: true
+      query: '',
+      searchableAttributes: ['name']
     };
   },
 
   getInitialState: function () {
     return {
+      forms: this.props.forms,
       category: this.props.category,
-      query: this.props.query,
-      forms: this.props.forms
+      query: this.props.query
     };
   },
 

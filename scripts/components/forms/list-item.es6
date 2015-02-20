@@ -24,15 +24,6 @@ export default React.createClass({
     this.update({showIsOpen: {$set: false}});
   },
 
-  truncate: function(str) {
-    var charLimit = 50;
-    if(str.length > charLimit){
-      return str.substr(0,charLimit-3)+"...";
-    } else {
-      return str;
-    }
-  },
-
   renderShow: function () {
     if (!this.state.showIsOpen) return;
     return <Show cursors={{form: this.getCursor('form')}} />;
@@ -59,7 +50,6 @@ export default React.createClass({
 
   render: function () {
     var form = this.state.form;
-    console.debug(form);
     return (
       <div className='osw-files-list-item' onClick={this.openShow}>
         <div style={{ float: 'left', padding: '10px' }}>
@@ -67,7 +57,7 @@ export default React.createClass({
         </div>
         <div className='osw-files-list-item-info' style={{ float: 'left' }}>
           <div className='osw-files-list-item-name'>
-            {this.truncate(form.name)}
+            {form.name}
             <Sep />
             <span className='osw-forms-list-item-category'>{form.category.name}</span>
           </div>

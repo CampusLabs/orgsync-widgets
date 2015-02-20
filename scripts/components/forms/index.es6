@@ -13,12 +13,6 @@ var PER_PAGE = 10;
 export default React.createClass({
   mixins: [Cursors],
 
-  comparator: function (a, b) {
-    var aDate = new Date(a);
-    var bDate = new Date(b);
-    return aDate < bDate ? -1 : 1;
-  },
-
   getDefaultProps: function () {
     return {
       category: '',
@@ -52,7 +46,7 @@ export default React.createClass({
   handleFetch: function (cb, er, res) {
     if (er) return cb(er);
     this.update({
-      forms: {$set: _.unique(this.state.forms.concat(res.data), 'id').sort(this.comparator)}
+      forms: {$set: _.unique(this.state.forms.concat(res.data), 'id')}
     });
     cb(null, res.data.length < PER_PAGE);
   },
@@ -146,6 +140,7 @@ export default React.createClass({
       <div className='osw-forms-index'>
         {this.renderFilters(forms)}
         <List
+          {...this.props}
           items={forms}
           fetch={this.fetch}
           renderLoading={this.renderLoading}

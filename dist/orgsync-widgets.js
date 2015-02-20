@@ -51241,24 +51241,13 @@ define('components/forms/show', ["exports", "module", "api", "components/ui/butt
       this.update(deltas);
     },
 
-    showDescription: function (form) {
-      if (form.description === "") {
-        return "No description provided.";
-      } else {
-        return form.description;
-      }
-    },
-
     showCreator: function (form) {
       return "Created by " + form.creator.display_name;
     },
 
     renderDescription: function (description) {
-      if (description) {
-        return description;
-      } else {
-        return "No description provided.";
-      }
+      if (!description || /^\s*$/.test(description)) return "No description provided";
+      return description;
     },
 
     render: function () {
@@ -51342,15 +51331,6 @@ define('components/forms/list-item', ["exports", "module", "cursors", "moment", 
       this.update({ showIsOpen: { $set: false } });
     },
 
-    truncate: function (str) {
-      var charLimit = 50;
-      if (str.length > charLimit) {
-        return str.substr(0, charLimit - 3) + "...";
-      } else {
-        return str;
-      }
-    },
-
     renderShow: function () {
       if (!this.state.showIsOpen) return;
       return React.createElement(Show, { cursors: { form: this.getCursor("form") } });
@@ -51377,7 +51357,6 @@ define('components/forms/list-item', ["exports", "module", "cursors", "moment", 
 
     render: function () {
       var form = this.state.form;
-      console.debug(form);
       return React.createElement(
         "div",
         { className: "osw-files-list-item", onClick: this.openShow },
@@ -51392,7 +51371,7 @@ define('components/forms/list-item', ["exports", "module", "cursors", "moment", 
           React.createElement(
             "div",
             { className: "osw-files-list-item-name" },
-            this.truncate(form.name),
+            form.name,
             React.createElement(Sep, null),
             React.createElement(
               "span",
@@ -51496,6 +51475,8 @@ define('components/forms/index', ["exports", "module", "underscore", "underscore
 
   var _interopRequire = function (obj) { return obj && obj.__esModule ? obj["default"] : obj; };
 
+  var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+
   var _ = _interopRequire(_underscore);
 
   var _str = _interopRequire(_underscoreString);
@@ -51519,12 +51500,6 @@ define('components/forms/index', ["exports", "module", "underscore", "underscore
   module.exports = React.createClass({
     displayName: "index",
     mixins: [Cursors],
-
-    comparator: function (a, b) {
-      var aDate = new Date(a);
-      var bDate = new Date(b);
-      return aDate < bDate ? -1 : 1;
-    },
 
     getDefaultProps: function () {
       return {
@@ -51559,7 +51534,7 @@ define('components/forms/index', ["exports", "module", "underscore", "underscore
     handleFetch: function (cb, er, res) {
       if (er) return cb(er);
       this.update({
-        forms: { $set: _.unique(this.state.forms.concat(res.data), "id").sort(this.comparator) }
+        forms: { $set: _.unique(this.state.forms.concat(res.data), "id") }
       });
       cb(null, res.data.length < PER_PAGE);
     },
@@ -51646,7 +51621,7 @@ define('components/forms/index', ["exports", "module", "underscore", "underscore
         "div",
         { className: "osw-forms-index" },
         this.renderFilters(forms),
-        React.createElement(List, {
+        React.createElement(List, _extends({}, this.props, {
           items: forms,
           fetch: this.fetch,
           renderLoading: this.renderLoading,
@@ -51654,7 +51629,7 @@ define('components/forms/index', ["exports", "module", "underscore", "underscore
           renderItem: this.renderListItem,
           renderEmpty: this.renderEmpty,
           uniform: true
-        })
+        }))
       );
     }
   });

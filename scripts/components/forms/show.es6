@@ -18,7 +18,11 @@ export default React.createClass({
     var form = this.state.form;
     if (form.description != null) return;
     this.update({isLoading: {$set: true}, error: {$set: null}});
-    api.get('/portals/:portal_id/forms/:id', {portal_id: form.portal.id, id: form.id}, this.handleFetch);
+    api.get(
+      '/portals/:portal_id/forms/:id',
+      {portal_id: form.portal.id, id: form.id},
+      this.handleFetch
+    );
   },
 
   handleFetch: function (er, res) {
@@ -28,14 +32,6 @@ export default React.createClass({
     this.update(deltas);
   },
 
-  showDescription: function(form) {
-    if(form.description === "") {
-      return "No description provided.";
-    } else {
-      return form.description;
-    }
-  },
-
   showCreator: function(form) {
     return (
       "Created by " + form.creator.display_name
@@ -43,13 +39,8 @@ export default React.createClass({
   },
 
   renderDescription: function(description) {
-    if(description) {
-      return (description);
-    } else {
-      return (
-        'No description provided.'
-      );
-    }
+    if(!description || /^\s*$/.test(description)) return 'No description provided';
+    return (description);
   },
 
   render: function () {

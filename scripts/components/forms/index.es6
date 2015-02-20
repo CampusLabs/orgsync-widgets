@@ -13,6 +13,10 @@ var PER_PAGE = 10;
 export default React.createClass({
   mixins: [Cursors],
 
+  propTypes: {
+    portalId: React.PropTypes.number
+  },
+
   getDefaultProps: function () {
     return {
       category: '',
@@ -106,7 +110,6 @@ export default React.createClass({
     return (
       <FormsListItem
         key={form.id}
-        redirect={this.props.redirect}
         cursors={{form: this.getCursor('forms', i)}}
       />
     );

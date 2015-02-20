@@ -50915,6 +50915,14 @@ define('components/shared/selector', ["exports", "module", "cursors", "utils/joi
     displayName: "selector",
     mixins: [Cursors],
 
+    propTypes: {
+      className: React.PropTypes.string,
+      name: React.PropTypes.string,
+      onChange: React.PropTypes.func.isRequired,
+      renderOptions: React.PropTypes.func.isRequired,
+      value: React.PropTypes.string
+    },
+
     render: function () {
       var options = this.props.renderOptions();
       var value = this.props.value;
@@ -50956,6 +50964,12 @@ define('components/shared/faceted-selector', ["exports", "module", "underscore",
   module.exports = React.createClass({
     displayName: "faceted-selector",
     mixins: [Cursors],
+
+    propTypes: {
+      getFacet: React.PropTypes.func.isRequired,
+      objects: React.PropTypes.array.isRequired,
+      showMatchCount: React.PropTypes.bool
+    },
 
     getDefaultProps: function () {
       return {
@@ -51009,6 +51023,12 @@ define('components/shared/category-selector', ["exports", "module", "cursors", "
     displayName: "category-selector",
     mixins: [Cursors],
 
+    propTypes: {
+      objects: React.PropTypes.array,
+      onChange: React.PropTypes.func.isRequired,
+      showMatchCount: React.PropTypes.bool
+    },
+
     getFacet: function (object) {
       return object.category.name;
     },
@@ -51036,6 +51056,11 @@ define('components/shared/query', ["exports", "module", "cursors", "react"], fun
   module.exports = React.createClass({
     displayName: "query",
     mixins: [Cursors],
+
+    propTypes: {
+      onChange: React.PropTypes.func.isRequired,
+      value: React.PropTypes.string
+    },
 
     render: function () {
       return React.createElement(
@@ -51072,6 +51097,13 @@ define('components/shared/summary', ["exports", "module", "underscore", "compone
   module.exports = React.createClass({
     displayName: "summary",
     mixins: [Cursors],
+
+    propTypes: {
+      filterKeys: React.PropTypes.array.isRequired,
+      objectName: React.PropTypes.string,
+      objects: React.PropTypes.array,
+      showMessage: React.PropTypes.bool
+    },
 
     getDefaultProps: function () {
       return {
@@ -51145,6 +51177,10 @@ define('components/forms/filters', ["exports", "module", "components/shared/cate
     displayName: "filters",
     mixins: [Cursors],
 
+    propTypes: {
+      objects: React.PropTypes.array
+    },
+
     handleChange: function (ev) {
       var deltas = {};
       deltas[ev.target.name] = { $set: ev.target.value };
@@ -51164,7 +51200,6 @@ define('components/forms/filters', ["exports", "module", "components/shared/cate
         }),
         React.createElement(Summary, _extends({}, this.props, {
           objects: this.props.forms,
-          objectName: "form",
           showMessage: false,
           filterKeys: ["query", "category"]
         }))
@@ -51317,6 +51352,10 @@ define('components/forms/list-item', ["exports", "module", "cursors", "moment", 
     displayName: "list-item",
     mixins: [Cursors],
 
+    propTypes: {
+      key: React.PropTypes.number
+    },
+
     getInitialState: function () {
       return {
         showIsOpen: false
@@ -51410,6 +51449,10 @@ define('components/shared/empty', ["exports", "module", "components/ui/button", 
     displayName: "empty",
     mixins: [Cursors],
 
+    propTypes: {
+      objectName: React.PropTypes.string
+    },
+
     getDefaultProps: function () {
       return {
         objectName: "items"
@@ -51501,6 +51544,10 @@ define('components/forms/index', ["exports", "module", "underscore", "underscore
     displayName: "index",
     mixins: [Cursors],
 
+    propTypes: {
+      portalId: React.PropTypes.number
+    },
+
     getDefaultProps: function () {
       return {
         category: "",
@@ -51584,7 +51631,6 @@ define('components/forms/index', ["exports", "module", "underscore", "underscore
       var i = this.state.forms.indexOf(form);
       return React.createElement(FormsListItem, {
         key: form.id,
-        redirect: this.props.redirect,
         cursors: { form: this.getCursor("forms", i) }
       });
     },

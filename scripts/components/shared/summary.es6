@@ -7,6 +7,13 @@ import React from 'react';
 export default React.createClass({
   mixins: [Cursors],
 
+  propTypes: {
+    filterKeys: React.PropTypes.array.isRequired,
+    objectName: React.PropTypes.string,
+    objects: React.PropTypes.array,
+    showMessage: React.PropTypes.bool
+  },
+
   getDefaultProps: function() {
     return {
       objectName: 'item',

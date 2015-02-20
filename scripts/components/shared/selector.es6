@@ -5,6 +5,14 @@ import React from 'react';
 export default React.createClass({
   mixins: [Cursors],
 
+  propTypes: {
+    className: React.PropTypes.string,
+    name: React.PropTypes.string,
+    onChange: React.PropTypes.func.isRequired,
+    renderOptions: React.PropTypes.func.isRequired,
+    value: React.PropTypes.string
+  },
+
   render: function () {
     var options = this.props.renderOptions();
     var value = this.props.value;

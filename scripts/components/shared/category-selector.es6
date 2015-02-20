@@ -6,6 +6,12 @@ import React from 'react';
 export default React.createClass({
   mixins: [Cursors],
 
+  propTypes: {
+    objects: React.PropTypes.array,
+    onChange: React.PropTypes.func.isRequired,
+    showMatchCount: React.PropTypes.bool
+  },
+
   getFacet: function (object) { return object.category.name; },
 
   render: function () {

@@ -10,6 +10,10 @@ const FORMAT = 'MMM D, YYYY';
 export default React.createClass({
   mixins: [Cursors],
 
+  propTypes: {
+    key: React.PropTypes.number
+  },
+
   getInitialState: function() {
     return {
       showIsOpen: false

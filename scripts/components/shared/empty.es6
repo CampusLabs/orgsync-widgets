@@ -5,6 +5,10 @@ import React from 'react';
 export default React.createClass({
   mixins: [Cursors],
 
+  propTypes: {
+    objectName: React.PropTypes.string
+  },
+
   getDefaultProps: function() {
     return {
       objectName: 'items'

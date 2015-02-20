@@ -6,6 +6,12 @@ import Selector from 'components/shared/selector';
 export default React.createClass({
   mixins: [Cursors],
 
+  propTypes: {
+    getFacet: React.PropTypes.func.isRequired,
+    objects: React.PropTypes.array.isRequired,
+    showMatchCount: React.PropTypes.bool
+  },
+
   getDefaultProps: function() {
     return {
       showMatchCount: true

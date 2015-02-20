@@ -7,6 +7,10 @@ import Summary from 'components/shared/summary';
 export default React.createClass({
   mixins: [Cursors],
 
+  propTypes: {
+    objects: React.PropTypes.array
+  },
+
   handleChange: function (ev) {
     var deltas = {};
     deltas[ev.target.name] = {$set: ev.target.value};
@@ -26,7 +30,6 @@ export default React.createClass({
         <Summary
           {...this.props}
           objects={this.props.forms}
-          objectName='form'
           showMessage={false}
           filterKeys={['query', 'category']}
         />

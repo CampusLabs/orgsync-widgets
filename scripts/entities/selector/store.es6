@@ -96,6 +96,7 @@ export var fetch = function (options, cb) {
   options = _.clone(options);
   options.from = cached.length;
   options.size = Math.max(0, Math.min(limit - options.from, FETCH_SIZE));
+  options.sort = 'name';
   if (options.dataset && !done[key]) {
     cacheItems(options.dataset, _.extend({overwrite: true}, options));
     done[key] = true;

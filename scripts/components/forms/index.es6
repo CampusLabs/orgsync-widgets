@@ -21,7 +21,7 @@ export default React.createClass({
     return {
       category: '',
       forms: [],
-      filtersAreShowing: true
+      filtersAreShowing: true,
       query: '',
       searchableAttributes: ['name']
     };

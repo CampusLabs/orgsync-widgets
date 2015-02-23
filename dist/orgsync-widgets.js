@@ -50935,8 +50935,8 @@ define('components/shared/selector', ["exports", "module", "cursors", "utils/joi
           "select",
           {
             name: this.props.name,
-            value: value,
-            onChange: this.props.onChange
+            onChange: this.props.onChange,
+            value: value
           },
           options
         )
@@ -51034,10 +51034,10 @@ define('components/shared/category-selector', ["exports", "module", "cursors", "
 
     render: function () {
       return React.createElement(FacetedSelector, _extends({}, this.props, {
-        className: joinClassNames("oswi-book", this.props.className),
-        name: "category",
         allOption: "All Categories",
-        getFacet: this.getFacet
+        className: joinClassNames("oswi-book", this.props.className),
+        getFacet: this.getFacet,
+        name: "category"
       }));
     }
   });
@@ -51066,12 +51066,12 @@ define('components/shared/query', ["exports", "module", "cursors", "react"], fun
         "div",
         { className: "osw-big osw-field oswi oswi-magnify" },
         React.createElement("input", {
+          autoComplete: "off",
           name: "query",
-          type: "text",
-          placeholder: "Search by name or keyword",
-          value: this.props.value,
           onChange: this.props.onChange,
-          autoComplete: "off"
+          placeholder: "Search by name or keyword",
+          type: "text",
+          value: this.props.value
         })
       );
     }
@@ -51192,16 +51192,95 @@ define('components/forms/filters', ["exports", "module", "components/shared/cate
         { className: "osw-forms-filters" },
         React.createElement(Query, { value: this.state.query, onChange: this.handleChange }),
         React.createElement(CategorySelector, {
-          showMatchCount: false,
           objects: this.props.forms,
-          value: this.state.category,
-          onChange: this.handleChange
+          onChange: this.handleChange,
+          showMatchCount: false,
+          value: this.state.category
         }),
         React.createElement(Summary, _extends({}, this.props, {
+          filterKeys: ["query", "category"],
           objects: this.props.forms,
-          showMessage: false,
-          filterKeys: ["query", "category"]
+          showMessage: false
         }))
+      );
+    }
+  });
+});
+// scripts/components/shared/empty.es6
+define('components/shared/empty', ["exports", "module", "components/ui/button", "cursors", "react"], function (exports, module, _componentsUiButton, _cursors, _react) {
+  "use strict";
+
+  var _interopRequire = function (obj) { return obj && obj.__esModule ? obj["default"] : obj; };
+
+  var Button = _interopRequire(_componentsUiButton);
+
+  var Cursors = _interopRequire(_cursors);
+
+  var React = _interopRequire(_react);
+
+  module.exports = React.createClass({
+    displayName: "empty",
+    mixins: [Cursors],
+
+    propTypes: {
+      objectName: React.PropTypes.string
+    },
+
+    getDefaultProps: function () {
+      return {
+        objectName: "items"
+      };
+    },
+
+    handleClick: function () {
+      this.update({
+        umbrella: { $set: "" },
+        category: { $set: "" },
+        letter: { $set: "" },
+        query: { $set: "" }
+      });
+    },
+
+    render: function () {
+      return React.createElement(
+        "div",
+        { className: "osw-portals-empty osw-inset-block" },
+        React.createElement(
+          "div",
+          { className: "osw-portals-empty-apology" },
+          "We're sorry, but no ",
+          this.props.objectName,
+          " match your selected filters."
+        ),
+        React.createElement(
+          "div",
+          { className: "osw-portals-empty-suggestions-header" },
+          "Suggestions"
+        ),
+        React.createElement(
+          "ul",
+          { className: "osw-portals-empty-suggestions" },
+          React.createElement(
+            "li",
+            null,
+            "Make sure all words are spelled correctly"
+          ),
+          React.createElement(
+            "li",
+            null,
+            "Try different, or fewer, keywords"
+          ),
+          React.createElement(
+            "li",
+            null,
+            "Clear all filters to return to all organizations"
+          )
+        ),
+        React.createElement(
+          Button,
+          { onClick: this.handleClick },
+          "Clear All Filters"
+        )
       );
     }
   });
@@ -51378,8 +51457,8 @@ define('components/forms/list-item', ["exports", "module", "cursors", "moment", 
       return React.createElement(
         Popup,
         {
-          name: "forms-show",
           close: this.closeShow,
+          name: "forms-show",
           title: "Form Details" },
         this.renderShow()
       );
@@ -51432,87 +51511,8 @@ define('components/forms/list-item', ["exports", "module", "cursors", "moment", 
     }
   });
 });
-// scripts/components/shared/empty.es6
-define('components/shared/empty', ["exports", "module", "components/ui/button", "cursors", "react"], function (exports, module, _componentsUiButton, _cursors, _react) {
-  "use strict";
-
-  var _interopRequire = function (obj) { return obj && obj.__esModule ? obj["default"] : obj; };
-
-  var Button = _interopRequire(_componentsUiButton);
-
-  var Cursors = _interopRequire(_cursors);
-
-  var React = _interopRequire(_react);
-
-  module.exports = React.createClass({
-    displayName: "empty",
-    mixins: [Cursors],
-
-    propTypes: {
-      objectName: React.PropTypes.string
-    },
-
-    getDefaultProps: function () {
-      return {
-        objectName: "items"
-      };
-    },
-
-    handleClick: function () {
-      this.update({
-        umbrella: { $set: "" },
-        category: { $set: "" },
-        letter: { $set: "" },
-        query: { $set: "" }
-      });
-    },
-
-    render: function () {
-      return React.createElement(
-        "div",
-        { className: "osw-portals-empty osw-inset-block" },
-        React.createElement(
-          "div",
-          { className: "osw-portals-empty-apology" },
-          "We're sorry, but no ",
-          this.props.objectName,
-          " match your selected filters."
-        ),
-        React.createElement(
-          "div",
-          { className: "osw-portals-empty-suggestions-header" },
-          "Suggestions"
-        ),
-        React.createElement(
-          "ul",
-          { className: "osw-portals-empty-suggestions" },
-          React.createElement(
-            "li",
-            null,
-            "Make sure all words are spelled correctly"
-          ),
-          React.createElement(
-            "li",
-            null,
-            "Try different, or fewer, keywords"
-          ),
-          React.createElement(
-            "li",
-            null,
-            "Clear all filters to return to all organizations"
-          )
-        ),
-        React.createElement(
-          Button,
-          { onClick: this.handleClick },
-          "Clear All Filters"
-        )
-      );
-    }
-  });
-});
 // scripts/components/forms/index.es6
-define('components/forms/index', ["exports", "module", "underscore", "underscore.string", "api", "cursors", "react-list", "components/forms/filters", "components/forms/list-item", "components/shared/empty", "react"], function (exports, module, _underscore, _underscoreString, _api, _cursors, _reactList, _componentsFormsFilters, _componentsFormsListItem, _componentsSharedEmpty, _react) {
+define('components/forms/index', ["exports", "module", "underscore", "underscore.string", "api", "cursors", "components/shared/empty", "components/forms/filters", "components/forms/list-item", "react-list", "react"], function (exports, module, _underscore, _underscoreString, _api, _cursors, _componentsSharedEmpty, _componentsFormsFilters, _componentsFormsListItem, _reactList, _react) {
   "use strict";
 
   var _interopRequire = function (obj) { return obj && obj.__esModule ? obj["default"] : obj; };
@@ -51527,13 +51527,13 @@ define('components/forms/index', ["exports", "module", "underscore", "underscore
 
   var Cursors = _interopRequire(_cursors);
 
-  var List = _interopRequire(_reactList);
+  var Empty = _interopRequire(_componentsSharedEmpty);
 
   var Filters = _interopRequire(_componentsFormsFilters);
 
   var FormsListItem = _interopRequire(_componentsFormsListItem);
 
-  var Empty = _interopRequire(_componentsSharedEmpty);
+  var List = _interopRequire(_reactList);
 
   var React = _interopRequire(_react);
 
@@ -51550,18 +51550,18 @@ define('components/forms/index', ["exports", "module", "underscore", "underscore
     getDefaultProps: function () {
       return {
         category: "",
-        query: "",
-        searchableAttributes: ["name"],
         forms: [],
-        filtersAreShowing: true
+        filtersAreShowing: true,
+        query: "",
+        searchableAttributes: ["name"]
       };
     },
 
     getInitialState: function () {
       return {
+        forms: this.props.forms,
         category: this.props.category,
-        query: this.props.query,
-        forms: this.props.forms
+        query: this.props.query
       };
     },
 

@@ -60,7 +60,8 @@ const WIDGETS = {
       'types',
       'boostTypes',
       'view',
-      'dataset'
+      'dataset',
+      'where'
     ]
   }
 };

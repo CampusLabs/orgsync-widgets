@@ -242,7 +242,8 @@ var SelectorIndex = React.createClass({
   },
 
   pluckSearchOptionsFrom: function (obj) {
-    var options = _.pick(obj, 'fields', 'limit', 'types', 'dataset', 'scopes');
+    var options =
+      _.pick(obj, 'fields', 'limit', 'types', 'dataset', 'scopes', 'where');
     if (obj.unionScopes != null) options.union_scopes = obj.unionScopes;
     if (obj.boostTypes) options.boost_types = obj.boostTypes;
     return options;

@@ -51,6 +51,7 @@ export var getQueryKey = function (options) {
     (options.types || []).slice().sort().join() || '_all',
     (options.boost_types || []).slice().sort().join() || 'none',
     (options.fields || []).slice().sort().join() || 'name',
+    (JSON.stringify(options.where)),
     parse(options.q)
   ]).join(':');
 };

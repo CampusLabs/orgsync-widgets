@@ -45498,7 +45498,7 @@ define('components/builder/index', ["exports", "module", "underscore", "undersco
     },
     Selector: {
       moduleName: "selector/index",
-      props: ["allowArbitrary", "allowEmptyQuery", "allowBrowse", "browseText", "limit", "scopes", "value", "types", "boostTypes", "view", "dataset"]
+      props: ["allowArbitrary", "allowEmptyQuery", "allowBrowse", "browseText", "limit", "scopes", "value", "types", "boostTypes", "view", "dataset", "where"]
     }
   };
 
@@ -52796,7 +52796,7 @@ define('entities/selector/store', ["exports", "underscore", "underscore.string",
   };
 
   var getQueryKey = exports.getQueryKey = function (options) {
-    return _.compact([(options.scopes || []).map(getTerm).sort().join(options.union_scopes ? "+" : "-") || "_all", (options.types || []).slice().sort().join() || "_all", (options.boost_types || []).slice().sort().join() || "none", (options.fields || []).slice().sort().join() || "name", parse(options.q)]).join(":");
+    return _.compact([(options.scopes || []).map(getTerm).sort().join(options.union_scopes ? "+" : "-") || "_all", (options.types || []).slice().sort().join() || "_all", (options.boost_types || []).slice().sort().join() || "none", (options.fields || []).slice().sort().join() || "name", JSON.stringify(options.where), parse(options.q)]).join(":");
   };
 
   var cacheItems = function (items, options) {
@@ -53172,7 +53172,7 @@ define('components/selector/index', ["exports", "module", "underscore", "orgsync
     },
 
     pluckSearchOptionsFrom: function (obj) {
-      var options = _.pick(obj, "fields", "limit", "types", "dataset", "scopes");
+      var options = _.pick(obj, "fields", "limit", "types", "dataset", "scopes", "where");
       if (obj.unionScopes != null) options.union_scopes = obj.unionScopes;
       if (obj.boostTypes) options.boost_types = obj.boostTypes;
       return options;

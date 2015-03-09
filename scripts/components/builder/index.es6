@@ -42,6 +42,12 @@ const WIDGETS = {
       'redirect'
     ]
   },
+  Polls: {
+    moduleName: 'polls/index',
+    props: [
+      'portalId'
+    ]
+  },
   Portals: {
     moduleName: 'portals/index',
     props: [

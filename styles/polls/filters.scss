@@ -1,0 +1,15 @@
+@import '../config';
+
+.orgsync-widget {
+  .osw-polls-filters .osw-field {
+    display: block;
+    @include box-sizing(border-box);
+    border: 5px solid transparent;
+  }
+
+  &[min-width~='480px'] .osw-polls-filters .osw-field {
+    display: inline-block;
+    vertical-align: top;
+    width: 100%;
+  }
+}

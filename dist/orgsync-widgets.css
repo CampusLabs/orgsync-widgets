@@ -1696,6 +1696,17 @@
   width: 100%; }
 .orgsync-widget .osw-photos-show-popup {
   max-width: 710px; }
+/* styles/polls/filters.scss */
+.orgsync-widget .osw-polls-filters .osw-field {
+  display: block;
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+  border: 5px solid transparent; }
+.orgsync-widget[min-width~='480px'] .osw-polls-filters .osw-field {
+  display: inline-block;
+  vertical-align: top;
+  width: 100%; }
 /* styles/portals/empty.scss */
 .orgsync-widget .osw-portals-empty-apology {
   margin-bottom: 10px; }

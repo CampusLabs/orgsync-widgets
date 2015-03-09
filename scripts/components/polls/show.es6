@@ -15,16 +15,9 @@ export default React.createClass({
   },
 
   componentWillMount: function () {
-    var form = this.state.form;
-    if (form.description != null) return;
+    var poll = this.state.poll;
+    if (poll.description != null) return;
     this.update({isLoading: {$set: true}, error: {$set: null}});
-    /*
-    api.get(
-      '/portals/:portal_id/polls/:id',
-      {portal_id: form.portal.id, id: form.id},
-      this.handleFetch
-    );
-    */
   },
 
   handleFetch: function (er, res) {
@@ -45,12 +38,16 @@ export default React.createClass({
     return (description);
   },
 
+  renderResults: function() {
+  },
+
   render: function () {
-    var form = this.state.form;
+    var poll = this.state.poll;
     return (
-      <div>
-        <h3>Poll Show</h3>
-        <p>Lorem ipsum dolor sit amet.</p>
+      <div className='osw-polls-show'>
+        <h3>{poll.name}</h3>
+        <p>{poll.description}</p>
+        {this.renderResults()}
       </div>
     );
   }

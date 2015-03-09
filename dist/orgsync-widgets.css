@@ -1707,6 +1707,70 @@
   display: inline-block;
   vertical-align: top;
   width: 100%; }
+/* styles/polls/list-item.scss */
+.orgsync-widget .osw-polls-list-item-name {
+  word-wrap: normal;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  cursor: pointer;
+  color: #38afd4;
+  font-size: 16px;
+  padding: 11px; }
+.orgsync-widget .osw-polls-list-item {
+  border-top: 1px solid #ccc;
+  padding: 8px; }
+  .orgsync-widget .osw-polls-list-item:after {
+    content: "";
+    display: table;
+    clear: both; }
+  .orgsync-widget .osw-polls-list-item:first-child {
+    border-top: 0;
+    padding-top: 6px; }
+.orgsync-widget .osw-polls-box-wrapper {
+  float: left;
+  width: 45px;
+  border-radius: 3px;
+  background-color: #5bbfa1;
+  text-align: center;
+  text-transform: uppercase;
+  line-height: 15px;
+  color: white;
+  box-shadow: 1px 0px 0px 0px #dedede; }
+  .orgsync-widget .osw-polls-box-wrapper .osw-polls-box-number {
+    font-size: 16px;
+    padding: 8px 0px 0px 0px; }
+  .orgsync-widget .osw-polls-box-wrapper .osw-polls-box-footer {
+    font-size: 11px;
+    padding: 0px 0px 4px 0px; }
+/* styles/polls/show.scss */
+.orgsync-widget .osw-polls-show {
+  padding: 10px 10px 0; }
+  .orgsync-widget .osw-polls-show > .osw-button-row {
+    margin-bottom: 10px; }
+.orgsync-widget .osw-polls-show-name {
+  font-size: 18px;
+  font-weight: bold; }
+.orgsync-widget .osw-polls-show-description, .orgsync-widget .osw-polls-show-button, .orgsync-widget .osw-polls-show-creator {
+  margin-bottom: 10px; }
+.orgsync-widget .osw-polls-show-creator {
+  font-weight: lighter;
+  color: #ccc;
+  font-size: 8pt; }
+.orgsync-widget .osw-polls-show-category {
+  font-size: 10pt;
+  color: #797979; }
+.orgsync-widget .osw-polls-show-description {
+  font-size: 10pt;
+  padding: 5px;
+  background-color: #f9f9f9;
+  border-radius: 5px; }
+.orgsync-widget .osw-polls-show-popup {
+  max-width: 400px; }
+  .orgsync-widget .osw-polls-show-popup[min-width~='480px'] .osw-forms-show:after {
+    content: "";
+    display: table;
+    clear: both; }
 /* styles/portals/empty.scss */
 .orgsync-widget .osw-portals-empty-apology {
   margin-bottom: 10px; }

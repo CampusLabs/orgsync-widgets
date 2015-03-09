@@ -52003,16 +52003,9 @@ define('components/polls/show', ["exports", "module", "api", "components/ui/butt
     },
 
     componentWillMount: function () {
-      var form = this.state.form;
-      if (form.description != null) return;
+      var poll = this.state.poll;
+      if (poll.description != null) return;
       this.update({ isLoading: { $set: true }, error: { $set: null } });
-      /*
-      api.get(
-        '/portals/:portal_id/polls/:id',
-        {portal_id: form.portal.id, id: form.id},
-        this.handleFetch
-      );
-      */
     },
 
     handleFetch: function (er, res) {
@@ -52030,21 +52023,24 @@ define('components/polls/show', ["exports", "module", "api", "components/ui/butt
       return description;
     },
 
+    renderResults: function () {},
+
     render: function () {
-      var form = this.state.form;
+      var poll = this.state.poll;
       return React.createElement(
         "div",
-        null,
+        { className: "osw-polls-show" },
         React.createElement(
           "h3",
           null,
-          "Poll Show"
+          poll.name
         ),
         React.createElement(
           "p",
           null,
-          "Lorem ipsum dolor sit amet."
-        )
+          poll.description
+        ),
+        this.renderResults()
       );
     }
   });
@@ -52111,13 +52107,27 @@ define('components/polls/list-item', ["exports", "module", "cursors", "moment", 
       var poll = this.state.poll;
       return React.createElement(
         "div",
-        { className: "osw-files-list-item", onClick: this.openShow },
+        { className: "osw-polls-list-item", onClick: this.openShow },
         React.createElement(
           "div",
-          { className: "osw-files-list-item-info", style: { float: "left" } },
+          { className: "osw-polls-list-item-info", style: { float: "left" } },
           React.createElement(
             "div",
-            { className: "osw-files-list-item-name" },
+            { className: "osw-polls-box-wrapper" },
+            React.createElement(
+              "div",
+              { className: "osw-polls-box-number" },
+              "0"
+            ),
+            React.createElement(
+              "div",
+              { className: "osw-polls-box-footer" },
+              "Votes"
+            )
+          ),
+          React.createElement(
+            "div",
+            { className: "osw-polls-list-item-name" },
             poll.name
           )
         ),
@@ -52155,7 +52165,7 @@ define('components/polls/index', ["exports", "module", "underscore", "underscore
   var PER_PAGE = 10;
 
   var staticRes = {
-    data: [{ name: "What is your favorite color?", id: 1 }, { name: "Who should be president?", id: 2 }, { name: "What day should the game be played?", id: 3 }, { name: "Which food do you prefer?", id: 4 }, { name: "When should the parade start?", id: 5 }, { name: "Do you agree with the president?", id: 6 }]
+    data: [{ name: "What is your favorite color?", id: 1, umbrella: false, votes: 10, description: "We are ordering t-shirts and would like to know what colors to get. Thanks!" }, { name: "Who should be president?", id: 2, umbrella: true, votes: 0, description: null }, { name: "What day should the game be played?", id: 3, umbrella: false, votes: 0, description: null }, { name: "Which food do you prefer?", id: 4, umbrella: true, votes: 14, description: "Please choose the food you prefer for our meal tonight." }, { name: "When should the parade start?", id: 5, umbrella: false, votes: 5, description: null }, { name: "Do you agree with the president?", id: 6, umbrella: true, votes: 7, description: null }]
   };
 
   module.exports = React.createClass({

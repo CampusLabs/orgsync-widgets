@@ -1,0 +1,50 @@
+@import '../config';
+
+.orgsync-widget {
+  .osw-polls-show {
+    padding: 10px 10px 0;
+
+    > .osw-button-row {
+      margin-bottom: 10px;
+    }
+  }
+
+  .osw-polls-show-name {
+    font-size: 18px;
+    font-weight: bold;
+  }
+
+  .osw-polls-show-description,
+  .osw-polls-show-button,
+  .osw-polls-show-creator {
+    margin-bottom: 10px;
+  }
+
+  .osw-polls-show-creator {
+    font-weight: lighter;
+    color: $grey;
+    font-size: 8pt;
+  }
+
+  .osw-polls-show-category {
+    font-size: 10pt;
+    color: $grey-darker;
+  }
+
+  .osw-polls-show-description {
+    font-size: 10pt;
+    padding: 5px;
+    background-color: $grey-lightest;
+    border-radius: 5px;
+  }
+
+  .osw-polls-show-popup {
+    max-width: 400px;
+
+    &[min-width~='480px'] {
+      .osw-forms-show {
+        @include clearfix;
+      }
+    }
+  }
+}

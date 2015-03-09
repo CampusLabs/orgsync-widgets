@@ -3,10 +3,25 @@
 .orgsync-widget {
   .osw-polls-list-item-name {
     @include ellipsis;
-    cursor: pointer;
     color: $blue;
     font-size: 16px;
     padding: 11px;
+
+    &:hover {
+      cursor: pointer;
+      text-decoration: underline;
+    }
+  }
+
+  .osw-polls-status {
+    float: right;
+    color: $green;
+    font-weight: bold;
+    &:hover {
+      cursor: pointer;
+      text-decoration: underline;
+      color: $green-darkest;
+    }
   }
 
   .osw-polls-list-item {

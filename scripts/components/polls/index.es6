@@ -13,11 +13,11 @@ var PER_PAGE = 10;
 var staticRes= {
   data: [
     { name: 'What is your favorite color?', id: 1, umbrella: false, votes: 10, description: 'We are ordering t-shirts and would like to know what colors to get. Thanks!' },
-    { name: 'Who should be president?', id: 2, umbrella: true, votes: 0, description: null },
-    { name: 'What day should the game be played?', id: 3, umbrella: false, votes: 0, description: null },
+    { name: 'Who should be president?', id: 2, umbrella: true, votes: 0, description: ''},
+    { name: 'What day should the game be played?', id: 3, umbrella: false, votes: 0, description: ''},
     { name: 'Which food do you prefer?', id: 4, umbrella: true, votes: 14, description: 'Please choose the food you prefer for our meal tonight.' },
-    { name: 'When should the parade start?', id: 5, umbrella: false, votes: 5, description: null },
-    { name: 'Do you agree with the president?', id: 6, umbrella: true, votes: 7, description: null }
+    { name: 'When should the parade start?', id: 5, umbrella: false, votes: 5, description: ''},
+    { name: 'Do you agree with the president?', id: 6, umbrella: true, votes: 7, description: ''}
   ]
 };
 

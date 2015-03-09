@@ -57,6 +57,9 @@ export default React.createClass({
             {poll.name}
           </div>
         </div>
+        <div className='osw-polls-status'>
+          <p>VOTE NOW</p>
+        </div>
         {this.renderShowPopup()}
       </div>
     );

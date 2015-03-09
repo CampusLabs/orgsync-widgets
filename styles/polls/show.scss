@@ -3,6 +3,8 @@
 .orgsync-widget {
   .osw-polls-show {
     padding: 10px 10px 0;
+    font-size: 16px;
+    font-weight: lighter;
 
     > .osw-button-row {
       margin-bottom: 10px;
@@ -26,9 +28,50 @@
     font-size: 8pt;
   }
 
+  table.osw-poll-results td {
+    border-bottom: 1px dotted #dedede;
+    padding: 5px;
+  }
+
   .osw-polls-show-category {
     font-size: 10pt;
     color: $grey-darker;
+  }
+
+  .osw-poll-bar {
+    background: #fdae50;
+    border-radius: 25px;
+    display: inline-block;
+    height: 1em;
+    position: relative;
+    top: 2px;
+  }
+
+  .osw-poll-bar-count {
+    color: #797979;
+    display: inline-block;
+    margin: 0;
+    padding: 0;
+    padding-left: 5px;
+  }
+
+  .osw-polls-text-right {
+    text-align: right;
+  }
+
+  .osw-polls-panel-header {
+    border-bottom: 1px solid #dedede;
+    color: #777;
+    margin: 0;
+    font-size: 1.05rem;
+    font-weight: 300;
+    font-style: normal;
+    line-height: 150%;
+
+    h4 {
+      padding: 8px;
+      margin: 0;
+    }
   }
 
   .osw-polls-show-description {
@@ -39,7 +82,7 @@
   }
 
   .osw-polls-show-popup {
-    max-width: 400px;
+    max-width: 700px;
 
     &[min-width~='480px'] {
       .osw-forms-show {

@@ -51975,8 +51975,100 @@ define('components/polls/filters', ["exports", "module", "cursors", "components/
     }
   });
 });
+// scripts/components/polls/results.es6
+define('components/polls/results', ["exports", "module", "react"], function (exports, module, _react) {
+  "use strict";
+
+  var _interopRequire = function (obj) { return obj && obj.__esModule ? obj["default"] : obj; };
+
+  var React = _interopRequire(_react);
+
+  module.exports = React.createClass({
+    displayName: "results",
+    render: function () {
+      return React.createElement(
+        "table",
+        { className: "osw-poll-results" },
+        React.createElement(
+          "tbody",
+          null,
+          React.createElement(
+            "tr",
+            null,
+            React.createElement(
+              "td",
+              { width: "30%" },
+              "For the new SGA Constitution"
+            ),
+            React.createElement(
+              "td",
+              null,
+              React.createElement("div", { className: "osw-poll-bar", style: { width: "88%" } }),
+              React.createElement(
+                "div",
+                { className: "osw-poll-bar-count" },
+                "7"
+              )
+            ),
+            React.createElement(
+              "td",
+              { width: "7%" },
+              "77%"
+            )
+          ),
+          React.createElement(
+            "tr",
+            null,
+            React.createElement(
+              "td",
+              { width: "30%" },
+              "Against the new SGA constitution."
+            ),
+            React.createElement(
+              "td",
+              null,
+              React.createElement("div", { className: "osw-poll-bar", style: { width: "25%" } }),
+              React.createElement(
+                "div",
+                { className: "osw-poll-bar-count" },
+                "2"
+              )
+            ),
+            React.createElement(
+              "td",
+              { width: "7%" },
+              "22%"
+            )
+          ),
+          React.createElement(
+            "tr",
+            null,
+            React.createElement(
+              "td",
+              { colSpan: 2, className: "osw-polls-text-right" },
+              React.createElement(
+                "strong",
+                null,
+                "Total Votes"
+              )
+            ),
+            React.createElement(
+              "td",
+              null,
+              React.createElement(
+                "strong",
+                null,
+                "9"
+              )
+            )
+          )
+        )
+      );
+    }
+  });
+});
 // scripts/components/polls/show.es6
-define('components/polls/show', ["exports", "module", "api", "components/ui/button", "components/ui/button-row", "cursors", "react"], function (exports, module, _api, _componentsUiButton, _componentsUiButtonRow, _cursors, _react) {
+define('components/polls/show', ["exports", "module", "api", "components/ui/button", "components/ui/button-row", "cursors", "react", "components/polls/results"], function (exports, module, _api, _componentsUiButton, _componentsUiButtonRow, _cursors, _react, _componentsPollsResults) {
   "use strict";
 
   var _interopRequire = function (obj) { return obj && obj.__esModule ? obj["default"] : obj; };
@@ -51990,6 +52082,8 @@ define('components/polls/show', ["exports", "module", "api", "components/ui/butt
   var Cursors = _interopRequire(_cursors);
 
   var React = _interopRequire(_react);
+
+  var Results = _interopRequire(_componentsPollsResults);
 
   module.exports = React.createClass({
     displayName: "show",
@@ -52010,12 +52104,8 @@ define('components/polls/show', ["exports", "module", "api", "components/ui/butt
 
     handleFetch: function (er, res) {
       var deltas = { isLoading: { $set: false } };
-      if (er) deltas.error = { $set: er };else deltas.form = { $set: res.data };
+      if (er) deltas.error = { $set: er };else deltas.poll = { $set: res.data };
       this.update(deltas);
-    },
-
-    showCreator: function (form) {
-      return "Created by " + form.creator.display_name;
     },
 
     renderDescription: function (description) {
@@ -52040,7 +52130,19 @@ define('components/polls/show', ["exports", "module", "api", "components/ui/butt
           null,
           poll.description
         ),
-        this.renderResults()
+        this.renderResults(),
+        React.createElement(
+          "div",
+          { className: "osw-polls-panel-header" },
+          React.createElement(
+            "h4",
+            null,
+            "Poll Results"
+          )
+        ),
+        React.createElement(Results, {
+          pollVotes: poll.pollVotes
+        })
       );
     }
   });
@@ -52131,6 +52233,15 @@ define('components/polls/list-item', ["exports", "module", "cursors", "moment", 
             poll.name
           )
         ),
+        React.createElement(
+          "div",
+          { className: "osw-polls-status" },
+          React.createElement(
+            "p",
+            null,
+            "VOTE NOW"
+          )
+        ),
         this.renderShowPopup()
       );
     }
@@ -52165,7 +52276,7 @@ define('components/polls/index', ["exports", "module", "underscore", "underscore
   var PER_PAGE = 10;
 
   var staticRes = {
-    data: [{ name: "What is your favorite color?", id: 1, umbrella: false, votes: 10, description: "We are ordering t-shirts and would like to know what colors to get. Thanks!" }, { name: "Who should be president?", id: 2, umbrella: true, votes: 0, description: null }, { name: "What day should the game be played?", id: 3, umbrella: false, votes: 0, description: null }, { name: "Which food do you prefer?", id: 4, umbrella: true, votes: 14, description: "Please choose the food you prefer for our meal tonight." }, { name: "When should the parade start?", id: 5, umbrella: false, votes: 5, description: null }, { name: "Do you agree with the president?", id: 6, umbrella: true, votes: 7, description: null }]
+    data: [{ name: "What is your favorite color?", id: 1, umbrella: false, votes: 10, description: "We are ordering t-shirts and would like to know what colors to get. Thanks!" }, { name: "Who should be president?", id: 2, umbrella: true, votes: 0, description: "" }, { name: "What day should the game be played?", id: 3, umbrella: false, votes: 0, description: "" }, { name: "Which food do you prefer?", id: 4, umbrella: true, votes: 14, description: "Please choose the food you prefer for our meal tonight." }, { name: "When should the parade start?", id: 5, umbrella: false, votes: 5, description: "" }, { name: "Do you agree with the president?", id: 6, umbrella: true, votes: 7, description: "" }]
   };
 
   module.exports = React.createClass({

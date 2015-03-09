@@ -1713,10 +1713,20 @@
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-  cursor: pointer;
   color: #38afd4;
   font-size: 16px;
   padding: 11px; }
+  .orgsync-widget .osw-polls-list-item-name:hover {
+    cursor: pointer;
+    text-decoration: underline; }
+.orgsync-widget .osw-polls-status {
+  float: right;
+  color: #87d361;
+  font-weight: bold; }
+  .orgsync-widget .osw-polls-status:hover {
+    cursor: pointer;
+    text-decoration: underline;
+    color: #5eb532; }
 .orgsync-widget .osw-polls-list-item {
   border-top: 1px solid #ccc;
   padding: 8px; }
@@ -1745,7 +1755,9 @@
     padding: 0px 0px 4px 0px; }
 /* styles/polls/show.scss */
 .orgsync-widget .osw-polls-show {
-  padding: 10px 10px 0; }
+  padding: 10px 10px 0;
+  font-size: 16px;
+  font-weight: lighter; }
   .orgsync-widget .osw-polls-show > .osw-button-row {
     margin-bottom: 10px; }
 .orgsync-widget .osw-polls-show-name {
@@ -1757,16 +1769,45 @@
   font-weight: lighter;
   color: #ccc;
   font-size: 8pt; }
+.orgsync-widget table.osw-poll-results td {
+  border-bottom: 1px dotted #dedede;
+  padding: 5px; }
 .orgsync-widget .osw-polls-show-category {
   font-size: 10pt;
   color: #797979; }
+.orgsync-widget .osw-poll-bar {
+  background: #fdae50;
+  border-radius: 25px;
+  display: inline-block;
+  height: 1em;
+  position: relative;
+  top: 2px; }
+.orgsync-widget .osw-poll-bar-count {
+  color: #797979;
+  display: inline-block;
+  margin: 0;
+  padding: 0;
+  padding-left: 5px; }
+.orgsync-widget .osw-polls-text-right {
+  text-align: right; }
+.orgsync-widget .osw-polls-panel-header {
+  border-bottom: 1px solid #dedede;
+  color: #777;
+  margin: 0;
+  font-size: 1.05rem;
+  font-weight: 300;
+  font-style: normal;
+  line-height: 150%; }
+  .orgsync-widget .osw-polls-panel-header h4 {
+    padding: 8px;
+    margin: 0; }
 .orgsync-widget .osw-polls-show-description {
   font-size: 10pt;
   padding: 5px;
   background-color: #f9f9f9;
   border-radius: 5px; }
 .orgsync-widget .osw-polls-show-popup {
-  max-width: 400px; }
+  max-width: 700px; }
   .orgsync-widget .osw-polls-show-popup[min-width~='480px'] .osw-forms-show:after {
     content: "";
     display: table;

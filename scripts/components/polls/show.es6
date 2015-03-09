@@ -3,6 +3,7 @@ import Button from 'components/ui/button';
 import ButtonRow from 'components/ui/button-row';
 import Cursors from 'cursors';
 import React from 'react';
+import Results from 'components/polls/results';
 
 export default React.createClass({
   mixins: [Cursors],
@@ -23,14 +24,8 @@ export default React.createClass({
   handleFetch: function (er, res) {
     var deltas = {isLoading: {$set: false}};
     if (er) deltas.error = {$set: er};
-    else deltas.form = {$set: res.data};
+    else deltas.poll = {$set: res.data};
     this.update(deltas);
-  },
-
-  showCreator: function(form) {
-    return (
-      "Created by " + form.creator.display_name
-    );
   },
 
   renderDescription: function(description) {
@@ -48,6 +43,14 @@ export default React.createClass({
         <h3>{poll.name}</h3>
         <p>{poll.description}</p>
         {this.renderResults()}
+
+        <div className="osw-polls-panel-header">
+          <h4>Poll Results</h4>
+        </div>
+
+        <Results
+          pollVotes={poll.pollVotes}
+        />
       </div>
     );
   }

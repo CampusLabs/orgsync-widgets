@@ -12,12 +12,66 @@ var PER_PAGE = 10;
 
 var staticRes= {
   data: [
-    { name: 'What is your favorite color?', id: 1, umbrella: false, votes: 10, description: 'We are ordering t-shirts and would like to know what colors to get. Thanks!' },
-    { name: 'Who should be president?', id: 2, umbrella: true, votes: 0, description: ''},
-    { name: 'What day should the game be played?', id: 3, umbrella: false, votes: 0, description: ''},
-    { name: 'Which food do you prefer?', id: 4, umbrella: true, votes: 14, description: 'Please choose the food you prefer for our meal tonight.' },
-    { name: 'When should the parade start?', id: 5, umbrella: false, votes: 5, description: ''},
-    { name: 'Do you agree with the president?', id: 6, umbrella: true, votes: 7, description: ''}
+    {
+      name: 'What is your favorite color?',
+      id: 1,
+      umbrella: false,
+      votes: 10,
+      links: { web: '#' },
+      description: '',
+      creator: { display_name: 'John Smith' },
+      responses: [{ id: 15, name: 'Blue', votes: 3 }, { id: 16, name: 'Green', votes: 4 }, { id: 17, name: 'Red', votes: 3 }]
+    },
+    {
+      name: 'Who should be president?',
+      id: 2,
+      umbrella: true,
+      votes: 0,
+      links: { web: '#' },
+      description: '',
+      creator: { display_name: 'Jane Doe' },
+      responses: [{ id: 14, name: 'John', votes: 0 }, { id: 13, name: 'Jane', votes: 0 }]
+    },
+    {
+      name: 'What day should the game be played?',
+      id: 3,
+      umbrella: false,
+      votes: 13,
+      links: { web: '#' },
+      description: 'Let us know when the volleyball game should take place.',
+      creator: { display_name: 'John Smith' },
+      responses: [{ id: 9, name: 'Monday', votes: 3 }, { id: 10, name: 'Tuesday', votes: 1 }, { id: 11, name: 'Thursday', votes: 2 }, { id: 12, name: 'Saturday', votes: 7 }]
+    },
+    {
+      name: 'Which food do you prefer?',
+      id: 4,
+      umbrella: true,
+      votes: 14,
+      links: { web: '#' },
+      description: "Please choose the food which you'd like to have served at this year's BBQ.",
+      creator: { display_name: 'Jane Doe' },
+      responses: [{ id: 8, name: 'Ribs', votes: 3 }, { id: 7, name: 'Steak', votes: 1 }, { id: 6, name: 'Brisket', votes: 10 }]
+    },
+    {
+      name: 'When should the parade start?',
+      id: 5,
+      umbrella: false,
+      votes: 5,
+      links: { web: '#' },
+      description: '',
+      creator: { display_name: 'Jane Doe' },
+      responses: [{ id: 4, name: '12:00 PM', votes: 3 }, { id: 5, name: '2:00 PM', votes: 2 }]
+    },
+    {
+      name: 'Do you agree with the president?',
+      id: 6,
+      umbrella: true,
+      votes: 15,
+      links: { web: '#' },
+      description: '',
+      creator: { display_name: 'John Smith' },
+      responses: [{ id: 1, name: 'Yes', votes: 8 }, { id: 2, name: 'No', votes: 4 }, { id: 3, name: 'Not Sure', votes: 3 }]
+    }
   ]
 };
 

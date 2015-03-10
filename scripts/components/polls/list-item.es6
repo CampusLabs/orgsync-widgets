@@ -50,7 +50,7 @@ export default React.createClass({
       <div className='osw-polls-list-item' onClick={this.openShow}>
         <div className='osw-polls-list-item-info' style={{ float: 'left' }}>
           <div className="osw-polls-box-wrapper">
-            <div className="osw-polls-box-number">0</div>
+            <div className="osw-polls-box-number">{poll.votes}</div>
             <div className="osw-polls-box-footer">Votes</div>
           </div>
           <div className='osw-polls-list-item-name'>

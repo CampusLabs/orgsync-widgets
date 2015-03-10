@@ -1,34 +1,55 @@
+import _ from 'underscore';
 import React from 'react';
 
 export default React.createClass({
+  propTypes: {
+    responses: React.PropTypes.array
+  },
+
+  getDefaultProps: function() {
+    return {
+      responses: []
+    };
+  },
+
+  percentageOfLeader: function(votes, maxWidth) {
+    var maxVotes = _.max(this.props.responses, function(response) { return response.votes }).votes;
+    return this.calculatePercentage(votes, maxVotes, maxWidth);
+  },
+
+  calculatePercentage: function(votes, maxVotes, maxWidth) {
+    if (votes === 0) {
+      return 0 + "%";
+    } else {
+      return parseInt(votes / maxVotes * maxWidth) + "%";
+    }
+  },
+
+  totalVotes: function() {
+    return _.reduce(this.props.responses, function(sum, response) { return sum + response.votes }, 0);
+  },
+
+  renderResponses: function() {
+    var that = this;
+    return _.map(this.props.responses, function(response) {
+      return (
+        <tr key={response.id}>
+          <td width="30%">{response.name}</td>
+          <td>
+            <div className="osw-poll-bar" style={{ width: that.percentageOfLeader(response.votes, 88) }}></div>
+            <div className="osw-poll-bar-count">{response.votes}</div>
+          </td>
+          <td width="7%">{that.calculatePercentage(response.votes, that.totalVotes(), 100)}</td>
+        </tr>
+      );
+    });
+  },
+
   render: function() {
     return (
       <table className="osw-poll-results">
         <tbody>
-          <tr>
-            <td width="30%">For the new SGA Constitution</td>
-            <td>
-              <div className="osw-poll-bar" style={{ width: "88%" }}></div>
-              <div className="osw-poll-bar-count">7</div>
-            </td>
-            <td width="7%">77%</td>
-          </tr>
-          <tr>
-            <td width="30%">Against the new SGA constitution.</td>
-            <td>
-              <div className="osw-poll-bar" style={{ width: "25%" }}></div>
-              <div className="osw-poll-bar-count">2</div>
-            </td>
-            <td width="7%">22%</td>
-          </tr>
-          <tr>
-            <td colSpan={2} className="osw-polls-text-right">
-              <strong>Total Votes</strong>
-            </td>
-            <td>
-              <strong>9</strong>
-            </td>
-          </tr>
+          {this.renderResponses()}
         </tbody>
       </table>
     );

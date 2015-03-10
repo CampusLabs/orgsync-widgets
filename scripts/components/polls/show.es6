@@ -1,3 +1,4 @@
+import _ from 'underscore';
 import api from 'api';
 import Button from 'components/ui/button';
 import ButtonRow from 'components/ui/button-row';
@@ -19,6 +20,7 @@ export default React.createClass({
     var poll = this.state.poll;
     if (poll.description != null) return;
     this.update({isLoading: {$set: true}, error: {$set: null}});
+    // API call would occur here
   },
 
   handleFetch: function (er, res) {
@@ -28,29 +30,27 @@ export default React.createClass({
     this.update(deltas);
   },
 
-  renderDescription: function(description) {
-    if(!description || /^\s*$/.test(description)) return 'No description provided';
-    return (description);
-  },
-
-  renderResults: function() {
-  },
-
   render: function () {
     var poll = this.state.poll;
     return (
       <div className='osw-polls-show'>
         <h3>{poll.name}</h3>
+        <p>Created by {poll.creator.display_name}</p>
         <p>{poll.description}</p>
-        {this.renderResults()}
 
         <div className="osw-polls-panel-header">
           <h4>Poll Results</h4>
         </div>
 
         <Results
-          pollVotes={poll.pollVotes}
+          responses={this.state.poll.responses}
         />
+
+        <ButtonRow>
+          <Button href={poll.links.web} target='_parent'>
+            On OrgSync.com
+          </Button>
+        </ButtonRow>
       </div>
     );
   }

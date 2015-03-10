@@ -52001,14 +52001,14 @@ define('components/polls/results', ["exports", "module", "underscore", "react"],
       var maxVotes = _.max(this.props.responses, function (response) {
         return response.votes;
       }).votes;
-      return this.calculatePercentage(votes, maxVotes, maxWidth);
+      return this.calculatePercentage(votes, maxVotes, maxWidth, 5);
     },
 
-    calculatePercentage: function (votes, maxVotes, maxWidth) {
+    calculatePercentage: function (votes, maxVotes, maxWidth, minWidth) {
       if (votes === 0) {
-        return 0 + "%";
+        return minWidth + "%";
       } else {
-        return parseInt(votes / maxVotes * maxWidth) + "%";
+        return parseInt(votes / maxVotes * (maxWidth - minWidth) + minWidth) + "%";
       }
     },
 
@@ -52042,7 +52042,7 @@ define('components/polls/results', ["exports", "module", "underscore", "react"],
           React.createElement(
             "td",
             { width: "7%" },
-            that.calculatePercentage(response.votes, that.totalVotes(), 100)
+            that.calculatePercentage(response.votes, that.totalVotes(), 100, 0)
           )
         );
       });
@@ -52139,12 +52139,16 @@ define('components/polls/show', ["exports", "module", "underscore", "api", "comp
           responses: this.state.poll.responses
         }),
         React.createElement(
-          ButtonRow,
-          null,
+          "div",
+          { className: "osw-button-row" },
           React.createElement(
-            Button,
-            { href: poll.links.web, target: "_parent" },
-            "On OrgSync.com"
+            ButtonRow,
+            null,
+            React.createElement(
+              Button,
+              { href: poll.links.web, target: "_parent" },
+              "View on OrgSync.com"
+            )
           )
         )
       );
@@ -52213,7 +52217,7 @@ define('components/polls/list-item', ["exports", "module", "cursors", "moment", 
       var poll = this.state.poll;
       return React.createElement(
         "div",
-        { className: "osw-polls-list-item", onClick: this.openShow },
+        { className: "osw-polls-list-item" },
         React.createElement(
           "div",
           { className: "osw-polls-list-item-info", style: { float: "left" } },
@@ -52233,13 +52237,13 @@ define('components/polls/list-item', ["exports", "module", "cursors", "moment", 
           ),
           React.createElement(
             "div",
-            { className: "osw-polls-list-item-name" },
+            { className: "osw-polls-list-item-name", onClick: this.openShow },
             poll.name
           )
         ),
         React.createElement(
           "div",
-          { className: "osw-polls-status" },
+          { className: "osw-polls-status", onClick: this.openShow },
           React.createElement(
             "p",
             null,

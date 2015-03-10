@@ -1759,7 +1759,9 @@
   font-size: 16px;
   font-weight: lighter; }
   .orgsync-widget .osw-polls-show > .osw-button-row {
-    margin-bottom: 10px; }
+    margin-top: 25px;
+    margin-bottom: 10px;
+    text-align: center; }
 .orgsync-widget .osw-polls-show-name {
   font-size: 18px;
   font-weight: bold; }

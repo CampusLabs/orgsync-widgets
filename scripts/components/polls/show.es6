@@ -46,11 +46,13 @@ export default React.createClass({
           responses={this.state.poll.responses}
         />
 
-        <ButtonRow>
-          <Button href={poll.links.web} target='_parent'>
-            On OrgSync.com
-          </Button>
-        </ButtonRow>
+        <div className="osw-button-row">
+          <ButtonRow>
+            <Button href={poll.links.web} target='_parent'>
+              View on OrgSync.com
+            </Button>
+          </ButtonRow>
+        </div>
       </div>
     );
   }

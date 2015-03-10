@@ -14,14 +14,14 @@ export default React.createClass({
 
   percentageOfLeader: function(votes, maxWidth) {
     var maxVotes = _.max(this.props.responses, function(response) { return response.votes }).votes;
-    return this.calculatePercentage(votes, maxVotes, maxWidth);
+    return this.calculatePercentage(votes, maxVotes, maxWidth, 5);
   },
 
-  calculatePercentage: function(votes, maxVotes, maxWidth) {
+  calculatePercentage: function(votes, maxVotes, maxWidth, minWidth) {
     if (votes === 0) {
-      return 0 + "%";
+      return minWidth + "%";
     } else {
-      return parseInt(votes / maxVotes * maxWidth) + "%";
+      return parseInt(votes / maxVotes * (maxWidth - minWidth) + minWidth) + "%";
     }
   },
 
@@ -39,7 +39,7 @@ export default React.createClass({
             <div className="osw-poll-bar" style={{ width: that.percentageOfLeader(response.votes, 88) }}></div>
             <div className="osw-poll-bar-count">{response.votes}</div>
           </td>
-          <td width="7%">{that.calculatePercentage(response.votes, that.totalVotes(), 100)}</td>
+          <td width="7%">{that.calculatePercentage(response.votes, that.totalVotes(), 100, 0)}</td>
         </tr>
       );
     });

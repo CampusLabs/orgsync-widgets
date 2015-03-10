@@ -47,17 +47,17 @@ export default React.createClass({
   render: function () {
     var poll = this.state.poll;
     return (
-      <div className='osw-polls-list-item' onClick={this.openShow}>
+      <div className='osw-polls-list-item'>
         <div className='osw-polls-list-item-info' style={{ float: 'left' }}>
           <div className="osw-polls-box-wrapper">
             <div className="osw-polls-box-number">{poll.votes}</div>
             <div className="osw-polls-box-footer">Votes</div>
           </div>
-          <div className='osw-polls-list-item-name'>
+          <div className='osw-polls-list-item-name' onClick={this.openShow}>
             {poll.name}
           </div>
         </div>
-        <div className='osw-polls-status'>
+        <div className='osw-polls-status' onClick={this.openShow}>
           <p>VOTE NOW</p>
         </div>
         {this.renderShowPopup()}

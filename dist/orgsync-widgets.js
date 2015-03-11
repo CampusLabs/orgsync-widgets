@@ -51993,7 +51993,7 @@ define('components/polls/results', ["exports", "module", "underscore", "react"],
 
     getDefaultProps: function () {
       return {
-        responses: []
+        responses: null
       };
     },
 
@@ -52049,15 +52049,27 @@ define('components/polls/results', ["exports", "module", "underscore", "react"],
     },
 
     render: function () {
-      return React.createElement(
-        "table",
-        { className: "osw-poll-results" },
-        React.createElement(
-          "tbody",
+      if (this.props.responses === null) {
+        return React.createElement(
+          "p",
           null,
-          this.renderResponses()
-        )
-      );
+          React.createElement(
+            "strong",
+            null,
+            "The results are hidden."
+          )
+        );
+      } else {
+        return React.createElement(
+          "table",
+          { className: "osw-poll-results" },
+          React.createElement(
+            "tbody",
+            null,
+            this.renderResponses()
+          )
+        );
+      }
     }
   });
 });
@@ -52136,7 +52148,7 @@ define('components/polls/show', ["exports", "module", "underscore", "api", "comp
           )
         ),
         React.createElement(Results, {
-          responses: this.state.poll.responses
+          responses: this.state.poll.poll_options
         }),
         React.createElement(
           "div",
@@ -52156,10 +52168,12 @@ define('components/polls/show', ["exports", "module", "underscore", "api", "comp
   });
 });
 // scripts/components/polls/list-item.es6
-define('components/polls/list-item', ["exports", "module", "cursors", "moment", "components/ui/popup", "react", "components/ui/sep", "components/polls/show"], function (exports, module, _cursors, _moment, _componentsUiPopup, _react, _componentsUiSep, _componentsPollsShow) {
+define('components/polls/list-item', ["exports", "module", "underscore", "cursors", "moment", "components/ui/popup", "react", "components/ui/sep", "components/polls/show"], function (exports, module, _underscore, _cursors, _moment, _componentsUiPopup, _react, _componentsUiSep, _componentsPollsShow) {
   "use strict";
 
   var _interopRequire = function (obj) { return obj && obj.__esModule ? obj["default"] : obj; };
+
+  var _ = _interopRequire(_underscore);
 
   var Cursors = _interopRequire(_cursors);
 
@@ -52287,57 +52301,51 @@ define('components/polls/index', ["exports", "module", "underscore", "underscore
     data: [{
       name: "What is your favorite color?",
       id: 1,
-      umbrella: false,
       votes: 10,
       links: { web: "#" },
       description: "",
       creator: { display_name: "John Smith" },
-      responses: [{ id: 15, name: "Blue", votes: 3 }, { id: 16, name: "Green", votes: 4 }, { id: 17, name: "Red", votes: 3 }]
+      poll_options: [{ id: 15, name: "Blue", votes: 3 }, { id: 16, name: "Green", votes: 4 }, { id: 17, name: "Red", votes: 3 }]
     }, {
       name: "Who should be president?",
       id: 2,
-      umbrella: true,
       votes: 0,
       links: { web: "#" },
       description: "",
       creator: { display_name: "Jane Doe" },
-      responses: [{ id: 14, name: "John", votes: 0 }, { id: 13, name: "Jane", votes: 0 }]
+      poll_options: null
     }, {
       name: "What day should the game be played?",
       id: 3,
-      umbrella: false,
       votes: 13,
       links: { web: "#" },
       description: "Let us know when the volleyball game should take place.",
       creator: { display_name: "John Smith" },
-      responses: [{ id: 9, name: "Monday", votes: 3 }, { id: 10, name: "Tuesday", votes: 1 }, { id: 11, name: "Thursday", votes: 2 }, { id: 12, name: "Saturday", votes: 7 }]
+      poll_options: [{ id: 9, name: "Monday", votes: 3 }, { id: 10, name: "Tuesday", votes: 1 }, { id: 11, name: "Thursday", votes: 2 }, { id: 12, name: "Saturday", votes: 7 }]
     }, {
       name: "Which food do you prefer?",
       id: 4,
-      umbrella: true,
       votes: 14,
       links: { web: "#" },
       description: "Please choose the food which you'd like to have served at this year's BBQ.",
       creator: { display_name: "Jane Doe" },
-      responses: [{ id: 8, name: "Ribs", votes: 3 }, { id: 7, name: "Steak", votes: 1 }, { id: 6, name: "Brisket", votes: 10 }]
+      poll_options: [{ id: 8, name: "Ribs", votes: 3 }, { id: 7, name: "Steak", votes: 1 }, { id: 6, name: "Brisket", votes: 10 }]
     }, {
       name: "When should the parade start?",
       id: 5,
-      umbrella: false,
       votes: 5,
       links: { web: "#" },
       description: "",
       creator: { display_name: "Jane Doe" },
-      responses: [{ id: 4, name: "12:00 PM", votes: 3 }, { id: 5, name: "2:00 PM", votes: 2 }]
+      poll_options: null
     }, {
       name: "Do you agree with the president?",
       id: 6,
-      umbrella: true,
       votes: 15,
       links: { web: "#" },
       description: "",
       creator: { display_name: "John Smith" },
-      responses: [{ id: 1, name: "Yes", votes: 8 }, { id: 2, name: "No", votes: 4 }, { id: 3, name: "Not Sure", votes: 3 }]
+      poll_options: [{ id: 1, name: "Yes", votes: 8 }, { id: 2, name: "No", votes: 4 }, { id: 3, name: "Not Sure", votes: 3 }]
     }]
   };
 
@@ -52365,9 +52373,53 @@ define('components/polls/index', ["exports", "module", "underscore", "underscore
       };
     },
 
-    componentWillMount: function () {
-      if (this.state.polls.length) this.sortAndUpdate(this.state.polls);
-    },
+    /*
+      componentWillMount: function () {
+        var rId = 100;
+    
+        _(100).times(function(n) {
+          var votes = _.random(0, 50);
+          var totalVotes = votes;
+          var poll_options = [];
+    
+    
+          var maxTimes = 10;
+          while(votes > 0 && maxTimes > 0) {
+            var vote = _.random(0, votes);
+            votes -= vote;
+    
+            poll_options.push({
+              id: rId,
+              name: _.random(0, 1123),
+              votes: vote
+            });
+            rId += 1;
+            maxTimes -= 1;
+          }
+    
+          if(votes > 0) {
+            poll_options.push({
+              id: rId,
+              name: _.random(0, 1123),
+              votes: votes
+            });
+          }
+    
+          staticRes.data.push(
+            {
+              name: _.random(0, 100000) + "?",
+              id: n+100,
+              umbrella: false,
+              votes: totalVotes,
+              links: { web: '#' },
+              description: "This poll is lorem ipsum dolor sit amet " + _.random(0, 50),
+              creator: { display_name: _.random(0, 1000) },
+              poll_options: poll_options
+            }
+          );
+        });
+      },
+    */
 
     fetch: function (cb) {
       this.update({

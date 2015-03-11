@@ -43,7 +43,7 @@ export default React.createClass({
         </div>
 
         <Results
-          responses={this.state.poll.responses}
+          responses={this.state.poll.poll_options}
         />
 
         <div className="osw-button-row">

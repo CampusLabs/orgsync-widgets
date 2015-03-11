@@ -8,7 +8,7 @@ export default React.createClass({
 
   getDefaultProps: function() {
     return {
-      responses: []
+      responses: null
     };
   },
 
@@ -46,12 +46,20 @@ export default React.createClass({
   },
 
   render: function() {
-    return (
-      <table className="osw-poll-results">
-        <tbody>
-          {this.renderResponses()}
-        </tbody>
-      </table>
-    );
+    if (this.props.responses === null) {
+      return (
+        <p>
+          <strong>The results are hidden.</strong>
+        </p>
+      );
+    } else {
+      return (
+        <table className="osw-poll-results">
+          <tbody>
+            {this.renderResponses()}
+          </tbody>
+        </table>
+      );
+    }
   }
 });

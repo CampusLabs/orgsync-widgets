@@ -1,3 +1,4 @@
+import _ from 'underscore';
 import Cursors from 'cursors';
 import moment from 'moment';
 import Popup from 'components/ui/popup';

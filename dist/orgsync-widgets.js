@@ -51991,6 +51991,12 @@ define('components/polls/results', ["exports", "module", "underscore", "react"],
       responses: React.PropTypes.array
     },
 
+    getInitialState: function () {
+      return {
+        sortedByVotes: false
+      };
+    },
+
     getDefaultProps: function () {
       return {
         responses: null
@@ -51999,9 +52005,9 @@ define('components/polls/results', ["exports", "module", "underscore", "react"],
 
     percentageOfLeader: function (votes, maxWidth) {
       var maxVotes = _.max(this.props.responses, function (response) {
-        return response.votes;
-      }).votes;
-      return this.calculatePercentage(votes, maxVotes, maxWidth, 5);
+        return response.poll_votes_count;
+      }).poll_votes_count;
+      return this.calculatePercentage(votes, maxVotes, maxWidth, 0);
     },
 
     calculatePercentage: function (votes, maxVotes, maxWidth, minWidth) {
@@ -52014,13 +52020,21 @@ define('components/polls/results', ["exports", "module", "underscore", "react"],
 
     totalVotes: function () {
       return _.reduce(this.props.responses, function (sum, response) {
-        return sum + response.votes;
+        return sum + response.poll_votes_count;
       }, 0);
+    },
+
+    sortedResponses: function () {
+      if (this.state.sortedByVotes) {
+        return _.sortBy(this.props.responses, "poll_votes_count").reverse();
+      } else {
+        return _.sortBy(this.props.responses, "id");
+      }
     },
 
     renderResponses: function () {
       var that = this;
-      return _.map(this.props.responses, function (response) {
+      return _.map(this.sortedResponses(), function (response) {
         return React.createElement(
           "tr",
           { key: response.id },
@@ -52032,20 +52046,34 @@ define('components/polls/results', ["exports", "module", "underscore", "react"],
           React.createElement(
             "td",
             null,
-            React.createElement("div", { className: "osw-poll-bar", style: { width: that.percentageOfLeader(response.votes, 88) } }),
+            React.createElement("div", { className: "osw-poll-bar", style: { width: that.percentageOfLeader(response.poll_votes_count, 88) } }),
             React.createElement(
               "div",
               { className: "osw-poll-bar-count" },
-              response.votes
+              response.poll_votes_count
             )
           ),
           React.createElement(
             "td",
             { width: "7%" },
-            that.calculatePercentage(response.votes, that.totalVotes(), 100, 0)
+            that.calculatePercentage(response.poll_votes_count, that.totalVotes(), 100, 0)
           )
         );
       });
+    },
+
+    sortOptions: function () {
+      this.setState({
+        sortedByVotes: !this.state.sortedByVotes
+      });
+    },
+
+    sortButtonLabel: function () {
+      if (this.state.sortedByVotes) {
+        return "Default";
+      } else {
+        return "Sort";
+      }
     },
 
     render: function () {
@@ -52061,12 +52089,30 @@ define('components/polls/results', ["exports", "module", "underscore", "react"],
         );
       } else {
         return React.createElement(
-          "table",
-          { className: "osw-poll-results" },
+          "div",
+          null,
           React.createElement(
-            "tbody",
-            null,
-            this.renderResponses()
+            "div",
+            { className: "osw-polls-panel-header" },
+            React.createElement(
+              "h4",
+              null,
+              "Poll Results"
+            ),
+            React.createElement(
+              "button",
+              { onClick: this.sortOptions },
+              this.sortButtonLabel()
+            )
+          ),
+          React.createElement(
+            "table",
+            { className: "osw-poll-results" },
+            React.createElement(
+              "tbody",
+              null,
+              this.renderResponses()
+            )
           )
         );
       }
@@ -52108,7 +52154,7 @@ define('components/polls/show', ["exports", "module", "underscore", "api", "comp
       var poll = this.state.poll;
       if (poll.description != null) return;
       this.update({ isLoading: { $set: true }, error: { $set: null } });
-      // API call would occur here
+      api.get("/portals/:portal_id/polls/:id", { portal_id: this.props.portalId, id: poll.id }, this.handleFetch);
     },
 
     handleFetch: function (er, res) {
@@ -52138,18 +52184,7 @@ define('components/polls/show', ["exports", "module", "underscore", "api", "comp
           null,
           poll.description
         ),
-        React.createElement(
-          "div",
-          { className: "osw-polls-panel-header" },
-          React.createElement(
-            "h4",
-            null,
-            "Poll Results"
-          )
-        ),
-        React.createElement(Results, {
-          responses: this.state.poll.poll_options
-        }),
+        React.createElement(Results, { responses: this.state.poll.poll_options }),
         React.createElement(
           "div",
           { className: "osw-button-row" },
@@ -52172,6 +52207,8 @@ define('components/polls/list-item', ["exports", "module", "underscore", "cursor
   "use strict";
 
   var _interopRequire = function (obj) { return obj && obj.__esModule ? obj["default"] : obj; };
+
+  var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
 
   var _ = _interopRequire(_underscore);
 
@@ -52213,7 +52250,9 @@ define('components/polls/list-item', ["exports", "module", "underscore", "cursor
 
     renderShow: function () {
       if (!this.state.showIsOpen) return;
-      return React.createElement(Show, { cursors: { poll: this.getCursor("poll") } });
+      return React.createElement(Show, _extends({}, this.props, {
+        cursors: { poll: this.getCursor("poll") }
+      }));
     },
 
     renderShowPopup: function () {
@@ -52241,7 +52280,7 @@ define('components/polls/list-item', ["exports", "module", "underscore", "cursor
             React.createElement(
               "div",
               { className: "osw-polls-box-number" },
-              poll.votes
+              poll.vote_count
             ),
             React.createElement(
               "div",
@@ -52297,58 +52336,6 @@ define('components/polls/index', ["exports", "module", "underscore", "underscore
 
   var PER_PAGE = 10;
 
-  var staticRes = {
-    data: [{
-      name: "What is your favorite color?",
-      id: 1,
-      votes: 10,
-      links: { web: "#" },
-      description: "",
-      creator: { display_name: "John Smith" },
-      poll_options: [{ id: 15, name: "Blue", votes: 3 }, { id: 16, name: "Green", votes: 4 }, { id: 17, name: "Red", votes: 3 }]
-    }, {
-      name: "Who should be president?",
-      id: 2,
-      votes: 0,
-      links: { web: "#" },
-      description: "",
-      creator: { display_name: "Jane Doe" },
-      poll_options: null
-    }, {
-      name: "What day should the game be played?",
-      id: 3,
-      votes: 13,
-      links: { web: "#" },
-      description: "Let us know when the volleyball game should take place.",
-      creator: { display_name: "John Smith" },
-      poll_options: [{ id: 9, name: "Monday", votes: 3 }, { id: 10, name: "Tuesday", votes: 1 }, { id: 11, name: "Thursday", votes: 2 }, { id: 12, name: "Saturday", votes: 7 }]
-    }, {
-      name: "Which food do you prefer?",
-      id: 4,
-      votes: 14,
-      links: { web: "#" },
-      description: "Please choose the food which you'd like to have served at this year's BBQ.",
-      creator: { display_name: "Jane Doe" },
-      poll_options: [{ id: 8, name: "Ribs", votes: 3 }, { id: 7, name: "Steak", votes: 1 }, { id: 6, name: "Brisket", votes: 10 }]
-    }, {
-      name: "When should the parade start?",
-      id: 5,
-      votes: 5,
-      links: { web: "#" },
-      description: "",
-      creator: { display_name: "Jane Doe" },
-      poll_options: null
-    }, {
-      name: "Do you agree with the president?",
-      id: 6,
-      votes: 15,
-      links: { web: "#" },
-      description: "",
-      creator: { display_name: "John Smith" },
-      poll_options: [{ id: 1, name: "Yes", votes: 8 }, { id: 2, name: "No", votes: 4 }, { id: 3, name: "Not Sure", votes: 3 }]
-    }]
-  };
-
   module.exports = React.createClass({
     displayName: "index",
     mixins: [Cursors],
@@ -52373,60 +52360,21 @@ define('components/polls/index', ["exports", "module", "underscore", "underscore
       };
     },
 
-    /*
-      componentWillMount: function () {
-        var rId = 100;
-    
-        _(100).times(function(n) {
-          var votes = _.random(0, 50);
-          var totalVotes = votes;
-          var poll_options = [];
-    
-    
-          var maxTimes = 10;
-          while(votes > 0 && maxTimes > 0) {
-            var vote = _.random(0, votes);
-            votes -= vote;
-    
-            poll_options.push({
-              id: rId,
-              name: _.random(0, 1123),
-              votes: vote
-            });
-            rId += 1;
-            maxTimes -= 1;
-          }
-    
-          if(votes > 0) {
-            poll_options.push({
-              id: rId,
-              name: _.random(0, 1123),
-              votes: votes
-            });
-          }
-    
-          staticRes.data.push(
-            {
-              name: _.random(0, 100000) + "?",
-              id: n+100,
-              umbrella: false,
-              votes: totalVotes,
-              links: { web: '#' },
-              description: "This poll is lorem ipsum dolor sit amet " + _.random(0, 50),
-              creator: { display_name: _.random(0, 1000) },
-              poll_options: poll_options
-            }
-          );
-        });
-      },
-    */
-
     fetch: function (cb) {
-      this.update({
-        polls: { $set: _.unique(this.state.polls.concat(staticRes.data), "id") }
-      });
+      api.get("/portals/:portal_id/polls", {
+        portal_id: this.props.portalId,
+        page: Math.floor(this.state.polls.length / PER_PAGE) + 1,
+        per_page: PER_PAGE
+      }, _.partial(this.handleFetch, cb));
+    },
 
-      cb(null, staticRes.data.length < PER_PAGE);
+    handleFetch: function (cb, er, res) {
+      console.debug("Polls res", res);
+      if (er) return cb(er);
+      this.update({
+        polls: { $set: _.unique(this.state.polls.concat(res.data), "id") }
+      });
+      cb(null, res.data.length < PER_PAGE);
     },
 
     matchesQuery: function (poll) {
@@ -52464,10 +52412,10 @@ define('components/polls/index', ["exports", "module", "underscore", "underscore
 
     renderListItem: function (poll) {
       var i = this.state.polls.indexOf(poll);
-      return React.createElement(PollsListItem, {
+      return React.createElement(PollsListItem, _extends({}, this.props, {
         key: poll.id,
         cursors: { poll: this.getCursor("polls", i) }
-      });
+      }));
     },
 
     renderLoading: function () {

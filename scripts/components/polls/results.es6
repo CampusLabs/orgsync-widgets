@@ -6,6 +6,12 @@ export default React.createClass({
     responses: React.PropTypes.array
   },
 
+  getInitialState: function() {
+    return {
+      sortedByVotes: false
+    };
+  },
+
   getDefaultProps: function() {
     return {
       responses: null
@@ -13,8 +19,8 @@ export default React.createClass({
   },
 
   percentageOfLeader: function(votes, maxWidth) {
-    var maxVotes = _.max(this.props.responses, function(response) { return response.votes }).votes;
-    return this.calculatePercentage(votes, maxVotes, maxWidth, 5);
+    var maxVotes = _.max(this.props.responses, function(response) { return response.poll_votes_count }).poll_votes_count;
+    return this.calculatePercentage(votes, maxVotes, maxWidth, 0);
   },
 
   calculatePercentage: function(votes, maxVotes, maxWidth, minWidth) {
@@ -26,23 +32,45 @@ export default React.createClass({
   },
 
   totalVotes: function() {
-    return _.reduce(this.props.responses, function(sum, response) { return sum + response.votes }, 0);
+    return _.reduce(this.props.responses, function(sum, response) { return sum + response.poll_votes_count }, 0);
+  },
+
+  sortedResponses: function() {
+    if (this.state.sortedByVotes) {
+      return _.sortBy(this.props.responses, 'poll_votes_count').reverse();
+    } else {
+      return _.sortBy(this.props.responses, 'id');
+    }
   },
 
   renderResponses: function() {
     var that = this;
-    return _.map(this.props.responses, function(response) {
+    return _.map(this.sortedResponses(), function(response) {
       return (
         <tr key={response.id}>
           <td width="30%">{response.name}</td>
           <td>
-            <div className="osw-poll-bar" style={{ width: that.percentageOfLeader(response.votes, 88) }}></div>
-            <div className="osw-poll-bar-count">{response.votes}</div>
+            <div className="osw-poll-bar" style={{ width: that.percentageOfLeader(response.poll_votes_count, 88) }}></div>
+            <div className="osw-poll-bar-count">{response.poll_votes_count}</div>
           </td>
-          <td width="7%">{that.calculatePercentage(response.votes, that.totalVotes(), 100, 0)}</td>
+          <td width="7%">{that.calculatePercentage(response.poll_votes_count, that.totalVotes(), 100, 0)}</td>
         </tr>
       );
     });
+  },
+
+  sortOptions: function() {
+    this.setState({
+      sortedByVotes: !this.state.sortedByVotes
+    });
+  },
+
+  sortButtonLabel: function() {
+    if (this.state.sortedByVotes) {
+      return 'Default';
+    } else {
+      return 'Sort';
+    }
   },
 
   render: function() {
@@ -54,11 +82,17 @@ export default React.createClass({
       );
     } else {
       return (
-        <table className="osw-poll-results">
-          <tbody>
-            {this.renderResponses()}
-          </tbody>
-        </table>
+        <div>
+          <div className="osw-polls-panel-header">
+            <h4>Poll Results</h4>
+            <button onClick={this.sortOptions}>{this.sortButtonLabel()}</button>
+          </div>
+          <table className="osw-poll-results">
+            <tbody>
+              {this.renderResponses()}
+            </tbody>
+          </table>
+        </div>
       );
     }
   }

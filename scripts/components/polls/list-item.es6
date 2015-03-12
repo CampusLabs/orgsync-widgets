@@ -31,7 +31,12 @@ export default React.createClass({
 
   renderShow: function () {
     if (!this.state.showIsOpen) return;
-    return <Show cursors={{poll: this.getCursor('poll')}} />;
+    return (
+      <Show
+        {...this.props}
+        cursors={{poll: this.getCursor('poll')}}
+      />
+    );
   },
 
   renderShowPopup: function() {
@@ -51,7 +56,7 @@ export default React.createClass({
       <div className='osw-polls-list-item'>
         <div className='osw-polls-list-item-info' style={{ float: 'left' }}>
           <div className="osw-polls-box-wrapper">
-            <div className="osw-polls-box-number">{poll.votes}</div>
+            <div className="osw-polls-box-number">{poll.vote_count}</div>
             <div className="osw-polls-box-footer">Votes</div>
           </div>
           <div className='osw-polls-list-item-name' onClick={this.openShow}>

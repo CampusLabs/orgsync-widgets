@@ -20,7 +20,11 @@ export default React.createClass({
     var poll = this.state.poll;
     if (poll.description != null) return;
     this.update({isLoading: {$set: true}, error: {$set: null}});
-    // API call would occur here
+    api.get(
+      '/portals/:portal_id/polls/:id',
+      {portal_id: this.props.portalId, id: poll.id},
+      this.handleFetch
+    );
   },
 
   handleFetch: function (er, res) {
@@ -38,13 +42,7 @@ export default React.createClass({
         <p>Created by {poll.creator.display_name}</p>
         <p>{poll.description}</p>
 
-        <div className="osw-polls-panel-header">
-          <h4>Poll Results</h4>
-        </div>
-
-        <Results
-          responses={this.state.poll.poll_options}
-        />
+        <Results responses={this.state.poll.poll_options} />
 
         <div className="osw-button-row">
           <ButtonRow>

@@ -1721,12 +1721,16 @@
     text-decoration: underline; }
 .orgsync-widget .osw-polls-status {
   float: right;
-  color: #87d361;
   font-weight: bold; }
+  .orgsync-widget .osw-polls-status .voted {
+    color: #ccc; }
+  .orgsync-widget .osw-polls-status .vote-now {
+    color: #87d361; }
+  .orgsync-widget .osw-polls-status .closed {
+    color: #de6444; }
   .orgsync-widget .osw-polls-status:hover {
     cursor: pointer;
-    text-decoration: underline;
-    color: #5eb532; }
+    text-decoration: underline; }
 .orgsync-widget .osw-polls-list-item {
   border-top: 1px solid #ccc;
   padding: 8px; }

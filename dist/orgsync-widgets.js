@@ -52266,6 +52266,57 @@ define('components/polls/list-item', ["exports", "module", "underscore", "cursor
       );
     },
 
+    renderStatusText: function (poll) {
+      if (poll.is_open) {
+        if (poll.has_voted) return React.createElement(
+          "p",
+          { className: "voted" },
+          "VOTED"
+        );
+        return React.createElement(
+          "p",
+          { className: "vote-now" },
+          "VOTE NOW"
+        );
+      } else {
+        return React.createElement(
+          "p",
+          { className: "closed" },
+          "CLOSED"
+        );
+      }
+    },
+
+    renderStatusLink: function (poll) {
+      return React.createElement(
+        "div",
+        { className: "osw-polls-status", onClick: this.openShow },
+        this.renderStatusText(poll)
+      );
+    },
+
+    renderVoteCount: function (poll) {
+      if (poll.vote_count > 999) return "999+";
+      return poll.vote_count;
+    },
+
+    renderPollBox: function (poll) {
+      return React.createElement(
+        "div",
+        { className: "osw-polls-box-wrapper" },
+        React.createElement(
+          "div",
+          { className: "osw-polls-box-number" },
+          this.renderVoteCount(poll)
+        ),
+        React.createElement(
+          "div",
+          { className: "osw-polls-box-footer" },
+          poll.vote_count === 1 ? "Vote" : "Votes"
+        )
+      );
+    },
+
     render: function () {
       var poll = this.state.poll;
       return React.createElement(
@@ -52274,35 +52325,14 @@ define('components/polls/list-item', ["exports", "module", "underscore", "cursor
         React.createElement(
           "div",
           { className: "osw-polls-list-item-info", style: { float: "left" } },
-          React.createElement(
-            "div",
-            { className: "osw-polls-box-wrapper" },
-            React.createElement(
-              "div",
-              { className: "osw-polls-box-number" },
-              poll.vote_count
-            ),
-            React.createElement(
-              "div",
-              { className: "osw-polls-box-footer" },
-              "Votes"
-            )
-          ),
+          this.renderPollBox(poll),
           React.createElement(
             "div",
             { className: "osw-polls-list-item-name", onClick: this.openShow },
             poll.name
           )
         ),
-        React.createElement(
-          "div",
-          { className: "osw-polls-status", onClick: this.openShow },
-          React.createElement(
-            "p",
-            null,
-            "VOTE NOW"
-          )
-        ),
+        this.renderStatusLink(poll),
         this.renderShowPopup()
       );
     }

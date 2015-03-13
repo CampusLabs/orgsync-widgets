@@ -15,12 +15,23 @@
 
   .osw-polls-status {
     float: right;
-    color: $green;
     font-weight: bold;
+
+    .voted {
+      color: $grey;
+    }
+
+    .vote-now {
+      color: $green;
+    }
+
+    .closed {
+      color: $red;
+    }
+
     &:hover {
       cursor: pointer;
       text-decoration: underline;
-      color: $green-darkest;
     }
   }
 

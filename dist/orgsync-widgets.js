@@ -51935,7 +51935,7 @@ define('components/news-posts/index', ["exports", "module", "underscore", "api",
   });
 });
 // scripts/components/polls/filters.es6
-define('components/polls/filters', ["exports", "module", "cursors", "components/shared/query", "react", "components/shared/summary"], function (exports, module, _cursors, _componentsSharedQuery, _react, _componentsSharedSummary) {
+define('components/polls/filters', ["exports", "module", "cursors", "components/shared/faceted-selector", "utils/join-class-names", "components/shared/query", "react", "components/shared/summary"], function (exports, module, _cursors, _componentsSharedFacetedSelector, _utilsJoinClassNames, _componentsSharedQuery, _react, _componentsSharedSummary) {
   "use strict";
 
   var _interopRequire = function (obj) { return obj && obj.__esModule ? obj["default"] : obj; };
@@ -51943,6 +51943,10 @@ define('components/polls/filters', ["exports", "module", "cursors", "components/
   var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
 
   var Cursors = _interopRequire(_cursors);
+
+  var FacetedSelector = _interopRequire(_componentsSharedFacetedSelector);
+
+  var joinClassNames = _interopRequire(_utilsJoinClassNames);
 
   var Query = _interopRequire(_componentsSharedQuery);
 
@@ -51966,8 +51970,18 @@ define('components/polls/filters', ["exports", "module", "cursors", "components/
         "div",
         { className: "osw-polls-filters" },
         React.createElement(Query, { value: this.state.query, onChange: this.handleChange }),
+        React.createElement(FacetedSelector, _extends({}, this.props, {
+          allOption: "All Categories",
+          className: joinClassNames("oswi-book", this.props.className),
+          getFacet: this.props.getFacet,
+          name: "category",
+          objects: this.props.polls,
+          onChange: this.handleChange,
+          showMatchCount: false,
+          value: this.state.category
+        })),
         React.createElement(Summary, _extends({}, this.props, {
-          filterKeys: ["query"],
+          filterKeys: ["query", "category"],
           objects: this.props.polls,
           showMessage: false
         }))
@@ -52376,6 +52390,7 @@ define('components/polls/index', ["exports", "module", "underscore", "underscore
 
     getDefaultProps: function () {
       return {
+        category: "",
         polls: [],
         filtersAreShowing: true,
         query: "",
@@ -52385,6 +52400,7 @@ define('components/polls/index', ["exports", "module", "underscore", "underscore
 
     getInitialState: function () {
       return {
+        category: this.props.category,
         polls: this.props.polls,
         query: this.props.query
       };
@@ -52407,6 +52423,17 @@ define('components/polls/index', ["exports", "module", "underscore", "underscore
       cb(null, res.data.length < PER_PAGE);
     },
 
+    getFacet: function (poll) {
+      if (poll.is_open) return "Open";
+      return "Closed";
+    },
+
+    matchesCategory: function (poll) {
+      var a = this.state.category;
+      var b = this.getFacet(poll);
+      return !a || a === b;
+    },
+
     matchesQuery: function (poll) {
       var query = this.state.query;
       if (!query) return true;
@@ -52424,7 +52451,7 @@ define('components/polls/index', ["exports", "module", "underscore", "underscore
     },
 
     pollMatchesFilters: function (poll) {
-      return this.matchesQuery(poll);
+      return this.matchesQuery(poll) && this.matchesCategory(poll);
     },
 
     getFilteredPolls: function () {
@@ -52435,8 +52462,11 @@ define('components/polls/index', ["exports", "module", "underscore", "underscore
       if (!this.state.polls.length || !this.props.filtersAreShowing) return;
       return React.createElement(Filters, {
         polls: polls,
+        getFacet: this.getFacet,
         cursors: {
-          query: this.getCursor("query") }
+          category: this.getCursor("category"),
+          query: this.getCursor("query")
+        }
       });
     },
 
@@ -52468,7 +52498,8 @@ define('components/polls/index', ["exports", "module", "underscore", "underscore
       return React.createElement(Empty, {
         objectName: "polls",
         cursors: {
-          query: this.getCursor("query")
+          query: this.getCursor("query"),
+          category: this.getCursor("category")
         }
       });
     },
@@ -52963,6 +52994,7 @@ define('components/portals/index', ["exports", "module", "underscore", "undersco
     },
 
     handleFetch: function (cb, er, res) {
+      console.debug("res", res);
       if (er) return cb(er);
       this.sortAndUpdate(res.data);
       cb(null, true);

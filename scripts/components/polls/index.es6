@@ -19,6 +19,7 @@ export default React.createClass({
 
   getDefaultProps: function () {
     return {
+      category: '',
       polls: [],
       filtersAreShowing: true,
       query: '',
@@ -28,6 +29,7 @@ export default React.createClass({
 
   getInitialState: function () {
     return {
+      category: this.props.category,
       polls: this.props.polls,
       query: this.props.query
     };
@@ -48,6 +50,17 @@ export default React.createClass({
       polls: {$set: _.unique(this.state.polls.concat(res.data), 'id')}
     });
     cb(null, res.data.length < PER_PAGE);
+  },
+
+  getFacet: function(poll) {
+    if (poll.is_open) return 'Open';
+    return 'Closed';
+  },
+
+  matchesCategory: function(poll) {
+    var a = this.state.category;
+    var b = this.getFacet(poll);
+    return !a || a === b;
   },
 
   matchesQuery: function(poll) {
@@ -71,7 +84,10 @@ export default React.createClass({
   },
 
   pollMatchesFilters: function(poll) {
-    return this.matchesQuery(poll)
+    return (
+      this.matchesQuery(poll) &&
+      this.matchesCategory(poll)
+    );
   },
 
   getFilteredPolls: function() {
@@ -83,8 +99,10 @@ export default React.createClass({
     return (
       <Filters
         polls={polls}
+        getFacet={this.getFacet}
         cursors={{
-          query: this.getCursor('query'),
+          category: this.getCursor('category'),
+          query: this.getCursor('query')
         }}
       />
     );
@@ -116,7 +134,8 @@ export default React.createClass({
       <Empty
         objectName='polls'
         cursors={{
-          query: this.getCursor('query')
+          query: this.getCursor('query'),
+          category: this.getCursor('category')
         }}
       />
     );

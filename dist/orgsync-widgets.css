@@ -1706,7 +1706,7 @@
 .orgsync-widget[min-width~='480px'] .osw-polls-filters .osw-field {
   display: inline-block;
   vertical-align: top;
-  width: 100%; }
+  width: 50%; }
 /* styles/polls/list-item.scss */
 .orgsync-widget .osw-polls-list-item-name {
   word-wrap: normal;

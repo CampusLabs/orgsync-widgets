@@ -44,7 +44,6 @@ export default React.createClass({
   },
 
   handleFetch: function (cb, er, res) {
-    console.debug("Polls res", res);
     if (er) return cb(er);
     this.update({
       polls: {$set: _.unique(this.state.polls.concat(res.data), 'id')}

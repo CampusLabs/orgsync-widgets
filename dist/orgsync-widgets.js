@@ -52091,50 +52091,47 @@ define('components/polls/results', ["exports", "module", "underscore", "react"],
     },
 
     render: function () {
-      if (this.props.responses === null) {
-        return React.createElement(
-          "p",
+      if (this.props.responses === null) return React.createElement(
+        "p",
+        null,
+        React.createElement(
+          "strong",
           null,
-          React.createElement(
-            "strong",
-            null,
-            "The results are hidden."
-          )
-        );
-      } else {
-        return React.createElement(
+          "The results are hidden."
+        )
+      );
+      return React.createElement(
+        "div",
+        null,
+        React.createElement(
           "div",
-          null,
+          { className: "osw-polls-panel-header group" },
           React.createElement(
-            "div",
-            { className: "osw-polls-panel-header" },
-            React.createElement(
-              "h4",
-              null,
-              "Poll Results"
-            ),
-            React.createElement(
-              "button",
-              { onClick: this.sortOptions },
-              this.sortButtonLabel()
-            )
+            "h4",
+            null,
+            "Poll Results"
           ),
           React.createElement(
-            "table",
-            { className: "osw-poll-results" },
-            React.createElement(
-              "tbody",
-              null,
-              this.renderResponses()
-            )
+            "button",
+            { className: "osw-button", onClick: this.sortOptions },
+            this.sortButtonLabel()
           )
-        );
-      }
+        ),
+        React.createElement(
+          "table",
+          { className: "osw-poll-results" },
+          React.createElement(
+            "tbody",
+            null,
+            this.renderResponses()
+          )
+        )
+      );
     }
   });
 });
 // scripts/components/polls/show.es6
-define('components/polls/show', ["exports", "module", "underscore", "api", "components/ui/button", "components/ui/button-row", "cursors", "react", "components/polls/results"], function (exports, module, _underscore, _api, _componentsUiButton, _componentsUiButtonRow, _cursors, _react, _componentsPollsResults) {
+define('components/polls/show', ["exports", "module", "underscore", "api", "components/ui/button", "components/ui/button-row", "cursors", "moment", "react", "components/polls/results"], function (exports, module, _underscore, _api, _componentsUiButton, _componentsUiButtonRow, _cursors, _moment, _react, _componentsPollsResults) {
   "use strict";
 
   var _interopRequire = function (obj) { return obj && obj.__esModule ? obj["default"] : obj; };
@@ -52149,9 +52146,13 @@ define('components/polls/show', ["exports", "module", "underscore", "api", "comp
 
   var Cursors = _interopRequire(_cursors);
 
+  var moment = _interopRequire(_moment);
+
   var React = _interopRequire(_react);
 
   var Results = _interopRequire(_componentsPollsResults);
+
+  var FORMAT = "MMM D, YYYY";
 
   module.exports = React.createClass({
     displayName: "show",
@@ -52177,6 +52178,31 @@ define('components/polls/show', ["exports", "module", "underscore", "api", "comp
       this.update(deltas);
     },
 
+    formatDate: function (dateString) {
+      return moment(dateString).format(FORMAT);
+    },
+
+    renderStatus: function (poll) {
+      if (!poll.is_open) {
+        return React.createElement(
+          "p",
+          null,
+          "This poll was open from ",
+          this.formatDate(poll.begins_at),
+          " to ",
+          this.formatDate(poll.ends_at)
+        );
+      }
+    },
+
+    renderVoted: function (poll) {
+      if (poll.has_voted) return React.createElement(
+        "p",
+        null,
+        "You have voted on this poll."
+      );
+    },
+
     render: function () {
       var poll = this.state.poll;
       return React.createElement(
@@ -52187,17 +52213,14 @@ define('components/polls/show', ["exports", "module", "underscore", "api", "comp
           null,
           poll.name
         ),
+        this.renderStatus(poll),
         React.createElement(
           "p",
           null,
           "Created by ",
           poll.creator.display_name
         ),
-        React.createElement(
-          "p",
-          null,
-          poll.description
-        ),
+        this.renderVoted(poll),
         React.createElement(Results, { responses: this.state.poll.poll_options }),
         React.createElement(
           "div",
@@ -52415,7 +52438,6 @@ define('components/polls/index', ["exports", "module", "underscore", "underscore
     },
 
     handleFetch: function (cb, er, res) {
-      console.debug("Polls res", res);
       if (er) return cb(er);
       this.update({
         polls: { $set: _.unique(this.state.polls.concat(res.data), "id") }

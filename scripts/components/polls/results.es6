@@ -74,26 +74,19 @@ export default React.createClass({
   },
 
   render: function() {
-    if (this.props.responses === null) {
-      return (
-        <p>
-          <strong>The results are hidden.</strong>
-        </p>
-      );
-    } else {
-      return (
-        <div>
-          <div className="osw-polls-panel-header">
-            <h4>Poll Results</h4>
-            <button onClick={this.sortOptions}>{this.sortButtonLabel()}</button>
-          </div>
-          <table className="osw-poll-results">
-            <tbody>
-              {this.renderResponses()}
-            </tbody>
-          </table>
+    if (this.props.responses === null) return (<p><strong>The results are hidden.</strong></p>);
+    return (
+      <div>
+        <div className="osw-polls-panel-header group">
+          <h4>Poll Results</h4>
+          <button className="osw-button" onClick={this.sortOptions}>{this.sortButtonLabel()}</button>
         </div>
-      );
-    }
+        <table className="osw-poll-results">
+          <tbody>
+            {this.renderResponses()}
+          </tbody>
+        </table>
+      </div>
+    );
   }
 });

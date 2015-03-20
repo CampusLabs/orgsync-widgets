@@ -1804,9 +1804,16 @@
   font-weight: 300;
   font-style: normal;
   line-height: 150%; }
+  .orgsync-widget .osw-polls-panel-header button {
+    float: right; }
   .orgsync-widget .osw-polls-panel-header h4 {
+    float: left;
     padding: 8px;
     margin: 0; }
+.orgsync-widget .group:after {
+  content: "";
+  display: block;
+  clear: both; }
 .orgsync-widget .osw-polls-show-description {
   font-size: 10pt;
   padding: 5px;

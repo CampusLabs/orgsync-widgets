@@ -1,3 +1,4 @@
+import moment from 'moment';
 import React from 'react';
 import {getPictureUrl} from 'entities/account';
 
@@ -12,7 +13,7 @@ export default React.createClass({
         </div>
         <div className='media-right'>
           {this.props.account.display_name}<br />
-          <span className='subtle-text'>{this.props.createdAt}</span>
+          <span className='subtle-text'>{moment(this.props.createdAt).fromNow()}</span>
         </div>
       </div>
     );

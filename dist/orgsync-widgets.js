@@ -51319,10 +51319,12 @@ define('components/ui/button-row', ["exports", "module", "cursors", "utils/join-
   });
 });
 // scripts/components/shared/created-by.es6
-define('components/shared/created-by', ["exports", "module", "react", "entities/account"], function (exports, module, _react, _entitiesAccount) {
+define('components/shared/created-by', ["exports", "module", "moment", "react", "entities/account"], function (exports, module, _moment, _react, _entitiesAccount) {
   "use strict";
 
   var _interopRequire = function (obj) { return obj && obj.__esModule ? obj["default"] : obj; };
+
+  var moment = _interopRequire(_moment);
 
   var React = _interopRequire(_react);
 
@@ -51348,7 +51350,7 @@ define('components/shared/created-by', ["exports", "module", "react", "entities/
           React.createElement(
             "span",
             { className: "subtle-text" },
-            this.props.createdAt
+            moment(this.props.createdAt).fromNow()
           )
         )
       );
@@ -51715,7 +51717,7 @@ define('components/forms/index', ["exports", "module", "underscore", "underscore
   });
 });
 // scripts/components/news-posts/show.es6
-define('components/news-posts/show', ["exports", "module", "components/comments/index", "components/shared/created-by", "cursors", "moment", "react"], function (exports, module, _componentsCommentsIndex, _componentsSharedCreatedBy, _cursors, _moment, _react) {
+define('components/news-posts/show', ["exports", "module", "components/comments/index", "components/shared/created-by", "cursors", "react"], function (exports, module, _componentsCommentsIndex, _componentsSharedCreatedBy, _cursors, _react) {
   "use strict";
 
   var _interopRequire = function (obj) { return obj && obj.__esModule ? obj["default"] : obj; };
@@ -51725,8 +51727,6 @@ define('components/news-posts/show', ["exports", "module", "components/comments/
   var CreatedBy = _interopRequire(_componentsSharedCreatedBy);
 
   var Cursors = _interopRequire(_cursors);
-
-  var moment = _interopRequire(_moment);
 
   var React = _interopRequire(_react);
 
@@ -51748,11 +51748,6 @@ define('components/news-posts/show', ["exports", "module", "components/comments/
             newsPost.title
           ),
           React.createElement(CreatedBy, { account: newsPost.creator, createdAt: newsPost.created_at }),
-          React.createElement(
-            "div",
-            { className: "osw-news-posts-show-time" },
-            moment(newsPost.created_at).fromNow()
-          ),
           React.createElement("div", {
             className: "osw-news-posts-show-body",
             dangerouslySetInnerHTML: { __html: newsPost.body }

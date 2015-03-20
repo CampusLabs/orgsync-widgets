@@ -1,7 +1,6 @@
 import CommentsIndex from 'components/comments/index';
 import CreatedBy from 'components/shared/created-by';
 import Cursors from 'cursors';
-import moment from 'moment';
 import React from 'react';
 
 export default React.createClass({
@@ -16,9 +15,6 @@ export default React.createClass({
 
           <CreatedBy account={newsPost.creator} createdAt={newsPost.created_at} />
 
-          <div className='osw-news-posts-show-time'>
-            {moment(newsPost.created_at).fromNow()}
-          </div>
           <div
             className='osw-news-posts-show-body'
             dangerouslySetInnerHTML={{__html: newsPost.body}}

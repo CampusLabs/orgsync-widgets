@@ -1,4 +1,5 @@
 import CommentsIndex from 'components/comments/index';
+import CreatedBy from 'components/shared/created-by';
 import Cursors from 'cursors';
 import moment from 'moment';
 import React from 'react';
@@ -12,9 +13,9 @@ export default React.createClass({
       <div className='osw-news-posts-show'>
         <div className='osw-news-posts-show-content'>
           <div className='osw-news-posts-show-title'>{newsPost.title}</div>
-          <div className='osw-news-posts-show-creator'>
-            {newsPost.creator.display_name}
-          </div>
+
+          <CreatedBy account={newsPost.creator} createdAt={newsPost.created_at} />
+
           <div className='osw-news-posts-show-time'>
             {moment(newsPost.created_at).fromNow()}
           </div>

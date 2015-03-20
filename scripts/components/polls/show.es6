@@ -2,9 +2,11 @@ import _ from 'underscore';
 import api from 'api';
 import Button from 'components/ui/button';
 import ButtonRow from 'components/ui/button-row';
+import CreatedBy from 'components/shared/created-by';
 import Cursors from 'cursors';
 import React from 'react';
 import Results from 'components/polls/results';
+
 
 export default React.createClass({
   mixins: [Cursors],
@@ -38,8 +40,10 @@ export default React.createClass({
     var poll = this.state.poll;
     return (
       <div className='osw-polls-show'>
-        <h3>{poll.name}</h3>
-        <p>Created by {poll.creator.display_name}</p>
+        <h1>{poll.name}</h1>
+
+        <CreatedBy account={poll.creator} createdAt={poll.created_at} />
+
         <p>{poll.description}</p>
 
         <Results responses={this.state.poll.poll_options} />

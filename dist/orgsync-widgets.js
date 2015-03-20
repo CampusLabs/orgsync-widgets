@@ -51318,8 +51318,45 @@ define('components/ui/button-row', ["exports", "module", "cursors", "utils/join-
     }
   });
 });
+// scripts/components/shared/created-by.es6
+define('components/shared/created-by', ["exports", "module", "react", "entities/account"], function (exports, module, _react, _entitiesAccount) {
+  "use strict";
+
+  var _interopRequire = function (obj) { return obj && obj.__esModule ? obj["default"] : obj; };
+
+  var React = _interopRequire(_react);
+
+  var getPictureUrl = _entitiesAccount.getPictureUrl;
+  module.exports = React.createClass({
+    displayName: "created-by",
+    render: function () {
+      return React.createElement(
+        "div",
+        { className: "media" },
+        React.createElement(
+          "div",
+          { className: "pull-left" },
+          React.createElement("img", {
+            src: getPictureUrl(this.props.account)
+          })
+        ),
+        React.createElement(
+          "div",
+          { className: "media-right" },
+          this.props.account.display_name,
+          React.createElement("br", null),
+          React.createElement(
+            "span",
+            { className: "subtle-text" },
+            this.props.createdAt
+          )
+        )
+      );
+    }
+  });
+});
 // scripts/components/forms/show.es6
-define('components/forms/show', ["exports", "module", "api", "components/ui/button", "components/ui/button-row", "cursors", "react"], function (exports, module, _api, _componentsUiButton, _componentsUiButtonRow, _cursors, _react) {
+define('components/forms/show', ["exports", "module", "api", "components/ui/button", "components/ui/button-row", "cursors", "components/shared/created-by", "react"], function (exports, module, _api, _componentsUiButton, _componentsUiButtonRow, _cursors, _componentsSharedCreatedBy, _react) {
   "use strict";
 
   var _interopRequire = function (obj) { return obj && obj.__esModule ? obj["default"] : obj; };
@@ -51331,6 +51368,8 @@ define('components/forms/show', ["exports", "module", "api", "components/ui/butt
   var ButtonRow = _interopRequire(_componentsUiButtonRow);
 
   var Cursors = _interopRequire(_cursors);
+
+  var CreatedBy = _interopRequire(_componentsSharedCreatedBy);
 
   var React = _interopRequire(_react);
 
@@ -51358,10 +51397,6 @@ define('components/forms/show', ["exports", "module", "api", "components/ui/butt
       this.update(deltas);
     },
 
-    showCreator: function (form) {
-      return "Created by " + form.creator.display_name;
-    },
-
     renderDescription: function (description) {
       if (!description || /^\s*$/.test(description)) return "No description provided";
       return description;
@@ -51382,11 +51417,7 @@ define('components/forms/show', ["exports", "module", "api", "components/ui/butt
           { className: "osw-forms-show-category" },
           form.category.name
         ),
-        React.createElement(
-          "div",
-          { className: "osw-forms-show-creator" },
-          this.showCreator(form)
-        ),
+        React.createElement(CreatedBy, { account: form.creator, createdAt: form.created_at }),
         React.createElement(
           "div",
           { className: "osw-forms-show-description" },
@@ -51684,12 +51715,14 @@ define('components/forms/index', ["exports", "module", "underscore", "underscore
   });
 });
 // scripts/components/news-posts/show.es6
-define('components/news-posts/show', ["exports", "module", "components/comments/index", "cursors", "moment", "react"], function (exports, module, _componentsCommentsIndex, _cursors, _moment, _react) {
+define('components/news-posts/show', ["exports", "module", "components/comments/index", "components/shared/created-by", "cursors", "moment", "react"], function (exports, module, _componentsCommentsIndex, _componentsSharedCreatedBy, _cursors, _moment, _react) {
   "use strict";
 
   var _interopRequire = function (obj) { return obj && obj.__esModule ? obj["default"] : obj; };
 
   var CommentsIndex = _interopRequire(_componentsCommentsIndex);
+
+  var CreatedBy = _interopRequire(_componentsSharedCreatedBy);
 
   var Cursors = _interopRequire(_cursors);
 
@@ -51714,11 +51747,7 @@ define('components/news-posts/show', ["exports", "module", "components/comments/
             { className: "osw-news-posts-show-title" },
             newsPost.title
           ),
-          React.createElement(
-            "div",
-            { className: "osw-news-posts-show-creator" },
-            newsPost.creator.display_name
-          ),
+          React.createElement(CreatedBy, { account: newsPost.creator, createdAt: newsPost.created_at }),
           React.createElement(
             "div",
             { className: "osw-news-posts-show-time" },
@@ -52134,7 +52163,7 @@ define('components/polls/results', ["exports", "module", "underscore", "react"],
   });
 });
 // scripts/components/polls/show.es6
-define('components/polls/show', ["exports", "module", "underscore", "api", "components/ui/button", "components/ui/button-row", "cursors", "react", "components/polls/results"], function (exports, module, _underscore, _api, _componentsUiButton, _componentsUiButtonRow, _cursors, _react, _componentsPollsResults) {
+define('components/polls/show', ["exports", "module", "underscore", "api", "components/ui/button", "components/ui/button-row", "components/shared/created-by", "cursors", "react", "components/polls/results"], function (exports, module, _underscore, _api, _componentsUiButton, _componentsUiButtonRow, _componentsSharedCreatedBy, _cursors, _react, _componentsPollsResults) {
   "use strict";
 
   var _interopRequire = function (obj) { return obj && obj.__esModule ? obj["default"] : obj; };
@@ -52146,6 +52175,8 @@ define('components/polls/show', ["exports", "module", "underscore", "api", "comp
   var Button = _interopRequire(_componentsUiButton);
 
   var ButtonRow = _interopRequire(_componentsUiButtonRow);
+
+  var CreatedBy = _interopRequire(_componentsSharedCreatedBy);
 
   var Cursors = _interopRequire(_cursors);
 
@@ -52183,16 +52214,11 @@ define('components/polls/show', ["exports", "module", "underscore", "api", "comp
         "div",
         { className: "osw-polls-show" },
         React.createElement(
-          "h3",
+          "h1",
           null,
           poll.name
         ),
-        React.createElement(
-          "p",
-          null,
-          "Created by ",
-          poll.creator.display_name
-        ),
+        React.createElement(CreatedBy, { account: poll.creator, createdAt: poll.created_at }),
         React.createElement(
           "p",
           null,

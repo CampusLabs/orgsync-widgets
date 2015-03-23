@@ -45494,7 +45494,7 @@ define('components/builder/index', ["exports", "module", "underscore", "undersco
     },
     Polls: {
       moduleName: "polls/index",
-      props: ["portalId"]
+      props: ["portalId", "limit"]
     },
     Portals: {
       moduleName: "portals/index",
@@ -52060,7 +52060,12 @@ define('components/polls/results', ["exports", "module", "underscore", "react"],
           React.createElement(
             "td",
             null,
-            React.createElement("div", { className: "osw-poll-bar", style: { width: that.percentageOfLeader(response.poll_votes_count, 88) } }),
+            React.createElement("div", {
+              className: "osw-poll-bar",
+              style: {
+                width: that.percentageOfLeader(response.poll_votes_count, 88)
+              }
+            }),
             React.createElement(
               "div",
               { className: "osw-poll-bar-count" },
@@ -52100,6 +52105,7 @@ define('components/polls/results', ["exports", "module", "underscore", "react"],
           "The results are hidden."
         )
       );
+
       return React.createElement(
         "div",
         null,
@@ -52113,7 +52119,10 @@ define('components/polls/results', ["exports", "module", "underscore", "react"],
           ),
           React.createElement(
             "button",
-            { className: "osw-button", onClick: this.sortOptions },
+            {
+              className: "osw-button",
+              onClick: this.sortOptions
+            },
             this.sortButtonLabel()
           )
         ),
@@ -52204,6 +52213,7 @@ define('components/polls/show', ["exports", "module", "underscore", "api", "comp
     },
 
     render: function () {
+      console.debug("show poll props", this.props);
       var poll = this.state.poll;
       return React.createElement(
         "div",
@@ -52325,6 +52335,7 @@ define('components/polls/list-item', ["exports", "module", "underscore", "cursor
     },
 
     renderStatusLink: function (poll) {
+      if (this.props.limit) return;
       return React.createElement(
         "div",
         { className: "osw-polls-status", onClick: this.openShow },
@@ -52354,11 +52365,15 @@ define('components/polls/list-item', ["exports", "module", "underscore", "cursor
       );
     },
 
+    renderBorderClass: function () {
+      return this.props.limit ? "osw-polls-no-border" : "";
+    },
+
     render: function () {
       var poll = this.state.poll;
       return React.createElement(
         "div",
-        { className: "osw-polls-list-item" },
+        { className: "osw-polls-list-item " + this.renderBorderClass() },
         React.createElement(
           "div",
           { className: "osw-polls-list-item-info", style: { float: "left" } },
@@ -52408,7 +52423,11 @@ define('components/polls/index', ["exports", "module", "underscore", "underscore
     mixins: [Cursors],
 
     propTypes: {
-      portalId: React.PropTypes.number
+      /* Specify which portal's polls to retrieve */
+      portalId: React.PropTypes.number,
+
+      /* If you'd like to limit the number of polls to show, specify a number */
+      limit: React.PropTypes.number
     },
 
     getDefaultProps: function () {
@@ -52417,7 +52436,8 @@ define('components/polls/index', ["exports", "module", "underscore", "underscore
         polls: [],
         filtersAreShowing: true,
         query: "",
-        searchableAttributes: ["name"]
+        searchableAttributes: ["name"],
+        limit: null
       };
     },
 
@@ -52432,6 +52452,7 @@ define('components/polls/index', ["exports", "module", "underscore", "underscore
     fetch: function (cb) {
       api.get("/portals/:portal_id/polls", {
         portal_id: this.props.portalId,
+        limit: this.props.limit,
         page: Math.floor(this.state.polls.length / PER_PAGE) + 1,
         per_page: PER_PAGE
       }, _.partial(this.handleFetch, cb));
@@ -52481,7 +52502,7 @@ define('components/polls/index', ["exports", "module", "underscore", "underscore
     },
 
     renderFilters: function (polls) {
-      if (!this.state.polls.length || !this.props.filtersAreShowing) return;
+      if (!this.state.polls.length || !this.props.filtersAreShowing || this.props.limit) return;
       return React.createElement(Filters, {
         polls: polls,
         getFacet: this.getFacet,

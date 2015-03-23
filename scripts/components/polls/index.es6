@@ -14,7 +14,11 @@ export default React.createClass({
   mixins: [Cursors],
 
   propTypes: {
-    portalId: React.PropTypes.number
+    /* Specify which portal's polls to retrieve */
+    portalId: React.PropTypes.number,
+
+    /* If you'd like to limit the number of polls to show, specify a number */
+    limit: React.PropTypes.number
   },
 
   getDefaultProps: function () {
@@ -23,7 +27,8 @@ export default React.createClass({
       polls: [],
       filtersAreShowing: true,
       query: '',
-      searchableAttributes: ['name']
+      searchableAttributes: ['name'],
+      limit: null
     };
   },
 
@@ -38,6 +43,7 @@ export default React.createClass({
   fetch: function (cb) {
     api.get('/portals/:portal_id/polls', {
       portal_id: this.props.portalId,
+      limit: this.props.limit,
       page: Math.floor(this.state.polls.length / PER_PAGE) + 1,
       per_page: PER_PAGE
     }, _.partial(this.handleFetch, cb));
@@ -94,7 +100,8 @@ export default React.createClass({
   },
 
   renderFilters: function (polls) {
-    if (!this.state.polls.length || !this.props.filtersAreShowing) return;
+    if (!this.state.polls.length || !this.props.filtersAreShowing ||
+      this.props.limit) return;
     return (
       <Filters
         polls={polls}

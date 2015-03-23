@@ -56,6 +56,7 @@ export default React.createClass({
   },
 
   render: function () {
+    console.debug("show poll props", this.props);
     var poll = this.state.poll;
     return (
       <div className='osw-polls-show'>

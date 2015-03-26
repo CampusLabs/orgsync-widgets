@@ -46218,6 +46218,10 @@ define('components/builder/index', ["exports", "module", "underscore", "undersco
       moduleName: "bookmarks/index",
       props: ["portalId"]
     },
+    ContactUs: {
+      moduleName: "contact-us/index",
+      props: ["to", "subject", "body"]
+    },
     Events: {
       moduleName: "events/index",
       props: ["communityId", "portalId", "view", "lockView", "tz", "activeEventFilterIds"]
@@ -46388,6 +46392,40 @@ define('components/builder/index', ["exports", "module", "underscore", "undersco
           { className: "osw-builder-index-right orgsync-widget" },
           this.renderPreview()
         )
+      );
+    }
+  });
+});
+// scripts/components/contact-us/index.es6
+define('components/contact-us/index', ["exports", "module", "components/ui/button", "react"], function (exports, module, _componentsUiButton, _react) {
+  "use strict";
+
+  var _interopRequire = function (obj) { return obj && obj.__esModule ? obj["default"] : obj; };
+
+  var Button = _interopRequire(_componentsUiButton);
+
+  var React = _interopRequire(_react);
+
+  module.exports = React.createClass({
+    displayName: "index",
+    propTypes: {
+      to: React.PropTypes.string.isRequired,
+      subject: React.PropTypes.string,
+      body: React.PropTypes.string
+    },
+
+    getDefaultProps: function () {
+      return {
+        subject: "",
+        body: ""
+      };
+    },
+
+    render: function () {
+      return React.createElement(
+        "a",
+        { href: "mailto:" + this.props.to + "?subject=" + this.props.subject + "&body=" + this.props.body },
+        "Contact Us"
       );
     }
   });

@@ -15,6 +15,14 @@ const WIDGETS = {
     moduleName: 'bookmarks/index',
     props: ['portalId']
   },
+  ContactUs: {
+    moduleName: 'contact-us/index',
+    props: [
+      'to',
+      'subject',
+      'body'
+    ]
+  },
   Events: {
     moduleName: 'events/index',
     props: [

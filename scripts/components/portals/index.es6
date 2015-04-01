@@ -66,7 +66,6 @@ export default React.createClass({
   },
 
   handleFetch: function (cb, er, res) {
-    console.debug('res', res);
     if (er) return cb(er);
     this.sortAndUpdate(res.data);
     cb(null, true);

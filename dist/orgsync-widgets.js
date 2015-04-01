@@ -45492,6 +45492,10 @@ define('components/builder/index', ["exports", "module", "underscore", "undersco
       moduleName: "news-posts/index",
       props: ["portalId", "truncateLength", "redirect"]
     },
+    Polls: {
+      moduleName: "polls/index",
+      props: ["portalId", "limit"]
+    },
     Portals: {
       moduleName: "portals/index",
       props: ["communityId", "umbrella", "category", "letter", "filtersAreShowing", "redirect"]
@@ -51975,6 +51979,632 @@ define('components/news-posts/index', ["exports", "module", "underscore", "api",
         renderItem: this.renderListItem,
         fetch: this.fetch
       });
+    }
+  });
+});
+// scripts/components/polls/filters.es6
+define('components/polls/filters', ["exports", "module", "cursors", "components/shared/faceted-selector", "utils/join-class-names", "components/shared/query", "react", "components/shared/summary"], function (exports, module, _cursors, _componentsSharedFacetedSelector, _utilsJoinClassNames, _componentsSharedQuery, _react, _componentsSharedSummary) {
+  "use strict";
+
+  var _interopRequire = function (obj) { return obj && obj.__esModule ? obj["default"] : obj; };
+
+  var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+
+  var Cursors = _interopRequire(_cursors);
+
+  var FacetedSelector = _interopRequire(_componentsSharedFacetedSelector);
+
+  var joinClassNames = _interopRequire(_utilsJoinClassNames);
+
+  var Query = _interopRequire(_componentsSharedQuery);
+
+  var React = _interopRequire(_react);
+
+  var Summary = _interopRequire(_componentsSharedSummary);
+
+  module.exports = React.createClass({
+    displayName: "filters",
+    mixins: [Cursors],
+
+    handleChange: function (ev) {
+      var deltas = {};
+      deltas[ev.target.name] = { $set: ev.target.value };
+      this.update(deltas);
+    },
+
+    render: function () {
+      return React.createElement(
+        "div",
+        { className: "osw-polls-filters" },
+        React.createElement(Query, { value: this.state.query, onChange: this.handleChange }),
+        React.createElement(FacetedSelector, _extends({}, this.props, {
+          allOption: "All Categories",
+          className: joinClassNames("oswi-book", this.props.className),
+          getFacet: this.props.getFacet,
+          name: "category",
+          objects: this.props.polls,
+          onChange: this.handleChange,
+          showMatchCount: false,
+          value: this.state.category
+        })),
+        React.createElement(Summary, _extends({}, this.props, {
+          filterKeys: ["query", "category"],
+          objects: this.props.polls,
+          showMessage: false
+        }))
+      );
+    }
+  });
+});
+// scripts/components/polls/results.es6
+define('components/polls/results', ["exports", "module", "underscore", "react"], function (exports, module, _underscore, _react) {
+  "use strict";
+
+  var _interopRequire = function (obj) { return obj && obj.__esModule ? obj["default"] : obj; };
+
+  var _ = _interopRequire(_underscore);
+
+  var React = _interopRequire(_react);
+
+  module.exports = React.createClass({
+    displayName: "results",
+    propTypes: {
+      responses: React.PropTypes.array
+    },
+
+    getInitialState: function () {
+      return {
+        sortedByVotes: false
+      };
+    },
+
+    getDefaultProps: function () {
+      return {
+        responses: null
+      };
+    },
+
+    percentageOfLeader: function (votes, maxWidth) {
+      var maxVotes = _.max(this.props.responses, function (response) {
+        return response.poll_votes_count;
+      }).poll_votes_count;
+      return this.calculatePercentage(votes, maxVotes, maxWidth, 0);
+    },
+
+    calculatePercentage: function (votes, maxVotes, maxWidth, minWidth) {
+      if (votes === 0) {
+        return minWidth + "%";
+      } else {
+        return parseInt(votes / maxVotes * (maxWidth - minWidth) + minWidth) + "%";
+      }
+    },
+
+    totalVotes: function () {
+      return _.reduce(this.props.responses, function (sum, response) {
+        return sum + response.poll_votes_count;
+      }, 0);
+    },
+
+    sortedResponses: function () {
+      if (this.state.sortedByVotes) {
+        return _.sortBy(this.props.responses, "poll_votes_count").reverse();
+      } else {
+        return _.sortBy(this.props.responses, "id");
+      }
+    },
+
+    renderResponses: function () {
+      var that = this;
+      return _.map(this.sortedResponses(), function (response) {
+        return React.createElement(
+          "tr",
+          { key: response.id },
+          React.createElement(
+            "td",
+            { width: "30%" },
+            response.name
+          ),
+          React.createElement(
+            "td",
+            null,
+            React.createElement("div", {
+              className: "osw-poll-bar",
+              style: {
+                width: that.percentageOfLeader(response.poll_votes_count, 88)
+              }
+            }),
+            React.createElement(
+              "div",
+              { className: "osw-poll-bar-count" },
+              response.poll_votes_count
+            )
+          ),
+          React.createElement(
+            "td",
+            { width: "7%" },
+            that.calculatePercentage(response.poll_votes_count, that.totalVotes(), 100, 0)
+          )
+        );
+      });
+    },
+
+    sortOptions: function () {
+      this.setState({
+        sortedByVotes: !this.state.sortedByVotes
+      });
+    },
+
+    sortButtonLabel: function () {
+      if (this.state.sortedByVotes) {
+        return "Default";
+      } else {
+        return "Sort";
+      }
+    },
+
+    render: function () {
+      if (this.props.responses === null) return React.createElement(
+        "p",
+        null,
+        React.createElement(
+          "strong",
+          null,
+          "The results are hidden."
+        )
+      );
+
+      return React.createElement(
+        "div",
+        null,
+        React.createElement(
+          "div",
+          { className: "osw-polls-panel-header group" },
+          React.createElement(
+            "h4",
+            null,
+            "Poll Results"
+          ),
+          React.createElement(
+            "button",
+            {
+              className: "osw-button",
+              onClick: this.sortOptions
+            },
+            this.sortButtonLabel()
+          )
+        ),
+        React.createElement(
+          "table",
+          { className: "osw-poll-results" },
+          React.createElement(
+            "tbody",
+            null,
+            this.renderResponses()
+          )
+        )
+      );
+    }
+  });
+});
+// scripts/components/polls/show.es6
+define('components/polls/show', ["exports", "module", "underscore", "api", "components/ui/button", "components/ui/button-row", "cursors", "moment", "react", "components/polls/results"], function (exports, module, _underscore, _api, _componentsUiButton, _componentsUiButtonRow, _cursors, _moment, _react, _componentsPollsResults) {
+  "use strict";
+
+  var _interopRequire = function (obj) { return obj && obj.__esModule ? obj["default"] : obj; };
+
+  var _ = _interopRequire(_underscore);
+
+  var api = _interopRequire(_api);
+
+  var Button = _interopRequire(_componentsUiButton);
+
+  var ButtonRow = _interopRequire(_componentsUiButtonRow);
+
+  var Cursors = _interopRequire(_cursors);
+
+  var moment = _interopRequire(_moment);
+
+  var React = _interopRequire(_react);
+
+  var Results = _interopRequire(_componentsPollsResults);
+
+  var FORMAT = "MMM D, YYYY";
+
+  module.exports = React.createClass({
+    displayName: "show",
+    mixins: [Cursors],
+
+    getInitialState: function () {
+      return {
+        isLoading: false,
+        error: null
+      };
+    },
+
+    componentWillMount: function () {
+      var poll = this.state.poll;
+      if (poll.description != null) return;
+      this.update({ isLoading: { $set: true }, error: { $set: null } });
+      api.get("/portals/:portal_id/polls/:id", { portal_id: this.props.portalId, id: poll.id }, this.handleFetch);
+    },
+
+    handleFetch: function (er, res) {
+      var deltas = { isLoading: { $set: false } };
+      if (er) deltas.error = { $set: er };else deltas.poll = { $set: res.data };
+      this.update(deltas);
+    },
+
+    formatDate: function (dateString) {
+      return moment(dateString).format(FORMAT);
+    },
+
+    renderStatus: function (poll) {
+      if (!poll.is_open) {
+        return React.createElement(
+          "p",
+          null,
+          "This poll was open from ",
+          this.formatDate(poll.begins_at),
+          " to ",
+          this.formatDate(poll.ends_at)
+        );
+      }
+    },
+
+    renderVoted: function (poll) {
+      if (poll.has_voted) return React.createElement(
+        "p",
+        null,
+        "You have voted on this poll."
+      );
+    },
+
+    render: function () {
+      var poll = this.state.poll;
+      return React.createElement(
+        "div",
+        { className: "osw-polls-show" },
+        React.createElement(
+          "h3",
+          null,
+          poll.name
+        ),
+        this.renderStatus(poll),
+        React.createElement(
+          "p",
+          null,
+          "Created by ",
+          poll.creator.display_name
+        ),
+        this.renderVoted(poll),
+        React.createElement(Results, { responses: this.state.poll.poll_options }),
+        React.createElement(
+          "div",
+          { className: "osw-button-row" },
+          React.createElement(
+            ButtonRow,
+            null,
+            React.createElement(
+              Button,
+              { href: poll.links.web, target: "_parent" },
+              "View on OrgSync.com"
+            )
+          )
+        )
+      );
+    }
+  });
+});
+// scripts/components/polls/list-item.es6
+define('components/polls/list-item', ["exports", "module", "underscore", "cursors", "moment", "components/ui/popup", "react", "components/ui/sep", "components/polls/show"], function (exports, module, _underscore, _cursors, _moment, _componentsUiPopup, _react, _componentsUiSep, _componentsPollsShow) {
+  "use strict";
+
+  var _interopRequire = function (obj) { return obj && obj.__esModule ? obj["default"] : obj; };
+
+  var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+
+  var _ = _interopRequire(_underscore);
+
+  var Cursors = _interopRequire(_cursors);
+
+  var moment = _interopRequire(_moment);
+
+  var Popup = _interopRequire(_componentsUiPopup);
+
+  var React = _interopRequire(_react);
+
+  var Sep = _interopRequire(_componentsUiSep);
+
+  var Show = _interopRequire(_componentsPollsShow);
+
+  var FORMAT = "MMM D, YYYY";
+
+  module.exports = React.createClass({
+    displayName: "list-item",
+    mixins: [Cursors],
+
+    propTypes: {
+      key: React.PropTypes.number
+    },
+
+    getInitialState: function () {
+      return {
+        showIsOpen: false
+      };
+    },
+
+    openShow: function (ev) {
+      this.update({ showIsOpen: { $set: true } });
+    },
+
+    closeShow: function () {
+      this.update({ showIsOpen: { $set: false } });
+    },
+
+    renderShow: function () {
+      if (!this.state.showIsOpen) return;
+      return React.createElement(Show, _extends({}, this.props, {
+        cursors: { poll: this.getCursor("poll") }
+      }));
+    },
+
+    renderShowPopup: function () {
+      return React.createElement(
+        Popup,
+        {
+          close: this.closeShow,
+          name: "polls-show",
+          title: "Poll Details" },
+        this.renderShow()
+      );
+    },
+
+    renderStatusText: function (poll) {
+      if (poll.is_open) {
+        if (poll.has_voted) return React.createElement(
+          "p",
+          { className: "voted" },
+          "VOTED"
+        );
+        return React.createElement(
+          "p",
+          { className: "vote-now" },
+          "VOTE NOW"
+        );
+      } else {
+        return React.createElement(
+          "p",
+          { className: "closed" },
+          "CLOSED"
+        );
+      }
+    },
+
+    renderStatusLink: function (poll) {
+      if (this.props.limit) return;
+      return React.createElement(
+        "div",
+        { className: "osw-polls-status", onClick: this.openShow },
+        this.renderStatusText(poll)
+      );
+    },
+
+    renderVoteCount: function (poll) {
+      if (poll.vote_count > 999) return "999+";
+      return poll.vote_count;
+    },
+
+    renderPollBox: function (poll) {
+      return React.createElement(
+        "div",
+        { className: "osw-polls-box-wrapper" },
+        React.createElement(
+          "div",
+          { className: "osw-polls-box-number" },
+          this.renderVoteCount(poll)
+        ),
+        React.createElement(
+          "div",
+          { className: "osw-polls-box-footer" },
+          poll.vote_count === 1 ? "Vote" : "Votes"
+        )
+      );
+    },
+
+    renderBorderClass: function () {
+      return this.props.limit ? "osw-polls-no-border" : "";
+    },
+
+    render: function () {
+      var poll = this.state.poll;
+      return React.createElement(
+        "div",
+        { className: "osw-polls-list-item " + this.renderBorderClass() },
+        React.createElement(
+          "div",
+          { className: "osw-polls-list-item-info", style: { float: "left" } },
+          this.renderPollBox(poll),
+          React.createElement(
+            "div",
+            { className: "osw-polls-list-item-name", onClick: this.openShow },
+            poll.name
+          )
+        ),
+        this.renderStatusLink(poll),
+        this.renderShowPopup()
+      );
+    }
+  });
+});
+// scripts/components/polls/index.es6
+define('components/polls/index', ["exports", "module", "underscore", "underscore.string", "api", "cursors", "components/shared/empty", "components/ui/error-block", "components/polls/filters", "react-list", "components/ui/loading-block", "components/polls/list-item", "react"], function (exports, module, _underscore, _underscoreString, _api, _cursors, _componentsSharedEmpty, _componentsUiErrorBlock, _componentsPollsFilters, _reactList, _componentsUiLoadingBlock, _componentsPollsListItem, _react) {
+  "use strict";
+
+  var _interopRequire = function (obj) { return obj && obj.__esModule ? obj["default"] : obj; };
+
+  var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+
+  var _ = _interopRequire(_underscore);
+
+  var _str = _interopRequire(_underscoreString);
+
+  var api = _interopRequire(_api);
+
+  var Cursors = _interopRequire(_cursors);
+
+  var Empty = _interopRequire(_componentsSharedEmpty);
+
+  var ErrorBlock = _interopRequire(_componentsUiErrorBlock);
+
+  var Filters = _interopRequire(_componentsPollsFilters);
+
+  var List = _interopRequire(_reactList);
+
+  var LoadingBlock = _interopRequire(_componentsUiLoadingBlock);
+
+  var PollsListItem = _interopRequire(_componentsPollsListItem);
+
+  var React = _interopRequire(_react);
+
+  var PER_PAGE = 10;
+
+  module.exports = React.createClass({
+    displayName: "index",
+    mixins: [Cursors],
+
+    propTypes: {
+      /* Specify which portal's polls to retrieve */
+      portalId: React.PropTypes.number,
+
+      /* If you'd like to limit the number of polls to show, specify a number */
+      limit: React.PropTypes.number
+    },
+
+    getDefaultProps: function () {
+      return {
+        category: "",
+        polls: [],
+        filtersAreShowing: true,
+        query: "",
+        searchableAttributes: ["name"],
+        limit: null
+      };
+    },
+
+    getInitialState: function () {
+      return {
+        category: this.props.category,
+        polls: this.props.polls,
+        query: this.props.query
+      };
+    },
+
+    fetch: function (cb) {
+      api.get("/portals/:portal_id/polls", {
+        portal_id: this.props.portalId,
+        limit: this.props.limit,
+        page: Math.floor(this.state.polls.length / PER_PAGE) + 1,
+        per_page: PER_PAGE
+      }, _.partial(this.handleFetch, cb));
+    },
+
+    handleFetch: function (cb, er, res) {
+      if (er) return cb(er);
+      this.update({
+        polls: { $set: _.unique(this.state.polls.concat(res.data), "id") }
+      });
+      cb(null, res.data.length < PER_PAGE);
+    },
+
+    getFacet: function (poll) {
+      if (poll.is_open) return "Open";
+      return "Closed";
+    },
+
+    matchesCategory: function (poll) {
+      var a = this.state.category;
+      var b = this.getFacet(poll);
+      return !a || a === b;
+    },
+
+    matchesQuery: function (poll) {
+      var query = this.state.query;
+      if (!query) return true;
+      var words = _str.words(query.toLowerCase());
+      var searchableWords = this.searchableWordsFor(poll);
+      return _.every(words, function (wordA) {
+        return _.any(searchableWords, function (wordB) {
+          return _str.startsWith(wordB, wordA);
+        });
+      });
+    },
+
+    searchableWordsFor: function (poll) {
+      return _str.words(_.values(_.pick(poll, this.props.searchableAttributes)).join(" ").toLowerCase());
+    },
+
+    pollMatchesFilters: function (poll) {
+      return this.matchesQuery(poll) && this.matchesCategory(poll);
+    },
+
+    getFilteredPolls: function () {
+      return this.state.polls.filter(this.pollMatchesFilters);
+    },
+
+    renderFilters: function (polls) {
+      if (!this.state.polls.length || !this.props.filtersAreShowing || this.props.limit) return;
+      return React.createElement(Filters, {
+        polls: polls,
+        getFacet: this.getFacet,
+        cursors: {
+          category: this.getCursor("category"),
+          query: this.getCursor("query")
+        }
+      });
+    },
+
+    renderListItem: function (poll) {
+      var i = this.state.polls.indexOf(poll);
+      return React.createElement(PollsListItem, _extends({}, this.props, {
+        key: poll.id,
+        cursors: { poll: this.getCursor("polls", i) }
+      }));
+    },
+
+    renderLoading: function () {
+      return React.createElement(LoadingBlock, null);
+    },
+
+    renderError: function (er) {
+      return React.createElement(ErrorBlock, { message: er.toString() });
+    },
+
+    renderEmpty: function () {
+      return React.createElement(Empty, {
+        objectName: "polls",
+        cursors: {
+          query: this.getCursor("query"),
+          category: this.getCursor("category")
+        }
+      });
+    },
+
+    render: function () {
+      var polls = this.getFilteredPolls();
+      return React.createElement(
+        "div",
+        { className: "osw-polls-index" },
+        this.renderFilters(polls),
+        React.createElement(List, _extends({}, this.props, {
+          items: polls,
+          fetch: this.fetch,
+          renderLoading: this.renderLoading,
+          renderError: this.renderError,
+          renderItem: this.renderListItem,
+          renderEmpty: this.renderEmpty,
+          uniform: true
+        }))
+      );
     }
   });
 });

@@ -1,0 +1,75 @@
+@import '../config';
+
+.orgsync-widget {
+  .osw-polls-list-item-name {
+    @include ellipsis;
+    color: $blue;
+    font-size: 16px;
+    padding: 11px;
+
+    &:hover {
+      cursor: pointer;
+      text-decoration: underline;
+    }
+  }
+
+  .osw-polls-status {
+    float: right;
+    font-weight: bold;
+
+    .voted {
+      color: $grey;
+    }
+
+    .vote-now {
+      color: $green;
+    }
+
+    .closed {
+      color: $red;
+    }
+
+    &:hover {
+      cursor: pointer;
+      text-decoration: underline;
+    }
+  }
+
+  .osw-polls-list-item {
+    @include clearfix;
+    border-top: 1px solid $grey;
+    padding: 8px;
+
+    &:first-child {
+      border-top: 0;
+      padding-top: 6px;
+    }
+  }
+
+  .osw-polls-no-border {
+    border-top: none;
+    white-space: normal;
+  }
+
+  .osw-polls-box-wrapper {
+    float: left;
+    width: 45px;
+    border-radius: 3px;
+    background-color: rgb(91, 191, 161);
+    text-align: center;
+    text-transform: uppercase;
+    line-height: 15px;
+    color: rgb(255, 255, 255);
+    box-shadow: 1px 0px 0px 0px rgb(222, 222, 222);
+
+    .osw-polls-box-number {
+      font-size: 16px;
+      padding: 8px 0px 0px 0px;
+    }
+
+    .osw-polls-box-footer {
+      font-size: 11px;
+      padding: 0px 0px 4px 0px;
+    }
+  }
+}

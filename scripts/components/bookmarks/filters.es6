@@ -9,7 +9,6 @@ export default React.createClass({
   mixins: [Cursors],
 
   handleChange: function (ev) {
-    console.log(ev.target.value);
     var deltas = {};
     deltas[ev.target.name] = {$set: ev.target.value};
     this.update(deltas);

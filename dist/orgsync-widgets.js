@@ -45693,7 +45693,6 @@ define('components/bookmarks/filters', ["exports", "module", "cursors", "compone
     mixins: [Cursors],
 
     handleChange: function (ev) {
-      console.log(ev.target.value);
       var deltas = {};
       deltas[ev.target.name] = { $set: ev.target.value };
       this.update(deltas);
@@ -45709,85 +45708,6 @@ define('components/bookmarks/filters', ["exports", "module", "cursors", "compone
           objects: this.props.bookmarks,
           showMessage: false
         }))
-      );
-    }
-  });
-});
-// scripts/components/shared/empty.es6
-define('components/shared/empty', ["exports", "module", "components/ui/button", "cursors", "react"], function (exports, module, _componentsUiButton, _cursors, _react) {
-  "use strict";
-
-  var _interopRequire = function (obj) { return obj && obj.__esModule ? obj["default"] : obj; };
-
-  var Button = _interopRequire(_componentsUiButton);
-
-  var Cursors = _interopRequire(_cursors);
-
-  var React = _interopRequire(_react);
-
-  module.exports = React.createClass({
-    displayName: "empty",
-    mixins: [Cursors],
-
-    propTypes: {
-      objectName: React.PropTypes.string
-    },
-
-    getDefaultProps: function () {
-      return {
-        objectName: "items"
-      };
-    },
-
-    handleClick: function () {
-      this.update({
-        umbrella: { $set: "" },
-        category: { $set: "" },
-        letter: { $set: "" },
-        query: { $set: "" }
-      });
-    },
-
-    render: function () {
-      return React.createElement(
-        "div",
-        { className: "osw-portals-empty osw-inset-block" },
-        React.createElement(
-          "div",
-          { className: "osw-portals-empty-apology" },
-          "We're sorry, but no ",
-          this.props.objectName,
-          " match your selected filters."
-        ),
-        React.createElement(
-          "div",
-          { className: "osw-portals-empty-suggestions-header" },
-          "Suggestions"
-        ),
-        React.createElement(
-          "ul",
-          { className: "osw-portals-empty-suggestions" },
-          React.createElement(
-            "li",
-            null,
-            "Make sure all words are spelled correctly"
-          ),
-          React.createElement(
-            "li",
-            null,
-            "Try different, or fewer, keywords"
-          ),
-          React.createElement(
-            "li",
-            null,
-            "Clear all filters to return to all organizations"
-          )
-        ),
-        React.createElement(
-          Button,
-          { onClick: this.handleClick },
-          "Clear All Filters"
-        )
       );
     }
   });
@@ -46028,8 +45948,139 @@ define('components/bookmarks/list-item', ["exports", "module", "underscore", "cu
     }
   });
 });
+// scripts/components/shared/empty.es6
+define('components/shared/empty', ["exports", "module", "components/ui/button", "cursors", "react"], function (exports, module, _componentsUiButton, _cursors, _react) {
+  "use strict";
+
+  var _interopRequire = function (obj) { return obj && obj.__esModule ? obj["default"] : obj; };
+
+  var Button = _interopRequire(_componentsUiButton);
+
+  var Cursors = _interopRequire(_cursors);
+
+  var React = _interopRequire(_react);
+
+  module.exports = React.createClass({
+    displayName: "empty",
+    mixins: [Cursors],
+
+    propTypes: {
+      objectName: React.PropTypes.string
+    },
+
+    getDefaultProps: function () {
+      return {
+        objectName: "items"
+      };
+    },
+
+    handleClick: function () {
+      this.update({
+        umbrella: { $set: "" },
+        category: { $set: "" },
+        letter: { $set: "" },
+        query: { $set: "" }
+      });
+    },
+
+    render: function () {
+      return React.createElement(
+        "div",
+        { className: "osw-portals-empty osw-inset-block" },
+        React.createElement(
+          "div",
+          { className: "osw-portals-empty-apology" },
+          "We're sorry, but no ",
+          this.props.objectName,
+          " match your selected filters."
+        ),
+        React.createElement(
+          "div",
+          { className: "osw-portals-empty-suggestions-header" },
+          "Suggestions"
+        ),
+        React.createElement(
+          "ul",
+          { className: "osw-portals-empty-suggestions" },
+          React.createElement(
+            "li",
+            null,
+            "Make sure all words are spelled correctly"
+          ),
+          React.createElement(
+            "li",
+            null,
+            "Try different, or fewer, keywords"
+          ),
+          React.createElement(
+            "li",
+            null,
+            "Clear all filters to return to all organizations"
+          )
+        ),
+        React.createElement(
+          Button,
+          { onClick: this.handleClick },
+          "Clear All Filters"
+        )
+      );
+    }
+  });
+});
+// scripts/components/ui/error-block.es6
+define('components/ui/error-block', ["exports", "module", "react"], function (exports, module, _react) {
+  "use strict";
+
+  var _interopRequire = function (obj) { return obj && obj.__esModule ? obj["default"] : obj; };
+
+  var React = _interopRequire(_react);
+
+  module.exports = React.createClass({
+    displayName: "error-block",
+    propTypes: {
+      message: React.PropTypes.string.isRequired
+    },
+
+    render: function () {
+      return React.createElement(
+        "div",
+        { className: "osw-inset-block osw-inset-block-red" },
+        this.props.message
+      );
+    }
+  });
+});
+// scripts/components/ui/loading-block.es6
+define('components/ui/loading-block', ["exports", "module", "react"], function (exports, module, _react) {
+  "use strict";
+
+  var _interopRequire = function (obj) { return obj && obj.__esModule ? obj["default"] : obj; };
+
+  var React = _interopRequire(_react);
+
+  module.exports = React.createClass({
+    displayName: "loading-block",
+    propTypes: {
+      message: React.PropTypes.string
+    },
+
+    getDefaultProps: function () {
+      return {
+        message: "Loading..."
+      };
+    },
+
+    render: function () {
+      return React.createElement(
+        "div",
+        { className: "osw-inset-block" },
+        this.props.message
+      );
+    }
+  });
+});
 // scripts/components/bookmarks/index.es6
-define('components/bookmarks/index', ["exports", "module", "underscore", "underscore.string", "api", "cursors", "components/shared/empty", "components/bookmarks/filters", "components/bookmarks/list-item", "react-list", "react"], function (exports, module, _underscore, _underscoreString, _api, _cursors, _componentsSharedEmpty, _componentsBookmarksFilters, _componentsBookmarksListItem, _reactList, _react) {
+define('components/bookmarks/index', ["exports", "module", "underscore", "underscore.string", "api", "components/bookmarks/list-item", "cursors", "components/shared/empty", "components/ui/error-block", "components/bookmarks/filters", "react-list", "components/ui/loading-block", "react"], function (exports, module, _underscore, _underscoreString, _api, _componentsBookmarksListItem, _cursors, _componentsSharedEmpty, _componentsUiErrorBlock, _componentsBookmarksFilters, _reactList, _componentsUiLoadingBlock, _react) {
   "use strict";
 
   var _interopRequire = function (obj) { return obj && obj.__esModule ? obj["default"] : obj; };
@@ -46042,15 +46093,19 @@ define('components/bookmarks/index', ["exports", "module", "underscore", "unders
 
   var api = _interopRequire(_api);
 
+  var BookmarksListItem = _interopRequire(_componentsBookmarksListItem);
+
   var Cursors = _interopRequire(_cursors);
 
   var Empty = _interopRequire(_componentsSharedEmpty);
 
+  var ErrorBlock = _interopRequire(_componentsUiErrorBlock);
+
   var Filters = _interopRequire(_componentsBookmarksFilters);
 
-  var BookmarksListItem = _interopRequire(_componentsBookmarksListItem);
-
   var List = _interopRequire(_reactList);
+
+  var LoadingBlock = _interopRequire(_componentsUiLoadingBlock);
 
   var React = _interopRequire(_react);
 
@@ -46062,19 +46117,14 @@ define('components/bookmarks/index', ["exports", "module", "underscore", "unders
 
     propTypes: {
       /* Specify which portal's bookmarks to retrieve */
-      portalId: React.PropTypes.number,
-
-      /* If you'd like to limit the number of bookmarks to show, specify a number */
-      limit: React.PropTypes.number
-    },
+      portalId: React.PropTypes.number.isRequired },
 
     getDefaultProps: function () {
       return {
         bookmarks: [],
         filtersAreShowing: true,
         query: "",
-        searchableAttributes: ["name"],
-        limit: null
+        searchableAttributes: ["name"]
       };
     },
 
@@ -46088,7 +46138,6 @@ define('components/bookmarks/index', ["exports", "module", "underscore", "unders
     fetch: function (cb) {
       api.get("/portals/:portal_id/links", {
         portal_id: this.props.portalId,
-        limit: this.props.limit,
         page: Math.floor(this.state.bookmarks.length / PER_PAGE) + 1,
         per_page: PER_PAGE
       }, _.partial(this.handleFetch, cb));
@@ -46127,7 +46176,7 @@ define('components/bookmarks/index', ["exports", "module", "underscore", "unders
     },
 
     renderFilters: function (bookmarks) {
-      if (!this.state.bookmarks.length || !this.props.filtersAreShowing || this.props.limit) return;
+      if (!this.state.bookmarks.length || !this.props.filtersAreShowing) return;
       return React.createElement(Filters, {
         bookmarks: bookmarks,
         getFacet: this.getFacet,
@@ -46146,19 +46195,11 @@ define('components/bookmarks/index', ["exports", "module", "underscore", "unders
     },
 
     renderLoading: function () {
-      return React.createElement(
-        "div",
-        { className: "osw-inset-block" },
-        "Loading..."
-      );
+      return React.createElement(LoadingBlock, null);
     },
 
     renderError: function (er) {
-      return React.createElement(
-        "div",
-        { className: "osw-inset-block osw-inset-block-red" },
-        er.toString()
-      );
+      return React.createElement(ErrorBlock, { message: er.toString() });
     },
 
     renderEmpty: function () {
@@ -51720,29 +51761,6 @@ define('components/forms/filters', ["exports", "module", "components/shared/cate
     }
   });
 });
-// scripts/components/ui/error-block.es6
-define('components/ui/error-block', ["exports", "module", "react"], function (exports, module, _react) {
-  "use strict";
-
-  var _interopRequire = function (obj) { return obj && obj.__esModule ? obj["default"] : obj; };
-
-  var React = _interopRequire(_react);
-
-  module.exports = React.createClass({
-    displayName: "error-block",
-    propTypes: {
-      message: React.PropTypes.string.isRequired
-    },
-
-    render: function () {
-      return React.createElement(
-        "div",
-        { className: "osw-inset-block osw-inset-block-red" },
-        this.props.message
-      );
-    }
-  });
-});
 // scripts/components/forms/show.es6
 define('components/forms/show', ["exports", "module", "api", "components/ui/button", "components/ui/button-row", "cursors", "react"], function (exports, module, _api, _componentsUiButton, _componentsUiButtonRow, _cursors, _react) {
   "use strict";
@@ -51936,35 +51954,6 @@ define('components/forms/list-item', ["exports", "module", "cursors", "moment", 
           )
         ),
         this.renderShowPopup()
-      );
-    }
-  });
-});
-// scripts/components/ui/loading-block.es6
-define('components/ui/loading-block', ["exports", "module", "react"], function (exports, module, _react) {
-  "use strict";
-
-  var _interopRequire = function (obj) { return obj && obj.__esModule ? obj["default"] : obj; };
-
-  var React = _interopRequire(_react);
-
-  module.exports = React.createClass({
-    displayName: "loading-block",
-    propTypes: {
-      message: React.PropTypes.string
-    },
-
-    getDefaultProps: function () {
-      return {
-        message: "Loading..."
-      };
-    },
-
-    render: function () {
-      return React.createElement(
-        "div",
-        { className: "osw-inset-block" },
-        this.props.message
       );
     }
   });

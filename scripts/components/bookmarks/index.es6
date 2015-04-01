@@ -1,11 +1,13 @@
 import _ from 'underscore';
 import _str from 'underscore.string';
 import api from 'api';
+import BookmarksListItem from 'components/bookmarks/list-item';
 import Cursors from 'cursors';
 import Empty from 'components/shared/empty';
+import ErrorBlock from 'components/ui/error-block';
 import Filters from 'components/bookmarks/filters';
-import BookmarksListItem from 'components/bookmarks/list-item';
 import List from 'react-list';
+import LoadingBlock from 'components/ui/loading-block';
 import React from 'react';
 
 var PER_PAGE = 10;
@@ -15,10 +17,7 @@ export default React.createClass({
 
   propTypes: {
     /* Specify which portal's bookmarks to retrieve */
-    portalId: React.PropTypes.number,
-
-    /* If you'd like to limit the number of bookmarks to show, specify a number */
-    limit: React.PropTypes.number
+    portalId: React.PropTypes.number.isRequired,
   },
 
   getDefaultProps: function () {
@@ -26,8 +25,7 @@ export default React.createClass({
       bookmarks: [],
       filtersAreShowing: true,
       query: '',
-      searchableAttributes: ['name'],
-      limit: null
+      searchableAttributes: ['name']
     };
   },
 
@@ -41,7 +39,6 @@ export default React.createClass({
   fetch: function (cb) {
     api.get('/portals/:portal_id/links', {
       portal_id: this.props.portalId,
-      limit: this.props.limit,
       page: Math.floor(this.state.bookmarks.length / PER_PAGE) + 1,
       per_page: PER_PAGE
     }, _.partial(this.handleFetch, cb));
@@ -84,8 +81,7 @@ export default React.createClass({
   },
 
   renderFilters: function (bookmarks) {
-    if (!this.state.bookmarks.length || !this.props.filtersAreShowing ||
-      this.props.limit) return;
+    if (!this.state.bookmarks.length || !this.props.filtersAreShowing) return;
     return (
       <Filters
         bookmarks={bookmarks}
@@ -109,13 +105,11 @@ export default React.createClass({
   },
 
   renderLoading: function () {
-    return <div className='osw-inset-block'>Loading...</div>;
+    return <LoadingBlock />;
   },
 
   renderError: function (er) {
-    return (
-      <div className='osw-inset-block osw-inset-block-red'>{er.toString()}</div>
-    );
+    return <ErrorBlock message={er.toString()} />;
   },
 
   renderEmpty: function () {

@@ -51023,7 +51023,7 @@ define('components/shared/category-selector', ["exports", "module", "cursors", "
     mixins: [Cursors],
 
     propTypes: {
-      objects: React.PropTypes.array,
+      objects: React.PropTypes.array.isRequired,
       onChange: React.PropTypes.func.isRequired,
       showMatchCount: React.PropTypes.bool
     },

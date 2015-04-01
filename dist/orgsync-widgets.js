@@ -52439,7 +52439,7 @@ define('components/polls/list-item', ["exports", "module", "underscore", "cursor
   });
 });
 // scripts/components/polls/index.es6
-define('components/polls/index', ["exports", "module", "underscore", "underscore.string", "api", "cursors", "components/shared/empty", "components/polls/filters", "components/polls/list-item", "react-list", "react"], function (exports, module, _underscore, _underscoreString, _api, _cursors, _componentsSharedEmpty, _componentsPollsFilters, _componentsPollsListItem, _reactList, _react) {
+define('components/polls/index', ["exports", "module", "underscore", "underscore.string", "api", "cursors", "components/shared/empty", "components/ui/error-block", "components/polls/filters", "react-list", "components/ui/loading-block", "components/polls/list-item", "react"], function (exports, module, _underscore, _underscoreString, _api, _cursors, _componentsSharedEmpty, _componentsUiErrorBlock, _componentsPollsFilters, _reactList, _componentsUiLoadingBlock, _componentsPollsListItem, _react) {
   "use strict";
 
   var _interopRequire = function (obj) { return obj && obj.__esModule ? obj["default"] : obj; };
@@ -52456,11 +52456,15 @@ define('components/polls/index', ["exports", "module", "underscore", "underscore
 
   var Empty = _interopRequire(_componentsSharedEmpty);
 
+  var ErrorBlock = _interopRequire(_componentsUiErrorBlock);
+
   var Filters = _interopRequire(_componentsPollsFilters);
 
-  var PollsListItem = _interopRequire(_componentsPollsListItem);
-
   var List = _interopRequire(_reactList);
+
+  var LoadingBlock = _interopRequire(_componentsUiLoadingBlock);
+
+  var PollsListItem = _interopRequire(_componentsPollsListItem);
 
   var React = _interopRequire(_react);
 
@@ -52570,19 +52574,11 @@ define('components/polls/index', ["exports", "module", "underscore", "underscore
     },
 
     renderLoading: function () {
-      return React.createElement(
-        "div",
-        { className: "osw-inset-block" },
-        "Loading..."
-      );
+      return React.createElement(LoadingBlock, null);
     },
 
     renderError: function (er) {
-      return React.createElement(
-        "div",
-        { className: "osw-inset-block osw-inset-block-red" },
-        er.toString()
-      );
+      return React.createElement(ErrorBlock, { message: er.toString() });
     },
 
     renderEmpty: function () {

@@ -7,7 +7,7 @@ export default React.createClass({
   mixins: [Cursors],
 
   propTypes: {
-    objects: React.PropTypes.array,
+    objects: React.PropTypes.array.isRequired,
     onChange: React.PropTypes.func.isRequired,
     showMatchCount: React.PropTypes.bool
   },

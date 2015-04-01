@@ -51027,7 +51027,7 @@ define('components/shared/category-selector', ["exports", "module", "cursors", "
     mixins: [Cursors],
 
     propTypes: {
-      objects: React.PropTypes.array,
+      objects: React.PropTypes.array.isRequired,
       onChange: React.PropTypes.func.isRequired,
       showMatchCount: React.PropTypes.bool
     },
@@ -51289,6 +51289,29 @@ define('components/shared/empty', ["exports", "module", "components/ui/button", 
     }
   });
 });
+// scripts/components/ui/error-block.es6
+define('components/ui/error-block', ["exports", "module", "react"], function (exports, module, _react) {
+  "use strict";
+
+  var _interopRequire = function (obj) { return obj && obj.__esModule ? obj["default"] : obj; };
+
+  var React = _interopRequire(_react);
+
+  module.exports = React.createClass({
+    displayName: "error-block",
+    propTypes: {
+      message: React.PropTypes.string.isRequired
+    },
+
+    render: function () {
+      return React.createElement(
+        "div",
+        { className: "osw-inset-block osw-inset-block-red" },
+        this.props.message
+      );
+    }
+  });
+});
 // scripts/components/ui/button-row.es6
 define('components/ui/button-row', ["exports", "module", "cursors", "utils/join-class-names", "react"], function (exports, module, _cursors, _utilsJoinClassNames, _react) {
   "use strict";
@@ -51515,8 +51538,37 @@ define('components/forms/list-item', ["exports", "module", "cursors", "moment", 
     }
   });
 });
+// scripts/components/ui/loading-block.es6
+define('components/ui/loading-block', ["exports", "module", "react"], function (exports, module, _react) {
+  "use strict";
+
+  var _interopRequire = function (obj) { return obj && obj.__esModule ? obj["default"] : obj; };
+
+  var React = _interopRequire(_react);
+
+  module.exports = React.createClass({
+    displayName: "loading-block",
+    propTypes: {
+      message: React.PropTypes.string
+    },
+
+    getDefaultProps: function () {
+      return {
+        message: "Loading..."
+      };
+    },
+
+    render: function () {
+      return React.createElement(
+        "div",
+        { className: "osw-inset-block" },
+        this.props.message
+      );
+    }
+  });
+});
 // scripts/components/forms/index.es6
-define('components/forms/index', ["exports", "module", "underscore", "underscore.string", "api", "cursors", "components/shared/empty", "components/forms/filters", "components/forms/list-item", "react-list", "react"], function (exports, module, _underscore, _underscoreString, _api, _cursors, _componentsSharedEmpty, _componentsFormsFilters, _componentsFormsListItem, _reactList, _react) {
+define('components/forms/index', ["exports", "module", "underscore", "underscore.string", "api", "cursors", "components/shared/empty", "components/ui/error-block", "components/forms/filters", "components/forms/list-item", "react-list", "components/ui/loading-block", "react"], function (exports, module, _underscore, _underscoreString, _api, _cursors, _componentsSharedEmpty, _componentsUiErrorBlock, _componentsFormsFilters, _componentsFormsListItem, _reactList, _componentsUiLoadingBlock, _react) {
   "use strict";
 
   var _interopRequire = function (obj) { return obj && obj.__esModule ? obj["default"] : obj; };
@@ -51533,11 +51585,15 @@ define('components/forms/index', ["exports", "module", "underscore", "underscore
 
   var Empty = _interopRequire(_componentsSharedEmpty);
 
+  var ErrorBlock = _interopRequire(_componentsUiErrorBlock);
+
   var Filters = _interopRequire(_componentsFormsFilters);
 
   var FormsListItem = _interopRequire(_componentsFormsListItem);
 
   var List = _interopRequire(_reactList);
+
+  var LoadingBlock = _interopRequire(_componentsUiLoadingBlock);
 
   var React = _interopRequire(_react);
 
@@ -51639,19 +51695,11 @@ define('components/forms/index', ["exports", "module", "underscore", "underscore
     },
 
     renderLoading: function () {
-      return React.createElement(
-        "div",
-        { className: "osw-inset-block" },
-        "Loading..."
-      );
+      return React.createElement(LoadingBlock, null);
     },
 
     renderError: function (er) {
-      return React.createElement(
-        "div",
-        { className: "osw-inset-block osw-inset-block-red" },
-        er.toString()
-      );
+      return React.createElement(ErrorBlock, { message: er.toString() });
     },
 
     renderEmpty: function () {
@@ -52957,7 +53005,7 @@ define('components/portals/list-item', ["exports", "module", "cursors", "compone
   });
 });
 // scripts/components/portals/index.es6
-define('components/portals/index', ["exports", "module", "underscore", "underscore.string", "api", "cursors", "react-list", "components/portals/filters", "components/portals/list-item", "components/shared/empty", "react"], function (exports, module, _underscore, _underscoreString, _api, _cursors, _reactList, _componentsPortalsFilters, _componentsPortalsListItem, _componentsSharedEmpty, _react) {
+define('components/portals/index', ["exports", "module", "underscore", "underscore.string", "api", "cursors", "components/ui/error-block", "components/portals/filters", "react-list", "components/portals/list-item", "components/ui/loading-block", "components/shared/empty", "react"], function (exports, module, _underscore, _underscoreString, _api, _cursors, _componentsUiErrorBlock, _componentsPortalsFilters, _reactList, _componentsPortalsListItem, _componentsUiLoadingBlock, _componentsSharedEmpty, _react) {
   "use strict";
 
   var _interopRequire = function (obj) { return obj && obj.__esModule ? obj["default"] : obj; };
@@ -52970,11 +53018,15 @@ define('components/portals/index', ["exports", "module", "underscore", "undersco
 
   var Cursors = _interopRequire(_cursors);
 
-  var List = _interopRequire(_reactList);
+  var ErrorBlock = _interopRequire(_componentsUiErrorBlock);
 
   var Filters = _interopRequire(_componentsPortalsFilters);
 
+  var List = _interopRequire(_reactList);
+
   var ListItem = _interopRequire(_componentsPortalsListItem);
+
+  var LoadingBlock = _interopRequire(_componentsUiLoadingBlock);
 
   var Empty = _interopRequire(_componentsSharedEmpty);
 
@@ -53110,19 +53162,11 @@ define('components/portals/index', ["exports", "module", "underscore", "undersco
     },
 
     renderLoading: function () {
-      return React.createElement(
-        "div",
-        { className: "osw-inset-block" },
-        "Loading..."
-      );
+      return React.createElement(LoadingBlock, null);
     },
 
     renderError: function (er) {
-      return React.createElement(
-        "div",
-        { className: "osw-inset-block osw-inset-block-red" },
-        er.toString()
-      );
+      return React.createElement(ErrorBlock, { message: er.toString() });
     },
 
     renderEmpty: function () {

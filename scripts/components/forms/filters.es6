@@ -1,13 +1,15 @@
 import CategorySelector from 'components/shared/category-selector';
 import Cursors from 'cursors';
-import LetterTable from 'components/portals/letter-table';
 import Query from 'components/shared/query';
 import React from 'react';
 import Summary from 'components/shared/summary';
-import UmbrellaSelector from 'components/portals/umbrella-selector';
 
 export default React.createClass({
   mixins: [Cursors],
+
+  propTypes: {
+    objects: React.PropTypes.array
+  },
 
   handleChange: function (ev) {
     var deltas = {};
@@ -17,24 +19,19 @@ export default React.createClass({
 
   render: function () {
     return (
-      <div className='osw-portals-filters'>
+      <div className='osw-forms-filters'>
         <Query value={this.state.query} onChange={this.handleChange} />
-        <UmbrellaSelector
-          portals={this.props.portals}
-          value={this.state.umbrella}
-          onChange={this.handleChange}
-        />
         <CategorySelector
-          objects={this.props.portals}
-          value={this.state.category}
+          objects={this.props.forms}
           onChange={this.handleChange}
+          showMatchCount={false}
+          value={this.state.category}
         />
-        <LetterTable cursors={{letter: this.getCursor('letter')}} />
         <Summary
           {...this.props}
-          objects={this.props.portals}
-          objectName='portal'
           filterKeys={['query', 'category']}
+          objects={this.props.forms}
+          showMessage={false}
         />
       </div>
     );

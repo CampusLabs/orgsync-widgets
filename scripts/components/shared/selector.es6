@@ -5,6 +5,13 @@ import React from 'react';
 export default React.createClass({
   mixins: [Cursors],
 
+  propTypes: {
+    className: React.PropTypes.string,
+    name: React.PropTypes.string,
+    onChange: React.PropTypes.func.isRequired,
+    renderOptions: React.PropTypes.func.isRequired
+  },
+
   render: function () {
     var options = this.props.renderOptions();
     var value = this.props.value;
@@ -21,8 +28,8 @@ export default React.createClass({
       >
         <select
           name={this.props.name}
-          value={value}
           onChange={this.props.onChange}
+          value={value}
         >
           {options}
         </select>

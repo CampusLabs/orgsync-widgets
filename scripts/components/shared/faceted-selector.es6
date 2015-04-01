@@ -1,13 +1,30 @@
 import _ from 'underscore';
 import Cursors from 'cursors';
 import React from 'react';
-import Selector from 'components/portals/selector';
+import Selector from 'components/shared/selector';
 
 export default React.createClass({
   mixins: [Cursors],
 
+  propTypes: {
+    getFacet: React.PropTypes.func.isRequired,
+    objects: React.PropTypes.array.isRequired,
+    showMatchCount: React.PropTypes.bool
+  },
+
+  getDefaultProps: function() {
+    return {
+      showMatchCount: true
+    };
+  },
+
   toOption: function (matches, name) {
-    return {id: name, name: name + ' (' + matches.length + ')'};
+    return {id: name, name: name + this.matchCount(matches)};
+  },
+
+  matchCount: function(matches) {
+    if (!this.props.showMatchCount) return '';
+    return ` (${matches.length})`;
   },
 
   renderOption: function (option) {
@@ -16,7 +33,7 @@ export default React.createClass({
 
   renderOptions: function () {
     return [{id: '', name: this.props.allOption}].concat(
-      _.chain(this.props.portals)
+      _.chain(this.props.objects)
         .map(this.props.getFacet)
         .groupBy()
         .map(this.toOption)

@@ -1492,6 +1492,49 @@
   .orgsync-widget .osw-files-list-item-date, .orgsync-widget .osw-files-list-item-date .osw-files-list-item-download {
     color: #797979;
     font-size: 14px; }
+/* styles/forms/filters.scss */
+.orgsync-widget .osw-forms-filters .osw-field {
+  display: block;
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+  border: 5px solid transparent; }
+.orgsync-widget[min-width~='480px'] .osw-forms-filters .osw-field {
+  display: inline-block;
+  vertical-align: top;
+  width: 50%; }
+/* styles/forms/list-item.scss */
+.orgsync-widget .osw-forms-list-item-category {
+  font-size: 12px;
+  color: #555; }
+/* styles/forms/show.scss */
+.orgsync-widget .osw-forms-show {
+  padding: 10px 10px 0; }
+  .orgsync-widget .osw-forms-show > .osw-button-row {
+    margin-bottom: 10px; }
+.orgsync-widget .osw-forms-show-name {
+  font-size: 18px;
+  font-weight: bold; }
+.orgsync-widget .osw-forms-show-description, .orgsync-widget .osw-forms-show-button, .orgsync-widget .osw-forms-show-creator {
+  margin-bottom: 10px; }
+.orgsync-widget .osw-forms-show-creator {
+  font-weight: lighter;
+  color: #ccc;
+  font-size: 8pt; }
+.orgsync-widget .osw-forms-show-category {
+  font-size: 10pt;
+  color: #797979; }
+.orgsync-widget .osw-forms-show-description {
+  font-size: 10pt;
+  padding: 5px;
+  background-color: #f9f9f9;
+  border-radius: 5px; }
+.orgsync-widget .osw-forms-show-popup {
+  max-width: 400px; }
+  .orgsync-widget .osw-forms-show-popup[min-width~='480px'] .osw-forms-show:after {
+    content: "";
+    display: table;
+    clear: both; }
 /* styles/news-posts/list-item.scss */
 .orgsync-widget .osw-news-posts-list-item {
   margin: 0 auto;

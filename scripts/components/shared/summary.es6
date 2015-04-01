@@ -7,14 +7,29 @@ import React from 'react';
 export default React.createClass({
   mixins: [Cursors],
 
+  propTypes: {
+    filterKeys: React.PropTypes.array.isRequired,
+    objectName: React.PropTypes.string,
+    objects: React.PropTypes.array,
+    showMessage: React.PropTypes.bool
+  },
+
+  getDefaultProps: function() {
+    return {
+      objectName: 'item',
+      showMessage: true
+    };
+  },
+
   getFilters: function () {
-    return _.pick(this.state, 'query', 'letter', 'umbrella', 'category');
+    return _.pick(this.state, this.props.filterKeys);
   },
 
   renderMessage: function () {
+    if (!this.props.showMessage) return '';
     var any = _.any(this.getFilters());
-    var l = this.props.portals.length;
-    return 'Showing ' + (any ? '' : 'all ') + l + ' portal' +
+    var l = this.props.objects.length;
+    return 'Showing ' + (any ? '' : 'all ') + l + ' ' + this.props.objectName +
       (l === 1 ? '' : 's') + (any ? ' matching ' : '.');
   },
 

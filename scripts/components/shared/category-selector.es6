@@ -6,19 +6,22 @@ import React from 'react';
 export default React.createClass({
   mixins: [Cursors],
 
-  getFacet: function (portal) {
-    return portal.umbrella ? portal.umbrella.name : 'Umbrella';
+  propTypes: {
+    objects: React.PropTypes.array.isRequired,
+    onChange: React.PropTypes.func.isRequired,
+    showMatchCount: React.PropTypes.bool
   },
+
+  getFacet: function (object) { return object.category.name; },
 
   render: function () {
     return (
       <FacetedSelector
         {...this.props}
-        objects={this.props.portals}
-        className={joinClassNames('oswi-umbrella', this.props.className)}
-        name='umbrella'
-        allOption='All Umbrellas'
+        allOption='All Categories'
+        className={joinClassNames('oswi-book', this.props.className)}
         getFacet={this.getFacet}
+        name='category'
       />
     );
   }

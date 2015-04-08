@@ -916,6 +916,8 @@
   vertical-align: top;
   width: 100%; }
 /* styles/bookmarks/list-item.scss */
+.orgsync-widget .osw-bookmarks-content {
+  margin-left: 25px; }
 .orgsync-widget .osw-bookmarks-list-item-name {
   word-wrap: normal;
   overflow: hidden;
@@ -938,6 +940,8 @@
   .orgsync-widget .osw-bookmarks-list-item:first-child {
     border-top: 0;
     padding-top: 6px; }
+.orgsync-widget .osw-bookmarks-favicon {
+  float: left; }
 /* styles/bookmarks/show.scss */
 .orgsync-widget .osw-bookmarks-show {
   padding: 10px 10px 0;

@@ -8,13 +8,13 @@ import Summary from 'components/shared/summary';
 export default React.createClass({
   mixins: [Cursors],
 
-  handleChange: function (ev) {
+  handleChange(ev) {
     var deltas = {};
     deltas[ev.target.name] = {$set: ev.target.value};
     this.update(deltas);
   },
 
-  render: function () {
+  render() {
     return (
       <div className='osw-bookmarks-filters'>
         <Query value={this.state.query} onChange={this.handleChange} />

@@ -1,6 +1,10 @@
 @import '../config';
 
 .orgsync-widget {
+  .osw-bookmarks-content {
+    margin-left: 25px;
+  }
+
   .osw-bookmarks-list-item-name {
     @include ellipsis;
     color: $blue;
@@ -25,5 +29,9 @@
       border-top: 0;
       padding-top: 6px;
     }
+  }
+
+  .osw-bookmarks-favicon {
+    float: left;
   }
 }

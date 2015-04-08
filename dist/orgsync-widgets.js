@@ -45692,13 +45692,13 @@ define('components/bookmarks/filters', ["exports", "module", "cursors", "compone
     displayName: "filters",
     mixins: [Cursors],
 
-    handleChange: function (ev) {
+    handleChange: function handleChange(ev) {
       var deltas = {};
       deltas[ev.target.name] = { $set: ev.target.value };
       this.update(deltas);
     },
 
-    render: function () {
+    render: function render() {
       return React.createElement(
         "div",
         { className: "osw-bookmarks-filters" },
@@ -45883,28 +45883,29 @@ define('components/bookmarks/list-item', ["exports", "module", "underscore", "cu
       key: React.PropTypes.number
     },
 
-    getInitialState: function () {
+    getInitialState: function getInitialState() {
       return {
         showIsOpen: false
       };
     },
 
-    openShow: function (ev) {
+    openShow: function openShow(ev) {
       this.update({ showIsOpen: { $set: true } });
     },
 
-    closeShow: function () {
+    closeShow: function closeShow() {
       this.update({ showIsOpen: { $set: false } });
     },
 
-    renderShow: function () {
-      if (!this.state.showIsOpen) return;
-      return React.createElement(Show, _extends({}, this.props, {
+    renderShow: function renderShow() {
+      if (!this.state.showIsOpen) {
+        return;
+      }return React.createElement(Show, _extends({}, this.props, {
         cursors: { bookmark: this.getCursor("bookmark") }
       }));
     },
 
-    renderShowPopup: function () {
+    renderShowPopup: function renderShowPopup() {
       return React.createElement(
         Popup,
         {
@@ -45915,19 +45916,19 @@ define('components/bookmarks/list-item', ["exports", "module", "underscore", "cu
       );
     },
 
-    render: function () {
+    render: function render() {
       var bookmark = this.state.bookmark;
       return React.createElement(
         "div",
         { className: "osw-bookmarks-list-item" },
         React.createElement(
           "div",
-          { style: { float: "left" } },
+          { className: "osw-bookmarks-favicon" },
           React.createElement("img", { src: "https://www.google.com/s2/favicons?domain_url=" + bookmark.url })
         ),
         React.createElement(
           "div",
-          { style: { marginLeft: "25px" } },
+          { className: "osw-bookmarks-content" },
           React.createElement(
             "div",
             { className: "osw-bookmarks-list-item-name", onClick: this.openShow },
@@ -46119,7 +46120,7 @@ define('components/bookmarks/index', ["exports", "module", "underscore", "unders
       /* Specify which portal's bookmarks to retrieve */
       portalId: React.PropTypes.number.isRequired },
 
-    getDefaultProps: function () {
+    getDefaultProps: function getDefaultProps() {
       return {
         bookmarks: [],
         filtersAreShowing: true,
@@ -46128,14 +46129,14 @@ define('components/bookmarks/index', ["exports", "module", "underscore", "unders
       };
     },
 
-    getInitialState: function () {
+    getInitialState: function getInitialState() {
       return {
         bookmarks: this.props.bookmarks,
         query: this.props.query
       };
     },
 
-    fetch: function (cb) {
+    fetch: function fetch(cb) {
       api.get("/portals/:portal_id/links", {
         portal_id: this.props.portalId,
         page: Math.floor(this.state.bookmarks.length / PER_PAGE) + 1,
@@ -46143,18 +46144,20 @@ define('components/bookmarks/index', ["exports", "module", "underscore", "unders
       }, _.partial(this.handleFetch, cb));
     },
 
-    handleFetch: function (cb, er, res) {
-      if (er) return cb(er);
-      this.update({
+    handleFetch: function handleFetch(cb, er, res) {
+      if (er) {
+        return cb(er);
+      }this.update({
         bookmarks: { $set: _.unique(this.state.bookmarks.concat(res.data), "id") }
       });
       cb(null, res.data.length < PER_PAGE);
     },
 
-    matchesQuery: function (bookmark) {
+    matchesQuery: function matchesQuery(bookmark) {
       var query = this.state.query;
-      if (!query) return true;
-      var words = _str.words(query.toLowerCase());
+      if (!query) {
+        return true;
+      }var words = _str.words(query.toLowerCase());
       var searchableWords = this.searchableWordsFor(bookmark);
       return _.every(words, function (wordA) {
         return _.any(searchableWords, function (wordB) {
@@ -46163,21 +46166,22 @@ define('components/bookmarks/index', ["exports", "module", "underscore", "unders
       });
     },
 
-    searchableWordsFor: function (bookmark) {
+    searchableWordsFor: function searchableWordsFor(bookmark) {
       return _str.words(_.values(_.pick(bookmark, this.props.searchableAttributes)).join(" ").toLowerCase());
     },
 
-    bookmarkMatchesFilters: function (bookmark) {
+    bookmarkMatchesFilters: function bookmarkMatchesFilters(bookmark) {
       return this.matchesQuery(bookmark);
     },
 
-    getFilteredBookmarks: function () {
+    getFilteredBookmarks: function getFilteredBookmarks() {
       return this.state.bookmarks.filter(this.bookmarkMatchesFilters);
     },
 
-    renderFilters: function (bookmarks) {
-      if (!this.state.bookmarks.length || !this.props.filtersAreShowing) return;
-      return React.createElement(Filters, {
+    renderFilters: function renderFilters(bookmarks) {
+      if (!this.state.bookmarks.length || !this.props.filtersAreShowing) {
+        return;
+      }return React.createElement(Filters, {
         bookmarks: bookmarks,
         getFacet: this.getFacet,
         cursors: {
@@ -46186,7 +46190,7 @@ define('components/bookmarks/index', ["exports", "module", "underscore", "unders
       });
     },
 
-    renderListItem: function (bookmark) {
+    renderListItem: function renderListItem(bookmark) {
       var i = this.state.bookmarks.indexOf(bookmark);
       return React.createElement(BookmarksListItem, _extends({}, this.props, {
         key: bookmark.id,
@@ -46194,15 +46198,15 @@ define('components/bookmarks/index', ["exports", "module", "underscore", "unders
       }));
     },
 
-    renderLoading: function () {
+    renderLoading: function renderLoading() {
       return React.createElement(LoadingBlock, null);
     },
 
-    renderError: function (er) {
+    renderError: function renderError(er) {
       return React.createElement(ErrorBlock, { message: er.toString() });
     },
 
-    renderEmpty: function () {
+    renderEmpty: function renderEmpty() {
       return React.createElement(Empty, {
         objectName: "bookmarks",
         cursors: {
@@ -46211,7 +46215,7 @@ define('components/bookmarks/index', ["exports", "module", "underscore", "unders
       });
     },
 
-    render: function () {
+    render: function render() {
       var bookmarks = this.getFilteredBookmarks();
       return React.createElement(
         "div",

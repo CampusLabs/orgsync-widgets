@@ -20,7 +20,7 @@ export default React.createClass({
     portalId: React.PropTypes.number.isRequired,
   },
 
-  getDefaultProps: function () {
+  getDefaultProps() {
     return {
       bookmarks: [],
       filtersAreShowing: true,
@@ -29,14 +29,14 @@ export default React.createClass({
     };
   },
 
-  getInitialState: function () {
+  getInitialState() {
     return {
       bookmarks: this.props.bookmarks,
       query: this.props.query
     };
   },
 
-  fetch: function (cb) {
+  fetch(cb) {
     api.get('/portals/:portal_id/links', {
       portal_id: this.props.portalId,
       page: Math.floor(this.state.bookmarks.length / PER_PAGE) + 1,
@@ -44,7 +44,7 @@ export default React.createClass({
     }, _.partial(this.handleFetch, cb));
   },
 
-  handleFetch: function (cb, er, res) {
+  handleFetch(cb, er, res) {
     if (er) return cb(er);
     this.update({
       bookmarks: {$set: _.unique(this.state.bookmarks.concat(res.data), 'id')}
@@ -52,7 +52,7 @@ export default React.createClass({
     cb(null, res.data.length < PER_PAGE);
   },
 
-  matchesQuery: function(bookmark) {
+  matchesQuery(bookmark) {
     var query = this.state.query;
     if (!query) return true;
     var words = _str.words(query.toLowerCase());
@@ -64,7 +64,7 @@ export default React.createClass({
     });
   },
 
-  searchableWordsFor: function (bookmark) {
+  searchableWordsFor(bookmark) {
     return _str.words(
       _.values(_.pick(bookmark, this.props.searchableAttributes))
         .join(' ')
@@ -72,15 +72,15 @@ export default React.createClass({
     );
   },
 
-  bookmarkMatchesFilters: function(bookmark) {
+  bookmarkMatchesFilters(bookmark) {
     return this.matchesQuery(bookmark);
   },
 
-  getFilteredBookmarks: function() {
+  getFilteredBookmarks() {
     return this.state.bookmarks.filter(this.bookmarkMatchesFilters);
   },
 
-  renderFilters: function (bookmarks) {
+  renderFilters(bookmarks) {
     if (!this.state.bookmarks.length || !this.props.filtersAreShowing) return;
     return (
       <Filters
@@ -93,7 +93,7 @@ export default React.createClass({
     );
   },
 
-  renderListItem: function (bookmark) {
+  renderListItem(bookmark) {
     var i = this.state.bookmarks.indexOf(bookmark);
     return (
       <BookmarksListItem
@@ -104,15 +104,15 @@ export default React.createClass({
     );
   },
 
-  renderLoading: function () {
+  renderLoading() {
     return <LoadingBlock />;
   },
 
-  renderError: function (er) {
+  renderError(er) {
     return <ErrorBlock message={er.toString()} />;
   },
 
-  renderEmpty: function () {
+  renderEmpty() {
     return (
       <Empty
         objectName='bookmarks'
@@ -123,7 +123,7 @@ export default React.createClass({
     );
   },
 
-  render: function () {
+  render() {
     var bookmarks = this.getFilteredBookmarks();
     return (
       <div className='osw-bookmarks-index'>

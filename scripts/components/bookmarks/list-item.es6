@@ -15,21 +15,21 @@ export default React.createClass({
     key: React.PropTypes.number
   },
 
-  getInitialState: function() {
+  getInitialState() {
     return {
       showIsOpen: false
     };
   },
 
-  openShow: function (ev) {
+  openShow(ev) {
     this.update({showIsOpen: {$set: true}});
   },
 
-  closeShow: function () {
+  closeShow() {
     this.update({showIsOpen: {$set: false}});
   },
 
-  renderShow: function () {
+  renderShow() {
     if (!this.state.showIsOpen) return;
     return (
       <Show
@@ -39,7 +39,7 @@ export default React.createClass({
     );
   },
 
-  renderShowPopup: function() {
+  renderShowPopup() {
     return (
       <Popup
         close={this.closeShow}
@@ -50,15 +50,15 @@ export default React.createClass({
     );
   },
 
-  render: function () {
+  render() {
     var bookmark = this.state.bookmark;
     return (
       <div className='osw-bookmarks-list-item'>
-        <div style={{ float: 'left' }}>
+        <div className='osw-bookmarks-favicon'>
           <img src={`https://www.google.com/s2/favicons?domain_url=${bookmark.url}`}/>
         </div>
 
-        <div style={{ marginLeft: '25px' }}>
+        <div className='osw-bookmarks-content'>
           <div className='osw-bookmarks-list-item-name' onClick={this.openShow}>
             {bookmark.name}
           </div>

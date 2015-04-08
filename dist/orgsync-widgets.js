@@ -45782,36 +45782,38 @@ define('components/bookmarks/show', ["exports", "module", "underscore", "api", "
     displayName: "show",
     mixins: [Cursors],
 
-    getInitialState: function () {
+    getInitialState: function getInitialState() {
       return {
         isLoading: false,
         error: null
       };
     },
 
-    componentWillMount: function () {
+    componentWillMount: function componentWillMount() {
       var bookmark = this.state.bookmark;
-      if (bookmark.description != null) return;
-      this.update({ isLoading: { $set: true }, error: { $set: null } });
+      if (bookmark.description != null) {
+        return;
+      }this.update({ isLoading: { $set: true }, error: { $set: null } });
       api.get("/portals/:portal_id/links/:id", { portal_id: this.props.portalId, id: bookmark.id }, this.handleFetch);
     },
 
-    handleFetch: function (er, res) {
+    handleFetch: function handleFetch(er, res) {
       var deltas = { isLoading: { $set: false } };
       if (er) deltas.error = { $set: er };else deltas.bookmark = { $set: res.data };
       this.update(deltas);
     },
 
-    formatDate: function (dateString) {
+    formatDate: function formatDate(dateString) {
       return moment(dateString).format(FORMAT);
     },
 
-    renderDescription: function (desc) {
-      if (desc === undefined) return;
-      return desc.replace(/(\r\n|\n|\r)/g, "<br />");
+    renderDescription: function renderDescription(desc) {
+      if (desc === undefined) {
+        return;
+      }return desc.replace(/(\r\n|\n|\r)/g, "<br />");
     },
 
-    render: function () {
+    render: function render() {
       var bookmark = this.state.bookmark;
       return React.createElement(
         "div",
@@ -45829,10 +45831,11 @@ define('components/bookmarks/show', ["exports", "module", "underscore", "api", "
             { className: "osw-bookmarks-show-name" },
             bookmark.name
           ),
-          React.createElement("div", {
-            className: "osw-bookmarks-show-description",
-            dangerouslySetInnerHTML: { __html: this.renderDescription(bookmark.description) }
-          })
+          React.createElement(
+            "div",
+            { className: "osw-bookmarks-show-description" },
+            bookmark.description
+          )
         ),
         React.createElement(
           "div",

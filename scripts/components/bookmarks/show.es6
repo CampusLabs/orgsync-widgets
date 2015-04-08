@@ -11,14 +11,14 @@ var FORMAT = 'MMM D, YYYY';
 export default React.createClass({
   mixins: [Cursors],
 
-  getInitialState: function () {
+  getInitialState() {
     return {
       isLoading: false,
       error: null
     };
   },
 
-  componentWillMount: function () {
+  componentWillMount() {
     var bookmark = this.state.bookmark;
     if (bookmark.description != null) return;
     this.update({isLoading: {$set: true}, error: {$set: null}});
@@ -29,23 +29,23 @@ export default React.createClass({
     );
   },
 
-  handleFetch: function (er, res) {
+  handleFetch(er, res) {
     var deltas = {isLoading: {$set: false}};
     if (er) deltas.error = {$set: er};
     else deltas.bookmark = {$set: res.data};
     this.update(deltas);
   },
 
-  formatDate: function(dateString) {
+  formatDate(dateString) {
     return moment(dateString).format(FORMAT);
   },
 
-  renderDescription: function(desc) {
+  renderDescription(desc) {
     if (desc === undefined) return;
     return desc.replace(/(\r\n|\n|\r)/g,"<br />");
   },
 
-  render: function () {
+  render() {
     var bookmark = this.state.bookmark;
     return (
       <div className='osw-bookmarks-show'>
@@ -56,10 +56,9 @@ export default React.createClass({
           <div className='osw-bookmarks-show-name'>
             {bookmark.name}
           </div>
-          <div
-            className='osw-bookmarks-show-description'
-            dangerouslySetInnerHTML={{__html: this.renderDescription(bookmark.description)}}
-          />
+          <div className='osw-bookmarks-show-description'>
+            {bookmark.description}
+          </div>
         </div>
         <div className='osw-button-row'>
           <ButtonRow>

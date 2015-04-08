@@ -3,6 +3,7 @@ import api from 'api';
 import Button from 'components/ui/button';
 import ButtonRow from 'components/ui/button-row';
 import Cursors from 'cursors';
+import FormattedText from 'formatted-text';
 import moment from 'moment';
 import React from 'react';
 
@@ -57,7 +58,9 @@ export default React.createClass({
             {bookmark.name}
           </div>
           <div className='osw-bookmarks-show-description'>
-            {bookmark.description}
+            <FormattedText>
+              {bookmark.description}
+            </FormattedText>
           </div>
         </div>
         <div className='osw-button-row'>

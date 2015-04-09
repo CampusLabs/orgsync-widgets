@@ -12,14 +12,14 @@ var FORMAT = 'MMM D, YYYY';
 export default React.createClass({
   mixins: [Cursors],
 
-  getInitialState: function () {
+  getInitialState() {
     return {
       isLoading: false,
       error: null
     };
   },
 
-  componentWillMount: function () {
+  componentWillMount() {
     var poll = this.state.poll;
     if (poll.description != null) return;
     this.update({isLoading: {$set: true}, error: {$set: null}});
@@ -30,14 +30,14 @@ export default React.createClass({
     );
   },
 
-  handleFetch: function (er, res) {
+  handleFetch(er, res) {
     var deltas = {isLoading: {$set: false}};
     if (er) deltas.error = {$set: er};
     else deltas.poll = {$set: res.data};
     this.update(deltas);
   },
 
-  formatDate: function(dateString) {
+  formatDate(dateString) {
     return moment(dateString).format(FORMAT);
   },
 
@@ -51,7 +51,7 @@ export default React.createClass({
     return <Results poll={poll} />;
   },
 
-  renderStatus: function(poll) {
+  renderStatus(poll) {
     if (poll.begins_at !== undefined && !poll.is_open) {
       var start = this.formatDate(poll.begins_at);
       var end = this.formatDate(poll.ends_at);
@@ -59,11 +59,11 @@ export default React.createClass({
     }
   },
 
-  renderVoted: function(poll) {
+  renderVoted(poll) {
     if (poll.has_voted) return <p>You have voted on this poll.</p>;
   },
 
-  render: function () {
+  render() {
     var poll = this.state.poll;
 
     return (

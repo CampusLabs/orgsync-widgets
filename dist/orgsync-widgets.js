@@ -52220,27 +52220,28 @@ define('components/polls/show', ["exports", "module", "underscore", "api", "comp
     displayName: "show",
     mixins: [Cursors],
 
-    getInitialState: function () {
+    getInitialState: function getInitialState() {
       return {
         isLoading: false,
         error: null
       };
     },
 
-    componentWillMount: function () {
+    componentWillMount: function componentWillMount() {
       var poll = this.state.poll;
-      if (poll.description != null) return;
-      this.update({ isLoading: { $set: true }, error: { $set: null } });
+      if (poll.description != null) {
+        return;
+      }this.update({ isLoading: { $set: true }, error: { $set: null } });
       api.get("/portals/:portal_id/polls/:id", { portal_id: this.props.portalId, id: poll.id }, this.handleFetch);
     },
 
-    handleFetch: function (er, res) {
+    handleFetch: function handleFetch(er, res) {
       var deltas = { isLoading: { $set: false } };
       if (er) deltas.error = { $set: er };else deltas.poll = { $set: res.data };
       this.update(deltas);
     },
 
-    formatDate: function (dateString) {
+    formatDate: function formatDate(dateString) {
       return moment(dateString).format(FORMAT);
     },
 
@@ -52261,7 +52262,7 @@ define('components/polls/show', ["exports", "module", "underscore", "api", "comp
       }return React.createElement(Results, { poll: poll });
     },
 
-    renderStatus: function (poll) {
+    renderStatus: function renderStatus(poll) {
       if (poll.begins_at !== undefined && !poll.is_open) {
         var start = this.formatDate(poll.begins_at);
         var end = this.formatDate(poll.ends_at);
@@ -52273,15 +52274,17 @@ define('components/polls/show', ["exports", "module", "underscore", "api", "comp
       }
     },
 
-    renderVoted: function (poll) {
-      if (poll.has_voted) return React.createElement(
-        "p",
-        null,
-        "You have voted on this poll."
-      );
+    renderVoted: function renderVoted(poll) {
+      if (poll.has_voted) {
+        return React.createElement(
+          "p",
+          null,
+          "You have voted on this poll."
+        );
+      }
     },
 
-    render: function () {
+    render: function render() {
       var poll = this.state.poll;
 
       return React.createElement(

@@ -45494,7 +45494,7 @@ define('components/builder/index', ["exports", "module", "underscore", "undersco
     },
     Polls: {
       moduleName: "polls/index",
-      props: ["portalId", "limit"]
+      props: ["portalId"]
     },
     Portals: {
       moduleName: "portals/index",
@@ -52037,41 +52037,44 @@ define('components/polls/filters', ["exports", "module", "cursors", "components/
   });
 });
 // scripts/components/polls/results.es6
-define('components/polls/results', ["exports", "module", "underscore", "react"], function (exports, module, _underscore, _react) {
+define('components/polls/results', ["exports", "module", "underscore", "cursors", "react"], function (exports, module, _underscore, _cursors, _react) {
   "use strict";
 
   var _interopRequire = function (obj) { return obj && obj.__esModule ? obj["default"] : obj; };
 
   var _ = _interopRequire(_underscore);
 
+  var Cursors = _interopRequire(_cursors);
+
   var React = _interopRequire(_react);
 
   module.exports = React.createClass({
     displayName: "results",
+    mixins: [Cursors],
+
     propTypes: {
-      responses: React.PropTypes.array
+      poll: React.PropTypes.shape({
+        poll_options: React.PropTypes.array.isRequired,
+        can_view_results: React.PropTypes.bool.isRequired,
+        votes: React.PropTypes.object.isRequired
+      }).isRequired
     },
 
-    getInitialState: function () {
+    getInitialState: function getInitialState() {
       return {
         sortedByVotes: false
       };
     },
 
-    getDefaultProps: function () {
-      return {
-        responses: null
-      };
-    },
-
-    percentageOfLeader: function (votes, maxWidth) {
-      var maxVotes = _.max(this.props.responses, function (response) {
-        return response.poll_votes_count;
-      }).poll_votes_count;
+    percentageOfLeader: function percentageOfLeader(votes, maxWidth) {
+      var _this = this;
+      var maxVotes = this.getPollVotesCount(_.max(this.props.poll.poll_options, function (response) {
+        return _this.getPollVotesCount(response);
+      }));
       return this.calculatePercentage(votes, maxVotes, maxWidth, 0);
     },
 
-    calculatePercentage: function (votes, maxVotes, maxWidth, minWidth) {
+    calculatePercentage: function calculatePercentage(votes, maxVotes, maxWidth, minWidth) {
       if (votes === 0) {
         return minWidth + "%";
       } else {
@@ -52079,23 +52082,30 @@ define('components/polls/results', ["exports", "module", "underscore", "react"],
       }
     },
 
-    totalVotes: function () {
-      return _.reduce(this.props.responses, function (sum, response) {
-        return sum + response.poll_votes_count;
+    totalVotes: function totalVotes() {
+      var _this = this;
+      return _.reduce(this.props.poll.poll_options, function (sum, response) {
+        return sum + _this.getPollVotesCount(response);
       }, 0);
     },
 
-    sortedResponses: function () {
+    sortedResponses: function sortedResponses() {
       if (this.state.sortedByVotes) {
-        return _.sortBy(this.props.responses, "poll_votes_count").reverse();
+        return _.sortBy(this.props.poll.poll_options, this.getPollVotesCount).reverse();
       } else {
-        return _.sortBy(this.props.responses, "id");
+        return _.sortBy(this.props.poll.poll_options, "id");
       }
     },
 
-    renderResponses: function () {
-      var that = this;
+    getPollVotesCount: function getPollVotesCount(response) {
+      return this.props.poll.votes[response.id];
+    },
+
+    renderResponses: function renderResponses() {
+      var _this = this;
       return _.map(this.sortedResponses(), function (response) {
+        var pollVotesCount = _this.getPollVotesCount(response);
+
         return React.createElement(
           "tr",
           { key: response.id },
@@ -52110,50 +52120,46 @@ define('components/polls/results', ["exports", "module", "underscore", "react"],
             React.createElement("div", {
               className: "osw-poll-bar",
               style: {
-                width: that.percentageOfLeader(response.poll_votes_count, 88)
+                width: _this.percentageOfLeader(pollVotesCount, 88)
               }
             }),
             React.createElement(
               "div",
               { className: "osw-poll-bar-count" },
-              response.poll_votes_count
+              pollVotesCount
             )
           ),
           React.createElement(
             "td",
             { width: "7%" },
-            that.calculatePercentage(response.poll_votes_count, that.totalVotes(), 100, 0)
+            _this.calculatePercentage(pollVotesCount, _this.totalVotes(), 100, 0)
           )
         );
       });
     },
 
-    sortOptions: function () {
-      this.setState({
-        sortedByVotes: !this.state.sortedByVotes
-      });
+    sortOptions: function sortOptions() {
+      this.update({ sortedByVotes: { $set: !this.state.sortedByVotes } });
     },
 
-    sortButtonLabel: function () {
-      if (this.state.sortedByVotes) {
-        return "Default";
-      } else {
-        return "Sort";
-      }
+    sortButtonLabel: function sortButtonLabel() {
+      return this.state.sortedByVotes ? "Default" : "Sort";
     },
 
-    render: function () {
-      if (this.props.responses === null) return React.createElement(
-        "p",
-        null,
-        React.createElement(
-          "strong",
+    render: function render() {
+      var poll = this.props.poll;
+
+      if (!poll.can_view_results) {
+        return React.createElement(
+          "p",
           null,
-          "The results are hidden."
-        )
-      );
-
-      return React.createElement(
+          React.createElement(
+            "strong",
+            null,
+            "The results are hidden."
+          )
+        );
+      }return React.createElement(
         "div",
         null,
         React.createElement(
@@ -52238,6 +52244,23 @@ define('components/polls/show', ["exports", "module", "underscore", "api", "comp
       return moment(dateString).format(FORMAT);
     },
 
+    renderCreator: function renderCreator(poll) {
+      if (!poll.creator) {
+        return;
+      }return React.createElement(
+        "p",
+        null,
+        "Created by ",
+        poll.creator.display_name
+      );
+    },
+
+    renderResults: function renderResults(poll) {
+      if (poll.can_view_results === undefined) {
+        return;
+      }return React.createElement(Results, { poll: poll });
+    },
+
     renderStatus: function (poll) {
       if (!poll.is_open) {
         return React.createElement(
@@ -52245,7 +52268,7 @@ define('components/polls/show', ["exports", "module", "underscore", "api", "comp
           null,
           "This poll was open from ",
           this.formatDate(poll.begins_at),
-          " to ",
+          "to ",
           this.formatDate(poll.ends_at)
         );
       }
@@ -52261,6 +52284,7 @@ define('components/polls/show', ["exports", "module", "underscore", "api", "comp
 
     render: function () {
       var poll = this.state.poll;
+
       return React.createElement(
         "div",
         { className: "osw-polls-show" },
@@ -52270,14 +52294,9 @@ define('components/polls/show', ["exports", "module", "underscore", "api", "comp
           poll.name
         ),
         this.renderStatus(poll),
-        React.createElement(
-          "p",
-          null,
-          "Created by ",
-          poll.creator.display_name
-        ),
+        this.renderCreator(poll),
         this.renderVoted(poll),
-        React.createElement(Results, { responses: this.state.poll.poll_options }),
+        this.renderResults(poll),
         React.createElement(
           "div",
           { className: "osw-button-row" },
@@ -52474,24 +52493,20 @@ define('components/polls/index', ["exports", "module", "underscore", "underscore
 
     propTypes: {
       /* Specify which portal's polls to retrieve */
-      portalId: React.PropTypes.number,
-
-      /* If you'd like to limit the number of polls to show, specify a number */
-      limit: React.PropTypes.number
+      portalId: React.PropTypes.number
     },
 
-    getDefaultProps: function () {
+    getDefaultProps: function getDefaultProps() {
       return {
         category: "",
         polls: [],
         filtersAreShowing: true,
         query: "",
-        searchableAttributes: ["name"],
-        limit: null
+        searchableAttributes: ["name"]
       };
     },
 
-    getInitialState: function () {
+    getInitialState: function getInitialState() {
       return {
         category: this.props.category,
         polls: this.props.polls,
@@ -52499,38 +52514,40 @@ define('components/polls/index', ["exports", "module", "underscore", "underscore
       };
     },
 
-    fetch: function (cb) {
+    fetch: function fetch(cb) {
       api.get("/portals/:portal_id/polls", {
         portal_id: this.props.portalId,
-        limit: this.props.limit,
         page: Math.floor(this.state.polls.length / PER_PAGE) + 1,
         per_page: PER_PAGE
       }, _.partial(this.handleFetch, cb));
     },
 
-    handleFetch: function (cb, er, res) {
-      if (er) return cb(er);
-      this.update({
+    handleFetch: function handleFetch(cb, er, res) {
+      if (er) {
+        return cb(er);
+      }this.update({
         polls: { $set: _.unique(this.state.polls.concat(res.data), "id") }
       });
       cb(null, res.data.length < PER_PAGE);
     },
 
-    getFacet: function (poll) {
-      if (poll.is_open) return "Open";
-      return "Closed";
+    getFacet: function getFacet(poll) {
+      if (poll.is_open) {
+        return "Open";
+      }return "Closed";
     },
 
-    matchesCategory: function (poll) {
+    matchesCategory: function matchesCategory(poll) {
       var a = this.state.category;
       var b = this.getFacet(poll);
       return !a || a === b;
     },
 
-    matchesQuery: function (poll) {
+    matchesQuery: function matchesQuery(poll) {
       var query = this.state.query;
-      if (!query) return true;
-      var words = _str.words(query.toLowerCase());
+      if (!query) {
+        return true;
+      }var words = _str.words(query.toLowerCase());
       var searchableWords = this.searchableWordsFor(poll);
       return _.every(words, function (wordA) {
         return _.any(searchableWords, function (wordB) {
@@ -52539,21 +52556,22 @@ define('components/polls/index', ["exports", "module", "underscore", "underscore
       });
     },
 
-    searchableWordsFor: function (poll) {
+    searchableWordsFor: function searchableWordsFor(poll) {
       return _str.words(_.values(_.pick(poll, this.props.searchableAttributes)).join(" ").toLowerCase());
     },
 
-    pollMatchesFilters: function (poll) {
+    pollMatchesFilters: function pollMatchesFilters(poll) {
       return this.matchesQuery(poll) && this.matchesCategory(poll);
     },
 
-    getFilteredPolls: function () {
+    getFilteredPolls: function getFilteredPolls() {
       return this.state.polls.filter(this.pollMatchesFilters);
     },
 
-    renderFilters: function (polls) {
-      if (!this.state.polls.length || !this.props.filtersAreShowing || this.props.limit) return;
-      return React.createElement(Filters, {
+    renderFilters: function renderFilters(polls) {
+      if (!this.state.polls.length || !this.props.filtersAreShowing) {
+        return;
+      }return React.createElement(Filters, {
         polls: polls,
         getFacet: this.getFacet,
         cursors: {
@@ -52563,7 +52581,7 @@ define('components/polls/index', ["exports", "module", "underscore", "underscore
       });
     },
 
-    renderListItem: function (poll) {
+    renderListItem: function renderListItem(poll) {
       var i = this.state.polls.indexOf(poll);
       return React.createElement(PollsListItem, _extends({}, this.props, {
         key: poll.id,
@@ -52571,15 +52589,15 @@ define('components/polls/index', ["exports", "module", "underscore", "underscore
       }));
     },
 
-    renderLoading: function () {
+    renderLoading: function renderLoading() {
       return React.createElement(LoadingBlock, null);
     },
 
-    renderError: function (er) {
+    renderError: function renderError(er) {
       return React.createElement(ErrorBlock, { message: er.toString() });
     },
 
-    renderEmpty: function () {
+    renderEmpty: function renderEmpty() {
       return React.createElement(Empty, {
         objectName: "polls",
         cursors: {
@@ -52589,7 +52607,7 @@ define('components/polls/index', ["exports", "module", "underscore", "underscore
       });
     },
 
-    render: function () {
+    render: function render() {
       var polls = this.getFilteredPolls();
       return React.createElement(
         "div",

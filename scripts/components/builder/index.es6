@@ -45,8 +45,7 @@ const WIDGETS = {
   Polls: {
     moduleName: 'polls/index',
     props: [
-      'portalId',
-      'limit'
+      'portalId'
     ]
   },
   Portals: {

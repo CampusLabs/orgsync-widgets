@@ -41,11 +41,22 @@ export default React.createClass({
     return moment(dateString).format(FORMAT);
   },
 
+  renderCreator(poll) {
+    if (!poll.creator) return;
+    return <p>Created by {poll.creator.display_name}</p>
+  },
+
+  renderResults(poll) {
+    if (poll.can_view_results === undefined) return;
+    return <Results poll={poll} />;
+  },
+
   renderStatus: function(poll) {
     if (!poll.is_open) {
       return (
         <p>
-          This poll was open from {this.formatDate(poll.begins_at)} to {this.formatDate(poll.ends_at)}
+          This poll was open from {this.formatDate(poll.begins_at)}
+          to {this.formatDate(poll.ends_at)}
         </p>
       );
     }
@@ -57,17 +68,15 @@ export default React.createClass({
 
   render: function () {
     var poll = this.state.poll;
+
     return (
       <div className='osw-polls-show'>
         <h3>{poll.name}</h3>
 
         {this.renderStatus(poll)}
-
-        <p>Created by {poll.creator.display_name}</p>
-
+        {this.renderCreator(poll)}
         {this.renderVoted(poll)}
-
-        <Results responses={this.state.poll.poll_options} />
+        {this.renderResults(poll)}
 
         <div className="osw-button-row">
           <ButtonRow>

@@ -1,31 +1,34 @@
 import _ from 'underscore';
+import Cursors from 'cursors';
 import React from 'react';
 
 export default React.createClass({
+  mixins: [Cursors],
+
   propTypes: {
-    responses: React.PropTypes.array
+    poll: React.PropTypes.shape({
+      poll_options: React.PropTypes.array.isRequired,
+      can_view_results: React.PropTypes.bool.isRequired,
+      votes: React.PropTypes.object.isRequired
+    }).isRequired
   },
 
-  getInitialState: function() {
+  getInitialState() {
     return {
       sortedByVotes: false
     };
   },
 
-  getDefaultProps: function() {
-    return {
-      responses: null
-    };
-  },
-
-  percentageOfLeader: function(votes, maxWidth) {
-    var maxVotes = _.max(this.props.responses, function(response) {
-      return response.poll_votes_count
-    }).poll_votes_count;
+  percentageOfLeader(votes, maxWidth) {
+    var maxVotes = this.getPollVotesCount(
+      _.max(this.props.poll.poll_options, (response) => {
+        return this.getPollVotesCount(response)
+      })
+    );
     return this.calculatePercentage(votes, maxVotes, maxWidth, 0);
   },
 
-  calculatePercentage: function(votes, maxVotes, maxWidth, minWidth) {
+  calculatePercentage(votes, maxVotes, maxWidth, minWidth) {
     if (votes === 0) {
       return minWidth + "%";
     } else {
@@ -33,23 +36,28 @@ export default React.createClass({
     }
   },
 
-  totalVotes: function() {
-    return _.reduce(this.props.responses, function(sum, response) {
-      return sum + response.poll_votes_count
+  totalVotes() {
+    return _.reduce(this.props.poll.poll_options, (sum, response) => {
+      return sum + this.getPollVotesCount(response);
     }, 0);
   },
 
-  sortedResponses: function() {
+  sortedResponses() {
     if (this.state.sortedByVotes) {
-      return _.sortBy(this.props.responses, 'poll_votes_count').reverse();
+      return _.sortBy(this.props.poll.poll_options, this.getPollVotesCount).reverse();
     } else {
-      return _.sortBy(this.props.responses, 'id');
+      return _.sortBy(this.props.poll.poll_options, 'id');
     }
   },
 
-  renderResponses: function() {
-    var that = this;
-    return _.map(this.sortedResponses(), function(response) {
+  getPollVotesCount(response) {
+    return this.props.poll.votes[response.id];
+  },
+
+  renderResponses() {
+    return _.map(this.sortedResponses(), (response) => {
+      var pollVotesCount = this.getPollVotesCount(response);
+
       return (
         <tr key={response.id}>
           <td width="30%">{response.name}</td>
@@ -57,37 +65,33 @@ export default React.createClass({
             <div
               className="osw-poll-bar"
               style={{
-                width: that.percentageOfLeader(response.poll_votes_count, 88)
+                width: this.percentageOfLeader(pollVotesCount, 88)
               }}
             ></div>
             <div className="osw-poll-bar-count">
-              {response.poll_votes_count}
+              {pollVotesCount}
             </div>
           </td>
           <td width="7%">
-            {that.calculatePercentage(response.poll_votes_count, that.totalVotes(), 100, 0)}
+            {this.calculatePercentage(pollVotesCount, this.totalVotes(), 100, 0)}
           </td>
         </tr>
       );
     });
   },
 
-  sortOptions: function() {
-    this.setState({
-      sortedByVotes: !this.state.sortedByVotes
-    });
+  sortOptions() {
+    this.update({sortedByVotes: {$set: !this.state.sortedByVotes}});
   },
 
-  sortButtonLabel: function() {
-    if (this.state.sortedByVotes) {
-      return 'Default';
-    } else {
-      return 'Sort';
-    }
+  sortButtonLabel() {
+    return this.state.sortedByVotes ? 'Default' : 'Sort';
   },
 
-  render: function() {
-    if (this.props.responses === null) return (
+  render() {
+    var poll = this.props.poll;
+
+    if (!poll.can_view_results) return (
       <p><strong>The results are hidden.</strong></p>
     );
 

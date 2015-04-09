@@ -17,24 +17,20 @@ export default React.createClass({
 
   propTypes: {
     /* Specify which portal's polls to retrieve */
-    portalId: React.PropTypes.number,
-
-    /* If you'd like to limit the number of polls to show, specify a number */
-    limit: React.PropTypes.number
+    portalId: React.PropTypes.number
   },
 
-  getDefaultProps: function () {
+  getDefaultProps() {
     return {
       category: '',
       polls: [],
       filtersAreShowing: true,
       query: '',
-      searchableAttributes: ['name'],
-      limit: null
+      searchableAttributes: ['name']
     };
   },
 
-  getInitialState: function () {
+  getInitialState() {
     return {
       category: this.props.category,
       polls: this.props.polls,
@@ -42,16 +38,15 @@ export default React.createClass({
     };
   },
 
-  fetch: function (cb) {
+  fetch(cb) {
     api.get('/portals/:portal_id/polls', {
       portal_id: this.props.portalId,
-      limit: this.props.limit,
       page: Math.floor(this.state.polls.length / PER_PAGE) + 1,
       per_page: PER_PAGE
     }, _.partial(this.handleFetch, cb));
   },
 
-  handleFetch: function (cb, er, res) {
+  handleFetch(cb, er, res) {
     if (er) return cb(er);
     this.update({
       polls: {$set: _.unique(this.state.polls.concat(res.data), 'id')}
@@ -59,18 +54,18 @@ export default React.createClass({
     cb(null, res.data.length < PER_PAGE);
   },
 
-  getFacet: function(poll) {
+  getFacet(poll) {
     if (poll.is_open) return 'Open';
     return 'Closed';
   },
 
-  matchesCategory: function(poll) {
+  matchesCategory(poll) {
     var a = this.state.category;
     var b = this.getFacet(poll);
     return !a || a === b;
   },
 
-  matchesQuery: function(poll) {
+  matchesQuery(poll) {
     var query = this.state.query;
     if (!query) return true;
     var words = _str.words(query.toLowerCase());
@@ -82,7 +77,7 @@ export default React.createClass({
     });
   },
 
-  searchableWordsFor: function (poll) {
+  searchableWordsFor(poll) {
     return _str.words(
       _.values(_.pick(poll, this.props.searchableAttributes))
       .join(' ')
@@ -90,20 +85,19 @@ export default React.createClass({
     );
   },
 
-  pollMatchesFilters: function(poll) {
+  pollMatchesFilters(poll) {
     return (
       this.matchesQuery(poll) &&
       this.matchesCategory(poll)
     );
   },
 
-  getFilteredPolls: function() {
+  getFilteredPolls() {
     return this.state.polls.filter(this.pollMatchesFilters);
   },
 
-  renderFilters: function (polls) {
-    if (!this.state.polls.length || !this.props.filtersAreShowing ||
-      this.props.limit) return;
+  renderFilters(polls) {
+    if (!this.state.polls.length || !this.props.filtersAreShowing) return;
     return (
       <Filters
         polls={polls}
@@ -116,7 +110,7 @@ export default React.createClass({
     );
   },
 
-  renderListItem: function (poll) {
+  renderListItem(poll) {
     var i = this.state.polls.indexOf(poll);
     return (
       <PollsListItem
@@ -127,15 +121,15 @@ export default React.createClass({
     );
   },
 
-  renderLoading: function () {
+  renderLoading() {
     return <LoadingBlock />;
   },
 
-  renderError: function (er) {
+  renderError(er) {
     return <ErrorBlock message={er.toString()} />;
   },
 
-  renderEmpty: function () {
+  renderEmpty() {
     return (
       <Empty
         objectName='polls'
@@ -147,7 +141,7 @@ export default React.createClass({
     );
   },
 
-  render: function () {
+  render() {
     var polls = this.getFilteredPolls();
     return (
       <div className='osw-polls-index'>

@@ -52262,14 +52262,13 @@ define('components/polls/show', ["exports", "module", "underscore", "api", "comp
     },
 
     renderStatus: function (poll) {
-      if (!poll.is_open) {
+      if (poll.begins_at !== undefined && !poll.is_open) {
+        var start = this.formatDate(poll.begins_at);
+        var end = this.formatDate(poll.ends_at);
         return React.createElement(
           "p",
           null,
-          "This poll was open from ",
-          this.formatDate(poll.begins_at),
-          "to ",
-          this.formatDate(poll.ends_at)
+          "This poll was open from " + start + " to " + end
         );
       }
     },

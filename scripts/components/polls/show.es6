@@ -52,13 +52,10 @@ export default React.createClass({
   },
 
   renderStatus: function(poll) {
-    if (!poll.is_open) {
-      return (
-        <p>
-          This poll was open from {this.formatDate(poll.begins_at)}
-          to {this.formatDate(poll.ends_at)}
-        </p>
-      );
+    if (poll.begins_at !== undefined && !poll.is_open) {
+      var start = this.formatDate(poll.begins_at);
+      var end = this.formatDate(poll.ends_at);
+      return <p>{`This poll was open from ${start} to ${end}`}</p>;
     }
   },
 

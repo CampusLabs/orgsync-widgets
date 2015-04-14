@@ -51,7 +51,7 @@ export default React.createClass({
     return (
       <div className='osw-bookmarks-show'>
         <div className='osw-bookmarks-favicon'>
-          <img src={`https://www.google.com/s2/favicons?domain_url=${bookmark.url}`}/>
+          <img src={`https://www.google.com/s2/favicons?domain_url=${bookmark.links.web}`}/>
         </div>
         <div style={{ marginLeft: '25px' }}>
           <div className='osw-bookmarks-show-name'>

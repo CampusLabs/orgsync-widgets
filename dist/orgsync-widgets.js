@@ -45949,7 +45949,7 @@ define('components/bookmarks/show', ["exports", "module", "underscore", "api", "
         React.createElement(
           "div",
           { className: "osw-bookmarks-favicon" },
-          React.createElement("img", { src: "https://www.google.com/s2/favicons?domain_url=" + bookmark.url })
+          React.createElement("img", { src: "https://www.google.com/s2/favicons?domain_url=" + bookmark.links.web })
         ),
         React.createElement(
           "div",
@@ -46024,12 +46024,17 @@ define('components/bookmarks/list-item', ["exports", "module", "underscore", "cu
       };
     },
 
-    openShow: function openShow(ev) {
-      this.update({ showIsOpen: { $set: true } });
-    },
-
     closeShow: function closeShow() {
       this.update({ showIsOpen: { $set: false } });
+    },
+
+    getFaviconUrl: function getFaviconUrl(bookmark) {
+      var prefix = "https://www.google.com/s2/favicons?domain_url=";
+      return "" + prefix + "" + bookmark.links.web;
+    },
+
+    openShow: function openShow(ev) {
+      this.update({ showIsOpen: { $set: true } });
     },
 
     renderShow: function renderShow() {
@@ -46059,7 +46064,7 @@ define('components/bookmarks/list-item', ["exports", "module", "underscore", "cu
         React.createElement(
           "div",
           { className: "osw-bookmarks-favicon" },
-          React.createElement("img", { src: "https://www.google.com/s2/favicons?domain_url=" + bookmark.url })
+          React.createElement("img", { src: this.getFaviconUrl(bookmark) })
         ),
         React.createElement(
           "div",
@@ -46075,7 +46080,7 @@ define('components/bookmarks/list-item', ["exports", "module", "underscore", "cu
             React.createElement(
               "p",
               null,
-              bookmark.url
+              bookmark.links.web
             )
           )
         ),

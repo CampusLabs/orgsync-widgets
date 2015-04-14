@@ -21,12 +21,17 @@ export default React.createClass({
     };
   },
 
-  openShow(ev) {
-    this.update({showIsOpen: {$set: true}});
-  },
-
   closeShow() {
     this.update({showIsOpen: {$set: false}});
+  },
+
+  getFaviconUrl(bookmark) {
+    let prefix = 'https://www.google.com/s2/favicons?domain_url=';
+    return `${prefix}${bookmark.links.web}`;
+  },
+
+  openShow(ev) {
+    this.update({showIsOpen: {$set: true}});
   },
 
   renderShow() {
@@ -55,7 +60,7 @@ export default React.createClass({
     return (
       <div className='osw-bookmarks-list-item'>
         <div className='osw-bookmarks-favicon'>
-          <img src={`https://www.google.com/s2/favicons?domain_url=${bookmark.url}`}/>
+          <img src={this.getFaviconUrl(bookmark)} />
         </div>
 
         <div className='osw-bookmarks-content'>
@@ -64,7 +69,7 @@ export default React.createClass({
           </div>
 
           <div className='osw-bookmarks-list-item-description'>
-            <p>{bookmark.url}</p>
+            <p>{bookmark.links.web}</p>
           </div>
         </div>
 

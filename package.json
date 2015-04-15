@@ -6,7 +6,7 @@
   "main": "dist/orgsync-widgets.js",
   "repository": {
     "type": "git",
-    "url": "https://github.com/orgsync/widgets"
+    "url": "https://github.com/orgsync/orgsync-widgets"
   },
   "devDependencies": {
     "cogs": "1.0.1",

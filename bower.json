@@ -37,6 +37,6 @@
     "tinycolor": "1.1.2",
     "underscore": "1.7.0",
     "underscore.string": "3.0.2",
-    "velcro": "e049b88196b51bae9d3531206b774f9156c5363c"
+    "velcro": "0.0.2"
   }
 }

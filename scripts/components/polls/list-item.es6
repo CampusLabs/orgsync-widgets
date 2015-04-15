@@ -60,6 +60,7 @@ export default React.createClass({
   },
 
   renderStatusLink: function(poll) {
+    if (this.props.limit) return;
     return (
       <div className='osw-polls-status' onClick={this.openShow}>
         {this.renderStatusText(poll)}
@@ -81,10 +82,14 @@ export default React.createClass({
     );
   },
 
+  renderBorderClass: function() {
+    return this.props.limit ? 'osw-polls-no-border' : '';
+  },
+
   render: function () {
     var poll = this.state.poll;
     return (
-      <div className='osw-polls-list-item'>
+      <div className={`osw-polls-list-item ${this.renderBorderClass()}`}>
         <div className='osw-polls-list-item-info' style={{ float: 'left' }}>
           {this.renderPollBox(poll)}
           <div className='osw-polls-list-item-name' onClick={this.openShow}>

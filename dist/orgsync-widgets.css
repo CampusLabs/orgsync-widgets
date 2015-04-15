@@ -1741,6 +1741,9 @@
   .orgsync-widget .osw-polls-list-item:first-child {
     border-top: 0;
     padding-top: 6px; }
+.orgsync-widget .osw-polls-no-border {
+  border-top: none;
+  white-space: normal; }
 .orgsync-widget .osw-polls-box-wrapper {
   float: left;
   width: 45px;
@@ -1804,9 +1807,16 @@
   font-weight: 300;
   font-style: normal;
   line-height: 150%; }
+  .orgsync-widget .osw-polls-panel-header button {
+    float: right; }
   .orgsync-widget .osw-polls-panel-header h4 {
+    float: left;
     padding: 8px;
     margin: 0; }
+.orgsync-widget .group:after {
+  content: "";
+  display: block;
+  clear: both; }
 .orgsync-widget .osw-polls-show-description {
   font-size: 10pt;
   padding: 5px;

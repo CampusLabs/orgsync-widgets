@@ -2,9 +2,11 @@ import _ from 'underscore';
 import _str from 'underscore.string';
 import api from 'api';
 import Cursors from 'cursors';
-import List from 'react-list';
+import ErrorBlock from 'components/ui/error-block';
 import Filters from 'components/portals/filters';
+import List from 'react-list';
 import ListItem from 'components/portals/list-item';
+import LoadingBlock from 'components/ui/loading-block';
 import Empty from 'components/shared/empty';
 import React from 'react';
 
@@ -64,7 +66,6 @@ export default React.createClass({
   },
 
   handleFetch: function (cb, er, res) {
-    console.debug('res', res);
     if (er) return cb(er);
     this.sortAndUpdate(res.data);
     cb(null, true);
@@ -150,13 +151,11 @@ export default React.createClass({
   },
 
   renderLoading: function () {
-    return <div className='osw-inset-block'>Loading...</div>;
+    return <LoadingBlock />;
   },
 
   renderError: function (er) {
-    return (
-      <div className='osw-inset-block osw-inset-block-red'>{er.toString()}</div>
-    );
+    return <ErrorBlock message={er.toString()} />;
   },
 
   renderEmpty: function () {

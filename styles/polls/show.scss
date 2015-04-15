@@ -70,10 +70,21 @@
     font-style: normal;
     line-height: 150%;
 
+    button {
+      float: right;
+    }
+
     h4 {
+      float: left;
       padding: 8px;
       margin: 0;
     }
+  }
+
+  .group:after {
+    content: "";
+    display: block;
+    clear: both;
   }
 
   .osw-polls-show-description {

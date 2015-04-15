@@ -3,9 +3,11 @@ import _str from 'underscore.string';
 import api from 'api';
 import Cursors from 'cursors';
 import Empty from 'components/shared/empty';
+import ErrorBlock from 'components/ui/error-block';
 import Filters from 'components/forms/filters';
 import FormsListItem from 'components/forms/list-item';
 import List from 'react-list';
+import LoadingBlock from 'components/ui/loading-block';
 import React from 'react';
 
 var PER_PAGE = 10;
@@ -116,13 +118,11 @@ export default React.createClass({
   },
 
   renderLoading: function () {
-    return <div className='osw-inset-block'>Loading...</div>;
+    return <LoadingBlock />;
   },
 
   renderError: function (er) {
-    return (
-      <div className='osw-inset-block osw-inset-block-red'>{er.toString()}</div>
-    );
+    return <ErrorBlock message={er.toString()} />;
   },
 
   renderEmpty: function () {

@@ -1,4 +1,3 @@
-import _ from 'underscore';
 import api from 'api';
 import Button from 'components/ui/button';
 import ButtonRow from 'components/ui/button-row';
@@ -12,6 +11,10 @@ var FORMAT = 'MMM D, YYYY';
 
 export default React.createClass({
   mixins: [Cursors],
+
+  propTypes: {
+    portalId: React.PropTypes.number
+  },
 
   getInitialState: function () {
     return {
@@ -38,21 +41,22 @@ export default React.createClass({
     this.update(deltas);
   },
 
-  formatDate: function(dateString) {
+  formatDate: function (dateString) {
     return moment(dateString).format(FORMAT);
   },
 
-  renderStatus: function(poll) {
+  renderStatus: function (poll) {
     if (!poll.is_open) {
       return (
         <p>
-          This poll was open from {this.formatDate(poll.begins_at)} to {this.formatDate(poll.ends_at)}
+          This poll was open from {this.formatDate(poll.begins_at)} to
+          {this.formatDate(poll.ends_at)}
         </p>
       );
     }
   },
 
-  renderVoted: function(poll) {
+  renderVoted: function (poll) {
     if (poll.has_voted) return <p>You have voted on this poll.</p>;
   },
 
@@ -68,10 +72,10 @@ export default React.createClass({
         <CreatedBy account={poll.creator} createdAt={poll.created_at} />
 
         {this.renderVoted(poll)}
-        
+
         <Results responses={this.state.poll.poll_options} />
 
-        <div className="osw-button-row">
+        <div className='osw-button-row'>
           <ButtonRow>
             <Button href={poll.links.web} target='_parent'>
               View on OrgSync.com

@@ -52216,12 +52216,10 @@ define('components/polls/results', ["exports", "module", "underscore", "react"],
   });
 });
 // scripts/components/polls/show.es6
-define('components/polls/show', ["exports", "module", "underscore", "api", "components/ui/button", "components/ui/button-row", "components/shared/created-by", "cursors", "moment", "react", "components/polls/results"], function (exports, module, _underscore, _api, _componentsUiButton, _componentsUiButtonRow, _componentsSharedCreatedBy, _cursors, _moment, _react, _componentsPollsResults) {
+define('components/polls/show', ["exports", "module", "api", "components/ui/button", "components/ui/button-row", "components/shared/created-by", "cursors", "moment", "react", "components/polls/results"], function (exports, module, _api, _componentsUiButton, _componentsUiButtonRow, _componentsSharedCreatedBy, _cursors, _moment, _react, _componentsPollsResults) {
   "use strict";
 
   var _interopRequire = function (obj) { return obj && obj.__esModule ? obj["default"] : obj; };
-
-  var _ = _interopRequire(_underscore);
 
   var api = _interopRequire(_api);
 
@@ -52244,6 +52242,10 @@ define('components/polls/show', ["exports", "module", "underscore", "api", "comp
   module.exports = React.createClass({
     displayName: "show",
     mixins: [Cursors],
+
+    propTypes: {
+      portalId: React.PropTypes.number
+    },
 
     getInitialState: function () {
       return {
@@ -52276,7 +52278,7 @@ define('components/polls/show', ["exports", "module", "underscore", "api", "comp
           null,
           "This poll was open from ",
           this.formatDate(poll.begins_at),
-          " to ",
+          " to",
           this.formatDate(poll.ends_at)
         );
       }

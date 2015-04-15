@@ -3,6 +3,11 @@ import React from 'react';
 import {getPictureUrl} from 'entities/account';
 
 export default React.createClass({
+  propTypes: {
+    account: React.PropTypes.object.isRequired,
+    createdAt: React.PropTypes.string
+  },
+
   render: function () {
     return (
       <div className='osw-media'>
@@ -13,7 +18,9 @@ export default React.createClass({
         </div>
         <div className='osw-media-body'>
           {this.props.account.display_name}<br />
-          <span className='subtle-text'>{moment(this.props.createdAt).fromNow()}</span>
+          <span className='subtle-text'>
+            {moment(this.props.createdAt).fromNow()}
+          </span>
         </div>
       </div>
     );

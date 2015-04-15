@@ -51354,6 +51354,11 @@ define('components/shared/created-by', ["exports", "module", "moment", "react", 
   var getPictureUrl = _entitiesAccount.getPictureUrl;
   module.exports = React.createClass({
     displayName: "created-by",
+    propTypes: {
+      account: React.PropTypes.object.isRequired,
+      createdAt: React.PropTypes.string
+    },
+
     render: function () {
       return React.createElement(
         "div",

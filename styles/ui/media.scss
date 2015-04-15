@@ -1,9 +1,9 @@
 @import '../config';
 
-.os-media {
-  @include os-media('os-pull-left', 'os-media-body');
+.osw-media {
+  @include os-media('osw-pull-left', 'osw-media-body');
 }
 
-.os-media-list {
+.osw-media-list {
   @include os-media-list;
 }

@@ -51357,17 +51357,17 @@ define('components/shared/created-by', ["exports", "module", "moment", "react", 
     render: function () {
       return React.createElement(
         "div",
-        { className: "os-media" },
+        { className: "osw-media" },
         React.createElement(
           "div",
-          { className: "os-pull-left" },
+          { className: "osw-pull-left" },
           React.createElement("img", {
             src: getPictureUrl(this.props.account)
           })
         ),
         React.createElement(
           "div",
-          { className: "os-media-body" },
+          { className: "osw-media-body" },
           this.props.account.display_name,
           React.createElement("br", null),
           React.createElement(

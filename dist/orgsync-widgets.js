@@ -52813,6 +52813,12 @@ define('components/polls/show', ["exports", "module", "api", "components/ui/butt
       return moment(dateString).format(FORMAT);
     },
 
+    renderCreator: function renderCreator(poll) {
+      if (poll.creator === undefined) {
+        return;
+      }return React.createElement(CreatedBy, { account: poll.creator, createdAt: poll.created_at });
+    },
+
     renderResults: function renderResults(poll) {
       if (poll.can_view_results === undefined) {
         return;
@@ -52853,7 +52859,7 @@ define('components/polls/show', ["exports", "module", "api", "components/ui/butt
           poll.name
         ),
         this.renderStatus(poll),
-        React.createElement(CreatedBy, { account: poll.creator, createdAt: poll.created_at }),
+        this.renderCreator(poll),
         this.renderVoted(poll),
         this.renderResults(poll),
         React.createElement(
@@ -53051,15 +53057,26 @@ define('components/polls/index', ["exports", "module", "underscore", "underscore
     mixins: [Cursors],
 
     propTypes: {
+      /* Category string for filtering polls */
+      category: React.PropTypes.string,
+
+      /* Array of poll objects */
+      polls: React.PropTypes.array,
+
       /* Specify which portal's polls to retrieve */
-      portalId: React.PropTypes.number
+      portalId: React.PropTypes.number,
+
+      /* Query string for filtering polls */
+      query: React.PropTypes.string,
+
+      /* Array of searchable attribute strings */
+      searchableAttributes: React.PropTypes.arrayOf(React.PropTypes.string)
     },
 
     getDefaultProps: function getDefaultProps() {
       return {
         category: "",
         polls: [],
-        filtersAreShowing: true,
         query: "",
         searchableAttributes: ["name"]
       };
@@ -53128,7 +53145,7 @@ define('components/polls/index', ["exports", "module", "underscore", "underscore
     },
 
     renderFilters: function renderFilters(polls) {
-      if (!this.state.polls.length || !this.props.filtersAreShowing) {
+      if (!this.state.polls.length) {
         return;
       }return React.createElement(Filters, {
         polls: polls,

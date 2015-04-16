@@ -16,15 +16,26 @@ export default React.createClass({
   mixins: [Cursors],
 
   propTypes: {
+    /* Category string for filtering polls */
+    category: React.PropTypes.string,
+
+    /* Array of poll objects */
+    polls: React.PropTypes.array,
+
     /* Specify which portal's polls to retrieve */
-    portalId: React.PropTypes.number
+    portalId: React.PropTypes.number,
+
+    /* Query string for filtering polls */
+    query: React.PropTypes.string,
+
+    /* Array of searchable attribute strings */
+    searchableAttributes: React.PropTypes.arrayOf(React.PropTypes.string)
   },
 
   getDefaultProps() {
     return {
       category: '',
       polls: [],
-      filtersAreShowing: true,
       query: '',
       searchableAttributes: ['name']
     };
@@ -97,7 +108,7 @@ export default React.createClass({
   },
 
   renderFilters(polls) {
-    if (!this.state.polls.length || !this.props.filtersAreShowing) return;
+    if (!this.state.polls.length) return;
     return (
       <Filters
         polls={polls}

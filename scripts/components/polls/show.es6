@@ -45,6 +45,11 @@ export default React.createClass({
     return moment(dateString).format(FORMAT);
   },
 
+  renderCreator(poll) {
+    if (poll.creator === undefined) return;
+    return <CreatedBy account={poll.creator} createdAt={poll.created_at} />;
+  },
+
   renderResults(poll) {
     if (poll.can_view_results === undefined) return;
     return <Results poll={poll} />;
@@ -71,9 +76,7 @@ export default React.createClass({
         <h3>{poll.name}</h3>
 
         {this.renderStatus(poll)}
-
-        <CreatedBy account={poll.creator} createdAt={poll.created_at} />
-
+        {this.renderCreator(poll)}
         {this.renderVoted(poll)}
         {this.renderResults(poll)}
 

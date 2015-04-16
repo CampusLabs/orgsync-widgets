@@ -2,6 +2,7 @@ import api from 'api';
 import Button from 'components/ui/button';
 import ButtonRow from 'components/ui/button-row';
 import Cursors from 'cursors';
+import CreatedBy from 'components/shared/created-by';
 import React from 'react';
 
 export default React.createClass({
@@ -32,12 +33,6 @@ export default React.createClass({
     this.update(deltas);
   },
 
-  showCreator: function(form) {
-    return (
-      "Created by " + form.creator.display_name
-    );
-  },
-
   renderDescription: function(description) {
     if(!description || /^\s*$/.test(description)) return 'No description provided';
     return (description);
@@ -53,9 +48,9 @@ export default React.createClass({
         <div className='osw-forms-show-category'>
           {form.category.name}
         </div>
-        <div className='osw-forms-show-creator'>
-          {this.showCreator(form)}
-        </div>
+
+        <CreatedBy account={form.creator} createdAt={form.created_at} />
+
         <div className='osw-forms-show-description'>
           {this.renderDescription(form.description)}
         </div>

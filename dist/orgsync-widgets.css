@@ -359,6 +359,9 @@
 .oswi-form:before {
   content: '\f006'; }
 
+.oswi-gear:before {
+  content: '\f128'; }
+
 .oswi-home:before {
   content: '\f000'; }
 
@@ -400,6 +403,9 @@
 
 .oswi-message:before {
   content: '\f016'; }
+
+.oswi-more:before {
+  content: '\f127'; }
 
 .oswi-move-to-person:before {
   content: '\f051'; }
@@ -2486,6 +2492,29 @@
     .orgsync-widget .osw-button.osw-button-disabled.osw-button-selected {
       background: #ccc;
       color: #fff; }
+/* styles/ui/media.scss */
+.osw-media {
+  line-height: 1.2em;
+  margin-bottom: 2em;
+  overflow: hidden; }
+  .osw-media .osw-media-body > *:first-child {
+    margin-top: 0; }
+  .osw-media .osw-media-body > *:last-child {
+    margin-bottom: 0; }
+  .osw-media .osw-pull-left {
+    float: left;
+    margin-right: 1em; }
+  .osw-media .osw-media-body {
+    overflow: hidden;
+    zoom: 1; }
+
+.osw-media-list {
+  list-style-type: none;
+  margin: 0;
+  padding: 0; }
+  .osw-media-list li {
+    margin: 0;
+    padding: 0; }
 /* styles/ui/popup.scss */
 .orgsync-widget .olay-container {
   background: rgba(0, 0, 0, 0.75); }

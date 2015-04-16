@@ -11,6 +11,10 @@ const WIDGETS = {
     moduleName: 'albums/index',
     props: ['portalId']
   },
+  Bookmarks: {
+    moduleName: 'bookmarks/index',
+    props: ['portalId']
+  },
   Events: {
     moduleName: 'events/index',
     props: [

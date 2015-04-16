@@ -359,6 +359,9 @@
 .oswi-form:before {
   content: '\f006'; }
 
+.oswi-gear:before {
+  content: '\f128'; }
+
 .oswi-home:before {
   content: '\f000'; }
 
@@ -400,6 +403,9 @@
 
 .oswi-message:before {
   content: '\f016'; }
+
+.oswi-more:before {
+  content: '\f127'; }
 
 .oswi-move-to-person:before {
   content: '\f051'; }
@@ -904,6 +910,79 @@
   font-weight: normal; }
 .orgsync-widget .osw-albums-show-popup {
   max-width: 1100px; }
+/* styles/bookmarks/filters.scss */
+.orgsync-widget .osw-bookmarks-filters .osw-field {
+  display: block;
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+  border: 5px solid transparent; }
+.orgsync-widget[min-width~='480px'] .osw-bookmarks-filters .osw-field {
+  display: inline-block;
+  vertical-align: top;
+  width: 100%; }
+/* styles/bookmarks/list-item.scss */
+.orgsync-widget .osw-bookmarks-content {
+  margin-left: 25px; }
+.orgsync-widget .osw-bookmarks-list-item-name {
+  word-wrap: normal;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: #38afd4;
+  font-size: 16px; }
+  .orgsync-widget .osw-bookmarks-list-item-name:hover {
+    cursor: pointer;
+    text-decoration: underline; }
+.orgsync-widget .osw-bookmarks-list-item-description {
+  color: #797979; }
+.orgsync-widget .osw-bookmarks-list-item {
+  border-top: 1px solid #ccc;
+  padding: 8px; }
+  .orgsync-widget .osw-bookmarks-list-item:after {
+    content: "";
+    display: table;
+    clear: both; }
+  .orgsync-widget .osw-bookmarks-list-item:first-child {
+    border-top: 0;
+    padding-top: 6px; }
+.orgsync-widget .osw-bookmarks-favicon {
+  float: left; }
+/* styles/bookmarks/show.scss */
+.orgsync-widget .osw-bookmarks-show {
+  padding: 10px 10px 0;
+  font-size: 16px;
+  font-weight: lighter; }
+  .orgsync-widget .osw-bookmarks-show > .osw-button-row {
+    margin-top: 25px;
+    margin-bottom: 10px;
+    margin-left: 25px; }
+.orgsync-widget .osw-bookmarks-show-name {
+  font-size: 18px;
+  font-weight: bold;
+  margin-bottom: 10px; }
+.orgsync-widget .osw-bookmarks-show-description, .orgsync-widget .osw-bookmarks-show-creator {
+  margin-bottom: 10px; }
+.orgsync-widget .osw-bookmarks-favicon {
+  float: left;
+  margin-top: 3px; }
+.orgsync-widget .osw-bookmarks-show-creator {
+  color: #797979; }
+.orgsync-widget .group:after {
+  content: "";
+  display: block;
+  clear: both; }
+.orgsync-widget .osw-polls-show-description {
+  font-size: 10pt;
+  padding: 5px;
+  background-color: #f9f9f9;
+  border-radius: 5px; }
+.orgsync-widget .osw-bookmarks-show-popup {
+  max-width: 480px; }
+  .orgsync-widget .osw-bookmarks-show-popup[min-width~='480px'] .osw-forms-show:after {
+    content: "";
+    display: table;
+    clear: both; }
 /* styles/builder/index.scss */
 .orgsync-widget .osw-builder-index-left {
   padding: 5px; }
@@ -2413,6 +2492,29 @@
     .orgsync-widget .osw-button.osw-button-disabled.osw-button-selected {
       background: #ccc;
       color: #fff; }
+/* styles/ui/media.scss */
+.osw-media {
+  line-height: 1.2em;
+  margin-bottom: 2em;
+  overflow: hidden; }
+  .osw-media .osw-media-body > *:first-child {
+    margin-top: 0; }
+  .osw-media .osw-media-body > *:last-child {
+    margin-bottom: 0; }
+  .osw-media .osw-pull-left {
+    float: left;
+    margin-right: 1em; }
+  .osw-media .osw-media-body {
+    overflow: hidden;
+    zoom: 1; }
+
+.osw-media-list {
+  list-style-type: none;
+  margin: 0;
+  padding: 0; }
+  .osw-media-list li {
+    margin: 0;
+    padding: 0; }
 /* styles/ui/popup.scss */
 .orgsync-widget .olay-container {
   background: rgba(0, 0, 0, 0.75); }

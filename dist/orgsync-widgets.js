@@ -45451,6 +45451,929 @@ define('components/albums/index', ["exports", "module", "jquery", "underscore", 
     }
   });
 });
+// scripts/components/shared/selector.es6
+define('components/shared/selector', ["exports", "module", "cursors", "utils/join-class-names", "react"], function (exports, module, _cursors, _utilsJoinClassNames, _react) {
+  "use strict";
+
+  var _interopRequire = function (obj) { return obj && obj.__esModule ? obj["default"] : obj; };
+
+  var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+
+  var Cursors = _interopRequire(_cursors);
+
+  var joinClassNames = _interopRequire(_utilsJoinClassNames);
+
+  var React = _interopRequire(_react);
+
+  module.exports = React.createClass({
+    displayName: "selector",
+    mixins: [Cursors],
+
+    propTypes: {
+      className: React.PropTypes.string,
+      name: React.PropTypes.string,
+      onChange: React.PropTypes.func.isRequired,
+      renderOptions: React.PropTypes.func.isRequired
+    },
+
+    render: function () {
+      var options = this.props.renderOptions();
+      var value = this.props.value;
+      if (options.length === 2) value = options[1].props.value;
+      return React.createElement(
+        "div",
+        _extends({}, this.props, {
+          className: joinClassNames("osw-big osw-field oswi osw-dropdown", this.props.className)
+        }),
+        React.createElement(
+          "select",
+          {
+            name: this.props.name,
+            onChange: this.props.onChange,
+            value: value
+          },
+          options
+        )
+      );
+    }
+  });
+});
+// scripts/components/shared/faceted-selector.es6
+define('components/shared/faceted-selector', ["exports", "module", "underscore", "cursors", "react", "components/shared/selector"], function (exports, module, _underscore, _cursors, _react, _componentsSharedSelector) {
+  "use strict";
+
+  var _interopRequire = function (obj) { return obj && obj.__esModule ? obj["default"] : obj; };
+
+  var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+
+  var _ = _interopRequire(_underscore);
+
+  var Cursors = _interopRequire(_cursors);
+
+  var React = _interopRequire(_react);
+
+  var Selector = _interopRequire(_componentsSharedSelector);
+
+  module.exports = React.createClass({
+    displayName: "faceted-selector",
+    mixins: [Cursors],
+
+    propTypes: {
+      getFacet: React.PropTypes.func.isRequired,
+      objects: React.PropTypes.array.isRequired,
+      showMatchCount: React.PropTypes.bool
+    },
+
+    getDefaultProps: function () {
+      return {
+        showMatchCount: true
+      };
+    },
+
+    toOption: function (matches, name) {
+      return { id: name, name: name + this.matchCount(matches) };
+    },
+
+    matchCount: function (matches) {
+      if (!this.props.showMatchCount) return "";
+      return " (" + matches.length + ")";
+    },
+
+    renderOption: function (option) {
+      return React.createElement(
+        "option",
+        { key: option.id, value: option.id },
+        option.name
+      );
+    },
+
+    renderOptions: function () {
+      return [{ id: "", name: this.props.allOption }].concat(_.chain(this.props.objects).map(this.props.getFacet).groupBy().map(this.toOption).sortBy("name").value()).map(this.renderOption);
+    },
+
+    render: function () {
+      return React.createElement(Selector, _extends({}, this.props, { renderOptions: this.renderOptions }));
+    }
+  });
+});
+// scripts/components/shared/query.es6
+define('components/shared/query', ["exports", "module", "cursors", "react"], function (exports, module, _cursors, _react) {
+  "use strict";
+
+  var _interopRequire = function (obj) { return obj && obj.__esModule ? obj["default"] : obj; };
+
+  var Cursors = _interopRequire(_cursors);
+
+  var React = _interopRequire(_react);
+
+  module.exports = React.createClass({
+    displayName: "query",
+    mixins: [Cursors],
+
+    propTypes: {
+      onChange: React.PropTypes.func.isRequired,
+      value: React.PropTypes.string
+    },
+
+    render: function () {
+      return React.createElement(
+        "div",
+        { className: "osw-big osw-field oswi oswi-magnify" },
+        React.createElement("input", {
+          autoComplete: "off",
+          name: "query",
+          onChange: this.props.onChange,
+          placeholder: "Search by name or keyword",
+          type: "text",
+          value: this.props.value
+        })
+      );
+    }
+  });
+});
+// scripts/components/shared/summary.es6
+define('components/shared/summary', ["exports", "module", "underscore", "components/ui/button", "cursors", "components/ui/icon", "react"], function (exports, module, _underscore, _componentsUiButton, _cursors, _componentsUiIcon, _react) {
+  "use strict";
+
+  var _interopRequire = function (obj) { return obj && obj.__esModule ? obj["default"] : obj; };
+
+  var _ = _interopRequire(_underscore);
+
+  var Button = _interopRequire(_componentsUiButton);
+
+  var Cursors = _interopRequire(_cursors);
+
+  var Icon = _interopRequire(_componentsUiIcon);
+
+  var React = _interopRequire(_react);
+
+  module.exports = React.createClass({
+    displayName: "summary",
+    mixins: [Cursors],
+
+    propTypes: {
+      filterKeys: React.PropTypes.array.isRequired,
+      objectName: React.PropTypes.string,
+      objects: React.PropTypes.array,
+      showMessage: React.PropTypes.bool
+    },
+
+    getDefaultProps: function () {
+      return {
+        objectName: "item",
+        showMessage: true
+      };
+    },
+
+    getFilters: function () {
+      return _.pick(this.state, this.props.filterKeys);
+    },
+
+    renderMessage: function () {
+      if (!this.props.showMessage) return "";
+      var any = _.any(this.getFilters());
+      var l = this.props.objects.length;
+      return "Showing " + (any ? "" : "all ") + l + " " + this.props.objectName + (l === 1 ? "" : "s") + (any ? " matching " : ".");
+    },
+
+    renderClearButtons: function () {
+      return _.map(this.getFilters(), function (value, name) {
+        if (!value) return null;
+        var deltas = {};
+        deltas[name] = { $set: "" };
+        return React.createElement(
+          Button,
+          { key: name, onClick: _.partial(this.update, deltas) },
+          value,
+          React.createElement(Icon, { name: "delete" })
+        );
+      }, this);
+    },
+
+    render: function () {
+      return React.createElement(
+        "div",
+        { className: "osw-portals-summary" },
+        React.createElement(
+          "div",
+          { className: "osw-portals-summary-message" },
+          this.renderMessage()
+        ),
+        React.createElement(
+          "div",
+          { className: "osw-portals-summary-clear-buttons" },
+          this.renderClearButtons()
+        )
+      );
+    }
+  });
+});
+// scripts/components/bookmarks/filters.es6
+define('components/bookmarks/filters', ["exports", "module", "cursors", "components/shared/faceted-selector", "utils/join-class-names", "components/shared/query", "react", "components/shared/summary"], function (exports, module, _cursors, _componentsSharedFacetedSelector, _utilsJoinClassNames, _componentsSharedQuery, _react, _componentsSharedSummary) {
+  "use strict";
+
+  var _interopRequire = function (obj) { return obj && obj.__esModule ? obj["default"] : obj; };
+
+  var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+
+  var Cursors = _interopRequire(_cursors);
+
+  var FacetedSelector = _interopRequire(_componentsSharedFacetedSelector);
+
+  var joinClassNames = _interopRequire(_utilsJoinClassNames);
+
+  var Query = _interopRequire(_componentsSharedQuery);
+
+  var React = _interopRequire(_react);
+
+  var Summary = _interopRequire(_componentsSharedSummary);
+
+  module.exports = React.createClass({
+    displayName: "filters",
+    mixins: [Cursors],
+
+    handleChange: function handleChange(ev) {
+      var deltas = {};
+      deltas[ev.target.name] = { $set: ev.target.value };
+      this.update(deltas);
+    },
+
+    render: function render() {
+      return React.createElement(
+        "div",
+        { className: "osw-bookmarks-filters" },
+        React.createElement(Query, { value: this.state.query, onChange: this.handleChange }),
+        React.createElement(Summary, _extends({}, this.props, {
+          filterKeys: ["query"],
+          objects: this.props.bookmarks,
+          showMessage: false
+        }))
+      );
+    }
+  });
+});
+// scripts/components/ui/sep.es6
+define('components/ui/sep', ["exports", "module", "react"], function (exports, module, _react) {
+  "use strict";
+
+  var _interopRequire = function (obj) { return obj && obj.__esModule ? obj["default"] : obj; };
+
+  var React = _interopRequire(_react);
+
+  module.exports = React.createClass({
+    displayName: "sep",
+    render: function () {
+      return React.createElement("span", { dangerouslySetInnerHTML: { __html: " &#x2022; " } });
+    }
+  });
+});
+// scripts/components/ui/button-row.es6
+define('components/ui/button-row', ["exports", "module", "cursors", "utils/join-class-names", "react"], function (exports, module, _cursors, _utilsJoinClassNames, _react) {
+  "use strict";
+
+  var _interopRequire = function (obj) { return obj && obj.__esModule ? obj["default"] : obj; };
+
+  var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+
+  var Cursors = _interopRequire(_cursors);
+
+  var joinClassNames = _interopRequire(_utilsJoinClassNames);
+
+  var React = _interopRequire(_react);
+
+  module.exports = React.createClass({
+    displayName: "button-row",
+    mixins: [Cursors],
+
+    render: function () {
+      return React.createElement(
+        "div",
+        _extends({}, this.props, {
+          className: joinClassNames("osw-button-row", this.props.classname)
+        }),
+        this.props.children
+      );
+    }
+  });
+});
+// bower_components/formatted-text/formatted-text.js
+var _slicedToArray = function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { var _arr = []; for (var _iterator = arr[Symbol.iterator](), _step; !(_step = _iterator.next()).done;) { _arr.push(_step.value); if (i && _arr.length === i) break; } return _arr; } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } };
+
+(function (root, factory) {
+  if (typeof define === "function" && define.amd) define('../bower_components/formatted-text/formatted-text', ["react"], factory);else if (typeof exports !== "undefined") {
+    module.exports = factory(require("react"));
+  } else root.FormattedText = factory(root.React);
+})(this, function (React) {
+  "use strict";
+
+  var PARAGRAPH_SPLIT = /\n{2,}/;
+
+  var LINE_SPLIT = /\n/;
+
+  var LINK = new RegExp(
+
+  // Group 1: Option 1, protocol specified
+  "([a-z]+://\\S+)" +
+
+  // OR
+  "|" +
+
+  // Group 2: Option 2, TLD specified
+  // Group 3: Pre-TLD section
+  "((\\S+?)\\.[a-z-]{2,63}\\S*)", "gi");
+
+  var DEFAULT_PROTOCOL = "http://";
+
+  var getLinks = function (text) {
+    var links = [];
+    for (var match = undefined; match = LINK.exec(text);) {
+      var _match = _slicedToArray(match, 4);
+
+      var all = _match[0];
+      var protocol = _match[1];
+      var tld = _match[2];
+      var preTld = _match[3];
+
+      // To qualify as a link, either the protocol or TLD must be specified.
+      if (protocol || tld) {
+        var index = match.index;
+        if (all[all.length - 1] === ".") all = all.slice(0, -1);
+        if (all[0] === "(" && all[all.length - 1] === ")" || all[0] === "[" && all[all.length - 1] === "]") {
+          ++index;
+          all = all.slice(1, -1);
+        }
+        links.push({
+          index: index,
+          text: all,
+          url: protocol ? all : preTld.indexOf("@") !== -1 ? "mailto:" + all : DEFAULT_PROTOCOL + all
+        });
+      }
+    }
+    return links;
+  };
+
+  var renderText = function (text, key) {
+    if (text) return React.createElement(
+      "span",
+      { key: key },
+      text
+    );
+  };
+
+  var renderLink = function (link, key) {
+    return React.createElement(
+      "a",
+      { key: key, href: link.url },
+      link.text
+    );
+  };
+
+  var renderLinks = function (text, key) {
+    var links = getLinks(text);
+    if (!links.length) return text;
+    var length = links.length;
+
+    return links.reduce(function (parts, link, i) {
+      var from = link.index;
+      var to = from + link.text.length;
+      return {
+        index: to,
+        components: parts.components.concat(renderText(text.slice(parts.index, from), "" + key + "-" + i * 2), renderLink(link, "" + key + "-" + (i * 2 + 1)), i === length - 1 ? renderText(text.slice(to), "" + key + "-" + length * 2) : null)
+      };
+    }, { index: 0, components: [] }).components;
+  };
+
+  var renderParagraph = function (text) {
+    var lines = text.trim().split(LINE_SPLIT);
+    return lines.reduce(function (paragraph, line, i) {
+      return paragraph.concat(renderLinks(line, i * 2), i === lines.length - 1 ? null : React.createElement("br", { key: i * 2 + 1 }));
+    }, []);
+  };
+
+  var renderParagraphs = function (text) {
+    var paragraphs = text.trim().split(PARAGRAPH_SPLIT);
+    return paragraphs.map(function (paragraph, i) {
+      return paragraph ? React.createElement(
+        "p",
+        { key: i },
+        renderParagraph(paragraph)
+      ) : null;
+    });
+  };
+
+  return React.createClass({
+    render: function render() {
+      var text = this.props.children || "";
+      return React.createElement(
+        "div",
+        null,
+        renderParagraphs(text)
+      );
+    }
+  });
+});
+// scripts/formatted-text.es6
+define('formatted-text', ["exports", "module", "../bower_components/formatted-text/formatted-text"], function (exports, module, _bower_componentsFormattedTextFormattedText) {
+  "use strict";
+
+  var _interopRequire = function (obj) { return obj && obj.__esModule ? obj["default"] : obj; };
+
+  var FormattedText = _interopRequire(_bower_componentsFormattedTextFormattedText);
+
+  module.exports = FormattedText;
+});
+// scripts/components/bookmarks/show.es6
+define('components/bookmarks/show', ["exports", "module", "underscore", "api", "components/ui/button", "components/ui/button-row", "cursors", "formatted-text", "moment", "react"], function (exports, module, _underscore, _api, _componentsUiButton, _componentsUiButtonRow, _cursors, _formattedText, _moment, _react) {
+  "use strict";
+
+  var _interopRequire = function (obj) { return obj && obj.__esModule ? obj["default"] : obj; };
+
+  var _ = _interopRequire(_underscore);
+
+  var api = _interopRequire(_api);
+
+  var Button = _interopRequire(_componentsUiButton);
+
+  var ButtonRow = _interopRequire(_componentsUiButtonRow);
+
+  var Cursors = _interopRequire(_cursors);
+
+  var FormattedText = _interopRequire(_formattedText);
+
+  var moment = _interopRequire(_moment);
+
+  var React = _interopRequire(_react);
+
+  var FORMAT = "MMM D, YYYY";
+
+  module.exports = React.createClass({
+    displayName: "show",
+    mixins: [Cursors],
+
+    getInitialState: function getInitialState() {
+      return {
+        isLoading: false,
+        error: null
+      };
+    },
+
+    componentWillMount: function componentWillMount() {
+      var bookmark = this.state.bookmark;
+      if (bookmark.description != null) {
+        return;
+      }this.update({ isLoading: { $set: true }, error: { $set: null } });
+      api.get("/portals/:portal_id/links/:id", { portal_id: this.props.portalId, id: bookmark.id }, this.handleFetch);
+    },
+
+    handleFetch: function handleFetch(er, res) {
+      var deltas = { isLoading: { $set: false } };
+      if (er) deltas.error = { $set: er };else deltas.bookmark = { $set: res.data };
+      this.update(deltas);
+    },
+
+    formatDate: function formatDate(dateString) {
+      return moment(dateString).format(FORMAT);
+    },
+
+    renderDescription: function renderDescription(desc) {
+      if (desc === undefined) {
+        return;
+      }return desc.replace(/(\r\n|\n|\r)/g, "<br />");
+    },
+
+    render: function render() {
+      var bookmark = this.state.bookmark;
+      return React.createElement(
+        "div",
+        { className: "osw-bookmarks-show" },
+        React.createElement(
+          "div",
+          { className: "osw-bookmarks-favicon" },
+          React.createElement("img", { src: "https://www.google.com/s2/favicons?domain_url=" + bookmark.links.web })
+        ),
+        React.createElement(
+          "div",
+          { style: { marginLeft: "25px" } },
+          React.createElement(
+            "div",
+            { className: "osw-bookmarks-show-name" },
+            bookmark.name
+          ),
+          React.createElement(
+            "div",
+            { className: "osw-bookmarks-show-description" },
+            React.createElement(
+              FormattedText,
+              null,
+              bookmark.description
+            )
+          )
+        ),
+        React.createElement(
+          "div",
+          { className: "osw-button-row" },
+          React.createElement(
+            ButtonRow,
+            null,
+            React.createElement(
+              Button,
+              { href: bookmark.url, target: "_parent" },
+              "Visit link"
+            )
+          )
+        )
+      );
+    }
+  });
+});
+// scripts/components/bookmarks/list-item.es6
+define('components/bookmarks/list-item', ["exports", "module", "underscore", "cursors", "moment", "components/ui/popup", "react", "components/ui/sep", "components/bookmarks/show"], function (exports, module, _underscore, _cursors, _moment, _componentsUiPopup, _react, _componentsUiSep, _componentsBookmarksShow) {
+  "use strict";
+
+  var _interopRequire = function (obj) { return obj && obj.__esModule ? obj["default"] : obj; };
+
+  var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+
+  var _ = _interopRequire(_underscore);
+
+  var Cursors = _interopRequire(_cursors);
+
+  var moment = _interopRequire(_moment);
+
+  var Popup = _interopRequire(_componentsUiPopup);
+
+  var React = _interopRequire(_react);
+
+  var Sep = _interopRequire(_componentsUiSep);
+
+  var Show = _interopRequire(_componentsBookmarksShow);
+
+  var FORMAT = "MMM D, YYYY";
+
+  module.exports = React.createClass({
+    displayName: "list-item",
+    mixins: [Cursors],
+
+    propTypes: {
+      key: React.PropTypes.number
+    },
+
+    getInitialState: function getInitialState() {
+      return {
+        showIsOpen: false
+      };
+    },
+
+    closeShow: function closeShow() {
+      this.update({ showIsOpen: { $set: false } });
+    },
+
+    getFaviconUrl: function getFaviconUrl(bookmark) {
+      var prefix = "https://www.google.com/s2/favicons?domain_url=";
+      return "" + prefix + "" + bookmark.links.web;
+    },
+
+    openShow: function openShow(ev) {
+      this.update({ showIsOpen: { $set: true } });
+    },
+
+    renderShow: function renderShow() {
+      if (!this.state.showIsOpen) {
+        return;
+      }return React.createElement(Show, _extends({}, this.props, {
+        cursors: { bookmark: this.getCursor("bookmark") }
+      }));
+    },
+
+    renderShowPopup: function renderShowPopup() {
+      return React.createElement(
+        Popup,
+        {
+          close: this.closeShow,
+          name: "bookmarks-show",
+          title: "Bookmark Details" },
+        this.renderShow()
+      );
+    },
+
+    render: function render() {
+      var bookmark = this.state.bookmark;
+      return React.createElement(
+        "div",
+        { className: "osw-bookmarks-list-item" },
+        React.createElement(
+          "div",
+          { className: "osw-bookmarks-favicon" },
+          React.createElement("img", { src: this.getFaviconUrl(bookmark) })
+        ),
+        React.createElement(
+          "div",
+          { className: "osw-bookmarks-content" },
+          React.createElement(
+            "div",
+            { className: "osw-bookmarks-list-item-name", onClick: this.openShow },
+            bookmark.name
+          ),
+          React.createElement(
+            "div",
+            { className: "osw-bookmarks-list-item-description" },
+            React.createElement(
+              "p",
+              null,
+              bookmark.links.web
+            )
+          )
+        ),
+        this.renderShowPopup()
+      );
+    }
+  });
+});
+// scripts/components/shared/empty.es6
+define('components/shared/empty', ["exports", "module", "components/ui/button", "cursors", "react"], function (exports, module, _componentsUiButton, _cursors, _react) {
+  "use strict";
+
+  var _interopRequire = function (obj) { return obj && obj.__esModule ? obj["default"] : obj; };
+
+  var Button = _interopRequire(_componentsUiButton);
+
+  var Cursors = _interopRequire(_cursors);
+
+  var React = _interopRequire(_react);
+
+  module.exports = React.createClass({
+    displayName: "empty",
+    mixins: [Cursors],
+
+    propTypes: {
+      objectName: React.PropTypes.string
+    },
+
+    getDefaultProps: function () {
+      return {
+        objectName: "items"
+      };
+    },
+
+    handleClick: function () {
+      this.update({
+        umbrella: { $set: "" },
+        category: { $set: "" },
+        letter: { $set: "" },
+        query: { $set: "" }
+      });
+    },
+
+    render: function () {
+      return React.createElement(
+        "div",
+        { className: "osw-portals-empty osw-inset-block" },
+        React.createElement(
+          "div",
+          { className: "osw-portals-empty-apology" },
+          "We're sorry, but no ",
+          this.props.objectName,
+          " match your selected filters."
+        ),
+        React.createElement(
+          "div",
+          { className: "osw-portals-empty-suggestions-header" },
+          "Suggestions"
+        ),
+        React.createElement(
+          "ul",
+          { className: "osw-portals-empty-suggestions" },
+          React.createElement(
+            "li",
+            null,
+            "Make sure all words are spelled correctly"
+          ),
+          React.createElement(
+            "li",
+            null,
+            "Try different, or fewer, keywords"
+          ),
+          React.createElement(
+            "li",
+            null,
+            "Clear all filters to return to all organizations"
+          )
+        ),
+        React.createElement(
+          Button,
+          { onClick: this.handleClick },
+          "Clear All Filters"
+        )
+      );
+    }
+  });
+});
+// scripts/components/ui/error-block.es6
+define('components/ui/error-block', ["exports", "module", "react"], function (exports, module, _react) {
+  "use strict";
+
+  var _interopRequire = function (obj) { return obj && obj.__esModule ? obj["default"] : obj; };
+
+  var React = _interopRequire(_react);
+
+  module.exports = React.createClass({
+    displayName: "error-block",
+    propTypes: {
+      message: React.PropTypes.string.isRequired
+    },
+
+    render: function () {
+      return React.createElement(
+        "div",
+        { className: "osw-inset-block osw-inset-block-red" },
+        this.props.message
+      );
+    }
+  });
+});
+// scripts/components/ui/loading-block.es6
+define('components/ui/loading-block', ["exports", "module", "react"], function (exports, module, _react) {
+  "use strict";
+
+  var _interopRequire = function (obj) { return obj && obj.__esModule ? obj["default"] : obj; };
+
+  var React = _interopRequire(_react);
+
+  module.exports = React.createClass({
+    displayName: "loading-block",
+    propTypes: {
+      message: React.PropTypes.string
+    },
+
+    getDefaultProps: function () {
+      return {
+        message: "Loading..."
+      };
+    },
+
+    render: function () {
+      return React.createElement(
+        "div",
+        { className: "osw-inset-block" },
+        this.props.message
+      );
+    }
+  });
+});
+// scripts/components/bookmarks/index.es6
+define('components/bookmarks/index', ["exports", "module", "underscore", "underscore.string", "api", "components/bookmarks/list-item", "cursors", "components/shared/empty", "components/ui/error-block", "components/bookmarks/filters", "react-list", "components/ui/loading-block", "react"], function (exports, module, _underscore, _underscoreString, _api, _componentsBookmarksListItem, _cursors, _componentsSharedEmpty, _componentsUiErrorBlock, _componentsBookmarksFilters, _reactList, _componentsUiLoadingBlock, _react) {
+  "use strict";
+
+  var _interopRequire = function (obj) { return obj && obj.__esModule ? obj["default"] : obj; };
+
+  var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+
+  var _ = _interopRequire(_underscore);
+
+  var _str = _interopRequire(_underscoreString);
+
+  var api = _interopRequire(_api);
+
+  var BookmarksListItem = _interopRequire(_componentsBookmarksListItem);
+
+  var Cursors = _interopRequire(_cursors);
+
+  var Empty = _interopRequire(_componentsSharedEmpty);
+
+  var ErrorBlock = _interopRequire(_componentsUiErrorBlock);
+
+  var Filters = _interopRequire(_componentsBookmarksFilters);
+
+  var List = _interopRequire(_reactList);
+
+  var LoadingBlock = _interopRequire(_componentsUiLoadingBlock);
+
+  var React = _interopRequire(_react);
+
+  var PER_PAGE = 10;
+
+  module.exports = React.createClass({
+    displayName: "index",
+    mixins: [Cursors],
+
+    propTypes: {
+      /* Specify which portal's bookmarks to retrieve */
+      portalId: React.PropTypes.number.isRequired },
+
+    getDefaultProps: function getDefaultProps() {
+      return {
+        bookmarks: [],
+        filtersAreShowing: true,
+        query: "",
+        searchableAttributes: ["name"]
+      };
+    },
+
+    getInitialState: function getInitialState() {
+      return {
+        bookmarks: this.props.bookmarks,
+        query: this.props.query
+      };
+    },
+
+    fetch: function fetch(cb) {
+      api.get("/portals/:portal_id/links", {
+        portal_id: this.props.portalId,
+        page: Math.floor(this.state.bookmarks.length / PER_PAGE) + 1,
+        per_page: PER_PAGE
+      }, _.partial(this.handleFetch, cb));
+    },
+
+    handleFetch: function handleFetch(cb, er, res) {
+      if (er) {
+        return cb(er);
+      }this.update({
+        bookmarks: { $set: _.unique(this.state.bookmarks.concat(res.data), "id") }
+      });
+      cb(null, res.data.length < PER_PAGE);
+    },
+
+    matchesQuery: function matchesQuery(bookmark) {
+      var query = this.state.query;
+      if (!query) {
+        return true;
+      }var words = _str.words(query.toLowerCase());
+      var searchableWords = this.searchableWordsFor(bookmark);
+      return _.every(words, function (wordA) {
+        return _.any(searchableWords, function (wordB) {
+          return _str.startsWith(wordB, wordA);
+        });
+      });
+    },
+
+    searchableWordsFor: function searchableWordsFor(bookmark) {
+      return _str.words(_.values(_.pick(bookmark, this.props.searchableAttributes)).join(" ").toLowerCase());
+    },
+
+    bookmarkMatchesFilters: function bookmarkMatchesFilters(bookmark) {
+      return this.matchesQuery(bookmark);
+    },
+
+    getFilteredBookmarks: function getFilteredBookmarks() {
+      return this.state.bookmarks.filter(this.bookmarkMatchesFilters);
+    },
+
+    renderFilters: function renderFilters(bookmarks) {
+      if (!this.state.bookmarks.length || !this.props.filtersAreShowing) {
+        return;
+      }return React.createElement(Filters, {
+        bookmarks: bookmarks,
+        getFacet: this.getFacet,
+        cursors: {
+          query: this.getCursor("query")
+        }
+      });
+    },
+
+    renderListItem: function renderListItem(bookmark) {
+      var i = this.state.bookmarks.indexOf(bookmark);
+      return React.createElement(BookmarksListItem, _extends({}, this.props, {
+        key: bookmark.id,
+        cursors: { bookmark: this.getCursor("bookmarks", i) }
+      }));
+    },
+
+    renderLoading: function renderLoading() {
+      return React.createElement(LoadingBlock, null);
+    },
+
+    renderError: function renderError(er) {
+      return React.createElement(ErrorBlock, { message: er.toString() });
+    },
+
+    renderEmpty: function renderEmpty() {
+      return React.createElement(Empty, {
+        objectName: "bookmarks",
+        cursors: {
+          query: this.getCursor("query")
+        }
+      });
+    },
+
+    render: function render() {
+      var bookmarks = this.getFilteredBookmarks();
+      return React.createElement(
+        "div",
+        { className: "osw-bookmarks-index" },
+        this.renderFilters(bookmarks),
+        React.createElement(List, _extends({}, this.props, {
+          items: bookmarks,
+          fetch: this.fetch,
+          renderLoading: this.renderLoading,
+          renderError: this.renderError,
+          renderItem: this.renderListItem,
+          renderEmpty: this.renderEmpty,
+          uniform: true
+        }))
+      );
+    }
+  });
+});
 // scripts/components/builder/index.es6
 define('components/builder/index', ["exports", "module", "underscore", "underscore.string", "api", "cursors", "react"], function (exports, module, _underscore, _underscoreString, _api, _cursors, _react) {
   "use strict";
@@ -45474,6 +46397,10 @@ define('components/builder/index', ["exports", "module", "underscore", "undersco
   var WIDGETS = {
     Albums: {
       moduleName: "albums/index",
+      props: ["portalId"]
+    },
+    Bookmarks: {
+      moduleName: "bookmarks/index",
       props: ["portalId"]
     },
     Events: {
@@ -48191,21 +49118,6 @@ define('entities/event', ["exports", "underscore", "underscore.string", "api", "
     value: true
   });
 });
-// scripts/components/ui/sep.es6
-define('components/ui/sep', ["exports", "module", "react"], function (exports, module, _react) {
-  "use strict";
-
-  var _interopRequire = function (obj) { return obj && obj.__esModule ? obj["default"] : obj; };
-
-  var React = _interopRequire(_react);
-
-  module.exports = React.createClass({
-    displayName: "sep",
-    render: function () {
-      return React.createElement("span", { dangerouslySetInnerHTML: { __html: " &#x2022; " } });
-    }
-  });
-});
 // scripts/components/events/show.es6
 define('components/events/show', ["exports", "module", "underscore", "underscore.string", "api", "components/ui/button", "cursors", "components/ui/icon", "react", "components/ui/sep", "entities/event"], function (exports, module, _underscore, _underscoreString, _api, _componentsUiButton, _cursors, _componentsUiIcon, _react, _componentsUiSep, _entitiesEvent) {
   "use strict";
@@ -50901,111 +51813,6 @@ define('components/files/index', ["exports", "module", "underscore", "components
     }
   });
 });
-// scripts/components/shared/selector.es6
-define('components/shared/selector', ["exports", "module", "cursors", "utils/join-class-names", "react"], function (exports, module, _cursors, _utilsJoinClassNames, _react) {
-  "use strict";
-
-  var _interopRequire = function (obj) { return obj && obj.__esModule ? obj["default"] : obj; };
-
-  var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
-
-  var Cursors = _interopRequire(_cursors);
-
-  var joinClassNames = _interopRequire(_utilsJoinClassNames);
-
-  var React = _interopRequire(_react);
-
-  module.exports = React.createClass({
-    displayName: "selector",
-    mixins: [Cursors],
-
-    propTypes: {
-      className: React.PropTypes.string,
-      name: React.PropTypes.string,
-      onChange: React.PropTypes.func.isRequired,
-      renderOptions: React.PropTypes.func.isRequired
-    },
-
-    render: function () {
-      var options = this.props.renderOptions();
-      var value = this.props.value;
-      if (options.length === 2) value = options[1].props.value;
-      return React.createElement(
-        "div",
-        _extends({}, this.props, {
-          className: joinClassNames("osw-big osw-field oswi osw-dropdown", this.props.className)
-        }),
-        React.createElement(
-          "select",
-          {
-            name: this.props.name,
-            onChange: this.props.onChange,
-            value: value
-          },
-          options
-        )
-      );
-    }
-  });
-});
-// scripts/components/shared/faceted-selector.es6
-define('components/shared/faceted-selector', ["exports", "module", "underscore", "cursors", "react", "components/shared/selector"], function (exports, module, _underscore, _cursors, _react, _componentsSharedSelector) {
-  "use strict";
-
-  var _interopRequire = function (obj) { return obj && obj.__esModule ? obj["default"] : obj; };
-
-  var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
-
-  var _ = _interopRequire(_underscore);
-
-  var Cursors = _interopRequire(_cursors);
-
-  var React = _interopRequire(_react);
-
-  var Selector = _interopRequire(_componentsSharedSelector);
-
-  module.exports = React.createClass({
-    displayName: "faceted-selector",
-    mixins: [Cursors],
-
-    propTypes: {
-      getFacet: React.PropTypes.func.isRequired,
-      objects: React.PropTypes.array.isRequired,
-      showMatchCount: React.PropTypes.bool
-    },
-
-    getDefaultProps: function () {
-      return {
-        showMatchCount: true
-      };
-    },
-
-    toOption: function (matches, name) {
-      return { id: name, name: name + this.matchCount(matches) };
-    },
-
-    matchCount: function (matches) {
-      if (!this.props.showMatchCount) return "";
-      return " (" + matches.length + ")";
-    },
-
-    renderOption: function (option) {
-      return React.createElement(
-        "option",
-        { key: option.id, value: option.id },
-        option.name
-      );
-    },
-
-    renderOptions: function () {
-      return [{ id: "", name: this.props.allOption }].concat(_.chain(this.props.objects).map(this.props.getFacet).groupBy().map(this.toOption).sortBy("name").value()).map(this.renderOption);
-    },
-
-    render: function () {
-      return React.createElement(Selector, _extends({}, this.props, { renderOptions: this.renderOptions }));
-    }
-  });
-});
 // scripts/components/shared/category-selector.es6
 define('components/shared/category-selector', ["exports", "module", "cursors", "components/shared/faceted-selector", "utils/join-class-names", "react"], function (exports, module, _cursors, _componentsSharedFacetedSelector, _utilsJoinClassNames, _react) {
   "use strict";
@@ -51043,118 +51850,6 @@ define('components/shared/category-selector', ["exports", "module", "cursors", "
         getFacet: this.getFacet,
         name: "category"
       }));
-    }
-  });
-});
-// scripts/components/shared/query.es6
-define('components/shared/query', ["exports", "module", "cursors", "react"], function (exports, module, _cursors, _react) {
-  "use strict";
-
-  var _interopRequire = function (obj) { return obj && obj.__esModule ? obj["default"] : obj; };
-
-  var Cursors = _interopRequire(_cursors);
-
-  var React = _interopRequire(_react);
-
-  module.exports = React.createClass({
-    displayName: "query",
-    mixins: [Cursors],
-
-    propTypes: {
-      onChange: React.PropTypes.func.isRequired,
-      value: React.PropTypes.string
-    },
-
-    render: function () {
-      return React.createElement(
-        "div",
-        { className: "osw-big osw-field oswi oswi-magnify" },
-        React.createElement("input", {
-          autoComplete: "off",
-          name: "query",
-          onChange: this.props.onChange,
-          placeholder: "Search by name or keyword",
-          type: "text",
-          value: this.props.value
-        })
-      );
-    }
-  });
-});
-// scripts/components/shared/summary.es6
-define('components/shared/summary', ["exports", "module", "underscore", "components/ui/button", "cursors", "components/ui/icon", "react"], function (exports, module, _underscore, _componentsUiButton, _cursors, _componentsUiIcon, _react) {
-  "use strict";
-
-  var _interopRequire = function (obj) { return obj && obj.__esModule ? obj["default"] : obj; };
-
-  var _ = _interopRequire(_underscore);
-
-  var Button = _interopRequire(_componentsUiButton);
-
-  var Cursors = _interopRequire(_cursors);
-
-  var Icon = _interopRequire(_componentsUiIcon);
-
-  var React = _interopRequire(_react);
-
-  module.exports = React.createClass({
-    displayName: "summary",
-    mixins: [Cursors],
-
-    propTypes: {
-      filterKeys: React.PropTypes.array.isRequired,
-      objectName: React.PropTypes.string,
-      objects: React.PropTypes.array,
-      showMessage: React.PropTypes.bool
-    },
-
-    getDefaultProps: function () {
-      return {
-        objectName: "item",
-        showMessage: true
-      };
-    },
-
-    getFilters: function () {
-      return _.pick(this.state, this.props.filterKeys);
-    },
-
-    renderMessage: function () {
-      if (!this.props.showMessage) return "";
-      var any = _.any(this.getFilters());
-      var l = this.props.objects.length;
-      return "Showing " + (any ? "" : "all ") + l + " " + this.props.objectName + (l === 1 ? "" : "s") + (any ? " matching " : ".");
-    },
-
-    renderClearButtons: function () {
-      return _.map(this.getFilters(), function (value, name) {
-        if (!value) return null;
-        var deltas = {};
-        deltas[name] = { $set: "" };
-        return React.createElement(
-          Button,
-          { key: name, onClick: _.partial(this.update, deltas) },
-          value,
-          React.createElement(Icon, { name: "delete" })
-        );
-      }, this);
-    },
-
-    render: function () {
-      return React.createElement(
-        "div",
-        { className: "osw-portals-summary" },
-        React.createElement(
-          "div",
-          { className: "osw-portals-summary-message" },
-          this.renderMessage()
-        ),
-        React.createElement(
-          "div",
-          { className: "osw-portals-summary-clear-buttons" },
-          this.renderClearButtons()
-        )
-      );
     }
   });
 });
@@ -51210,139 +51905,52 @@ define('components/forms/filters', ["exports", "module", "components/shared/cate
     }
   });
 });
-// scripts/components/shared/empty.es6
-define('components/shared/empty', ["exports", "module", "components/ui/button", "cursors", "react"], function (exports, module, _componentsUiButton, _cursors, _react) {
+// scripts/components/shared/created-by.es6
+define('components/shared/created-by', ["exports", "module", "moment", "react", "entities/account"], function (exports, module, _moment, _react, _entitiesAccount) {
   "use strict";
 
   var _interopRequire = function (obj) { return obj && obj.__esModule ? obj["default"] : obj; };
 
-  var Button = _interopRequire(_componentsUiButton);
-
-  var Cursors = _interopRequire(_cursors);
+  var moment = _interopRequire(_moment);
 
   var React = _interopRequire(_react);
 
+  var getPictureUrl = _entitiesAccount.getPictureUrl;
   module.exports = React.createClass({
-    displayName: "empty",
-    mixins: [Cursors],
-
+    displayName: "created-by",
     propTypes: {
-      objectName: React.PropTypes.string
-    },
-
-    getDefaultProps: function () {
-      return {
-        objectName: "items"
-      };
-    },
-
-    handleClick: function () {
-      this.update({
-        umbrella: { $set: "" },
-        category: { $set: "" },
-        letter: { $set: "" },
-        query: { $set: "" }
-      });
+      account: React.PropTypes.object.isRequired,
+      createdAt: React.PropTypes.string
     },
 
     render: function () {
       return React.createElement(
         "div",
-        { className: "osw-portals-empty osw-inset-block" },
+        { className: "osw-media" },
         React.createElement(
           "div",
-          { className: "osw-portals-empty-apology" },
-          "We're sorry, but no ",
-          this.props.objectName,
-          " match your selected filters."
+          { className: "osw-pull-left" },
+          React.createElement("img", {
+            src: getPictureUrl(this.props.account)
+          })
         ),
         React.createElement(
           "div",
-          { className: "osw-portals-empty-suggestions-header" },
-          "Suggestions"
-        ),
-        React.createElement(
-          "ul",
-          { className: "osw-portals-empty-suggestions" },
+          { className: "osw-media-body" },
+          this.props.account.display_name,
+          React.createElement("br", null),
           React.createElement(
-            "li",
-            null,
-            "Make sure all words are spelled correctly"
-          ),
-          React.createElement(
-            "li",
-            null,
-            "Try different, or fewer, keywords"
-          ),
-          React.createElement(
-            "li",
-            null,
-            "Clear all filters to return to all organizations"
+            "span",
+            { className: "subtle-text" },
+            moment(this.props.createdAt).fromNow()
           )
-        ),
-        React.createElement(
-          Button,
-          { onClick: this.handleClick },
-          "Clear All Filters"
         )
       );
     }
   });
 });
-// scripts/components/ui/error-block.es6
-define('components/ui/error-block', ["exports", "module", "react"], function (exports, module, _react) {
-  "use strict";
-
-  var _interopRequire = function (obj) { return obj && obj.__esModule ? obj["default"] : obj; };
-
-  var React = _interopRequire(_react);
-
-  module.exports = React.createClass({
-    displayName: "error-block",
-    propTypes: {
-      message: React.PropTypes.string.isRequired
-    },
-
-    render: function () {
-      return React.createElement(
-        "div",
-        { className: "osw-inset-block osw-inset-block-red" },
-        this.props.message
-      );
-    }
-  });
-});
-// scripts/components/ui/button-row.es6
-define('components/ui/button-row', ["exports", "module", "cursors", "utils/join-class-names", "react"], function (exports, module, _cursors, _utilsJoinClassNames, _react) {
-  "use strict";
-
-  var _interopRequire = function (obj) { return obj && obj.__esModule ? obj["default"] : obj; };
-
-  var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
-
-  var Cursors = _interopRequire(_cursors);
-
-  var joinClassNames = _interopRequire(_utilsJoinClassNames);
-
-  var React = _interopRequire(_react);
-
-  module.exports = React.createClass({
-    displayName: "button-row",
-    mixins: [Cursors],
-
-    render: function () {
-      return React.createElement(
-        "div",
-        _extends({}, this.props, {
-          className: joinClassNames("osw-button-row", this.props.classname)
-        }),
-        this.props.children
-      );
-    }
-  });
-});
 // scripts/components/forms/show.es6
-define('components/forms/show', ["exports", "module", "api", "components/ui/button", "components/ui/button-row", "cursors", "react"], function (exports, module, _api, _componentsUiButton, _componentsUiButtonRow, _cursors, _react) {
+define('components/forms/show', ["exports", "module", "api", "components/ui/button", "components/ui/button-row", "cursors", "components/shared/created-by", "react"], function (exports, module, _api, _componentsUiButton, _componentsUiButtonRow, _cursors, _componentsSharedCreatedBy, _react) {
   "use strict";
 
   var _interopRequire = function (obj) { return obj && obj.__esModule ? obj["default"] : obj; };
@@ -51354,6 +51962,8 @@ define('components/forms/show', ["exports", "module", "api", "components/ui/butt
   var ButtonRow = _interopRequire(_componentsUiButtonRow);
 
   var Cursors = _interopRequire(_cursors);
+
+  var CreatedBy = _interopRequire(_componentsSharedCreatedBy);
 
   var React = _interopRequire(_react);
 
@@ -51381,10 +51991,6 @@ define('components/forms/show', ["exports", "module", "api", "components/ui/butt
       this.update(deltas);
     },
 
-    showCreator: function (form) {
-      return "Created by " + form.creator.display_name;
-    },
-
     renderDescription: function (description) {
       if (!description || /^\s*$/.test(description)) return "No description provided";
       return description;
@@ -51405,11 +52011,7 @@ define('components/forms/show', ["exports", "module", "api", "components/ui/butt
           { className: "osw-forms-show-category" },
           form.category.name
         ),
-        React.createElement(
-          "div",
-          { className: "osw-forms-show-creator" },
-          this.showCreator(form)
-        ),
+        React.createElement(CreatedBy, { account: form.creator, createdAt: form.created_at }),
         React.createElement(
           "div",
           { className: "osw-forms-show-description" },
@@ -51534,35 +52136,6 @@ define('components/forms/list-item', ["exports", "module", "cursors", "moment", 
           )
         ),
         this.renderShowPopup()
-      );
-    }
-  });
-});
-// scripts/components/ui/loading-block.es6
-define('components/ui/loading-block', ["exports", "module", "react"], function (exports, module, _react) {
-  "use strict";
-
-  var _interopRequire = function (obj) { return obj && obj.__esModule ? obj["default"] : obj; };
-
-  var React = _interopRequire(_react);
-
-  module.exports = React.createClass({
-    displayName: "loading-block",
-    propTypes: {
-      message: React.PropTypes.string
-    },
-
-    getDefaultProps: function () {
-      return {
-        message: "Loading..."
-      };
-    },
-
-    render: function () {
-      return React.createElement(
-        "div",
-        { className: "osw-inset-block" },
-        this.props.message
       );
     }
   });
@@ -51732,16 +52305,16 @@ define('components/forms/index', ["exports", "module", "underscore", "underscore
   });
 });
 // scripts/components/news-posts/show.es6
-define('components/news-posts/show', ["exports", "module", "components/comments/index", "cursors", "moment", "react"], function (exports, module, _componentsCommentsIndex, _cursors, _moment, _react) {
+define('components/news-posts/show', ["exports", "module", "components/comments/index", "components/shared/created-by", "cursors", "react"], function (exports, module, _componentsCommentsIndex, _componentsSharedCreatedBy, _cursors, _react) {
   "use strict";
 
   var _interopRequire = function (obj) { return obj && obj.__esModule ? obj["default"] : obj; };
 
   var CommentsIndex = _interopRequire(_componentsCommentsIndex);
 
-  var Cursors = _interopRequire(_cursors);
+  var CreatedBy = _interopRequire(_componentsSharedCreatedBy);
 
-  var moment = _interopRequire(_moment);
+  var Cursors = _interopRequire(_cursors);
 
   var React = _interopRequire(_react);
 
@@ -51762,16 +52335,7 @@ define('components/news-posts/show', ["exports", "module", "components/comments/
             { className: "osw-news-posts-show-title" },
             newsPost.title
           ),
-          React.createElement(
-            "div",
-            { className: "osw-news-posts-show-creator" },
-            newsPost.creator.display_name
-          ),
-          React.createElement(
-            "div",
-            { className: "osw-news-posts-show-time" },
-            moment(newsPost.created_at).fromNow()
-          ),
+          React.createElement(CreatedBy, { account: newsPost.creator, createdAt: newsPost.created_at }),
           React.createElement("div", {
             className: "osw-news-posts-show-body",
             dangerouslySetInnerHTML: { __html: newsPost.body }
@@ -52193,18 +52757,18 @@ define('components/polls/results', ["exports", "module", "underscore", "cursors"
   });
 });
 // scripts/components/polls/show.es6
-define('components/polls/show', ["exports", "module", "underscore", "api", "components/ui/button", "components/ui/button-row", "cursors", "moment", "react", "components/polls/results"], function (exports, module, _underscore, _api, _componentsUiButton, _componentsUiButtonRow, _cursors, _moment, _react, _componentsPollsResults) {
+define('components/polls/show', ["exports", "module", "api", "components/ui/button", "components/ui/button-row", "components/shared/created-by", "cursors", "moment", "react", "components/polls/results"], function (exports, module, _api, _componentsUiButton, _componentsUiButtonRow, _componentsSharedCreatedBy, _cursors, _moment, _react, _componentsPollsResults) {
   "use strict";
 
   var _interopRequire = function (obj) { return obj && obj.__esModule ? obj["default"] : obj; };
-
-  var _ = _interopRequire(_underscore);
 
   var api = _interopRequire(_api);
 
   var Button = _interopRequire(_componentsUiButton);
 
   var ButtonRow = _interopRequire(_componentsUiButtonRow);
+
+  var CreatedBy = _interopRequire(_componentsSharedCreatedBy);
 
   var Cursors = _interopRequire(_cursors);
 
@@ -52220,7 +52784,11 @@ define('components/polls/show', ["exports", "module", "underscore", "api", "comp
     displayName: "show",
     mixins: [Cursors],
 
-    getInitialState: function getInitialState() {
+    propTypes: {
+      portalId: React.PropTypes.number
+    },
+
+    getInitialState: function () {
       return {
         isLoading: false,
         error: null
@@ -52243,17 +52811,6 @@ define('components/polls/show', ["exports", "module", "underscore", "api", "comp
 
     formatDate: function formatDate(dateString) {
       return moment(dateString).format(FORMAT);
-    },
-
-    renderCreator: function renderCreator(poll) {
-      if (!poll.creator) {
-        return;
-      }return React.createElement(
-        "p",
-        null,
-        "Created by ",
-        poll.creator.display_name
-      );
     },
 
     renderResults: function renderResults(poll) {
@@ -52296,7 +52853,7 @@ define('components/polls/show', ["exports", "module", "underscore", "api", "comp
           poll.name
         ),
         this.renderStatus(poll),
-        this.renderCreator(poll),
+        React.createElement(CreatedBy, { account: poll.creator, createdAt: poll.created_at }),
         this.renderVoted(poll),
         this.renderResults(poll),
         React.createElement(

@@ -1,7 +1,7 @@
-import _ from 'underscore';
 import api from 'api';
 import Button from 'components/ui/button';
 import ButtonRow from 'components/ui/button-row';
+import CreatedBy from 'components/shared/created-by';
 import Cursors from 'cursors';
 import moment from 'moment';
 import React from 'react';
@@ -12,7 +12,11 @@ var FORMAT = 'MMM D, YYYY';
 export default React.createClass({
   mixins: [Cursors],
 
-  getInitialState() {
+  propTypes: {
+    portalId: React.PropTypes.number
+  },
+
+  getInitialState: function () {
     return {
       isLoading: false,
       error: null
@@ -41,11 +45,6 @@ export default React.createClass({
     return moment(dateString).format(FORMAT);
   },
 
-  renderCreator(poll) {
-    if (!poll.creator) return;
-    return <p>Created by {poll.creator.display_name}</p>
-  },
-
   renderResults(poll) {
     if (poll.can_view_results === undefined) return;
     return <Results poll={poll} />;
@@ -53,8 +52,8 @@ export default React.createClass({
 
   renderStatus(poll) {
     if (poll.begins_at !== undefined && !poll.is_open) {
-      var start = this.formatDate(poll.begins_at);
-      var end = this.formatDate(poll.ends_at);
+      let start = this.formatDate(poll.begins_at);
+      let end = this.formatDate(poll.ends_at);
       return <p>{`This poll was open from ${start} to ${end}`}</p>;
     }
   },
@@ -68,14 +67,17 @@ export default React.createClass({
 
     return (
       <div className='osw-polls-show'>
+
         <h3>{poll.name}</h3>
 
         {this.renderStatus(poll)}
-        {this.renderCreator(poll)}
+
+        <CreatedBy account={poll.creator} createdAt={poll.created_at} />
+
         {this.renderVoted(poll)}
         {this.renderResults(poll)}
 
-        <div className="osw-button-row">
+        <div className='osw-button-row'>
           <ButtonRow>
             <Button href={poll.links.web} target='_parent'>
               View on OrgSync.com

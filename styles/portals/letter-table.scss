@@ -8,7 +8,7 @@
   &[min-width~='640px'] > .osw-portals-index .osw-portals-letter-table {
     display: table;
     width: 100%;
-    @include box-sizing(border-box);
+    box-sizing: border-box;;
     border: 5px solid transparent;
     border-collapse: collapse;
     table-layout: fixed;

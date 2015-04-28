@@ -97,7 +97,7 @@
     }
 
     .osw-selector-result-icon {
-      @include box-sizing(border-box);
+      box-sizing: border-box;;
       padding-top: 2px;
     }
 

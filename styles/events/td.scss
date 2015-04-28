@@ -23,7 +23,7 @@
   }
 
   .osw-events-td-event {
-    @include box-sizing(border-box);
+    box-sizing: border-box;;
     @include clearfix;
     border-left: 2px solid $grey;
     cursor: pointer;

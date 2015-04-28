@@ -51,7 +51,7 @@
 
   .osw-portals-list-item-umbrella,
   .osw-portals-list-item-category {
-    @include box-sizing(border-box);
+    box-sizing: border-box;;
     color: $grey-darker;
     line-height: 1.4em;
     @include ellipsis;
@@ -63,7 +63,7 @@
 
   &[min-width~='480px'] > .osw-portals-index .osw-portals-list-item {
     display: inline-block;
-    @include box-sizing(border-box);
+    box-sizing: border-box;;
     border: 5px solid transparent;
     width: 33.33%;
     vertical-align: top;

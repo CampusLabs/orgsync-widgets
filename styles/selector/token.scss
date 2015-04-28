@@ -2,7 +2,7 @@
 
 .orgsync-widget {
   .osw-selector-token {
-    @include box-sizing(border-box);
+    box-sizing: border-box;;
     @include user-select(none);
     border-radius: $border-radius;
     color: #fff;

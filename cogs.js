@@ -25,6 +25,7 @@ module.exports = {
     },
     css: {
       transformers: [
+        'autoprefixer',
         'directives',
         {name: 'prepend-path', options: {before: '/* ', after: ' */'}}
       ]

@@ -9283,7 +9283,7 @@ return jQuery;
 define('jquery', ['exports', 'module', '../bower_components/jquery/dist/jquery'], function (exports, module, _bower_componentsJqueryDistJquery) {
   'use strict';
 
-  var _interopRequire = function (obj) { return obj && obj.__esModule ? obj['default'] : obj; };
+  function _interopRequire(obj) { return obj && obj.__esModule ? obj['default'] : obj; }
 
   var _$ = _interopRequire(_bower_componentsJqueryDistJquery);
 
@@ -10842,7 +10842,7 @@ define('jquery', ['exports', 'module', '../bower_components/jquery/dist/jquery']
 define('underscore', ['exports', 'module', '../bower_components/underscore/underscore'], function (exports, module, _bower_componentsUnderscoreUnderscore) {
   'use strict';
 
-  var _interopRequire = function (obj) { return obj && obj.__esModule ? obj['default'] : obj; };
+  function _interopRequire(obj) { return obj && obj.__esModule ? obj['default'] : obj; }
 
   var _2 = _interopRequire(_bower_componentsUnderscoreUnderscore);
 
@@ -11001,7 +11001,7 @@ define('underscore', ['exports', 'module', '../bower_components/underscore/under
 define('cache', ['exports', 'module', '../bower_components/cache/cache'], function (exports, module, _bower_componentsCacheCache) {
   'use strict';
 
-  var _interopRequire = function (obj) { return obj && obj.__esModule ? obj['default'] : obj; };
+  function _interopRequire(obj) { return obj && obj.__esModule ? obj['default'] : obj; }
 
   var _cache = _interopRequire(_bower_componentsCacheCache);
 
@@ -18446,7 +18446,7 @@ function toArray(list, index) {
 define('socket.io', ['exports', 'module', '../bower_components/socket.io-client/socket.io'], function (exports, module, _bower_componentsSocketIoClientSocketIo) {
   'use strict';
 
-  var _interopRequire = function (obj) { return obj && obj.__esModule ? obj['default'] : obj; };
+  function _interopRequire(obj) { return obj && obj.__esModule ? obj['default'] : obj; }
 
   var _socketIo = _interopRequire(_bower_componentsSocketIoClientSocketIo);
 
@@ -40054,7 +40054,7 @@ module.exports = warning;
 define('react', ['exports', 'module', '../bower_components/react/react-with-addons'], function (exports, module, _bower_componentsReactReactWithAddons) {
   'use strict';
 
-  var _interopRequire = function (obj) { return obj && obj.__esModule ? obj['default'] : obj; };
+  function _interopRequire(obj) { return obj && obj.__esModule ? obj['default'] : obj; }
 
   var _React = _interopRequire(_bower_componentsReactReactWithAddons);
 
@@ -40064,11 +40064,11 @@ define('react', ['exports', 'module', '../bower_components/react/react-with-addo
 define('orgsync-widgets', ['exports', 'jquery', 'underscore', 'cache', 'config', 'elementQuery', 'socket.io', 'react', 'require'], function (exports, _jquery, _underscore, _cache, _config, _elementQuery, _socketIo, _react, _require) {
   'use strict';
 
-  var _interopRequire = function (obj) { return obj && obj.__esModule ? obj['default'] : obj; };
-
   Object.defineProperty(exports, '__esModule', {
     value: true
   });
+
+  function _interopRequire(obj) { return obj && obj.__esModule ? obj['default'] : obj; }
 
   var _$ = _interopRequire(_jquery);
 
@@ -40098,12 +40098,10 @@ define('orgsync-widgets', ['exports', 'jquery', 'underscore', 'cache', 'config',
   };
 
   var mount = function mount(el) {
-    if (el.widgetIsMounted) {
-      return;
-    }var data = _$(el).data();
-    if (!data.moduleName) {
-      return;
-    }var component = _require2('components/' + data.moduleName);
+    if (el.widgetIsMounted) return;
+    var data = _$(el).data();
+    if (!data.moduleName) return;
+    var component = _require2('components/' + data.moduleName);
     el.widgetIsMounted = true;
     _React.render(_React.createFactory(component)(_2.clone(data)), el);
     _elementQuery2();
@@ -41456,7 +41454,7 @@ module.exports = request;
 define('superagent', ['exports', 'module', '../bower_components/superagent/superagent'], function (exports, module, _bower_componentsSuperagentSuperagent) {
   'use strict';
 
-  var _interopRequire = function (obj) { return obj && obj.__esModule ? obj['default'] : obj; };
+  function _interopRequire(obj) { return obj && obj.__esModule ? obj['default'] : obj; }
 
   var _superagent = _interopRequire(_bower_componentsSuperagentSuperagent);
 
@@ -41517,39 +41515,24 @@ define('superagent', ['exports', 'module', '../bower_components/superagent/super
       data = extend({key: this.key}, data);
       var url = this.url(path, data, false);
 
-      // HACK: This little dance is necessary for IE9. Once IE9 support is
-      // dropped, JSONP will be irrelevant and purely superagent can be used.
-      try {
-        var req = superagent[method](url);
-        req[method === 'get' ? 'query' : 'send'](data);
-        for (var key in attachments) {
-          var attachment = attachments[key];
-          req.attach(key, attachment.file, attachment.name);
-        }
-        req.end(function (er, res) {
-          var body = (res || {}).body || {};
-          if (body.data) return cb(null, body);
-          if (!er) {
-            if (body.error) er = new Error(body.error);
-            else if (res.error) er = res.error;
-            else er = new Error('Unknown');
-          }
-          er.fields = body.error_fields || {};
-          cb(er, body);
-        });
-      } catch (er) {
-        if (typeof jQuery === 'undefined') throw er;
-        jQuery.ajax({
-          url: url,
-          dataType: 'jsonp',
-          data: data,
-          success: function (res) {
-            if (res.error) return cb(new Error(res.error));
-            cb(null, res);
-          },
-          error: cb
-        });
+      var req = superagent[method](url);
+      req[method === 'get' ? 'query' : 'send'](data);
+
+      for (var key in attachments) {
+        var attachment = attachments[key];
+        req.attach(key, attachment.file, attachment.name);
       }
+
+      req.end(function (er, res) {
+        var body = (res || {}).body || {};
+        if (body.data) return cb(null, body);
+        if (body.error) er = new Error(body.error);
+        else if (res && res.error) er = res.error;
+        else if (!er) er = new Error('Unknown');
+        er.fields = body.error_fields || {};
+        cb(er, body);
+      });
+
       return this;
     },
 
@@ -41585,7 +41568,7 @@ define('superagent', ['exports', 'module', '../bower_components/superagent/super
 define('orgsync-api', ['exports', 'module', '../bower_components/orgsync-api/orgsync-api'], function (exports, module, _bower_componentsOrgsyncApiOrgsyncApi) {
   'use strict';
 
-  var _interopRequire = function (obj) { return obj && obj.__esModule ? obj['default'] : obj; };
+  function _interopRequire(obj) { return obj && obj.__esModule ? obj['default'] : obj; }
 
   var _OrgSyncApi = _interopRequire(_bower_componentsOrgsyncApiOrgsyncApi);
 
@@ -41595,7 +41578,7 @@ define('orgsync-api', ['exports', 'module', '../bower_components/orgsync-api/org
 define('api', ['exports', 'module', 'config', 'orgsync-api'], function (exports, module, _config, _orgsyncApi) {
   'use strict';
 
-  var _interopRequire = function (obj) { return obj && obj.__esModule ? obj['default'] : obj; };
+  function _interopRequire(obj) { return obj && obj.__esModule ? obj['default'] : obj; }
 
   var _config2 = _interopRequire(_config);
 
@@ -41623,7 +41606,7 @@ define('entities/account', ['exports'], function (exports) {
 define('components/accounts/list-item', ['exports', 'module', 'entities/account', 'react'], function (exports, module, _entitiesAccount, _react) {
   'use strict';
 
-  var _interopRequire = function (obj) { return obj && obj.__esModule ? obj['default'] : obj; };
+  function _interopRequire(obj) { return obj && obj.__esModule ? obj['default'] : obj; }
 
   var _React = _interopRequire(_react);
 
@@ -41776,7 +41759,7 @@ define('components/accounts/list-item', ['exports', 'module', 'entities/account'
 define('cursors', ['exports', 'module', '../bower_components/cursors/cursors'], function (exports, module, _bower_componentsCursorsCursors) {
   'use strict';
 
-  var _interopRequire = function (obj) { return obj && obj.__esModule ? obj['default'] : obj; };
+  function _interopRequire(obj) { return obj && obj.__esModule ? obj['default'] : obj; }
 
   var _Cursors = _interopRequire(_bower_componentsCursorsCursors);
 
@@ -42039,7 +42022,7 @@ define('cursors', ['exports', 'module', '../bower_components/cursors/cursors'], 
 define('react-list', ['exports', 'module', '../bower_components/react-list/react-list'], function (exports, module, _bower_componentsReactListReactList) {
   'use strict';
 
-  var _interopRequire = function (obj) { return obj && obj.__esModule ? obj['default'] : obj; };
+  function _interopRequire(obj) { return obj && obj.__esModule ? obj['default'] : obj; }
 
   var _ReactList = _interopRequire(_bower_componentsReactListReactList);
 
@@ -42049,7 +42032,7 @@ define('react-list', ['exports', 'module', '../bower_components/react-list/react
 define('components/accounts/index', ['exports', 'module', 'underscore', 'api', 'components/accounts/list-item', 'cursors', 'react-list', 'react'], function (exports, module, _underscore, _api, _componentsAccountsListItem, _cursors, _reactList, _react) {
   'use strict';
 
-  var _interopRequire = function (obj) { return obj && obj.__esModule ? obj['default'] : obj; };
+  function _interopRequire(obj) { return obj && obj.__esModule ? obj['default'] : obj; }
 
   var _2 = _interopRequire(_underscore);
 
@@ -42085,9 +42068,8 @@ define('components/accounts/index', ['exports', 'module', 'underscore', 'api', '
     },
 
     handleFetch: function handleFetch(cb, er, res) {
-      if (er) {
-        return cb(er);
-      }this.update({
+      if (er) return cb(er);
+      this.update({
         accounts: { $set: _2.unique(this.state.accounts.concat(res.data), 'id') }
       });
       cb(null, res.data.length < PER_PAGE);
@@ -43125,7 +43107,7 @@ module.exports = function words(str, delimiter) {
 define('underscore.string', ['exports', 'module', '../bower_components/underscore.string/dist/underscore.string'], function (exports, module, _bower_componentsUnderscoreStringDistUnderscoreString) {
   'use strict';
 
-  var _interopRequire = function (obj) { return obj && obj.__esModule ? obj['default'] : obj; };
+  function _interopRequire(obj) { return obj && obj.__esModule ? obj['default'] : obj; }
 
   var _str2 = _interopRequire(_bower_componentsUnderscoreStringDistUnderscoreString);
 
@@ -43135,7 +43117,7 @@ define('underscore.string', ['exports', 'module', '../bower_components/underscor
 define('utils/join-class-names', ['exports', 'module', 'underscore'], function (exports, module, _underscore) {
   'use strict';
 
-  var _interopRequire = function (obj) { return obj && obj.__esModule ? obj['default'] : obj; };
+  function _interopRequire(obj) { return obj && obj.__esModule ? obj['default'] : obj; }
 
   var _2 = _interopRequire(_underscore);
 
@@ -43147,9 +43129,9 @@ define('utils/join-class-names', ['exports', 'module', 'underscore'], function (
 define('components/ui/button', ['exports', 'module', 'cursors', 'utils/join-class-names', 'react'], function (exports, module, _cursors, _utilsJoinClassNames, _react) {
   'use strict';
 
-  var _interopRequire = function (obj) { return obj && obj.__esModule ? obj['default'] : obj; };
-
   var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+
+  function _interopRequire(obj) { return obj && obj.__esModule ? obj['default'] : obj; }
 
   var _Cursors = _interopRequire(_cursors);
 
@@ -43200,7 +43182,7 @@ define('components/ui/button', ['exports', 'module', 'cursors', 'utils/join-clas
 define('components/accounts/show', ['exports', 'module', 'underscore', 'underscore.string', 'api', 'components/ui/button', 'config', 'cursors', 'react', 'entities/account'], function (exports, module, _underscore, _underscoreString, _api, _componentsUiButton, _config, _cursors, _react, _entitiesAccount) {
   'use strict';
 
-  var _interopRequire = function (obj) { return obj && obj.__esModule ? obj['default'] : obj; };
+  function _interopRequire(obj) { return obj && obj.__esModule ? obj['default'] : obj; }
 
   var _2 = _interopRequire(_underscore);
 
@@ -43251,20 +43233,17 @@ define('components/accounts/show', ['exports', 'module', 'underscore', 'undersco
 
     renderTitle: function renderTitle() {
       var title = this.state.account.title;
-      if (title) {
-        return _React.createElement(
-          'div',
-          { className: 'osw-accounts-show-title' },
-          title
-        );
-      }
+      if (title) return _React.createElement(
+        'div',
+        { className: 'osw-accounts-show-title' },
+        title
+      );
     },
 
     renderSimpleField: function renderSimpleField(key, title) {
       var content = this.state.account[key];
-      if (!content) {
-        return;
-      }content = key === 'email_address' ? _React.createElement(
+      if (!content) return;
+      content = key === 'email_address' ? _React.createElement(
         'a',
         { href: 'mailto:' + content },
         content
@@ -43274,12 +43253,10 @@ define('components/accounts/show', ['exports', 'module', 'underscore', 'undersco
 
     renderAddress: function renderAddress() {
       var address = this.state.account.address;
-      if (!address) {
-        return;
-      }var content = _2.compact([address.street, _2.compact([_2.compact([address.city, address.state]).join(', '), address.zip]).join(' '), address.country]).join('\n');
-      if (!content) {
-        return;
-      }return this.renderField('Address', this.renderInLines(content));
+      if (!address) return;
+      var content = _2.compact([address.street, _2.compact([_2.compact([address.city, address.state]).join(', '), address.zip]).join(' '), address.country]).join('\n');
+      if (!content) return;
+      return this.renderField('Address', this.renderInLines(content));
     },
 
     renderInLines: function renderInLines(str) {
@@ -43353,9 +43330,9 @@ define('components/accounts/show', ['exports', 'module', 'underscore', 'undersco
 define('components/ui/icon', ['exports', 'module', 'cursors', 'utils/join-class-names', 'react'], function (exports, module, _cursors, _utilsJoinClassNames, _react) {
   'use strict';
 
-  var _interopRequire = function (obj) { return obj && obj.__esModule ? obj['default'] : obj; };
-
   var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+
+  function _interopRequire(obj) { return obj && obj.__esModule ? obj['default'] : obj; }
 
   var _Cursors = _interopRequire(_cursors);
 
@@ -43379,7 +43356,7 @@ define('components/ui/icon', ['exports', 'module', 'cursors', 'utils/join-class-
 define('components/accounts/show-popup', ['exports', 'module', 'components/accounts/show', 'cursors', 'components/ui/icon', 'react'], function (exports, module, _componentsAccountsShow, _cursors, _componentsUiIcon, _react) {
   'use strict';
 
-  var _interopRequire = function (obj) { return obj && obj.__esModule ? obj['default'] : obj; };
+  function _interopRequire(obj) { return obj && obj.__esModule ? obj['default'] : obj; }
 
   var _AccountsShow = _interopRequire(_componentsAccountsShow);
 
@@ -43417,7 +43394,7 @@ define('components/accounts/show-popup', ['exports', 'module', 'components/accou
 define('components/albums/list-item', ['exports', 'module', 'underscore', 'cursors', 'react'], function (exports, module, _underscore, _cursors, _react) {
   'use strict';
 
-  var _interopRequire = function (obj) { return obj && obj.__esModule ? obj['default'] : obj; };
+  function _interopRequire(obj) { return obj && obj.__esModule ? obj['default'] : obj; }
 
   var _2 = _interopRequire(_underscore);
 
@@ -43431,9 +43408,8 @@ define('components/albums/list-item', ['exports', 'module', 'underscore', 'curso
     mixins: [_Cursors],
 
     handleClick: function handleClick(ev) {
-      if (this.props.redirect) {
-        return;
-      }ev.preventDefault();
+      if (this.props.redirect) return;
+      ev.preventDefault();
       this.update({ activeAlbumId: { $set: this.props.album.id } });
     },
 
@@ -43475,7 +43451,7 @@ define('components/albums/list-item', ['exports', 'module', 'underscore', 'curso
 define('components/photos/list-item', ['exports', 'module', 'cursors', 'components/ui/icon', 'react'], function (exports, module, _cursors, _componentsUiIcon, _react) {
   'use strict';
 
-  var _interopRequire = function (obj) { return obj && obj.__esModule ? obj['default'] : obj; };
+  function _interopRequire(obj) { return obj && obj.__esModule ? obj['default'] : obj; }
 
   var _Cursors = _interopRequire(_cursors);
 
@@ -43489,17 +43465,15 @@ define('components/photos/list-item', ['exports', 'module', 'cursors', 'componen
     mixins: [_Cursors],
 
     handleClick: function handleClick(ev) {
-      if (this.props.redirect) {
-        return;
-      }ev.preventDefault();
+      if (this.props.redirect) return;
+      ev.preventDefault();
       this.update({ activePhotoId: { $set: this.props.photo.id } });
     },
 
     renderCommentCount: function renderCommentCount() {
       var count = this.props.photo.comments_count;
-      if (!count) {
-        return;
-      }return _React.createElement(
+      if (!count) return;
+      return _React.createElement(
         'div',
         { className: 'osw-photos-list-item-comment-count' },
         count,
@@ -46614,7 +46588,7 @@ define('components/photos/list-item', ['exports', 'module', 'cursors', 'componen
 define('moment', ['exports', 'module', '../bower_components/moment/moment'], function (exports, module, _bower_componentsMomentMoment) {
   'use strict';
 
-  var _interopRequire = function (obj) { return obj && obj.__esModule ? obj['default'] : obj; };
+  function _interopRequire(obj) { return obj && obj.__esModule ? obj['default'] : obj; }
 
   var _moment = _interopRequire(_bower_componentsMomentMoment);
 
@@ -46624,7 +46598,7 @@ define('moment', ['exports', 'module', '../bower_components/moment/moment'], fun
 define('components/comments/list-item', ['exports', 'module', 'moment', 'react'], function (exports, module, _moment, _react) {
   'use strict';
 
-  var _interopRequire = function (obj) { return obj && obj.__esModule ? obj['default'] : obj; };
+  function _interopRequire(obj) { return obj && obj.__esModule ? obj['default'] : obj; }
 
   var _moment2 = _interopRequire(_moment);
 
@@ -46670,7 +46644,7 @@ define('components/comments/list-item', ['exports', 'module', 'moment', 'react']
 define('components/comments/new', ['exports', 'module', 'components/ui/button', 'react'], function (exports, module, _componentsUiButton, _react) {
   'use strict';
 
-  var _interopRequire = function (obj) { return obj && obj.__esModule ? obj['default'] : obj; };
+  function _interopRequire(obj) { return obj && obj.__esModule ? obj['default'] : obj; }
 
   var _Button = _interopRequire(_componentsUiButton);
 
@@ -46696,7 +46670,7 @@ define('components/comments/new', ['exports', 'module', 'components/ui/button', 
 define('components/comments/index', ['exports', 'module', 'jquery', 'underscore', 'api', 'cursors', 'react-list', 'components/comments/list-item', 'components/comments/new', 'react'], function (exports, module, _jquery, _underscore, _api, _cursors, _reactList, _componentsCommentsListItem, _componentsCommentsNew, _react) {
   'use strict';
 
-  var _interopRequire = function (obj) { return obj && obj.__esModule ? obj['default'] : obj; };
+  function _interopRequire(obj) { return obj && obj.__esModule ? obj['default'] : obj; }
 
   var _$ = _interopRequire(_jquery);
 
@@ -46729,9 +46703,8 @@ define('components/comments/index', ['exports', 'module', 'jquery', 'underscore'
     },
 
     handleFetch: function handleFetch(cb, er, res) {
-      if (er) {
-        return cb(er);
-      }this.update({ comments: {
+      if (er) return cb(er);
+      this.update({ comments: {
           $set: _2.chain(this.state.comments.concat(res.data)).unique(_2.property('id')).sortBy(_2.property('created_at')).value()
         } });
       cb(null, res.data.length < PER_PAGE);
@@ -46770,7 +46743,7 @@ define('components/comments/index', ['exports', 'module', 'jquery', 'underscore'
 define('components/photos/show', ['exports', 'module', 'components/comments/index', 'cursors', 'react'], function (exports, module, _componentsCommentsIndex, _cursors, _react) {
   'use strict';
 
-  var _interopRequire = function (obj) { return obj && obj.__esModule ? obj['default'] : obj; };
+  function _interopRequire(obj) { return obj && obj.__esModule ? obj['default'] : obj; }
 
   var _CommentsIndex = _interopRequire(_componentsCommentsIndex);
 
@@ -46789,9 +46762,8 @@ define('components/photos/show', ['exports', 'module', 'components/comments/inde
 
     renderDescription: function renderDescription() {
       var description = this.state.photo.description;
-      if (!description) {
-        return;
-      }return _React.createElement(
+      if (!description) return;
+      return _React.createElement(
         'div',
         { className: 'osw-photos-show-description' },
         description
@@ -46931,7 +46903,7 @@ define('components/photos/show', ['exports', 'module', 'components/comments/inde
 define('olay-react', ['exports', 'module', '../bower_components/olay-react/olay-react'], function (exports, module, _bower_componentsOlayReactOlayReact) {
   'use strict';
 
-  var _interopRequire = function (obj) { return obj && obj.__esModule ? obj['default'] : obj; };
+  function _interopRequire(obj) { return obj && obj.__esModule ? obj['default'] : obj; }
 
   var _OlayReact = _interopRequire(_bower_componentsOlayReactOlayReact);
 
@@ -46941,7 +46913,7 @@ define('olay-react', ['exports', 'module', '../bower_components/olay-react/olay-
 define('components/ui/popup', ['exports', 'module', 'elementQuery', 'components/ui/icon', 'olay-react', 'react'], function (exports, module, _elementQuery, _componentsUiIcon, _olayReact, _react) {
   'use strict';
 
-  var _interopRequire = function (obj) { return obj && obj.__esModule ? obj['default'] : obj; };
+  function _interopRequire(obj) { return obj && obj.__esModule ? obj['default'] : obj; }
 
   var _elementQuery2 = _interopRequire(_elementQuery);
 
@@ -46975,9 +46947,8 @@ define('components/ui/popup', ['exports', 'module', 'elementQuery', 'components/
 
     renderPopup: function renderPopup() {
       var children = this.props.children;
-      if (!_React.Children.count(children)) {
-        return;
-      }return _React.createElement(
+      if (!_React.Children.count(children)) return;
+      return _React.createElement(
         'div',
         { className: 'osw-popup osw-' + this.props.name + '-popup' },
         _React.createElement(
@@ -46999,9 +46970,8 @@ define('components/ui/popup', ['exports', 'module', 'elementQuery', 'components/
     },
 
     renderCloseButton: function renderCloseButton() {
-      if (!this.props.displayCloseButton) {
-        return;
-      }return _React.createElement(_Icon, {
+      if (!this.props.displayCloseButton) return;
+      return _React.createElement(_Icon, {
         name: 'delete',
         className: 'osw-popup-close-button',
         onClick: this.handleCloseClick
@@ -47021,7 +46991,7 @@ define('components/ui/popup', ['exports', 'module', 'elementQuery', 'components/
 define('components/photos/index', ['exports', 'module', 'jquery', 'underscore', 'api', 'components/photos/list-item', 'components/photos/show', 'cursors', 'react-list', 'react', 'components/ui/popup'], function (exports, module, _jquery, _underscore, _api, _componentsPhotosListItem, _componentsPhotosShow, _cursors, _reactList, _react, _componentsUiPopup) {
   'use strict';
 
-  var _interopRequire = function (obj) { return obj && obj.__esModule ? obj['default'] : obj; };
+  function _interopRequire(obj) { return obj && obj.__esModule ? obj['default'] : obj; }
 
   var _$ = _interopRequire(_jquery);
 
@@ -47078,9 +47048,8 @@ define('components/photos/index', ['exports', 'module', 'jquery', 'underscore', 
     },
 
     incrActivePhoto: function incrActivePhoto(dir) {
-      if (!dir || !this.state.activePhotoId) {
-        return;
-      }var photos = this.state.photos;
+      if (!dir || !this.state.activePhotoId) return;
+      var photos = this.state.photos;
       var l = photos.length;
       var photo = this.getActivePhoto();
       this.update({ activePhotoId: {
@@ -47098,9 +47067,8 @@ define('components/photos/index', ['exports', 'module', 'jquery', 'underscore', 
     },
 
     handleFetch: function handleFetch(cb, er, res) {
-      if (er) {
-        return cb(er);
-      }var photos = _2.chain(this.state.photos.concat(res.data)).unique(_2.property('id')).map(function (photo) {
+      if (er) return cb(er);
+      var photos = _2.chain(this.state.photos.concat(res.data)).unique(_2.property('id')).map(function (photo) {
         return _2.extend({ comments: [] }, photo);
       }).value();
       this.update({ photos: { $set: photos } });
@@ -47122,9 +47090,8 @@ define('components/photos/index', ['exports', 'module', 'jquery', 'underscore', 
 
     renderActivePhoto: function renderActivePhoto() {
       var photo = this.getActivePhoto();
-      if (!photo) {
-        return;
-      }return _React.createElement(_Show, {
+      if (!photo) return;
+      return _React.createElement(_Show, {
         key: photo.id,
         onImageClick: this.handleImageClick,
         cursors: {
@@ -47160,7 +47127,7 @@ define('components/photos/index', ['exports', 'module', 'jquery', 'underscore', 
 define('components/albums/show', ['exports', 'module', 'components/photos/index', 'cursors', 'react'], function (exports, module, _componentsPhotosIndex, _cursors, _react) {
   'use strict';
 
-  var _interopRequire = function (obj) { return obj && obj.__esModule ? obj['default'] : obj; };
+  function _interopRequire(obj) { return obj && obj.__esModule ? obj['default'] : obj; }
 
   var _PhotosIndex = _interopRequire(_componentsPhotosIndex);
 
@@ -47208,7 +47175,7 @@ define('components/albums/show', ['exports', 'module', 'components/photos/index'
 define('components/albums/index', ['exports', 'module', 'jquery', 'underscore', 'api', 'components/albums/list-item', 'components/albums/show', 'cursors', 'react-list', 'react', 'components/ui/popup'], function (exports, module, _jquery, _underscore, _api, _componentsAlbumsListItem, _componentsAlbumsShow, _cursors, _reactList, _react, _componentsUiPopup) {
   'use strict';
 
-  var _interopRequire = function (obj) { return obj && obj.__esModule ? obj['default'] : obj; };
+  function _interopRequire(obj) { return obj && obj.__esModule ? obj['default'] : obj; }
 
   var _$ = _interopRequire(_jquery);
 
@@ -47266,9 +47233,8 @@ define('components/albums/index', ['exports', 'module', 'jquery', 'underscore', 
     },
 
     incrActiveAlbum: function incrActiveAlbum(dir) {
-      if (!dir || !this.state.activeAlbumId || this.state.activePhotoId) {
-        return;
-      }var albums = this.state.albums;
+      if (!dir || !this.state.activeAlbumId || this.state.activePhotoId) return;
+      var albums = this.state.albums;
       var l = albums.length;
       var album = this.getActiveAlbum();
       this.update({ activeAlbumId: {
@@ -47285,9 +47251,8 @@ define('components/albums/index', ['exports', 'module', 'jquery', 'underscore', 
     },
 
     handleFetch: function handleFetch(cb, er, res) {
-      if (er) {
-        return cb(er);
-      }var albums = _2.chain(this.state.albums.concat(res.data)).unique(_2.property('id')).map(function (album) {
+      if (er) return cb(er);
+      var albums = _2.chain(this.state.albums.concat(res.data)).unique(_2.property('id')).map(function (album) {
         return _2.extend({ photos: [] }, album);
       }).value();
       this.update({ albums: { $push: albums } });
@@ -47305,9 +47270,8 @@ define('components/albums/index', ['exports', 'module', 'jquery', 'underscore', 
 
     renderActiveAlbum: function renderActiveAlbum() {
       var album = this.getActiveAlbum();
-      if (!album) {
-        return;
-      }return _React.createElement(_Show, {
+      if (!album) return;
+      return _React.createElement(_Show, {
         key: album.id,
         portalId: this.props.portalId,
         cursors: {
@@ -47344,9 +47308,9 @@ define('components/albums/index', ['exports', 'module', 'jquery', 'underscore', 
 define('components/shared/selector', ['exports', 'module', 'cursors', 'utils/join-class-names', 'react'], function (exports, module, _cursors, _utilsJoinClassNames, _react) {
   'use strict';
 
-  var _interopRequire = function (obj) { return obj && obj.__esModule ? obj['default'] : obj; };
-
   var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+
+  function _interopRequire(obj) { return obj && obj.__esModule ? obj['default'] : obj; }
 
   var _Cursors = _interopRequire(_cursors);
 
@@ -47392,9 +47356,9 @@ define('components/shared/selector', ['exports', 'module', 'cursors', 'utils/joi
 define('components/shared/faceted-selector', ['exports', 'module', 'underscore', 'cursors', 'react', 'components/shared/selector'], function (exports, module, _underscore, _cursors, _react, _componentsSharedSelector) {
   'use strict';
 
-  var _interopRequire = function (obj) { return obj && obj.__esModule ? obj['default'] : obj; };
-
   var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+
+  function _interopRequire(obj) { return obj && obj.__esModule ? obj['default'] : obj; }
 
   var _2 = _interopRequire(_underscore);
 
@@ -47426,9 +47390,8 @@ define('components/shared/faceted-selector', ['exports', 'module', 'underscore',
     },
 
     matchCount: function matchCount(matches) {
-      if (!this.props.showMatchCount) {
-        return '';
-      }return ' (' + matches.length + ')';
+      if (!this.props.showMatchCount) return '';
+      return ' (' + matches.length + ')';
     },
 
     renderOption: function renderOption(option) {
@@ -47452,7 +47415,7 @@ define('components/shared/faceted-selector', ['exports', 'module', 'underscore',
 define('components/shared/query', ['exports', 'module', 'cursors', 'react'], function (exports, module, _cursors, _react) {
   'use strict';
 
-  var _interopRequire = function (obj) { return obj && obj.__esModule ? obj['default'] : obj; };
+  function _interopRequire(obj) { return obj && obj.__esModule ? obj['default'] : obj; }
 
   var _Cursors = _interopRequire(_cursors);
 
@@ -47488,7 +47451,7 @@ define('components/shared/query', ['exports', 'module', 'cursors', 'react'], fun
 define('components/shared/summary', ['exports', 'module', 'underscore', 'components/ui/button', 'cursors', 'components/ui/icon', 'react'], function (exports, module, _underscore, _componentsUiButton, _cursors, _componentsUiIcon, _react) {
   'use strict';
 
-  var _interopRequire = function (obj) { return obj && obj.__esModule ? obj['default'] : obj; };
+  function _interopRequire(obj) { return obj && obj.__esModule ? obj['default'] : obj; }
 
   var _2 = _interopRequire(_underscore);
 
@@ -47524,9 +47487,8 @@ define('components/shared/summary', ['exports', 'module', 'underscore', 'compone
     },
 
     renderMessage: function renderMessage() {
-      if (!this.props.showMessage) {
-        return '';
-      }var any = _2.any(this.getFilters());
+      if (!this.props.showMessage) return '';
+      var any = _2.any(this.getFilters());
       var l = this.props.objects.length;
       return 'Showing ' + (any ? '' : 'all ') + l + ' ' + this.props.objectName + (l === 1 ? '' : 's') + (any ? ' matching ' : '.');
     },
@@ -47567,9 +47529,9 @@ define('components/shared/summary', ['exports', 'module', 'underscore', 'compone
 define('components/bookmarks/filters', ['exports', 'module', 'cursors', 'components/shared/faceted-selector', 'utils/join-class-names', 'components/shared/query', 'react', 'components/shared/summary'], function (exports, module, _cursors, _componentsSharedFacetedSelector, _utilsJoinClassNames, _componentsSharedQuery, _react, _componentsSharedSummary) {
   'use strict';
 
-  var _interopRequire = function (obj) { return obj && obj.__esModule ? obj['default'] : obj; };
-
   var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+
+  function _interopRequire(obj) { return obj && obj.__esModule ? obj['default'] : obj; }
 
   var _Cursors = _interopRequire(_cursors);
 
@@ -47612,7 +47574,7 @@ define('components/bookmarks/filters', ['exports', 'module', 'cursors', 'compone
 define('components/ui/sep', ['exports', 'module', 'react'], function (exports, module, _react) {
   'use strict';
 
-  var _interopRequire = function (obj) { return obj && obj.__esModule ? obj['default'] : obj; };
+  function _interopRequire(obj) { return obj && obj.__esModule ? obj['default'] : obj; }
 
   var _React = _interopRequire(_react);
 
@@ -47628,9 +47590,9 @@ define('components/ui/sep', ['exports', 'module', 'react'], function (exports, m
 define('components/ui/button-row', ['exports', 'module', 'cursors', 'utils/join-class-names', 'react'], function (exports, module, _cursors, _utilsJoinClassNames, _react) {
   'use strict';
 
-  var _interopRequire = function (obj) { return obj && obj.__esModule ? obj['default'] : obj; };
-
   var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+
+  function _interopRequire(obj) { return obj && obj.__esModule ? obj['default'] : obj; }
 
   var _Cursors = _interopRequire(_cursors);
 
@@ -47820,7 +47782,7 @@ define('components/ui/button-row', ['exports', 'module', 'cursors', 'utils/join-
 define('formatted-text', ['exports', 'module', '../bower_components/formatted-text/formatted-text'], function (exports, module, _bower_componentsFormattedTextFormattedText) {
   'use strict';
 
-  var _interopRequire = function (obj) { return obj && obj.__esModule ? obj['default'] : obj; };
+  function _interopRequire(obj) { return obj && obj.__esModule ? obj['default'] : obj; }
 
   var _FormattedText = _interopRequire(_bower_componentsFormattedTextFormattedText);
 
@@ -47830,7 +47792,7 @@ define('formatted-text', ['exports', 'module', '../bower_components/formatted-te
 define('components/bookmarks/show', ['exports', 'module', 'underscore', 'api', 'components/ui/button', 'components/ui/button-row', 'cursors', 'formatted-text', 'moment', 'react'], function (exports, module, _underscore, _api, _componentsUiButton, _componentsUiButtonRow, _cursors, _formattedText, _moment, _react) {
   'use strict';
 
-  var _interopRequire = function (obj) { return obj && obj.__esModule ? obj['default'] : obj; };
+  function _interopRequire(obj) { return obj && obj.__esModule ? obj['default'] : obj; }
 
   var _2 = _interopRequire(_underscore);
 
@@ -47864,9 +47826,8 @@ define('components/bookmarks/show', ['exports', 'module', 'underscore', 'api', '
 
     componentWillMount: function componentWillMount() {
       var bookmark = this.state.bookmark;
-      if (bookmark.description != null) {
-        return;
-      }this.update({ isLoading: { $set: true }, error: { $set: null } });
+      if (bookmark.description != null) return;
+      this.update({ isLoading: { $set: true }, error: { $set: null } });
       _api2.get('/portals/:portal_id/links/:id', { portal_id: this.props.portalId, id: bookmark.id }, this.handleFetch);
     },
 
@@ -47881,9 +47842,8 @@ define('components/bookmarks/show', ['exports', 'module', 'underscore', 'api', '
     },
 
     renderDescription: function renderDescription(desc) {
-      if (desc === undefined) {
-        return;
-      }return desc.replace(/(\r\n|\n|\r)/g, '<br />');
+      if (desc === undefined) return;
+      return desc.replace(/(\r\n|\n|\r)/g, '<br />');
     },
 
     render: function render() {
@@ -47935,9 +47895,9 @@ define('components/bookmarks/show', ['exports', 'module', 'underscore', 'api', '
 define('components/bookmarks/list-item', ['exports', 'module', 'underscore', 'cursors', 'moment', 'components/ui/popup', 'react', 'components/ui/sep', 'components/bookmarks/show'], function (exports, module, _underscore, _cursors, _moment, _componentsUiPopup, _react, _componentsUiSep, _componentsBookmarksShow) {
   'use strict';
 
-  var _interopRequire = function (obj) { return obj && obj.__esModule ? obj['default'] : obj; };
-
   var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+
+  function _interopRequire(obj) { return obj && obj.__esModule ? obj['default'] : obj; }
 
   var _2 = _interopRequire(_underscore);
 
@@ -47984,9 +47944,8 @@ define('components/bookmarks/list-item', ['exports', 'module', 'underscore', 'cu
     },
 
     renderShow: function renderShow() {
-      if (!this.state.showIsOpen) {
-        return;
-      }return _React.createElement(_Show, _extends({}, this.props, {
+      if (!this.state.showIsOpen) return;
+      return _React.createElement(_Show, _extends({}, this.props, {
         cursors: { bookmark: this.getCursor('bookmark') }
       }));
     },
@@ -48039,7 +47998,7 @@ define('components/bookmarks/list-item', ['exports', 'module', 'underscore', 'cu
 define('components/shared/empty', ['exports', 'module', 'components/ui/button', 'cursors', 'react'], function (exports, module, _componentsUiButton, _cursors, _react) {
   'use strict';
 
-  var _interopRequire = function (obj) { return obj && obj.__esModule ? obj['default'] : obj; };
+  function _interopRequire(obj) { return obj && obj.__esModule ? obj['default'] : obj; }
 
   var _Button = _interopRequire(_componentsUiButton);
 
@@ -48119,7 +48078,7 @@ define('components/shared/empty', ['exports', 'module', 'components/ui/button', 
 define('components/ui/error-block', ['exports', 'module', 'react'], function (exports, module, _react) {
   'use strict';
 
-  var _interopRequire = function (obj) { return obj && obj.__esModule ? obj['default'] : obj; };
+  function _interopRequire(obj) { return obj && obj.__esModule ? obj['default'] : obj; }
 
   var _React = _interopRequire(_react);
 
@@ -48143,7 +48102,7 @@ define('components/ui/error-block', ['exports', 'module', 'react'], function (ex
 define('components/ui/loading-block', ['exports', 'module', 'react'], function (exports, module, _react) {
   'use strict';
 
-  var _interopRequire = function (obj) { return obj && obj.__esModule ? obj['default'] : obj; };
+  function _interopRequire(obj) { return obj && obj.__esModule ? obj['default'] : obj; }
 
   var _React = _interopRequire(_react);
 
@@ -48173,9 +48132,9 @@ define('components/ui/loading-block', ['exports', 'module', 'react'], function (
 define('components/bookmarks/index', ['exports', 'module', 'underscore', 'underscore.string', 'api', 'components/bookmarks/list-item', 'cursors', 'components/shared/empty', 'components/ui/error-block', 'components/bookmarks/filters', 'react-list', 'components/ui/loading-block', 'react'], function (exports, module, _underscore, _underscoreString, _api, _componentsBookmarksListItem, _cursors, _componentsSharedEmpty, _componentsUiErrorBlock, _componentsBookmarksFilters, _reactList, _componentsUiLoadingBlock, _react) {
   'use strict';
 
-  var _interopRequire = function (obj) { return obj && obj.__esModule ? obj['default'] : obj; };
-
   var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+
+  function _interopRequire(obj) { return obj && obj.__esModule ? obj['default'] : obj; }
 
   var _2 = _interopRequire(_underscore);
 
@@ -48235,9 +48194,8 @@ define('components/bookmarks/index', ['exports', 'module', 'underscore', 'unders
     },
 
     handleFetch: function handleFetch(cb, er, res) {
-      if (er) {
-        return cb(er);
-      }this.update({
+      if (er) return cb(er);
+      this.update({
         bookmarks: { $set: _2.unique(this.state.bookmarks.concat(res.data), 'id') }
       });
       cb(null, res.data.length < PER_PAGE);
@@ -48245,9 +48203,8 @@ define('components/bookmarks/index', ['exports', 'module', 'underscore', 'unders
 
     matchesQuery: function matchesQuery(bookmark) {
       var query = this.state.query;
-      if (!query) {
-        return true;
-      }var words = _str2.words(query.toLowerCase());
+      if (!query) return true;
+      var words = _str2.words(query.toLowerCase());
       var searchableWords = this.searchableWordsFor(bookmark);
       return _2.every(words, function (wordA) {
         return _2.any(searchableWords, function (wordB) {
@@ -48269,9 +48226,8 @@ define('components/bookmarks/index', ['exports', 'module', 'underscore', 'unders
     },
 
     renderFilters: function renderFilters(bookmarks) {
-      if (!this.state.bookmarks.length || !this.props.filtersAreShowing) {
-        return;
-      }return _React.createElement(_Filters, {
+      if (!this.state.bookmarks.length || !this.props.filtersAreShowing) return;
+      return _React.createElement(_Filters, {
         bookmarks: bookmarks,
         getFacet: this.getFacet,
         cursors: {
@@ -48328,9 +48284,9 @@ define('components/bookmarks/index', ['exports', 'module', 'underscore', 'unders
 define('components/builder/index', ['exports', 'module', 'underscore', 'underscore.string', 'api', 'cursors', 'react'], function (exports, module, _underscore, _underscoreString, _api, _cursors, _react) {
   'use strict';
 
-  var _interopRequire = function (obj) { return obj && obj.__esModule ? obj['default'] : obj; };
-
   var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+
+  function _interopRequire(obj) { return obj && obj.__esModule ? obj['default'] : obj; }
 
   var _2 = _interopRequire(_underscore);
 
@@ -48533,7 +48489,7 @@ define('components/builder/index', ['exports', 'module', 'underscore', 'undersco
 define('components/event-filters/list-item', ['exports', 'module', 'cursors', 'components/ui/icon', 'react'], function (exports, module, _cursors, _componentsUiIcon, _react) {
   'use strict';
 
-  var _interopRequire = function (obj) { return obj && obj.__esModule ? obj['default'] : obj; };
+  function _interopRequire(obj) { return obj && obj.__esModule ? obj['default'] : obj; }
 
   var _Cursors = _interopRequire(_cursors);
 
@@ -49706,7 +49662,7 @@ else {
 define('tinycolor', ['exports', 'module', '../bower_components/tinycolor/tinycolor'], function (exports, module, _bower_componentsTinycolorTinycolor) {
   'use strict';
 
-  var _interopRequire = function (obj) { return obj && obj.__esModule ? obj['default'] : obj; };
+  function _interopRequire(obj) { return obj && obj.__esModule ? obj['default'] : obj; }
 
   var _tinycolor = _interopRequire(_bower_componentsTinycolorTinycolor);
 
@@ -49724,7 +49680,7 @@ define('../bower_components/velcro/config', ["exports", "module"], function (exp
 define('components/event-filters/index', ['exports', 'module', 'underscore', 'api', 'cursors', 'components/event-filters/list-item', 'react', 'tinycolor', '../bower_components/velcro/config'], function (exports, module, _underscore, _api, _cursors, _componentsEventFiltersListItem, _react, _tinycolor, _bower_componentsVelcroConfig) {
   'use strict';
 
-  var _interopRequire = function (obj) { return obj && obj.__esModule ? obj['default'] : obj; };
+  function _interopRequire(obj) { return obj && obj.__esModule ? obj['default'] : obj; }
 
   var _2 = _interopRequire(_underscore);
 
@@ -49784,9 +49740,8 @@ define('components/event-filters/index', ['exports', 'module', 'underscore', 'ap
 
     handleFetch: function handleFetch(er, res) {
       this.update({ isLoading: { $set: false } });
-      if (er) {
-        return this.update({ error: { $set: er } });
-      }var activeIds = this.props.activeIds;
+      if (er) return this.update({ error: { $set: er } });
+      var activeIds = this.props.activeIds;
       this.fillEventFilters(_2.map(res.data, function (eventFilter) {
         return _2.extend({}, eventFilter, {
           active: !activeIds.length || _2.contains(activeIds, eventFilter.id)
@@ -49831,9 +49786,8 @@ define('components/event-filters/index', ['exports', 'module', 'underscore', 'ap
     },
 
     renderHeader: function renderHeader(section) {
-      if (!section.header) {
-        return;
-      }var header = section.header;
+      if (!section.header) return;
+      var header = section.header;
       if (this.props.useSharedHeader && header === PORTALS_HEADER) {
         header = 'Shared';
       }
@@ -50913,7 +50867,7 @@ define('components/event-filters/index', ['exports', 'module', 'underscore', 'ap
 define('moment-timezone', ['exports', 'module', '../bower_components/moment-timezone/builds/moment-timezone-with-data'], function (exports, module, _bower_componentsMomentTimezoneBuildsMomentTimezoneWithData) {
   'use strict';
 
-  var _interopRequire = function (obj) { return obj && obj.__esModule ? obj['default'] : obj; };
+  function _interopRequire(obj) { return obj && obj.__esModule ? obj['default'] : obj; }
 
   var _moment = _interopRequire(_bower_componentsMomentTimezoneBuildsMomentTimezoneWithData);
 
@@ -50923,11 +50877,11 @@ define('moment-timezone', ['exports', 'module', '../bower_components/moment-time
 define('entities/event', ['exports', 'underscore', 'underscore.string', 'api', 'moment-timezone'], function (exports, _underscore, _underscoreString, _api, _momentTimezone) {
   'use strict';
 
-  var _interopRequire = function (obj) { return obj && obj.__esModule ? obj['default'] : obj; };
-
   Object.defineProperty(exports, '__esModule', {
     value: true
   });
+
+  function _interopRequire(obj) { return obj && obj.__esModule ? obj['default'] : obj; }
 
   var _2 = _interopRequire(_underscore);
 
@@ -50954,9 +50908,8 @@ define('entities/event', ['exports', 'underscore', 'underscore.string', 'api', '
 
   exports.getDaySpan = getDaySpan;
   var isAllDay = function isAllDay(event, tz) {
-    if (event.is_all_day) {
-      return true;
-    }var startMom = getMoment(event.starts_at, tz);
+    if (event.is_all_day) return true;
+    var startMom = getMoment(event.starts_at, tz);
     var endMom = getMoment(event.ends_at, tz);
     return startMom.isSame(startMom.clone().startOf('day')) && endMom.isSame(endMom.clone().startOf('day'));
   };
@@ -50967,9 +50920,8 @@ define('entities/event', ['exports', 'underscore', 'underscore.string', 'api', '
   };
 
   var matchesQuery = function matchesQuery(event, query) {
-    if (!query) {
-      return true;
-    }var words = _str2.words(query.toLowerCase());
+    if (!query) return true;
+    var words = _str2.words(query.toLowerCase());
     var searchable = searchableWords(event);
     return _2.every(words, function (wordA) {
       return _2.any(searchable, function (wordB) {
@@ -51016,20 +50968,15 @@ define('entities/event', ['exports', 'underscore', 'underscore.string', 'api', '
 
   exports.parseResponse = parseResponse;
   var comparator = function comparator(tz, a, b) {
-    if (a.is_all_day !== b.is_all_day) {
-      return a.is_all_day ? -1 : 1;
-    }if (a.is_all_day) {
+    if (a.is_all_day !== b.is_all_day) return a.is_all_day ? -1 : 1;
+    if (a.is_all_day) {
       var aDaySpan = getDaySpan(a.starts_at, a.ends_at, tz);
       var bDaySpan = getDaySpan(b.starts_at, b.ends_at, tz);
-      if (aDaySpan !== bDaySpan) {
-        return aDaySpan > bDaySpan ? -1 : 1;
-      }
+      if (aDaySpan !== bDaySpan) return aDaySpan > bDaySpan ? -1 : 1;
     }
-    if (a.starts_at !== b.starts_at) {
-      return a.starts_at < b.starts_at ? -1 : 1;
-    }if (a.title !== b.title) {
-      return a.title < b.title ? -1 : 1;
-    }return 0;
+    if (a.starts_at !== b.starts_at) return a.starts_at < b.starts_at ? -1 : 1;
+    if (a.title !== b.title) return a.title < b.title ? -1 : 1;
+    return 0;
   };
 
   exports.comparator = comparator;
@@ -51061,9 +51008,8 @@ define('entities/event', ['exports', 'underscore', 'underscore.string', 'api', '
 
   exports.getPrevContiguous = getPrevContiguous;
   var handleFetch = function handleFetch(options, cb, er, res) {
-    if (er) {
-      return cb(er);
-    }var after = options.after;
+    if (er) return cb(er);
+    var after = options.after;
     var before = options.before;
     var events = parseResponse(res);
     if (events.length === PER_PAGE) {
@@ -51083,9 +51029,8 @@ define('entities/event', ['exports', 'underscore', 'underscore.string', 'api', '
     var ranges = options.ranges;
     options.after = getNextContiguous(options.after, ranges);
     options.before = getPrevContiguous(options.before, ranges);
-    if (options.after >= options.before) {
-      return cb();
-    }_api2.get(options.url, {
+    if (options.after >= options.before) return cb();
+    _api2.get(options.url, {
       upcoming: true,
       per_page: PER_PAGE,
       after: options.after,
@@ -51100,7 +51045,7 @@ define('entities/event', ['exports', 'underscore', 'underscore.string', 'api', '
 define('components/events/show', ['exports', 'module', 'underscore', 'underscore.string', 'api', 'components/ui/button', 'cursors', 'components/ui/icon', 'react', 'components/ui/sep', 'entities/event'], function (exports, module, _underscore, _underscoreString, _api, _componentsUiButton, _cursors, _componentsUiIcon, _react, _componentsUiSep, _entitiesEvent) {
   'use strict';
 
-  var _interopRequire = function (obj) { return obj && obj.__esModule ? obj['default'] : obj; };
+  function _interopRequire(obj) { return obj && obj.__esModule ? obj['default'] : obj; }
 
   var _2 = _interopRequire(_underscore);
 
@@ -51285,9 +51230,8 @@ define('components/events/show', ['exports', 'module', 'underscore', 'underscore
     renderAttendees: function renderAttendees() {
       var event = this.state.event;
       var sample = event.attendees_sample;
-      if (!_2.size(sample)) {
-        return;
-      }var more = event.total_attendees - sample.length;
+      if (!_2.size(sample)) return;
+      var more = event.total_attendees - sample.length;
       return _React.createElement(
         'div',
         { className: 'osw-events-show-attendees' },
@@ -51309,9 +51253,8 @@ define('components/events/show', ['exports', 'module', 'underscore', 'underscore
     renderRsvpAction: function renderRsvpAction() {
       var event = this.state.event;
       var actions = event.rsvp_actions;
-      if (!_2.size(actions)) {
-        return;
-      }var buttons;
+      if (!_2.size(actions)) return;
+      var buttons;
       if (actions[0] === 'Register') {
         buttons = _React.createElement(
           _Button,
@@ -51368,9 +51311,8 @@ define('components/events/show', ['exports', 'module', 'underscore', 'underscore
         null,
         message
       );
-      if (!_2.any([attendees, rsvpAction, message])) {
-        return;
-      }return _React.createElement(
+      if (!_2.any([attendees, rsvpAction, message])) return;
+      return _React.createElement(
         Section,
         { icon: 'rsvp' },
         attendees,
@@ -51381,9 +51323,8 @@ define('components/events/show', ['exports', 'module', 'underscore', 'underscore
 
     renderLocation: function renderLocation() {
       var location = this.state.event.location;
-      if (!location) {
-        return;
-      }return _React.createElement(
+      if (!location) return;
+      return _React.createElement(
         Section,
         { icon: 'location' },
         _React.createElement(
@@ -51418,9 +51359,8 @@ define('components/events/show', ['exports', 'module', 'underscore', 'underscore
     renderDescription: function renderDescription() {
       var description = this.state.event.description;
       if (description) description = _str2.trim(description);
-      if (!description) {
-        return;
-      }var blocks = description.split(/\r?\n/);
+      if (!description) return;
+      var blocks = description.split(/\r?\n/);
       var components = _2.reduce(blocks, function (blocks, block, i) {
         if (i > 0) blocks.push(_React.createElement('br', { key: 'br-' + i }));
         if (block) blocks.push(_React.createElement(
@@ -51483,7 +51423,7 @@ define('components/events/show', ['exports', 'module', 'underscore', 'underscore
 define('components/events/td', ['exports', 'module', 'cursors', 'components/ui/popup', 'react', 'components/events/show', 'tinycolor', 'entities/event'], function (exports, module, _cursors, _componentsUiPopup, _react, _componentsEventsShow, _tinycolor, _entitiesEvent) {
   'use strict';
 
-  var _interopRequire = function (obj) { return obj && obj.__esModule ? obj['default'] : obj; };
+  function _interopRequire(obj) { return obj && obj.__esModule ? obj['default'] : obj; }
 
   var _Cursors = _interopRequire(_cursors);
 
@@ -51524,9 +51464,8 @@ define('components/events/td', ['exports', 'module', 'cursors', 'components/ui/p
     getEventStyle: function getEventStyle() {
       var event = this.state.event;
       var color = _entitiesEvent.getColor(event, this.props.eventFilters);
-      if (!color) {
-        return;
-      }var style = { borderColor: '#' + color };
+      if (!color) return;
+      var style = { borderColor: '#' + color };
       var tz = this.props.tz;
       if (_entitiesEvent.isAllDay(event, tz) || this.isContinued() || this.doesContinue()) {
         style.background = _tinycolor2(color).lighten(40).toHexString();
@@ -51545,20 +51484,17 @@ define('components/events/td', ['exports', 'module', 'cursors', 'components/ui/p
     getEndTime: function getEndTime() {
       var endIso = _entitiesEvent.getMoment(this.props.date, this.props.tz).add(this.props.colSpan, 'days').toISOString();
       var event = this.state.event;
-      if (event.ends_at >= endIso) {
-        return;
-      }return 'ends ' + this.getFormattedTime(event.ends_at);
+      if (event.ends_at >= endIso) return;
+      return 'ends ' + this.getFormattedTime(event.ends_at);
     },
 
     getTime: function getTime() {
       var event = this.state.event;
-      if (_entitiesEvent.isAllDay(event, this.props.tz)) {
-        return;
-      }var isContinued = this.isContinued();
+      if (_entitiesEvent.isAllDay(event, this.props.tz)) return;
+      var isContinued = this.isContinued();
       var doesContinue = this.doesContinue();
-      if (isContinued && doesContinue) {
-        return;
-      }if (isContinued || doesContinue && this.startsAtMidnight()) {
+      if (isContinued && doesContinue) return;
+      if (isContinued || doesContinue && this.startsAtMidnight()) {
         return this.getEndTime();
       }
       return this.getStartTime();
@@ -51606,9 +51542,8 @@ define('components/events/td', ['exports', 'module', 'cursors', 'components/ui/p
     },
 
     renderTitle: function renderTitle() {
-      if (this.props.hideTitle) {
-        return;
-      }return _React.createElement(
+      if (this.props.hideTitle) return;
+      return _React.createElement(
         'div',
         { className: 'osw-events-td-title' },
         this.state.event.title
@@ -51633,9 +51568,8 @@ define('components/events/td', ['exports', 'module', 'cursors', 'components/ui/p
     },
 
     renderShow: function renderShow() {
-      if (!this.state.showIsOpen) {
-        return;
-      }return _React.createElement(_Show, {
+      if (!this.state.showIsOpen) return;
+      return _React.createElement(_Show, {
         tz: this.props.tz,
         cursors: { event: this.getCursor('event') }
       });
@@ -51665,7 +51599,7 @@ define('components/events/td', ['exports', 'module', 'cursors', 'components/ui/p
 define('components/events/list-item', ['exports', 'module', 'underscore.string', 'cursors', 'components/ui/icon', 'components/ui/popup', 'react', 'components/ui/sep', 'components/events/show', 'entities/event'], function (exports, module, _underscoreString, _cursors, _componentsUiIcon, _componentsUiPopup, _react, _componentsUiSep, _componentsEventsShow, _entitiesEvent) {
   'use strict';
 
-  var _interopRequire = function (obj) { return obj && obj.__esModule ? obj['default'] : obj; };
+  function _interopRequire(obj) { return obj && obj.__esModule ? obj['default'] : obj; }
 
   var _str2 = _interopRequire(_underscoreString);
 
@@ -51710,9 +51644,8 @@ define('components/events/list-item', ['exports', 'module', 'underscore.string',
 
     getTime: function getTime() {
       var event = this.state.event;
-      if (event.is_all_day) {
-        return 'All Day';
-      }var date = this.props.date;
+      if (event.is_all_day) return 'All Day';
+      var date = this.props.date;
       var tz = this.props.tz;
       var eventStart = _entitiesEvent.getMoment(event.starts_at, tz);
       var eventEnd = _entitiesEvent.getMoment(event.ends_at, tz);
@@ -51720,29 +51653,24 @@ define('components/events/list-item', ['exports', 'module', 'underscore.string',
       var dateEnd = dateStart.clone().add(1, 'day');
       var startsBefore = eventStart <= dateStart;
       var endsAfter = eventEnd >= dateEnd;
-      if (startsBefore && endsAfter) {
-        return 'All Day';
-      }if (!startsBefore && !endsAfter) {
+      if (startsBefore && endsAfter) return 'All Day';
+      if (!startsBefore && !endsAfter) {
         return eventStart.format(FORMAT) + ' - ' + eventEnd.format(FORMAT);
       }
-      if (startsBefore) {
-        return this.formatWithVerb(eventEnd, 'End');
-      }return this.formatWithVerb(eventStart, 'Start');
+      if (startsBefore) return this.formatWithVerb(eventEnd, 'End');
+      return this.formatWithVerb(eventStart, 'Start');
     },
 
     getStyle: function getStyle() {
       var color = _entitiesEvent.getColor(this.state.event, this.props.eventFilters);
-      if (color) {
-        return { borderLeftColor: '#' + color };
-      }
+      if (color) return { borderLeftColor: '#' + color };
     },
 
     renderRsvp: function renderRsvp() {
       var rsvp = this.state.event.rsvp;
       var icon = rsvp === 'Attending' || rsvp === 'Added by Admin' ? 'check' : rsvp === 'Maybe Attending' ? 'construction' : rsvp === 'Invited' ? 'info' : null;
-      if (!icon) {
-        return;
-      }return _React.createElement(
+      if (!icon) return;
+      return _React.createElement(
         'span',
         { className: 'osw-events-list-item-' + _str2.slugify(rsvp) },
         _React.createElement(_Icon, { name: icon }),
@@ -51770,9 +51698,8 @@ define('components/events/list-item', ['exports', 'module', 'underscore.string',
     },
 
     renderShow: function renderShow() {
-      if (!this.state.showIsOpen) {
-        return;
-      }return _React.createElement(_Show, {
+      if (!this.state.showIsOpen) return;
+      return _React.createElement(_Show, {
         tz: this.props.tz,
         cursors: { event: this.getCursor('event') }
       });
@@ -51839,7 +51766,7 @@ define('components/events/list-item', ['exports', 'module', 'underscore.string',
 define('components/events/list-date', ['exports', 'module', 'cursors', 'react-list', 'components/events/list-item', 'react', 'entities/event'], function (exports, module, _cursors, _reactList, _componentsEventsListItem, _react, _entitiesEvent) {
   'use strict';
 
-  var _interopRequire = function (obj) { return obj && obj.__esModule ? obj['default'] : obj; };
+  function _interopRequire(obj) { return obj && obj.__esModule ? obj['default'] : obj; }
 
   var _Cursors = _interopRequire(_cursors);
 
@@ -51902,7 +51829,7 @@ define('components/events/list-date', ['exports', 'module', 'cursors', 'react-li
 define('components/events/week', ['exports', 'module', 'underscore', 'cursors', 'components/events/td', 'components/events/list-date', 'components/ui/popup', 'react', 'entities/event'], function (exports, module, _underscore, _cursors, _componentsEventsTd, _componentsEventsListDate, _componentsUiPopup, _react, _entitiesEvent) {
   'use strict';
 
-  var _interopRequire = function (obj) { return obj && obj.__esModule ? obj['default'] : obj; };
+  function _interopRequire(obj) { return obj && obj.__esModule ? obj['default'] : obj; }
 
   var _2 = _interopRequire(_underscore);
 
@@ -52056,11 +51983,9 @@ define('components/events/week', ['exports', 'module', 'underscore', 'cursors', 
     },
 
     renderTd: function renderTd(td, y) {
-      if (td === true) {
-        return;
-      }if (td === null) {
-        return _React.createElement(_Td, { key: 'empty-' + y });
-      }if (td.more) {
+      if (td === true) return;
+      if (td === null) return _React.createElement(_Td, { key: 'empty-' + y });
+      if (td.more) {
         return _React.createElement(_Td, {
           key: 'more-' + y,
           more: td.more,
@@ -52097,9 +52022,8 @@ define('components/events/week', ['exports', 'module', 'underscore', 'cursors', 
 
     renderOpenDate: function renderOpenDate() {
       var date = this.state.openDate;
-      if (!date) {
-        return;
-      }return _React.createElement(_ListDate, {
+      if (!date) return;
+      return _React.createElement(_ListDate, {
         events: this.getEventsForDate(date),
         eventFilters: this.props.eventFilters,
         date: date,
@@ -52139,7 +52063,7 @@ define('components/events/week', ['exports', 'module', 'underscore', 'cursors', 
 define('components/events/calendar', ['exports', 'module', 'underscore', 'cursors', 'entities/event', 'react', 'components/events/week'], function (exports, module, _underscore, _cursors, _entitiesEvent, _react, _componentsEventsWeek) {
   'use strict';
 
-  var _interopRequire = function (obj) { return obj && obj.__esModule ? obj['default'] : obj; };
+  function _interopRequire(obj) { return obj && obj.__esModule ? obj['default'] : obj; }
 
   var _2 = _interopRequire(_underscore);
 
@@ -52169,17 +52093,7 @@ define('components/events/calendar', ['exports', 'module', 'underscore', 'cursor
       if (this.props.date !== prevProps.date) this.fetch();
     },
 
-    fetch: (function (_fetch) {
-      function fetch() {
-        return _fetch.apply(this, arguments);
-      }
-
-      fetch.toString = function () {
-        return _fetch.toString();
-      };
-
-      return fetch;
-    })(function () {
+    fetch: function fetch() {
       if (this.state.isLoading || this.state.error) return;
       this.update({ isLoading: { $set: true }, error: { $set: null } });
       _entitiesEvent.fetch({
@@ -52189,7 +52103,7 @@ define('components/events/calendar', ['exports', 'module', 'underscore', 'cursor
         events: this.state.allEvents,
         url: this.props.eventsUrl
       }, this.handleFetch);
-    }),
+    },
 
     handleFetch: function handleFetch(er, ranges, events) {
       this.update({ isLoading: { $set: false } });
@@ -52273,9 +52187,9 @@ define('components/events/calendar', ['exports', 'module', 'underscore', 'cursor
 define('components/ui/button-group', ['exports', 'module', 'cursors', 'utils/join-class-names', 'react'], function (exports, module, _cursors, _utilsJoinClassNames, _react) {
   'use strict';
 
-  var _interopRequire = function (obj) { return obj && obj.__esModule ? obj['default'] : obj; };
-
   var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+
+  function _interopRequire(obj) { return obj && obj.__esModule ? obj['default'] : obj; }
 
   var _Cursors = _interopRequire(_cursors);
 
@@ -52303,7 +52217,7 @@ define('components/ui/button-group', ['exports', 'module', 'cursors', 'utils/joi
 define('components/events/list', ['exports', 'module', 'underscore', 'cursors', 'react-list', 'components/events/list-date', 'react', 'entities/event'], function (exports, module, _underscore, _cursors, _reactList, _componentsEventsListDate, _react, _entitiesEvent) {
   'use strict';
 
-  var _interopRequire = function (obj) { return obj && obj.__esModule ? obj['default'] : obj; };
+  function _interopRequire(obj) { return obj && obj.__esModule ? obj['default'] : obj; }
 
   var _2 = _interopRequire(_underscore);
 
@@ -52322,17 +52236,7 @@ define('components/events/list', ['exports', 'module', 'underscore', 'cursors', 
 
     mixins: [_Cursors],
 
-    fetch: (function (_fetch) {
-      function fetch(_x) {
-        return _fetch.apply(this, arguments);
-      }
-
-      fetch.toString = function () {
-        return _fetch.toString();
-      };
-
-      return fetch;
-    })(function (cb) {
+    fetch: function fetch(cb) {
       var options = {
         ranges: this.state.ranges,
         events: this.state.allEvents,
@@ -52344,14 +52248,12 @@ define('components/events/list', ['exports', 'module', 'underscore', 'cursors', 
       options[past ? 'after' : 'before'] = now.add((past ? -1 : 1) * YEAR_LIMIT, 'years').toISOString();
       if (past) options.direction = 'backwards';
       _entitiesEvent.fetch(options, _2.partial(this.handleFetch, cb));
-    }),
+    },
 
     handleFetch: function handleFetch(cb, er, ranges, events) {
-      if (er) {
-        return cb(er);
-      }if (!ranges || !events) {
-        return cb(null, true);
-      }this.update({ ranges: { $set: ranges }, allEvents: { $set: events } });
+      if (er) return cb(er);
+      if (!ranges || !events) return cb(null, true);
+      this.update({ ranges: { $set: ranges }, allEvents: { $set: events } });
       cb();
     },
 
@@ -52793,7 +52695,7 @@ define('jstz', function () { return root.jstz; });
 define('tz', ['exports', 'module', 'jstz'], function (exports, module, _jstz) {
   'use strict';
 
-  var _interopRequire = function (obj) { return obj && obj.__esModule ? obj['default'] : obj; };
+  function _interopRequire(obj) { return obj && obj.__esModule ? obj['default'] : obj; }
 
   var _jstz2 = _interopRequire(_jstz);
 
@@ -52803,7 +52705,7 @@ define('tz', ['exports', 'module', 'jstz'], function (exports, module, _jstz) {
 define('components/events/index', ['exports', 'module', 'underscore', 'components/ui/button', 'components/ui/button-group', 'components/events/calendar', 'components/events/list', 'cursors', 'components/event-filters/index', 'components/ui/icon', 'react', 'tz', 'entities/event'], function (exports, module, _underscore, _componentsUiButton, _componentsUiButtonGroup, _componentsEventsCalendar, _componentsEventsList, _cursors, _componentsEventFiltersIndex, _componentsUiIcon, _react, _tz, _entitiesEvent) {
   'use strict';
 
-  var _interopRequire = function (obj) { return obj && obj.__esModule ? obj['default'] : obj; };
+  function _interopRequire(obj) { return obj && obj.__esModule ? obj['default'] : obj; }
 
   var _2 = _interopRequire(_underscore);
 
@@ -53001,9 +52903,8 @@ define('components/events/index', ['exports', 'module', 'underscore', 'component
     },
 
     renderFiltersToggle: function renderFiltersToggle() {
-      if (this.isListLocked()) {
-        return;
-      }return _React.createElement(
+      if (this.isListLocked()) return;
+      return _React.createElement(
         _Button,
         {
           className: 'osw-events-index-toggle-filters',
@@ -53074,9 +52975,8 @@ define('components/events/index', ['exports', 'module', 'underscore', 'component
     },
 
     renderViewTabs: function renderViewTabs() {
-      if (this.props.lockView || this.isListLocked()) {
-        return;
-      }var view = this.getView();
+      if (this.props.lockView || this.isListLocked()) return;
+      var view = this.getView();
       return _React.createElement(
         _ButtonGroup,
         { className: 'osw-events-index-view-tabs' },
@@ -53205,9 +53105,9 @@ define('components/events/index', ['exports', 'module', 'underscore', 'component
 define('components/ui/text-button', ['exports', 'module', 'components/ui/button', 'cursors', 'react'], function (exports, module, _componentsUiButton, _cursors, _react) {
   'use strict';
 
-  var _interopRequire = function (obj) { return obj && obj.__esModule ? obj['default'] : obj; };
-
   var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+
+  function _interopRequire(obj) { return obj && obj.__esModule ? obj['default'] : obj; }
 
   var _Button = _interopRequire(_componentsUiButton);
 
@@ -53229,7 +53129,7 @@ define('components/ui/text-button', ['exports', 'module', 'components/ui/button'
 define('components/files/breadcrumb', ['exports', 'module', 'underscore', 'cursors', 'react', 'components/ui/text-button'], function (exports, module, _underscore, _cursors, _react, _componentsUiTextButton) {
   'use strict';
 
-  var _interopRequire = function (obj) { return obj && obj.__esModule ? obj['default'] : obj; };
+  function _interopRequire(obj) { return obj && obj.__esModule ? obj['default'] : obj; }
 
   var _2 = _interopRequire(_underscore);
 
@@ -53270,11 +53170,11 @@ define('components/files/breadcrumb', ['exports', 'module', 'underscore', 'curso
 define('entities/file', ['exports', 'underscore'], function (exports, _underscore) {
   'use strict';
 
-  var _interopRequire = function (obj) { return obj && obj.__esModule ? obj['default'] : obj; };
-
   Object.defineProperty(exports, '__esModule', {
     value: true
   });
+
+  function _interopRequire(obj) { return obj && obj.__esModule ? obj['default'] : obj; }
 
   var _2 = _interopRequire(_underscore);
 
@@ -53309,7 +53209,7 @@ define('entities/file', ['exports', 'underscore'], function (exports, _underscor
 define('components/files/file-show', ['exports', 'module', 'underscore', 'api', 'components/ui/button', 'components/comments/index', 'cursors', 'moment', 'react', 'components/ui/text-button', 'entities/file'], function (exports, module, _underscore, _api, _componentsUiButton, _componentsCommentsIndex, _cursors, _moment, _react, _componentsUiTextButton, _entitiesFile) {
   'use strict';
 
-  var _interopRequire = function (obj) { return obj && obj.__esModule ? obj['default'] : obj; };
+  function _interopRequire(obj) { return obj && obj.__esModule ? obj['default'] : obj; }
 
   var _2 = _interopRequire(_underscore);
 
@@ -53355,9 +53255,8 @@ define('components/files/file-show', ['exports', 'module', 'underscore', 'api', 
 
     renderDetail: function renderDetail(label, key, isDate) {
       var val = this.state.file[key];
-      if (!val) {
-        return;
-      }if (isDate) val = FORMAT(val);
+      if (!val) return;
+      if (isDate) val = FORMAT(val);
       return _React.createElement(
         'div',
         { className: 'osw-files-file-show-detail' },
@@ -53372,9 +53271,8 @@ define('components/files/file-show', ['exports', 'module', 'underscore', 'api', 
 
     renderDescription: function renderDescription() {
       var description = this.state.file.description;
-      if (!description) {
-        return;
-      }return _React.createElement(
+      if (!description) return;
+      return _React.createElement(
         'div',
         { className: 'osw-files-file-show-section' },
         _React.createElement(
@@ -53437,9 +53335,8 @@ define('components/files/file-show', ['exports', 'module', 'underscore', 'api', 
 
     renderVersions: function renderVersions() {
       var versions = this.state.file.versions;
-      if (!versions.length) {
-        return;
-      }return _React.createElement(
+      if (!versions.length) return;
+      return _React.createElement(
         'div',
         { className: 'osw-files-file-show-section' },
         _React.createElement(
@@ -53537,7 +53434,7 @@ define('components/files/file-show', ['exports', 'module', 'underscore', 'api', 
 define('components/files/list-item', ['exports', 'module', 'cursors', 'entities/file', 'moment', 'react', 'components/ui/sep', 'components/ui/text-button'], function (exports, module, _cursors, _entitiesFile, _moment, _react, _componentsUiSep, _componentsUiTextButton) {
   'use strict';
 
-  var _interopRequire = function (obj) { return obj && obj.__esModule ? obj['default'] : obj; };
+  function _interopRequire(obj) { return obj && obj.__esModule ? obj['default'] : obj; }
 
   var _Cursors = _interopRequire(_cursors);
 
@@ -53630,7 +53527,7 @@ define('components/files/list-item', ['exports', 'module', 'cursors', 'entities/
 define('components/files/folder-show', ['exports', 'module', 'underscore', 'api', 'cursors', 'react-list', 'components/files/list-item', 'react'], function (exports, module, _underscore, _api, _cursors, _reactList, _componentsFilesListItem, _react) {
   'use strict';
 
-  var _interopRequire = function (obj) { return obj && obj.__esModule ? obj['default'] : obj; };
+  function _interopRequire(obj) { return obj && obj.__esModule ? obj['default'] : obj; }
 
   var _2 = _interopRequire(_underscore);
 
@@ -53670,9 +53567,8 @@ define('components/files/folder-show', ['exports', 'module', 'underscore', 'api'
     handleFetch: function handleFetch(cb, er, res) {
       var _this = this;
 
-      if (er) {
-        return cb(er);
-      }var files = _2.chain(this.getFiles().concat(res.data)).unique('id').map(function (file) {
+      if (er) return cb(er);
+      var files = _2.chain(this.getFiles().concat(res.data)).unique('id').map(function (file) {
         return _2.extend({}, file, {
           portal: _this.state.file.portal,
           comments: [],
@@ -53709,7 +53605,7 @@ define('components/files/folder-show', ['exports', 'module', 'underscore', 'api'
 define('components/files/index', ['exports', 'module', 'underscore', 'components/files/breadcrumb', 'cursors', 'components/files/file-show', 'components/files/folder-show', 'react'], function (exports, module, _underscore, _componentsFilesBreadcrumb, _cursors, _componentsFilesFileShow, _componentsFilesFolderShow, _react) {
   'use strict';
 
-  var _interopRequire = function (obj) { return obj && obj.__esModule ? obj['default'] : obj; };
+  function _interopRequire(obj) { return obj && obj.__esModule ? obj['default'] : obj; }
 
   var _2 = _interopRequire(_underscore);
 
@@ -53830,9 +53726,9 @@ define('components/files/index', ['exports', 'module', 'underscore', 'components
 define('components/shared/category-selector', ['exports', 'module', 'cursors', 'components/shared/faceted-selector', 'utils/join-class-names', 'react'], function (exports, module, _cursors, _componentsSharedFacetedSelector, _utilsJoinClassNames, _react) {
   'use strict';
 
-  var _interopRequire = function (obj) { return obj && obj.__esModule ? obj['default'] : obj; };
-
   var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+
+  function _interopRequire(obj) { return obj && obj.__esModule ? obj['default'] : obj; }
 
   var _Cursors = _interopRequire(_cursors);
 
@@ -53871,9 +53767,9 @@ define('components/shared/category-selector', ['exports', 'module', 'cursors', '
 define('components/forms/filters', ['exports', 'module', 'components/shared/category-selector', 'cursors', 'components/shared/query', 'react', 'components/shared/summary'], function (exports, module, _componentsSharedCategorySelector, _cursors, _componentsSharedQuery, _react, _componentsSharedSummary) {
   'use strict';
 
-  var _interopRequire = function (obj) { return obj && obj.__esModule ? obj['default'] : obj; };
-
   var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+
+  function _interopRequire(obj) { return obj && obj.__esModule ? obj['default'] : obj; }
 
   var _CategorySelector = _interopRequire(_componentsSharedCategorySelector);
 
@@ -53924,7 +53820,7 @@ define('components/forms/filters', ['exports', 'module', 'components/shared/cate
 define('components/shared/created-by', ['exports', 'module', 'moment', 'react', 'entities/account'], function (exports, module, _moment, _react, _entitiesAccount) {
   'use strict';
 
-  var _interopRequire = function (obj) { return obj && obj.__esModule ? obj['default'] : obj; };
+  function _interopRequire(obj) { return obj && obj.__esModule ? obj['default'] : obj; }
 
   var _moment2 = _interopRequire(_moment);
 
@@ -53968,7 +53864,7 @@ define('components/shared/created-by', ['exports', 'module', 'moment', 'react', 
 define('components/forms/show', ['exports', 'module', 'api', 'components/ui/button', 'components/ui/button-row', 'cursors', 'components/shared/created-by', 'react'], function (exports, module, _api, _componentsUiButton, _componentsUiButtonRow, _cursors, _componentsSharedCreatedBy, _react) {
   'use strict';
 
-  var _interopRequire = function (obj) { return obj && obj.__esModule ? obj['default'] : obj; };
+  function _interopRequire(obj) { return obj && obj.__esModule ? obj['default'] : obj; }
 
   var _api2 = _interopRequire(_api);
 
@@ -53996,9 +53892,8 @@ define('components/forms/show', ['exports', 'module', 'api', 'components/ui/butt
 
     componentWillMount: function componentWillMount() {
       var form = this.state.form;
-      if (form.description != null) {
-        return;
-      }this.update({ isLoading: { $set: true }, error: { $set: null } });
+      if (form.description != null) return;
+      this.update({ isLoading: { $set: true }, error: { $set: null } });
       _api2.get('/portals/:portal_id/forms/:id', { portal_id: form.portal.id, id: form.id }, this.handleFetch);
     },
 
@@ -54009,9 +53904,8 @@ define('components/forms/show', ['exports', 'module', 'api', 'components/ui/butt
     },
 
     renderDescription: function renderDescription(description) {
-      if (!description || /^\s*$/.test(description)) {
-        return 'No description provided';
-      }return description;
+      if (!description || /^\s*$/.test(description)) return 'No description provided';
+      return description;
     },
 
     render: function render() {
@@ -54057,7 +53951,7 @@ define('components/forms/show', ['exports', 'module', 'api', 'components/ui/butt
 define('components/forms/list-item', ['exports', 'module', 'cursors', 'moment', 'components/ui/popup', 'react', 'components/ui/sep', 'components/forms/show'], function (exports, module, _cursors, _moment, _componentsUiPopup, _react, _componentsUiSep, _componentsFormsShow) {
   'use strict';
 
-  var _interopRequire = function (obj) { return obj && obj.__esModule ? obj['default'] : obj; };
+  function _interopRequire(obj) { return obj && obj.__esModule ? obj['default'] : obj; }
 
   var _Cursors = _interopRequire(_cursors);
 
@@ -54097,9 +53991,8 @@ define('components/forms/list-item', ['exports', 'module', 'cursors', 'moment', 
     },
 
     renderShow: function renderShow() {
-      if (!this.state.showIsOpen) {
-        return;
-      }return _React.createElement(_Show, { cursors: { form: this.getCursor('form') } });
+      if (!this.state.showIsOpen) return;
+      return _React.createElement(_Show, { cursors: { form: this.getCursor('form') } });
     },
 
     renderShowPopup: function renderShowPopup() {
@@ -54164,9 +54057,9 @@ define('components/forms/list-item', ['exports', 'module', 'cursors', 'moment', 
 define('components/forms/index', ['exports', 'module', 'underscore', 'underscore.string', 'api', 'cursors', 'components/shared/empty', 'components/ui/error-block', 'components/forms/filters', 'components/forms/list-item', 'react-list', 'components/ui/loading-block', 'react'], function (exports, module, _underscore, _underscoreString, _api, _cursors, _componentsSharedEmpty, _componentsUiErrorBlock, _componentsFormsFilters, _componentsFormsListItem, _reactList, _componentsUiLoadingBlock, _react) {
   'use strict';
 
-  var _interopRequire = function (obj) { return obj && obj.__esModule ? obj['default'] : obj; };
-
   var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+
+  function _interopRequire(obj) { return obj && obj.__esModule ? obj['default'] : obj; }
 
   var _2 = _interopRequire(_underscore);
 
@@ -54232,9 +54125,8 @@ define('components/forms/index', ['exports', 'module', 'underscore', 'underscore
     },
 
     handleFetch: function handleFetch(cb, er, res) {
-      if (er) {
-        return cb(er);
-      }this.update({
+      if (er) return cb(er);
+      this.update({
         forms: { $set: _2.unique(this.state.forms.concat(res.data), 'id') }
       });
       cb(null, res.data.length < PER_PAGE);
@@ -54248,9 +54140,8 @@ define('components/forms/index', ['exports', 'module', 'underscore', 'underscore
 
     matchesQuery: function matchesQuery(form) {
       var query = this.state.query;
-      if (!query) {
-        return true;
-      }var words = _str2.words(query.toLowerCase());
+      if (!query) return true;
+      var words = _str2.words(query.toLowerCase());
       var searchableWords = this.searchableWordsFor(form);
       return _2.every(words, function (wordA) {
         return _2.any(searchableWords, function (wordB) {
@@ -54272,9 +54163,8 @@ define('components/forms/index', ['exports', 'module', 'underscore', 'underscore
     },
 
     renderFilters: function renderFilters(forms) {
-      if (!this.state.forms.length || !this.props.filtersAreShowing) {
-        return;
-      }return _React.createElement(_Filters, {
+      if (!this.state.forms.length || !this.props.filtersAreShowing) return;
+      return _React.createElement(_Filters, {
         forms: forms,
         cursors: {
           query: this.getCursor('query'),
@@ -54332,7 +54222,7 @@ define('components/forms/index', ['exports', 'module', 'underscore', 'underscore
 define('components/news-posts/show', ['exports', 'module', 'components/comments/index', 'components/shared/created-by', 'cursors', 'react'], function (exports, module, _componentsCommentsIndex, _componentsSharedCreatedBy, _cursors, _react) {
   'use strict';
 
-  var _interopRequire = function (obj) { return obj && obj.__esModule ? obj['default'] : obj; };
+  function _interopRequire(obj) { return obj && obj.__esModule ? obj['default'] : obj; }
 
   var _CommentsIndex = _interopRequire(_componentsCommentsIndex);
 
@@ -54379,7 +54269,7 @@ define('components/news-posts/show', ['exports', 'module', 'components/comments/
 define('components/news-posts/list-item', ['exports', 'module', 'jquery', 'underscore.string', 'cursors', 'components/ui/icon', 'moment', 'components/news-posts/show', 'components/ui/popup', 'react'], function (exports, module, _jquery, _underscoreString, _cursors, _componentsUiIcon, _moment, _componentsNewsPostsShow, _componentsUiPopup, _react) {
   'use strict';
 
-  var _interopRequire = function (obj) { return obj && obj.__esModule ? obj['default'] : obj; };
+  function _interopRequire(obj) { return obj && obj.__esModule ? obj['default'] : obj; }
 
   var _$ = _interopRequire(_jquery);
 
@@ -54415,9 +54305,8 @@ define('components/news-posts/list-item', ['exports', 'module', 'jquery', 'under
     },
 
     onTitleClick: function onTitleClick(ev) {
-      if (this.props.redirect) {
-        return;
-      }ev.preventDefault();
+      if (this.props.redirect) return;
+      ev.preventDefault();
       this.open();
     },
 
@@ -54435,9 +54324,8 @@ define('components/news-posts/list-item', ['exports', 'module', 'jquery', 'under
 
     renderCount: function renderCount() {
       var count = this.state.newsPost.comments_count;
-      if (!count) {
-        return;
-      }return _React.createElement(
+      if (!count) return;
+      return _React.createElement(
         'div',
         { className: 'osw-news-posts-list-item-comment-count' },
         count,
@@ -54448,9 +54336,8 @@ define('components/news-posts/list-item', ['exports', 'module', 'jquery', 'under
 
     renderBody: function renderBody() {
       var pruned = _str2.prune(this.getStrippedBody(), this.props.truncateLength);
-      if (pruned === '...') {
-        return;
-      }return _React.createElement(
+      if (pruned === '...') return;
+      return _React.createElement(
         'div',
         { className: 'osw-news-posts-list-item-body' },
         pruned
@@ -54458,9 +54345,8 @@ define('components/news-posts/list-item', ['exports', 'module', 'jquery', 'under
     },
 
     renderShow: function renderShow() {
-      if (!this.state.isOpen) {
-        return;
-      }return _React.createElement(_Show, {
+      if (!this.state.isOpen) return;
+      return _React.createElement(_Show, {
         cursors: { newsPost: this.getCursor('newsPost') }
       });
     },
@@ -54512,7 +54398,7 @@ define('components/news-posts/list-item', ['exports', 'module', 'jquery', 'under
 define('components/news-posts/index', ['exports', 'module', 'underscore', 'api', 'cursors', 'react-list', 'components/news-posts/list-item', 'react'], function (exports, module, _underscore, _api, _cursors, _reactList, _componentsNewsPostsListItem, _react) {
   'use strict';
 
-  var _interopRequire = function (obj) { return obj && obj.__esModule ? obj['default'] : obj; };
+  function _interopRequire(obj) { return obj && obj.__esModule ? obj['default'] : obj; }
 
   var _2 = _interopRequire(_underscore);
 
@@ -54549,9 +54435,8 @@ define('components/news-posts/index', ['exports', 'module', 'underscore', 'api',
     },
 
     handleFetch: function handleFetch(cb, er, res) {
-      if (er) {
-        return cb(er);
-      }var newsPosts = _2.chain(this.state.newsPosts.concat(res.data)).unique(_2.property('id')).map(function (newsPost) {
+      if (er) return cb(er);
+      var newsPosts = _2.chain(this.state.newsPosts.concat(res.data)).unique(_2.property('id')).map(function (newsPost) {
         return _2.extend({ comments: [] }, newsPost);
       }).sortBy('created_at').value().reverse();
       this.update({ newsPosts: { $set: newsPosts } });
@@ -54582,9 +54467,9 @@ define('components/news-posts/index', ['exports', 'module', 'underscore', 'api',
 define('components/polls/filters', ['exports', 'module', 'cursors', 'components/shared/faceted-selector', 'utils/join-class-names', 'components/shared/query', 'react', 'components/shared/summary'], function (exports, module, _cursors, _componentsSharedFacetedSelector, _utilsJoinClassNames, _componentsSharedQuery, _react, _componentsSharedSummary) {
   'use strict';
 
-  var _interopRequire = function (obj) { return obj && obj.__esModule ? obj['default'] : obj; };
-
   var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+
+  function _interopRequire(obj) { return obj && obj.__esModule ? obj['default'] : obj; }
 
   var _Cursors = _interopRequire(_cursors);
 
@@ -54637,7 +54522,7 @@ define('components/polls/filters', ['exports', 'module', 'cursors', 'components/
 define('components/polls/results', ['exports', 'module', 'underscore', 'react'], function (exports, module, _underscore, _react) {
   'use strict';
 
-  var _interopRequire = function (obj) { return obj && obj.__esModule ? obj['default'] : obj; };
+  function _interopRequire(obj) { return obj && obj.__esModule ? obj['default'] : obj; }
 
   var _2 = _interopRequire(_underscore);
 
@@ -54741,17 +54626,17 @@ define('components/polls/results', ['exports', 'module', 'underscore', 'react'],
     },
 
     render: function render() {
-      if (this.props.responses === null) {
-        return _React.createElement(
-          'p',
+      if (this.props.responses === null) return _React.createElement(
+        'p',
+        null,
+        _React.createElement(
+          'strong',
           null,
-          _React.createElement(
-            'strong',
-            null,
-            'The results are hidden.'
-          )
-        );
-      }return _React.createElement(
+          'The results are hidden.'
+        )
+      );
+
+      return _React.createElement(
         'div',
         null,
         _React.createElement(
@@ -54788,7 +54673,7 @@ define('components/polls/results', ['exports', 'module', 'underscore', 'react'],
 define('components/polls/show', ['exports', 'module', 'api', 'components/ui/button', 'components/ui/button-row', 'components/shared/created-by', 'cursors', 'moment', 'react', 'components/polls/results'], function (exports, module, _api, _componentsUiButton, _componentsUiButtonRow, _componentsSharedCreatedBy, _cursors, _moment, _react, _componentsPollsResults) {
   'use strict';
 
-  var _interopRequire = function (obj) { return obj && obj.__esModule ? obj['default'] : obj; };
+  function _interopRequire(obj) { return obj && obj.__esModule ? obj['default'] : obj; }
 
   var _api2 = _interopRequire(_api);
 
@@ -54826,9 +54711,8 @@ define('components/polls/show', ['exports', 'module', 'api', 'components/ui/butt
 
     componentWillMount: function componentWillMount() {
       var poll = this.state.poll;
-      if (poll.description != null) {
-        return;
-      }this.update({ isLoading: { $set: true }, error: { $set: null } });
+      if (poll.description != null) return;
+      this.update({ isLoading: { $set: true }, error: { $set: null } });
       _api2.get('/portals/:portal_id/polls/:id', { portal_id: this.props.portalId, id: poll.id }, this.handleFetch);
     },
 
@@ -54856,13 +54740,11 @@ define('components/polls/show', ['exports', 'module', 'api', 'components/ui/butt
     },
 
     renderVoted: function renderVoted(poll) {
-      if (poll.has_voted) {
-        return _React.createElement(
-          'p',
-          null,
-          'You have voted on this poll.'
-        );
-      }
+      if (poll.has_voted) return _React.createElement(
+        'p',
+        null,
+        'You have voted on this poll.'
+      );
     },
 
     render: function render() {
@@ -54900,9 +54782,9 @@ define('components/polls/show', ['exports', 'module', 'api', 'components/ui/butt
 define('components/polls/list-item', ['exports', 'module', 'underscore', 'cursors', 'moment', 'components/ui/popup', 'react', 'components/ui/sep', 'components/polls/show'], function (exports, module, _underscore, _cursors, _moment, _componentsUiPopup, _react, _componentsUiSep, _componentsPollsShow) {
   'use strict';
 
-  var _interopRequire = function (obj) { return obj && obj.__esModule ? obj['default'] : obj; };
-
   var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+
+  function _interopRequire(obj) { return obj && obj.__esModule ? obj['default'] : obj; }
 
   var _2 = _interopRequire(_underscore);
 
@@ -54944,9 +54826,8 @@ define('components/polls/list-item', ['exports', 'module', 'underscore', 'cursor
     },
 
     renderShow: function renderShow() {
-      if (!this.state.showIsOpen) {
-        return;
-      }return _React.createElement(_Show, _extends({}, this.props, {
+      if (!this.state.showIsOpen) return;
+      return _React.createElement(_Show, _extends({}, this.props, {
         cursors: { poll: this.getCursor('poll') }
       }));
     },
@@ -54964,13 +54845,12 @@ define('components/polls/list-item', ['exports', 'module', 'underscore', 'cursor
 
     renderStatusText: function renderStatusText(poll) {
       if (poll.is_open) {
-        if (poll.has_voted) {
-          return _React.createElement(
-            'p',
-            { className: 'voted' },
-            'VOTED'
-          );
-        }return _React.createElement(
+        if (poll.has_voted) return _React.createElement(
+          'p',
+          { className: 'voted' },
+          'VOTED'
+        );
+        return _React.createElement(
           'p',
           { className: 'vote-now' },
           'VOTE NOW'
@@ -54985,9 +54865,8 @@ define('components/polls/list-item', ['exports', 'module', 'underscore', 'cursor
     },
 
     renderStatusLink: function renderStatusLink(poll) {
-      if (this.props.limit) {
-        return;
-      }return _React.createElement(
+      if (this.props.limit) return;
+      return _React.createElement(
         'div',
         { className: 'osw-polls-status', onClick: this.openShow },
         this.renderStatusText(poll)
@@ -54995,9 +54874,8 @@ define('components/polls/list-item', ['exports', 'module', 'underscore', 'cursor
     },
 
     renderVoteCount: function renderVoteCount(poll) {
-      if (poll.vote_count > 999) {
-        return '999+';
-      }return poll.vote_count;
+      if (poll.vote_count > 999) return '999+';
+      return poll.vote_count;
     },
 
     renderPollBox: function renderPollBox(poll) {
@@ -55046,9 +54924,9 @@ define('components/polls/list-item', ['exports', 'module', 'underscore', 'cursor
 define('components/polls/index', ['exports', 'module', 'underscore', 'underscore.string', 'api', 'cursors', 'components/shared/empty', 'components/ui/error-block', 'components/polls/filters', 'react-list', 'components/ui/loading-block', 'components/polls/list-item', 'react'], function (exports, module, _underscore, _underscoreString, _api, _cursors, _componentsSharedEmpty, _componentsUiErrorBlock, _componentsPollsFilters, _reactList, _componentsUiLoadingBlock, _componentsPollsListItem, _react) {
   'use strict';
 
-  var _interopRequire = function (obj) { return obj && obj.__esModule ? obj['default'] : obj; };
-
   var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+
+  function _interopRequire(obj) { return obj && obj.__esModule ? obj['default'] : obj; }
 
   var _2 = _interopRequire(_underscore);
 
@@ -55116,18 +54994,16 @@ define('components/polls/index', ['exports', 'module', 'underscore', 'underscore
     },
 
     handleFetch: function handleFetch(cb, er, res) {
-      if (er) {
-        return cb(er);
-      }this.update({
+      if (er) return cb(er);
+      this.update({
         polls: { $set: _2.unique(this.state.polls.concat(res.data), 'id') }
       });
       cb(null, res.data.length < PER_PAGE);
     },
 
     getFacet: function getFacet(poll) {
-      if (poll.is_open) {
-        return 'Open';
-      }return 'Closed';
+      if (poll.is_open) return 'Open';
+      return 'Closed';
     },
 
     matchesCategory: function matchesCategory(poll) {
@@ -55138,9 +55014,8 @@ define('components/polls/index', ['exports', 'module', 'underscore', 'underscore
 
     matchesQuery: function matchesQuery(poll) {
       var query = this.state.query;
-      if (!query) {
-        return true;
-      }var words = _str2.words(query.toLowerCase());
+      if (!query) return true;
+      var words = _str2.words(query.toLowerCase());
       var searchableWords = this.searchableWordsFor(poll);
       return _2.every(words, function (wordA) {
         return _2.any(searchableWords, function (wordB) {
@@ -55162,9 +55037,8 @@ define('components/polls/index', ['exports', 'module', 'underscore', 'underscore
     },
 
     renderFilters: function renderFilters(polls) {
-      if (!this.state.polls.length || !this.props.filtersAreShowing || this.props.limit) {
-        return;
-      }return _React.createElement(_Filters, {
+      if (!this.state.polls.length || !this.props.filtersAreShowing || this.props.limit) return;
+      return _React.createElement(_Filters, {
         polls: polls,
         getFacet: this.getFacet,
         cursors: {
@@ -55223,7 +55097,7 @@ define('components/polls/index', ['exports', 'module', 'underscore', 'underscore
 define('components/portals/letter-cell', ['exports', 'module', 'components/ui/button', 'cursors', 'react'], function (exports, module, _componentsUiButton, _cursors, _react) {
   'use strict';
 
-  var _interopRequire = function (obj) { return obj && obj.__esModule ? obj['default'] : obj; };
+  function _interopRequire(obj) { return obj && obj.__esModule ? obj['default'] : obj; }
 
   var _Button = _interopRequire(_componentsUiButton);
 
@@ -55263,9 +55137,9 @@ define('components/portals/letter-cell', ['exports', 'module', 'components/ui/bu
 define('components/portals/letter-table', ['exports', 'module', 'underscore', 'cursors', 'components/portals/letter-cell', 'react'], function (exports, module, _underscore, _cursors, _componentsPortalsLetterCell, _react) {
   'use strict';
 
-  var _interopRequire = function (obj) { return obj && obj.__esModule ? obj['default'] : obj; };
-
   var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+
+  function _interopRequire(obj) { return obj && obj.__esModule ? obj['default'] : obj; }
 
   var _2 = _interopRequire(_underscore);
 
@@ -55317,9 +55191,9 @@ define('components/portals/letter-table', ['exports', 'module', 'underscore', 'c
 define('components/portals/umbrella-selector', ['exports', 'module', 'cursors', 'components/shared/faceted-selector', 'utils/join-class-names', 'react'], function (exports, module, _cursors, _componentsSharedFacetedSelector, _utilsJoinClassNames, _react) {
   'use strict';
 
-  var _interopRequire = function (obj) { return obj && obj.__esModule ? obj['default'] : obj; };
-
   var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+
+  function _interopRequire(obj) { return obj && obj.__esModule ? obj['default'] : obj; }
 
   var _Cursors = _interopRequire(_cursors);
 
@@ -55353,9 +55227,9 @@ define('components/portals/umbrella-selector', ['exports', 'module', 'cursors', 
 define('components/portals/filters', ['exports', 'module', 'components/shared/category-selector', 'cursors', 'components/portals/letter-table', 'components/shared/query', 'react', 'components/shared/summary', 'components/portals/umbrella-selector'], function (exports, module, _componentsSharedCategorySelector, _cursors, _componentsPortalsLetterTable, _componentsSharedQuery, _react, _componentsSharedSummary, _componentsPortalsUmbrellaSelector) {
   'use strict';
 
-  var _interopRequire = function (obj) { return obj && obj.__esModule ? obj['default'] : obj; };
-
   var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+
+  function _interopRequire(obj) { return obj && obj.__esModule ? obj['default'] : obj; }
 
   var _CategorySelector = _interopRequire(_componentsSharedCategorySelector);
 
@@ -55411,7 +55285,7 @@ define('components/portals/filters', ['exports', 'module', 'components/shared/ca
 define('components/portals/show', ['exports', 'module', 'api', 'cursors', 'components/ui/button', 'components/ui/button-row', 'react'], function (exports, module, _api, _cursors, _componentsUiButton, _componentsUiButtonRow, _react) {
   'use strict';
 
-  var _interopRequire = function (obj) { return obj && obj.__esModule ? obj['default'] : obj; };
+  function _interopRequire(obj) { return obj && obj.__esModule ? obj['default'] : obj; }
 
   var _api2 = _interopRequire(_api);
 
@@ -55443,9 +55317,8 @@ define('components/portals/show', ['exports', 'module', 'api', 'cursors', 'compo
 
     componentWillMount: function componentWillMount() {
       var portal = this.state.portal;
-      if (portal.description != null) {
-        return;
-      }this.update({ isLoading: { $set: true }, error: { $set: null } });
+      if (portal.description != null) return;
+      this.update({ isLoading: { $set: true }, error: { $set: null } });
       _api2.get('/portals/:id', { id: portal.id }, this.handleFetch);
     },
 
@@ -55456,11 +55329,9 @@ define('components/portals/show', ['exports', 'module', 'api', 'cursors', 'compo
     },
 
     renderDescription: function renderDescription() {
-      if (this.state.isLoading) {
-        return 'Loading...';
-      }if (this.state.error) {
-        return this.state.error;
-      }return this.state.portal.description;
+      if (this.state.isLoading) return 'Loading...';
+      if (this.state.error) return this.state.error;
+      return this.state.portal.description;
     },
 
     renderWebsiteLink: function renderWebsiteLink() {
@@ -55520,7 +55391,7 @@ define('components/portals/show', ['exports', 'module', 'api', 'cursors', 'compo
 define('components/portals/list-item', ['exports', 'module', 'cursors', 'components/ui/popup', 'react', 'components/portals/show'], function (exports, module, _cursors, _componentsUiPopup, _react, _componentsPortalsShow) {
   'use strict';
 
-  var _interopRequire = function (obj) { return obj && obj.__esModule ? obj['default'] : obj; };
+  function _interopRequire(obj) { return obj && obj.__esModule ? obj['default'] : obj; }
 
   var _Cursors = _interopRequire(_cursors);
 
@@ -55544,9 +55415,8 @@ define('components/portals/list-item', ['exports', 'module', 'cursors', 'compone
     },
 
     handleClick: function handleClick(ev) {
-      if (this.props.redirect) {
-        return;
-      }ev.preventDefault();
+      if (this.props.redirect) return;
+      ev.preventDefault();
       this.update({ showIsOpen: { $set: true } });
     },
 
@@ -55569,9 +55439,8 @@ define('components/portals/list-item', ['exports', 'module', 'cursors', 'compone
     },
 
     renderShow: function renderShow() {
-      if (!this.state.showIsOpen) {
-        return;
-      }return _React.createElement(_Show, { cursors: { portal: this.getCursor('portal') } });
+      if (!this.state.showIsOpen) return;
+      return _React.createElement(_Show, { cursors: { portal: this.getCursor('portal') } });
     },
 
     renderShowPopup: function renderShowPopup() {
@@ -55624,7 +55493,7 @@ define('components/portals/list-item', ['exports', 'module', 'cursors', 'compone
 define('components/portals/index', ['exports', 'module', 'underscore', 'underscore.string', 'api', 'cursors', 'components/ui/error-block', 'components/portals/filters', 'react-list', 'components/portals/list-item', 'components/ui/loading-block', 'components/shared/empty', 'react'], function (exports, module, _underscore, _underscoreString, _api, _cursors, _componentsUiErrorBlock, _componentsPortalsFilters, _reactList, _componentsPortalsListItem, _componentsUiLoadingBlock, _componentsSharedEmpty, _react) {
   'use strict';
 
-  var _interopRequire = function (obj) { return obj && obj.__esModule ? obj['default'] : obj; };
+  function _interopRequire(obj) { return obj && obj.__esModule ? obj['default'] : obj; }
 
   var _2 = _interopRequire(_underscore);
 
@@ -55661,9 +55530,8 @@ define('components/portals/index', ['exports', 'module', 'underscore', 'undersco
     mixins: [_Cursors],
 
     comparator: function comparator(a, b) {
-      if (!a.umbrella !== !b.umbrella) {
-        return !a.umbrella ? -1 : 1;
-      }var aName = (a.name || '').toLowerCase();
+      if (!a.umbrella !== !b.umbrella) return !a.umbrella ? -1 : 1;
+      var aName = (a.name || '').toLowerCase();
       var bName = (b.name || '').toLowerCase();
       return aName < bName ? -1 : 1;
     },
@@ -55702,15 +55570,13 @@ define('components/portals/index', ['exports', 'module', 'underscore', 'undersco
     },
 
     fetch: function fetch(cb) {
-      if (this.state.portals.length) {
-        return cb(null, true);
-      }_api2.get(this.getUrl(), { all: true }, _2.partial(this.handleFetch, cb));
+      if (this.state.portals.length) return cb(null, true);
+      _api2.get(this.getUrl(), { all: true }, _2.partial(this.handleFetch, cb));
     },
 
     handleFetch: function handleFetch(cb, er, res) {
-      if (er) {
-        return cb(er);
-      }this.sortAndUpdate(res.data);
+      if (er) return cb(er);
+      this.sortAndUpdate(res.data);
       cb(null, true);
     },
 
@@ -55736,9 +55602,8 @@ define('components/portals/index', ['exports', 'module', 'underscore', 'undersco
 
     matchesQuery: function matchesQuery(portal) {
       var query = this.state.query;
-      if (!query) {
-        return true;
-      }var words = _str2.words(query.toLowerCase());
+      if (!query) return true;
+      var words = _str2.words(query.toLowerCase());
       var searchableWords = this.searchableWordsFor(portal);
       return _2.every(words, function (wordA) {
         return _2.any(searchableWords, function (wordB) {
@@ -55760,9 +55625,8 @@ define('components/portals/index', ['exports', 'module', 'underscore', 'undersco
     },
 
     renderFilters: function renderFilters(portals) {
-      if (!this.state.portals.length || !this.props.filtersAreShowing) {
-        return;
-      }return _React.createElement(_Filters, {
+      if (!this.state.portals.length || !this.props.filtersAreShowing) return;
+      return _React.createElement(_Filters, {
         portals: portals,
         cursors: {
           query: this.getCursor('query'),
@@ -55825,11 +55689,11 @@ define('components/portals/index', ['exports', 'module', 'underscore', 'undersco
 define('entities/selector/item', ['exports', 'underscore', 'underscore.string'], function (exports, _underscore, _underscoreString) {
   'use strict';
 
-  var _interopRequire = function (obj) { return obj && obj.__esModule ? obj['default'] : obj; };
-
   Object.defineProperty(exports, '__esModule', {
     value: true
   });
+
+  function _interopRequire(obj) { return obj && obj.__esModule ? obj['default'] : obj; }
 
   var _2 = _interopRequire(_underscore);
 
@@ -55868,43 +55732,30 @@ define('entities/selector/item', ['exports', 'underscore', 'underscore.string'],
 
   exports.isArbitrary = isArbitrary;
   var getTerm = function getTerm(item) {
-    if (item.term) {
-      return item.term;
-    }if (isArbitrary(item)) {
-      return 'arbitrary_' + item.name;
-    }return item._type + '_' + item.id;
+    if (item.term) return item.term;
+    if (isArbitrary(item)) return 'arbitrary_' + item.name;
+    return item._type + '_' + item.id;
   };
 
   exports.getTerm = getTerm;
   var getName = _2.partial(getBestFit, NAME_FIELDS);
 
   exports.getName = getName;
-  var getDisplayName = (function (_getDisplayName) {
-    function getDisplayName(_x) {
-      return _getDisplayName.apply(this, arguments);
-    }
-
-    getDisplayName.toString = function () {
-      return _getDisplayName.toString();
-    };
-
-    return getDisplayName;
-  })(function (item) {
+  var getDisplayName = function getDisplayName(item) {
     var name = getName(item);
     if (item._type === 'group' && item.portal) {
       name += ' (' + getDisplayName(item.portal) + ')';
     }
     return name;
-  });
+  };
 
   exports.getDisplayName = getDisplayName;
   var getPictureUrl = _2.partial(getBestFit, PICTURE_URL_FIELDS);
 
   exports.getPictureUrl = getPictureUrl;
   var getIconName = function getIconName(item) {
-    if (isArbitrary(item)) {
-      return ARBITRARY_ICON;
-    }return ICON_MAP[item._type] || _str2.dasherize(item._type);
+    if (isArbitrary(item)) return ARBITRARY_ICON;
+    return ICON_MAP[item._type] || _str2.dasherize(item._type);
   };
 
   exports.getIconName = getIconName;
@@ -55915,9 +55766,9 @@ define('entities/selector/item', ['exports', 'underscore', 'underscore.string'],
 define('components/selector/result', ['exports', 'module', 'underscore', 'underscore.string', 'cursors', 'components/ui/icon', 'react', 'entities/selector/item'], function (exports, module, _underscore, _underscoreString, _cursors, _componentsUiIcon, _react, _entitiesSelectorItem) {
   'use strict';
 
-  var _interopRequire = function (obj) { return obj && obj.__esModule ? obj['default'] : obj; };
-
   var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+
+  function _interopRequire(obj) { return obj && obj.__esModule ? obj['default'] : obj; }
 
   var _2 = _interopRequire(_underscore);
 
@@ -55943,9 +55794,8 @@ define('components/selector/result', ['exports', 'module', 'underscore', 'unders
 
     getImageStyle: function getImageStyle() {
       var src = _entitiesSelectorItem.getPictureUrl(this.props.item);
-      if (!src) {
-        return {};
-      }if (src[0] === '/') src = 'https://orgsync.com' + src;
+      if (!src) return {};
+      if (src[0] === '/') src = 'https://orgsync.com' + src;
       return { backgroundImage: 'url(\'' + src + '\')' };
     },
 
@@ -55997,7 +55847,7 @@ define('components/selector/result', ['exports', 'module', 'underscore', 'unders
 define('components/selector/scope', ['exports', 'module', 'cursors', 'react', 'entities/selector/item'], function (exports, module, _cursors, _react, _entitiesSelectorItem) {
   'use strict';
 
-  var _interopRequire = function (obj) { return obj && obj.__esModule ? obj['default'] : obj; };
+  function _interopRequire(obj) { return obj && obj.__esModule ? obj['default'] : obj; }
 
   var _Cursors = _interopRequire(_cursors);
 
@@ -56023,9 +55873,8 @@ define('components/selector/scope', ['exports', 'module', 'cursors', 'react', 'e
     },
 
     renderToggle: function renderToggle() {
-      if (!this.props.scope.selectable) {
-        return;
-      }return _React.createElement('input', {
+      if (!this.props.scope.selectable) return;
+      return _React.createElement('input', {
         checked: this.props.isSelected,
         className: 'osw-selector-scope-toggle',
         onChange: this.handleChange,
@@ -56037,9 +55886,8 @@ define('components/selector/scope', ['exports', 'module', 'cursors', 'react', 'e
     renderName: function renderName() {
       var name = _entitiesSelectorItem.getDisplayName(this.props.scope);
       var count = this.props.count;
-      if (!count) {
-        return name;
-      }return _React.createElement(
+      if (!count) return name;
+      return _React.createElement(
         'strong',
         null,
         name,
@@ -56067,11 +55915,11 @@ define('components/selector/scope', ['exports', 'module', 'cursors', 'react', 'e
 define('entities/selector/store', ['exports', 'underscore', 'underscore.string', 'orgsync-widgets', 'entities/selector/item', 'react'], function (exports, _underscore, _underscoreString, _orgsyncWidgets, _entitiesSelectorItem, _react) {
   'use strict';
 
-  var _interopRequire = function (obj) { return obj && obj.__esModule ? obj['default'] : obj; };
-
   Object.defineProperty(exports, '__esModule', {
     value: true
   });
+
+  function _interopRequire(obj) { return obj && obj.__esModule ? obj['default'] : obj; }
 
   var _2 = _interopRequire(_underscore);
 
@@ -56101,9 +55949,9 @@ define('entities/selector/store', ['exports', 'underscore', 'underscore.string',
     if (field === 'portal_name') field = 'portal.name';
     if (field === 'portal_short_name') field = 'portal.short_name';
 
-    if (field === 'name') {
-      return _entitiesSelectorItem.getName(item);
-    }var path = field.split('.');
+    if (field === 'name') return _entitiesSelectorItem.getName(item);
+
+    var path = field.split('.');
     var value = item;
     while (value && path.length) value = value[path.shift()];
     return value;
@@ -56111,9 +55959,8 @@ define('entities/selector/store', ['exports', 'underscore', 'underscore.string',
 
   var filter = function filter(item, q, options) {
     q = parse(q);
-    if (!q) {
-      return true;
-    }var values = _2.map(options.fields || ['name'], _2.partial(filterValue, item));
+    if (!q) return true;
+    var values = _2.map(options.fields || ['name'], _2.partial(filterValue, item));
     var searchableWords = _2.unique(_str2.words(values.join(' ').toLowerCase()));
     return _2.every(_str2.words(q), function (wordA) {
       return _2.any(searchableWords, _2.partial(_str2.startsWith, _2, wordA, 0));
@@ -56151,9 +55998,8 @@ define('entities/selector/store', ['exports', 'underscore', 'underscore.string',
 
         // If the current query matches the original query, there is an exact
         // match and there is no need to predict results.
-        if (options.q === q) {
-          return cached;
-        }results = results.concat(cached.filter(_2.partial(filter, _2, q, options)));
+        if (options.q === q) return cached;
+        results = results.concat(cached.filter(_2.partial(filter, _2, q, options)));
       }
       if (!options.q) break;
       options = update(options, { q: { $set: parse(options.q.slice(0, -1)) } });
@@ -56175,9 +56021,8 @@ define('entities/selector/store', ['exports', 'underscore', 'underscore.string',
       cacheItems(options.dataset, _2.extend({ overwrite: true }, options));
       done[key] = true;
     }
-    if (done[key] || !options.size) {
-      return cb(null, true, options);
-    }_orgsyncWidgets.io.emit('search', options, function (er, res) {
+    if (done[key] || !options.size) return cb(null, true, options);
+    _orgsyncWidgets.io.emit('search', options, function (er, res) {
       if (er) return cb(er);
       var items = _2.map(res.hits.hits, function (hit) {
         return _2.extend({ _type: hit._type }, hit._source);
@@ -56192,7 +56037,7 @@ define('entities/selector/store', ['exports', 'underscore', 'underscore.string',
 define('components/selector/token', ['exports', 'module', 'cursors', 'components/ui/icon', 'react', 'entities/selector/item'], function (exports, module, _cursors, _componentsUiIcon, _react, _entitiesSelectorItem) {
   'use strict';
 
-  var _interopRequire = function (obj) { return obj && obj.__esModule ? obj['default'] : obj; };
+  function _interopRequire(obj) { return obj && obj.__esModule ? obj['default'] : obj; }
 
   var _Cursors = _interopRequire(_cursors);
 
@@ -56239,9 +56084,9 @@ define('components/selector/token', ['exports', 'module', 'cursors', 'components
 define('components/selector/index', ['exports', 'module', 'underscore', 'orgsync-widgets', 'components/ui/button', 'cursors', 'react-list', 'components/ui/popup', 'react', 'components/selector/result', 'components/selector/scope', 'entities/selector/store', 'components/selector/token', 'entities/selector/item'], function (exports, module, _underscore, _orgsyncWidgets, _componentsUiButton, _cursors, _reactList, _componentsUiPopup, _react, _componentsSelectorResult, _componentsSelectorScope, _entitiesSelectorStore, _componentsSelectorToken, _entitiesSelectorItem) {
   'use strict';
 
-  var _interopRequire = function (obj) { return obj && obj.__esModule ? obj['default'] : obj; };
-
   var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+
+  function _interopRequire(obj) { return obj && obj.__esModule ? obj['default'] : obj; }
 
   var _2 = _interopRequire(_underscore);
 
@@ -56427,17 +56272,15 @@ define('components/selector/index', ['exports', 'module', 'underscore', 'orgsync
     },
 
     addValue: function addValue(item) {
-      if (this.isSelected(item)) {
-        return;
-      }var value = _2.sortBy(this.state.value.concat(item), NAME_COMPARATOR);
+      if (this.isSelected(item)) return;
+      var value = _2.sortBy(this.state.value.concat(item), NAME_COMPARATOR);
       this.update({ value: { $set: value } });
     },
 
     removeValue: function removeValue(item) {
       var existing = this.getSelected(item);
-      if (!existing) {
-        return;
-      }var i = _2.indexOf(this.state.value, existing);
+      if (!existing) return;
+      var i = _2.indexOf(this.state.value, existing);
       this.update({ value: { $splice: [[i, 1]] } });
     },
 
@@ -56468,9 +56311,8 @@ define('components/selector/index', ['exports', 'module', 'underscore', 'orgsync
     },
 
     handleResultMouseOver: function handleResultMouseOver(item, ev) {
-      if (!this.mouseMoved(ev)) {
-        return;
-      }this.setActiveIndex(_2.indexOf(this.state.results, item));
+      if (!this.mouseMoved(ev)) return;
+      this.setActiveIndex(_2.indexOf(this.state.results, item));
     },
 
     handleResultClick: function handleResultClick(item) {
@@ -56521,9 +56363,8 @@ define('components/selector/index', ['exports', 'module', 'underscore', 'orgsync
     },
 
     handleFetch: function handleFetch(cb, er, done) {
-      if (er) {
-        return cb(er);
-      }cb(null, done);
+      if (er) return cb(er);
+      cb(null, done);
       this.updateResults();
     },
 
@@ -56548,9 +56389,8 @@ define('components/selector/index', ['exports', 'module', 'underscore', 'orgsync
     },
 
     renderTokens: function renderTokens() {
-      if (this.props.view === 'browse') {
-        return;
-      }return _React.createElement(
+      if (this.props.view === 'browse') return;
+      return _React.createElement(
         'div',
         { className: 'osw-selector-index-tokens' },
         this.state.value.map(this.renderToken)
@@ -56558,9 +56398,8 @@ define('components/selector/index', ['exports', 'module', 'underscore', 'orgsync
     },
 
     renderBrowseButton: function renderBrowseButton() {
-      if (this.props.view === 'browse' || !this.props.allowBrowse) {
-        return;
-      }return _React.createElement(
+      if (this.props.view === 'browse' || !this.props.allowBrowse) return;
+      return _React.createElement(
         _Button,
         {
           className: 'osw-selector-index-browse-button',
@@ -56633,9 +56472,8 @@ define('components/selector/index', ['exports', 'module', 'underscore', 'orgsync
     },
 
     renderResults: function renderResults() {
-      if (!this.shouldShowResults()) {
-        return;
-      }var options = this.getSearchOptions();
+      if (!this.shouldShowResults()) return;
+      var options = this.getSearchOptions();
       return _React.createElement(_List, {
         key: _entitiesSelectorStore.getQueryKey(_2.omit(options, 'dataset')),
         ref: 'results',
@@ -56655,9 +56493,8 @@ define('components/selector/index', ['exports', 'module', 'underscore', 'orgsync
     },
 
     renderBrowse: function renderBrowse() {
-      if (!this.state.browseIsOpen) {
-        return;
-      }return _React.createElement(
+      if (!this.state.browseIsOpen) return;
+      return _React.createElement(
         'div',
         null,
         _React.createElement(SelectorIndex, _extends({}, this.props, {
@@ -56681,9 +56518,8 @@ define('components/selector/index', ['exports', 'module', 'underscore', 'orgsync
     },
 
     renderPopup: function renderPopup() {
-      if (this.props.view === 'browse') {
-        return;
-      }return _React.createElement(
+      if (this.props.view === 'browse') return;
+      return _React.createElement(
         _Popup,
         {
           ref: 'popup',
@@ -56696,9 +56532,8 @@ define('components/selector/index', ['exports', 'module', 'underscore', 'orgsync
     },
 
     renderLeft: function renderLeft() {
-      if (this.props.view === 'inline') {
-        return;
-      }return _React.createElement(
+      if (this.props.view === 'inline') return;
+      return _React.createElement(
         'div',
         { className: 'osw-selector-index-left' },
         _React.createElement(_List, {
@@ -56743,9 +56578,8 @@ define('components/selector/index', ['exports', 'module', 'underscore', 'orgsync
     },
 
     renderRight: function renderRight() {
-      if (this.props.view === 'inline') {
-        return;
-      }return _React.createElement(
+      if (this.props.view === 'inline') return;
+      return _React.createElement(
         'div',
         { className: 'osw-selector-index-right' },
         _React.createElement(
@@ -56794,7 +56628,7 @@ define('components/selector/index', ['exports', 'module', 'underscore', 'orgsync
 define('components/ui/auto-textbox', ['exports', 'module', 'jquery', 'cursors', 'react'], function (exports, module, _jquery, _cursors, _react) {
   'use strict';
 
-  var _interopRequire = function (obj) { return obj && obj.__esModule ? obj['default'] : obj; };
+  function _interopRequire(obj) { return obj && obj.__esModule ? obj['default'] : obj; }
 
   var _$ = _interopRequire(_jquery);
 

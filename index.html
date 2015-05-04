@@ -11,9 +11,12 @@
     <title>OrgSync Widgets</title>
     <link href='dist/orgsync-widgets.css' rel='stylesheet'>
     <script>
-      window.OSW_API_KEY = localStorage.getItem('OSW_API_KEY');
-      window.OSW_API_URL_ROOT = localStorage.getItem('OSW_API_URL_ROOT');
-      window.OSW_IO_URL = localStorage.getItem('OSW_IO_URL');
+      window.OSW_API_KEY = localStorage.getItem('OSW_API_KEY') ||
+        localStorage.getItem('API_KEY');
+      window.OSW_API_URL_ROOT = localStorage.getItem('OSW_API_URL_ROOT') ||
+        localStorage.getItem('API_URL_ROOT');
+      window.OSW_IO_URL = localStorage.getItem('OSW_IO_URL') ||
+       localStorage.getItem('ORGSYNC_URL');
     </script>
     <script src='dist/orgsync-widgets.js'></script>
     <script src='http://localhost:35729/livereload.js'></script>

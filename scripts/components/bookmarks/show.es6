@@ -41,33 +41,41 @@ export default React.createClass({
     return moment(dateString).format(FORMAT);
   },
 
-  renderDescription(desc) {
-    if (desc === undefined) return;
-    return desc.replace(/(\r\n|\n|\r)/g,"<br />");
+  renderDescription(bookmark) {
+    const description = bookmark.description;
+    if (description === undefined) return 'Loading...';
+    return (
+      <FormattedText>
+        {description}
+      </FormattedText>
+    );
+  },
+
+  renderLink(bookmark) {
+    return <Button href={bookmark.links.web}>Visit link</Button>;
   },
 
   render() {
-    var bookmark = this.state.bookmark;
+    const {bookmark} = this.state;
     return (
       <div className='osw-bookmarks-show'>
         <div className='osw-bookmarks-favicon'>
           <img src={`https://www.google.com/s2/favicons?domain_url=${bookmark.links.web}`}/>
         </div>
-        <div style={{ marginLeft: '25px' }}>
+
+        <div style={{marginLeft: '25px'}}>
           <div className='osw-bookmarks-show-name'>
             {bookmark.name}
           </div>
+
           <div className='osw-bookmarks-show-description'>
-            <FormattedText>
-              {bookmark.description}
-            </FormattedText>
+            {this.renderDescription(bookmark)}
           </div>
         </div>
+
         <div className='osw-button-row'>
           <ButtonRow>
-            <Button href={bookmark.url} target='_parent'>
-              Visit link
-            </Button>
+            {this.renderLink(bookmark)}
           </ButtonRow>
         </div>
       </div>

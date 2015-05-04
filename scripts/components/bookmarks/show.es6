@@ -1,9 +1,9 @@
-import _ from 'underscore';
 import api from 'api';
 import Button from 'components/ui/button';
 import ButtonRow from 'components/ui/button-row';
 import Cursors from 'cursors';
 import FormattedText from 'formatted-text';
+import LoadingSpinner from 'components/ui/loading-spinner';
 import moment from 'moment';
 import React from 'react';
 
@@ -43,7 +43,7 @@ export default React.createClass({
 
   renderDescription(bookmark) {
     const description = bookmark.description;
-    if (description === undefined) return 'Loading...';
+    if (description === undefined) return <LoadingSpinner />;
     return (
       <FormattedText>
         {description}

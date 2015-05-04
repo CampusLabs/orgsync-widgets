@@ -47811,13 +47811,33 @@ define('formatted-text', ['exports', 'module', '../bower_components/formatted-te
 
   module.exports = _FormattedText;
 });
-// scripts/components/bookmarks/show.es6
-define('components/bookmarks/show', ['exports', 'module', 'underscore', 'api', 'components/ui/button', 'components/ui/button-row', 'cursors', 'formatted-text', 'moment', 'react'], function (exports, module, _underscore, _api, _componentsUiButton, _componentsUiButtonRow, _cursors, _formattedText, _moment, _react) {
+// scripts/components/ui/loading-spinner.es6
+define('components/ui/loading-spinner', ['exports', 'module', 'cursors', 'react'], function (exports, module, _cursors, _react) {
   'use strict';
 
   var _interopRequire = function (obj) { return obj && obj.__esModule ? obj['default'] : obj; };
 
-  var _2 = _interopRequire(_underscore);
+  var _Cursors = _interopRequire(_cursors);
+
+  var _React = _interopRequire(_react);
+
+  var SRC = 'data:image/gif;base64,R0lGODlhKwALAPEAAP///319fQAAAAAAACH/C05FV' + 'FNDQVBFMi4wAwEAAAAh+QQFCgAAACwAAAAAKwALAAACMkSOCMuW2diD88UKG95W' + '88uF4DaGWFmhZid93pq+pwxnLUnXh8ou+sSz+T64YCAyTBUAACH5BAUKAAEALAA' + 'AAAALAAsAAAIMDI5oye0Po5yULhcKACH5BAUKAAIALAAAAAAbAAsAAAIrVI4oyw' + 'IPoUk0NBczqPTqzCXeB4VKQ5amhabbOqYry7ivGZNz/k3ctUgJCgAh+QQFCgACA' + 'CwQAAAAGwALAAACK1SOKMsCD6FJNDQXM6j06swl3geFSkOWpoWm2zqmK8u4rxmT' + 'c/5N3LVICQoAOw==';
+
+  module.exports = _React.createClass({
+    displayName: 'loading-spinner',
+
+    mixins: [_Cursors],
+
+    render: function render() {
+      return _React.createElement('img', { src: SRC, style: { width: 21, height: 5 } });
+    }
+  });
+});
+// scripts/components/bookmarks/show.es6
+define('components/bookmarks/show', ['exports', 'module', 'api', 'components/ui/button', 'components/ui/button-row', 'cursors', 'formatted-text', 'components/ui/loading-spinner', 'moment', 'react'], function (exports, module, _api, _componentsUiButton, _componentsUiButtonRow, _cursors, _formattedText, _componentsUiLoadingSpinner, _moment, _react) {
+  'use strict';
+
+  var _interopRequire = function (obj) { return obj && obj.__esModule ? obj['default'] : obj; };
 
   var _api2 = _interopRequire(_api);
 
@@ -47828,6 +47848,8 @@ define('components/bookmarks/show', ['exports', 'module', 'underscore', 'api', '
   var _Cursors = _interopRequire(_cursors);
 
   var _FormattedText = _interopRequire(_formattedText);
+
+  var _LoadingSpinner = _interopRequire(_componentsUiLoadingSpinner);
 
   var _moment2 = _interopRequire(_moment);
 
@@ -47868,7 +47890,7 @@ define('components/bookmarks/show', ['exports', 'module', 'underscore', 'api', '
     renderDescription: function renderDescription(bookmark) {
       var description = bookmark.description;
       if (description === undefined) {
-        return 'Loading...';
+        return _React.createElement(_LoadingSpinner, null);
       }return _React.createElement(
         _FormattedText,
         null,
@@ -54785,7 +54807,7 @@ define('components/polls/results', ['exports', 'module', 'underscore', 'cursors'
   });
 });
 // scripts/components/polls/show.es6
-define('components/polls/show', ['exports', 'module', 'api', 'components/ui/button', 'components/ui/button-row', 'components/shared/created-by', 'cursors', 'moment', 'react', 'components/polls/results'], function (exports, module, _api, _componentsUiButton, _componentsUiButtonRow, _componentsSharedCreatedBy, _cursors, _moment, _react, _componentsPollsResults) {
+define('components/polls/show', ['exports', 'module', 'api', 'components/ui/button', 'components/ui/button-row', 'components/shared/created-by', 'cursors', 'components/ui/loading-spinner', 'moment', 'react', 'components/polls/results'], function (exports, module, _api, _componentsUiButton, _componentsUiButtonRow, _componentsSharedCreatedBy, _cursors, _componentsUiLoadingSpinner, _moment, _react, _componentsPollsResults) {
   'use strict';
 
   var _interopRequire = function (obj) { return obj && obj.__esModule ? obj['default'] : obj; };
@@ -54799,6 +54821,8 @@ define('components/polls/show', ['exports', 'module', 'api', 'components/ui/butt
   var _CreatedBy = _interopRequire(_componentsSharedCreatedBy);
 
   var _Cursors = _interopRequire(_cursors);
+
+  var _LoadingSpinner = _interopRequire(_componentsUiLoadingSpinner);
 
   var _moment2 = _interopRequire(_moment);
 
@@ -54844,7 +54868,7 @@ define('components/polls/show', ['exports', 'module', 'api', 'components/ui/butt
 
     renderContent: function renderContent(poll) {
       if (this.state.isLoading) {
-        return 'Loading...';
+        return _React.createElement(_LoadingSpinner, null);
       }return _React.createElement(
         'div',
         null,
@@ -56869,28 +56893,6 @@ define('components/ui/auto-textbox', ['exports', 'module', 'jquery', 'cursors', 
 
     render: function render() {
       return _React.createElement('textarea', this.props);
-    }
-  });
-});
-// scripts/components/ui/loading-spinner.es6
-define('components/ui/loading-spinner', ['exports', 'module', 'cursors', 'react'], function (exports, module, _cursors, _react) {
-  'use strict';
-
-  var _interopRequire = function (obj) { return obj && obj.__esModule ? obj['default'] : obj; };
-
-  var _Cursors = _interopRequire(_cursors);
-
-  var _React = _interopRequire(_react);
-
-  var SRC = 'data:image/gif;base64,R0lGODlhKwALAPEAAP///319fQAAAAAAACH/C05FV' + 'FNDQVBFMi4wAwEAAAAh+QQFCgAAACwAAAAAKwALAAACMkSOCMuW2diD88UKG95W' + '88uF4DaGWFmhZid93pq+pwxnLUnXh8ou+sSz+T64YCAyTBUAACH5BAUKAAEALAA' + 'AAAALAAsAAAIMDI5oye0Po5yULhcKACH5BAUKAAIALAAAAAAbAAsAAAIrVI4oyw' + 'IPoUk0NBczqPTqzCXeB4VKQ5amhabbOqYry7ivGZNz/k3ctUgJCgAh+QQFCgACA' + 'CwQAAAAGwALAAACK1SOKMsCD6FJNDQXM6j06swl3geFSkOWpoWm2zqmK8u4rxmT' + 'c/5N3LVICQoAOw==';
-
-  module.exports = _React.createClass({
-    displayName: 'loading-spinner',
-
-    mixins: [_Cursors],
-
-    render: function render() {
-      return _React.createElement('img', { src: SRC, style: { width: 21, height: 5 } });
     }
   });
 });

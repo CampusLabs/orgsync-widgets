@@ -3,6 +3,7 @@ import Button from 'components/ui/button';
 import ButtonRow from 'components/ui/button-row';
 import CreatedBy from 'components/shared/created-by';
 import Cursors from 'cursors';
+import LoadingSpinner from 'components/ui/loading-spinner';
 import moment from 'moment';
 import React from 'react';
 import Results from 'components/polls/results';
@@ -46,7 +47,7 @@ export default React.createClass({
   },
 
   renderContent(poll) {
-    if (this.state.isLoading) return 'Loading...';
+    if (this.state.isLoading) return <LoadingSpinner />;
     return (
       <div>
         {this.renderStatus(poll)}

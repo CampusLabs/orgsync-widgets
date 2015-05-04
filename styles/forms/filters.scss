@@ -3,7 +3,7 @@
 .orgsync-widget {
   .osw-forms-filters .osw-field {
     display: block;
-    @include box-sizing(border-box);
+    box-sizing: border-box;;
     border: 5px solid transparent;
   }
 

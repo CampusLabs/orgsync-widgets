@@ -150,7 +150,7 @@
     input,
     select {
       @include appearance(none);
-      @include box-sizing(border-box);
+      box-sizing: border-box;;
       width: 100%;
       padding: 5px;
       border: 1px solid $grey;

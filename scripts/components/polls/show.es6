@@ -45,9 +45,30 @@ export default React.createClass({
     return moment(dateString).format(FORMAT);
   },
 
+  renderContent(poll) {
+    if (this.state.isLoading) return 'Loading...';
+    return (
+      <div>
+        {this.renderStatus(poll)}
+        {this.renderCreator(poll)}
+        {this.renderVoted(poll)}
+        {this.renderResults(poll)}
+      </div>
+    );
+  },
+
   renderCreator(poll) {
     if (poll.creator === undefined) return;
     return <CreatedBy account={poll.creator} createdAt={poll.created_at} />;
+  },
+
+  renderLink(poll) {
+    if (poll.links === undefined) return;
+    return (
+      <Button href={poll.links.web}>
+        View on OrgSync.com
+      </Button>
+    );
   },
 
   renderResults(poll) {
@@ -68,23 +89,17 @@ export default React.createClass({
   },
 
   render() {
-    var poll = this.state.poll;
+    const {poll} = this.state;
 
     return (
       <div className='osw-polls-show'>
-
         <h3>{poll.name}</h3>
 
-        {this.renderStatus(poll)}
-        {this.renderCreator(poll)}
-        {this.renderVoted(poll)}
-        {this.renderResults(poll)}
+        {this.renderContent(poll)}
 
         <div className='osw-button-row'>
           <ButtonRow>
-            <Button href={poll.links.web} target='_parent'>
-              View on OrgSync.com
-            </Button>
+            {this.renderLink(poll)}
           </ButtonRow>
         </div>
       </div>

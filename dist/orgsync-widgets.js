@@ -54842,10 +54842,33 @@ define('components/polls/show', ['exports', 'module', 'api', 'components/ui/butt
       return _moment2(dateString).format(FORMAT);
     },
 
+    renderContent: function renderContent(poll) {
+      if (this.state.isLoading) {
+        return 'Loading...';
+      }return _React.createElement(
+        'div',
+        null,
+        this.renderStatus(poll),
+        this.renderCreator(poll),
+        this.renderVoted(poll),
+        this.renderResults(poll)
+      );
+    },
+
     renderCreator: function renderCreator(poll) {
       if (poll.creator === undefined) {
         return;
       }return _React.createElement(_CreatedBy, { account: poll.creator, createdAt: poll.created_at });
+    },
+
+    renderLink: function renderLink(poll) {
+      if (poll.links === undefined) {
+        return;
+      }return _React.createElement(
+        _Button,
+        { href: poll.links.web },
+        'View on OrgSync.com'
+      );
     },
 
     renderResults: function renderResults(poll) {
@@ -54887,21 +54910,14 @@ define('components/polls/show', ['exports', 'module', 'api', 'components/ui/butt
           null,
           poll.name
         ),
-        this.renderStatus(poll),
-        this.renderCreator(poll),
-        this.renderVoted(poll),
-        this.renderResults(poll),
+        this.renderContent(poll),
         _React.createElement(
           'div',
           { className: 'osw-button-row' },
           _React.createElement(
             _ButtonRow,
             null,
-            _React.createElement(
-              _Button,
-              { href: poll.links.web, target: '_parent' },
-              'View on OrgSync.com'
-            )
+            this.renderLink(poll)
           )
         )
       );

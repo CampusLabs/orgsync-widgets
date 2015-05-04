@@ -1,6 +1,6 @@
 {
   "name": "orgsync-widgets",
-  "version": "0.0.46",
+  "version": "0.0.48",
   "license": "MIT",
   "main": [
     "dist/orgsync-widgets.js",
@@ -21,23 +21,23 @@
   "devDependencies": {
     "amdainty": "0.2.0",
     "cache": "0.0.4",
-    "bourbon": "4.0.2",
-    "cursors": "0.5.0",
+    "bourbon": "4.2.2",
+    "cursors": "0.6.0",
     "elementQuery": "tysonmatanich/elementQuery#f3e328c7070e5d8e11682979092a5c06925c6ad3",
-    "formatted-text": "0.0.4",
-    "jquery": "2.1.3",
+    "formatted-text": "0.0.8",
+    "jquery": "2.1.4",
     "jstz": "https://bitbucket.org/pellepim/jstimezonedetect/get/f9e3e30e1e1f.zip",
-    "moment": "2.9.0",
-    "moment-timezone": "0.3.0",
-    "olay-react": "0.4.0",
-    "orgsync-api": "0.1.8",
-    "react": "0.12.2",
+    "moment": "2.10.2",
+    "moment-timezone": "0.3.1",
+    "olay-react": "0.4.2",
+    "orgsync-api": "0.2.1",
+    "react": "0.13.2",
     "react-list": "0.2.8",
-    "socket.io-client": "1.3.2",
-    "superagent": "0.21.0",
+    "socket.io-client": "1.3.5",
+    "superagent": "1.2.0",
     "tinycolor": "1.1.2",
-    "underscore": "1.7.0",
-    "underscore.string": "3.0.2",
-    "velcro": "0.0.2"
+    "underscore": "1.8.3",
+    "underscore.string": "3.0.3",
+    "velcro": "0.0.4"
   }
 }

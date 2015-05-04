@@ -41,14 +41,14 @@
   }
 
   .osw-selector-index-browse {
-    @include box-sizing(border-box);
+    box-sizing: border-box;;
     @include clearfix;
     border: 1px solid #ccc;
 
     .osw-selector-index-left,
     .osw-selector-index-middle,
     .osw-selector-index-right {
-      @include box-sizing(border-box);
+      box-sizing: border-box;;
     }
 
     .osw-selector-index-left,
@@ -100,7 +100,7 @@
 
     input {
       @include appearance(none);
-      @include box-sizing(border-box);
+      box-sizing: border-box;;
       border: 0;
       font-size: 14px;
       line-height: 24px;
@@ -150,7 +150,7 @@
   }
 
   .osw-selector-index-right-header {
-    @include box-sizing(border-box);
+    box-sizing: border-box;;
     background: $grey-lightest;
     border-bottom: 1px solid #ccc;
     color: $grey-darker;

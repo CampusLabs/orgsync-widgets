@@ -1,6 +1,6 @@
 {
   "name": "orgsync-widgets",
-  "version": "0.0.46",
+  "version": "0.0.48",
   "author": "Casey Foster <c@sey.me>",
   "license": "MIT",
   "main": "dist/orgsync-widgets.js",
@@ -9,14 +9,15 @@
     "url": "https://github.com/orgsync/orgsync-widgets"
   },
   "devDependencies": {
-    "cogs": "1.0.1",
-    "cogs-transformer-babel": "1.0.2",
-    "cogs-transformer-concat-amd": "1.0.2",
-    "cogs-transformer-directives": "1.0.1",
-    "cogs-transformer-json": "1.0.0",
-    "cogs-transformer-prepend-path": "1.0.0",
-    "cogs-transformer-sass": "1.0.1",
+    "cogs": "1.0.4",
+    "cogs-transformer-autoprefixer": "1.0.0",
+    "cogs-transformer-babel": "1.0.9",
+    "cogs-transformer-concat-amd": "1.0.3",
+    "cogs-transformer-directives": "1.0.2",
+    "cogs-transformer-json": "1.0.2",
+    "cogs-transformer-prepend-path": "1.0.1",
+    "cogs-transformer-sass": "1.0.3",
     "eslint": "0.19.0",
-    "eslint-plugin-react": "2.1.0"
+    "eslint-plugin-react": "2.2.0"
   }
 }

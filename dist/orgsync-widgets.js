@@ -9283,11 +9283,11 @@ return jQuery;
 define('jquery', ['exports', 'module', '../bower_components/jquery/dist/jquery'], function (exports, module, _bower_componentsJqueryDistJquery) {
   'use strict';
 
-  function _interopRequire(obj) { return obj && obj.__esModule ? obj['default'] : obj; }
+  function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 
-  var _$ = _interopRequire(_bower_componentsJqueryDistJquery);
+  var _$ = _interopRequireDefault(_bower_componentsJqueryDistJquery);
 
-  module.exports = _$;
+  module.exports = _$['default'];
 });
 // bower_components/underscore/underscore.js
 //     Underscore.js 1.8.3
@@ -10842,11 +10842,11 @@ define('jquery', ['exports', 'module', '../bower_components/jquery/dist/jquery']
 define('underscore', ['exports', 'module', '../bower_components/underscore/underscore'], function (exports, module, _bower_componentsUnderscoreUnderscore) {
   'use strict';
 
-  function _interopRequire(obj) { return obj && obj.__esModule ? obj['default'] : obj; }
+  function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 
-  var _2 = _interopRequire(_bower_componentsUnderscoreUnderscore);
+  var _2 = _interopRequireDefault(_bower_componentsUnderscoreUnderscore);
 
-  module.exports = _2;
+  module.exports = _2['default'];
 });
 // bower_components/cache/cache.js
 (function (root, factory) {
@@ -11001,11 +11001,11 @@ define('underscore', ['exports', 'module', '../bower_components/underscore/under
 define('cache', ['exports', 'module', '../bower_components/cache/cache'], function (exports, module, _bower_componentsCacheCache) {
   'use strict';
 
-  function _interopRequire(obj) { return obj && obj.__esModule ? obj['default'] : obj; }
+  function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 
-  var _cache = _interopRequire(_bower_componentsCacheCache);
+  var _cache = _interopRequireDefault(_bower_componentsCacheCache);
 
-  module.exports = _cache;
+  module.exports = _cache['default'];
 });
 // scripts/config.es6
 define('config', ['exports', 'module'], function (exports, module) {
@@ -18446,11 +18446,11 @@ function toArray(list, index) {
 define('socket.io', ['exports', 'module', '../bower_components/socket.io-client/socket.io'], function (exports, module, _bower_componentsSocketIoClientSocketIo) {
   'use strict';
 
-  function _interopRequire(obj) { return obj && obj.__esModule ? obj['default'] : obj; }
+  function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 
-  var _socketIo = _interopRequire(_bower_componentsSocketIoClientSocketIo);
+  var _socketIo = _interopRequireDefault(_bower_componentsSocketIoClientSocketIo);
 
-  module.exports = _socketIo;
+  module.exports = _socketIo['default'];
 });
 // bower_components/react/react-with-addons.js
 /**
@@ -40054,11 +40054,11 @@ module.exports = warning;
 define('react', ['exports', 'module', '../bower_components/react/react-with-addons'], function (exports, module, _bower_componentsReactReactWithAddons) {
   'use strict';
 
-  function _interopRequire(obj) { return obj && obj.__esModule ? obj['default'] : obj; }
+  function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 
-  var _React = _interopRequire(_bower_componentsReactReactWithAddons);
+  var _React = _interopRequireDefault(_bower_componentsReactReactWithAddons);
 
-  module.exports = _React;
+  module.exports = _React['default'];
 });
 // scripts/orgsync-widgets.es6
 define('orgsync-widgets', ['exports', 'jquery', 'underscore', 'cache', 'config', 'elementQuery', 'socket.io', 'react', 'require'], function (exports, _jquery, _underscore, _cache, _config, _elementQuery, _socketIo, _react, _require) {
@@ -40068,69 +40068,69 @@ define('orgsync-widgets', ['exports', 'jquery', 'underscore', 'cache', 'config',
     value: true
   });
 
-  function _interopRequire(obj) { return obj && obj.__esModule ? obj['default'] : obj; }
+  function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 
-  var _$ = _interopRequire(_jquery);
+  var _$ = _interopRequireDefault(_jquery);
 
-  var _2 = _interopRequire(_underscore);
+  var _2 = _interopRequireDefault(_underscore);
 
-  var _Cache = _interopRequire(_cache);
+  var _Cache = _interopRequireDefault(_cache);
 
-  var _config2 = _interopRequire(_config);
+  var _config2 = _interopRequireDefault(_config);
 
-  var _elementQuery2 = _interopRequire(_elementQuery);
+  var _elementQuery2 = _interopRequireDefault(_elementQuery);
 
-  var _socket = _interopRequire(_socketIo);
+  var _socket = _interopRequireDefault(_socketIo);
 
-  var _React = _interopRequire(_react);
+  var _React = _interopRequireDefault(_react);
 
-  var _require2 = _interopRequire(_require);
+  var _require2 = _interopRequireDefault(_require);
 
   // Tell elementQuery to keep track of sizes for `.orgsync-widget`s
-  _elementQuery2(_config2.elementQuery);
+  (0, _elementQuery2['default'])(_config2['default'].elementQuery);
 
-  _$(window).on('ready resize load', function () {
-    _elementQuery2();
+  (0, _$['default'])(window).on('ready resize load', function () {
+    (0, _elementQuery2['default'])();
   });
 
   var eachEl = function eachEl(fn) {
-    _2.each(_$('.orgsync-widget'), fn);
+    _2['default'].each((0, _$['default'])('.orgsync-widget'), fn);
   };
 
   var mount = function mount(el) {
     if (el.widgetIsMounted) return;
-    var data = _$(el).data();
+    var data = (0, _$['default'])(el).data();
     if (!data.moduleName) return;
-    var component = _require2('components/' + data.moduleName);
+    var component = (0, _require2['default'])('components/' + data.moduleName);
     el.widgetIsMounted = true;
-    _React.render(_React.createFactory(component)(_2.clone(data)), el);
-    _elementQuery2();
+    _React['default'].render(_React['default'].createFactory(component)(_2['default'].clone(data)), el);
+    (0, _elementQuery2['default'])();
   };
 
   exports.mount = mount;
-  var mountAll = _2.partial(eachEl, mount);
+  var mountAll = _2['default'].partial(eachEl, mount);
 
   exports.mountAll = mountAll;
   var unmount = function unmount(el) {
-    if (_React.unmountComponentAtNode(el)) el.widgetIsMounted = false;
+    if (_React['default'].unmountComponentAtNode(el)) el.widgetIsMounted = false;
   };
 
   exports.unmount = unmount;
-  var unmountAll = _2.partial(eachEl, unmount);
+  var unmountAll = _2['default'].partial(eachEl, unmount);
 
   exports.unmountAll = unmountAll;
-  var io = _socket(_config2.io.uri, _config2.io);
+  var io = (0, _socket['default'])(_config2['default'].io.uri, _config2['default'].io);
   exports.io = io;
   io.on('connect', function () {
-    io.emit('auth', _config2.api.key);
+    io.emit('auth', _config2['default'].api.key);
   });
 
-  var cache = new _Cache({ useLocalStorage: false });
+  var cache = new _Cache['default']({ useLocalStorage: false });
 
   exports.cache = cache;
-  exports.require = _require2;
+  exports.require = _require2['default'];
 
-  _$(mountAll);
+  (0, _$['default'])(mountAll);
 });
 // bower_components/superagent/superagent.js
 !function(e){if("object"==typeof exports&&"undefined"!=typeof module)module.exports=e();else if("function"==typeof define&&define.amd)define('../bower_components/superagent/superagent', [],e);else{var f;"undefined"!=typeof window?f=window:"undefined"!=typeof global?f=global:"undefined"!=typeof self&&(f=self),f.superagent=e()}}(function(){var define,module,exports;return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
@@ -41454,11 +41454,11 @@ module.exports = request;
 define('superagent', ['exports', 'module', '../bower_components/superagent/superagent'], function (exports, module, _bower_componentsSuperagentSuperagent) {
   'use strict';
 
-  function _interopRequire(obj) { return obj && obj.__esModule ? obj['default'] : obj; }
+  function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 
-  var _superagent = _interopRequire(_bower_componentsSuperagentSuperagent);
+  var _superagent = _interopRequireDefault(_bower_componentsSuperagentSuperagent);
 
-  module.exports = _superagent;
+  module.exports = _superagent['default'];
 });
 // bower_components/orgsync-api/orgsync-api.js
 (function (root, factory) {
@@ -41568,23 +41568,23 @@ define('superagent', ['exports', 'module', '../bower_components/superagent/super
 define('orgsync-api', ['exports', 'module', '../bower_components/orgsync-api/orgsync-api'], function (exports, module, _bower_componentsOrgsyncApiOrgsyncApi) {
   'use strict';
 
-  function _interopRequire(obj) { return obj && obj.__esModule ? obj['default'] : obj; }
+  function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 
-  var _OrgSyncApi = _interopRequire(_bower_componentsOrgsyncApiOrgsyncApi);
+  var _OrgSyncApi = _interopRequireDefault(_bower_componentsOrgsyncApiOrgsyncApi);
 
-  module.exports = _OrgSyncApi;
+  module.exports = _OrgSyncApi['default'];
 });
 // scripts/api.es6
 define('api', ['exports', 'module', 'config', 'orgsync-api'], function (exports, module, _config, _orgsyncApi) {
   'use strict';
 
-  function _interopRequire(obj) { return obj && obj.__esModule ? obj['default'] : obj; }
+  function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 
-  var _config2 = _interopRequire(_config);
+  var _config2 = _interopRequireDefault(_config);
 
-  var _OrgSyncApi = _interopRequire(_orgsyncApi);
+  var _OrgSyncApi = _interopRequireDefault(_orgsyncApi);
 
-  var api = new _OrgSyncApi(_config2.api);
+  var api = new _OrgSyncApi['default'](_config2['default'].api);
 
   module.exports = api;
 });
@@ -41606,28 +41606,28 @@ define('entities/account', ['exports'], function (exports) {
 define('components/accounts/list-item', ['exports', 'module', 'entities/account', 'react'], function (exports, module, _entitiesAccount, _react) {
   'use strict';
 
-  function _interopRequire(obj) { return obj && obj.__esModule ? obj['default'] : obj; }
+  function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 
-  var _React = _interopRequire(_react);
+  var _React = _interopRequireDefault(_react);
 
-  module.exports = _React.createClass({
+  module.exports = _React['default'].createClass({
     displayName: 'list-item',
 
     render: function render() {
       var account = this.props.account;
-      return _React.createElement(
+      return _React['default'].createElement(
         'div',
         { className: 'osw-accounts-list-item' },
-        _React.createElement('img', {
+        _React['default'].createElement('img', {
           className: 'osw-accounts-list-item-picture',
-          src: _entitiesAccount.getPictureUrl(account)
+          src: (0, _entitiesAccount.getPictureUrl)(account)
         }),
-        _React.createElement(
+        _React['default'].createElement(
           'div',
           { className: 'osw-accounts-list-item-first-name' },
           account.first_name
         ),
-        _React.createElement(
+        _React['default'].createElement(
           'div',
           { className: 'osw-accounts-list-item-last-name' },
           account.last_name
@@ -41759,11 +41759,11 @@ define('components/accounts/list-item', ['exports', 'module', 'entities/account'
 define('cursors', ['exports', 'module', '../bower_components/cursors/cursors'], function (exports, module, _bower_componentsCursorsCursors) {
   'use strict';
 
-  function _interopRequire(obj) { return obj && obj.__esModule ? obj['default'] : obj; }
+  function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 
-  var _Cursors = _interopRequire(_bower_componentsCursorsCursors);
+  var _Cursors = _interopRequireDefault(_bower_componentsCursorsCursors);
 
-  module.exports = _Cursors;
+  module.exports = _Cursors['default'];
 });
 // bower_components/react-list/react-list.js
 (function (root, factory) {
@@ -42022,36 +42022,36 @@ define('cursors', ['exports', 'module', '../bower_components/cursors/cursors'], 
 define('react-list', ['exports', 'module', '../bower_components/react-list/react-list'], function (exports, module, _bower_componentsReactListReactList) {
   'use strict';
 
-  function _interopRequire(obj) { return obj && obj.__esModule ? obj['default'] : obj; }
+  function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 
-  var _ReactList = _interopRequire(_bower_componentsReactListReactList);
+  var _ReactList = _interopRequireDefault(_bower_componentsReactListReactList);
 
-  module.exports = _ReactList;
+  module.exports = _ReactList['default'];
 });
 // scripts/components/accounts/index.es6
 define('components/accounts/index', ['exports', 'module', 'underscore', 'api', 'components/accounts/list-item', 'cursors', 'react-list', 'react'], function (exports, module, _underscore, _api, _componentsAccountsListItem, _cursors, _reactList, _react) {
   'use strict';
 
-  function _interopRequire(obj) { return obj && obj.__esModule ? obj['default'] : obj; }
+  function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 
-  var _2 = _interopRequire(_underscore);
+  var _2 = _interopRequireDefault(_underscore);
 
-  var _api2 = _interopRequire(_api);
+  var _api2 = _interopRequireDefault(_api);
 
-  var _AccountsListItem = _interopRequire(_componentsAccountsListItem);
+  var _AccountsListItem = _interopRequireDefault(_componentsAccountsListItem);
 
-  var _Cursors = _interopRequire(_cursors);
+  var _Cursors = _interopRequireDefault(_cursors);
 
-  var _List = _interopRequire(_reactList);
+  var _List = _interopRequireDefault(_reactList);
 
-  var _React = _interopRequire(_react);
+  var _React = _interopRequireDefault(_react);
 
   var PER_PAGE = 100;
 
-  module.exports = _React.createClass({
+  module.exports = _React['default'].createClass({
     displayName: 'index',
 
-    mixins: [_Cursors],
+    mixins: [_Cursors['default']],
 
     getInitialState: function getInitialState() {
       return {
@@ -42060,27 +42060,27 @@ define('components/accounts/index', ['exports', 'module', 'underscore', 'api', '
     },
 
     fetch: function fetch(cb) {
-      _api2.get('/portals/:portal_id/people', {
+      _api2['default'].get('/portals/:portal_id/people', {
         portal_id: this.props.portalId,
         page: Math.floor(this.state.accounts.length / PER_PAGE) + 1,
         per_page: PER_PAGE
-      }, _2.partial(this.handleFetch, cb));
+      }, _2['default'].partial(this.handleFetch, cb));
     },
 
     handleFetch: function handleFetch(cb, er, res) {
       if (er) return cb(er);
       this.update({
-        accounts: { $set: _2.unique(this.state.accounts.concat(res.data), 'id') }
+        accounts: { $set: _2['default'].unique(this.state.accounts.concat(res.data), 'id') }
       });
       cb(null, res.data.length < PER_PAGE);
     },
 
     renderListItem: function renderListItem(account) {
-      return _React.createElement(_AccountsListItem, { key: account.id, account: account });
+      return _React['default'].createElement(_AccountsListItem['default'], { key: account.id, account: account });
     },
 
     render: function render() {
-      return _React.createElement(_List, {
+      return _React['default'].createElement(_List['default'], {
         className: 'osw-accounts-index',
         items: this.state.accounts,
         renderItem: this.renderListItem,
@@ -43107,22 +43107,22 @@ module.exports = function words(str, delimiter) {
 define('underscore.string', ['exports', 'module', '../bower_components/underscore.string/dist/underscore.string'], function (exports, module, _bower_componentsUnderscoreStringDistUnderscoreString) {
   'use strict';
 
-  function _interopRequire(obj) { return obj && obj.__esModule ? obj['default'] : obj; }
+  function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 
-  var _str2 = _interopRequire(_bower_componentsUnderscoreStringDistUnderscoreString);
+  var _str2 = _interopRequireDefault(_bower_componentsUnderscoreStringDistUnderscoreString);
 
-  module.exports = _str2;
+  module.exports = _str2['default'];
 });
 // scripts/utils/join-class-names.es6
 define('utils/join-class-names', ['exports', 'module', 'underscore'], function (exports, module, _underscore) {
   'use strict';
 
-  function _interopRequire(obj) { return obj && obj.__esModule ? obj['default'] : obj; }
+  function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 
-  var _2 = _interopRequire(_underscore);
+  var _2 = _interopRequireDefault(_underscore);
 
   module.exports = function (a, b) {
-    return _2.compact(_2.unique((a || '').split(/\s+/).concat((b || '').split(/\s+/)))).join(' ');
+    return _2['default'].compact(_2['default'].unique((a || '').split(/\s+/).concat((b || '').split(/\s+/)))).join(' ');
   };
 });
 // scripts/components/ui/button.es6
@@ -43131,18 +43131,18 @@ define('components/ui/button', ['exports', 'module', 'cursors', 'utils/join-clas
 
   var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
 
-  function _interopRequire(obj) { return obj && obj.__esModule ? obj['default'] : obj; }
+  function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 
-  var _Cursors = _interopRequire(_cursors);
+  var _Cursors = _interopRequireDefault(_cursors);
 
-  var _joinClassNames = _interopRequire(_utilsJoinClassNames);
+  var _joinClassNames = _interopRequireDefault(_utilsJoinClassNames);
 
-  var _React = _interopRequire(_react);
+  var _React = _interopRequireDefault(_react);
 
-  module.exports = _React.createClass({
+  module.exports = _React['default'].createClass({
     displayName: 'button',
 
-    mixins: [_Cursors],
+    mixins: [_Cursors['default']],
 
     getDefaultProps: function getDefaultProps() {
       return {
@@ -43154,11 +43154,11 @@ define('components/ui/button', ['exports', 'module', 'cursors', 'utils/join-clas
       var classes = [this.props.baseClassName];
       if (this.props.isSelected) classes.push('osw-button-selected');
       if (this.props.disabled) classes.push('osw-button-disabled');
-      return _joinClassNames(classes.join(' '), this.props.className);
+      return (0, _joinClassNames['default'])(classes.join(' '), this.props.className);
     },
 
     renderAnchor: function renderAnchor() {
-      return _React.createElement(
+      return _React['default'].createElement(
         'a',
         _extends({}, this.props, { className: this.getClassName() }),
         this.props.children
@@ -43166,7 +43166,7 @@ define('components/ui/button', ['exports', 'module', 'cursors', 'utils/join-clas
     },
 
     renderButton: function renderButton() {
-      return _React.createElement(
+      return _React['default'].createElement(
         'button',
         _extends({ type: 'button' }, this.props, { className: this.getClassName() }),
         this.props.children
@@ -43182,26 +43182,26 @@ define('components/ui/button', ['exports', 'module', 'cursors', 'utils/join-clas
 define('components/accounts/show', ['exports', 'module', 'underscore', 'underscore.string', 'api', 'components/ui/button', 'config', 'cursors', 'react', 'entities/account'], function (exports, module, _underscore, _underscoreString, _api, _componentsUiButton, _config, _cursors, _react, _entitiesAccount) {
   'use strict';
 
-  function _interopRequire(obj) { return obj && obj.__esModule ? obj['default'] : obj; }
+  function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 
-  var _2 = _interopRequire(_underscore);
+  var _2 = _interopRequireDefault(_underscore);
 
-  var _str2 = _interopRequire(_underscoreString);
+  var _str2 = _interopRequireDefault(_underscoreString);
 
-  var _api2 = _interopRequire(_api);
+  var _api2 = _interopRequireDefault(_api);
 
-  var _Button = _interopRequire(_componentsUiButton);
+  var _Button = _interopRequireDefault(_componentsUiButton);
 
-  var _config2 = _interopRequire(_config);
+  var _config2 = _interopRequireDefault(_config);
 
-  var _Cursors = _interopRequire(_cursors);
+  var _Cursors = _interopRequireDefault(_cursors);
 
-  var _React = _interopRequire(_react);
+  var _React = _interopRequireDefault(_react);
 
-  module.exports = _React.createClass({
+  module.exports = _React['default'].createClass({
     displayName: 'show',
 
-    mixins: [_Cursors],
+    mixins: [_Cursors['default']],
 
     getInitialState: function getInitialState() {
       return {
@@ -43217,7 +43217,7 @@ define('components/accounts/show', ['exports', 'module', 'underscore', 'undersco
 
     fetchAccount: function fetchAccount() {
       this.update({ isLoading: { $set: true }, error: { $set: null } });
-      _api2.get('/accounts/:id', {
+      _api2['default'].get('/accounts/:id', {
         id: this.props.accountId,
         portal_id: this.props.portalId
       }, this.handleAccount);
@@ -43233,7 +43233,7 @@ define('components/accounts/show', ['exports', 'module', 'underscore', 'undersco
 
     renderTitle: function renderTitle() {
       var title = this.state.account.title;
-      if (title) return _React.createElement(
+      if (title) return _React['default'].createElement(
         'div',
         { className: 'osw-accounts-show-title' },
         title
@@ -43243,7 +43243,7 @@ define('components/accounts/show', ['exports', 'module', 'underscore', 'undersco
     renderSimpleField: function renderSimpleField(key, title) {
       var content = this.state.account[key];
       if (!content) return;
-      content = key === 'email_address' ? _React.createElement(
+      content = key === 'email_address' ? _React['default'].createElement(
         'a',
         { href: 'mailto:' + content },
         content
@@ -43254,14 +43254,14 @@ define('components/accounts/show', ['exports', 'module', 'underscore', 'undersco
     renderAddress: function renderAddress() {
       var address = this.state.account.address;
       if (!address) return;
-      var content = _2.compact([address.street, _2.compact([_2.compact([address.city, address.state]).join(', '), address.zip]).join(' '), address.country]).join('\n');
+      var content = _2['default'].compact([address.street, _2['default'].compact([_2['default'].compact([address.city, address.state]).join(', '), address.zip]).join(' '), address.country]).join('\n');
       if (!content) return;
       return this.renderField('Address', this.renderInLines(content));
     },
 
     renderInLines: function renderInLines(str) {
-      return _2.map(_str2.lines(str), function (line, i) {
-        return _React.createElement(
+      return _2['default'].map(_str2['default'].lines(str), function (line, i) {
+        return _React['default'].createElement(
           'div',
           { key: i },
           line
@@ -43270,15 +43270,15 @@ define('components/accounts/show', ['exports', 'module', 'underscore', 'undersco
     },
 
     renderField: function renderField(title, content) {
-      return _React.createElement(
+      return _React['default'].createElement(
         'div',
         { className: 'osw-accounts-show-field' },
-        _React.createElement(
+        _React['default'].createElement(
           'div',
           { className: 'osw-accounts-show-field-title' },
           title
         ),
-        _React.createElement(
+        _React['default'].createElement(
           'div',
           { className: 'osw-accounts-show-field-content' },
           content
@@ -43288,14 +43288,14 @@ define('components/accounts/show', ['exports', 'module', 'underscore', 'undersco
 
     renderAccount: function renderAccount() {
       var account = this.state.account;
-      return _React.createElement(
+      return _React['default'].createElement(
         'div',
         null,
-        _React.createElement('img', {
+        _React['default'].createElement('img', {
           className: 'osw-accounts-show-picture',
-          src: _entitiesAccount.getPictureUrl(account)
+          src: (0, _entitiesAccount.getPictureUrl)(account)
         }),
-        _React.createElement(
+        _React['default'].createElement(
           'div',
           { className: 'osw-accounts-show-name' },
           account.display_name
@@ -43305,12 +43305,12 @@ define('components/accounts/show', ['exports', 'module', 'underscore', 'undersco
         this.renderSimpleField('phone_number', 'Phone'),
         this.renderAddress(),
         this.renderSimpleField('about_me', 'About Me'),
-        _React.createElement(
+        _React['default'].createElement(
           'div',
           { className: 'osw-accounts-show-send-a-message' },
-          _React.createElement(
-            _Button,
-            { href: '' + _config2.io.uri + '/messages/new?account=' + account.id },
+          _React['default'].createElement(
+            _Button['default'],
+            { href: '' + _config2['default'].io.uri + '/messages/new?account=' + account.id },
             'Send a Message'
           )
         )
@@ -43318,7 +43318,7 @@ define('components/accounts/show', ['exports', 'module', 'underscore', 'undersco
     },
 
     render: function render() {
-      return _React.createElement(
+      return _React['default'].createElement(
         'div',
         { className: 'osw-accounts-show' },
         this.state.account ? this.renderAccount() : this.state.error ? this.state.error.toString() : 'Loading...'
@@ -43332,22 +43332,22 @@ define('components/ui/icon', ['exports', 'module', 'cursors', 'utils/join-class-
 
   var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
 
-  function _interopRequire(obj) { return obj && obj.__esModule ? obj['default'] : obj; }
+  function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 
-  var _Cursors = _interopRequire(_cursors);
+  var _Cursors = _interopRequireDefault(_cursors);
 
-  var _joinClassNames = _interopRequire(_utilsJoinClassNames);
+  var _joinClassNames = _interopRequireDefault(_utilsJoinClassNames);
 
-  var _React = _interopRequire(_react);
+  var _React = _interopRequireDefault(_react);
 
-  module.exports = _React.createClass({
+  module.exports = _React['default'].createClass({
     displayName: 'icon',
 
-    mixins: [_Cursors],
+    mixins: [_Cursors['default']],
 
     render: function render() {
-      return _React.createElement('i', _extends({}, this.props, {
-        className: _joinClassNames('oswi oswi-' + this.props.name, this.props.className)
+      return _React['default'].createElement('i', _extends({}, this.props, {
+        className: (0, _joinClassNames['default'])('oswi oswi-' + this.props.name, this.props.className)
       }));
     }
   });
@@ -43356,20 +43356,20 @@ define('components/ui/icon', ['exports', 'module', 'cursors', 'utils/join-class-
 define('components/accounts/show-popup', ['exports', 'module', 'components/accounts/show', 'cursors', 'components/ui/icon', 'react'], function (exports, module, _componentsAccountsShow, _cursors, _componentsUiIcon, _react) {
   'use strict';
 
-  function _interopRequire(obj) { return obj && obj.__esModule ? obj['default'] : obj; }
+  function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 
-  var _AccountsShow = _interopRequire(_componentsAccountsShow);
+  var _AccountsShow = _interopRequireDefault(_componentsAccountsShow);
 
-  var _Cursors = _interopRequire(_cursors);
+  var _Cursors = _interopRequireDefault(_cursors);
 
-  var _Icon = _interopRequire(_componentsUiIcon);
+  var _Icon = _interopRequireDefault(_componentsUiIcon);
 
-  var _React = _interopRequire(_react);
+  var _React = _interopRequireDefault(_react);
 
-  module.exports = _React.createClass({
+  module.exports = _React['default'].createClass({
     displayName: 'show-popup',
 
-    mixins: [_Cursors],
+    mixins: [_Cursors['default']],
 
     handleCloseClick: function handleCloseClick(ev) {
       this.props.close();
@@ -43377,15 +43377,15 @@ define('components/accounts/show-popup', ['exports', 'module', 'components/accou
     },
 
     render: function render() {
-      return _React.createElement(
+      return _React['default'].createElement(
         'div',
         { className: 'osw-accounts-show-popup' },
-        _React.createElement(_Icon, {
+        _React['default'].createElement(_Icon['default'], {
           name: 'delete',
           className: 'osw-accounts-show-popup-close-button',
           onClick: this.handleCloseClick
         }),
-        _React.createElement(_AccountsShow, this.props)
+        _React['default'].createElement(_AccountsShow['default'], this.props)
       );
     }
   });
@@ -43394,18 +43394,18 @@ define('components/accounts/show-popup', ['exports', 'module', 'components/accou
 define('components/albums/list-item', ['exports', 'module', 'underscore', 'cursors', 'react'], function (exports, module, _underscore, _cursors, _react) {
   'use strict';
 
-  function _interopRequire(obj) { return obj && obj.__esModule ? obj['default'] : obj; }
+  function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 
-  var _2 = _interopRequire(_underscore);
+  var _2 = _interopRequireDefault(_underscore);
 
-  var _Cursors = _interopRequire(_cursors);
+  var _Cursors = _interopRequireDefault(_cursors);
 
-  var _React = _interopRequire(_react);
+  var _React = _interopRequireDefault(_react);
 
-  module.exports = _React.createClass({
+  module.exports = _React['default'].createClass({
     displayName: 'list-item',
 
-    mixins: [_Cursors],
+    mixins: [_Cursors['default']],
 
     handleClick: function handleClick(ev) {
       if (this.props.redirect) return;
@@ -43415,30 +43415,30 @@ define('components/albums/list-item', ['exports', 'module', 'underscore', 'curso
 
     render: function render() {
       var album = this.props.album;
-      return _React.createElement(
+      return _React['default'].createElement(
         'a',
         {
           className: 'osw-albums-list-item',
           href: album.links.web,
           onClick: this.handleClick
         },
-        _React.createElement(
+        _React['default'].createElement(
           'div',
           { className: 'osw-albums-list-item-cover-photos-container' },
-          _2.times(4, function (n) {
-            return _React.createElement(
+          _2['default'].times(4, function (n) {
+            return _React['default'].createElement(
               'div',
               { className: 'osw-albums-list-item-cover-photo', key: n },
-              _React.createElement('img', { src: album.cover_photo })
+              _React['default'].createElement('img', { src: album.cover_photo })
             );
           })
         ),
-        _React.createElement(
+        _React['default'].createElement(
           'div',
           { className: 'osw-albums-list-item-name' },
           album.name
         ),
-        _React.createElement(
+        _React['default'].createElement(
           'div',
           { className: 'osw-albums-list-item-photo-count' },
           album.photo_count + ' Photos'
@@ -43451,18 +43451,18 @@ define('components/albums/list-item', ['exports', 'module', 'underscore', 'curso
 define('components/photos/list-item', ['exports', 'module', 'cursors', 'components/ui/icon', 'react'], function (exports, module, _cursors, _componentsUiIcon, _react) {
   'use strict';
 
-  function _interopRequire(obj) { return obj && obj.__esModule ? obj['default'] : obj; }
+  function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 
-  var _Cursors = _interopRequire(_cursors);
+  var _Cursors = _interopRequireDefault(_cursors);
 
-  var _Icon = _interopRequire(_componentsUiIcon);
+  var _Icon = _interopRequireDefault(_componentsUiIcon);
 
-  var _React = _interopRequire(_react);
+  var _React = _interopRequireDefault(_react);
 
-  module.exports = _React.createClass({
+  module.exports = _React['default'].createClass({
     displayName: 'list-item',
 
-    mixins: [_Cursors],
+    mixins: [_Cursors['default']],
 
     handleClick: function handleClick(ev) {
       if (this.props.redirect) return;
@@ -43473,28 +43473,28 @@ define('components/photos/list-item', ['exports', 'module', 'cursors', 'componen
     renderCommentCount: function renderCommentCount() {
       var count = this.props.photo.comments_count;
       if (!count) return;
-      return _React.createElement(
+      return _React['default'].createElement(
         'div',
         { className: 'osw-photos-list-item-comment-count' },
         count,
         ' ',
-        _React.createElement(_Icon, { name: 'communication' })
+        _React['default'].createElement(_Icon['default'], { name: 'communication' })
       );
     },
 
     render: function render() {
       var photo = this.props.photo;
-      return _React.createElement(
+      return _React['default'].createElement(
         'a',
         {
           className: 'osw-photos-list-item',
           onClick: this.handleClick,
           href: photo.links.web
         },
-        _React.createElement(
+        _React['default'].createElement(
           'div',
           { className: 'osw-photos-list-item-thumbnail' },
-          _React.createElement('img', { src: photo.thumbnail_url })
+          _React['default'].createElement('img', { src: photo.thumbnail_url })
         ),
         this.renderCommentCount()
       );
@@ -46588,52 +46588,52 @@ define('components/photos/list-item', ['exports', 'module', 'cursors', 'componen
 define('moment', ['exports', 'module', '../bower_components/moment/moment'], function (exports, module, _bower_componentsMomentMoment) {
   'use strict';
 
-  function _interopRequire(obj) { return obj && obj.__esModule ? obj['default'] : obj; }
+  function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 
-  var _moment = _interopRequire(_bower_componentsMomentMoment);
+  var _moment = _interopRequireDefault(_bower_componentsMomentMoment);
 
-  module.exports = _moment;
+  module.exports = _moment['default'];
 });
 // scripts/components/comments/list-item.es6
 define('components/comments/list-item', ['exports', 'module', 'moment', 'react'], function (exports, module, _moment, _react) {
   'use strict';
 
-  function _interopRequire(obj) { return obj && obj.__esModule ? obj['default'] : obj; }
+  function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 
-  var _moment2 = _interopRequire(_moment);
+  var _moment2 = _interopRequireDefault(_moment);
 
-  var _React = _interopRequire(_react);
+  var _React = _interopRequireDefault(_react);
 
-  module.exports = _React.createClass({
+  module.exports = _React['default'].createClass({
     displayName: 'list-item',
 
     render: function render() {
       var comment = this.props.comment;
       var creator = comment.creator;
-      return _React.createElement(
+      return _React['default'].createElement(
         'div',
         { className: 'osw-comments-list-item' },
-        _React.createElement('img', {
+        _React['default'].createElement('img', {
           className: 'osw-comments-list-item-creator-avatar',
           src: creator.picture_url
         }),
-        _React.createElement(
+        _React['default'].createElement(
           'div',
           { className: 'osw-comments-list-item-info' },
-          _React.createElement(
+          _React['default'].createElement(
             'div',
             { className: 'osw-comments-list-item-creator-name' },
             creator.display_name
           ),
-          _React.createElement(
+          _React['default'].createElement(
             'div',
             { className: 'osw-comments-list-item-content' },
             comment.content
           ),
-          _React.createElement(
+          _React['default'].createElement(
             'div',
             { className: 'osw-comments-list-item-time' },
-            _moment2(comment.created_at).fromNow()
+            (0, _moment2['default'])(comment.created_at).fromNow()
           )
         )
       );
@@ -46644,21 +46644,21 @@ define('components/comments/list-item', ['exports', 'module', 'moment', 'react']
 define('components/comments/new', ['exports', 'module', 'components/ui/button', 'react'], function (exports, module, _componentsUiButton, _react) {
   'use strict';
 
-  function _interopRequire(obj) { return obj && obj.__esModule ? obj['default'] : obj; }
+  function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 
-  var _Button = _interopRequire(_componentsUiButton);
+  var _Button = _interopRequireDefault(_componentsUiButton);
 
-  var _React = _interopRequire(_react);
+  var _React = _interopRequireDefault(_react);
 
-  module.exports = _React.createClass({
+  module.exports = _React['default'].createClass({
     displayName: 'new',
 
     render: function render() {
-      return _React.createElement(
+      return _React['default'].createElement(
         'div',
         { className: 'osw-comments-new' },
-        _React.createElement(
-          _Button,
+        _React['default'].createElement(
+          _Button['default'],
           { href: this.props.url },
           'Comment on OrgSync!'
         )
@@ -46670,52 +46670,52 @@ define('components/comments/new', ['exports', 'module', 'components/ui/button', 
 define('components/comments/index', ['exports', 'module', 'jquery', 'underscore', 'api', 'cursors', 'react-list', 'components/comments/list-item', 'components/comments/new', 'react'], function (exports, module, _jquery, _underscore, _api, _cursors, _reactList, _componentsCommentsListItem, _componentsCommentsNew, _react) {
   'use strict';
 
-  function _interopRequire(obj) { return obj && obj.__esModule ? obj['default'] : obj; }
+  function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 
-  var _$ = _interopRequire(_jquery);
+  var _$ = _interopRequireDefault(_jquery);
 
-  var _2 = _interopRequire(_underscore);
+  var _2 = _interopRequireDefault(_underscore);
 
-  var _api2 = _interopRequire(_api);
+  var _api2 = _interopRequireDefault(_api);
 
-  var _Cursors = _interopRequire(_cursors);
+  var _Cursors = _interopRequireDefault(_cursors);
 
-  var _List = _interopRequire(_reactList);
+  var _List = _interopRequireDefault(_reactList);
 
-  var _ListItem = _interopRequire(_componentsCommentsListItem);
+  var _ListItem = _interopRequireDefault(_componentsCommentsListItem);
 
-  var _New = _interopRequire(_componentsCommentsNew);
+  var _New = _interopRequireDefault(_componentsCommentsNew);
 
-  var _React = _interopRequire(_react);
+  var _React = _interopRequireDefault(_react);
 
   var PER_PAGE = 100;
 
-  module.exports = _React.createClass({
+  module.exports = _React['default'].createClass({
     displayName: 'index',
 
-    mixins: [_Cursors],
+    mixins: [_Cursors['default']],
 
     fetch: function fetch(cb) {
-      _api2.get(this.props.url, {
+      _api2['default'].get(this.props.url, {
         page: Math.floor(this.state.comments.length / PER_PAGE) + 1,
         per_page: PER_PAGE
-      }, _2.partial(this.handleFetch, cb));
+      }, _2['default'].partial(this.handleFetch, cb));
     },
 
     handleFetch: function handleFetch(cb, er, res) {
       if (er) return cb(er);
       this.update({ comments: {
-          $set: _2.chain(this.state.comments.concat(res.data)).unique(_2.property('id')).sortBy(_2.property('created_at')).value()
+          $set: _2['default'].chain(this.state.comments.concat(res.data)).unique(_2['default'].property('id')).sortBy(_2['default'].property('created_at')).value()
         } });
       cb(null, res.data.length < PER_PAGE);
     },
 
     renderListItem: function renderListItem(comment) {
-      return _React.createElement(_ListItem, { key: comment.id, comment: comment });
+      return _React['default'].createElement(_ListItem['default'], { key: comment.id, comment: comment });
     },
 
     renderError: function renderError(er) {
-      return _React.createElement(
+      return _React['default'].createElement(
         'div',
         { className: 'osw-inset-block' },
         er
@@ -46723,18 +46723,18 @@ define('components/comments/index', ['exports', 'module', 'jquery', 'underscore'
     },
 
     render: function render() {
-      return _React.createElement(
+      return _React['default'].createElement(
         'div',
         { className: 'osw-comments-index' },
-        _React.createElement(_List, {
+        _React['default'].createElement(_List['default'], {
           items: this.state.comments,
           renderItem: this.renderListItem,
-          renderEmpty: _$.noop,
-          renderLoading: _$.noop,
+          renderEmpty: _$['default'].noop,
+          renderLoading: _$['default'].noop,
           renderError: this.renderError,
           fetch: this.fetch
         }),
-        _React.createElement(_New, { url: this.props.newUrl })
+        _React['default'].createElement(_New['default'], { url: this.props.newUrl })
       );
     }
   });
@@ -46743,18 +46743,18 @@ define('components/comments/index', ['exports', 'module', 'jquery', 'underscore'
 define('components/photos/show', ['exports', 'module', 'components/comments/index', 'cursors', 'react'], function (exports, module, _componentsCommentsIndex, _cursors, _react) {
   'use strict';
 
-  function _interopRequire(obj) { return obj && obj.__esModule ? obj['default'] : obj; }
+  function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 
-  var _CommentsIndex = _interopRequire(_componentsCommentsIndex);
+  var _CommentsIndex = _interopRequireDefault(_componentsCommentsIndex);
 
-  var _Cursors = _interopRequire(_cursors);
+  var _Cursors = _interopRequireDefault(_cursors);
 
-  var _React = _interopRequire(_react);
+  var _React = _interopRequireDefault(_react);
 
-  module.exports = _React.createClass({
+  module.exports = _React['default'].createClass({
     displayName: 'show',
 
-    mixins: [_Cursors],
+    mixins: [_Cursors['default']],
 
     handleImageClick: function handleImageClick() {
       if (this.props.onImageClick) this.props.onImageClick();
@@ -46763,7 +46763,7 @@ define('components/photos/show', ['exports', 'module', 'components/comments/inde
     renderDescription: function renderDescription() {
       var description = this.state.photo.description;
       if (!description) return;
-      return _React.createElement(
+      return _React['default'].createElement(
         'div',
         { className: 'osw-photos-show-description' },
         description
@@ -46772,10 +46772,10 @@ define('components/photos/show', ['exports', 'module', 'components/comments/inde
 
     render: function render() {
       var photo = this.state.photo;
-      return _React.createElement(
+      return _React['default'].createElement(
         'div',
         { className: 'osw-photos-show' },
-        _React.createElement(
+        _React['default'].createElement(
           'div',
           {
             className: 'osw-photos-show-image',
@@ -46784,7 +46784,7 @@ define('components/photos/show', ['exports', 'module', 'components/comments/inde
           },
           this.renderDescription()
         ),
-        _React.createElement(_CommentsIndex, {
+        _React['default'].createElement(_CommentsIndex['default'], {
           url: this.state.photo.links.comments,
           newUrl: this.state.photo.links.web,
           cursors: { comments: this.getCursor('photo', 'comments') }
@@ -46903,27 +46903,27 @@ define('components/photos/show', ['exports', 'module', 'components/comments/inde
 define('olay-react', ['exports', 'module', '../bower_components/olay-react/olay-react'], function (exports, module, _bower_componentsOlayReactOlayReact) {
   'use strict';
 
-  function _interopRequire(obj) { return obj && obj.__esModule ? obj['default'] : obj; }
+  function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 
-  var _OlayReact = _interopRequire(_bower_componentsOlayReactOlayReact);
+  var _OlayReact = _interopRequireDefault(_bower_componentsOlayReactOlayReact);
 
-  module.exports = _OlayReact;
+  module.exports = _OlayReact['default'];
 });
 // scripts/components/ui/popup.es6
 define('components/ui/popup', ['exports', 'module', 'elementQuery', 'components/ui/icon', 'olay-react', 'react'], function (exports, module, _elementQuery, _componentsUiIcon, _olayReact, _react) {
   'use strict';
 
-  function _interopRequire(obj) { return obj && obj.__esModule ? obj['default'] : obj; }
+  function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 
-  var _elementQuery2 = _interopRequire(_elementQuery);
+  var _elementQuery2 = _interopRequireDefault(_elementQuery);
 
-  var _Icon = _interopRequire(_componentsUiIcon);
+  var _Icon = _interopRequireDefault(_componentsUiIcon);
 
-  var _Olay = _interopRequire(_olayReact);
+  var _Olay = _interopRequireDefault(_olayReact);
 
-  var _React = _interopRequire(_react);
+  var _React = _interopRequireDefault(_react);
 
-  module.exports = _React.createClass({
+  module.exports = _React['default'].createClass({
     displayName: 'popup',
 
     getDefaultProps: function getDefaultProps() {
@@ -46933,11 +46933,11 @@ define('components/ui/popup', ['exports', 'module', 'elementQuery', 'components/
     },
 
     componentDidMount: function componentDidMount() {
-      if (_React.Children.count(this.props.children)) _elementQuery2();
+      if (_React['default'].Children.count(this.props.children)) (0, _elementQuery2['default'])();
     },
 
     componentDidUpdate: function componentDidUpdate() {
-      if (_React.Children.count(this.props.children)) _elementQuery2();
+      if (_React['default'].Children.count(this.props.children)) (0, _elementQuery2['default'])();
     },
 
     handleCloseClick: function handleCloseClick(ev) {
@@ -46947,21 +46947,21 @@ define('components/ui/popup', ['exports', 'module', 'elementQuery', 'components/
 
     renderPopup: function renderPopup() {
       var children = this.props.children;
-      if (!_React.Children.count(children)) return;
-      return _React.createElement(
+      if (!_React['default'].Children.count(children)) return;
+      return _React['default'].createElement(
         'div',
         { className: 'osw-popup osw-' + this.props.name + '-popup' },
-        _React.createElement(
+        _React['default'].createElement(
           'div',
           { className: 'osw-popup-head' },
           this.renderCloseButton(),
-          _React.createElement(
+          _React['default'].createElement(
             'div',
             { className: 'osw-popup-title' },
             this.props.title
           )
         ),
-        _React.createElement(
+        _React['default'].createElement(
           'div',
           { className: 'osw-popup-body' },
           children
@@ -46971,7 +46971,7 @@ define('components/ui/popup', ['exports', 'module', 'elementQuery', 'components/
 
     renderCloseButton: function renderCloseButton() {
       if (!this.props.displayCloseButton) return;
-      return _React.createElement(_Icon, {
+      return _React['default'].createElement(_Icon['default'], {
         name: 'delete',
         className: 'osw-popup-close-button',
         onClick: this.handleCloseClick
@@ -46979,8 +46979,8 @@ define('components/ui/popup', ['exports', 'module', 'elementQuery', 'components/
     },
 
     render: function render() {
-      return _React.createElement(
-        _Olay,
+      return _React['default'].createElement(
+        _Olay['default'],
         { close: this.props.close },
         this.renderPopup()
       );
@@ -46991,34 +46991,34 @@ define('components/ui/popup', ['exports', 'module', 'elementQuery', 'components/
 define('components/photos/index', ['exports', 'module', 'jquery', 'underscore', 'api', 'components/photos/list-item', 'components/photos/show', 'cursors', 'react-list', 'react', 'components/ui/popup'], function (exports, module, _jquery, _underscore, _api, _componentsPhotosListItem, _componentsPhotosShow, _cursors, _reactList, _react, _componentsUiPopup) {
   'use strict';
 
-  function _interopRequire(obj) { return obj && obj.__esModule ? obj['default'] : obj; }
+  function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 
-  var _$ = _interopRequire(_jquery);
+  var _$ = _interopRequireDefault(_jquery);
 
-  var _2 = _interopRequire(_underscore);
+  var _2 = _interopRequireDefault(_underscore);
 
-  var _api2 = _interopRequire(_api);
+  var _api2 = _interopRequireDefault(_api);
 
-  var _ListItem = _interopRequire(_componentsPhotosListItem);
+  var _ListItem = _interopRequireDefault(_componentsPhotosListItem);
 
-  var _Show = _interopRequire(_componentsPhotosShow);
+  var _Show = _interopRequireDefault(_componentsPhotosShow);
 
-  var _Cursors = _interopRequire(_cursors);
+  var _Cursors = _interopRequireDefault(_cursors);
 
-  var _List = _interopRequire(_reactList);
+  var _List = _interopRequireDefault(_reactList);
 
-  var _React = _interopRequire(_react);
+  var _React = _interopRequireDefault(_react);
 
-  var _Popup = _interopRequire(_componentsUiPopup);
+  var _Popup = _interopRequireDefault(_componentsUiPopup);
 
   var keyDirMap = { '37': -1, '39': 1 };
 
   var PER_PAGE = 100;
 
-  module.exports = _React.createClass({
+  module.exports = _React['default'].createClass({
     displayName: 'index',
 
-    mixins: [_Cursors],
+    mixins: [_Cursors['default']],
 
     getInitialState: function getInitialState() {
       return {
@@ -47028,15 +47028,15 @@ define('components/photos/index', ['exports', 'module', 'jquery', 'underscore', 
     },
 
     componentWillMount: function componentWillMount() {
-      _$(document).on('keydown', this.handleKeyDown);
+      (0, _$['default'])(document).on('keydown', this.handleKeyDown);
     },
 
     componentWillUnmount: function componentWillUnmount() {
-      _$(document).off('keydown', this.handleKeyDown);
+      (0, _$['default'])(document).off('keydown', this.handleKeyDown);
     },
 
     getActivePhoto: function getActivePhoto() {
-      return _2.find(this.state.photos, _2.matches({ id: this.state.activePhotoId }));
+      return _2['default'].find(this.state.photos, _2['default'].matches({ id: this.state.activePhotoId }));
     },
 
     handleKeyDown: function handleKeyDown(ev) {
@@ -47058,18 +47058,18 @@ define('components/photos/index', ['exports', 'module', 'jquery', 'underscore', 
     },
 
     fetch: function fetch(cb) {
-      _api2.get('/portals/:portal_id/albums/:album_id/photos', {
+      _api2['default'].get('/portals/:portal_id/albums/:album_id/photos', {
         portal_id: this.props.portalId,
         album_id: this.props.albumId,
         page: Math.floor(this.state.photos.length / PER_PAGE) + 1,
         per_page: PER_PAGE
-      }, _2.partial(this.handleFetch, cb));
+      }, _2['default'].partial(this.handleFetch, cb));
     },
 
     handleFetch: function handleFetch(cb, er, res) {
       if (er) return cb(er);
-      var photos = _2.chain(this.state.photos.concat(res.data)).unique(_2.property('id')).map(function (photo) {
-        return _2.extend({ comments: [] }, photo);
+      var photos = _2['default'].chain(this.state.photos.concat(res.data)).unique(_2['default'].property('id')).map(function (photo) {
+        return _2['default'].extend({ comments: [] }, photo);
       }).value();
       this.update({ photos: { $set: photos } });
       cb(null, res.data.length < PER_PAGE);
@@ -47080,7 +47080,7 @@ define('components/photos/index', ['exports', 'module', 'jquery', 'underscore', 
     },
 
     renderListItem: function renderListItem(photo) {
-      return _React.createElement(_ListItem, {
+      return _React['default'].createElement(_ListItem['default'], {
         key: photo.id,
         photo: photo,
         redirect: this.props.redirect,
@@ -47091,7 +47091,7 @@ define('components/photos/index', ['exports', 'module', 'jquery', 'underscore', 
     renderActivePhoto: function renderActivePhoto() {
       var photo = this.getActivePhoto();
       if (!photo) return;
-      return _React.createElement(_Show, {
+      return _React['default'].createElement(_Show['default'], {
         key: photo.id,
         onImageClick: this.handleImageClick,
         cursors: {
@@ -47101,17 +47101,17 @@ define('components/photos/index', ['exports', 'module', 'jquery', 'underscore', 
     },
 
     render: function render() {
-      return _React.createElement(
+      return _React['default'].createElement(
         'div',
         { className: 'osw-photos-index' },
-        _React.createElement(_List, {
+        _React['default'].createElement(_List['default'], {
           className: 'osw-photos-index-list',
           items: this.state.photos,
           renderItem: this.renderListItem,
           fetch: this.fetch
         }),
-        _React.createElement(
-          _Popup,
+        _React['default'].createElement(
+          _Popup['default'],
           {
             name: 'photos-show',
             close: this.closeActivePhoto,
@@ -47127,39 +47127,39 @@ define('components/photos/index', ['exports', 'module', 'jquery', 'underscore', 
 define('components/albums/show', ['exports', 'module', 'components/photos/index', 'cursors', 'react'], function (exports, module, _componentsPhotosIndex, _cursors, _react) {
   'use strict';
 
-  function _interopRequire(obj) { return obj && obj.__esModule ? obj['default'] : obj; }
+  function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 
-  var _PhotosIndex = _interopRequire(_componentsPhotosIndex);
+  var _PhotosIndex = _interopRequireDefault(_componentsPhotosIndex);
 
-  var _Cursors = _interopRequire(_cursors);
+  var _Cursors = _interopRequireDefault(_cursors);
 
-  var _React = _interopRequire(_react);
+  var _React = _interopRequireDefault(_react);
 
-  module.exports = _React.createClass({
+  module.exports = _React['default'].createClass({
     displayName: 'show',
 
-    mixins: [_Cursors],
+    mixins: [_Cursors['default']],
 
     render: function render() {
-      return _React.createElement(
+      return _React['default'].createElement(
         'div',
         { className: 'osw-albums-show' },
-        _React.createElement(
+        _React['default'].createElement(
           'div',
           { className: 'osw-albums-show-info' },
-          _React.createElement(
+          _React['default'].createElement(
             'div',
             { className: 'osw-albums-show-name' },
             this.state.album.name
           ),
-          _React.createElement(
+          _React['default'].createElement(
             'div',
             { className: 'osw-albums-show-photo-count' },
             this.state.album.photo_count,
             ' Photos'
           )
         ),
-        _React.createElement(_PhotosIndex, {
+        _React['default'].createElement(_PhotosIndex['default'], {
           portalId: this.props.portalId,
           albumId: this.state.album.id,
           cursors: {
@@ -47175,34 +47175,34 @@ define('components/albums/show', ['exports', 'module', 'components/photos/index'
 define('components/albums/index', ['exports', 'module', 'jquery', 'underscore', 'api', 'components/albums/list-item', 'components/albums/show', 'cursors', 'react-list', 'react', 'components/ui/popup'], function (exports, module, _jquery, _underscore, _api, _componentsAlbumsListItem, _componentsAlbumsShow, _cursors, _reactList, _react, _componentsUiPopup) {
   'use strict';
 
-  function _interopRequire(obj) { return obj && obj.__esModule ? obj['default'] : obj; }
+  function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 
-  var _$ = _interopRequire(_jquery);
+  var _$ = _interopRequireDefault(_jquery);
 
-  var _2 = _interopRequire(_underscore);
+  var _2 = _interopRequireDefault(_underscore);
 
-  var _api2 = _interopRequire(_api);
+  var _api2 = _interopRequireDefault(_api);
 
-  var _ListItem = _interopRequire(_componentsAlbumsListItem);
+  var _ListItem = _interopRequireDefault(_componentsAlbumsListItem);
 
-  var _Show = _interopRequire(_componentsAlbumsShow);
+  var _Show = _interopRequireDefault(_componentsAlbumsShow);
 
-  var _Cursors = _interopRequire(_cursors);
+  var _Cursors = _interopRequireDefault(_cursors);
 
-  var _List = _interopRequire(_reactList);
+  var _List = _interopRequireDefault(_reactList);
 
-  var _React = _interopRequire(_react);
+  var _React = _interopRequireDefault(_react);
 
-  var _Popup = _interopRequire(_componentsUiPopup);
+  var _Popup = _interopRequireDefault(_componentsUiPopup);
 
   var keyDirMap = { '37': -1, '39': 1 };
 
   var PER_PAGE = 100;
 
-  module.exports = _React.createClass({
+  module.exports = _React['default'].createClass({
     displayName: 'index',
 
-    mixins: [_Cursors],
+    mixins: [_Cursors['default']],
 
     getInitialState: function getInitialState() {
       return {
@@ -47213,15 +47213,15 @@ define('components/albums/index', ['exports', 'module', 'jquery', 'underscore', 
     },
 
     componentWillMount: function componentWillMount() {
-      _$(document).on('keydown', this.handleKeyDown);
+      (0, _$['default'])(document).on('keydown', this.handleKeyDown);
     },
 
     componentWillUnmount: function componentWillUnmount() {
-      _$(document).off('keydown', this.handleKeyDown);
+      (0, _$['default'])(document).off('keydown', this.handleKeyDown);
     },
 
     getActiveAlbum: function getActiveAlbum() {
-      return _2.find(this.state.albums, _2.matches({ id: this.state.activeAlbumId }));
+      return _2['default'].find(this.state.albums, _2['default'].matches({ id: this.state.activeAlbumId }));
     },
 
     handleKeyDown: function handleKeyDown(ev) {
@@ -47243,24 +47243,24 @@ define('components/albums/index', ['exports', 'module', 'jquery', 'underscore', 
     },
 
     fetch: function fetch(cb) {
-      _api2.get('/portals/:portal_id/albums', {
+      _api2['default'].get('/portals/:portal_id/albums', {
         portal_id: this.props.portalId,
         page: Math.floor(this.state.albums.length / PER_PAGE) + 1,
         per_page: PER_PAGE
-      }, _2.partial(this.handleFetch, cb));
+      }, _2['default'].partial(this.handleFetch, cb));
     },
 
     handleFetch: function handleFetch(cb, er, res) {
       if (er) return cb(er);
-      var albums = _2.chain(this.state.albums.concat(res.data)).unique(_2.property('id')).map(function (album) {
-        return _2.extend({ photos: [] }, album);
+      var albums = _2['default'].chain(this.state.albums.concat(res.data)).unique(_2['default'].property('id')).map(function (album) {
+        return _2['default'].extend({ photos: [] }, album);
       }).value();
       this.update({ albums: { $push: albums } });
       cb(null, res.data.length < PER_PAGE);
     },
 
     renderListItem: function renderListItem(album) {
-      return _React.createElement(_ListItem, {
+      return _React['default'].createElement(_ListItem['default'], {
         key: album.id,
         album: album,
         redirect: this.props.redirect,
@@ -47271,7 +47271,7 @@ define('components/albums/index', ['exports', 'module', 'jquery', 'underscore', 
     renderActiveAlbum: function renderActiveAlbum() {
       var album = this.getActiveAlbum();
       if (!album) return;
-      return _React.createElement(_Show, {
+      return _React['default'].createElement(_Show['default'], {
         key: album.id,
         portalId: this.props.portalId,
         cursors: {
@@ -47282,17 +47282,17 @@ define('components/albums/index', ['exports', 'module', 'jquery', 'underscore', 
     },
 
     render: function render() {
-      return _React.createElement(
+      return _React['default'].createElement(
         'div',
         { className: 'osw-albums-index' },
-        _React.createElement(_List, {
+        _React['default'].createElement(_List['default'], {
           className: 'osw-albums-index-list',
           items: this.state.albums,
           renderItem: this.renderListItem,
           fetch: this.fetch
         }),
-        _React.createElement(
-          _Popup,
+        _React['default'].createElement(
+          _Popup['default'],
           {
             name: 'albums-show',
             close: this.closeActiveAlbum,
@@ -47310,36 +47310,36 @@ define('components/shared/selector', ['exports', 'module', 'cursors', 'utils/joi
 
   var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
 
-  function _interopRequire(obj) { return obj && obj.__esModule ? obj['default'] : obj; }
+  function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 
-  var _Cursors = _interopRequire(_cursors);
+  var _Cursors = _interopRequireDefault(_cursors);
 
-  var _joinClassNames = _interopRequire(_utilsJoinClassNames);
+  var _joinClassNames = _interopRequireDefault(_utilsJoinClassNames);
 
-  var _React = _interopRequire(_react);
+  var _React = _interopRequireDefault(_react);
 
-  module.exports = _React.createClass({
+  module.exports = _React['default'].createClass({
     displayName: 'selector',
 
-    mixins: [_Cursors],
+    mixins: [_Cursors['default']],
 
     propTypes: {
-      className: _React.PropTypes.string,
-      name: _React.PropTypes.string,
-      onChange: _React.PropTypes.func.isRequired,
-      renderOptions: _React.PropTypes.func.isRequired
+      className: _React['default'].PropTypes.string,
+      name: _React['default'].PropTypes.string,
+      onChange: _React['default'].PropTypes.func.isRequired,
+      renderOptions: _React['default'].PropTypes.func.isRequired
     },
 
     render: function render() {
       var options = this.props.renderOptions();
       var value = this.props.value;
       if (options.length === 2) value = options[1].props.value;
-      return _React.createElement(
+      return _React['default'].createElement(
         'div',
         _extends({}, this.props, {
-          className: _joinClassNames('osw-big osw-field oswi osw-dropdown', this.props.className)
+          className: (0, _joinClassNames['default'])('osw-big osw-field oswi osw-dropdown', this.props.className)
         }),
-        _React.createElement(
+        _React['default'].createElement(
           'select',
           {
             name: this.props.name,
@@ -47358,25 +47358,25 @@ define('components/shared/faceted-selector', ['exports', 'module', 'underscore',
 
   var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
 
-  function _interopRequire(obj) { return obj && obj.__esModule ? obj['default'] : obj; }
+  function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 
-  var _2 = _interopRequire(_underscore);
+  var _2 = _interopRequireDefault(_underscore);
 
-  var _Cursors = _interopRequire(_cursors);
+  var _Cursors = _interopRequireDefault(_cursors);
 
-  var _React = _interopRequire(_react);
+  var _React = _interopRequireDefault(_react);
 
-  var _Selector = _interopRequire(_componentsSharedSelector);
+  var _Selector = _interopRequireDefault(_componentsSharedSelector);
 
-  module.exports = _React.createClass({
+  module.exports = _React['default'].createClass({
     displayName: 'faceted-selector',
 
-    mixins: [_Cursors],
+    mixins: [_Cursors['default']],
 
     propTypes: {
-      getFacet: _React.PropTypes.func.isRequired,
-      objects: _React.PropTypes.array.isRequired,
-      showMatchCount: _React.PropTypes.bool
+      getFacet: _React['default'].PropTypes.func.isRequired,
+      objects: _React['default'].PropTypes.array.isRequired,
+      showMatchCount: _React['default'].PropTypes.bool
     },
 
     getDefaultProps: function getDefaultProps() {
@@ -47395,7 +47395,7 @@ define('components/shared/faceted-selector', ['exports', 'module', 'underscore',
     },
 
     renderOption: function renderOption(option) {
-      return _React.createElement(
+      return _React['default'].createElement(
         'option',
         { key: option.id, value: option.id },
         option.name
@@ -47403,11 +47403,11 @@ define('components/shared/faceted-selector', ['exports', 'module', 'underscore',
     },
 
     renderOptions: function renderOptions() {
-      return [{ id: '', name: this.props.allOption }].concat(_2.chain(this.props.objects).map(this.props.getFacet).groupBy().map(this.toOption).sortBy('name').value()).map(this.renderOption);
+      return [{ id: '', name: this.props.allOption }].concat(_2['default'].chain(this.props.objects).map(this.props.getFacet).groupBy().map(this.toOption).sortBy('name').value()).map(this.renderOption);
     },
 
     render: function render() {
-      return _React.createElement(_Selector, _extends({}, this.props, { renderOptions: this.renderOptions }));
+      return _React['default'].createElement(_Selector['default'], _extends({}, this.props, { renderOptions: this.renderOptions }));
     }
   });
 });
@@ -47415,27 +47415,27 @@ define('components/shared/faceted-selector', ['exports', 'module', 'underscore',
 define('components/shared/query', ['exports', 'module', 'cursors', 'react'], function (exports, module, _cursors, _react) {
   'use strict';
 
-  function _interopRequire(obj) { return obj && obj.__esModule ? obj['default'] : obj; }
+  function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 
-  var _Cursors = _interopRequire(_cursors);
+  var _Cursors = _interopRequireDefault(_cursors);
 
-  var _React = _interopRequire(_react);
+  var _React = _interopRequireDefault(_react);
 
-  module.exports = _React.createClass({
+  module.exports = _React['default'].createClass({
     displayName: 'query',
 
-    mixins: [_Cursors],
+    mixins: [_Cursors['default']],
 
     propTypes: {
-      onChange: _React.PropTypes.func.isRequired,
-      value: _React.PropTypes.string
+      onChange: _React['default'].PropTypes.func.isRequired,
+      value: _React['default'].PropTypes.string
     },
 
     render: function render() {
-      return _React.createElement(
+      return _React['default'].createElement(
         'div',
         { className: 'osw-big osw-field oswi oswi-magnify' },
-        _React.createElement('input', {
+        _React['default'].createElement('input', {
           autoComplete: 'off',
           name: 'query',
           onChange: this.props.onChange,
@@ -47451,28 +47451,28 @@ define('components/shared/query', ['exports', 'module', 'cursors', 'react'], fun
 define('components/shared/summary', ['exports', 'module', 'underscore', 'components/ui/button', 'cursors', 'components/ui/icon', 'react'], function (exports, module, _underscore, _componentsUiButton, _cursors, _componentsUiIcon, _react) {
   'use strict';
 
-  function _interopRequire(obj) { return obj && obj.__esModule ? obj['default'] : obj; }
+  function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 
-  var _2 = _interopRequire(_underscore);
+  var _2 = _interopRequireDefault(_underscore);
 
-  var _Button = _interopRequire(_componentsUiButton);
+  var _Button = _interopRequireDefault(_componentsUiButton);
 
-  var _Cursors = _interopRequire(_cursors);
+  var _Cursors = _interopRequireDefault(_cursors);
 
-  var _Icon = _interopRequire(_componentsUiIcon);
+  var _Icon = _interopRequireDefault(_componentsUiIcon);
 
-  var _React = _interopRequire(_react);
+  var _React = _interopRequireDefault(_react);
 
-  module.exports = _React.createClass({
+  module.exports = _React['default'].createClass({
     displayName: 'summary',
 
-    mixins: [_Cursors],
+    mixins: [_Cursors['default']],
 
     propTypes: {
-      filterKeys: _React.PropTypes.array.isRequired,
-      objectName: _React.PropTypes.string,
-      objects: _React.PropTypes.array,
-      showMessage: _React.PropTypes.bool
+      filterKeys: _React['default'].PropTypes.array.isRequired,
+      objectName: _React['default'].PropTypes.string,
+      objects: _React['default'].PropTypes.array,
+      showMessage: _React['default'].PropTypes.bool
     },
 
     getDefaultProps: function getDefaultProps() {
@@ -47483,40 +47483,40 @@ define('components/shared/summary', ['exports', 'module', 'underscore', 'compone
     },
 
     getFilters: function getFilters() {
-      return _2.pick(this.state, this.props.filterKeys);
+      return _2['default'].pick(this.state, this.props.filterKeys);
     },
 
     renderMessage: function renderMessage() {
       if (!this.props.showMessage) return '';
-      var any = _2.any(this.getFilters());
+      var any = _2['default'].any(this.getFilters());
       var l = this.props.objects.length;
       return 'Showing ' + (any ? '' : 'all ') + l + ' ' + this.props.objectName + (l === 1 ? '' : 's') + (any ? ' matching ' : '.');
     },
 
     renderClearButtons: function renderClearButtons() {
-      return _2.map(this.getFilters(), function (value, name) {
+      return _2['default'].map(this.getFilters(), function (value, name) {
         if (!value) return null;
         var deltas = {};
         deltas[name] = { $set: '' };
-        return _React.createElement(
-          _Button,
-          { key: name, onClick: _2.partial(this.update, deltas) },
+        return _React['default'].createElement(
+          _Button['default'],
+          { key: name, onClick: _2['default'].partial(this.update, deltas) },
           value,
-          _React.createElement(_Icon, { name: 'delete' })
+          _React['default'].createElement(_Icon['default'], { name: 'delete' })
         );
       }, this);
     },
 
     render: function render() {
-      return _React.createElement(
+      return _React['default'].createElement(
         'div',
         { className: 'osw-portals-summary' },
-        _React.createElement(
+        _React['default'].createElement(
           'div',
           { className: 'osw-portals-summary-message' },
           this.renderMessage()
         ),
-        _React.createElement(
+        _React['default'].createElement(
           'div',
           { className: 'osw-portals-summary-clear-buttons' },
           this.renderClearButtons()
@@ -47531,24 +47531,24 @@ define('components/bookmarks/filters', ['exports', 'module', 'cursors', 'compone
 
   var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
 
-  function _interopRequire(obj) { return obj && obj.__esModule ? obj['default'] : obj; }
+  function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 
-  var _Cursors = _interopRequire(_cursors);
+  var _Cursors = _interopRequireDefault(_cursors);
 
-  var _FacetedSelector = _interopRequire(_componentsSharedFacetedSelector);
+  var _FacetedSelector = _interopRequireDefault(_componentsSharedFacetedSelector);
 
-  var _joinClassNames = _interopRequire(_utilsJoinClassNames);
+  var _joinClassNames = _interopRequireDefault(_utilsJoinClassNames);
 
-  var _Query = _interopRequire(_componentsSharedQuery);
+  var _Query = _interopRequireDefault(_componentsSharedQuery);
 
-  var _React = _interopRequire(_react);
+  var _React = _interopRequireDefault(_react);
 
-  var _Summary = _interopRequire(_componentsSharedSummary);
+  var _Summary = _interopRequireDefault(_componentsSharedSummary);
 
-  module.exports = _React.createClass({
+  module.exports = _React['default'].createClass({
     displayName: 'filters',
 
-    mixins: [_Cursors],
+    mixins: [_Cursors['default']],
 
     handleChange: function handleChange(ev) {
       var deltas = {};
@@ -47557,11 +47557,11 @@ define('components/bookmarks/filters', ['exports', 'module', 'cursors', 'compone
     },
 
     render: function render() {
-      return _React.createElement(
+      return _React['default'].createElement(
         'div',
         { className: 'osw-bookmarks-filters' },
-        _React.createElement(_Query, { value: this.state.query, onChange: this.handleChange }),
-        _React.createElement(_Summary, _extends({}, this.props, {
+        _React['default'].createElement(_Query['default'], { value: this.state.query, onChange: this.handleChange }),
+        _React['default'].createElement(_Summary['default'], _extends({}, this.props, {
           filterKeys: ['query'],
           objects: this.props.bookmarks,
           showMessage: false
@@ -47574,15 +47574,15 @@ define('components/bookmarks/filters', ['exports', 'module', 'cursors', 'compone
 define('components/ui/sep', ['exports', 'module', 'react'], function (exports, module, _react) {
   'use strict';
 
-  function _interopRequire(obj) { return obj && obj.__esModule ? obj['default'] : obj; }
+  function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 
-  var _React = _interopRequire(_react);
+  var _React = _interopRequireDefault(_react);
 
-  module.exports = _React.createClass({
+  module.exports = _React['default'].createClass({
     displayName: 'sep',
 
     render: function render() {
-      return _React.createElement('span', { dangerouslySetInnerHTML: { __html: ' &#x2022; ' } });
+      return _React['default'].createElement('span', { dangerouslySetInnerHTML: { __html: ' &#x2022; ' } });
     }
   });
 });
@@ -47592,24 +47592,24 @@ define('components/ui/button-row', ['exports', 'module', 'cursors', 'utils/join-
 
   var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
 
-  function _interopRequire(obj) { return obj && obj.__esModule ? obj['default'] : obj; }
+  function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 
-  var _Cursors = _interopRequire(_cursors);
+  var _Cursors = _interopRequireDefault(_cursors);
 
-  var _joinClassNames = _interopRequire(_utilsJoinClassNames);
+  var _joinClassNames = _interopRequireDefault(_utilsJoinClassNames);
 
-  var _React = _interopRequire(_react);
+  var _React = _interopRequireDefault(_react);
 
-  module.exports = _React.createClass({
+  module.exports = _React['default'].createClass({
     displayName: 'button-row',
 
-    mixins: [_Cursors],
+    mixins: [_Cursors['default']],
 
     render: function render() {
-      return _React.createElement(
+      return _React['default'].createElement(
         'div',
         _extends({}, this.props, {
-          className: _joinClassNames('osw-button-row', this.props.classname)
+          className: (0, _joinClassNames['default'])('osw-button-row', this.props.classname)
         }),
         this.props.children
       );
@@ -47782,40 +47782,40 @@ define('components/ui/button-row', ['exports', 'module', 'cursors', 'utils/join-
 define('formatted-text', ['exports', 'module', '../bower_components/formatted-text/formatted-text'], function (exports, module, _bower_componentsFormattedTextFormattedText) {
   'use strict';
 
-  function _interopRequire(obj) { return obj && obj.__esModule ? obj['default'] : obj; }
+  function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 
-  var _FormattedText = _interopRequire(_bower_componentsFormattedTextFormattedText);
+  var _FormattedText = _interopRequireDefault(_bower_componentsFormattedTextFormattedText);
 
-  module.exports = _FormattedText;
+  module.exports = _FormattedText['default'];
 });
 // scripts/components/bookmarks/show.es6
 define('components/bookmarks/show', ['exports', 'module', 'underscore', 'api', 'components/ui/button', 'components/ui/button-row', 'cursors', 'formatted-text', 'moment', 'react'], function (exports, module, _underscore, _api, _componentsUiButton, _componentsUiButtonRow, _cursors, _formattedText, _moment, _react) {
   'use strict';
 
-  function _interopRequire(obj) { return obj && obj.__esModule ? obj['default'] : obj; }
+  function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 
-  var _2 = _interopRequire(_underscore);
+  var _2 = _interopRequireDefault(_underscore);
 
-  var _api2 = _interopRequire(_api);
+  var _api2 = _interopRequireDefault(_api);
 
-  var _Button = _interopRequire(_componentsUiButton);
+  var _Button = _interopRequireDefault(_componentsUiButton);
 
-  var _ButtonRow = _interopRequire(_componentsUiButtonRow);
+  var _ButtonRow = _interopRequireDefault(_componentsUiButtonRow);
 
-  var _Cursors = _interopRequire(_cursors);
+  var _Cursors = _interopRequireDefault(_cursors);
 
-  var _FormattedText = _interopRequire(_formattedText);
+  var _FormattedText = _interopRequireDefault(_formattedText);
 
-  var _moment2 = _interopRequire(_moment);
+  var _moment2 = _interopRequireDefault(_moment);
 
-  var _React = _interopRequire(_react);
+  var _React = _interopRequireDefault(_react);
 
   var FORMAT = 'MMM D, YYYY';
 
-  module.exports = _React.createClass({
+  module.exports = _React['default'].createClass({
     displayName: 'show',
 
-    mixins: [_Cursors],
+    mixins: [_Cursors['default']],
 
     getInitialState: function getInitialState() {
       return {
@@ -47828,7 +47828,7 @@ define('components/bookmarks/show', ['exports', 'module', 'underscore', 'api', '
       var bookmark = this.state.bookmark;
       if (bookmark.description != null) return;
       this.update({ isLoading: { $set: true }, error: { $set: null } });
-      _api2.get('/portals/:portal_id/links/:id', { portal_id: this.props.portalId, id: bookmark.id }, this.handleFetch);
+      _api2['default'].get('/portals/:portal_id/links/:id', { portal_id: this.props.portalId, id: bookmark.id }, this.handleFetch);
     },
 
     handleFetch: function handleFetch(er, res) {
@@ -47838,7 +47838,7 @@ define('components/bookmarks/show', ['exports', 'module', 'underscore', 'api', '
     },
 
     formatDate: function formatDate(dateString) {
-      return _moment2(dateString).format(FORMAT);
+      return (0, _moment2['default'])(dateString).format(FORMAT);
     },
 
     renderDescription: function renderDescription(desc) {
@@ -47848,40 +47848,40 @@ define('components/bookmarks/show', ['exports', 'module', 'underscore', 'api', '
 
     render: function render() {
       var bookmark = this.state.bookmark;
-      return _React.createElement(
+      return _React['default'].createElement(
         'div',
         { className: 'osw-bookmarks-show' },
-        _React.createElement(
+        _React['default'].createElement(
           'div',
           { className: 'osw-bookmarks-favicon' },
-          _React.createElement('img', { src: 'https://www.google.com/s2/favicons?domain_url=' + bookmark.links.web })
+          _React['default'].createElement('img', { src: 'https://www.google.com/s2/favicons?domain_url=' + bookmark.links.web })
         ),
-        _React.createElement(
+        _React['default'].createElement(
           'div',
           { style: { marginLeft: '25px' } },
-          _React.createElement(
+          _React['default'].createElement(
             'div',
             { className: 'osw-bookmarks-show-name' },
             bookmark.name
           ),
-          _React.createElement(
+          _React['default'].createElement(
             'div',
             { className: 'osw-bookmarks-show-description' },
-            _React.createElement(
-              _FormattedText,
+            _React['default'].createElement(
+              _FormattedText['default'],
               null,
               bookmark.description
             )
           )
         ),
-        _React.createElement(
+        _React['default'].createElement(
           'div',
           { className: 'osw-button-row' },
-          _React.createElement(
-            _ButtonRow,
+          _React['default'].createElement(
+            _ButtonRow['default'],
             null,
-            _React.createElement(
-              _Button,
+            _React['default'].createElement(
+              _Button['default'],
               { href: bookmark.url, target: '_parent' },
               'Visit link'
             )
@@ -47897,31 +47897,31 @@ define('components/bookmarks/list-item', ['exports', 'module', 'underscore', 'cu
 
   var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
 
-  function _interopRequire(obj) { return obj && obj.__esModule ? obj['default'] : obj; }
+  function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 
-  var _2 = _interopRequire(_underscore);
+  var _2 = _interopRequireDefault(_underscore);
 
-  var _Cursors = _interopRequire(_cursors);
+  var _Cursors = _interopRequireDefault(_cursors);
 
-  var _moment2 = _interopRequire(_moment);
+  var _moment2 = _interopRequireDefault(_moment);
 
-  var _Popup = _interopRequire(_componentsUiPopup);
+  var _Popup = _interopRequireDefault(_componentsUiPopup);
 
-  var _React = _interopRequire(_react);
+  var _React = _interopRequireDefault(_react);
 
-  var _Sep = _interopRequire(_componentsUiSep);
+  var _Sep = _interopRequireDefault(_componentsUiSep);
 
-  var _Show = _interopRequire(_componentsBookmarksShow);
+  var _Show = _interopRequireDefault(_componentsBookmarksShow);
 
   var FORMAT = 'MMM D, YYYY';
 
-  module.exports = _React.createClass({
+  module.exports = _React['default'].createClass({
     displayName: 'list-item',
 
-    mixins: [_Cursors],
+    mixins: [_Cursors['default']],
 
     propTypes: {
-      key: _React.PropTypes.number
+      key: _React['default'].PropTypes.number
     },
 
     getInitialState: function getInitialState() {
@@ -47945,14 +47945,14 @@ define('components/bookmarks/list-item', ['exports', 'module', 'underscore', 'cu
 
     renderShow: function renderShow() {
       if (!this.state.showIsOpen) return;
-      return _React.createElement(_Show, _extends({}, this.props, {
+      return _React['default'].createElement(_Show['default'], _extends({}, this.props, {
         cursors: { bookmark: this.getCursor('bookmark') }
       }));
     },
 
     renderShowPopup: function renderShowPopup() {
-      return _React.createElement(
-        _Popup,
+      return _React['default'].createElement(
+        _Popup['default'],
         {
           close: this.closeShow,
           name: 'bookmarks-show',
@@ -47963,26 +47963,26 @@ define('components/bookmarks/list-item', ['exports', 'module', 'underscore', 'cu
 
     render: function render() {
       var bookmark = this.state.bookmark;
-      return _React.createElement(
+      return _React['default'].createElement(
         'div',
         { className: 'osw-bookmarks-list-item' },
-        _React.createElement(
+        _React['default'].createElement(
           'div',
           { className: 'osw-bookmarks-favicon' },
-          _React.createElement('img', { src: this.getFaviconUrl(bookmark) })
+          _React['default'].createElement('img', { src: this.getFaviconUrl(bookmark) })
         ),
-        _React.createElement(
+        _React['default'].createElement(
           'div',
           { className: 'osw-bookmarks-content' },
-          _React.createElement(
+          _React['default'].createElement(
             'div',
             { className: 'osw-bookmarks-list-item-name', onClick: this.openShow },
             bookmark.name
           ),
-          _React.createElement(
+          _React['default'].createElement(
             'div',
             { className: 'osw-bookmarks-list-item-description' },
-            _React.createElement(
+            _React['default'].createElement(
               'p',
               null,
               bookmark.links.web
@@ -47998,21 +47998,21 @@ define('components/bookmarks/list-item', ['exports', 'module', 'underscore', 'cu
 define('components/shared/empty', ['exports', 'module', 'components/ui/button', 'cursors', 'react'], function (exports, module, _componentsUiButton, _cursors, _react) {
   'use strict';
 
-  function _interopRequire(obj) { return obj && obj.__esModule ? obj['default'] : obj; }
+  function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 
-  var _Button = _interopRequire(_componentsUiButton);
+  var _Button = _interopRequireDefault(_componentsUiButton);
 
-  var _Cursors = _interopRequire(_cursors);
+  var _Cursors = _interopRequireDefault(_cursors);
 
-  var _React = _interopRequire(_react);
+  var _React = _interopRequireDefault(_react);
 
-  module.exports = _React.createClass({
+  module.exports = _React['default'].createClass({
     displayName: 'empty',
 
-    mixins: [_Cursors],
+    mixins: [_Cursors['default']],
 
     propTypes: {
-      objectName: _React.PropTypes.string
+      objectName: _React['default'].PropTypes.string
     },
 
     getDefaultProps: function getDefaultProps() {
@@ -48031,42 +48031,42 @@ define('components/shared/empty', ['exports', 'module', 'components/ui/button', 
     },
 
     render: function render() {
-      return _React.createElement(
+      return _React['default'].createElement(
         'div',
         { className: 'osw-portals-empty osw-inset-block' },
-        _React.createElement(
+        _React['default'].createElement(
           'div',
           { className: 'osw-portals-empty-apology' },
           'We\'re sorry, but no ',
           this.props.objectName,
           ' match your selected filters.'
         ),
-        _React.createElement(
+        _React['default'].createElement(
           'div',
           { className: 'osw-portals-empty-suggestions-header' },
           'Suggestions'
         ),
-        _React.createElement(
+        _React['default'].createElement(
           'ul',
           { className: 'osw-portals-empty-suggestions' },
-          _React.createElement(
+          _React['default'].createElement(
             'li',
             null,
             'Make sure all words are spelled correctly'
           ),
-          _React.createElement(
+          _React['default'].createElement(
             'li',
             null,
             'Try different, or fewer, keywords'
           ),
-          _React.createElement(
+          _React['default'].createElement(
             'li',
             null,
             'Clear all filters to return to all organizations'
           )
         ),
-        _React.createElement(
-          _Button,
+        _React['default'].createElement(
+          _Button['default'],
           { onClick: this.handleClick },
           'Clear All Filters'
         )
@@ -48078,19 +48078,19 @@ define('components/shared/empty', ['exports', 'module', 'components/ui/button', 
 define('components/ui/error-block', ['exports', 'module', 'react'], function (exports, module, _react) {
   'use strict';
 
-  function _interopRequire(obj) { return obj && obj.__esModule ? obj['default'] : obj; }
+  function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 
-  var _React = _interopRequire(_react);
+  var _React = _interopRequireDefault(_react);
 
-  module.exports = _React.createClass({
+  module.exports = _React['default'].createClass({
     displayName: 'error-block',
 
     propTypes: {
-      message: _React.PropTypes.string.isRequired
+      message: _React['default'].PropTypes.string.isRequired
     },
 
     render: function render() {
-      return _React.createElement(
+      return _React['default'].createElement(
         'div',
         { className: 'osw-inset-block osw-inset-block-red' },
         this.props.message
@@ -48102,15 +48102,15 @@ define('components/ui/error-block', ['exports', 'module', 'react'], function (ex
 define('components/ui/loading-block', ['exports', 'module', 'react'], function (exports, module, _react) {
   'use strict';
 
-  function _interopRequire(obj) { return obj && obj.__esModule ? obj['default'] : obj; }
+  function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 
-  var _React = _interopRequire(_react);
+  var _React = _interopRequireDefault(_react);
 
-  module.exports = _React.createClass({
+  module.exports = _React['default'].createClass({
     displayName: 'loading-block',
 
     propTypes: {
-      message: _React.PropTypes.string
+      message: _React['default'].PropTypes.string
     },
 
     getDefaultProps: function getDefaultProps() {
@@ -48120,7 +48120,7 @@ define('components/ui/loading-block', ['exports', 'module', 'react'], function (
     },
 
     render: function render() {
-      return _React.createElement(
+      return _React['default'].createElement(
         'div',
         { className: 'osw-inset-block' },
         this.props.message
@@ -48134,40 +48134,41 @@ define('components/bookmarks/index', ['exports', 'module', 'underscore', 'unders
 
   var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
 
-  function _interopRequire(obj) { return obj && obj.__esModule ? obj['default'] : obj; }
+  function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 
-  var _2 = _interopRequire(_underscore);
+  var _2 = _interopRequireDefault(_underscore);
 
-  var _str2 = _interopRequire(_underscoreString);
+  var _str2 = _interopRequireDefault(_underscoreString);
 
-  var _api2 = _interopRequire(_api);
+  var _api2 = _interopRequireDefault(_api);
 
-  var _BookmarksListItem = _interopRequire(_componentsBookmarksListItem);
+  var _BookmarksListItem = _interopRequireDefault(_componentsBookmarksListItem);
 
-  var _Cursors = _interopRequire(_cursors);
+  var _Cursors = _interopRequireDefault(_cursors);
 
-  var _Empty = _interopRequire(_componentsSharedEmpty);
+  var _Empty = _interopRequireDefault(_componentsSharedEmpty);
 
-  var _ErrorBlock = _interopRequire(_componentsUiErrorBlock);
+  var _ErrorBlock = _interopRequireDefault(_componentsUiErrorBlock);
 
-  var _Filters = _interopRequire(_componentsBookmarksFilters);
+  var _Filters = _interopRequireDefault(_componentsBookmarksFilters);
 
-  var _List = _interopRequire(_reactList);
+  var _List = _interopRequireDefault(_reactList);
 
-  var _LoadingBlock = _interopRequire(_componentsUiLoadingBlock);
+  var _LoadingBlock = _interopRequireDefault(_componentsUiLoadingBlock);
 
-  var _React = _interopRequire(_react);
+  var _React = _interopRequireDefault(_react);
 
   var PER_PAGE = 10;
 
-  module.exports = _React.createClass({
+  module.exports = _React['default'].createClass({
     displayName: 'index',
 
-    mixins: [_Cursors],
+    mixins: [_Cursors['default']],
 
     propTypes: {
       /* Specify which portal's bookmarks to retrieve */
-      portalId: _React.PropTypes.number.isRequired },
+      portalId: _React['default'].PropTypes.number.isRequired
+    },
 
     getDefaultProps: function getDefaultProps() {
       return {
@@ -48186,17 +48187,17 @@ define('components/bookmarks/index', ['exports', 'module', 'underscore', 'unders
     },
 
     fetch: function fetch(cb) {
-      _api2.get('/portals/:portal_id/links', {
+      _api2['default'].get('/portals/:portal_id/links', {
         portal_id: this.props.portalId,
         page: Math.floor(this.state.bookmarks.length / PER_PAGE) + 1,
         per_page: PER_PAGE
-      }, _2.partial(this.handleFetch, cb));
+      }, _2['default'].partial(this.handleFetch, cb));
     },
 
     handleFetch: function handleFetch(cb, er, res) {
       if (er) return cb(er);
       this.update({
-        bookmarks: { $set: _2.unique(this.state.bookmarks.concat(res.data), 'id') }
+        bookmarks: { $set: _2['default'].unique(this.state.bookmarks.concat(res.data), 'id') }
       });
       cb(null, res.data.length < PER_PAGE);
     },
@@ -48204,17 +48205,17 @@ define('components/bookmarks/index', ['exports', 'module', 'underscore', 'unders
     matchesQuery: function matchesQuery(bookmark) {
       var query = this.state.query;
       if (!query) return true;
-      var words = _str2.words(query.toLowerCase());
+      var words = _str2['default'].words(query.toLowerCase());
       var searchableWords = this.searchableWordsFor(bookmark);
-      return _2.every(words, function (wordA) {
-        return _2.any(searchableWords, function (wordB) {
-          return _str2.startsWith(wordB, wordA);
+      return _2['default'].every(words, function (wordA) {
+        return _2['default'].any(searchableWords, function (wordB) {
+          return _str2['default'].startsWith(wordB, wordA);
         });
       });
     },
 
     searchableWordsFor: function searchableWordsFor(bookmark) {
-      return _str2.words(_2.values(_2.pick(bookmark, this.props.searchableAttributes)).join(' ').toLowerCase());
+      return _str2['default'].words(_2['default'].values(_2['default'].pick(bookmark, this.props.searchableAttributes)).join(' ').toLowerCase());
     },
 
     bookmarkMatchesFilters: function bookmarkMatchesFilters(bookmark) {
@@ -48227,7 +48228,7 @@ define('components/bookmarks/index', ['exports', 'module', 'underscore', 'unders
 
     renderFilters: function renderFilters(bookmarks) {
       if (!this.state.bookmarks.length || !this.props.filtersAreShowing) return;
-      return _React.createElement(_Filters, {
+      return _React['default'].createElement(_Filters['default'], {
         bookmarks: bookmarks,
         getFacet: this.getFacet,
         cursors: {
@@ -48238,22 +48239,22 @@ define('components/bookmarks/index', ['exports', 'module', 'underscore', 'unders
 
     renderListItem: function renderListItem(bookmark) {
       var i = this.state.bookmarks.indexOf(bookmark);
-      return _React.createElement(_BookmarksListItem, _extends({}, this.props, {
+      return _React['default'].createElement(_BookmarksListItem['default'], _extends({}, this.props, {
         key: bookmark.id,
         cursors: { bookmark: this.getCursor('bookmarks', i) }
       }));
     },
 
     renderLoading: function renderLoading() {
-      return _React.createElement(_LoadingBlock, null);
+      return _React['default'].createElement(_LoadingBlock['default'], null);
     },
 
     renderError: function renderError(er) {
-      return _React.createElement(_ErrorBlock, { message: er.toString() });
+      return _React['default'].createElement(_ErrorBlock['default'], { message: er.toString() });
     },
 
     renderEmpty: function renderEmpty() {
-      return _React.createElement(_Empty, {
+      return _React['default'].createElement(_Empty['default'], {
         objectName: 'bookmarks',
         cursors: {
           query: this.getCursor('query')
@@ -48263,11 +48264,11 @@ define('components/bookmarks/index', ['exports', 'module', 'underscore', 'unders
 
     render: function render() {
       var bookmarks = this.getFilteredBookmarks();
-      return _React.createElement(
+      return _React['default'].createElement(
         'div',
         { className: 'osw-bookmarks-index' },
         this.renderFilters(bookmarks),
-        _React.createElement(_List, _extends({}, this.props, {
+        _React['default'].createElement(_List['default'], _extends({}, this.props, {
           items: bookmarks,
           fetch: this.fetch,
           renderLoading: this.renderLoading,
@@ -48286,17 +48287,17 @@ define('components/builder/index', ['exports', 'module', 'underscore', 'undersco
 
   var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
 
-  function _interopRequire(obj) { return obj && obj.__esModule ? obj['default'] : obj; }
+  function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 
-  var _2 = _interopRequire(_underscore);
+  var _2 = _interopRequireDefault(_underscore);
 
-  var _str2 = _interopRequire(_underscoreString);
+  var _str2 = _interopRequireDefault(_underscoreString);
 
-  var _api2 = _interopRequire(_api);
+  var _api2 = _interopRequireDefault(_api);
 
-  var _Cursors = _interopRequire(_cursors);
+  var _Cursors = _interopRequireDefault(_cursors);
 
-  var _React = _interopRequire(_react);
+  var _React = _interopRequireDefault(_react);
 
   var PERSIST_KEY = 'OSW_BUILDER';
 
@@ -48340,28 +48341,28 @@ define('components/builder/index', ['exports', 'module', 'underscore', 'undersco
   };
 
   var DEFAULT_STATE = {
-    widget: _2.keys(WIDGETS)[0],
+    widget: _2['default'].keys(WIDGETS)[0],
     props: {}
   };
 
-  module.exports = _React.createClass({
+  module.exports = _React['default'].createClass({
     displayName: 'index',
 
-    mixins: [_Cursors],
+    mixins: [_Cursors['default']],
 
     getInitialState: function getInitialState() {
       var state = undefined;
       try {
         state = JSON.parse(localStorage.getItem(PERSIST_KEY));
       } catch (er) {}
-      return _2.extend({}, state || DEFAULT_STATE, {
-        apiKey: _api2.key
+      return _2['default'].extend({}, state || DEFAULT_STATE, {
+        apiKey: _api2['default'].key
       });
     },
 
     componentDidUpdate: function componentDidUpdate() {
       localStorage.setItem(PERSIST_KEY, JSON.stringify(this.state));
-      localStorage.setItem('OSW_API_KEY', _api2.key = this.state.apiKey);
+      localStorage.setItem('OSW_API_KEY', _api2['default'].key = this.state.apiKey);
     },
 
     handleApiKeyChange: function handleApiKeyChange(ev) {
@@ -48379,8 +48380,8 @@ define('components/builder/index', ['exports', 'module', 'underscore', 'undersco
     },
 
     renderWidgetOptions: function renderWidgetOptions() {
-      return _2.map(WIDGETS, function (__, widget) {
-        return _React.createElement(
+      return _2['default'].map(WIDGETS, function (__, widget) {
+        return _React['default'].createElement(
           'option',
           { key: widget },
           widget
@@ -48391,18 +48392,18 @@ define('components/builder/index', ['exports', 'module', 'underscore', 'undersco
     renderProps: function renderProps() {
       var _this = this;
 
-      return _2.map(WIDGETS[this.state.widget].props, function (prop) {
-        return _React.createElement(
+      return _2['default'].map(WIDGETS[this.state.widget].props, function (prop) {
+        return _React['default'].createElement(
           'div',
           { key: prop },
           prop,
-          _React.createElement('br', null),
-          _React.createElement(
+          _React['default'].createElement('br', null),
+          _React['default'].createElement(
             'div',
             { className: 'osw-field' },
-            _React.createElement('input', {
+            _React['default'].createElement('input', {
               value: _this.state.props[prop],
-              onChange: _2.partial(_this.handlePropChange, prop)
+              onChange: _2['default'].partial(_this.handlePropChange, prop)
             })
           )
         );
@@ -48410,28 +48411,28 @@ define('components/builder/index', ['exports', 'module', 'underscore', 'undersco
     },
 
     getDataAttrs: function getDataAttrs() {
-      return _2.compact(_2.map(_2.extend({
+      return _2['default'].compact(_2['default'].map(_2['default'].extend({
         moduleName: WIDGETS[this.state.widget].moduleName
       }, this.state.props), function (val, key) {
         if (!val) return;
         var stringified = JSON.stringify(val).replace(/\\(.)/g, '$1');
-        if (_2.isString(val)) stringified = stringified.slice(1, -1);
-        return 'data-' + _str2.dasherize(key) + '=\'' + _2.escape(stringified) + '\'';
+        if (_2['default'].isString(val)) stringified = stringified.slice(1, -1);
+        return 'data-' + _str2['default'].dasherize(key) + '=\'' + _2['default'].escape(stringified) + '\'';
       }));
     },
 
     renderHtml: function renderHtml() {
-      return _React.createElement(
+      return _React['default'].createElement(
         'pre',
         { className: 'osw-inset-block' },
-        '\n<link href=\'https://orgsync.com/assets/orgsync-widgets.css\' rel=\'stylesheet\'>\n<script>window.OSW_API_KEY = \'' + _api2.key + '\';</script>\n<script src=\'https://orgsync.com/assets/orgsync-widgets.js\' async></script>\n<div\n  class=\'orgsync-widget\'\n  ' + this.getDataAttrs().join('\n  ') + '\n></div>\n'
+        '\n<link href=\'https://orgsync.com/assets/orgsync-widgets.css\' rel=\'stylesheet\'>\n<script>window.OSW_API_KEY = \'' + _api2['default'].key + '\';</script>\n<script src=\'https://orgsync.com/assets/orgsync-widgets.js\' async></script>\n<div\n  class=\'orgsync-widget\'\n  ' + this.getDataAttrs().join('\n  ') + '\n></div>\n'
       );
     },
 
     renderPreview: function renderPreview() {
       var moduleName = 'components/' + WIDGETS[this.state.widget].moduleName;
       var Component = require(moduleName);
-      var props = _2.reduce(this.state.props, function (props, val, key) {
+      var props = _2['default'].reduce(this.state.props, function (props, val, key) {
         try {
           val = JSON.parse(val);
         } catch (er) {}
@@ -48439,32 +48440,32 @@ define('components/builder/index', ['exports', 'module', 'underscore', 'undersco
         return props;
       }, {});
       var key = JSON.stringify(props);
-      return _React.createElement(Component, _extends({ key: key }, props));
+      return _React['default'].createElement(Component, _extends({ key: key }, props));
     },
 
     render: function render() {
-      return _React.createElement(
+      return _React['default'].createElement(
         'div',
         { className: 'osw-builder-index' },
-        _React.createElement(
+        _React['default'].createElement(
           'div',
           { className: 'osw-builder-index-left' },
           'API Key',
-          _React.createElement('br', null),
-          _React.createElement(
+          _React['default'].createElement('br', null),
+          _React['default'].createElement(
             'div',
             { className: 'osw-field' },
-            _React.createElement('input', {
+            _React['default'].createElement('input', {
               value: this.state.apiKey,
               onChange: this.handleApiKeyChange
             })
           ),
           'Widget',
-          _React.createElement('br', null),
-          _React.createElement(
+          _React['default'].createElement('br', null),
+          _React['default'].createElement(
             'div',
             { className: 'osw-field osw-dropdown' },
-            _React.createElement(
+            _React['default'].createElement(
               'select',
               {
                 value: this.state.widget,
@@ -48476,7 +48477,7 @@ define('components/builder/index', ['exports', 'module', 'underscore', 'undersco
           this.renderProps(),
           this.renderHtml()
         ),
-        _React.createElement(
+        _React['default'].createElement(
           'div',
           { className: 'osw-builder-index-right orgsync-widget' },
           this.renderPreview()
@@ -48489,13 +48490,13 @@ define('components/builder/index', ['exports', 'module', 'underscore', 'undersco
 define('components/event-filters/list-item', ['exports', 'module', 'cursors', 'components/ui/icon', 'react'], function (exports, module, _cursors, _componentsUiIcon, _react) {
   'use strict';
 
-  function _interopRequire(obj) { return obj && obj.__esModule ? obj['default'] : obj; }
+  function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 
-  var _Cursors = _interopRequire(_cursors);
+  var _Cursors = _interopRequireDefault(_cursors);
 
-  var _Icon = _interopRequire(_componentsUiIcon);
+  var _Icon = _interopRequireDefault(_componentsUiIcon);
 
-  var _React = _interopRequire(_react);
+  var _React = _interopRequireDefault(_react);
 
   var ICON_MAP = {
     category: 'book',
@@ -48507,10 +48508,10 @@ define('components/event-filters/list-item', ['exports', 'module', 'cursors', 'c
     umbrella: 'umbrella'
   };
 
-  module.exports = _React.createClass({
+  module.exports = _React['default'].createClass({
     displayName: 'list-item',
 
-    mixins: [_Cursors],
+    mixins: [_Cursors['default']],
 
     handleChange: function handleChange(ev) {
       this.update({ eventFilter: { active: { $set: ev.target.checked } } });
@@ -48518,18 +48519,18 @@ define('components/event-filters/list-item', ['exports', 'module', 'cursors', 'c
 
     render: function render() {
       var eventFilter = this.state.eventFilter;
-      return _React.createElement(
+      return _React['default'].createElement(
         'label',
         { className: 'osw-event-filters-list-item' },
-        _React.createElement(_Icon, {
+        _React['default'].createElement(_Icon['default'], {
           className: 'osw-event-filters-list-item-icon',
           name: ICON_MAP[eventFilter.type],
           style: { color: '#' + eventFilter.hex }
         }),
-        _React.createElement(
+        _React['default'].createElement(
           'div',
           { className: 'osw-event-filters-list-item-name' },
-          _React.createElement('input', {
+          _React['default'].createElement('input', {
             className: 'osw-event-filters-list-item-checkbox',
             type: 'checkbox',
             checked: eventFilter.active,
@@ -49662,11 +49663,11 @@ else {
 define('tinycolor', ['exports', 'module', '../bower_components/tinycolor/tinycolor'], function (exports, module, _bower_componentsTinycolorTinycolor) {
   'use strict';
 
-  function _interopRequire(obj) { return obj && obj.__esModule ? obj['default'] : obj; }
+  function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 
-  var _tinycolor = _interopRequire(_bower_componentsTinycolorTinycolor);
+  var _tinycolor = _interopRequireDefault(_bower_componentsTinycolorTinycolor);
 
-  module.exports = _tinycolor;
+  module.exports = _tinycolor['default'];
 });
 // bower_components/velcro/config.json
 define('../bower_components/velcro/config', ["exports", "module"], function (exports, module) {
@@ -49680,21 +49681,21 @@ define('../bower_components/velcro/config', ["exports", "module"], function (exp
 define('components/event-filters/index', ['exports', 'module', 'underscore', 'api', 'cursors', 'components/event-filters/list-item', 'react', 'tinycolor', '../bower_components/velcro/config'], function (exports, module, _underscore, _api, _cursors, _componentsEventFiltersListItem, _react, _tinycolor, _bower_componentsVelcroConfig) {
   'use strict';
 
-  function _interopRequire(obj) { return obj && obj.__esModule ? obj['default'] : obj; }
+  function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 
-  var _2 = _interopRequire(_underscore);
+  var _2 = _interopRequireDefault(_underscore);
 
-  var _api2 = _interopRequire(_api);
+  var _api2 = _interopRequireDefault(_api);
 
-  var _Cursors = _interopRequire(_cursors);
+  var _Cursors = _interopRequireDefault(_cursors);
 
-  var _EventFilterListItem = _interopRequire(_componentsEventFiltersListItem);
+  var _EventFilterListItem = _interopRequireDefault(_componentsEventFiltersListItem);
 
-  var _React = _interopRequire(_react);
+  var _React = _interopRequireDefault(_react);
 
-  var _tinycolor2 = _interopRequire(_tinycolor);
+  var _tinycolor2 = _interopRequireDefault(_tinycolor);
 
-  var _velcroConfig = _interopRequire(_bower_componentsVelcroConfig);
+  var _velcroConfig = _interopRequireDefault(_bower_componentsVelcroConfig);
 
   var RSVP_HEX = '94b363';
 
@@ -49712,10 +49713,10 @@ define('components/event-filters/index', ['exports', 'module', 'underscore', 'ap
     umbrella: PORTALS_HEADER
   };
 
-  module.exports = _React.createClass({
+  module.exports = _React['default'].createClass({
     displayName: 'index',
 
-    mixins: [_Cursors],
+    mixins: [_Cursors['default']],
 
     getDefaultProps: function getDefaultProps() {
       return {
@@ -49731,7 +49732,7 @@ define('components/event-filters/index', ['exports', 'module', 'underscore', 'ap
     },
 
     componentDidMount: function componentDidMount() {
-      _api2.get(this.props.url, this.handleFetch);
+      _api2['default'].get(this.props.url, this.handleFetch);
     },
 
     componentDidUpdate: function componentDidUpdate(__, prevState) {
@@ -49742,9 +49743,9 @@ define('components/event-filters/index', ['exports', 'module', 'underscore', 'ap
       this.update({ isLoading: { $set: false } });
       if (er) return this.update({ error: { $set: er } });
       var activeIds = this.props.activeIds;
-      this.fillEventFilters(_2.map(res.data, function (eventFilter) {
-        return _2.extend({}, eventFilter, {
-          active: !activeIds.length || _2.contains(activeIds, eventFilter.id)
+      this.fillEventFilters(_2['default'].map(res.data, function (eventFilter) {
+        return _2['default'].extend({}, eventFilter, {
+          active: !activeIds.length || _2['default'].contains(activeIds, eventFilter.id)
         });
       }));
     },
@@ -49752,11 +49753,11 @@ define('components/event-filters/index', ['exports', 'module', 'underscore', 'ap
     fillEventFilters: function fillEventFilters(eventFilters) {
       if (!eventFilters) eventFilters = this.state.eventFilters;
       var activeIds = this.props.activeIds;
-      this.update({ eventFilters: { $set: _2.chain(this.state.events).reduce(function (eventFilters, event) {
-            var eventFilterIds = _2.pluck(eventFilters, 'id');
-            var inEventFilters = _2.partial(_2.include, event.filters);
-            if (!_2.any(eventFilterIds, inEventFilters)) {
-              var id = _2.find(event.filters, function (id) {
+      this.update({ eventFilters: { $set: _2['default'].chain(this.state.events).reduce(function (eventFilters, event) {
+            var eventFilterIds = _2['default'].pluck(eventFilters, 'id');
+            var inEventFilters = _2['default'].partial(_2['default'].include, event.filters);
+            if (!_2['default'].any(eventFilterIds, inEventFilters)) {
+              var id = _2['default'].find(event.filters, function (id) {
                 return SECTION_MAP[id.split('-')[0]] === PORTALS_HEADER;
               });
               var type = id.split('-')[0];
@@ -49764,7 +49765,7 @@ define('components/event-filters/index', ['exports', 'module', 'underscore', 'ap
                 id: id,
                 type: type,
                 name: event.portal.name,
-                active: !activeIds.length || _2.contains(activeIds, id)
+                active: !activeIds.length || _2['default'].contains(activeIds, id)
               });
             }
             return eventFilters;
@@ -49773,13 +49774,13 @@ define('components/event-filters/index', ['exports', 'module', 'underscore', 'ap
     },
 
     setEventFilterHex: function setEventFilterHex(filter, i, filters) {
-      var color = _2.find(_velcroConfig.colors, { id: filter.color });
-      filter.hex = color ? color.hex : filter.type === 'rsvp' ? RSVP_HEX : _tinycolor2({ h: i * (360 / filters.length), s: 0.75, l: 0.55 }).toHex();
+      var color = _2['default'].find(_velcroConfig['default'].colors, { id: filter.color });
+      filter.hex = color ? color.hex : filter.type === 'rsvp' ? RSVP_HEX : (0, _tinycolor2['default'])({ h: i * (360 / filters.length), s: 0.75, l: 0.55 }).toHex();
     },
 
     toggle: function toggle(eventFilters, ev) {
-      this.update(_2.reduce(eventFilters, function (deltas, eventFilter) {
-        var i = _2.indexOf(this.state.eventFilters, eventFilter);
+      this.update(_2['default'].reduce(eventFilters, function (deltas, eventFilter) {
+        var i = _2['default'].indexOf(this.state.eventFilters, eventFilter);
         deltas.eventFilters[i] = { active: { $set: ev.target.checked } };
         return deltas;
       }, { eventFilters: {} }, this));
@@ -49791,18 +49792,18 @@ define('components/event-filters/index', ['exports', 'module', 'underscore', 'ap
       if (this.props.useSharedHeader && header === PORTALS_HEADER) {
         header = 'Shared';
       }
-      return _React.createElement(
+      return _React['default'].createElement(
         'label',
         { className: 'osw-event-filters-list-item osw-event-filters-list-item-header'
         },
-        _React.createElement(
+        _React['default'].createElement(
           'div',
           { className: 'osw-event-filters-list-item-name' },
-          _React.createElement('input', {
+          _React['default'].createElement('input', {
             className: 'osw-event-filters-list-item-checkbox',
             type: 'checkbox',
-            checked: _2.every(section.eventFilters, 'active'),
-            onChange: _2.partial(this.toggle, section.eventFilters)
+            checked: _2['default'].every(section.eventFilters, 'active'),
+            onChange: _2['default'].partial(this.toggle, section.eventFilters)
           }),
           header
         )
@@ -49810,43 +49811,43 @@ define('components/event-filters/index', ['exports', 'module', 'underscore', 'ap
     },
 
     renderEventFilter: function renderEventFilter(eventFilter) {
-      var i = _2.indexOf(this.state.eventFilters, eventFilter);
-      return _React.createElement(_EventFilterListItem, {
+      var i = _2['default'].indexOf(this.state.eventFilters, eventFilter);
+      return _React['default'].createElement(_EventFilterListItem['default'], {
         key: eventFilter.id,
         cursors: { eventFilter: this.getCursor('eventFilters', i) }
       });
     },
 
     renderSection: function renderSection(section, i) {
-      return _React.createElement(
+      return _React['default'].createElement(
         'div',
         { key: i },
-        i ? _React.createElement('hr', null) : null,
+        i ? _React['default'].createElement('hr', null) : null,
         this.renderHeader(section),
-        _2.map(section.eventFilters, this.renderEventFilter)
+        _2['default'].map(section.eventFilters, this.renderEventFilter)
       );
     },
 
     renderSections: function renderSections() {
-      var sections = _2.chain(this.state.eventFilters).groupBy(function (eventFilter) {
+      var sections = _2['default'].chain(this.state.eventFilters).groupBy(function (eventFilter) {
         return SECTION_MAP[eventFilter.type];
-      }).pairs().map(_2.partial(_2.object, ['header', 'eventFilters'])).sortBy('header').value();
-      return _React.createElement(
+      }).pairs().map(_2['default'].partial(_2['default'].object, ['header', 'eventFilters'])).sortBy('header').value();
+      return _React['default'].createElement(
         'div',
         { className: 'osw-event-filters' },
-        _2.map(sections, this.renderSection)
+        _2['default'].map(sections, this.renderSection)
       );
     },
 
     render: function render() {
-      return _React.createElement(
+      return _React['default'].createElement(
         'div',
         { className: 'osw-inset-block osw-event-filters-index' },
-        this.state.isLoading ? _React.createElement(
+        this.state.isLoading ? _React['default'].createElement(
           'div',
           null,
           'Loading...'
-        ) : this.state.error ? _React.createElement(
+        ) : this.state.error ? _React['default'].createElement(
           'div',
           null,
           this.state.error.toString()
@@ -50867,11 +50868,11 @@ define('components/event-filters/index', ['exports', 'module', 'underscore', 'ap
 define('moment-timezone', ['exports', 'module', '../bower_components/moment-timezone/builds/moment-timezone-with-data'], function (exports, module, _bower_componentsMomentTimezoneBuildsMomentTimezoneWithData) {
   'use strict';
 
-  function _interopRequire(obj) { return obj && obj.__esModule ? obj['default'] : obj; }
+  function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 
-  var _moment = _interopRequire(_bower_componentsMomentTimezoneBuildsMomentTimezoneWithData);
+  var _moment = _interopRequireDefault(_bower_componentsMomentTimezoneBuildsMomentTimezoneWithData);
 
-  module.exports = _moment;
+  module.exports = _moment['default'];
 });
 // scripts/entities/event.es6
 define('entities/event', ['exports', 'underscore', 'underscore.string', 'api', 'moment-timezone'], function (exports, _underscore, _underscoreString, _api, _momentTimezone) {
@@ -50881,19 +50882,19 @@ define('entities/event', ['exports', 'underscore', 'underscore.string', 'api', '
     value: true
   });
 
-  function _interopRequire(obj) { return obj && obj.__esModule ? obj['default'] : obj; }
+  function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 
-  var _2 = _interopRequire(_underscore);
+  var _2 = _interopRequireDefault(_underscore);
 
-  var _str2 = _interopRequire(_underscoreString);
+  var _str2 = _interopRequireDefault(_underscoreString);
 
-  var _api2 = _interopRequire(_api);
+  var _api2 = _interopRequireDefault(_api);
 
-  var _moment = _interopRequire(_momentTimezone);
+  var _moment = _interopRequireDefault(_momentTimezone);
 
   var PER_PAGE = 100;
 
-  var cache = _2.memoize(_moment.tz, function (date, tz) {
+  var cache = _2['default'].memoize(_moment['default'].tz, function (date, tz) {
     return date + '/' + tz;
   });
 
@@ -50916,22 +50917,22 @@ define('entities/event', ['exports', 'underscore', 'underscore.string', 'api', '
 
   exports.isAllDay = isAllDay;
   var searchableWords = function searchableWords(event) {
-    return _str2.words(_2.values(_2.pick(event, 'title', 'description', 'location')).join(' ').toLowerCase());
+    return _str2['default'].words(_2['default'].values(_2['default'].pick(event, 'title', 'description', 'location')).join(' ').toLowerCase());
   };
 
   var matchesQuery = function matchesQuery(event, query) {
     if (!query) return true;
-    var words = _str2.words(query.toLowerCase());
+    var words = _str2['default'].words(query.toLowerCase());
     var searchable = searchableWords(event);
-    return _2.every(words, function (wordA) {
-      return _2.any(searchable, function (wordB) {
-        return _str2.startsWith(wordB, wordA);
+    return _2['default'].every(words, function (wordA) {
+      return _2['default'].any(searchable, function (wordB) {
+        return _str2['default'].startsWith(wordB, wordA);
       });
     });
   };
 
   var matchesFilters = function matchesFilters(event, filters) {
-    return _2.any(event.filters, _2.partial(_2.contains, _2.pluck(filters, 'id')));
+    return _2['default'].any(event.filters, _2['default'].partial(_2['default'].contains, _2['default'].pluck(filters, 'id')));
   };
 
   var matchesQueryAndFilters = function matchesQueryAndFilters(event, query, filters) {
@@ -50940,20 +50941,20 @@ define('entities/event', ['exports', 'underscore', 'underscore.string', 'api', '
 
   exports.matchesQueryAndFilters = matchesQueryAndFilters;
   var getColor = function getColor(event, filters) {
-    var match = _2.find(filters, function (filter) {
-      return _2.contains(event.filters, filter.id);
+    var match = _2['default'].find(filters, function (filter) {
+      return _2['default'].contains(event.filters, filter.id);
     });
     return match && match.hex;
   };
 
   exports.getColor = getColor;
   var fixDate = function fixDate(date, isAllDay) {
-    return isAllDay ? date.slice(0, 10) : _moment.utc(date).toISOString();
+    return isAllDay ? date.slice(0, 10) : _moment['default'].utc(date).toISOString();
   };
 
   var mergeResponse = function mergeResponse(a, b) {
     var isAllDay = a.is_all_day;
-    return _2.extend({}, a, b, {
+    return _2['default'].extend({}, a, b, {
       starts_at: fixDate(b.starts_at, isAllDay),
       ends_at: fixDate(b.ends_at, isAllDay)
     });
@@ -50961,8 +50962,8 @@ define('entities/event', ['exports', 'underscore', 'underscore.string', 'api', '
 
   exports.mergeResponse = mergeResponse;
   var parseResponse = function parseResponse(res) {
-    return _2.flatten(_2.map(res.data, function (event) {
-      return _2.map(event.dates, _2.partial(mergeResponse, event));
+    return _2['default'].flatten(_2['default'].map(res.data, function (event) {
+      return _2['default'].map(event.dates, _2['default'].partial(mergeResponse, event));
     }));
   };
 
@@ -50981,14 +50982,14 @@ define('entities/event', ['exports', 'underscore', 'underscore.string', 'api', '
 
   exports.comparator = comparator;
   var merge = function merge(a, b) {
-    return a.concat(_2.reject(b, function (event) {
-      return _2.any(a, _2.matches({ id: event.id }));
+    return a.concat(_2['default'].reject(b, function (event) {
+      return _2['default'].any(a, _2['default'].matches({ id: event.id }));
     }));
   };
 
   exports.merge = merge;
   var getNextContiguous = function getNextContiguous(after, ranges) {
-    ranges = _2.sortBy(ranges, 0);
+    ranges = _2['default'].sortBy(ranges, 0);
     for (var i = 0, l = ranges.length; i < l; ++i) {
       var range = ranges[i];
       if (after >= range[0] && after < range[1]) after = range[1];
@@ -50998,7 +50999,7 @@ define('entities/event', ['exports', 'underscore', 'underscore.string', 'api', '
 
   exports.getNextContiguous = getNextContiguous;
   var getPrevContiguous = function getPrevContiguous(before, ranges) {
-    ranges = _2.sortBy(ranges, 1);
+    ranges = _2['default'].sortBy(ranges, 1);
     for (var i = ranges.length - 1; i >= 0; --i) {
       var range = ranges[i];
       if (before <= range[1] && before > range[0]) before = range[0];
@@ -51014,9 +51015,9 @@ define('entities/event', ['exports', 'underscore', 'underscore.string', 'api', '
     var events = parseResponse(res);
     if (events.length === PER_PAGE) {
       if (options.direction === 'backwards') {
-        after = _2.first(_2.sortBy(events, 'ends_at')).ends_at;
+        after = _2['default'].first(_2['default'].sortBy(events, 'ends_at')).ends_at;
       } else {
-        before = _2.last(_2.sortBy(events, 'starts_at')).starts_at;
+        before = _2['default'].last(_2['default'].sortBy(events, 'starts_at')).starts_at;
       }
     }
     var ranges = options.ranges.concat([[after, before]]);
@@ -51025,19 +51026,19 @@ define('entities/event', ['exports', 'underscore', 'underscore.string', 'api', '
   };
 
   var fetch = function fetch(options, cb) {
-    options = _2.clone(options);
+    options = _2['default'].clone(options);
     var ranges = options.ranges;
     options.after = getNextContiguous(options.after, ranges);
     options.before = getPrevContiguous(options.before, ranges);
     if (options.after >= options.before) return cb();
-    _api2.get(options.url, {
+    _api2['default'].get(options.url, {
       upcoming: true,
       per_page: PER_PAGE,
       after: options.after,
       before: options.before,
       direction: options.direction,
       restrict_to_portal: false
-    }, _2.partial(handleFetch, options, cb));
+    }, _2['default'].partial(handleFetch, options, cb));
   };
   exports.fetch = fetch;
 });
@@ -51045,23 +51046,23 @@ define('entities/event', ['exports', 'underscore', 'underscore.string', 'api', '
 define('components/events/show', ['exports', 'module', 'underscore', 'underscore.string', 'api', 'components/ui/button', 'cursors', 'components/ui/icon', 'react', 'components/ui/sep', 'entities/event'], function (exports, module, _underscore, _underscoreString, _api, _componentsUiButton, _cursors, _componentsUiIcon, _react, _componentsUiSep, _entitiesEvent) {
   'use strict';
 
-  function _interopRequire(obj) { return obj && obj.__esModule ? obj['default'] : obj; }
+  function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 
-  var _2 = _interopRequire(_underscore);
+  var _2 = _interopRequireDefault(_underscore);
 
-  var _str2 = _interopRequire(_underscoreString);
+  var _str2 = _interopRequireDefault(_underscoreString);
 
-  var _api2 = _interopRequire(_api);
+  var _api2 = _interopRequireDefault(_api);
 
-  var _Button = _interopRequire(_componentsUiButton);
+  var _Button = _interopRequireDefault(_componentsUiButton);
 
-  var _Cursors = _interopRequire(_cursors);
+  var _Cursors = _interopRequireDefault(_cursors);
 
-  var _Icon = _interopRequire(_componentsUiIcon);
+  var _Icon = _interopRequireDefault(_componentsUiIcon);
 
-  var _React = _interopRequire(_react);
+  var _React = _interopRequireDefault(_react);
 
-  var _Sep = _interopRequire(_componentsUiSep);
+  var _Sep = _interopRequireDefault(_componentsUiSep);
 
   var DATE_FORMAT = 'dddd, MMM D, YYYY';
   var TIME_FORMAT = 'h:mm A';
@@ -51079,17 +51080,17 @@ define('components/events/show', ['exports', 'module', 'underscore', 'underscore
     'Not Attending': 'No'
   };
 
-  var Section = _React.createClass({
+  var Section = _React['default'].createClass({
     displayName: 'Section',
 
-    mixin: [_Cursors],
+    mixin: [_Cursors['default']],
 
     render: function render() {
-      return _React.createElement(
+      return _React['default'].createElement(
         'div',
         { className: 'osw-events-show-section' },
-        _React.createElement(_Icon, { name: this.props.icon }),
-        _React.createElement(
+        _React['default'].createElement(_Icon['default'], { name: this.props.icon }),
+        _React['default'].createElement(
           'div',
           { className: 'osw-events-show-section-main' },
           this.props.children
@@ -51098,10 +51099,10 @@ define('components/events/show', ['exports', 'module', 'underscore', 'underscore
     }
   });
 
-  module.exports = _React.createClass({
+  module.exports = _React['default'].createClass({
     displayName: 'show',
 
-    mixins: [_Cursors],
+    mixins: [_Cursors['default']],
 
     getInitialState: function getInitialState() {
       return {
@@ -51115,11 +51116,11 @@ define('components/events/show', ['exports', 'module', 'underscore', 'underscore
     },
 
     getIcsUrl: function getIcsUrl() {
-      return _api2.url(this.state.event.links.ics);
+      return _api2['default'].url(this.state.event.links.ics);
     },
 
     getGcalUrl: function getGcalUrl() {
-      return _api2.url(this.state.event.links.gcal);
+      return _api2['default'].url(this.state.event.links.gcal);
     },
 
     getLocationUrl: function getLocationUrl() {
@@ -51128,31 +51129,31 @@ define('components/events/show', ['exports', 'module', 'underscore', 'underscore
 
     fetch: function fetch() {
       this.update({ isLoading: { $set: true }, error: { $set: null } });
-      _api2.get(this.state.event.links.show, this.handleFetch);
+      _api2['default'].get(this.state.event.links.show, this.handleFetch);
     },
 
     setRsvp: function setRsvp(status) {
       this.update({ isLoading: { $set: true }, error: { $set: null } });
-      _api2.post(this.state.event.links.rsvp, { status: status }, this.handleFetch);
+      _api2['default'].post(this.state.event.links.rsvp, { status: status }, this.handleFetch);
     },
 
     handleFetch: function handleFetch(er, res) {
       var deltas = { isLoading: { $set: false } };
-      if (er) deltas.error = { $set: er };else deltas.event = { $merge: _entitiesEvent.mergeResponse(this.state.event, res.data) };
+      if (er) deltas.error = { $set: er };else deltas.event = { $merge: (0, _entitiesEvent.mergeResponse)(this.state.event, res.data) };
       this.update(deltas);
     },
 
     renderDefaultPicture: function renderDefaultPicture() {
-      var dateMom = _entitiesEvent.getMoment(this.state.event.starts_at, this.props.tz);
-      return _React.createElement(
+      var dateMom = (0, _entitiesEvent.getMoment)(this.state.event.starts_at, this.props.tz);
+      return _React['default'].createElement(
         'div',
         null,
-        _React.createElement(
+        _React['default'].createElement(
           'div',
           { className: 'osw-events-show-month' },
           dateMom.format('MMM')
         ),
-        _React.createElement(
+        _React['default'].createElement(
           'div',
           { className: 'osw-events-show-date' },
           dateMom.format('D')
@@ -51163,12 +51164,12 @@ define('components/events/show', ['exports', 'module', 'underscore', 'underscore
     renderTime: function renderTime() {
       var event = this.state.event;
       var tz = this.props.tz;
-      var startMom = _entitiesEvent.getMoment(event.starts_at, tz);
-      var endMom = _entitiesEvent.getMoment(event.ends_at, tz);
+      var startMom = (0, _entitiesEvent.getMoment)(event.starts_at, tz);
+      var endMom = (0, _entitiesEvent.getMoment)(event.ends_at, tz);
       var isMultiDay = startMom.clone().add(1, 'day').startOf('day') < endMom;
       var start = startMom.format(DATE_FORMAT);
       var end, time;
-      if (_entitiesEvent.isAllDay(event, tz)) {
+      if ((0, _entitiesEvent.isAllDay)(event, tz)) {
         if (isMultiDay) {
           start += ' -';
           end = endMom.clone().subtract(1, 'day').format(DATE_FORMAT);
@@ -51182,34 +51183,34 @@ define('components/events/show', ['exports', 'module', 'underscore', 'underscore
           time = startMom.format(TIME_FORMAT) + ' - ' + endMom.format(TIME_FORMAT + ' z');
         }
       }
-      return _React.createElement(
+      return _React['default'].createElement(
         Section,
         { icon: 'time' },
-        _React.createElement(
+        _React['default'].createElement(
           'div',
           null,
           start
         ),
-        end ? _React.createElement(
+        end ? _React['default'].createElement(
           'div',
           null,
           end
         ) : null,
-        time ? _React.createElement(
+        time ? _React['default'].createElement(
           'div',
           { className: 'osw-events-show-time' },
           time
         ) : null,
-        _React.createElement(
+        _React['default'].createElement(
           'div',
           { className: 'osw-events-show-add-to-calendar' },
-          _React.createElement(
+          _React['default'].createElement(
             'a',
             { href: this.getIcsUrl(), target: '_parent' },
             'Add to iCal/Outlook'
           ),
-          _React.createElement(_Sep, null),
-          _React.createElement(
+          _React['default'].createElement(_Sep['default'], null),
+          _React['default'].createElement(
             'a',
             { href: this.getGcalUrl(), target: '_parent' },
             'Add to Google Calendar'
@@ -51220,26 +51221,26 @@ define('components/events/show', ['exports', 'module', 'underscore', 'underscore
 
     renderAttendee: function renderAttendee(attendee) {
       var alt = attendee.display_name;
-      return _React.createElement(
+      return _React['default'].createElement(
         'span',
         { key: attendee.id, className: 'osw-events-show-attendee' },
-        _React.createElement('img', { src: attendee.picture_url, alt: alt, title: alt })
+        _React['default'].createElement('img', { src: attendee.picture_url, alt: alt, title: alt })
       );
     },
 
     renderAttendees: function renderAttendees() {
       var event = this.state.event;
       var sample = event.attendees_sample;
-      if (!_2.size(sample)) return;
+      if (!_2['default'].size(sample)) return;
       var more = event.total_attendees - sample.length;
-      return _React.createElement(
+      return _React['default'].createElement(
         'div',
         { className: 'osw-events-show-attendees' },
         event.attendees_sample.map(this.renderAttendee),
-        more ? _React.createElement(
+        more ? _React['default'].createElement(
           'div',
           null,
-          _React.createElement(
+          _React['default'].createElement(
             'a',
             { href: event.links.web, target: '_parent' },
             'And ',
@@ -51253,11 +51254,11 @@ define('components/events/show', ['exports', 'module', 'underscore', 'underscore
     renderRsvpAction: function renderRsvpAction() {
       var event = this.state.event;
       var actions = event.rsvp_actions;
-      if (!_2.size(actions)) return;
+      if (!_2['default'].size(actions)) return;
       var buttons;
       if (actions[0] === 'Register') {
-        buttons = _React.createElement(
-          _Button,
+        buttons = _React['default'].createElement(
+          _Button['default'],
           { href: event.pre_event_form, target: '_parent' },
           'Yes, Register Now'
         );
@@ -51267,34 +51268,34 @@ define('components/events/show', ['exports', 'module', 'underscore', 'underscore
       } else if ('withCredentials' in new XMLHttpRequest()) {
         var userAction = ACTION_MAP[event.rsvp];
         buttons = actions.map(function (action) {
-          return _React.createElement(
+          return _React['default'].createElement(
             'label',
             { key: action },
-            _React.createElement('input', {
+            _React['default'].createElement('input', {
               type: 'radio',
               name: 'rsvp',
               checked: action === userAction,
-              onChange: _2.partial(this.setRsvp, STATUS_MAP[action])
+              onChange: _2['default'].partial(this.setRsvp, STATUS_MAP[action])
             }),
             action
           );
         }, this);
       } else {
-        buttons = _React.createElement(
-          _Button,
+        buttons = _React['default'].createElement(
+          _Button['default'],
           { href: event.links.web, target: '_parent' },
           'RSVP'
         );
       }
-      return _React.createElement(
+      return _React['default'].createElement(
         'div',
         { className: 'osw-events-show-rsvp-action' },
-        _React.createElement(
+        _React['default'].createElement(
           'div',
           null,
           'Will you be attending?'
         ),
-        buttons ? _React.createElement(
+        buttons ? _React['default'].createElement(
           'div',
           { className: 'osw-events-show-actions' },
           buttons
@@ -51306,13 +51307,13 @@ define('components/events/show', ['exports', 'module', 'underscore', 'underscore
       var attendees = this.renderAttendees();
       var rsvpAction = this.renderRsvpAction();
       var message = this.state.event.rsvp_message;
-      if (message) message = _React.createElement(
+      if (message) message = _React['default'].createElement(
         'div',
         null,
         message
       );
-      if (!_2.any([attendees, rsvpAction, message])) return;
-      return _React.createElement(
+      if (!_2['default'].any([attendees, rsvpAction, message])) return;
+      return _React['default'].createElement(
         Section,
         { icon: 'rsvp' },
         attendees,
@@ -51324,10 +51325,10 @@ define('components/events/show', ['exports', 'module', 'underscore', 'underscore
     renderLocation: function renderLocation() {
       var location = this.state.event.location;
       if (!location) return;
-      return _React.createElement(
+      return _React['default'].createElement(
         Section,
         { icon: 'location' },
-        _React.createElement(
+        _React['default'].createElement(
           'a',
           {
             className: 'osw-events-show-location',
@@ -51341,10 +51342,10 @@ define('components/events/show', ['exports', 'module', 'underscore', 'underscore
 
     renderPortalName: function renderPortalName() {
       var portal = this.state.event.portal;
-      return _React.createElement(
+      return _React['default'].createElement(
         Section,
         { icon: 'organization' },
-        _React.createElement(
+        _React['default'].createElement(
           'a',
           {
             className: 'osw-events-show-portal-name',
@@ -51358,19 +51359,19 @@ define('components/events/show', ['exports', 'module', 'underscore', 'underscore
 
     renderDescription: function renderDescription() {
       var description = this.state.event.description;
-      if (description) description = _str2.trim(description);
+      if (description) description = _str2['default'].trim(description);
       if (!description) return;
       var blocks = description.split(/\r?\n/);
-      var components = _2.reduce(blocks, function (blocks, block, i) {
-        if (i > 0) blocks.push(_React.createElement('br', { key: 'br-' + i }));
-        if (block) blocks.push(_React.createElement(
+      var components = _2['default'].reduce(blocks, function (blocks, block, i) {
+        if (i > 0) blocks.push(_React['default'].createElement('br', { key: 'br-' + i }));
+        if (block) blocks.push(_React['default'].createElement(
           'span',
           { key: 'span-' + i },
           block
         ));
         return blocks;
       }, []);
-      return _React.createElement(
+      return _React['default'].createElement(
         Section,
         { icon: 'info' },
         components
@@ -51380,18 +51381,18 @@ define('components/events/show', ['exports', 'module', 'underscore', 'underscore
     render: function render() {
       var event = this.state.event;
       var src = event.thumbnail_url;
-      return _React.createElement(
+      return _React['default'].createElement(
         'div',
         { className: 'osw-events-show' },
-        _React.createElement(
+        _React['default'].createElement(
           'div',
           { className: 'osw-events-show-picture-container' },
-          src ? _React.createElement('img', { src: src }) : this.renderDefaultPicture()
+          src ? _React['default'].createElement('img', { src: src }) : this.renderDefaultPicture()
         ),
-        _React.createElement(
+        _React['default'].createElement(
           'div',
           { className: 'osw-events-show-info' },
-          _React.createElement(
+          _React['default'].createElement(
             'a',
             {
               className: 'osw-events-show-title',
@@ -51405,11 +51406,11 @@ define('components/events/show', ['exports', 'module', 'underscore', 'underscore
           this.renderRsvp(),
           this.renderPortalName(),
           this.renderDescription(),
-          _React.createElement(
+          _React['default'].createElement(
             'div',
             { className: 'osw-events-show-see-full-details' },
-            _React.createElement(
-              _Button,
+            _React['default'].createElement(
+              _Button['default'],
               { href: event.links.web, target: '_parent' },
               'See Full Details'
             )
@@ -51423,22 +51424,22 @@ define('components/events/show', ['exports', 'module', 'underscore', 'underscore
 define('components/events/td', ['exports', 'module', 'cursors', 'components/ui/popup', 'react', 'components/events/show', 'tinycolor', 'entities/event'], function (exports, module, _cursors, _componentsUiPopup, _react, _componentsEventsShow, _tinycolor, _entitiesEvent) {
   'use strict';
 
-  function _interopRequire(obj) { return obj && obj.__esModule ? obj['default'] : obj; }
+  function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 
-  var _Cursors = _interopRequire(_cursors);
+  var _Cursors = _interopRequireDefault(_cursors);
 
-  var _Popup = _interopRequire(_componentsUiPopup);
+  var _Popup = _interopRequireDefault(_componentsUiPopup);
 
-  var _React = _interopRequire(_react);
+  var _React = _interopRequireDefault(_react);
 
-  var _Show = _interopRequire(_componentsEventsShow);
+  var _Show = _interopRequireDefault(_componentsEventsShow);
 
-  var _tinycolor2 = _interopRequire(_tinycolor);
+  var _tinycolor2 = _interopRequireDefault(_tinycolor);
 
-  module.exports = _React.createClass({
+  module.exports = _React['default'].createClass({
     displayName: 'td',
 
-    mixins: [_Cursors],
+    mixins: [_Cursors['default']],
 
     getInitialState: function getInitialState() {
       return {
@@ -51451,7 +51452,7 @@ define('components/events/td', ['exports', 'module', 'cursors', 'components/ui/p
       var event = this.state.event;
       if (event) {
         var tz = this.props.tz;
-        if (_entitiesEvent.isAllDay(event, tz)) classes.push('osw-events-td-all-day');
+        if ((0, _entitiesEvent.isAllDay)(event, tz)) classes.push('osw-events-td-all-day');
         if (this.isContinued()) classes.push('osw-events-td-continued');
         if (this.doesContinue()) classes.push('osw-events-td-continues');
         var rsvp = event.rsvp;
@@ -51463,18 +51464,18 @@ define('components/events/td', ['exports', 'module', 'cursors', 'components/ui/p
 
     getEventStyle: function getEventStyle() {
       var event = this.state.event;
-      var color = _entitiesEvent.getColor(event, this.props.eventFilters);
+      var color = (0, _entitiesEvent.getColor)(event, this.props.eventFilters);
       if (!color) return;
       var style = { borderColor: '#' + color };
       var tz = this.props.tz;
-      if (_entitiesEvent.isAllDay(event, tz) || this.isContinued() || this.doesContinue()) {
-        style.background = _tinycolor2(color).lighten(40).toHexString();
+      if ((0, _entitiesEvent.isAllDay)(event, tz) || this.isContinued() || this.doesContinue()) {
+        style.background = (0, _tinycolor2['default'])(color).lighten(40).toHexString();
       }
       return style;
     },
 
     getFormattedTime: function getFormattedTime(date) {
-      return _entitiesEvent.getMoment(date, this.props.tz).format('h:mma').replace(':00', '').replace('m', '');
+      return (0, _entitiesEvent.getMoment)(date, this.props.tz).format('h:mma').replace(':00', '').replace('m', '');
     },
 
     getStartTime: function getStartTime() {
@@ -51482,7 +51483,7 @@ define('components/events/td', ['exports', 'module', 'cursors', 'components/ui/p
     },
 
     getEndTime: function getEndTime() {
-      var endIso = _entitiesEvent.getMoment(this.props.date, this.props.tz).add(this.props.colSpan, 'days').toISOString();
+      var endIso = (0, _entitiesEvent.getMoment)(this.props.date, this.props.tz).add(this.props.colSpan, 'days').toISOString();
       var event = this.state.event;
       if (event.ends_at >= endIso) return;
       return 'ends ' + this.getFormattedTime(event.ends_at);
@@ -51490,7 +51491,7 @@ define('components/events/td', ['exports', 'module', 'cursors', 'components/ui/p
 
     getTime: function getTime() {
       var event = this.state.event;
-      if (_entitiesEvent.isAllDay(event, this.props.tz)) return;
+      if ((0, _entitiesEvent.isAllDay)(event, this.props.tz)) return;
       var isContinued = this.isContinued();
       var doesContinue = this.doesContinue();
       if (isContinued && doesContinue) return;
@@ -51504,7 +51505,7 @@ define('components/events/td', ['exports', 'module', 'cursors', 'components/ui/p
       var event = this.state.event;
       var start = this.props.date;
       if (!event.is_all_day) {
-        start = _entitiesEvent.getMoment(start, this.props.tz).toISOString();
+        start = (0, _entitiesEvent.getMoment)(start, this.props.tz).toISOString();
       }
       return event.starts_at < start;
     },
@@ -51513,13 +51514,13 @@ define('components/events/td', ['exports', 'module', 'cursors', 'components/ui/p
       var event = this.state.event;
       var tz = this.props.tz;
       var start = this.props.date;
-      var endMom = _entitiesEvent.getMoment(start, tz).add(this.props.colSpan, 'days');
+      var endMom = (0, _entitiesEvent.getMoment)(start, tz).add(this.props.colSpan, 'days');
       var end = event.is_all_day ? endMom.format('YYYY-MM-DD') : endMom.toISOString();
       return event.ends_at > end;
     },
 
     startsAtMidnight: function startsAtMidnight() {
-      return this.state.event.starts_at === _entitiesEvent.getMoment(this.props.date, this.props.tz).toISOString();
+      return this.state.event.starts_at === (0, _entitiesEvent.getMoment)(this.props.date, this.props.tz).toISOString();
     },
 
     openShow: function openShow() {
@@ -51531,7 +51532,7 @@ define('components/events/td', ['exports', 'module', 'cursors', 'components/ui/p
     },
 
     renderMore: function renderMore() {
-      return _React.createElement(
+      return _React['default'].createElement(
         'div',
         {
           className: 'osw-events-td-more',
@@ -51543,7 +51544,7 @@ define('components/events/td', ['exports', 'module', 'cursors', 'components/ui/p
 
     renderTitle: function renderTitle() {
       if (this.props.hideTitle) return;
-      return _React.createElement(
+      return _React['default'].createElement(
         'div',
         { className: 'osw-events-td-title' },
         this.state.event.title
@@ -51551,14 +51552,14 @@ define('components/events/td', ['exports', 'module', 'cursors', 'components/ui/p
     },
 
     renderEvent: function renderEvent() {
-      return _React.createElement(
+      return _React['default'].createElement(
         'div',
         {
           className: 'osw-events-td-event',
           style: this.getEventStyle(),
           onClick: this.openShow
         },
-        _React.createElement(
+        _React['default'].createElement(
           'div',
           { className: 'osw-events-td-time' },
           this.getTime()
@@ -51569,15 +51570,15 @@ define('components/events/td', ['exports', 'module', 'cursors', 'components/ui/p
 
     renderShow: function renderShow() {
       if (!this.state.showIsOpen) return;
-      return _React.createElement(_Show, {
+      return _React['default'].createElement(_Show['default'], {
         tz: this.props.tz,
         cursors: { event: this.getCursor('event') }
       });
     },
 
     renderShowPopup: function renderShowPopup() {
-      return _React.createElement(
-        _Popup,
+      return _React['default'].createElement(
+        _Popup['default'],
         { name: 'events-show', close: this.closeShow, title: 'Event Details' },
         this.renderShow()
       );
@@ -51586,7 +51587,7 @@ define('components/events/td', ['exports', 'module', 'cursors', 'components/ui/p
     render: function render() {
       var event = this.state.event;
       var more = this.props.more;
-      return _React.createElement(
+      return _React['default'].createElement(
         'td',
         { className: this.getClassName(), colSpan: this.props.colSpan },
         event ? this.renderEvent() : more ? this.renderMore() : null,
@@ -51599,28 +51600,28 @@ define('components/events/td', ['exports', 'module', 'cursors', 'components/ui/p
 define('components/events/list-item', ['exports', 'module', 'underscore.string', 'cursors', 'components/ui/icon', 'components/ui/popup', 'react', 'components/ui/sep', 'components/events/show', 'entities/event'], function (exports, module, _underscoreString, _cursors, _componentsUiIcon, _componentsUiPopup, _react, _componentsUiSep, _componentsEventsShow, _entitiesEvent) {
   'use strict';
 
-  function _interopRequire(obj) { return obj && obj.__esModule ? obj['default'] : obj; }
+  function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 
-  var _str2 = _interopRequire(_underscoreString);
+  var _str2 = _interopRequireDefault(_underscoreString);
 
-  var _Cursors = _interopRequire(_cursors);
+  var _Cursors = _interopRequireDefault(_cursors);
 
-  var _Icon = _interopRequire(_componentsUiIcon);
+  var _Icon = _interopRequireDefault(_componentsUiIcon);
 
-  var _Popup = _interopRequire(_componentsUiPopup);
+  var _Popup = _interopRequireDefault(_componentsUiPopup);
 
-  var _React = _interopRequire(_react);
+  var _React = _interopRequireDefault(_react);
 
-  var _Sep = _interopRequire(_componentsUiSep);
+  var _Sep = _interopRequireDefault(_componentsUiSep);
 
-  var _Show = _interopRequire(_componentsEventsShow);
+  var _Show = _interopRequireDefault(_componentsEventsShow);
 
   var FORMAT = 'h:mm A';
 
-  module.exports = _React.createClass({
+  module.exports = _React['default'].createClass({
     displayName: 'list-item',
 
-    mixins: [_Cursors],
+    mixins: [_Cursors['default']],
 
     getInitialState: function getInitialState() {
       return {
@@ -51637,7 +51638,7 @@ define('components/events/list-item', ['exports', 'module', 'underscore.string',
     },
 
     formatWithVerb: function formatWithVerb(time, verb) {
-      var now = _entitiesEvent.getMoment(void 0, this.props.tz);
+      var now = (0, _entitiesEvent.getMoment)(void 0, this.props.tz);
       var suffix = time < now ? 'ed' : 's';
       return time.format('[' + verb + suffix + ' at ]h:mm A');
     },
@@ -51647,9 +51648,9 @@ define('components/events/list-item', ['exports', 'module', 'underscore.string',
       if (event.is_all_day) return 'All Day';
       var date = this.props.date;
       var tz = this.props.tz;
-      var eventStart = _entitiesEvent.getMoment(event.starts_at, tz);
-      var eventEnd = _entitiesEvent.getMoment(event.ends_at, tz);
-      var dateStart = _entitiesEvent.getMoment(date, tz);
+      var eventStart = (0, _entitiesEvent.getMoment)(event.starts_at, tz);
+      var eventEnd = (0, _entitiesEvent.getMoment)(event.ends_at, tz);
+      var dateStart = (0, _entitiesEvent.getMoment)(date, tz);
       var dateEnd = dateStart.clone().add(1, 'day');
       var startsBefore = eventStart <= dateStart;
       var endsAfter = eventEnd >= dateEnd;
@@ -51662,7 +51663,7 @@ define('components/events/list-item', ['exports', 'module', 'underscore.string',
     },
 
     getStyle: function getStyle() {
-      var color = _entitiesEvent.getColor(this.state.event, this.props.eventFilters);
+      var color = (0, _entitiesEvent.getColor)(this.state.event, this.props.eventFilters);
       if (color) return { borderLeftColor: '#' + color };
     },
 
@@ -51670,26 +51671,26 @@ define('components/events/list-item', ['exports', 'module', 'underscore.string',
       var rsvp = this.state.event.rsvp;
       var icon = rsvp === 'Attending' || rsvp === 'Added by Admin' ? 'check' : rsvp === 'Maybe Attending' ? 'construction' : rsvp === 'Invited' ? 'info' : null;
       if (!icon) return;
-      return _React.createElement(
+      return _React['default'].createElement(
         'span',
-        { className: 'osw-events-list-item-' + _str2.slugify(rsvp) },
-        _React.createElement(_Icon, { name: icon }),
+        { className: 'osw-events-list-item-' + _str2['default'].slugify(rsvp) },
+        _React['default'].createElement(_Icon['default'], { name: icon }),
         ' ',
         rsvp
       );
     },
 
     renderDefaultPicture: function renderDefaultPicture() {
-      var dateMom = _entitiesEvent.getMoment(this.props.date, this.props.tz);
-      return _React.createElement(
+      var dateMom = (0, _entitiesEvent.getMoment)(this.props.date, this.props.tz);
+      return _React['default'].createElement(
         'div',
         null,
-        _React.createElement(
+        _React['default'].createElement(
           'div',
           { className: 'osw-events-list-item-month' },
           dateMom.format('MMM')
         ),
-        _React.createElement(
+        _React['default'].createElement(
           'div',
           { className: 'osw-events-list-item-date' },
           dateMom.format('D')
@@ -51699,15 +51700,15 @@ define('components/events/list-item', ['exports', 'module', 'underscore.string',
 
     renderShow: function renderShow() {
       if (!this.state.showIsOpen) return;
-      return _React.createElement(_Show, {
+      return _React['default'].createElement(_Show['default'], {
         tz: this.props.tz,
         cursors: { event: this.getCursor('event') }
       });
     },
 
     renderShowPopup: function renderShowPopup() {
-      return _React.createElement(
-        _Popup,
+      return _React['default'].createElement(
+        _Popup['default'],
         { name: 'events-show', close: this.closeShow, title: 'Event Details' },
         this.renderShow()
       );
@@ -51716,39 +51717,39 @@ define('components/events/list-item', ['exports', 'module', 'underscore.string',
     render: function render() {
       var event = this.state.event;
       var src = event.thumbnail_url;
-      return _React.createElement(
+      return _React['default'].createElement(
         'div',
         { className: 'osw-events-list-item' },
-        _React.createElement(
+        _React['default'].createElement(
           'div',
           {
             className: 'osw-events-list-item-content',
             style: this.getStyle(),
             onClick: this.openShow
           },
-          _React.createElement(
+          _React['default'].createElement(
             'div',
             { className: 'osw-events-list-item-picture-container' },
-            src ? _React.createElement('img', { src: src }) : this.renderDefaultPicture()
+            src ? _React['default'].createElement('img', { src: src }) : this.renderDefaultPicture()
           ),
-          _React.createElement(
+          _React['default'].createElement(
             'div',
             { className: 'osw-events-list-item-info' },
-            _React.createElement(
+            _React['default'].createElement(
               'div',
               { className: 'osw-events-list-item-title' },
               event.title
             ),
-            _React.createElement(
+            _React['default'].createElement(
               'div',
               { className: 'osw-events-list-item-subtext' },
-              _React.createElement(
+              _React['default'].createElement(
                 'span',
                 { className: 'osw-events-list-item-time' },
                 this.getTime()
               ),
-              _React.createElement(_Sep, null),
-              _React.createElement(
+              _React['default'].createElement(_Sep['default'], null),
+              _React['default'].createElement(
                 'span',
                 { className: 'osw-events-list-item-portal-name' },
                 event.portal.name
@@ -51766,26 +51767,26 @@ define('components/events/list-item', ['exports', 'module', 'underscore.string',
 define('components/events/list-date', ['exports', 'module', 'cursors', 'react-list', 'components/events/list-item', 'react', 'entities/event'], function (exports, module, _cursors, _reactList, _componentsEventsListItem, _react, _entitiesEvent) {
   'use strict';
 
-  function _interopRequire(obj) { return obj && obj.__esModule ? obj['default'] : obj; }
+  function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 
-  var _Cursors = _interopRequire(_cursors);
+  var _Cursors = _interopRequireDefault(_cursors);
 
-  var _List = _interopRequire(_reactList);
+  var _List = _interopRequireDefault(_reactList);
 
-  var _ListItem = _interopRequire(_componentsEventsListItem);
+  var _ListItem = _interopRequireDefault(_componentsEventsListItem);
 
-  var _React = _interopRequire(_react);
+  var _React = _interopRequireDefault(_react);
 
   var PREFIX_RE = /^(Yesterday|Today|Tomorrow)/;
 
-  module.exports = _React.createClass({
+  module.exports = _React['default'].createClass({
     displayName: 'list-date',
 
-    mixins: [_Cursors],
+    mixins: [_Cursors['default']],
 
     renderEvent: function renderEvent(event) {
       var i = this.state.allEvents.indexOf(event);
-      return _React.createElement(_ListItem, {
+      return _React['default'].createElement(_ListItem['default'], {
         key: event.id,
         date: this.props.date,
         eventFilters: this.props.eventFilters,
@@ -51795,7 +51796,7 @@ define('components/events/list-date', ['exports', 'module', 'cursors', 'react-li
     },
 
     renderEmpty: function renderEmpty() {
-      return _React.createElement(
+      return _React['default'].createElement(
         'div',
         { className: 'osw-inset-block' },
         'There are no events to show.'
@@ -51804,18 +51805,18 @@ define('components/events/list-date', ['exports', 'module', 'cursors', 'react-li
 
     render: function render() {
       var date = this.props.date;
-      var dateMom = _entitiesEvent.getMoment(date, this.props.tz);
+      var dateMom = (0, _entitiesEvent.getMoment)(date, this.props.tz);
       var prefix = PREFIX_RE.exec(dateMom.calendar()) || '';
       if (prefix) prefix = prefix[0] + ', ';
-      return _React.createElement(
+      return _React['default'].createElement(
         'div',
         { className: 'osw-events-list-date' },
-        _React.createElement(
+        _React['default'].createElement(
           'div',
           { className: 'osw-events-list-date-header' },
           prefix + dateMom.format('dddd, MMMM D, YYYY')
         ),
-        _React.createElement(_List, {
+        _React['default'].createElement(_List['default'], {
           items: this.props.events,
           renderItem: this.renderEvent,
           renderEmpty: this.renderEmpty,
@@ -51829,24 +51830,24 @@ define('components/events/list-date', ['exports', 'module', 'cursors', 'react-li
 define('components/events/week', ['exports', 'module', 'underscore', 'cursors', 'components/events/td', 'components/events/list-date', 'components/ui/popup', 'react', 'entities/event'], function (exports, module, _underscore, _cursors, _componentsEventsTd, _componentsEventsListDate, _componentsUiPopup, _react, _entitiesEvent) {
   'use strict';
 
-  function _interopRequire(obj) { return obj && obj.__esModule ? obj['default'] : obj; }
+  function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 
-  var _2 = _interopRequire(_underscore);
+  var _2 = _interopRequireDefault(_underscore);
 
-  var _Cursors = _interopRequire(_cursors);
+  var _Cursors = _interopRequireDefault(_cursors);
 
-  var _Td = _interopRequire(_componentsEventsTd);
+  var _Td = _interopRequireDefault(_componentsEventsTd);
 
-  var _ListDate = _interopRequire(_componentsEventsListDate);
+  var _ListDate = _interopRequireDefault(_componentsEventsListDate);
 
-  var _Popup = _interopRequire(_componentsUiPopup);
+  var _Popup = _interopRequireDefault(_componentsUiPopup);
 
-  var _React = _interopRequire(_react);
+  var _React = _interopRequireDefault(_react);
 
-  module.exports = _React.createClass({
+  module.exports = _React['default'].createClass({
     displayName: 'week',
 
-    mixins: [_Cursors],
+    mixins: [_Cursors['default']],
 
     getInitialState: function getInitialState() {
       return {
@@ -51855,12 +51856,12 @@ define('components/events/week', ['exports', 'module', 'underscore', 'cursors', 
     },
 
     getEventsForDate: function getEventsForDate(date) {
-      var dateMom = _entitiesEvent.getMoment(date, this.props.tz);
+      var dateMom = (0, _entitiesEvent.getMoment)(date, this.props.tz);
       var iso = dateMom.toISOString();
       dateMom.add(1, 'day');
       var endIso = dateMom.toISOString();
       var endDate = dateMom.format('YYYY-MM-DD');
-      return _2.filter(this.props.events, function (event) {
+      return _2['default'].filter(this.props.events, function (event) {
         var start = event.is_all_day ? date : iso;
         var end = event.is_all_day ? endDate : endIso;
         return event.ends_at > start && event.starts_at < end;
@@ -51871,16 +51872,16 @@ define('components/events/week', ['exports', 'module', 'underscore', 'cursors', 
       var rows = this.props.rows;
       var added = [];
       var tz = this.props.tz;
-      var grid = _2.times(rows, _2.partial(_2.times, 7, _2.constant(null)));
-      _2.times(7, function (x) {
-        var dateMom = _entitiesEvent.getMoment(this.props.date, tz).day(x);
+      var grid = _2['default'].times(rows, _2['default'].partial(_2['default'].times, 7, _2['default'].constant(null)));
+      _2['default'].times(7, function (x) {
+        var dateMom = (0, _entitiesEvent.getMoment)(this.props.date, tz).day(x);
         var iso = dateMom.toISOString();
         var date = dateMom.format('YYYY-MM-DD');
 
         // Find events for this day, then remove the events that have already been
         // added previously in the grid.
-        var events = _2.difference(this.getEventsForDate(date), added);
-        _2.times(rows, function (y) {
+        var events = _2['default'].difference(this.getEventsForDate(date), added);
+        _2['default'].times(rows, function (y) {
           var i;
           if (!events.length) return;
 
@@ -51915,7 +51916,7 @@ define('components/events/week', ['exports', 'module', 'underscore', 'cursors', 
           // Grab the next event up for display.
           var event = events.shift();
           added.push(event);
-          var daySpan = _entitiesEvent.getDaySpan(date, event.ends_at, tz);
+          var daySpan = (0, _entitiesEvent.getDaySpan)(date, event.ends_at, tz);
           var colSpan = Math.min(daySpan, 7 - x);
 
           // Mark spots this event takes up as taken.
@@ -51950,20 +51951,20 @@ define('components/events/week', ['exports', 'module', 'underscore', 'cursors', 
 
     renderHeader: function renderHeader(n) {
       var tz = this.props.tz;
-      var date = _entitiesEvent.getMoment(this.props.date, tz).day(n);
+      var date = (0, _entitiesEvent.getMoment)(this.props.date, tz).day(n);
       var formatted = date.format(date.date() === 1 ? 'MMMM D' : 'D');
-      var now = _entitiesEvent.getMoment(void 0, tz);
-      return _React.createElement(
+      var now = (0, _entitiesEvent.getMoment)(void 0, tz);
+      return _React['default'].createElement(
         'th',
         {
           key: n,
           className: date.isSame(now, 'day') ? 'osw-events-week-current-day' : null
         },
-        _React.createElement(
+        _React['default'].createElement(
           'div',
           {
             className: 'osw-events-week-day-wrapper',
-            onClick: _2.partial(this.openDate, date.format('YYYY-MM-DD'))
+            onClick: _2['default'].partial(this.openDate, date.format('YYYY-MM-DD'))
           },
           formatted
         )
@@ -51971,29 +51972,29 @@ define('components/events/week', ['exports', 'module', 'underscore', 'cursors', 
     },
 
     renderHead: function renderHead() {
-      return _React.createElement(
+      return _React['default'].createElement(
         'thead',
         null,
-        _React.createElement(
+        _React['default'].createElement(
           'tr',
           null,
-          _2.times(7, this.renderHeader)
+          _2['default'].times(7, this.renderHeader)
         )
       );
     },
 
     renderTd: function renderTd(td, y) {
       if (td === true) return;
-      if (td === null) return _React.createElement(_Td, { key: 'empty-' + y });
+      if (td === null) return _React['default'].createElement(_Td['default'], { key: 'empty-' + y });
       if (td.more) {
-        return _React.createElement(_Td, {
+        return _React['default'].createElement(_Td['default'], {
           key: 'more-' + y,
           more: td.more,
-          openDate: _2.partial(this.openDate, td.date)
+          openDate: _2['default'].partial(this.openDate, td.date)
         });
       }
       var i = this.state.allEvents.indexOf(td.event);
-      return _React.createElement(_Td, {
+      return _React['default'].createElement(_Td['default'], {
         key: 'event-' + td.event.id + '-' + y,
         colSpan: td.colSpan,
         date: td.date,
@@ -52005,25 +52006,25 @@ define('components/events/week', ['exports', 'module', 'underscore', 'cursors', 
     },
 
     renderRow: function renderRow(row, x) {
-      return _React.createElement(
+      return _React['default'].createElement(
         'tr',
         { key: x },
-        _2.map(row, this.renderTd)
+        _2['default'].map(row, this.renderTd)
       );
     },
 
     renderBody: function renderBody() {
-      return _React.createElement(
+      return _React['default'].createElement(
         'tbody',
         null,
-        _2.map(this.getGrid(), this.renderRow)
+        _2['default'].map(this.getGrid(), this.renderRow)
       );
     },
 
     renderOpenDate: function renderOpenDate() {
       var date = this.state.openDate;
       if (!date) return;
-      return _React.createElement(_ListDate, {
+      return _React['default'].createElement(_ListDate['default'], {
         events: this.getEventsForDate(date),
         eventFilters: this.props.eventFilters,
         date: date,
@@ -52033,8 +52034,8 @@ define('components/events/week', ['exports', 'module', 'underscore', 'cursors', 
     },
 
     renderOpenDatePopup: function renderOpenDatePopup() {
-      return _React.createElement(
-        _Popup,
+      return _React['default'].createElement(
+        _Popup['default'],
         {
           name: 'events-list-date',
           close: this.closeDate,
@@ -52045,10 +52046,10 @@ define('components/events/week', ['exports', 'module', 'underscore', 'cursors', 
     },
 
     render: function render() {
-      return _React.createElement(
+      return _React['default'].createElement(
         'div',
         { className: 'osw-events-week' },
-        _React.createElement(
+        _React['default'].createElement(
           'table',
           null,
           this.renderHead(),
@@ -52063,20 +52064,20 @@ define('components/events/week', ['exports', 'module', 'underscore', 'cursors', 
 define('components/events/calendar', ['exports', 'module', 'underscore', 'cursors', 'entities/event', 'react', 'components/events/week'], function (exports, module, _underscore, _cursors, _entitiesEvent, _react, _componentsEventsWeek) {
   'use strict';
 
-  function _interopRequire(obj) { return obj && obj.__esModule ? obj['default'] : obj; }
+  function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 
-  var _2 = _interopRequire(_underscore);
+  var _2 = _interopRequireDefault(_underscore);
 
-  var _Cursors = _interopRequire(_cursors);
+  var _Cursors = _interopRequireDefault(_cursors);
 
-  var _React = _interopRequire(_react);
+  var _React = _interopRequireDefault(_react);
 
-  var _Week = _interopRequire(_componentsEventsWeek);
+  var _Week = _interopRequireDefault(_componentsEventsWeek);
 
-  module.exports = _React.createClass({
+  module.exports = _React['default'].createClass({
     displayName: 'calendar',
 
-    mixins: [_Cursors],
+    mixins: [_Cursors['default']],
 
     getInitialState: function getInitialState() {
       return {
@@ -52096,7 +52097,7 @@ define('components/events/calendar', ['exports', 'module', 'underscore', 'cursor
     fetch: function fetch() {
       if (this.state.isLoading || this.state.error) return;
       this.update({ isLoading: { $set: true }, error: { $set: null } });
-      _entitiesEvent.fetch({
+      (0, _entitiesEvent.fetch)({
         after: this.getStartMom().toISOString(),
         before: this.getEndMom().toISOString(),
         ranges: this.state.ranges,
@@ -52113,13 +52114,13 @@ define('components/events/calendar', ['exports', 'module', 'underscore', 'cursor
       } else if (ranges && events) {
         deltas.ranges = { $set: ranges };
         deltas.allEvents = { $set: events };
-        if (this.isMounted()) _2.defer(this.fetch);
+        if (this.isMounted()) _2['default'].defer(this.fetch);
       }
       this.update(deltas);
     },
 
     getStartMom: function getStartMom() {
-      return _entitiesEvent.getMoment(this.props.date, this.props.tz).startOf('month').startOf('week');
+      return (0, _entitiesEvent.getMoment)(this.props.date, this.props.tz).startOf('month').startOf('week');
     },
 
     getEndMom: function getEndMom() {
@@ -52128,41 +52129,41 @@ define('components/events/calendar', ['exports', 'module', 'underscore', 'cursor
 
     getDates: function getDates() {
       var startMom = this.getStartMom();
-      return _2.times(this.props.weeks, function (n) {
+      return _2['default'].times(this.props.weeks, function (n) {
         return startMom.clone().add(n, 'weeks').format('YYYY-MM-DD');
       });
     },
 
     renderDayName: function renderDayName(n) {
-      return _React.createElement(
+      return _React['default'].createElement(
         'th',
         { key: n },
-        _React.createElement(
+        _React['default'].createElement(
           'div',
           { className: 'osw-events-calendar-day-name' },
-          _entitiesEvent.getMoment(void 0, this.props.tz).day(n).format('ddd')
+          (0, _entitiesEvent.getMoment)(void 0, this.props.tz).day(n).format('ddd')
         )
       );
     },
 
     renderDayNames: function renderDayNames() {
-      return _React.createElement(
+      return _React['default'].createElement(
         'table',
         { className: 'osw-events-calendar-day-names' },
-        _React.createElement(
+        _React['default'].createElement(
           'thead',
           null,
-          _React.createElement(
+          _React['default'].createElement(
             'tr',
             null,
-            _2.times(7, this.renderDayName)
+            _2['default'].times(7, this.renderDayName)
           )
         )
       );
     },
 
     renderWeek: function renderWeek(date) {
-      return _React.createElement(_Week, {
+      return _React['default'].createElement(_Week['default'], {
         key: date,
         date: date,
         rows: 4,
@@ -52174,7 +52175,7 @@ define('components/events/calendar', ['exports', 'module', 'underscore', 'cursor
     },
 
     render: function render() {
-      return _React.createElement(
+      return _React['default'].createElement(
         'div',
         { className: 'osw-events-calendar' },
         this.renderDayNames(),
@@ -52189,24 +52190,24 @@ define('components/ui/button-group', ['exports', 'module', 'cursors', 'utils/joi
 
   var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
 
-  function _interopRequire(obj) { return obj && obj.__esModule ? obj['default'] : obj; }
+  function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 
-  var _Cursors = _interopRequire(_cursors);
+  var _Cursors = _interopRequireDefault(_cursors);
 
-  var _joinClassNames = _interopRequire(_utilsJoinClassNames);
+  var _joinClassNames = _interopRequireDefault(_utilsJoinClassNames);
 
-  var _React = _interopRequire(_react);
+  var _React = _interopRequireDefault(_react);
 
-  module.exports = _React.createClass({
+  module.exports = _React['default'].createClass({
     displayName: 'button-group',
 
-    mixins: [_Cursors],
+    mixins: [_Cursors['default']],
 
     render: function render() {
-      return _React.createElement(
+      return _React['default'].createElement(
         'div',
         _extends({}, this.props, {
-          className: _joinClassNames('osw-button-group', this.props.className)
+          className: (0, _joinClassNames['default'])('osw-button-group', this.props.className)
         }),
         this.props.children
       );
@@ -52217,24 +52218,24 @@ define('components/ui/button-group', ['exports', 'module', 'cursors', 'utils/joi
 define('components/events/list', ['exports', 'module', 'underscore', 'cursors', 'react-list', 'components/events/list-date', 'react', 'entities/event'], function (exports, module, _underscore, _cursors, _reactList, _componentsEventsListDate, _react, _entitiesEvent) {
   'use strict';
 
-  function _interopRequire(obj) { return obj && obj.__esModule ? obj['default'] : obj; }
+  function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 
-  var _2 = _interopRequire(_underscore);
+  var _2 = _interopRequireDefault(_underscore);
 
-  var _Cursors = _interopRequire(_cursors);
+  var _Cursors = _interopRequireDefault(_cursors);
 
-  var _List = _interopRequire(_reactList);
+  var _List = _interopRequireDefault(_reactList);
 
-  var _ListDate = _interopRequire(_componentsEventsListDate);
+  var _ListDate = _interopRequireDefault(_componentsEventsListDate);
 
-  var _React = _interopRequire(_react);
+  var _React = _interopRequireDefault(_react);
 
   var YEAR_LIMIT = 2;
 
-  module.exports = _React.createClass({
+  module.exports = _React['default'].createClass({
     displayName: 'list',
 
-    mixins: [_Cursors],
+    mixins: [_Cursors['default']],
 
     fetch: function fetch(cb) {
       var options = {
@@ -52243,11 +52244,11 @@ define('components/events/list', ['exports', 'module', 'underscore', 'cursors', 
         url: this.props.eventsUrl
       };
       var past = this.props.past;
-      var now = _entitiesEvent.getMoment(void 0, this.props.tz);
+      var now = (0, _entitiesEvent.getMoment)(void 0, this.props.tz);
       options[past ? 'before' : 'after'] = now.toISOString();
       options[past ? 'after' : 'before'] = now.add((past ? -1 : 1) * YEAR_LIMIT, 'years').toISOString();
       if (past) options.direction = 'backwards';
-      _entitiesEvent.fetch(options, _2.partial(this.handleFetch, cb));
+      (0, _entitiesEvent.fetch)(options, _2['default'].partial(this.handleFetch, cb));
     },
 
     handleFetch: function handleFetch(cb, er, ranges, events) {
@@ -52259,15 +52260,15 @@ define('components/events/list', ['exports', 'module', 'underscore', 'cursors', 
 
     getDates: function getDates() {
       var tz = this.props.tz;
-      var now = _entitiesEvent.getMoment(void 0, tz);
+      var now = (0, _entitiesEvent.getMoment)(void 0, tz);
       var past = this.props.past;
       var dir = past ? -1 : 1;
       var ranges = this.state.ranges;
       var method = past ? _entitiesEvent.getPrevContiguous : _entitiesEvent.getNextContiguous;
-      var contiguousLimit = _entitiesEvent.getMoment(method(now.toISOString(), ranges), tz);
-      return _2.chain(this.props.events).reduce(function (dates, event) {
-        var start = _entitiesEvent.getMoment(event.starts_at, tz);
-        var end = _entitiesEvent.getMoment(event.ends_at, tz);
+      var contiguousLimit = (0, _entitiesEvent.getMoment)(method(now.toISOString(), ranges), tz);
+      return _2['default'].chain(this.props.events).reduce(function (dates, event) {
+        var start = (0, _entitiesEvent.getMoment)(event.starts_at, tz);
+        var end = (0, _entitiesEvent.getMoment)(event.ends_at, tz);
         if (past) {
           if (end < contiguousLimit) return dates;
           if (end > now) end = now.clone();
@@ -52288,7 +52289,7 @@ define('components/events/list', ['exports', 'module', 'underscore', 'cursors', 
     },
 
     renderDate: function renderDate(date) {
-      return _React.createElement(_ListDate, {
+      return _React['default'].createElement(_ListDate['default'], {
         key: date[0],
         date: date[0],
         events: date[1],
@@ -52299,7 +52300,7 @@ define('components/events/list', ['exports', 'module', 'underscore', 'cursors', 
     },
 
     renderLoading: function renderLoading() {
-      return _React.createElement(
+      return _React['default'].createElement(
         'div',
         { className: 'osw-inset-block' },
         'Loading...'
@@ -52307,7 +52308,7 @@ define('components/events/list', ['exports', 'module', 'underscore', 'cursors', 
     },
 
     renderEmpty: function renderEmpty() {
-      return _React.createElement(
+      return _React['default'].createElement(
         'div',
         { className: 'osw-inset-block' },
         'There are no events to show.'
@@ -52315,7 +52316,7 @@ define('components/events/list', ['exports', 'module', 'underscore', 'cursors', 
     },
 
     render: function render() {
-      return _React.createElement(_List, {
+      return _React['default'].createElement(_List['default'], {
         className: 'osw-events-list',
         items: this.getDates(),
         renderItem: this.renderDate,
@@ -52695,62 +52696,62 @@ define('jstz', function () { return root.jstz; });
 define('tz', ['exports', 'module', 'jstz'], function (exports, module, _jstz) {
   'use strict';
 
-  function _interopRequire(obj) { return obj && obj.__esModule ? obj['default'] : obj; }
+  function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 
-  var _jstz2 = _interopRequire(_jstz);
+  var _jstz2 = _interopRequireDefault(_jstz);
 
-  module.exports = _jstz2.determine().name();
+  module.exports = _jstz2['default'].determine().name();
 });
 // scripts/components/events/index.es6
 define('components/events/index', ['exports', 'module', 'underscore', 'components/ui/button', 'components/ui/button-group', 'components/events/calendar', 'components/events/list', 'cursors', 'components/event-filters/index', 'components/ui/icon', 'react', 'tz', 'entities/event'], function (exports, module, _underscore, _componentsUiButton, _componentsUiButtonGroup, _componentsEventsCalendar, _componentsEventsList, _cursors, _componentsEventFiltersIndex, _componentsUiIcon, _react, _tz, _entitiesEvent) {
   'use strict';
 
-  function _interopRequire(obj) { return obj && obj.__esModule ? obj['default'] : obj; }
+  function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 
-  var _2 = _interopRequire(_underscore);
+  var _2 = _interopRequireDefault(_underscore);
 
-  var _Button = _interopRequire(_componentsUiButton);
+  var _Button = _interopRequireDefault(_componentsUiButton);
 
-  var _ButtonGroup = _interopRequire(_componentsUiButtonGroup);
+  var _ButtonGroup = _interopRequireDefault(_componentsUiButtonGroup);
 
-  var _Calendar = _interopRequire(_componentsEventsCalendar);
+  var _Calendar = _interopRequireDefault(_componentsEventsCalendar);
 
-  var _List = _interopRequire(_componentsEventsList);
+  var _List = _interopRequireDefault(_componentsEventsList);
 
-  var _Cursors = _interopRequire(_cursors);
+  var _Cursors = _interopRequireDefault(_cursors);
 
-  var _EventFiltersIndex = _interopRequire(_componentsEventFiltersIndex);
+  var _EventFiltersIndex = _interopRequireDefault(_componentsEventFiltersIndex);
 
-  var _Icon = _interopRequire(_componentsUiIcon);
+  var _Icon = _interopRequireDefault(_componentsUiIcon);
 
-  var _React = _interopRequire(_react);
+  var _React = _interopRequireDefault(_react);
 
-  var _tz2 = _interopRequire(_tz);
+  var _tz2 = _interopRequireDefault(_tz);
 
   var LIST_LOCK_BREAKPOINT = 600;
 
-  module.exports = _React.createClass({
+  module.exports = _React['default'].createClass({
     displayName: 'index',
 
-    mixins: [_Cursors],
+    mixins: [_Cursors['default']],
 
     getDefaultProps: function getDefaultProps() {
       return {
         activeEventFilterIds: [],
-        date: _entitiesEvent.getMoment(void 0, _tz2).format('YYYY-MM-DD'),
+        date: (0, _entitiesEvent.getMoment)(void 0, _tz2['default']).format('YYYY-MM-DD'),
         eventFilters: [],
         events: [],
         filtersAreShowing: true,
         lockView: false,
         query: '',
-        tz: _tz2,
+        tz: _tz2['default'],
         view: 'calendar'
       };
     },
 
     getInitialState: function getInitialState() {
       return {
-        date: _entitiesEvent.getMoment(this.props.date, this.props.tz).format('YYYY-MM-DD'),
+        date: (0, _entitiesEvent.getMoment)(this.props.date, this.props.tz).format('YYYY-MM-DD'),
         eventFilters: this.props.eventFilters,
         events: this.props.events,
         filtersAreShowing: this.props.filtersAreShowing,
@@ -52780,8 +52781,8 @@ define('components/events/index', ['exports', 'module', 'underscore', 'component
       var events = this.state.events;
       var query = this.state.query;
       var filters = this.getActiveEventFilters();
-      var matches = _2.partial(_entitiesEvent.matchesQueryAndFilters, _2, query, filters);
-      return _2.filter(events, matches).sort(_2.partial(_entitiesEvent.comparator, _tz2));
+      var matches = _2['default'].partial(_entitiesEvent.matchesQueryAndFilters, _2['default'], query, filters);
+      return _2['default'].filter(events, matches).sort(_2['default'].partial(_entitiesEvent.comparator, _tz2['default']));
     },
 
     getEventsUrl: function getEventsUrl() {
@@ -52789,7 +52790,7 @@ define('components/events/index', ['exports', 'module', 'underscore', 'component
     },
 
     getActiveEventFilters: function getActiveEventFilters() {
-      return _2.filter(this.state.eventFilters, _2.matches({ active: true }));
+      return _2['default'].filter(this.state.eventFilters, _2['default'].matches({ active: true }));
     },
 
     getMainClassName: function getMainClassName() {
@@ -52815,27 +52816,27 @@ define('components/events/index', ['exports', 'module', 'underscore', 'component
     renderTz: function renderTz() {
       var tz = this.state.tz;
       var city = tz.replace(/^.*?\//, '').replace(/_/g, ' ');
-      return _React.createElement(
+      return _React['default'].createElement(
         'div',
         { className: 'osw-events-index-tz' },
-        city + ' Time (' + _entitiesEvent.getMoment(void 0, tz).zoneAbbr() + ')'
+        city + ' Time (' + (0, _entitiesEvent.getMoment)(void 0, tz).zoneAbbr() + ')'
       );
     },
 
     handleMonthChange: function handleMonthChange(ev) {
       var month = parseInt(ev.target.value);
-      var dateMom = _entitiesEvent.getMoment(this.state.date, this.state.tz).month(month);
+      var dateMom = (0, _entitiesEvent.getMoment)(this.state.date, this.state.tz).month(month);
       this.update({ date: { $set: dateMom.format('YYYY-MM-DD') } });
     },
 
     handleYearChange: function handleYearChange(ev) {
       var year = parseInt(ev.target.value);
-      var dateMom = _entitiesEvent.getMoment(this.state.date, this.state.tz).year(year);
+      var dateMom = (0, _entitiesEvent.getMoment)(this.state.date, this.state.tz).year(year);
       this.update({ date: { $set: dateMom.format('YYYY-MM-DD') } });
     },
 
     handleTodayClick: function handleTodayClick() {
-      var dateMom = _entitiesEvent.getMoment(void 0, this.state.tz);
+      var dateMom = (0, _entitiesEvent.getMoment)(void 0, this.state.tz);
       this.update({ date: { $set: dateMom.format('YYYY-MM-DD') } });
     },
 
@@ -52848,7 +52849,7 @@ define('components/events/index', ['exports', 'module', 'underscore', 'component
     },
 
     incrMonth: function incrMonth(dir) {
-      var dateMom = _entitiesEvent.getMoment(this.state.date, this.state.tz).add(dir, 'month');
+      var dateMom = (0, _entitiesEvent.getMoment)(this.state.date, this.state.tz).add(dir, 'month');
       this.update({ date: { $set: dateMom.format('YYYY-MM-DD') } });
     },
 
@@ -52862,27 +52863,27 @@ define('components/events/index', ['exports', 'module', 'underscore', 'component
     },
 
     renderMonthOption: function renderMonthOption(month) {
-      return _React.createElement(
+      return _React['default'].createElement(
         'option',
         { key: month, value: month },
-        _entitiesEvent.getMoment(this.state.date, this.state.tz).month(month).format('MMMM')
+        (0, _entitiesEvent.getMoment)(this.state.date, this.state.tz).month(month).format('MMMM')
       );
     },
 
     renderMonthSelect: function renderMonthSelect() {
-      return _React.createElement(
+      return _React['default'].createElement(
         'select',
         {
           className: 'osw-events-index-month',
-          value: _entitiesEvent.getMoment(this.state.date, this.state.tz).month(),
+          value: (0, _entitiesEvent.getMoment)(this.state.date, this.state.tz).month(),
           onChange: this.handleMonthChange
         },
-        _2.times(12, this.renderMonthOption)
+        _2['default'].times(12, this.renderMonthOption)
       );
     },
 
     renderYearOption: function renderYearOption(year) {
-      return _React.createElement(
+      return _React['default'].createElement(
         'option',
         { key: year },
         year
@@ -52890,56 +52891,56 @@ define('components/events/index', ['exports', 'module', 'underscore', 'component
     },
 
     renderYearSelect: function renderYearSelect() {
-      var year = _entitiesEvent.getMoment(this.state.date, this.state.tz).year();
-      return _React.createElement(
+      var year = (0, _entitiesEvent.getMoment)(this.state.date, this.state.tz).year();
+      return _React['default'].createElement(
         'select',
         {
           className: 'osw-events-index-year',
           value: year,
           onChange: this.handleYearChange
         },
-        _2.map(_2.range(year - 3, year + 4), this.renderYearOption)
+        _2['default'].map(_2['default'].range(year - 3, year + 4), this.renderYearOption)
       );
     },
 
     renderFiltersToggle: function renderFiltersToggle() {
       if (this.isListLocked()) return;
-      return _React.createElement(
-        _Button,
+      return _React['default'].createElement(
+        _Button['default'],
         {
           className: 'osw-events-index-toggle-filters',
           onClick: this.toggleFiltersAreShowing
         },
-        _React.createElement(_Icon, { name: 'office-shortcuts' }),
+        _React['default'].createElement(_Icon['default'], { name: 'office-shortcuts' }),
         ' ',
         this.state.filtersAreShowing ? 'Hide Filters' : 'Show Filters'
       );
     },
 
     renderCalendarControls: function renderCalendarControls() {
-      return _React.createElement(
+      return _React['default'].createElement(
         'div',
         { className: 'osw-events-index-calendar-controls' },
-        _React.createElement(
-          _ButtonGroup,
+        _React['default'].createElement(
+          _ButtonGroup['default'],
           { className: 'osw-events-index-incr' },
-          _React.createElement(
-            _Button,
+          _React['default'].createElement(
+            _Button['default'],
             { onClick: this.handlePrevClick },
-            _React.createElement(_Icon, {
+            _React['default'].createElement(_Icon['default'], {
               name: 'pointer-left',
               className: 'osw-events-index-prev-month'
             })
           ),
-          _React.createElement(
-            _Button,
+          _React['default'].createElement(
+            _Button['default'],
             { onClick: this.handleTodayClick },
             'Today'
           ),
-          _React.createElement(
-            _Button,
+          _React['default'].createElement(
+            _Button['default'],
             { onClick: this.handleNextClick },
-            _React.createElement(_Icon, {
+            _React['default'].createElement(_Icon['default'], {
               name: 'pointer-right',
               className: 'osw-events-index-next-month'
             })
@@ -52952,22 +52953,22 @@ define('components/events/index', ['exports', 'module', 'underscore', 'component
 
     renderListControls: function renderListControls() {
       var view = this.getView();
-      return _React.createElement(
-        _ButtonGroup,
+      return _React['default'].createElement(
+        _ButtonGroup['default'],
         { className: 'osw-events-index-list-controls' },
-        _React.createElement(
-          _Button,
+        _React['default'].createElement(
+          _Button['default'],
           {
             isSelected: view === 'upcoming',
-            onClick: _2.partial(this.update, { view: { $set: 'upcoming' } })
+            onClick: _2['default'].partial(this.update, { view: { $set: 'upcoming' } })
           },
           'Upcoming'
         ),
-        _React.createElement(
-          _Button,
+        _React['default'].createElement(
+          _Button['default'],
           {
             isSelected: view === 'past',
-            onClick: _2.partial(this.update, { view: { $set: 'past' } })
+            onClick: _2['default'].partial(this.update, { view: { $set: 'past' } })
           },
           'Past'
         )
@@ -52977,22 +52978,22 @@ define('components/events/index', ['exports', 'module', 'underscore', 'component
     renderViewTabs: function renderViewTabs() {
       if (this.props.lockView || this.isListLocked()) return;
       var view = this.getView();
-      return _React.createElement(
-        _ButtonGroup,
+      return _React['default'].createElement(
+        _ButtonGroup['default'],
         { className: 'osw-events-index-view-tabs' },
-        _React.createElement(
-          _Button,
+        _React['default'].createElement(
+          _Button['default'],
           {
             isSelected: view === 'calendar',
-            onClick: _2.partial(this.update, { view: { $set: 'calendar' } })
+            onClick: _2['default'].partial(this.update, { view: { $set: 'calendar' } })
           },
           'Calendar'
         ),
-        _React.createElement(
-          _Button,
+        _React['default'].createElement(
+          _Button['default'],
           {
             isSelected: view === 'upcoming' || view === 'past',
-            onClick: _2.partial(this.update, { view: { $set: 'upcoming' } })
+            onClick: _2['default'].partial(this.update, { view: { $set: 'upcoming' } })
           },
           'List'
         )
@@ -53006,7 +53007,7 @@ define('components/events/index', ['exports', 'module', 'underscore', 'component
     renderView: function renderView() {
       switch (this.getView()) {
         case 'calendar':
-          return _React.createElement(_Calendar, {
+          return _React['default'].createElement(_Calendar['default'], {
             key: 'calendar',
             weeks: 6,
             events: this.getFilteredEvents(),
@@ -53020,7 +53021,7 @@ define('components/events/index', ['exports', 'module', 'underscore', 'component
             }
           });
         case 'upcoming':
-          return _React.createElement(_List, {
+          return _React['default'].createElement(_List['default'], {
             key: 'upcoming',
             events: this.getFilteredEvents(),
             eventFilters: this.getActiveEventFilters(),
@@ -53032,7 +53033,7 @@ define('components/events/index', ['exports', 'module', 'underscore', 'component
             }
           });
         case 'past':
-          return _React.createElement(_List, {
+          return _React['default'].createElement(_List['default'], {
             key: 'past',
             events: this.getFilteredEvents(),
             eventFilters: this.getActiveEventFilters(),
@@ -53048,25 +53049,25 @@ define('components/events/index', ['exports', 'module', 'underscore', 'component
     },
 
     render: function render() {
-      return _React.createElement(
+      return _React['default'].createElement(
         'div',
         { className: 'osw-events-index' },
-        _React.createElement(
+        _React['default'].createElement(
           'div',
           { className: 'osw-events-index-sidebar' },
-          _React.createElement(
+          _React['default'].createElement(
             'div',
             { className: 'osw-events-index-search' },
-            _React.createElement(
+            _React['default'].createElement(
               'div',
               { className: 'osw-field oswi oswi-magnify' },
-              _React.createElement('input', {
+              _React['default'].createElement('input', {
                 value: this.state.query,
                 onChange: this.handleQueryChange
               })
             )
           ),
-          _React.createElement(_EventFiltersIndex, {
+          _React['default'].createElement(_EventFiltersIndex['default'], {
             url: this.getEventsUrl() + '/filters',
             activeIds: this.props.activeEventFilterIds,
             useSharedHeader: !!this.props.portalId,
@@ -53076,13 +53077,13 @@ define('components/events/index', ['exports', 'module', 'underscore', 'component
             }
           })
         ),
-        _React.createElement(
+        _React['default'].createElement(
           'div',
           { className: this.getMainClassName() },
-          _React.createElement(
+          _React['default'].createElement(
             'div',
             { className: 'osw-events-index-header' },
-            _React.createElement(
+            _React['default'].createElement(
               'div',
               { className: 'osw-events-index-left' },
               this.renderFiltersToggle(),
@@ -53090,7 +53091,7 @@ define('components/events/index', ['exports', 'module', 'underscore', 'component
             ),
             this.renderViewControls()
           ),
-          _React.createElement(
+          _React['default'].createElement(
             'div',
             { className: 'osw-events-index-view' },
             this.renderView()
@@ -53107,21 +53108,21 @@ define('components/ui/text-button', ['exports', 'module', 'components/ui/button'
 
   var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
 
-  function _interopRequire(obj) { return obj && obj.__esModule ? obj['default'] : obj; }
+  function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 
-  var _Button = _interopRequire(_componentsUiButton);
+  var _Button = _interopRequireDefault(_componentsUiButton);
 
-  var _Cursors = _interopRequire(_cursors);
+  var _Cursors = _interopRequireDefault(_cursors);
 
-  var _React = _interopRequire(_react);
+  var _React = _interopRequireDefault(_react);
 
-  module.exports = _React.createClass({
+  module.exports = _React['default'].createClass({
     displayName: 'text-button',
 
-    mixins: [_Cursors],
+    mixins: [_Cursors['default']],
 
     render: function render() {
-      return _React.createElement(_Button, _extends({}, this.props, { baseClassName: 'osw-text-button' }));
+      return _React['default'].createElement(_Button['default'], _extends({}, this.props, { baseClassName: 'osw-text-button' }));
     }
   });
 });
@@ -53129,23 +53130,23 @@ define('components/ui/text-button', ['exports', 'module', 'components/ui/button'
 define('components/files/breadcrumb', ['exports', 'module', 'underscore', 'cursors', 'react', 'components/ui/text-button'], function (exports, module, _underscore, _cursors, _react, _componentsUiTextButton) {
   'use strict';
 
-  function _interopRequire(obj) { return obj && obj.__esModule ? obj['default'] : obj; }
+  function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 
-  var _2 = _interopRequire(_underscore);
+  var _2 = _interopRequireDefault(_underscore);
 
-  var _Cursors = _interopRequire(_cursors);
+  var _Cursors = _interopRequireDefault(_cursors);
 
-  var _React = _interopRequire(_react);
+  var _React = _interopRequireDefault(_react);
 
-  var _TextButton = _interopRequire(_componentsUiTextButton);
+  var _TextButton = _interopRequireDefault(_componentsUiTextButton);
 
-  module.exports = _React.createClass({
+  module.exports = _React['default'].createClass({
     displayName: 'breadcrumb',
 
-    mixins: [_Cursors],
+    mixins: [_Cursors['default']],
 
     getIndex: function getIndex() {
-      return _2.indexOf(this.state.path, this.props.file.id);
+      return _2['default'].indexOf(this.state.path, this.props.file.id);
     },
 
     splicePath: function splicePath() {
@@ -53153,12 +53154,12 @@ define('components/files/breadcrumb', ['exports', 'module', 'underscore', 'curso
     },
 
     render: function render() {
-      return _React.createElement(
+      return _React['default'].createElement(
         'span',
         null,
         this.getIndex() > 0 ? ' / ' : '',
-        _React.createElement(
-          _TextButton,
+        _React['default'].createElement(
+          _TextButton['default'],
           { onClick: this.splicePath },
           this.props.file.name
         )
@@ -53174,9 +53175,9 @@ define('entities/file', ['exports', 'underscore'], function (exports, _underscor
     value: true
   });
 
-  function _interopRequire(obj) { return obj && obj.__esModule ? obj['default'] : obj; }
+  function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 
-  var _2 = _interopRequire(_underscore);
+  var _2 = _interopRequireDefault(_underscore);
 
   var ALIASES = {
     Document: 'doc',
@@ -53198,9 +53199,9 @@ define('entities/file', ['exports', 'underscore'], function (exports, _underscor
 
   exports.getPictureUrl = getPictureUrl;
   var getHumanFileSize = function getHumanFileSize(bytes) {
-    var unit = _2.find(UNITS, function (unit) {
+    var unit = _2['default'].find(UNITS, function (unit) {
       return bytes >= unit.bytes;
-    }) || _2.last(UNITS);
+    }) || _2['default'].last(UNITS);
     return '' + Math.ceil(bytes / unit.bytes * 10) / 10 + ' ' + unit.name;
   };
   exports.getHumanFileSize = getHumanFileSize;
@@ -53209,40 +53210,40 @@ define('entities/file', ['exports', 'underscore'], function (exports, _underscor
 define('components/files/file-show', ['exports', 'module', 'underscore', 'api', 'components/ui/button', 'components/comments/index', 'cursors', 'moment', 'react', 'components/ui/text-button', 'entities/file'], function (exports, module, _underscore, _api, _componentsUiButton, _componentsCommentsIndex, _cursors, _moment, _react, _componentsUiTextButton, _entitiesFile) {
   'use strict';
 
-  function _interopRequire(obj) { return obj && obj.__esModule ? obj['default'] : obj; }
+  function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 
-  var _2 = _interopRequire(_underscore);
+  var _2 = _interopRequireDefault(_underscore);
 
-  var _api2 = _interopRequire(_api);
+  var _api2 = _interopRequireDefault(_api);
 
-  var _Button = _interopRequire(_componentsUiButton);
+  var _Button = _interopRequireDefault(_componentsUiButton);
 
-  var _CommentsIndex = _interopRequire(_componentsCommentsIndex);
+  var _CommentsIndex = _interopRequireDefault(_componentsCommentsIndex);
 
-  var _Cursors = _interopRequire(_cursors);
+  var _Cursors = _interopRequireDefault(_cursors);
 
-  var _moment2 = _interopRequire(_moment);
+  var _moment2 = _interopRequireDefault(_moment);
 
-  var _React = _interopRequire(_react);
+  var _React = _interopRequireDefault(_react);
 
-  var _TextButton = _interopRequire(_componentsUiTextButton);
+  var _TextButton = _interopRequireDefault(_componentsUiTextButton);
 
   var FORMAT = function FORMAT(iso) {
-    return _moment2(iso).format('MMM D, YYYY, h:mm A');
+    return (0, _moment2['default'])(iso).format('MMM D, YYYY, h:mm A');
   };
 
-  module.exports = _React.createClass({
+  module.exports = _React['default'].createClass({
     displayName: 'file-show',
 
-    mixins: [_Cursors],
+    mixins: [_Cursors['default']],
 
     componentWillMount: function componentWillMount() {
       this.fetch();
     },
 
     fetch: function fetch() {
-      _api2.get(this.state.file.links.show, this.handleFetch);
-      _api2.get(this.state.file.links.versions, this.handleVersionsFetch);
+      _api2['default'].get(this.state.file.links.show, this.handleFetch);
+      _api2['default'].get(this.state.file.links.versions, this.handleVersionsFetch);
     },
 
     handleFetch: function handleFetch(er, res) {
@@ -53257,10 +53258,10 @@ define('components/files/file-show', ['exports', 'module', 'underscore', 'api', 
       var val = this.state.file[key];
       if (!val) return;
       if (isDate) val = FORMAT(val);
-      return _React.createElement(
+      return _React['default'].createElement(
         'div',
         { className: 'osw-files-file-show-detail' },
-        _React.createElement(
+        _React['default'].createElement(
           'strong',
           null,
           '' + label + ':'
@@ -53272,10 +53273,10 @@ define('components/files/file-show', ['exports', 'module', 'underscore', 'api', 
     renderDescription: function renderDescription() {
       var description = this.state.file.description;
       if (!description) return;
-      return _React.createElement(
+      return _React['default'].createElement(
         'div',
         { className: 'osw-files-file-show-section' },
-        _React.createElement(
+        _React['default'].createElement(
           'div',
           { className: 'osw-files-file-show-header' },
           'Description'
@@ -53285,49 +53286,49 @@ define('components/files/file-show', ['exports', 'module', 'underscore', 'api', 
     },
 
     renderVersion: function renderVersion(version) {
-      return [_React.createElement(
+      return [_React['default'].createElement(
         'tr',
         { key: version.id },
-        _React.createElement(
+        _React['default'].createElement(
           'td',
           null,
           FORMAT(version.created_at)
         ),
-        _React.createElement(
+        _React['default'].createElement(
           'td',
           null,
           version.account.display_name
         ),
-        _React.createElement(
+        _React['default'].createElement(
           'td',
           null,
           version.file_name
         ),
-        _React.createElement(
+        _React['default'].createElement(
           'td',
           null,
-          _React.createElement(
-            _Button,
+          _React['default'].createElement(
+            _Button['default'],
             { href: version.links.download },
-            'Download ' + _entitiesFile.getHumanFileSize(version.file_size)
+            'Download ' + (0, _entitiesFile.getHumanFileSize)(version.file_size)
           )
         )
-      )].concat(version.description ? _React.createElement(
+      )].concat(version.description ? _React['default'].createElement(
         'tr',
         {
           key: '' + version.id + '-description',
           className: 'osw-files-file-show-version-description'
         },
-        _React.createElement('td', null),
-        _React.createElement(
+        _React['default'].createElement('td', null),
+        _React['default'].createElement(
           'td',
           { colSpan: '4' },
-          _React.createElement(
+          _React['default'].createElement(
             'strong',
             null,
             'Version Notes'
           ),
-          _React.createElement('br', null),
+          _React['default'].createElement('br', null),
           version.description
         )
       ) : []);
@@ -53336,45 +53337,45 @@ define('components/files/file-show', ['exports', 'module', 'underscore', 'api', 
     renderVersions: function renderVersions() {
       var versions = this.state.file.versions;
       if (!versions.length) return;
-      return _React.createElement(
+      return _React['default'].createElement(
         'div',
         { className: 'osw-files-file-show-section' },
-        _React.createElement(
+        _React['default'].createElement(
           'div',
           { className: 'osw-files-file-show-header' },
           'Versions'
         ),
-        _React.createElement(
+        _React['default'].createElement(
           'table',
           { className: 'osw-files-file-show-versions' },
-          _React.createElement(
+          _React['default'].createElement(
             'thead',
             null,
-            _React.createElement(
+            _React['default'].createElement(
               'tr',
               null,
-              _React.createElement(
+              _React['default'].createElement(
                 'th',
                 null,
                 'Created'
               ),
-              _React.createElement(
+              _React['default'].createElement(
                 'th',
                 null,
                 'Added by'
               ),
-              _React.createElement(
+              _React['default'].createElement(
                 'th',
                 null,
                 'Filename'
               ),
-              _React.createElement('th', null)
+              _React['default'].createElement('th', null)
             )
           ),
-          _React.createElement(
+          _React['default'].createElement(
             'tbody',
             null,
-            _2.map(versions, this.renderVersion)
+            _2['default'].map(versions, this.renderVersion)
           )
         )
       );
@@ -53382,17 +53383,17 @@ define('components/files/file-show', ['exports', 'module', 'underscore', 'api', 
 
     render: function render() {
       var file = this.state.file;
-      return _React.createElement(
+      return _React['default'].createElement(
         'div',
         { className: 'osw-files-file-show' },
-        _React.createElement(
+        _React['default'].createElement(
           'div',
           { className: 'osw-files-file-show-info' },
-          _React.createElement('div', {
+          _React['default'].createElement('div', {
             className: 'osw-files-file-show-picture',
-            style: { backgroundImage: 'url(\'' + _entitiesFile.getPictureUrl(file) + '\')' }
+            style: { backgroundImage: 'url(\'' + (0, _entitiesFile.getPictureUrl)(file) + '\')' }
           }),
-          _React.createElement(
+          _React['default'].createElement(
             'div',
             { className: 'osw-files-file-show-name' },
             file.name
@@ -53400,27 +53401,27 @@ define('components/files/file-show', ['exports', 'module', 'underscore', 'api', 
           this.renderDetail('Filename', 'file_name'),
           this.renderDetail('Created', 'created_at', true),
           this.renderDetail('Updated', 'updated_at', true),
-          _React.createElement(
-            _Button,
+          _React['default'].createElement(
+            _Button['default'],
             {
               className: 'osw-files-file-show-download',
               href: file.links.download
             },
             'Download ',
-            _entitiesFile.getHumanFileSize(file.file_size)
+            (0, _entitiesFile.getHumanFileSize)(file.file_size)
           )
         ),
         this.renderDescription(),
         this.renderVersions(),
-        _React.createElement(
+        _React['default'].createElement(
           'div',
           { className: 'osw-files-file-show-section' },
-          _React.createElement(
+          _React['default'].createElement(
             'div',
             { className: 'osw-files-file-show-header' },
             'Comments'
           ),
-          _React.createElement(_CommentsIndex, {
+          _React['default'].createElement(_CommentsIndex['default'], {
             url: file.links.comments,
             newUrl: file.links.web,
             cursors: { comments: this.getCursor('file', 'comments') }
@@ -53434,24 +53435,24 @@ define('components/files/file-show', ['exports', 'module', 'underscore', 'api', 
 define('components/files/list-item', ['exports', 'module', 'cursors', 'entities/file', 'moment', 'react', 'components/ui/sep', 'components/ui/text-button'], function (exports, module, _cursors, _entitiesFile, _moment, _react, _componentsUiSep, _componentsUiTextButton) {
   'use strict';
 
-  function _interopRequire(obj) { return obj && obj.__esModule ? obj['default'] : obj; }
+  function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 
-  var _Cursors = _interopRequire(_cursors);
+  var _Cursors = _interopRequireDefault(_cursors);
 
-  var _moment2 = _interopRequire(_moment);
+  var _moment2 = _interopRequireDefault(_moment);
 
-  var _React = _interopRequire(_react);
+  var _React = _interopRequireDefault(_react);
 
-  var _Sep = _interopRequire(_componentsUiSep);
+  var _Sep = _interopRequireDefault(_componentsUiSep);
 
-  var _TextButton = _interopRequire(_componentsUiTextButton);
+  var _TextButton = _interopRequireDefault(_componentsUiTextButton);
 
   var FORMAT = 'MMM D, YYYY, h:mm A';
 
-  module.exports = _React.createClass({
+  module.exports = _React['default'].createClass({
     displayName: 'list-item',
 
-    mixins: [_Cursors],
+    mixins: [_Cursors['default']],
 
     pushPath: function pushPath() {
       this.update({ path: { $push: [this.state.file.id] } });
@@ -53466,7 +53467,7 @@ define('components/files/list-item', ['exports', 'module', 'cursors', 'entities/
       if (!this.state.file.is_pinned) {
         classes.push('osw-files-list-item-pin-hidden');
       }
-      return _React.createElement('div', { className: classes.join(' ') });
+      return _React['default'].createElement('div', { className: classes.join(' ') });
     },
 
     renderCount: function renderCount() {
@@ -53474,8 +53475,8 @@ define('components/files/list-item', ['exports', 'module', 'cursors', 'entities/
     },
 
     renderDownload: function renderDownload() {
-      return _React.createElement(
-        _TextButton,
+      return _React['default'].createElement(
+        _TextButton['default'],
         {
           className: 'osw-files-list-item-download',
           href: this.state.file.links.download,
@@ -53487,35 +53488,35 @@ define('components/files/list-item', ['exports', 'module', 'cursors', 'entities/
 
     render: function render() {
       var file = this.state.file;
-      return _React.createElement(
+      return _React['default'].createElement(
         'div',
         { className: 'osw-files-list-item', onClick: this.pushPath },
-        _React.createElement(
+        _React['default'].createElement(
           'div',
           { className: 'osw-files-list-item-left' },
           this.renderPin(),
-          _React.createElement('div', {
+          _React['default'].createElement('div', {
             className: 'osw-files-list-item-picture',
-            style: { backgroundImage: 'url(\'' + _entitiesFile.getPictureUrl(file) + '\')' }
+            style: { backgroundImage: 'url(\'' + (0, _entitiesFile.getPictureUrl)(file) + '\')' }
           })
         ),
-        _React.createElement(
+        _React['default'].createElement(
           'div',
           { className: 'osw-files-list-item-info' },
-          _React.createElement(
+          _React['default'].createElement(
             'div',
             { className: 'osw-files-list-item-name' },
             file.name
           ),
-          _React.createElement(
+          _React['default'].createElement(
             'div',
             { className: 'osw-files-list-item-date' },
-            _React.createElement(
+            _React['default'].createElement(
               'span',
               null,
-              _moment2(file.updated_at).format(FORMAT)
+              (0, _moment2['default'])(file.updated_at).format(FORMAT)
             ),
-            _React.createElement(_Sep, null),
+            _React['default'].createElement(_Sep['default'], null),
             file.type === 'folder' ? this.renderCount() : this.renderDownload()
           )
         )
@@ -53527,26 +53528,26 @@ define('components/files/list-item', ['exports', 'module', 'cursors', 'entities/
 define('components/files/folder-show', ['exports', 'module', 'underscore', 'api', 'cursors', 'react-list', 'components/files/list-item', 'react'], function (exports, module, _underscore, _api, _cursors, _reactList, _componentsFilesListItem, _react) {
   'use strict';
 
-  function _interopRequire(obj) { return obj && obj.__esModule ? obj['default'] : obj; }
+  function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 
-  var _2 = _interopRequire(_underscore);
+  var _2 = _interopRequireDefault(_underscore);
 
-  var _api2 = _interopRequire(_api);
+  var _api2 = _interopRequireDefault(_api);
 
-  var _Cursors = _interopRequire(_cursors);
+  var _Cursors = _interopRequireDefault(_cursors);
 
-  var _List = _interopRequire(_reactList);
+  var _List = _interopRequireDefault(_reactList);
 
-  var _FilesListItem = _interopRequire(_componentsFilesListItem);
+  var _FilesListItem = _interopRequireDefault(_componentsFilesListItem);
 
-  var _React = _interopRequire(_react);
+  var _React = _interopRequireDefault(_react);
 
   var PER_PAGE = 100;
 
-  module.exports = _React.createClass({
+  module.exports = _React['default'].createClass({
     displayName: 'folder-show',
 
-    mixins: [_Cursors],
+    mixins: [_Cursors['default']],
 
     getFiles: function getFiles() {
       return this.state.file.files || [];
@@ -53556,20 +53557,20 @@ define('components/files/folder-show', ['exports', 'module', 'underscore', 'api'
       var folder = this.state.file;
       var path = '/portals/:portal_id/files';
       if (folder.id) path += '/:id/contents';
-      _api2.get(path, _2.extend({
+      _api2['default'].get(path, _2['default'].extend({
         portal_id: folder.portal.id,
         id: folder.id || void 0,
         page: Math.floor(this.getFiles().length / PER_PAGE) + 1,
         per_page: PER_PAGE
-      }), _2.partial(this.handleFetch, cb));
+      }), _2['default'].partial(this.handleFetch, cb));
     },
 
     handleFetch: function handleFetch(cb, er, res) {
       var _this = this;
 
       if (er) return cb(er);
-      var files = _2.chain(this.getFiles().concat(res.data)).unique('id').map(function (file) {
-        return _2.extend({}, file, {
+      var files = _2['default'].chain(this.getFiles().concat(res.data)).unique('id').map(function (file) {
+        return _2['default'].extend({}, file, {
           portal: _this.state.file.portal,
           comments: [],
           versions: []
@@ -53581,7 +53582,7 @@ define('components/files/folder-show', ['exports', 'module', 'underscore', 'api'
 
     renderListItem: function renderListItem(file) {
       var i = this.getFiles().indexOf(file);
-      return _React.createElement(_FilesListItem, {
+      return _React['default'].createElement(_FilesListItem['default'], {
         key: file.id,
         cursors: {
           path: this.getCursor('path'),
@@ -53591,7 +53592,7 @@ define('components/files/folder-show', ['exports', 'module', 'underscore', 'api'
     },
 
     render: function render() {
-      return _React.createElement(_List, {
+      return _React['default'].createElement(_List['default'], {
         className: 'osw-files-folder-show',
         items: this.getFiles(),
         renderItem: this.renderListItem,
@@ -53605,26 +53606,26 @@ define('components/files/folder-show', ['exports', 'module', 'underscore', 'api'
 define('components/files/index', ['exports', 'module', 'underscore', 'components/files/breadcrumb', 'cursors', 'components/files/file-show', 'components/files/folder-show', 'react'], function (exports, module, _underscore, _componentsFilesBreadcrumb, _cursors, _componentsFilesFileShow, _componentsFilesFolderShow, _react) {
   'use strict';
 
-  function _interopRequire(obj) { return obj && obj.__esModule ? obj['default'] : obj; }
+  function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 
-  var _2 = _interopRequire(_underscore);
+  var _2 = _interopRequireDefault(_underscore);
 
-  var _Breadcrumb = _interopRequire(_componentsFilesBreadcrumb);
+  var _Breadcrumb = _interopRequireDefault(_componentsFilesBreadcrumb);
 
-  var _Cursors = _interopRequire(_cursors);
+  var _Cursors = _interopRequireDefault(_cursors);
 
-  var _FileShow = _interopRequire(_componentsFilesFileShow);
+  var _FileShow = _interopRequireDefault(_componentsFilesFileShow);
 
-  var _FolderShow = _interopRequire(_componentsFilesFolderShow);
+  var _FolderShow = _interopRequireDefault(_componentsFilesFolderShow);
 
-  var _React = _interopRequire(_react);
+  var _React = _interopRequireDefault(_react);
 
-  var CSSTransitionGroup = _React.addons.CSSTransitionGroup;
+  var CSSTransitionGroup = _React['default'].addons.CSSTransitionGroup;
 
-  module.exports = _React.createClass({
+  module.exports = _React['default'].createClass({
     displayName: 'index',
 
-    mixins: [_Cursors],
+    mixins: [_Cursors['default']],
 
     getInitialState: function getInitialState() {
       return {
@@ -53658,7 +53659,7 @@ define('components/files/index', ['exports', 'module', 'underscore', 'components
     },
 
     renderBreadCrumb: function renderBreadCrumb(file) {
-      return _React.createElement(_Breadcrumb, {
+      return _React['default'].createElement(_Breadcrumb['default'], {
         key: file.id,
         file: file,
         cursors: { path: this.getCursor('path') }
@@ -53666,17 +53667,17 @@ define('components/files/index', ['exports', 'module', 'underscore', 'components
     },
 
     getFile: function getFile() {
-      return _2.reduce(this.state.path, function (file, id) {
-        return _2.find(file.files, { id: id });
+      return _2['default'].reduce(this.state.path, function (file, id) {
+        return _2['default'].find(file.files, { id: id });
       }, this.state.root);
     },
 
     getCursorPath: function getCursorPath() {
       var file = this.state.root;
-      return _2.reduce(this.state.path, function (path, id) {
+      return _2['default'].reduce(this.state.path, function (path, id) {
         var files = file.files;
-        file = _2.find(files, { id: id });
-        return path.concat('files', _2.indexOf(files, file));
+        file = _2['default'].find(files, { id: id });
+        return path.concat('files', _2['default'].indexOf(files, file));
       }, []);
     },
 
@@ -53684,33 +53685,33 @@ define('components/files/index', ['exports', 'module', 'underscore', 'components
       var _this = this;
 
       var file = this.state.root;
-      return _2.map(this.state.path, function (id) {
-        return _this.renderBreadCrumb(file = _2.find(file.files, { id: id }));
+      return _2['default'].map(this.state.path, function (id) {
+        return _this.renderBreadCrumb(file = _2['default'].find(file.files, { id: id }));
       });
     },
 
     render: function render() {
       var file = this.getFile();
-      var Show = file.type === 'folder' ? _FolderShow : _FileShow;
-      return _React.createElement(
+      var Show = file.type === 'folder' ? _FolderShow['default'] : _FileShow['default'];
+      return _React['default'].createElement(
         'div',
         { className: 'osw-files-index' },
-        _React.createElement(
+        _React['default'].createElement(
           'div',
           { className: 'osw-files-index-header' },
           this.renderBreadCrumbs()
         ),
-        _React.createElement(
+        _React['default'].createElement(
           CSSTransitionGroup,
           {
             component: 'div',
             transitionName: 'osw-files-slide-' + this.getDirection(),
             className: 'osw-files-index-pages'
           },
-          _React.createElement(
+          _React['default'].createElement(
             'div',
             { key: file.id, className: 'osw-files-index-page' },
-            _React.createElement(Show, {
+            _React['default'].createElement(Show, {
               cursors: {
                 file: this.getCursor('root', this.getCursorPath()),
                 path: this.getCursor('path')
@@ -53728,25 +53729,25 @@ define('components/shared/category-selector', ['exports', 'module', 'cursors', '
 
   var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
 
-  function _interopRequire(obj) { return obj && obj.__esModule ? obj['default'] : obj; }
+  function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 
-  var _Cursors = _interopRequire(_cursors);
+  var _Cursors = _interopRequireDefault(_cursors);
 
-  var _FacetedSelector = _interopRequire(_componentsSharedFacetedSelector);
+  var _FacetedSelector = _interopRequireDefault(_componentsSharedFacetedSelector);
 
-  var _joinClassNames = _interopRequire(_utilsJoinClassNames);
+  var _joinClassNames = _interopRequireDefault(_utilsJoinClassNames);
 
-  var _React = _interopRequire(_react);
+  var _React = _interopRequireDefault(_react);
 
-  module.exports = _React.createClass({
+  module.exports = _React['default'].createClass({
     displayName: 'category-selector',
 
-    mixins: [_Cursors],
+    mixins: [_Cursors['default']],
 
     propTypes: {
-      objects: _React.PropTypes.array.isRequired,
-      onChange: _React.PropTypes.func.isRequired,
-      showMatchCount: _React.PropTypes.bool
+      objects: _React['default'].PropTypes.array.isRequired,
+      onChange: _React['default'].PropTypes.func.isRequired,
+      showMatchCount: _React['default'].PropTypes.bool
     },
 
     getFacet: function getFacet(object) {
@@ -53754,9 +53755,9 @@ define('components/shared/category-selector', ['exports', 'module', 'cursors', '
     },
 
     render: function render() {
-      return _React.createElement(_FacetedSelector, _extends({}, this.props, {
+      return _React['default'].createElement(_FacetedSelector['default'], _extends({}, this.props, {
         allOption: 'All Categories',
-        className: _joinClassNames('oswi-book', this.props.className),
+        className: (0, _joinClassNames['default'])('oswi-book', this.props.className),
         getFacet: this.getFacet,
         name: 'category'
       }));
@@ -53769,25 +53770,25 @@ define('components/forms/filters', ['exports', 'module', 'components/shared/cate
 
   var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
 
-  function _interopRequire(obj) { return obj && obj.__esModule ? obj['default'] : obj; }
+  function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 
-  var _CategorySelector = _interopRequire(_componentsSharedCategorySelector);
+  var _CategorySelector = _interopRequireDefault(_componentsSharedCategorySelector);
 
-  var _Cursors = _interopRequire(_cursors);
+  var _Cursors = _interopRequireDefault(_cursors);
 
-  var _Query = _interopRequire(_componentsSharedQuery);
+  var _Query = _interopRequireDefault(_componentsSharedQuery);
 
-  var _React = _interopRequire(_react);
+  var _React = _interopRequireDefault(_react);
 
-  var _Summary = _interopRequire(_componentsSharedSummary);
+  var _Summary = _interopRequireDefault(_componentsSharedSummary);
 
-  module.exports = _React.createClass({
+  module.exports = _React['default'].createClass({
     displayName: 'filters',
 
-    mixins: [_Cursors],
+    mixins: [_Cursors['default']],
 
     propTypes: {
-      objects: _React.PropTypes.array
+      objects: _React['default'].PropTypes.array
     },
 
     handleChange: function handleChange(ev) {
@@ -53797,17 +53798,17 @@ define('components/forms/filters', ['exports', 'module', 'components/shared/cate
     },
 
     render: function render() {
-      return _React.createElement(
+      return _React['default'].createElement(
         'div',
         { className: 'osw-forms-filters' },
-        _React.createElement(_Query, { value: this.state.query, onChange: this.handleChange }),
-        _React.createElement(_CategorySelector, {
+        _React['default'].createElement(_Query['default'], { value: this.state.query, onChange: this.handleChange }),
+        _React['default'].createElement(_CategorySelector['default'], {
           objects: this.props.forms,
           onChange: this.handleChange,
           showMatchCount: false,
           value: this.state.category
         }),
-        _React.createElement(_Summary, _extends({}, this.props, {
+        _React['default'].createElement(_Summary['default'], _extends({}, this.props, {
           filterKeys: ['query', 'category'],
           objects: this.props.forms,
           showMessage: false
@@ -53820,40 +53821,40 @@ define('components/forms/filters', ['exports', 'module', 'components/shared/cate
 define('components/shared/created-by', ['exports', 'module', 'moment', 'react', 'entities/account'], function (exports, module, _moment, _react, _entitiesAccount) {
   'use strict';
 
-  function _interopRequire(obj) { return obj && obj.__esModule ? obj['default'] : obj; }
+  function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 
-  var _moment2 = _interopRequire(_moment);
+  var _moment2 = _interopRequireDefault(_moment);
 
-  var _React = _interopRequire(_react);
+  var _React = _interopRequireDefault(_react);
 
-  module.exports = _React.createClass({
+  module.exports = _React['default'].createClass({
     displayName: 'created-by',
 
     propTypes: {
-      account: _React.PropTypes.object.isRequired,
-      createdAt: _React.PropTypes.string
+      account: _React['default'].PropTypes.object.isRequired,
+      createdAt: _React['default'].PropTypes.string
     },
 
     render: function render() {
-      return _React.createElement(
+      return _React['default'].createElement(
         'div',
         { className: 'osw-media' },
-        _React.createElement(
+        _React['default'].createElement(
           'div',
           { className: 'osw-pull-left' },
-          _React.createElement('img', {
-            src: _entitiesAccount.getPictureUrl(this.props.account)
+          _React['default'].createElement('img', {
+            src: (0, _entitiesAccount.getPictureUrl)(this.props.account)
           })
         ),
-        _React.createElement(
+        _React['default'].createElement(
           'div',
           { className: 'osw-media-body' },
           this.props.account.display_name,
-          _React.createElement('br', null),
-          _React.createElement(
+          _React['default'].createElement('br', null),
+          _React['default'].createElement(
             'span',
             { className: 'subtle-text' },
-            _moment2(this.props.createdAt).fromNow()
+            (0, _moment2['default'])(this.props.createdAt).fromNow()
           )
         )
       );
@@ -53864,24 +53865,24 @@ define('components/shared/created-by', ['exports', 'module', 'moment', 'react', 
 define('components/forms/show', ['exports', 'module', 'api', 'components/ui/button', 'components/ui/button-row', 'cursors', 'components/shared/created-by', 'react'], function (exports, module, _api, _componentsUiButton, _componentsUiButtonRow, _cursors, _componentsSharedCreatedBy, _react) {
   'use strict';
 
-  function _interopRequire(obj) { return obj && obj.__esModule ? obj['default'] : obj; }
+  function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 
-  var _api2 = _interopRequire(_api);
+  var _api2 = _interopRequireDefault(_api);
 
-  var _Button = _interopRequire(_componentsUiButton);
+  var _Button = _interopRequireDefault(_componentsUiButton);
 
-  var _ButtonRow = _interopRequire(_componentsUiButtonRow);
+  var _ButtonRow = _interopRequireDefault(_componentsUiButtonRow);
 
-  var _Cursors = _interopRequire(_cursors);
+  var _Cursors = _interopRequireDefault(_cursors);
 
-  var _CreatedBy = _interopRequire(_componentsSharedCreatedBy);
+  var _CreatedBy = _interopRequireDefault(_componentsSharedCreatedBy);
 
-  var _React = _interopRequire(_react);
+  var _React = _interopRequireDefault(_react);
 
-  module.exports = _React.createClass({
+  module.exports = _React['default'].createClass({
     displayName: 'show',
 
-    mixins: [_Cursors],
+    mixins: [_Cursors['default']],
 
     getInitialState: function getInitialState() {
       return {
@@ -53894,7 +53895,7 @@ define('components/forms/show', ['exports', 'module', 'api', 'components/ui/butt
       var form = this.state.form;
       if (form.description != null) return;
       this.update({ isLoading: { $set: true }, error: { $set: null } });
-      _api2.get('/portals/:portal_id/forms/:id', { portal_id: form.portal.id, id: form.id }, this.handleFetch);
+      _api2['default'].get('/portals/:portal_id/forms/:id', { portal_id: form.portal.id, id: form.id }, this.handleFetch);
     },
 
     handleFetch: function handleFetch(er, res) {
@@ -53910,35 +53911,35 @@ define('components/forms/show', ['exports', 'module', 'api', 'components/ui/butt
 
     render: function render() {
       var form = this.state.form;
-      return _React.createElement(
+      return _React['default'].createElement(
         'div',
         { className: 'osw-forms-show' },
-        _React.createElement(
+        _React['default'].createElement(
           'div',
           { className: 'osw-forms-show-name' },
           form.name
         ),
-        _React.createElement(
+        _React['default'].createElement(
           'div',
           { className: 'osw-forms-show-category' },
           form.category.name
         ),
-        _React.createElement(_CreatedBy, { account: form.creator, createdAt: form.created_at }),
-        _React.createElement(
+        _React['default'].createElement(_CreatedBy['default'], { account: form.creator, createdAt: form.created_at }),
+        _React['default'].createElement(
           'div',
           { className: 'osw-forms-show-description' },
           this.renderDescription(form.description)
         ),
-        _React.createElement(
-          _ButtonRow,
+        _React['default'].createElement(
+          _ButtonRow['default'],
           null,
-          _React.createElement(
-            _Button,
+          _React['default'].createElement(
+            _Button['default'],
             { href: form.links.web, target: '_parent' },
             'On OrgSync.com'
           ),
-          _React.createElement(
-            _Button,
+          _React['default'].createElement(
+            _Button['default'],
             { href: form.links.pdf_link, target: '_parent' },
             'PDF'
           )
@@ -53951,29 +53952,29 @@ define('components/forms/show', ['exports', 'module', 'api', 'components/ui/butt
 define('components/forms/list-item', ['exports', 'module', 'cursors', 'moment', 'components/ui/popup', 'react', 'components/ui/sep', 'components/forms/show'], function (exports, module, _cursors, _moment, _componentsUiPopup, _react, _componentsUiSep, _componentsFormsShow) {
   'use strict';
 
-  function _interopRequire(obj) { return obj && obj.__esModule ? obj['default'] : obj; }
+  function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 
-  var _Cursors = _interopRequire(_cursors);
+  var _Cursors = _interopRequireDefault(_cursors);
 
-  var _moment2 = _interopRequire(_moment);
+  var _moment2 = _interopRequireDefault(_moment);
 
-  var _Popup = _interopRequire(_componentsUiPopup);
+  var _Popup = _interopRequireDefault(_componentsUiPopup);
 
-  var _React = _interopRequire(_react);
+  var _React = _interopRequireDefault(_react);
 
-  var _Sep = _interopRequire(_componentsUiSep);
+  var _Sep = _interopRequireDefault(_componentsUiSep);
 
-  var _Show = _interopRequire(_componentsFormsShow);
+  var _Show = _interopRequireDefault(_componentsFormsShow);
 
   var FORMAT = 'MMM D, YYYY';
 
-  module.exports = _React.createClass({
+  module.exports = _React['default'].createClass({
     displayName: 'list-item',
 
-    mixins: [_Cursors],
+    mixins: [_Cursors['default']],
 
     propTypes: {
-      key: _React.PropTypes.number
+      key: _React['default'].PropTypes.number
     },
 
     getInitialState: function getInitialState() {
@@ -53992,12 +53993,12 @@ define('components/forms/list-item', ['exports', 'module', 'cursors', 'moment', 
 
     renderShow: function renderShow() {
       if (!this.state.showIsOpen) return;
-      return _React.createElement(_Show, { cursors: { form: this.getCursor('form') } });
+      return _React['default'].createElement(_Show['default'], { cursors: { form: this.getCursor('form') } });
     },
 
     renderShowPopup: function renderShowPopup() {
-      return _React.createElement(
-        _Popup,
+      return _React['default'].createElement(
+        _Popup['default'],
         {
           close: this.closeShow,
           name: 'forms-show',
@@ -54011,40 +54012,40 @@ define('components/forms/list-item', ['exports', 'module', 'cursors', 'moment', 
       if (!this.state.form.important) {
         classes.push('osw-files-list-item-pin-hidden');
       }
-      return _React.createElement('div', { className: classes.join(' ') });
+      return _React['default'].createElement('div', { className: classes.join(' ') });
     },
 
     render: function render() {
       var form = this.state.form;
-      return _React.createElement(
+      return _React['default'].createElement(
         'div',
         { className: 'osw-files-list-item', onClick: this.openShow },
-        _React.createElement(
+        _React['default'].createElement(
           'div',
           { style: { float: 'left', padding: '10px' } },
           this.renderPin()
         ),
-        _React.createElement(
+        _React['default'].createElement(
           'div',
           { className: 'osw-files-list-item-info', style: { float: 'left' } },
-          _React.createElement(
+          _React['default'].createElement(
             'div',
             { className: 'osw-files-list-item-name' },
             form.name,
-            _React.createElement(_Sep, null),
-            _React.createElement(
+            _React['default'].createElement(_Sep['default'], null),
+            _React['default'].createElement(
               'span',
               { className: 'osw-forms-list-item-category' },
               form.category.name
             )
           ),
-          _React.createElement(
+          _React['default'].createElement(
             'div',
             { className: 'osw-files-list-item-date' },
-            _React.createElement(
+            _React['default'].createElement(
               'span',
               null,
-              _moment2(form.last_activity_at).format(FORMAT)
+              (0, _moment2['default'])(form.last_activity_at).format(FORMAT)
             )
           )
         ),
@@ -54059,39 +54060,39 @@ define('components/forms/index', ['exports', 'module', 'underscore', 'underscore
 
   var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
 
-  function _interopRequire(obj) { return obj && obj.__esModule ? obj['default'] : obj; }
+  function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 
-  var _2 = _interopRequire(_underscore);
+  var _2 = _interopRequireDefault(_underscore);
 
-  var _str2 = _interopRequire(_underscoreString);
+  var _str2 = _interopRequireDefault(_underscoreString);
 
-  var _api2 = _interopRequire(_api);
+  var _api2 = _interopRequireDefault(_api);
 
-  var _Cursors = _interopRequire(_cursors);
+  var _Cursors = _interopRequireDefault(_cursors);
 
-  var _Empty = _interopRequire(_componentsSharedEmpty);
+  var _Empty = _interopRequireDefault(_componentsSharedEmpty);
 
-  var _ErrorBlock = _interopRequire(_componentsUiErrorBlock);
+  var _ErrorBlock = _interopRequireDefault(_componentsUiErrorBlock);
 
-  var _Filters = _interopRequire(_componentsFormsFilters);
+  var _Filters = _interopRequireDefault(_componentsFormsFilters);
 
-  var _FormsListItem = _interopRequire(_componentsFormsListItem);
+  var _FormsListItem = _interopRequireDefault(_componentsFormsListItem);
 
-  var _List = _interopRequire(_reactList);
+  var _List = _interopRequireDefault(_reactList);
 
-  var _LoadingBlock = _interopRequire(_componentsUiLoadingBlock);
+  var _LoadingBlock = _interopRequireDefault(_componentsUiLoadingBlock);
 
-  var _React = _interopRequire(_react);
+  var _React = _interopRequireDefault(_react);
 
   var PER_PAGE = 10;
 
-  module.exports = _React.createClass({
+  module.exports = _React['default'].createClass({
     displayName: 'index',
 
-    mixins: [_Cursors],
+    mixins: [_Cursors['default']],
 
     propTypes: {
-      portalId: _React.PropTypes.number
+      portalId: _React['default'].PropTypes.number
     },
 
     getDefaultProps: function getDefaultProps() {
@@ -54117,17 +54118,17 @@ define('components/forms/index', ['exports', 'module', 'underscore', 'underscore
     },
 
     fetch: function fetch(cb) {
-      _api2.get('/portals/:portal_id/forms', {
+      _api2['default'].get('/portals/:portal_id/forms', {
         portal_id: this.props.portalId,
         page: Math.floor(this.state.forms.length / PER_PAGE) + 1,
         per_page: PER_PAGE
-      }, _2.partial(this.handleFetch, cb));
+      }, _2['default'].partial(this.handleFetch, cb));
     },
 
     handleFetch: function handleFetch(cb, er, res) {
       if (er) return cb(er);
       this.update({
-        forms: { $set: _2.unique(this.state.forms.concat(res.data), 'id') }
+        forms: { $set: _2['default'].unique(this.state.forms.concat(res.data), 'id') }
       });
       cb(null, res.data.length < PER_PAGE);
     },
@@ -54141,17 +54142,17 @@ define('components/forms/index', ['exports', 'module', 'underscore', 'underscore
     matchesQuery: function matchesQuery(form) {
       var query = this.state.query;
       if (!query) return true;
-      var words = _str2.words(query.toLowerCase());
+      var words = _str2['default'].words(query.toLowerCase());
       var searchableWords = this.searchableWordsFor(form);
-      return _2.every(words, function (wordA) {
-        return _2.any(searchableWords, function (wordB) {
-          return _str2.startsWith(wordB, wordA);
+      return _2['default'].every(words, function (wordA) {
+        return _2['default'].any(searchableWords, function (wordB) {
+          return _str2['default'].startsWith(wordB, wordA);
         });
       });
     },
 
     searchableWordsFor: function searchableWordsFor(form) {
-      return _str2.words(_2.values(_2.pick(form, this.props.searchableAttributes)).join(' ').toLowerCase());
+      return _str2['default'].words(_2['default'].values(_2['default'].pick(form, this.props.searchableAttributes)).join(' ').toLowerCase());
     },
 
     formMatchesFilters: function formMatchesFilters(form) {
@@ -54164,7 +54165,7 @@ define('components/forms/index', ['exports', 'module', 'underscore', 'underscore
 
     renderFilters: function renderFilters(forms) {
       if (!this.state.forms.length || !this.props.filtersAreShowing) return;
-      return _React.createElement(_Filters, {
+      return _React['default'].createElement(_Filters['default'], {
         forms: forms,
         cursors: {
           query: this.getCursor('query'),
@@ -54175,22 +54176,22 @@ define('components/forms/index', ['exports', 'module', 'underscore', 'underscore
 
     renderListItem: function renderListItem(form) {
       var i = this.state.forms.indexOf(form);
-      return _React.createElement(_FormsListItem, {
+      return _React['default'].createElement(_FormsListItem['default'], {
         key: form.id,
         cursors: { form: this.getCursor('forms', i) }
       });
     },
 
     renderLoading: function renderLoading() {
-      return _React.createElement(_LoadingBlock, null);
+      return _React['default'].createElement(_LoadingBlock['default'], null);
     },
 
     renderError: function renderError(er) {
-      return _React.createElement(_ErrorBlock, { message: er.toString() });
+      return _React['default'].createElement(_ErrorBlock['default'], { message: er.toString() });
     },
 
     renderEmpty: function renderEmpty() {
-      return _React.createElement(_Empty, {
+      return _React['default'].createElement(_Empty['default'], {
         objectName: 'forms',
         cursors: {
           category: this.getCursor('category'),
@@ -54201,11 +54202,11 @@ define('components/forms/index', ['exports', 'module', 'underscore', 'underscore
 
     render: function render() {
       var forms = this.getFilteredForms();
-      return _React.createElement(
+      return _React['default'].createElement(
         'div',
         { className: 'osw-forms-index' },
         this.renderFilters(forms),
-        _React.createElement(_List, _extends({}, this.props, {
+        _React['default'].createElement(_List['default'], _extends({}, this.props, {
           items: forms,
           fetch: this.fetch,
           renderLoading: this.renderLoading,
@@ -54222,41 +54223,41 @@ define('components/forms/index', ['exports', 'module', 'underscore', 'underscore
 define('components/news-posts/show', ['exports', 'module', 'components/comments/index', 'components/shared/created-by', 'cursors', 'react'], function (exports, module, _componentsCommentsIndex, _componentsSharedCreatedBy, _cursors, _react) {
   'use strict';
 
-  function _interopRequire(obj) { return obj && obj.__esModule ? obj['default'] : obj; }
+  function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 
-  var _CommentsIndex = _interopRequire(_componentsCommentsIndex);
+  var _CommentsIndex = _interopRequireDefault(_componentsCommentsIndex);
 
-  var _CreatedBy = _interopRequire(_componentsSharedCreatedBy);
+  var _CreatedBy = _interopRequireDefault(_componentsSharedCreatedBy);
 
-  var _Cursors = _interopRequire(_cursors);
+  var _Cursors = _interopRequireDefault(_cursors);
 
-  var _React = _interopRequire(_react);
+  var _React = _interopRequireDefault(_react);
 
-  module.exports = _React.createClass({
+  module.exports = _React['default'].createClass({
     displayName: 'show',
 
-    mixins: [_Cursors],
+    mixins: [_Cursors['default']],
 
     render: function render() {
       var newsPost = this.state.newsPost;
-      return _React.createElement(
+      return _React['default'].createElement(
         'div',
         { className: 'osw-news-posts-show' },
-        _React.createElement(
+        _React['default'].createElement(
           'div',
           { className: 'osw-news-posts-show-content' },
-          _React.createElement(
+          _React['default'].createElement(
             'div',
             { className: 'osw-news-posts-show-title' },
             newsPost.title
           ),
-          _React.createElement(_CreatedBy, { account: newsPost.creator, createdAt: newsPost.created_at }),
-          _React.createElement('div', {
+          _React['default'].createElement(_CreatedBy['default'], { account: newsPost.creator, createdAt: newsPost.created_at }),
+          _React['default'].createElement('div', {
             className: 'osw-news-posts-show-body',
             dangerouslySetInnerHTML: { __html: newsPost.body }
           })
         ),
-        _React.createElement(_CommentsIndex, {
+        _React['default'].createElement(_CommentsIndex['default'], {
           url: newsPost.links.comments,
           newUrl: newsPost.links.web,
           cursors: { comments: this.getCursor('newsPost', 'comments') }
@@ -54269,28 +54270,28 @@ define('components/news-posts/show', ['exports', 'module', 'components/comments/
 define('components/news-posts/list-item', ['exports', 'module', 'jquery', 'underscore.string', 'cursors', 'components/ui/icon', 'moment', 'components/news-posts/show', 'components/ui/popup', 'react'], function (exports, module, _jquery, _underscoreString, _cursors, _componentsUiIcon, _moment, _componentsNewsPostsShow, _componentsUiPopup, _react) {
   'use strict';
 
-  function _interopRequire(obj) { return obj && obj.__esModule ? obj['default'] : obj; }
+  function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 
-  var _$ = _interopRequire(_jquery);
+  var _$ = _interopRequireDefault(_jquery);
 
-  var _str2 = _interopRequire(_underscoreString);
+  var _str2 = _interopRequireDefault(_underscoreString);
 
-  var _Cursors = _interopRequire(_cursors);
+  var _Cursors = _interopRequireDefault(_cursors);
 
-  var _Icon = _interopRequire(_componentsUiIcon);
+  var _Icon = _interopRequireDefault(_componentsUiIcon);
 
-  var _moment2 = _interopRequire(_moment);
+  var _moment2 = _interopRequireDefault(_moment);
 
-  var _Show = _interopRequire(_componentsNewsPostsShow);
+  var _Show = _interopRequireDefault(_componentsNewsPostsShow);
 
-  var _Popup = _interopRequire(_componentsUiPopup);
+  var _Popup = _interopRequireDefault(_componentsUiPopup);
 
-  var _React = _interopRequire(_react);
+  var _React = _interopRequireDefault(_react);
 
-  module.exports = _React.createClass({
+  module.exports = _React['default'].createClass({
     displayName: 'list-item',
 
-    mixins: [_Cursors],
+    mixins: [_Cursors['default']],
 
     getDefaultProps: function getDefaultProps() {
       return {
@@ -54319,25 +54320,25 @@ define('components/news-posts/list-item', ['exports', 'module', 'jquery', 'under
     },
 
     getStrippedBody: function getStrippedBody() {
-      return _$(_$.parseHTML(this.state.newsPost.body)).text();
+      return (0, _$['default'])(_$['default'].parseHTML(this.state.newsPost.body)).text();
     },
 
     renderCount: function renderCount() {
       var count = this.state.newsPost.comments_count;
       if (!count) return;
-      return _React.createElement(
+      return _React['default'].createElement(
         'div',
         { className: 'osw-news-posts-list-item-comment-count' },
         count,
         ' ',
-        _React.createElement(_Icon, { name: 'communication' })
+        _React['default'].createElement(_Icon['default'], { name: 'communication' })
       );
     },
 
     renderBody: function renderBody() {
-      var pruned = _str2.prune(this.getStrippedBody(), this.props.truncateLength);
+      var pruned = _str2['default'].prune(this.getStrippedBody(), this.props.truncateLength);
       if (pruned === '...') return;
-      return _React.createElement(
+      return _React['default'].createElement(
         'div',
         { className: 'osw-news-posts-list-item-body' },
         pruned
@@ -54346,22 +54347,22 @@ define('components/news-posts/list-item', ['exports', 'module', 'jquery', 'under
 
     renderShow: function renderShow() {
       if (!this.state.isOpen) return;
-      return _React.createElement(_Show, {
+      return _React['default'].createElement(_Show['default'], {
         cursors: { newsPost: this.getCursor('newsPost') }
       });
     },
 
     render: function render() {
       var newsPost = this.state.newsPost;
-      return _React.createElement(
+      return _React['default'].createElement(
         'div',
         { className: 'osw-news-posts-list-item' },
-        _React.createElement(
+        _React['default'].createElement(
           'div',
           { className: 'osw-news-posts-list-item-thumbnail' },
-          _React.createElement('img', { src: newsPost.thumbnail_url })
+          _React['default'].createElement('img', { src: newsPost.thumbnail_url })
         ),
-        _React.createElement(
+        _React['default'].createElement(
           'a',
           {
             href: newsPost.links.web,
@@ -54369,20 +54370,20 @@ define('components/news-posts/list-item', ['exports', 'module', 'jquery', 'under
             onClick: this.onTitleClick },
           newsPost.title
         ),
-        _React.createElement(
+        _React['default'].createElement(
           'div',
           { className: 'osw-news-posts-list-item-creator' },
           newsPost.creator.display_name
         ),
-        _React.createElement(
+        _React['default'].createElement(
           'div',
           { className: 'osw-news-posts-list-item-time' },
-          _moment2(newsPost.created_at).fromNow()
+          (0, _moment2['default'])(newsPost.created_at).fromNow()
         ),
         this.renderCount(),
         this.renderBody(),
-        _React.createElement(
-          _Popup,
+        _React['default'].createElement(
+          _Popup['default'],
           {
             name: 'news-posts-show',
             close: this.close,
@@ -54398,26 +54399,26 @@ define('components/news-posts/list-item', ['exports', 'module', 'jquery', 'under
 define('components/news-posts/index', ['exports', 'module', 'underscore', 'api', 'cursors', 'react-list', 'components/news-posts/list-item', 'react'], function (exports, module, _underscore, _api, _cursors, _reactList, _componentsNewsPostsListItem, _react) {
   'use strict';
 
-  function _interopRequire(obj) { return obj && obj.__esModule ? obj['default'] : obj; }
+  function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 
-  var _2 = _interopRequire(_underscore);
+  var _2 = _interopRequireDefault(_underscore);
 
-  var _api2 = _interopRequire(_api);
+  var _api2 = _interopRequireDefault(_api);
 
-  var _Cursors = _interopRequire(_cursors);
+  var _Cursors = _interopRequireDefault(_cursors);
 
-  var _List = _interopRequire(_reactList);
+  var _List = _interopRequireDefault(_reactList);
 
-  var _NewsPostsListItem = _interopRequire(_componentsNewsPostsListItem);
+  var _NewsPostsListItem = _interopRequireDefault(_componentsNewsPostsListItem);
 
-  var _React = _interopRequire(_react);
+  var _React = _interopRequireDefault(_react);
 
   var PER_PAGE = 20;
 
-  module.exports = _React.createClass({
+  module.exports = _React['default'].createClass({
     displayName: 'index',
 
-    mixins: [_Cursors],
+    mixins: [_Cursors['default']],
 
     getInitialState: function getInitialState() {
       return {
@@ -54426,18 +54427,18 @@ define('components/news-posts/index', ['exports', 'module', 'underscore', 'api',
     },
 
     fetch: function fetch(cb) {
-      _api2.get('/portals/:portal_id/news', {
+      _api2['default'].get('/portals/:portal_id/news', {
         portal_id: this.props.portalId,
         page: Math.floor(this.state.newsPosts.length / PER_PAGE) + 1,
         per_page: PER_PAGE,
         strip_html: false
-      }, _2.partial(this.handleFetch, cb));
+      }, _2['default'].partial(this.handleFetch, cb));
     },
 
     handleFetch: function handleFetch(cb, er, res) {
       if (er) return cb(er);
-      var newsPosts = _2.chain(this.state.newsPosts.concat(res.data)).unique(_2.property('id')).map(function (newsPost) {
-        return _2.extend({ comments: [] }, newsPost);
+      var newsPosts = _2['default'].chain(this.state.newsPosts.concat(res.data)).unique(_2['default'].property('id')).map(function (newsPost) {
+        return _2['default'].extend({ comments: [] }, newsPost);
       }).sortBy('created_at').value().reverse();
       this.update({ newsPosts: { $set: newsPosts } });
       cb(null, res.data.length < PER_PAGE);
@@ -54445,7 +54446,7 @@ define('components/news-posts/index', ['exports', 'module', 'underscore', 'api',
 
     renderListItem: function renderListItem(newsPost) {
       var i = this.state.newsPosts.indexOf(newsPost);
-      return _React.createElement(_NewsPostsListItem, {
+      return _React['default'].createElement(_NewsPostsListItem['default'], {
         key: newsPost.id,
         redirect: this.props.redirect,
         truncateLength: this.props.truncateLength,
@@ -54454,7 +54455,7 @@ define('components/news-posts/index', ['exports', 'module', 'underscore', 'api',
     },
 
     render: function render() {
-      return _React.createElement(_List, {
+      return _React['default'].createElement(_List['default'], {
         className: 'osw-news-posts-index',
         items: this.state.newsPosts,
         renderItem: this.renderListItem,
@@ -54469,24 +54470,24 @@ define('components/polls/filters', ['exports', 'module', 'cursors', 'components/
 
   var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
 
-  function _interopRequire(obj) { return obj && obj.__esModule ? obj['default'] : obj; }
+  function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 
-  var _Cursors = _interopRequire(_cursors);
+  var _Cursors = _interopRequireDefault(_cursors);
 
-  var _FacetedSelector = _interopRequire(_componentsSharedFacetedSelector);
+  var _FacetedSelector = _interopRequireDefault(_componentsSharedFacetedSelector);
 
-  var _joinClassNames = _interopRequire(_utilsJoinClassNames);
+  var _joinClassNames = _interopRequireDefault(_utilsJoinClassNames);
 
-  var _Query = _interopRequire(_componentsSharedQuery);
+  var _Query = _interopRequireDefault(_componentsSharedQuery);
 
-  var _React = _interopRequire(_react);
+  var _React = _interopRequireDefault(_react);
 
-  var _Summary = _interopRequire(_componentsSharedSummary);
+  var _Summary = _interopRequireDefault(_componentsSharedSummary);
 
-  module.exports = _React.createClass({
+  module.exports = _React['default'].createClass({
     displayName: 'filters',
 
-    mixins: [_Cursors],
+    mixins: [_Cursors['default']],
 
     handleChange: function handleChange(ev) {
       var deltas = {};
@@ -54495,13 +54496,13 @@ define('components/polls/filters', ['exports', 'module', 'cursors', 'components/
     },
 
     render: function render() {
-      return _React.createElement(
+      return _React['default'].createElement(
         'div',
         { className: 'osw-polls-filters' },
-        _React.createElement(_Query, { value: this.state.query, onChange: this.handleChange }),
-        _React.createElement(_FacetedSelector, _extends({}, this.props, {
+        _React['default'].createElement(_Query['default'], { value: this.state.query, onChange: this.handleChange }),
+        _React['default'].createElement(_FacetedSelector['default'], _extends({}, this.props, {
           allOption: 'All Categories',
-          className: _joinClassNames('oswi-book', this.props.className),
+          className: (0, _joinClassNames['default'])('oswi-book', this.props.className),
           getFacet: this.props.getFacet,
           name: 'category',
           objects: this.props.polls,
@@ -54509,7 +54510,7 @@ define('components/polls/filters', ['exports', 'module', 'cursors', 'components/
           showMatchCount: false,
           value: this.state.category
         })),
-        _React.createElement(_Summary, _extends({}, this.props, {
+        _React['default'].createElement(_Summary['default'], _extends({}, this.props, {
           filterKeys: ['query', 'category'],
           objects: this.props.polls,
           showMessage: false
@@ -54522,17 +54523,17 @@ define('components/polls/filters', ['exports', 'module', 'cursors', 'components/
 define('components/polls/results', ['exports', 'module', 'underscore', 'react'], function (exports, module, _underscore, _react) {
   'use strict';
 
-  function _interopRequire(obj) { return obj && obj.__esModule ? obj['default'] : obj; }
+  function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 
-  var _2 = _interopRequire(_underscore);
+  var _2 = _interopRequireDefault(_underscore);
 
-  var _React = _interopRequire(_react);
+  var _React = _interopRequireDefault(_react);
 
-  module.exports = _React.createClass({
+  module.exports = _React['default'].createClass({
     displayName: 'results',
 
     propTypes: {
-      responses: _React.PropTypes.array
+      responses: _React['default'].PropTypes.array
     },
 
     getInitialState: function getInitialState() {
@@ -54548,7 +54549,7 @@ define('components/polls/results', ['exports', 'module', 'underscore', 'react'],
     },
 
     percentageOfLeader: function percentageOfLeader(votes, maxWidth) {
-      var maxVotes = _2.max(this.props.responses, function (response) {
+      var maxVotes = _2['default'].max(this.props.responses, function (response) {
         return response.poll_votes_count;
       }).poll_votes_count;
       return this.calculatePercentage(votes, maxVotes, maxWidth, 0);
@@ -54563,46 +54564,46 @@ define('components/polls/results', ['exports', 'module', 'underscore', 'react'],
     },
 
     totalVotes: function totalVotes() {
-      return _2.reduce(this.props.responses, function (sum, response) {
+      return _2['default'].reduce(this.props.responses, function (sum, response) {
         return sum + response.poll_votes_count;
       }, 0);
     },
 
     sortedResponses: function sortedResponses() {
       if (this.state.sortedByVotes) {
-        return _2.sortBy(this.props.responses, 'poll_votes_count').reverse();
+        return _2['default'].sortBy(this.props.responses, 'poll_votes_count').reverse();
       } else {
-        return _2.sortBy(this.props.responses, 'id');
+        return _2['default'].sortBy(this.props.responses, 'id');
       }
     },
 
     renderResponses: function renderResponses() {
       var that = this;
-      return _2.map(this.sortedResponses(), function (response) {
-        return _React.createElement(
+      return _2['default'].map(this.sortedResponses(), function (response) {
+        return _React['default'].createElement(
           'tr',
           { key: response.id },
-          _React.createElement(
+          _React['default'].createElement(
             'td',
             { width: '30%' },
             response.name
           ),
-          _React.createElement(
+          _React['default'].createElement(
             'td',
             null,
-            _React.createElement('div', {
+            _React['default'].createElement('div', {
               className: 'osw-poll-bar',
               style: {
                 width: that.percentageOfLeader(response.poll_votes_count, 88)
               }
             }),
-            _React.createElement(
+            _React['default'].createElement(
               'div',
               { className: 'osw-poll-bar-count' },
               response.poll_votes_count
             )
           ),
-          _React.createElement(
+          _React['default'].createElement(
             'td',
             { width: '7%' },
             that.calculatePercentage(response.poll_votes_count, that.totalVotes(), 100, 0)
@@ -54626,28 +54627,28 @@ define('components/polls/results', ['exports', 'module', 'underscore', 'react'],
     },
 
     render: function render() {
-      if (this.props.responses === null) return _React.createElement(
+      if (this.props.responses === null) return _React['default'].createElement(
         'p',
         null,
-        _React.createElement(
+        _React['default'].createElement(
           'strong',
           null,
           'The results are hidden.'
         )
       );
 
-      return _React.createElement(
+      return _React['default'].createElement(
         'div',
         null,
-        _React.createElement(
+        _React['default'].createElement(
           'div',
           { className: 'osw-polls-panel-header group' },
-          _React.createElement(
+          _React['default'].createElement(
             'h4',
             null,
             'Poll Results'
           ),
-          _React.createElement(
+          _React['default'].createElement(
             'button',
             {
               className: 'osw-button',
@@ -54656,10 +54657,10 @@ define('components/polls/results', ['exports', 'module', 'underscore', 'react'],
             this.sortButtonLabel()
           )
         ),
-        _React.createElement(
+        _React['default'].createElement(
           'table',
           { className: 'osw-poll-results' },
-          _React.createElement(
+          _React['default'].createElement(
             'tbody',
             null,
             this.renderResponses()
@@ -54673,33 +54674,33 @@ define('components/polls/results', ['exports', 'module', 'underscore', 'react'],
 define('components/polls/show', ['exports', 'module', 'api', 'components/ui/button', 'components/ui/button-row', 'components/shared/created-by', 'cursors', 'moment', 'react', 'components/polls/results'], function (exports, module, _api, _componentsUiButton, _componentsUiButtonRow, _componentsSharedCreatedBy, _cursors, _moment, _react, _componentsPollsResults) {
   'use strict';
 
-  function _interopRequire(obj) { return obj && obj.__esModule ? obj['default'] : obj; }
+  function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 
-  var _api2 = _interopRequire(_api);
+  var _api2 = _interopRequireDefault(_api);
 
-  var _Button = _interopRequire(_componentsUiButton);
+  var _Button = _interopRequireDefault(_componentsUiButton);
 
-  var _ButtonRow = _interopRequire(_componentsUiButtonRow);
+  var _ButtonRow = _interopRequireDefault(_componentsUiButtonRow);
 
-  var _CreatedBy = _interopRequire(_componentsSharedCreatedBy);
+  var _CreatedBy = _interopRequireDefault(_componentsSharedCreatedBy);
 
-  var _Cursors = _interopRequire(_cursors);
+  var _Cursors = _interopRequireDefault(_cursors);
 
-  var _moment2 = _interopRequire(_moment);
+  var _moment2 = _interopRequireDefault(_moment);
 
-  var _React = _interopRequire(_react);
+  var _React = _interopRequireDefault(_react);
 
-  var _Results = _interopRequire(_componentsPollsResults);
+  var _Results = _interopRequireDefault(_componentsPollsResults);
 
   var FORMAT = 'MMM D, YYYY';
 
-  module.exports = _React.createClass({
+  module.exports = _React['default'].createClass({
     displayName: 'show',
 
-    mixins: [_Cursors],
+    mixins: [_Cursors['default']],
 
     propTypes: {
-      portalId: _React.PropTypes.number
+      portalId: _React['default'].PropTypes.number
     },
 
     getInitialState: function getInitialState() {
@@ -54713,7 +54714,7 @@ define('components/polls/show', ['exports', 'module', 'api', 'components/ui/butt
       var poll = this.state.poll;
       if (poll.description != null) return;
       this.update({ isLoading: { $set: true }, error: { $set: null } });
-      _api2.get('/portals/:portal_id/polls/:id', { portal_id: this.props.portalId, id: poll.id }, this.handleFetch);
+      _api2['default'].get('/portals/:portal_id/polls/:id', { portal_id: this.props.portalId, id: poll.id }, this.handleFetch);
     },
 
     handleFetch: function handleFetch(er, res) {
@@ -54723,12 +54724,12 @@ define('components/polls/show', ['exports', 'module', 'api', 'components/ui/butt
     },
 
     formatDate: function formatDate(dateString) {
-      return _moment2(dateString).format(FORMAT);
+      return (0, _moment2['default'])(dateString).format(FORMAT);
     },
 
     renderStatus: function renderStatus(poll) {
       if (!poll.is_open) {
-        return _React.createElement(
+        return _React['default'].createElement(
           'p',
           null,
           'This poll was open from ',
@@ -54740,7 +54741,7 @@ define('components/polls/show', ['exports', 'module', 'api', 'components/ui/butt
     },
 
     renderVoted: function renderVoted(poll) {
-      if (poll.has_voted) return _React.createElement(
+      if (poll.has_voted) return _React['default'].createElement(
         'p',
         null,
         'You have voted on this poll.'
@@ -54749,26 +54750,26 @@ define('components/polls/show', ['exports', 'module', 'api', 'components/ui/butt
 
     render: function render() {
       var poll = this.state.poll;
-      return _React.createElement(
+      return _React['default'].createElement(
         'div',
         { className: 'osw-polls-show' },
-        _React.createElement(
+        _React['default'].createElement(
           'h3',
           null,
           poll.name
         ),
         this.renderStatus(poll),
-        _React.createElement(_CreatedBy, { account: poll.creator, createdAt: poll.created_at }),
+        _React['default'].createElement(_CreatedBy['default'], { account: poll.creator, createdAt: poll.created_at }),
         this.renderVoted(poll),
-        _React.createElement(_Results, { responses: this.state.poll.poll_options }),
-        _React.createElement(
+        _React['default'].createElement(_Results['default'], { responses: this.state.poll.poll_options }),
+        _React['default'].createElement(
           'div',
           { className: 'osw-button-row' },
-          _React.createElement(
-            _ButtonRow,
+          _React['default'].createElement(
+            _ButtonRow['default'],
             null,
-            _React.createElement(
-              _Button,
+            _React['default'].createElement(
+              _Button['default'],
               { href: poll.links.web, target: '_parent' },
               'View on OrgSync.com'
             )
@@ -54784,31 +54785,31 @@ define('components/polls/list-item', ['exports', 'module', 'underscore', 'cursor
 
   var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
 
-  function _interopRequire(obj) { return obj && obj.__esModule ? obj['default'] : obj; }
+  function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 
-  var _2 = _interopRequire(_underscore);
+  var _2 = _interopRequireDefault(_underscore);
 
-  var _Cursors = _interopRequire(_cursors);
+  var _Cursors = _interopRequireDefault(_cursors);
 
-  var _moment2 = _interopRequire(_moment);
+  var _moment2 = _interopRequireDefault(_moment);
 
-  var _Popup = _interopRequire(_componentsUiPopup);
+  var _Popup = _interopRequireDefault(_componentsUiPopup);
 
-  var _React = _interopRequire(_react);
+  var _React = _interopRequireDefault(_react);
 
-  var _Sep = _interopRequire(_componentsUiSep);
+  var _Sep = _interopRequireDefault(_componentsUiSep);
 
-  var _Show = _interopRequire(_componentsPollsShow);
+  var _Show = _interopRequireDefault(_componentsPollsShow);
 
   var FORMAT = 'MMM D, YYYY';
 
-  module.exports = _React.createClass({
+  module.exports = _React['default'].createClass({
     displayName: 'list-item',
 
-    mixins: [_Cursors],
+    mixins: [_Cursors['default']],
 
     propTypes: {
-      key: _React.PropTypes.number
+      key: _React['default'].PropTypes.number
     },
 
     getInitialState: function getInitialState() {
@@ -54827,14 +54828,14 @@ define('components/polls/list-item', ['exports', 'module', 'underscore', 'cursor
 
     renderShow: function renderShow() {
       if (!this.state.showIsOpen) return;
-      return _React.createElement(_Show, _extends({}, this.props, {
+      return _React['default'].createElement(_Show['default'], _extends({}, this.props, {
         cursors: { poll: this.getCursor('poll') }
       }));
     },
 
     renderShowPopup: function renderShowPopup() {
-      return _React.createElement(
-        _Popup,
+      return _React['default'].createElement(
+        _Popup['default'],
         {
           close: this.closeShow,
           name: 'polls-show',
@@ -54845,18 +54846,18 @@ define('components/polls/list-item', ['exports', 'module', 'underscore', 'cursor
 
     renderStatusText: function renderStatusText(poll) {
       if (poll.is_open) {
-        if (poll.has_voted) return _React.createElement(
+        if (poll.has_voted) return _React['default'].createElement(
           'p',
           { className: 'voted' },
           'VOTED'
         );
-        return _React.createElement(
+        return _React['default'].createElement(
           'p',
           { className: 'vote-now' },
           'VOTE NOW'
         );
       } else {
-        return _React.createElement(
+        return _React['default'].createElement(
           'p',
           { className: 'closed' },
           'CLOSED'
@@ -54866,7 +54867,7 @@ define('components/polls/list-item', ['exports', 'module', 'underscore', 'cursor
 
     renderStatusLink: function renderStatusLink(poll) {
       if (this.props.limit) return;
-      return _React.createElement(
+      return _React['default'].createElement(
         'div',
         { className: 'osw-polls-status', onClick: this.openShow },
         this.renderStatusText(poll)
@@ -54879,15 +54880,15 @@ define('components/polls/list-item', ['exports', 'module', 'underscore', 'cursor
     },
 
     renderPollBox: function renderPollBox(poll) {
-      return _React.createElement(
+      return _React['default'].createElement(
         'div',
         { className: 'osw-polls-box-wrapper' },
-        _React.createElement(
+        _React['default'].createElement(
           'div',
           { className: 'osw-polls-box-number' },
           this.renderVoteCount(poll)
         ),
-        _React.createElement(
+        _React['default'].createElement(
           'div',
           { className: 'osw-polls-box-footer' },
           poll.vote_count === 1 ? 'Vote' : 'Votes'
@@ -54901,14 +54902,14 @@ define('components/polls/list-item', ['exports', 'module', 'underscore', 'cursor
 
     render: function render() {
       var poll = this.state.poll;
-      return _React.createElement(
+      return _React['default'].createElement(
         'div',
         { className: 'osw-polls-list-item ' + this.renderBorderClass() },
-        _React.createElement(
+        _React['default'].createElement(
           'div',
           { className: 'osw-polls-list-item-info', style: { float: 'left' } },
           this.renderPollBox(poll),
-          _React.createElement(
+          _React['default'].createElement(
             'div',
             { className: 'osw-polls-list-item-name', onClick: this.openShow },
             poll.name
@@ -54926,43 +54927,43 @@ define('components/polls/index', ['exports', 'module', 'underscore', 'underscore
 
   var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
 
-  function _interopRequire(obj) { return obj && obj.__esModule ? obj['default'] : obj; }
+  function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 
-  var _2 = _interopRequire(_underscore);
+  var _2 = _interopRequireDefault(_underscore);
 
-  var _str2 = _interopRequire(_underscoreString);
+  var _str2 = _interopRequireDefault(_underscoreString);
 
-  var _api2 = _interopRequire(_api);
+  var _api2 = _interopRequireDefault(_api);
 
-  var _Cursors = _interopRequire(_cursors);
+  var _Cursors = _interopRequireDefault(_cursors);
 
-  var _Empty = _interopRequire(_componentsSharedEmpty);
+  var _Empty = _interopRequireDefault(_componentsSharedEmpty);
 
-  var _ErrorBlock = _interopRequire(_componentsUiErrorBlock);
+  var _ErrorBlock = _interopRequireDefault(_componentsUiErrorBlock);
 
-  var _Filters = _interopRequire(_componentsPollsFilters);
+  var _Filters = _interopRequireDefault(_componentsPollsFilters);
 
-  var _List = _interopRequire(_reactList);
+  var _List = _interopRequireDefault(_reactList);
 
-  var _LoadingBlock = _interopRequire(_componentsUiLoadingBlock);
+  var _LoadingBlock = _interopRequireDefault(_componentsUiLoadingBlock);
 
-  var _PollsListItem = _interopRequire(_componentsPollsListItem);
+  var _PollsListItem = _interopRequireDefault(_componentsPollsListItem);
 
-  var _React = _interopRequire(_react);
+  var _React = _interopRequireDefault(_react);
 
   var PER_PAGE = 10;
 
-  module.exports = _React.createClass({
+  module.exports = _React['default'].createClass({
     displayName: 'index',
 
-    mixins: [_Cursors],
+    mixins: [_Cursors['default']],
 
     propTypes: {
       /* Specify which portal's polls to retrieve */
-      portalId: _React.PropTypes.number,
+      portalId: _React['default'].PropTypes.number,
 
       /* If you'd like to limit the number of polls to show, specify a number */
-      limit: _React.PropTypes.number
+      limit: _React['default'].PropTypes.number
     },
 
     getDefaultProps: function getDefaultProps() {
@@ -54985,18 +54986,18 @@ define('components/polls/index', ['exports', 'module', 'underscore', 'underscore
     },
 
     fetch: function fetch(cb) {
-      _api2.get('/portals/:portal_id/polls', {
+      _api2['default'].get('/portals/:portal_id/polls', {
         portal_id: this.props.portalId,
         limit: this.props.limit,
         page: Math.floor(this.state.polls.length / PER_PAGE) + 1,
         per_page: PER_PAGE
-      }, _2.partial(this.handleFetch, cb));
+      }, _2['default'].partial(this.handleFetch, cb));
     },
 
     handleFetch: function handleFetch(cb, er, res) {
       if (er) return cb(er);
       this.update({
-        polls: { $set: _2.unique(this.state.polls.concat(res.data), 'id') }
+        polls: { $set: _2['default'].unique(this.state.polls.concat(res.data), 'id') }
       });
       cb(null, res.data.length < PER_PAGE);
     },
@@ -55015,17 +55016,17 @@ define('components/polls/index', ['exports', 'module', 'underscore', 'underscore
     matchesQuery: function matchesQuery(poll) {
       var query = this.state.query;
       if (!query) return true;
-      var words = _str2.words(query.toLowerCase());
+      var words = _str2['default'].words(query.toLowerCase());
       var searchableWords = this.searchableWordsFor(poll);
-      return _2.every(words, function (wordA) {
-        return _2.any(searchableWords, function (wordB) {
-          return _str2.startsWith(wordB, wordA);
+      return _2['default'].every(words, function (wordA) {
+        return _2['default'].any(searchableWords, function (wordB) {
+          return _str2['default'].startsWith(wordB, wordA);
         });
       });
     },
 
     searchableWordsFor: function searchableWordsFor(poll) {
-      return _str2.words(_2.values(_2.pick(poll, this.props.searchableAttributes)).join(' ').toLowerCase());
+      return _str2['default'].words(_2['default'].values(_2['default'].pick(poll, this.props.searchableAttributes)).join(' ').toLowerCase());
     },
 
     pollMatchesFilters: function pollMatchesFilters(poll) {
@@ -55038,7 +55039,7 @@ define('components/polls/index', ['exports', 'module', 'underscore', 'underscore
 
     renderFilters: function renderFilters(polls) {
       if (!this.state.polls.length || !this.props.filtersAreShowing || this.props.limit) return;
-      return _React.createElement(_Filters, {
+      return _React['default'].createElement(_Filters['default'], {
         polls: polls,
         getFacet: this.getFacet,
         cursors: {
@@ -55050,22 +55051,22 @@ define('components/polls/index', ['exports', 'module', 'underscore', 'underscore
 
     renderListItem: function renderListItem(poll) {
       var i = this.state.polls.indexOf(poll);
-      return _React.createElement(_PollsListItem, _extends({}, this.props, {
+      return _React['default'].createElement(_PollsListItem['default'], _extends({}, this.props, {
         key: poll.id,
         cursors: { poll: this.getCursor('polls', i) }
       }));
     },
 
     renderLoading: function renderLoading() {
-      return _React.createElement(_LoadingBlock, null);
+      return _React['default'].createElement(_LoadingBlock['default'], null);
     },
 
     renderError: function renderError(er) {
-      return _React.createElement(_ErrorBlock, { message: er.toString() });
+      return _React['default'].createElement(_ErrorBlock['default'], { message: er.toString() });
     },
 
     renderEmpty: function renderEmpty() {
-      return _React.createElement(_Empty, {
+      return _React['default'].createElement(_Empty['default'], {
         objectName: 'polls',
         cursors: {
           query: this.getCursor('query'),
@@ -55076,11 +55077,11 @@ define('components/polls/index', ['exports', 'module', 'underscore', 'underscore
 
     render: function render() {
       var polls = this.getFilteredPolls();
-      return _React.createElement(
+      return _React['default'].createElement(
         'div',
         { className: 'osw-polls-index' },
         this.renderFilters(polls),
-        _React.createElement(_List, _extends({}, this.props, {
+        _React['default'].createElement(_List['default'], _extends({}, this.props, {
           items: polls,
           fetch: this.fetch,
           renderLoading: this.renderLoading,
@@ -55097,18 +55098,18 @@ define('components/polls/index', ['exports', 'module', 'underscore', 'underscore
 define('components/portals/letter-cell', ['exports', 'module', 'components/ui/button', 'cursors', 'react'], function (exports, module, _componentsUiButton, _cursors, _react) {
   'use strict';
 
-  function _interopRequire(obj) { return obj && obj.__esModule ? obj['default'] : obj; }
+  function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 
-  var _Button = _interopRequire(_componentsUiButton);
+  var _Button = _interopRequireDefault(_componentsUiButton);
 
-  var _Cursors = _interopRequire(_cursors);
+  var _Cursors = _interopRequireDefault(_cursors);
 
-  var _React = _interopRequire(_react);
+  var _React = _interopRequireDefault(_react);
 
-  module.exports = _React.createClass({
+  module.exports = _React['default'].createClass({
     displayName: 'letter-cell',
 
-    mixins: [_Cursors],
+    mixins: [_Cursors['default']],
 
     getClassName: function getClassName() {
       if (this.state.currentLetter === this.props.letter) {
@@ -55121,11 +55122,11 @@ define('components/portals/letter-cell', ['exports', 'module', 'components/ui/bu
     },
 
     render: function render() {
-      return _React.createElement(
+      return _React['default'].createElement(
         'td',
         { className: 'osw-portals-letter-cell' },
-        _React.createElement(
-          _Button,
+        _React['default'].createElement(
+          _Button['default'],
           { className: this.getClassName(), onClick: this.handleClick },
           this.props.letter || 'All'
         )
@@ -55139,23 +55140,23 @@ define('components/portals/letter-table', ['exports', 'module', 'underscore', 'c
 
   var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
 
-  function _interopRequire(obj) { return obj && obj.__esModule ? obj['default'] : obj; }
+  function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 
-  var _2 = _interopRequire(_underscore);
+  var _2 = _interopRequireDefault(_underscore);
 
-  var _Cursors = _interopRequire(_cursors);
+  var _Cursors = _interopRequireDefault(_cursors);
 
-  var _LetterCell = _interopRequire(_componentsPortalsLetterCell);
+  var _LetterCell = _interopRequireDefault(_componentsPortalsLetterCell);
 
-  var _React = _interopRequire(_react);
+  var _React = _interopRequireDefault(_react);
 
-  module.exports = _React.createClass({
+  module.exports = _React['default'].createClass({
     displayName: 'letter-table',
 
-    mixins: [_Cursors],
+    mixins: [_Cursors['default']],
 
     renderCell: function renderCell(letter, i) {
-      return _React.createElement(_LetterCell, _extends({}, this.props, {
+      return _React['default'].createElement(_LetterCell['default'], _extends({}, this.props, {
         key: i,
         letter: letter,
         cursors: { currentLetter: this.getCursor('letter') }
@@ -55166,18 +55167,18 @@ define('components/portals/letter-table', ['exports', 'module', 'underscore', 'c
       var fromCode = function fromCode(n) {
         return String.fromCharCode(n);
       };
-      var letters = _2.map(_2.range(65, 91), fromCode);
-      return _2.map([''].concat(letters, 'Other'), this.renderCell);
+      var letters = _2['default'].map(_2['default'].range(65, 91), fromCode);
+      return _2['default'].map([''].concat(letters, 'Other'), this.renderCell);
     },
 
     render: function render() {
-      return _React.createElement(
+      return _React['default'].createElement(
         'table',
         { className: 'osw-portals-letter-table' },
-        _React.createElement(
+        _React['default'].createElement(
           'tbody',
           null,
-          _React.createElement(
+          _React['default'].createElement(
             'tr',
             null,
             this.renderCells()
@@ -55193,29 +55194,29 @@ define('components/portals/umbrella-selector', ['exports', 'module', 'cursors', 
 
   var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
 
-  function _interopRequire(obj) { return obj && obj.__esModule ? obj['default'] : obj; }
+  function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 
-  var _Cursors = _interopRequire(_cursors);
+  var _Cursors = _interopRequireDefault(_cursors);
 
-  var _FacetedSelector = _interopRequire(_componentsSharedFacetedSelector);
+  var _FacetedSelector = _interopRequireDefault(_componentsSharedFacetedSelector);
 
-  var _joinClassNames = _interopRequire(_utilsJoinClassNames);
+  var _joinClassNames = _interopRequireDefault(_utilsJoinClassNames);
 
-  var _React = _interopRequire(_react);
+  var _React = _interopRequireDefault(_react);
 
-  module.exports = _React.createClass({
+  module.exports = _React['default'].createClass({
     displayName: 'umbrella-selector',
 
-    mixins: [_Cursors],
+    mixins: [_Cursors['default']],
 
     getFacet: function getFacet(portal) {
       return portal.umbrella ? portal.umbrella.name : 'Umbrella';
     },
 
     render: function render() {
-      return _React.createElement(_FacetedSelector, _extends({}, this.props, {
+      return _React['default'].createElement(_FacetedSelector['default'], _extends({}, this.props, {
         objects: this.props.portals,
-        className: _joinClassNames('oswi-umbrella', this.props.className),
+        className: (0, _joinClassNames['default'])('oswi-umbrella', this.props.className),
         name: 'umbrella',
         allOption: 'All Umbrellas',
         getFacet: this.getFacet
@@ -55229,26 +55230,26 @@ define('components/portals/filters', ['exports', 'module', 'components/shared/ca
 
   var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
 
-  function _interopRequire(obj) { return obj && obj.__esModule ? obj['default'] : obj; }
+  function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 
-  var _CategorySelector = _interopRequire(_componentsSharedCategorySelector);
+  var _CategorySelector = _interopRequireDefault(_componentsSharedCategorySelector);
 
-  var _Cursors = _interopRequire(_cursors);
+  var _Cursors = _interopRequireDefault(_cursors);
 
-  var _LetterTable = _interopRequire(_componentsPortalsLetterTable);
+  var _LetterTable = _interopRequireDefault(_componentsPortalsLetterTable);
 
-  var _Query = _interopRequire(_componentsSharedQuery);
+  var _Query = _interopRequireDefault(_componentsSharedQuery);
 
-  var _React = _interopRequire(_react);
+  var _React = _interopRequireDefault(_react);
 
-  var _Summary = _interopRequire(_componentsSharedSummary);
+  var _Summary = _interopRequireDefault(_componentsSharedSummary);
 
-  var _UmbrellaSelector = _interopRequire(_componentsPortalsUmbrellaSelector);
+  var _UmbrellaSelector = _interopRequireDefault(_componentsPortalsUmbrellaSelector);
 
-  module.exports = _React.createClass({
+  module.exports = _React['default'].createClass({
     displayName: 'filters',
 
-    mixins: [_Cursors],
+    mixins: [_Cursors['default']],
 
     handleChange: function handleChange(ev) {
       var deltas = {};
@@ -55257,22 +55258,22 @@ define('components/portals/filters', ['exports', 'module', 'components/shared/ca
     },
 
     render: function render() {
-      return _React.createElement(
+      return _React['default'].createElement(
         'div',
         { className: 'osw-portals-filters' },
-        _React.createElement(_Query, { value: this.state.query, onChange: this.handleChange }),
-        _React.createElement(_UmbrellaSelector, {
+        _React['default'].createElement(_Query['default'], { value: this.state.query, onChange: this.handleChange }),
+        _React['default'].createElement(_UmbrellaSelector['default'], {
           portals: this.props.portals,
           value: this.state.umbrella,
           onChange: this.handleChange
         }),
-        _React.createElement(_CategorySelector, {
+        _React['default'].createElement(_CategorySelector['default'], {
           objects: this.props.portals,
           value: this.state.category,
           onChange: this.handleChange
         }),
-        _React.createElement(_LetterTable, { cursors: { letter: this.getCursor('letter') } }),
-        _React.createElement(_Summary, _extends({}, this.props, {
+        _React['default'].createElement(_LetterTable['default'], { cursors: { letter: this.getCursor('letter') } }),
+        _React['default'].createElement(_Summary['default'], _extends({}, this.props, {
           objects: this.props.portals,
           objectName: 'portal',
           filterKeys: ['query', 'category']
@@ -55285,24 +55286,24 @@ define('components/portals/filters', ['exports', 'module', 'components/shared/ca
 define('components/portals/show', ['exports', 'module', 'api', 'cursors', 'components/ui/button', 'components/ui/button-row', 'react'], function (exports, module, _api, _cursors, _componentsUiButton, _componentsUiButtonRow, _react) {
   'use strict';
 
-  function _interopRequire(obj) { return obj && obj.__esModule ? obj['default'] : obj; }
+  function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 
-  var _api2 = _interopRequire(_api);
+  var _api2 = _interopRequireDefault(_api);
 
-  var _Cursors = _interopRequire(_cursors);
+  var _Cursors = _interopRequireDefault(_cursors);
 
-  var _Button = _interopRequire(_componentsUiButton);
+  var _Button = _interopRequireDefault(_componentsUiButton);
 
-  var _ButtonRow = _interopRequire(_componentsUiButtonRow);
+  var _ButtonRow = _interopRequireDefault(_componentsUiButtonRow);
 
-  var _React = _interopRequire(_react);
+  var _React = _interopRequireDefault(_react);
 
   var DEFAULT_SRC = 'https://orgsync.com/assets/icons/portals/no_org_profile_150.png';
 
-  module.exports = _React.createClass({
+  module.exports = _React['default'].createClass({
     displayName: 'show',
 
-    mixins: [_Cursors],
+    mixins: [_Cursors['default']],
 
     getInitialState: function getInitialState() {
       return {
@@ -55319,7 +55320,7 @@ define('components/portals/show', ['exports', 'module', 'api', 'cursors', 'compo
       var portal = this.state.portal;
       if (portal.description != null) return;
       this.update({ isLoading: { $set: true }, error: { $set: null } });
-      _api2.get('/portals/:id', { id: portal.id }, this.handleFetch);
+      _api2['default'].get('/portals/:id', { id: portal.id }, this.handleFetch);
     },
 
     handleFetch: function handleFetch(er, res) {
@@ -55336,8 +55337,8 @@ define('components/portals/show', ['exports', 'module', 'api', 'cursors', 'compo
 
     renderWebsiteLink: function renderWebsiteLink() {
       var url = this.state.portal.website_url;
-      return url && _React.createElement(
-        _Button,
+      return url && _React['default'].createElement(
+        _Button['default'],
         { href: url },
         'Website'
       );
@@ -55345,39 +55346,39 @@ define('components/portals/show', ['exports', 'module', 'api', 'cursors', 'compo
 
     render: function render() {
       var portal = this.state.portal;
-      return _React.createElement(
+      return _React['default'].createElement(
         'div',
         { className: 'osw-portals-show' },
-        _React.createElement('img', {
+        _React['default'].createElement('img', {
           className: 'osw-portals-show-picture',
           src: this.getSrc(),
           alt: portal.name
         }),
-        _React.createElement(
+        _React['default'].createElement(
           'div',
           { className: 'osw-portals-show-name' },
           portal.name
         ),
-        _React.createElement(
+        _React['default'].createElement(
           'div',
           { className: 'osw-portals-show-umbrella' },
           portal.umbrella ? portal.umbrella.name : 'Umbrella'
         ),
-        _React.createElement(
+        _React['default'].createElement(
           'div',
           { className: 'osw-portals-show-category' },
           portal.category.name
         ),
-        _React.createElement(
+        _React['default'].createElement(
           'div',
           { className: 'osw-portals-show-description' },
           this.renderDescription()
         ),
-        _React.createElement(
-          _ButtonRow,
+        _React['default'].createElement(
+          _ButtonRow['default'],
           null,
-          _React.createElement(
-            _Button,
+          _React['default'].createElement(
+            _Button['default'],
             { href: portal.links.web },
             'On OrgSync.com'
           ),
@@ -55391,22 +55392,22 @@ define('components/portals/show', ['exports', 'module', 'api', 'cursors', 'compo
 define('components/portals/list-item', ['exports', 'module', 'cursors', 'components/ui/popup', 'react', 'components/portals/show'], function (exports, module, _cursors, _componentsUiPopup, _react, _componentsPortalsShow) {
   'use strict';
 
-  function _interopRequire(obj) { return obj && obj.__esModule ? obj['default'] : obj; }
+  function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 
-  var _Cursors = _interopRequire(_cursors);
+  var _Cursors = _interopRequireDefault(_cursors);
 
-  var _Popup = _interopRequire(_componentsUiPopup);
+  var _Popup = _interopRequireDefault(_componentsUiPopup);
 
-  var _React = _interopRequire(_react);
+  var _React = _interopRequireDefault(_react);
 
-  var _Show = _interopRequire(_componentsPortalsShow);
+  var _Show = _interopRequireDefault(_componentsPortalsShow);
 
   var DEFAULT_SRC = 'https://orgsync.com/assets/icons/portals/no_org_profile_150.png';
 
-  module.exports = _React.createClass({
+  module.exports = _React['default'].createClass({
     displayName: 'list-item',
 
-    mixins: [_Cursors],
+    mixins: [_Cursors['default']],
 
     getInitialState: function getInitialState() {
       return {
@@ -55440,12 +55441,12 @@ define('components/portals/list-item', ['exports', 'module', 'cursors', 'compone
 
     renderShow: function renderShow() {
       if (!this.state.showIsOpen) return;
-      return _React.createElement(_Show, { cursors: { portal: this.getCursor('portal') } });
+      return _React['default'].createElement(_Show['default'], { cursors: { portal: this.getCursor('portal') } });
     },
 
     renderShowPopup: function renderShowPopup() {
-      return _React.createElement(
-        _Popup,
+      return _React['default'].createElement(
+        _Popup['default'],
         { name: 'portals-show', close: this.closeShow, title: 'Portal Details' },
         this.renderShow()
       );
@@ -55453,31 +55454,31 @@ define('components/portals/list-item', ['exports', 'module', 'cursors', 'compone
 
     render: function render() {
       var portal = this.state.portal;
-      return _React.createElement(
+      return _React['default'].createElement(
         'div',
         { className: 'osw-portals-list-item' },
-        _React.createElement(
+        _React['default'].createElement(
           'a',
           { href: portal.links.web, onClick: this.handleClick },
-          _React.createElement(
+          _React['default'].createElement(
             'div',
             { className: 'osw-portals-list-item-picture' },
-            _React.createElement('img', { src: this.getSrc() })
+            _React['default'].createElement('img', { alt: '', src: this.getSrc() })
           ),
-          _React.createElement(
+          _React['default'].createElement(
             'div',
             { className: 'osw-portals-list-item-info' },
-            _React.createElement(
+            _React['default'].createElement(
               'div',
               { className: 'osw-portals-list-item-name' },
               this.getFittedName()
             ),
-            _React.createElement(
+            _React['default'].createElement(
               'div',
               { className: 'osw-portals-list-item-umbrella' },
               this.getUmbrellaName()
             ),
-            _React.createElement(
+            _React['default'].createElement(
               'div',
               { className: 'osw-portals-list-item-category' },
               portal.category.name
@@ -55493,41 +55494,41 @@ define('components/portals/list-item', ['exports', 'module', 'cursors', 'compone
 define('components/portals/index', ['exports', 'module', 'underscore', 'underscore.string', 'api', 'cursors', 'components/ui/error-block', 'components/portals/filters', 'react-list', 'components/portals/list-item', 'components/ui/loading-block', 'components/shared/empty', 'react'], function (exports, module, _underscore, _underscoreString, _api, _cursors, _componentsUiErrorBlock, _componentsPortalsFilters, _reactList, _componentsPortalsListItem, _componentsUiLoadingBlock, _componentsSharedEmpty, _react) {
   'use strict';
 
-  function _interopRequire(obj) { return obj && obj.__esModule ? obj['default'] : obj; }
+  function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 
-  var _2 = _interopRequire(_underscore);
+  var _2 = _interopRequireDefault(_underscore);
 
-  var _str2 = _interopRequire(_underscoreString);
+  var _str2 = _interopRequireDefault(_underscoreString);
 
-  var _api2 = _interopRequire(_api);
+  var _api2 = _interopRequireDefault(_api);
 
-  var _Cursors = _interopRequire(_cursors);
+  var _Cursors = _interopRequireDefault(_cursors);
 
-  var _ErrorBlock = _interopRequire(_componentsUiErrorBlock);
+  var _ErrorBlock = _interopRequireDefault(_componentsUiErrorBlock);
 
-  var _Filters = _interopRequire(_componentsPortalsFilters);
+  var _Filters = _interopRequireDefault(_componentsPortalsFilters);
 
-  var _List = _interopRequire(_reactList);
+  var _List = _interopRequireDefault(_reactList);
 
-  var _ListItem = _interopRequire(_componentsPortalsListItem);
+  var _ListItem = _interopRequireDefault(_componentsPortalsListItem);
 
-  var _LoadingBlock = _interopRequire(_componentsUiLoadingBlock);
+  var _LoadingBlock = _interopRequireDefault(_componentsUiLoadingBlock);
 
-  var _Empty = _interopRequire(_componentsSharedEmpty);
+  var _Empty = _interopRequireDefault(_componentsSharedEmpty);
 
-  var _React = _interopRequire(_react);
+  var _React = _interopRequireDefault(_react);
 
-  var LETTER_REG_EXPS = _2.times(26, function (n) {
+  var LETTER_REG_EXPS = _2['default'].times(26, function (n) {
     return String.fromCharCode(65 + n);
   }).reduce(function (letters, letter) {
     letters[letter] = new RegExp('^' + letter, 'i');
     return letters;
   }, { '': /.*/, Other: /^[^a-z]/i });
 
-  module.exports = _React.createClass({
+  module.exports = _React['default'].createClass({
     displayName: 'index',
 
-    mixins: [_Cursors],
+    mixins: [_Cursors['default']],
 
     comparator: function comparator(a, b) {
       if (!a.umbrella !== !b.umbrella) return !a.umbrella ? -1 : 1;
@@ -55571,7 +55572,7 @@ define('components/portals/index', ['exports', 'module', 'underscore', 'undersco
 
     fetch: function fetch(cb) {
       if (this.state.portals.length) return cb(null, true);
-      _api2.get(this.getUrl(), { all: true }, _2.partial(this.handleFetch, cb));
+      _api2['default'].get(this.getUrl(), { all: true }, _2['default'].partial(this.handleFetch, cb));
     },
 
     handleFetch: function handleFetch(cb, er, res) {
@@ -55597,17 +55598,17 @@ define('components/portals/index', ['exports', 'module', 'underscore', 'undersco
     },
 
     searchableWordsFor: function searchableWordsFor(portal) {
-      return _str2.words(_2.values(_2.pick(portal, this.props.searchableAttributes)).join(' ').toLowerCase());
+      return _str2['default'].words(_2['default'].values(_2['default'].pick(portal, this.props.searchableAttributes)).join(' ').toLowerCase());
     },
 
     matchesQuery: function matchesQuery(portal) {
       var query = this.state.query;
       if (!query) return true;
-      var words = _str2.words(query.toLowerCase());
+      var words = _str2['default'].words(query.toLowerCase());
       var searchableWords = this.searchableWordsFor(portal);
-      return _2.every(words, function (wordA) {
-        return _2.any(searchableWords, function (wordB) {
-          return _str2.startsWith(wordB, wordA);
+      return _2['default'].every(words, function (wordA) {
+        return _2['default'].any(searchableWords, function (wordB) {
+          return _str2['default'].startsWith(wordB, wordA);
         });
       });
     },
@@ -55626,7 +55627,7 @@ define('components/portals/index', ['exports', 'module', 'underscore', 'undersco
 
     renderFilters: function renderFilters(portals) {
       if (!this.state.portals.length || !this.props.filtersAreShowing) return;
-      return _React.createElement(_Filters, {
+      return _React['default'].createElement(_Filters['default'], {
         portals: portals,
         cursors: {
           query: this.getCursor('query'),
@@ -55639,7 +55640,7 @@ define('components/portals/index', ['exports', 'module', 'underscore', 'undersco
 
     renderListItem: function renderListItem(portal) {
       var i = this.state.portals.indexOf(portal);
-      return _React.createElement(_ListItem, {
+      return _React['default'].createElement(_ListItem['default'], {
         key: portal.id,
         redirect: this.props.redirect,
         cursors: { portal: this.getCursor('portals', i) }
@@ -55647,15 +55648,15 @@ define('components/portals/index', ['exports', 'module', 'underscore', 'undersco
     },
 
     renderLoading: function renderLoading() {
-      return _React.createElement(_LoadingBlock, null);
+      return _React['default'].createElement(_LoadingBlock['default'], null);
     },
 
     renderError: function renderError(er) {
-      return _React.createElement(_ErrorBlock, { message: er.toString() });
+      return _React['default'].createElement(_ErrorBlock['default'], { message: er.toString() });
     },
 
     renderEmpty: function renderEmpty() {
-      return _React.createElement(_Empty, {
+      return _React['default'].createElement(_Empty['default'], {
         objectName: 'portals',
         cursors: {
           umbrella: this.getCursor('umbrella'),
@@ -55668,11 +55669,11 @@ define('components/portals/index', ['exports', 'module', 'underscore', 'undersco
 
     render: function render() {
       var portals = this.getFilteredPortals();
-      return _React.createElement(
+      return _React['default'].createElement(
         'div',
         { className: 'osw-portals-index' },
         this.renderFilters(portals),
-        _React.createElement(_List, {
+        _React['default'].createElement(_List['default'], {
           items: portals,
           fetch: this.fetch,
           renderLoading: this.renderLoading,
@@ -55693,11 +55694,11 @@ define('entities/selector/item', ['exports', 'underscore', 'underscore.string'],
     value: true
   });
 
-  function _interopRequire(obj) { return obj && obj.__esModule ? obj['default'] : obj; }
+  function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 
-  var _2 = _interopRequire(_underscore);
+  var _2 = _interopRequireDefault(_underscore);
 
-  var _str2 = _interopRequire(_underscoreString);
+  var _str2 = _interopRequireDefault(_underscoreString);
 
   var ICON_MAP = {
     account: 'person',
@@ -55723,7 +55724,7 @@ define('entities/selector/item', ['exports', 'underscore', 'underscore.string'],
   var BASIC_FIELDS = ['_type', 'id'].concat(NAME_FIELDS).concat(PICTURE_URL_FIELDS);
 
   var getBestFit = function getBestFit(fields, item) {
-    return item[_2.find(fields, _2.partial(_2.has, item))];
+    return item[_2['default'].find(fields, _2['default'].partial(_2['default'].has, item))];
   };
 
   var isArbitrary = function isArbitrary(item) {
@@ -55738,7 +55739,7 @@ define('entities/selector/item', ['exports', 'underscore', 'underscore.string'],
   };
 
   exports.getTerm = getTerm;
-  var getName = _2.partial(getBestFit, NAME_FIELDS);
+  var getName = _2['default'].partial(getBestFit, NAME_FIELDS);
 
   exports.getName = getName;
   var getDisplayName = function getDisplayName(item) {
@@ -55750,16 +55751,16 @@ define('entities/selector/item', ['exports', 'underscore', 'underscore.string'],
   };
 
   exports.getDisplayName = getDisplayName;
-  var getPictureUrl = _2.partial(getBestFit, PICTURE_URL_FIELDS);
+  var getPictureUrl = _2['default'].partial(getBestFit, PICTURE_URL_FIELDS);
 
   exports.getPictureUrl = getPictureUrl;
   var getIconName = function getIconName(item) {
     if (isArbitrary(item)) return ARBITRARY_ICON;
-    return ICON_MAP[item._type] || _str2.dasherize(item._type);
+    return ICON_MAP[item._type] || _str2['default'].dasherize(item._type);
   };
 
   exports.getIconName = getIconName;
-  var getBasicFields = _2.partial(_2.pick, _2, BASIC_FIELDS);
+  var getBasicFields = _2['default'].partial(_2['default'].pick, _2['default'], BASIC_FIELDS);
   exports.getBasicFields = getBasicFields;
 });
 // scripts/components/selector/result.es6
@@ -55768,74 +55769,74 @@ define('components/selector/result', ['exports', 'module', 'underscore', 'unders
 
   var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
 
-  function _interopRequire(obj) { return obj && obj.__esModule ? obj['default'] : obj; }
+  function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 
-  var _2 = _interopRequire(_underscore);
+  var _2 = _interopRequireDefault(_underscore);
 
-  var _str2 = _interopRequire(_underscoreString);
+  var _str2 = _interopRequireDefault(_underscoreString);
 
-  var _Cursors = _interopRequire(_cursors);
+  var _Cursors = _interopRequireDefault(_cursors);
 
-  var _Icon = _interopRequire(_componentsUiIcon);
+  var _Icon = _interopRequireDefault(_componentsUiIcon);
 
-  var _React = _interopRequire(_react);
+  var _React = _interopRequireDefault(_react);
 
-  module.exports = _React.createClass({
+  module.exports = _React['default'].createClass({
     displayName: 'result',
 
-    mixins: [_Cursors],
+    mixins: [_Cursors['default']],
 
     className: function className() {
-      var classes = ['osw-selector-result', 'osw-selector-result-type-' + _entitiesSelectorItem.getIconName(this.props.item)];
+      var classes = ['osw-selector-result', 'osw-selector-result-type-' + (0, _entitiesSelectorItem.getIconName)(this.props.item)];
       if (this.props.isSelected) classes.push('osw-selector-result-selected');
       if (this.props.isActive) classes.push('osw-selector-result-active');
       return classes.join(' ');
     },
 
     getImageStyle: function getImageStyle() {
-      var src = _entitiesSelectorItem.getPictureUrl(this.props.item);
+      var src = (0, _entitiesSelectorItem.getPictureUrl)(this.props.item);
       if (!src) return {};
       if (src[0] === '/') src = 'https://orgsync.com' + src;
       return { backgroundImage: 'url(\'' + src + '\')' };
     },
 
     renderIcon: function renderIcon() {
-      return _React.createElement(
+      return _React['default'].createElement(
         'div',
         { className: 'osw-selector-result-icon' },
-        _React.createElement(_Icon, { name: _entitiesSelectorItem.getIconName(this.props.item) })
+        _React['default'].createElement(_Icon['default'], { name: (0, _entitiesSelectorItem.getIconName)(this.props.item) })
       );
     },
 
     render: function render() {
       var item = this.props.item;
-      var eventHandlers = _2.pick(this.props, 'onMouseOver', 'onClick');
-      return _React.createElement(
+      var eventHandlers = _2['default'].pick(this.props, 'onMouseOver', 'onClick');
+      return _React['default'].createElement(
         'div',
         _extends({}, eventHandlers, { className: this.className() }),
-        _React.createElement(
+        _React['default'].createElement(
           'div',
           { className: 'osw-selector-result-content' },
-          _React.createElement(
+          _React['default'].createElement(
             'div',
             {
               className: 'osw-selector-result-image',
               style: this.getImageStyle()
             },
-            _entitiesSelectorItem.getPictureUrl(item) ? null : this.renderIcon()
+            (0, _entitiesSelectorItem.getPictureUrl)(item) ? null : this.renderIcon()
           ),
-          _React.createElement(
+          _React['default'].createElement(
             'div',
             { className: 'osw-selector-result-info' },
-            _React.createElement(
+            _React['default'].createElement(
               'div',
               { className: 'osw-selector-result-name' },
-              _entitiesSelectorItem.getDisplayName(item)
+              (0, _entitiesSelectorItem.getDisplayName)(item)
             ),
-            _React.createElement(
+            _React['default'].createElement(
               'div',
               { className: 'osw-selector-result-type' },
-              _str2.titleize(_str2.humanize(item._type))
+              _str2['default'].titleize(_str2['default'].humanize(item._type))
             )
           )
         )
@@ -55847,20 +55848,20 @@ define('components/selector/result', ['exports', 'module', 'underscore', 'unders
 define('components/selector/scope', ['exports', 'module', 'cursors', 'react', 'entities/selector/item'], function (exports, module, _cursors, _react, _entitiesSelectorItem) {
   'use strict';
 
-  function _interopRequire(obj) { return obj && obj.__esModule ? obj['default'] : obj; }
+  function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 
-  var _Cursors = _interopRequire(_cursors);
+  var _Cursors = _interopRequireDefault(_cursors);
 
-  var _React = _interopRequire(_react);
+  var _React = _interopRequireDefault(_react);
 
   var STOP_PROPAGATION = function STOP_PROPAGATION(ev) {
     ev.stopPropagation();
   };
 
-  module.exports = _React.createClass({
+  module.exports = _React['default'].createClass({
     displayName: 'scope',
 
-    mixins: [_Cursors],
+    mixins: [_Cursors['default']],
 
     handleChange: function handleChange() {
       this.props.onResultClick(this.props.scope);
@@ -55874,7 +55875,7 @@ define('components/selector/scope', ['exports', 'module', 'cursors', 'react', 'e
 
     renderToggle: function renderToggle() {
       if (!this.props.scope.selectable) return;
-      return _React.createElement('input', {
+      return _React['default'].createElement('input', {
         checked: this.props.isSelected,
         className: 'osw-selector-scope-toggle',
         onChange: this.handleChange,
@@ -55884,10 +55885,10 @@ define('components/selector/scope', ['exports', 'module', 'cursors', 'react', 'e
     },
 
     renderName: function renderName() {
-      var name = _entitiesSelectorItem.getDisplayName(this.props.scope);
+      var name = (0, _entitiesSelectorItem.getDisplayName)(this.props.scope);
       var count = this.props.count;
       if (!count) return name;
-      return _React.createElement(
+      return _React['default'].createElement(
         'strong',
         null,
         name,
@@ -55898,11 +55899,11 @@ define('components/selector/scope', ['exports', 'module', 'cursors', 'react', 'e
     },
 
     render: function render() {
-      return _React.createElement(
+      return _React['default'].createElement(
         'div',
         { className: this.getClassName(), onClick: this.props.onClick },
         this.renderToggle(),
-        _React.createElement(
+        _React['default'].createElement(
           'div',
           { className: 'osw-selector-scope-name' },
           this.renderName()
@@ -55919,15 +55920,15 @@ define('entities/selector/store', ['exports', 'underscore', 'underscore.string',
     value: true
   });
 
-  function _interopRequire(obj) { return obj && obj.__esModule ? obj['default'] : obj; }
+  function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 
-  var _2 = _interopRequire(_underscore);
+  var _2 = _interopRequireDefault(_underscore);
 
-  var _str2 = _interopRequire(_underscoreString);
+  var _str2 = _interopRequireDefault(_underscoreString);
 
-  var _React = _interopRequire(_react);
+  var _React = _interopRequireDefault(_react);
 
-  var update = _React.addons.update;
+  var update = _React['default'].addons.update;
 
   var FETCH_SIZE = 100;
 
@@ -55949,7 +55950,7 @@ define('entities/selector/store', ['exports', 'underscore', 'underscore.string',
     if (field === 'portal_name') field = 'portal.name';
     if (field === 'portal_short_name') field = 'portal.short_name';
 
-    if (field === 'name') return _entitiesSelectorItem.getName(item);
+    if (field === 'name') return (0, _entitiesSelectorItem.getName)(item);
 
     var path = field.split('.');
     var value = item;
@@ -55960,15 +55961,15 @@ define('entities/selector/store', ['exports', 'underscore', 'underscore.string',
   var filter = function filter(item, q, options) {
     q = parse(q);
     if (!q) return true;
-    var values = _2.map(options.fields || ['name'], _2.partial(filterValue, item));
-    var searchableWords = _2.unique(_str2.words(values.join(' ').toLowerCase()));
-    return _2.every(_str2.words(q), function (wordA) {
-      return _2.any(searchableWords, _2.partial(_str2.startsWith, _2, wordA, 0));
+    var values = _2['default'].map(options.fields || ['name'], _2['default'].partial(filterValue, item));
+    var searchableWords = _2['default'].unique(_str2['default'].words(values.join(' ').toLowerCase()));
+    return _2['default'].every(_str2['default'].words(q), function (wordA) {
+      return _2['default'].any(searchableWords, _2['default'].partial(_str2['default'].startsWith, _2['default'], wordA, 0));
     });
   };
 
   var getQueryKey = function getQueryKey(options) {
-    return _2.compact([(options.scopes || []).map(_entitiesSelectorItem.getTerm).sort().join(options.union_scopes ? '+' : '-') || '_all', (options.types || []).slice().sort().join() || '_all', (options.boost_types || []).slice().sort().join() || 'none', (options.fields || []).slice().sort().join() || 'name', JSON.stringify(options.where), parse(options.q)]).join(':');
+    return _2['default'].compact([(options.scopes || []).map(_entitiesSelectorItem.getTerm).sort().join(options.union_scopes ? '+' : '-') || '_all', (options.types || []).slice().sort().join() || '_all', (options.boost_types || []).slice().sort().join() || 'none', (options.fields || []).slice().sort().join() || 'name', JSON.stringify(options.where), parse(options.q)]).join(':');
   };
 
   exports.getQueryKey = getQueryKey;
@@ -55976,10 +55977,10 @@ define('entities/selector/store', ['exports', 'underscore', 'underscore.string',
     var key = getQueryKey(options);
     var cached = (_orgsyncWidgets.cache.get(key) || []).slice();
     if (options.overwrite) cached = [];
-    _2.each(items, function (item) {
-      _orgsyncWidgets.cache.set(_entitiesSelectorItem.getTerm(item), item);
+    _2['default'].each(items, function (item) {
+      _orgsyncWidgets.cache.set((0, _entitiesSelectorItem.getTerm)(item), item);
     });
-    _orgsyncWidgets.cache.set(key, _2.unique(cached.concat(_2.map(items, _entitiesSelectorItem.getTerm))));
+    _orgsyncWidgets.cache.set(key, _2['default'].unique(cached.concat(_2['default'].map(items, _entitiesSelectorItem.getTerm))));
   };
 
   var getItemFromId = function getItemFromId(id) {
@@ -55999,33 +56000,33 @@ define('entities/selector/store', ['exports', 'underscore', 'underscore.string',
         // If the current query matches the original query, there is an exact
         // match and there is no need to predict results.
         if (options.q === q) return cached;
-        results = results.concat(cached.filter(_2.partial(filter, _2, q, options)));
+        results = results.concat(cached.filter(_2['default'].partial(filter, _2['default'], q, options)));
       }
       if (!options.q) break;
       options = update(options, { q: { $set: parse(options.q.slice(0, -1)) } });
     }
-    return _2.unique(results).slice(0, options.limit);
+    return _2['default'].unique(results).slice(0, options.limit);
   };
 
   exports.search = search;
   var fetch = function fetch(options, cb) {
-    if (options.dataset) options = _2.omit(options, 'q');
+    if (options.dataset) options = _2['default'].omit(options, 'q');
     var key = getQueryKey(options);
     var cached = _orgsyncWidgets.cache.get(key) || [];
     var limit = options.limit || Infinity;
-    options = _2.clone(options);
+    options = _2['default'].clone(options);
     options.from = cached.length;
     options.size = Math.max(0, Math.min(limit - options.from, FETCH_SIZE));
     options.sort = 'name';
     if (options.dataset && !done[key]) {
-      cacheItems(options.dataset, _2.extend({ overwrite: true }, options));
+      cacheItems(options.dataset, _2['default'].extend({ overwrite: true }, options));
       done[key] = true;
     }
     if (done[key] || !options.size) return cb(null, true, options);
     _orgsyncWidgets.io.emit('search', options, function (er, res) {
       if (er) return cb(er);
-      var items = _2.map(res.hits.hits, function (hit) {
-        return _2.extend({ _type: hit._type }, hit._source);
+      var items = _2['default'].map(res.hits.hits, function (hit) {
+        return _2['default'].extend({ _type: hit._type }, hit._source);
       });
       cacheItems(items, options);
       cb(null, done[key] = items.length < options.size, options);
@@ -56037,43 +56038,43 @@ define('entities/selector/store', ['exports', 'underscore', 'underscore.string',
 define('components/selector/token', ['exports', 'module', 'cursors', 'components/ui/icon', 'react', 'entities/selector/item'], function (exports, module, _cursors, _componentsUiIcon, _react, _entitiesSelectorItem) {
   'use strict';
 
-  function _interopRequire(obj) { return obj && obj.__esModule ? obj['default'] : obj; }
+  function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 
-  var _Cursors = _interopRequire(_cursors);
+  var _Cursors = _interopRequireDefault(_cursors);
 
-  var _Icon = _interopRequire(_componentsUiIcon);
+  var _Icon = _interopRequireDefault(_componentsUiIcon);
 
-  var _React = _interopRequire(_react);
+  var _React = _interopRequireDefault(_react);
 
-  module.exports = _React.createClass({
+  module.exports = _React['default'].createClass({
     displayName: 'token',
 
-    mixins: [_Cursors],
+    mixins: [_Cursors['default']],
 
     getClassName: function getClassName() {
-      return 'osw-selector-token osw-selector-token-type-' + _entitiesSelectorItem.getIconName(this.props.item);
+      return 'osw-selector-token osw-selector-token-type-' + (0, _entitiesSelectorItem.getIconName)(this.props.item);
     },
 
     render: function render() {
-      return _React.createElement(
+      return _React['default'].createElement(
         'div',
         { className: this.getClassName() },
-        _React.createElement(
+        _React['default'].createElement(
           'div',
           { className: 'osw-selector-token-content' },
-          _React.createElement(_Icon, {
+          _React['default'].createElement(_Icon['default'], {
             className: 'osw-selector-token-remove',
             name: 'delete',
             onClick: this.props.onRemoveClick
           }),
-          _React.createElement(
+          _React['default'].createElement(
             'div',
             { className: 'osw-selector-token-name' },
-            _React.createElement(_Icon, {
+            _React['default'].createElement(_Icon['default'], {
               className: 'osw-selector-token-icon',
-              name: _entitiesSelectorItem.getIconName(this.props.item)
+              name: (0, _entitiesSelectorItem.getIconName)(this.props.item)
             }),
-            _entitiesSelectorItem.getDisplayName(this.props.item)
+            (0, _entitiesSelectorItem.getDisplayName)(this.props.item)
           )
         )
       );
@@ -56086,36 +56087,36 @@ define('components/selector/index', ['exports', 'module', 'underscore', 'orgsync
 
   var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
 
-  function _interopRequire(obj) { return obj && obj.__esModule ? obj['default'] : obj; }
+  function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 
-  var _2 = _interopRequire(_underscore);
+  var _2 = _interopRequireDefault(_underscore);
 
-  var _Button = _interopRequire(_componentsUiButton);
+  var _Button = _interopRequireDefault(_componentsUiButton);
 
-  var _Cursors = _interopRequire(_cursors);
+  var _Cursors = _interopRequireDefault(_cursors);
 
-  var _List = _interopRequire(_reactList);
+  var _List = _interopRequireDefault(_reactList);
 
-  var _Popup = _interopRequire(_componentsUiPopup);
+  var _Popup = _interopRequireDefault(_componentsUiPopup);
 
-  var _React = _interopRequire(_react);
+  var _React = _interopRequireDefault(_react);
 
-  var _Result = _interopRequire(_componentsSelectorResult);
+  var _Result = _interopRequireDefault(_componentsSelectorResult);
 
-  var _Scope = _interopRequire(_componentsSelectorScope);
+  var _Scope = _interopRequireDefault(_componentsSelectorScope);
 
-  var _Token = _interopRequire(_componentsSelectorToken);
+  var _Token = _interopRequireDefault(_componentsSelectorToken);
 
   var DOWNCASE = function DOWNCASE(str) {
     return str.toLowerCase();
   };
 
-  var NAME_COMPARATOR = _2.compose(DOWNCASE, _entitiesSelectorItem.getDisplayName);
+  var NAME_COMPARATOR = _2['default'].compose(DOWNCASE, _entitiesSelectorItem.getDisplayName);
 
-  var SelectorIndex = _React.createClass({
+  var SelectorIndex = _React['default'].createClass({
     displayName: 'SelectorIndex',
 
-    mixins: [_Cursors],
+    mixins: [_Cursors['default']],
 
     getDefaultProps: function getDefaultProps() {
       return {
@@ -56147,7 +56148,7 @@ define('components/selector/index', ['exports', 'module', 'underscore', 'orgsync
         query: this.props.query,
         results: [],
         scope: this.props.scopes[0],
-        value: _2.sortBy(this.props.value, NAME_COMPARATOR)
+        value: _2['default'].sortBy(this.props.value, NAME_COMPARATOR)
       };
     },
 
@@ -56172,11 +56173,11 @@ define('components/selector/index', ['exports', 'module', 'underscore', 'orgsync
     },
 
     updateLastMouse: function updateLastMouse(ev) {
-      this.lastMouse = _2.pick(ev, 'screenX', 'screenY');
+      this.lastMouse = _2['default'].pick(ev, 'screenX', 'screenY');
     },
 
     mouseMoved: function mouseMoved(ev) {
-      return !_2.isEqual(this.lastMouse, _2.pick(ev, 'screenX', 'screenY'));
+      return !_2['default'].isEqual(this.lastMouse, _2['default'].pick(ev, 'screenX', 'screenY'));
     },
 
     updateResults: function updateResults() {
@@ -56186,7 +56187,7 @@ define('components/selector/index', ['exports', 'module', 'underscore', 'orgsync
         results = [{ name: this.state.query }].concat(results);
       }
       if (this.props.view === 'inline' && !q) {
-        results = _2.filter(this.props.scopes, 'selectable').concat(results);
+        results = _2['default'].filter(this.props.scopes, 'selectable').concat(results);
       }
       this.update({ results: { $set: results } });
 
@@ -56194,7 +56195,7 @@ define('components/selector/index', ['exports', 'module', 'underscore', 'orgsync
       // active index were changed. This improves the UX by only forcing the
       // user's selection to change when it's necessary.
       var end = this.state.activeIndex + 1;
-      if (!_2.isEqual(results.slice(0, end), this.state.results.slice(0, end))) {
+      if (!_2['default'].isEqual(results.slice(0, end), this.state.results.slice(0, end))) {
         this.resetActiveIndex(results);
       }
     },
@@ -56273,14 +56274,14 @@ define('components/selector/index', ['exports', 'module', 'underscore', 'orgsync
 
     addValue: function addValue(item) {
       if (this.isSelected(item)) return;
-      var value = _2.sortBy(this.state.value.concat(item), NAME_COMPARATOR);
+      var value = _2['default'].sortBy(this.state.value.concat(item), NAME_COMPARATOR);
       this.update({ value: { $set: value } });
     },
 
     removeValue: function removeValue(item) {
       var existing = this.getSelected(item);
       if (!existing) return;
-      var i = _2.indexOf(this.state.value, existing);
+      var i = _2['default'].indexOf(this.state.value, existing);
       this.update({ value: { $splice: [[i, 1]] } });
     },
 
@@ -56312,12 +56313,12 @@ define('components/selector/index', ['exports', 'module', 'underscore', 'orgsync
 
     handleResultMouseOver: function handleResultMouseOver(item, ev) {
       if (!this.mouseMoved(ev)) return;
-      this.setActiveIndex(_2.indexOf(this.state.results, item));
+      this.setActiveIndex(_2['default'].indexOf(this.state.results, item));
     },
 
     handleResultClick: function handleResultClick(item) {
       this.isSelected(item) ? this.removeValue(item) : this.addValue(item);
-      this.setActiveIndex(_2.indexOf(this.state.results, item));
+      this.setActiveIndex(_2['default'].indexOf(this.state.results, item));
     },
 
     handleBrowseButtonClick: function handleBrowseButtonClick(ev) {
@@ -56338,7 +56339,7 @@ define('components/selector/index', ['exports', 'module', 'underscore', 'orgsync
     },
 
     pluckSearchOptionsFrom: function pluckSearchOptionsFrom(obj) {
-      var options = _2.pick(obj, 'fields', 'limit', 'types', 'dataset', 'scopes', 'where');
+      var options = _2['default'].pick(obj, 'fields', 'limit', 'types', 'dataset', 'scopes', 'where');
       if (obj.unionScopes != null) options.union_scopes = obj.unionScopes;
       if (obj.boostTypes) options.boost_types = obj.boostTypes;
       return options;
@@ -56353,13 +56354,13 @@ define('components/selector/index', ['exports', 'module', 'underscore', 'orgsync
       } else {
         var scope = this.state.scope;
         options.scopes = [scope];
-        _2.extend(options, this.pluckSearchOptionsFrom(scope));
+        _2['default'].extend(options, this.pluckSearchOptionsFrom(scope));
       }
       return options;
     },
 
     fetch: function fetch(cb) {
-      _entitiesSelectorStore.fetch(this.getSearchOptions(), _2.partial(this.handleFetch, cb));
+      _entitiesSelectorStore.fetch(this.getSearchOptions(), _2['default'].partial(this.handleFetch, cb));
     },
 
     handleFetch: function handleFetch(cb, er, done) {
@@ -56373,7 +56374,7 @@ define('components/selector/index', ['exports', 'module', 'underscore', 'orgsync
     },
 
     getSelected: function getSelected(item) {
-      return _2.find(this.state.value, _2.compose(_2.partial(_2.isEqual, _entitiesSelectorItem.getTerm(item)), _entitiesSelectorItem.getTerm));
+      return _2['default'].find(this.state.value, _2['default'].compose(_2['default'].partial(_2['default'].isEqual, (0, _entitiesSelectorItem.getTerm)(item)), _entitiesSelectorItem.getTerm));
     },
 
     isSelected: function isSelected(item) {
@@ -56381,16 +56382,16 @@ define('components/selector/index', ['exports', 'module', 'underscore', 'orgsync
     },
 
     renderToken: function renderToken(item, i) {
-      return _React.createElement(_Token, {
+      return _React['default'].createElement(_Token['default'], {
         key: i,
         item: item,
-        onRemoveClick: _2.partial(this.removeValue, item)
+        onRemoveClick: _2['default'].partial(this.removeValue, item)
       });
     },
 
     renderTokens: function renderTokens() {
       if (this.props.view === 'browse') return;
-      return _React.createElement(
+      return _React['default'].createElement(
         'div',
         { className: 'osw-selector-index-tokens' },
         this.state.value.map(this.renderToken)
@@ -56399,8 +56400,8 @@ define('components/selector/index', ['exports', 'module', 'underscore', 'orgsync
 
     renderBrowseButton: function renderBrowseButton() {
       if (this.props.view === 'browse' || !this.props.allowBrowse) return;
-      return _React.createElement(
-        _Button,
+      return _React['default'].createElement(
+        _Button['default'],
         {
           className: 'osw-selector-index-browse-button',
           onClick: this.handleBrowseButtonClick
@@ -56410,37 +56411,37 @@ define('components/selector/index', ['exports', 'module', 'underscore', 'orgsync
     },
 
     renderScope: function renderScope(scope, i) {
-      return _React.createElement(_Scope, {
+      return _React['default'].createElement(_Scope['default'], {
         isActive: scope === this.state.scope,
         isSelected: this.isSelected(scope),
         key: i,
-        onClick: _2.partial(this.handleScopeClick, scope),
+        onClick: _2['default'].partial(this.handleScopeClick, scope),
         onResultClick: this.handleResultClick,
         scope: scope
       });
     },
 
     renderResult: function renderResult(item, i) {
-      return _React.createElement(_Result, {
+      return _React['default'].createElement(_Result['default'], {
         key: i,
         item: item,
-        onClick: _2.partial(this.handleResultClick, item),
-        onMouseOver: _2.partial(this.handleResultMouseOver, item),
+        onClick: _2['default'].partial(this.handleResultClick, item),
+        onMouseOver: _2['default'].partial(this.handleResultMouseOver, item),
         isSelected: this.isSelected(item),
-        isActive: _2.indexOf(this.state.results, item) === this.state.activeIndex
+        isActive: _2['default'].indexOf(this.state.results, item) === this.state.activeIndex
       });
     },
 
     renderSelectedResult: function renderSelectedResult(item, i) {
-      return _React.createElement(_Result, {
+      return _React['default'].createElement(_Result['default'], {
         key: i,
         item: item,
-        onClick: _2.partial(this.removeValue, item)
+        onClick: _2['default'].partial(this.removeValue, item)
       });
     },
 
     renderLoading: function renderLoading() {
-      return _React.createElement(
+      return _React['default'].createElement(
         'div',
         { className: 'osw-selector-index-loading' },
         'Loading...'
@@ -56448,7 +56449,7 @@ define('components/selector/index', ['exports', 'module', 'underscore', 'orgsync
     },
 
     renderEmpty: function renderEmpty() {
-      return _React.createElement(
+      return _React['default'].createElement(
         'div',
         { className: 'osw-selector-index-empty' },
         'No results found.'
@@ -56456,7 +56457,7 @@ define('components/selector/index', ['exports', 'module', 'underscore', 'orgsync
     },
 
     renderSelectedEmpty: function renderSelectedEmpty() {
-      return _React.createElement(
+      return _React['default'].createElement(
         'div',
         { className: 'osw-selector-index-empty' },
         'Nothing selected.'
@@ -56464,7 +56465,7 @@ define('components/selector/index', ['exports', 'module', 'underscore', 'orgsync
     },
 
     renderError: function renderError() {
-      return _React.createElement(
+      return _React['default'].createElement(
         'div',
         { className: 'osw-selector-index-error' },
         'An error occurred.'
@@ -56474,8 +56475,8 @@ define('components/selector/index', ['exports', 'module', 'underscore', 'orgsync
     renderResults: function renderResults() {
       if (!this.shouldShowResults()) return;
       var options = this.getSearchOptions();
-      return _React.createElement(_List, {
-        key: _entitiesSelectorStore.getQueryKey(_2.omit(options, 'dataset')),
+      return _React['default'].createElement(_List['default'], {
+        key: _entitiesSelectorStore.getQueryKey(_2['default'].omit(options, 'dataset')),
         ref: 'results',
         className: 'osw-selector-index-results',
         items: this.state.results,
@@ -56494,10 +56495,10 @@ define('components/selector/index', ['exports', 'module', 'underscore', 'orgsync
 
     renderBrowse: function renderBrowse() {
       if (!this.state.browseIsOpen) return;
-      return _React.createElement(
+      return _React['default'].createElement(
         'div',
         null,
-        _React.createElement(SelectorIndex, _extends({}, this.props, {
+        _React['default'].createElement(SelectorIndex, _extends({}, this.props, {
           view: 'browse',
           query: this.state.query,
           cursors: {
@@ -56505,11 +56506,11 @@ define('components/selector/index', ['exports', 'module', 'underscore', 'orgsync
             browseIsOpen: this.getCursor('browseIsOpen')
           }
         })),
-        _React.createElement(
+        _React['default'].createElement(
           'div',
           { className: 'osw-selector-index-done-container' },
-          _React.createElement(
-            _Button,
+          _React['default'].createElement(
+            _Button['default'],
             { onClick: this.closeBrowse },
             'Done'
           )
@@ -56519,8 +56520,8 @@ define('components/selector/index', ['exports', 'module', 'underscore', 'orgsync
 
     renderPopup: function renderPopup() {
       if (this.props.view === 'browse') return;
-      return _React.createElement(
-        _Popup,
+      return _React['default'].createElement(
+        _Popup['default'],
         {
           ref: 'popup',
           title: this.props.browseText,
@@ -56533,10 +56534,10 @@ define('components/selector/index', ['exports', 'module', 'underscore', 'orgsync
 
     renderLeft: function renderLeft() {
       if (this.props.view === 'inline') return;
-      return _React.createElement(
+      return _React['default'].createElement(
         'div',
         { className: 'osw-selector-index-left' },
-        _React.createElement(_List, {
+        _React['default'].createElement(_List['default'], {
           className: 'osw-selector-index-scopes',
           items: this.props.scopes,
           renderItem: this.renderScope,
@@ -56548,23 +56549,23 @@ define('components/selector/index', ['exports', 'module', 'underscore', 'orgsync
     },
 
     renderMiddle: function renderMiddle() {
-      return _React.createElement(
+      return _React['default'].createElement(
         'div',
         { className: 'osw-selector-index-middle' },
-        _React.createElement('input', {
+        _React['default'].createElement('input', {
           name: this.props.hiddenInputName,
           type: 'hidden',
-          value: JSON.stringify(_2.map(this.state.value, _entitiesSelectorItem.getBasicFields))
+          value: JSON.stringify(_2['default'].map(this.state.value, _entitiesSelectorItem.getBasicFields))
         }),
-        _React.createElement(
+        _React['default'].createElement(
           'div',
           { className: 'osw-selector-index-tokens-and-query' },
           this.renderTokens(),
           this.renderBrowseButton(),
-          _React.createElement(
+          _React['default'].createElement(
             'div',
             { className: 'osw-selector-index-query' },
-            _React.createElement('input', {
+            _React['default'].createElement('input', {
               ref: 'query',
               value: this.state.query,
               onChange: this.handleQueryChange,
@@ -56579,15 +56580,15 @@ define('components/selector/index', ['exports', 'module', 'underscore', 'orgsync
 
     renderRight: function renderRight() {
       if (this.props.view === 'inline') return;
-      return _React.createElement(
+      return _React['default'].createElement(
         'div',
         { className: 'osw-selector-index-right' },
-        _React.createElement(
+        _React['default'].createElement(
           'div',
           { className: 'osw-selector-index-right-header' },
           'Selected'
         ),
-        _React.createElement(_List, {
+        _React['default'].createElement(_List['default'], {
           className: 'osw-selector-index-selected-results',
           items: this.state.value,
           renderItem: this.renderSelectedResult,
@@ -56600,10 +56601,10 @@ define('components/selector/index', ['exports', 'module', 'underscore', 'orgsync
     },
 
     render: function render() {
-      return _React.createElement(
+      return _React['default'].createElement(
         'div',
         this.props,
-        _React.createElement(
+        _React['default'].createElement(
           'div',
           {
             className: this.getClassName(),
@@ -56628,26 +56629,26 @@ define('components/selector/index', ['exports', 'module', 'underscore', 'orgsync
 define('components/ui/auto-textbox', ['exports', 'module', 'jquery', 'cursors', 'react'], function (exports, module, _jquery, _cursors, _react) {
   'use strict';
 
-  function _interopRequire(obj) { return obj && obj.__esModule ? obj['default'] : obj; }
+  function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 
-  var _$ = _interopRequire(_jquery);
+  var _$ = _interopRequireDefault(_jquery);
 
-  var _Cursors = _interopRequire(_cursors);
+  var _Cursors = _interopRequireDefault(_cursors);
 
-  var _React = _interopRequire(_react);
+  var _React = _interopRequireDefault(_react);
 
-  module.exports = _React.createClass({
+  module.exports = _React['default'].createClass({
     displayName: 'auto-textbox',
 
-    mixins: [_Cursors],
+    mixins: [_Cursors['default']],
 
     componentDidMount: function componentDidMount() {
-      _$(window).on('resize', this.resize);
+      (0, _$['default'])(window).on('resize', this.resize);
       this.resize();
     },
 
     componentWillUnmount: function componentWillUnmount() {
-      _$(window).off('resize', this.resize);
+      (0, _$['default'])(window).off('resize', this.resize);
     },
 
     componentDidUpdate: function componentDidUpdate() {
@@ -56656,7 +56657,7 @@ define('components/ui/auto-textbox', ['exports', 'module', 'jquery', 'cursors', 
 
     resize: function resize() {
       var el = this.getDOMNode();
-      var $el = _$(el);
+      var $el = (0, _$['default'])(el);
       var minHeight = el.style.minHeight;
       $el.css({ minHeight: 0, height: 0 });
       var targetHeight = Math.round(el.scrollHeight);
@@ -56668,7 +56669,7 @@ define('components/ui/auto-textbox', ['exports', 'module', 'jquery', 'cursors', 
     },
 
     render: function render() {
-      return _React.createElement('textarea', this.props);
+      return _React['default'].createElement('textarea', this.props);
     }
   });
 });

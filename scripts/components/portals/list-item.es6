@@ -57,7 +57,7 @@ export default React.createClass({
       <div className='osw-portals-list-item'>
         <a href={portal.links.web} onClick={this.handleClick}>
           <div className='osw-portals-list-item-picture'>
-            <img src={this.getSrc()} />
+            <img alt='' src={this.getSrc()} />
           </div>
           <div className='osw-portals-list-item-info'>
             <div className='osw-portals-list-item-name'>

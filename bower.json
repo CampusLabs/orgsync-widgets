@@ -1,6 +1,6 @@
 {
   "name": "orgsync-widgets",
-  "version": "0.0.49",
+  "version": "0.0.50",
   "license": "MIT",
   "main": [
     "dist/orgsync-widgets.js",
@@ -22,7 +22,7 @@
     "amdainty": "0.2.0",
     "cache": "0.0.4",
     "bourbon": "4.2.2",
-    "cursors": "0.6.0",
+    "cursors": "0.6.1",
     "elementQuery": "tysonmatanich/elementQuery#f3e328c7070e5d8e11682979092a5c06925c6ad3",
     "formatted-text": "0.0.8",
     "jquery": "2.1.4",

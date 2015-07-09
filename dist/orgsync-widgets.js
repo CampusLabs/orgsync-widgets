@@ -41746,7 +41746,8 @@ define('components/accounts/list-item', ['exports', 'module', 'entities/account'
         }
         if (!change) changes.push(change = {root: root, state: {}});
         var delta = wrapWithPath(deltas[key], path.slice(1));
-        change.state[path[0]] = update(root.state[path[0]], delta);
+        var state = change.state[path[0]] || root.state[path[0]];
+        change.state[path[0]] = update(state, delta);
       }
       for (i = 0, l = changes.length; i < l; ++i) {
         change = changes[i];
@@ -43310,7 +43311,7 @@ define('components/accounts/show', ['exports', 'module', 'underscore', 'undersco
           { className: 'osw-accounts-show-send-a-message' },
           _React['default'].createElement(
             _Button['default'],
-            { href: '' + _config2['default'].io.uri + '/messages/new?account=' + account.id },
+            { href: _config2['default'].io.uri + '/messages/new?account=' + account.id },
             'Send a Message'
           )
         )
@@ -47936,7 +47937,7 @@ define('components/bookmarks/list-item', ['exports', 'module', 'underscore', 'cu
 
     getFaviconUrl: function getFaviconUrl(bookmark) {
       var prefix = 'https://www.google.com/s2/favicons?domain_url=';
-      return '' + prefix + '' + bookmark.links.web;
+      return '' + prefix + bookmark.links.web;
     },
 
     openShow: function openShow(ev) {
@@ -49674,7 +49675,7 @@ define('../bower_components/velcro/config', ["exports", "module"], function (exp
   "use strict";
 
   module.exports = {
-    colors: [{ id: 0, name: "nothing", hex: "ffffff" }, { id: 1, name: "red-lightest", hex: "edab9b" }, { id: 2, name: "purple", hex: "a95bbf" }, { id: 3, name: "teal-lightest", hex: "a4dcca" }, { id: 4, name: "pink-lightest", hex: "e29ce1" }, { id: 5, name: "green", hex: "87d361" }, { id: 6, name: "orange", hex: "e57d02" }, { id: 7, name: "purple-lightest", hex: "cfa4dc" }, { id: 8, name: "yellow-lightest", hex: "f8e2ac" }, { id: 9, name: "grey", hex: "cccccc" }, { id: 10, name: "yellow", hex: "efc24f" }, { id: 11, name: "indigo-lightest", hex: "ced9ef" }, { id: 12, name: "blue-lightest", hex: "8cd1e6" }, { id: 13, name: "red", hex: "de6444" }, { id: 14, name: "white", hex: "ffffff" }, { id: 15, name: "indigo", hex: "819dd5" }, { id: 16, name: "teal", hex: "5bbfa1" }, { id: 17, name: "grey-lighter", hex: "e2e2e2" }, { id: 18, name: "pink", hex: "cb4dc7" }, { id: 19, name: "green-lightest", hex: "c5e9b1" }, { id: 20, name: "blue", hex: "38afd4" }, { id: 21, name: "orange-lightest", hex: "fdac50" }, { id: 100, name: "nothing", hex: "ffffff" }, { id: 101, name: "red-lightest", hex: "edab9b" }, { id: 102, name: "purple", hex: "a95bbf" }, { id: 103, name: "teal-lightest", hex: "a4dcca" }, { id: 104, name: "pink-lightest", hex: "e29ce1" }, { id: 105, name: "green", hex: "87d361" }, { id: 106, name: "orange", hex: "e57d02" }, { id: 107, name: "purple-lightest", hex: "cfa4dc" }, { id: 108, name: "yellow-lightest", hex: "f8e2ac" }, { id: 109, name: "grey", hex: "cccccc" }, { id: 110, name: "yellow", hex: "efc24f" }, { id: 111, name: "indigo-lightest", hex: "ced9ef" }, { id: 112, name: "blue-lightest", hex: "8cd1e6" }, { id: 113, name: "red", hex: "de6444" }, { id: 114, name: "white", hex: "ffffff" }, { id: 115, name: "indigo", hex: "819dd5" }, { id: 116, name: "teal", hex: "5bbfa1" }, { id: 117, name: "grey-lighter", hex: "e2e2e2" }, { id: 118, name: "pink", hex: "cb4dc7" }, { id: 119, name: "green-lightest", hex: "c5e9b1" }, { id: 120, name: "blue", hex: "38afd4" }, { id: 121, name: "orange-lightest", hex: "fdac50" }]
+    "colors": [{ "id": 0, "name": "nothing", "hex": "ffffff" }, { "id": 1, "name": "red-lightest", "hex": "edab9b" }, { "id": 2, "name": "purple", "hex": "a95bbf" }, { "id": 3, "name": "teal-lightest", "hex": "a4dcca" }, { "id": 4, "name": "pink-lightest", "hex": "e29ce1" }, { "id": 5, "name": "green", "hex": "87d361" }, { "id": 6, "name": "orange", "hex": "e57d02" }, { "id": 7, "name": "purple-lightest", "hex": "cfa4dc" }, { "id": 8, "name": "yellow-lightest", "hex": "f8e2ac" }, { "id": 9, "name": "grey", "hex": "cccccc" }, { "id": 10, "name": "yellow", "hex": "efc24f" }, { "id": 11, "name": "indigo-lightest", "hex": "ced9ef" }, { "id": 12, "name": "blue-lightest", "hex": "8cd1e6" }, { "id": 13, "name": "red", "hex": "de6444" }, { "id": 14, "name": "white", "hex": "ffffff" }, { "id": 15, "name": "indigo", "hex": "819dd5" }, { "id": 16, "name": "teal", "hex": "5bbfa1" }, { "id": 17, "name": "grey-lighter", "hex": "e2e2e2" }, { "id": 18, "name": "pink", "hex": "cb4dc7" }, { "id": 19, "name": "green-lightest", "hex": "c5e9b1" }, { "id": 20, "name": "blue", "hex": "38afd4" }, { "id": 21, "name": "orange-lightest", "hex": "fdac50" }, { "id": 100, "name": "nothing", "hex": "ffffff" }, { "id": 101, "name": "red-lightest", "hex": "edab9b" }, { "id": 102, "name": "purple", "hex": "a95bbf" }, { "id": 103, "name": "teal-lightest", "hex": "a4dcca" }, { "id": 104, "name": "pink-lightest", "hex": "e29ce1" }, { "id": 105, "name": "green", "hex": "87d361" }, { "id": 106, "name": "orange", "hex": "e57d02" }, { "id": 107, "name": "purple-lightest", "hex": "cfa4dc" }, { "id": 108, "name": "yellow-lightest", "hex": "f8e2ac" }, { "id": 109, "name": "grey", "hex": "cccccc" }, { "id": 110, "name": "yellow", "hex": "efc24f" }, { "id": 111, "name": "indigo-lightest", "hex": "ced9ef" }, { "id": 112, "name": "blue-lightest", "hex": "8cd1e6" }, { "id": 113, "name": "red", "hex": "de6444" }, { "id": 114, "name": "white", "hex": "ffffff" }, { "id": 115, "name": "indigo", "hex": "819dd5" }, { "id": 116, "name": "teal", "hex": "5bbfa1" }, { "id": 117, "name": "grey-lighter", "hex": "e2e2e2" }, { "id": 118, "name": "pink", "hex": "cb4dc7" }, { "id": 119, "name": "green-lightest", "hex": "c5e9b1" }, { "id": 120, "name": "blue", "hex": "38afd4" }, { "id": 121, "name": "orange-lightest", "hex": "fdac50" }]
   };
 });
 // scripts/components/event-filters/index.es6
@@ -53202,7 +53203,7 @@ define('entities/file', ['exports', 'underscore'], function (exports, _underscor
     var unit = _2['default'].find(UNITS, function (unit) {
       return bytes >= unit.bytes;
     }) || _2['default'].last(UNITS);
-    return '' + Math.ceil(bytes / unit.bytes * 10) / 10 + ' ' + unit.name;
+    return Math.ceil(bytes / unit.bytes * 10) / 10 + ' ' + unit.name;
   };
   exports.getHumanFileSize = getHumanFileSize;
 });
@@ -53264,7 +53265,7 @@ define('components/files/file-show', ['exports', 'module', 'underscore', 'api', 
         _React['default'].createElement(
           'strong',
           null,
-          '' + label + ':'
+          label + ':'
         ),
         ' ' + val
       );
@@ -53316,7 +53317,7 @@ define('components/files/file-show', ['exports', 'module', 'underscore', 'api', 
       )].concat(version.description ? _React['default'].createElement(
         'tr',
         {
-          key: '' + version.id + '-description',
+          key: version.id + '-description',
           className: 'osw-files-file-show-version-description'
         },
         _React['default'].createElement('td', null),
@@ -53471,7 +53472,7 @@ define('components/files/list-item', ['exports', 'module', 'cursors', 'entities/
     },
 
     renderCount: function renderCount() {
-      return '' + (this.state.file.file_count || 'No') + ' Items';
+      return (this.state.file.file_count || 'No') + ' Items';
     },
 
     renderDownload: function renderDownload() {

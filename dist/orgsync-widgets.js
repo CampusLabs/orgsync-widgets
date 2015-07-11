@@ -55565,15 +55565,18 @@ define('components/portals/index', ['exports', 'module', 'underscore', 'undersco
     },
 
     getUrl: function getUrl() {
-      if (this.props.portalId) {
-        return '/portals/' + this.props.portalId + '/portals';
-      }
-      return '/communities/' + this.props.communityId + '/portals';
+      var _props = this.props;
+      var portalId = _props.portalId;
+      var communityId = _props.communityId;
+
+      if (portalId) return '/portals/' + portalId + '/portals';
+      if (communityId) return '/communities/' + communityId + '/portals';
     },
 
     fetch: function fetch(cb) {
-      if (this.state.portals.length) return cb(null, true);
-      _api2['default'].get(this.getUrl(), { all: true }, _2['default'].partial(this.handleFetch, cb));
+      var url = this.getUrl();
+      if (this.state.portals.length || !url) return cb(null, true);
+      _api2['default'].get(url, { all: true }, _2['default'].partial(this.handleFetch, cb));
     },
 
     handleFetch: function handleFetch(cb, er, res) {

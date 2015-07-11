@@ -54,15 +54,15 @@ export default React.createClass({
   },
 
   getUrl: function () {
-    if (this.props.portalId) {
-      return '/portals/' + this.props.portalId + '/portals';
-    }
-    return '/communities/' + this.props.communityId + '/portals';
+    const {portalId, communityId} = this.props;
+    if (portalId) return `/portals/${portalId}/portals`;
+    if (communityId) return `/communities/${communityId}/portals`;
   },
 
   fetch: function (cb) {
-    if (this.state.portals.length) return cb(null, true);
-    api.get(this.getUrl(), {all: true}, _.partial(this.handleFetch, cb));
+    const url = this.getUrl();
+    if (this.state.portals.length || !url) return cb(null, true);
+    api.get(url, {all: true}, _.partial(this.handleFetch, cb));
   },
 
   handleFetch: function (cb, er, res) {

@@ -53066,7 +53066,7 @@ define('components/events/index', ['exports', 'module', 'underscore', 'component
         _React['default'].createElement(
           'a',
           { href: '{baseURL}/events/forms', className: 'hide-for-small-only' },
-          _React['default'].createElement('i', { className: 'icon-forms' }),
+          _React['default'].createElement('i', { className: 'icon-form' }),
           'Event Forms'
         ),
         _React['default'].createElement(
@@ -53074,7 +53074,7 @@ define('components/events/index', ['exports', 'module', 'underscore', 'component
           { className: 'has-dropdown click-dropdown' },
           _React['default'].createElement(
             'a',
-            { href: '#', 'class': 'button share-button has-icon' },
+            { href: '#', className: 'button share-button has-icon' },
             _React['default'].createElement('i', { className: ' icon-down' }),
             'Export'
           ),

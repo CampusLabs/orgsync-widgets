@@ -333,10 +333,10 @@ export default React.createClass({
           <i className='icon-involvement'></i>Attendance
         </a>
         <a href='{baseURL}/events/forms' className='hide-for-small-only'>
-          <i className='icon-forms'></i>Event Forms
+          <i className='icon-form'></i>Event Forms
         </a>
         <div className="has-dropdown click-dropdown">
-          <a href="#" class="button share-button has-icon">
+          <a href="#" className="button share-button has-icon">
             <i className=" icon-down"></i>Export
           </a>
           <div className="dropdown dropdown-left">

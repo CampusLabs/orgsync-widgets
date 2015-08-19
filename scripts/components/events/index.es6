@@ -30,7 +30,8 @@ export default React.createClass({
       lockView: false,
       query: '',
       tz: tz,
-      view: 'calendar'
+      view: 'calendar',
+      isOSAdmin: false
     };
   },
 
@@ -322,6 +323,46 @@ export default React.createClass({
     }
   },
 
+  renderOSAdminButtons: function () {
+    if (!this.props.isOSAdmin) return;
+    var baseURL = '/' + this.props.portalId;
+
+    return (
+      <div className='button-group admin-button-group'>
+        <a href='{baseURL}/events/show_grid' className='hide-for-small-only'>
+          <i className='icon-involvement'></i>Attendance
+        </a>
+        <a href='{baseURL}/events/forms' className='hide-for-small-only'>
+          <i className='icon-forms'></i>Event Forms
+        </a>
+        <div class="has-dropdown click-dropdown">
+          <a href="#" class="button share-button has-icon">
+            <i class=" icon-down"></i>Export
+          </a>
+          <div class="dropdown dropdown-left">
+            <ul class="button-list">
+              <li>
+                <a href="{baseURL}/admin_reports/export_turnout?export=hours"
+                    className="js-no-pjax icon-download"
+                    data-export-queue="true">Event Hours</a>
+              </li>
+              <li>
+                <a href="{baseURL}/admin_reports/export_turnout?export=attendance"
+                    className="js-no-pjax icon-download"
+                    data-export-queue="true">Attendance</a>
+              </li>
+              <li>
+                <a href="{baseURL}/events/export_all_event_members"
+                    className="js-no-pjax icon-download"
+                    data-export-queue="true">RSVPs</a>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    )
+  },
+
   render: function () {
     return (
       <div className='osw-events-index'>
@@ -343,6 +384,7 @@ export default React.createClass({
               eventFilters: this.getCursor('eventFilters')
             }}
           />
+          {this.renderOSAdminButtons()}
         </div>
         <div className={this.getMainClassName()}>
           <div className='osw-events-index-header'>

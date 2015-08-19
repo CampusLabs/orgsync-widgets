@@ -46781,7 +46781,7 @@ define('components/photos/show', ['exports', 'module', 'components/comments/inde
           {
             className: 'osw-photos-show-image',
             onClick: this.handleImageClick,
-            style: { backgroundImage: 'url(\'' + photo.full_url + '\')' }
+            style: { backgroundImage: "url('" + photo.full_url + "')" }
           },
           this.renderDescription()
         ),
@@ -47844,7 +47844,7 @@ define('components/bookmarks/show', ['exports', 'module', 'underscore', 'api', '
 
     renderDescription: function renderDescription(desc) {
       if (desc === undefined) return;
-      return desc.replace(/(\r\n|\n|\r)/g, '<br />');
+      return desc.replace(/(\r\n|\n|\r)/g, "<br />");
     },
 
     render: function render() {
@@ -48313,7 +48313,7 @@ define('components/builder/index', ['exports', 'module', 'underscore', 'undersco
     },
     Events: {
       moduleName: 'events/index',
-      props: ['communityId', 'portalId', 'view', 'lockView', 'tz', 'activeEventFilterIds']
+      props: ['communityId', 'portalId', 'view', 'lockView', 'tz', 'activeEventFilterIds', 'isOSAdmin']
     },
     Files: {
       moduleName: 'files/index',
@@ -51267,27 +51267,27 @@ define('components/events/show', ['exports', 'module', 'underscore', 'underscore
         // HACK: Remove this condition once IE9 support is dropped.
         // https://hacks.mozilla.org/2009/07/cross-site-xmlhttprequest-with-cors/
       } else if ('withCredentials' in new XMLHttpRequest()) {
-        var userAction = ACTION_MAP[event.rsvp];
-        buttons = actions.map(function (action) {
-          return _React['default'].createElement(
-            'label',
-            { key: action },
-            _React['default'].createElement('input', {
-              type: 'radio',
-              name: 'rsvp',
-              checked: action === userAction,
-              onChange: _2['default'].partial(this.setRsvp, STATUS_MAP[action])
-            }),
-            action
+          var userAction = ACTION_MAP[event.rsvp];
+          buttons = actions.map(function (action) {
+            return _React['default'].createElement(
+              'label',
+              { key: action },
+              _React['default'].createElement('input', {
+                type: 'radio',
+                name: 'rsvp',
+                checked: action === userAction,
+                onChange: _2['default'].partial(this.setRsvp, STATUS_MAP[action])
+              }),
+              action
+            );
+          }, this);
+        } else {
+          buttons = _React['default'].createElement(
+            _Button['default'],
+            { href: event.links.web, target: '_parent' },
+            'RSVP'
           );
-        }, this);
-      } else {
-        buttons = _React['default'].createElement(
-          _Button['default'],
-          { href: event.links.web, target: '_parent' },
-          'RSVP'
-        );
-      }
+        }
       return _React['default'].createElement(
         'div',
         { className: 'osw-events-show-rsvp-action' },
@@ -52746,7 +52746,8 @@ define('components/events/index', ['exports', 'module', 'underscore', 'component
         lockView: false,
         query: '',
         tz: _tz2['default'],
-        view: 'calendar'
+        view: 'calendar',
+        isOSAdmin: false
       };
     },
 
@@ -53049,6 +53050,79 @@ define('components/events/index', ['exports', 'module', 'underscore', 'component
       }
     },
 
+    renderOSAdminButtons: function renderOSAdminButtons() {
+      if (!this.props.isOSAdmin) return;
+      var baseURL = '/' + this.props.portalId;
+
+      return _React['default'].createElement(
+        'div',
+        { className: 'button-group admin-button-group' },
+        _React['default'].createElement(
+          'a',
+          { href: '{baseURL}/events/show_grid', className: 'hide-for-small-only' },
+          _React['default'].createElement('i', { className: 'icon-involvement' }),
+          'Attendance'
+        ),
+        _React['default'].createElement(
+          'a',
+          { href: '{baseURL}/events/forms', className: 'hide-for-small-only' },
+          _React['default'].createElement('i', { className: 'icon-forms' }),
+          'Event Forms'
+        ),
+        _React['default'].createElement(
+          'div',
+          { 'class': 'has-dropdown click-dropdown' },
+          _React['default'].createElement(
+            'a',
+            { href: '#', 'class': 'button share-button has-icon' },
+            _React['default'].createElement('i', { 'class': ' icon-down' }),
+            'Export'
+          ),
+          _React['default'].createElement(
+            'div',
+            { 'class': 'dropdown dropdown-left' },
+            _React['default'].createElement(
+              'ul',
+              { 'class': 'button-list' },
+              _React['default'].createElement(
+                'li',
+                null,
+                _React['default'].createElement(
+                  'a',
+                  { href: '{baseURL}/admin_reports/export_turnout?export=hours',
+                    className: 'js-no-pjax icon-download',
+                    'data-export-queue': 'true' },
+                  'Event Hours'
+                )
+              ),
+              _React['default'].createElement(
+                'li',
+                null,
+                _React['default'].createElement(
+                  'a',
+                  { href: '{baseURL}/admin_reports/export_turnout?export=attendance',
+                    className: 'js-no-pjax icon-download',
+                    'data-export-queue': 'true' },
+                  'Attendance'
+                )
+              ),
+              _React['default'].createElement(
+                'li',
+                null,
+                _React['default'].createElement(
+                  'a',
+                  { href: '{baseURL}/events/export_all_event_members',
+                    className: 'js-no-pjax icon-download',
+                    'data-export-queue': 'true' },
+                  'RSVPs'
+                )
+              )
+            )
+          )
+        )
+      );
+    },
+
     render: function render() {
       return _React['default'].createElement(
         'div',
@@ -53076,7 +53150,8 @@ define('components/events/index', ['exports', 'module', 'underscore', 'component
               events: this.getCursor('events'),
               eventFilters: this.getCursor('eventFilters')
             }
-          })
+          }),
+          this.renderOSAdminButtons()
         ),
         _React['default'].createElement(
           'div',
@@ -54558,9 +54633,9 @@ define('components/polls/results', ['exports', 'module', 'underscore', 'react'],
 
     calculatePercentage: function calculatePercentage(votes, maxVotes, maxWidth, minWidth) {
       if (votes === 0) {
-        return minWidth + '%';
+        return minWidth + "%";
       } else {
-        return parseInt(votes / maxVotes * (maxWidth - minWidth) + minWidth) + '%';
+        return parseInt(votes / maxVotes * (maxWidth - minWidth) + minWidth) + "%";
       }
     },
 
@@ -54876,7 +54951,7 @@ define('components/polls/list-item', ['exports', 'module', 'underscore', 'cursor
     },
 
     renderVoteCount: function renderVoteCount(poll) {
-      if (poll.vote_count > 999) return '999+';
+      if (poll.vote_count > 999) return "999+";
       return poll.vote_count;
     },
 
@@ -55801,7 +55876,7 @@ define('components/selector/result', ['exports', 'module', 'underscore', 'unders
       var src = (0, _entitiesSelectorItem.getPictureUrl)(this.props.item);
       if (!src) return {};
       if (src[0] === '/') src = 'https://orgsync.com' + src;
-      return { backgroundImage: 'url(\'' + src + '\')' };
+      return { backgroundImage: "url('" + src + "')" };
     },
 
     renderIcon: function renderIcon() {

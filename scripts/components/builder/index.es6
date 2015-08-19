@@ -24,7 +24,7 @@ const WIDGETS = {
       'lockView',
       'tz',
       'activeEventFilterIds',
-      'isOSAdmin'
+      'isAdmin'
     ]
   },
   Files: {

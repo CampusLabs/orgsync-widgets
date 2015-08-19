@@ -48313,7 +48313,7 @@ define('components/builder/index', ['exports', 'module', 'underscore', 'undersco
     },
     Events: {
       moduleName: 'events/index',
-      props: ['communityId', 'portalId', 'view', 'lockView', 'tz', 'activeEventFilterIds', 'isOSAdmin']
+      props: ['communityId', 'portalId', 'view', 'lockView', 'tz', 'activeEventFilterIds', 'isAdmin']
     },
     Files: {
       moduleName: 'files/index',

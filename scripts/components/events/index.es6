@@ -335,12 +335,12 @@ export default React.createClass({
         <a href='{baseURL}/events/forms' className='hide-for-small-only'>
           <i className='icon-forms'></i>Event Forms
         </a>
-        <div class="has-dropdown click-dropdown">
+        <div className="has-dropdown click-dropdown">
           <a href="#" class="button share-button has-icon">
-            <i class=" icon-down"></i>Export
+            <i className=" icon-down"></i>Export
           </a>
-          <div class="dropdown dropdown-left">
-            <ul class="button-list">
+          <div className="dropdown dropdown-left">
+            <ul className="button-list">
               <li>
                 <a href="{baseURL}/admin_reports/export_turnout?export=hours"
                     className="js-no-pjax icon-download"

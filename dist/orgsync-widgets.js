@@ -53071,19 +53071,19 @@ define('components/events/index', ['exports', 'module', 'underscore', 'component
         ),
         _React['default'].createElement(
           'div',
-          { 'class': 'has-dropdown click-dropdown' },
+          { className: 'has-dropdown click-dropdown' },
           _React['default'].createElement(
             'a',
             { href: '#', 'class': 'button share-button has-icon' },
-            _React['default'].createElement('i', { 'class': ' icon-down' }),
+            _React['default'].createElement('i', { className: ' icon-down' }),
             'Export'
           ),
           _React['default'].createElement(
             'div',
-            { 'class': 'dropdown dropdown-left' },
+            { className: 'dropdown dropdown-left' },
             _React['default'].createElement(
               'ul',
-              { 'class': 'button-list' },
+              { className: 'button-list' },
               _React['default'].createElement(
                 'li',
                 null,

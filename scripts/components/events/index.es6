@@ -31,7 +31,7 @@ export default React.createClass({
       query: '',
       tz: tz,
       view: 'calendar',
-      isOSAdmin: false
+      isAdmin: false
     };
   },
 
@@ -324,7 +324,7 @@ export default React.createClass({
   },
 
   renderOSAdminButtons: function () {
-    if (!this.props.isOSAdmin) return;
+    if (!this.props.isAdmin) return;
     var baseURL = '/' + this.props.portalId;
 
     return (

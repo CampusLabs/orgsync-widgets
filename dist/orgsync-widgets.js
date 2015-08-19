@@ -52747,7 +52747,7 @@ define('components/events/index', ['exports', 'module', 'underscore', 'component
         query: '',
         tz: _tz2['default'],
         view: 'calendar',
-        isOSAdmin: false
+        isAdmin: false
       };
     },
 
@@ -53051,7 +53051,7 @@ define('components/events/index', ['exports', 'module', 'underscore', 'component
     },
 
     renderOSAdminButtons: function renderOSAdminButtons() {
-      if (!this.props.isOSAdmin) return;
+      if (!this.props.isAdmin) return;
       var baseURL = '/' + this.props.portalId;
 
       return _React['default'].createElement(

@@ -49091,7 +49091,7 @@ define('io', ['exports', 'module', 'config', 'live'], function (exports, module,
 
   var _Live = _interopRequireDefault(_live);
 
-  var io = new _Live['default'](_config2['default'].live);
+  var live = new _Live['default'](_config2['default'].live);
   var queue = [];
   var authorized = false;
 
@@ -49100,14 +49100,14 @@ define('io', ['exports', 'module', 'config', 'live'], function (exports, module,
       args[_key] = arguments[_key];
     }
 
-    if (authorized) return io.send.apply(io, args);
+    if (authorized) return live.send.apply(live, args);
     queue.push(args);
-    return io;
+    return live;
   };
 
   var auth = function auth() {
     authorized = false;
-    io.send('auth', _config2['default'].api.key, handleAuth);
+    live.send('auth', _config2['default'].api.key, handleAuth);
   };
 
   var handleAuth = function handleAuth() {
@@ -49117,9 +49117,9 @@ define('io', ['exports', 'module', 'config', 'live'], function (exports, module,
   };
 
   auth();
-  io.on('close', auth);
+  live.on('close', auth);
 
-  module.exports = { off: io.off.bind(io), on: io.on.bind(io), send: send };
+  module.exports = { send: send, live: live };
 });
 // scripts/entities/selector/store.es6
 define('entities/selector/store', ['exports', 'underscore', 'underscore.string', 'orgsync-widgets', 'entities/selector/item', 'io', 'react'], function (exports, _underscore, _underscoreString, _orgsyncWidgets, _entitiesSelectorItem, _io, _react) {

@@ -1,28 +1,28 @@
 import config from 'config';
 import Live from 'live';
 
-const io = new Live(config.live);
+const live = new Live(config.live);
 const queue = [];
 let authorized = false;
 
-const send = (...args) => {
-  if (authorized) return io.send(...args);
+live.emit = (...args) => {
+  if (authorized) return live.send(...args);
   queue.push(args);
-  return io;
+  return live;
 };
 
 const auth = () => {
   authorized = false;
-  io.send('auth', config.api.key, handleAuth);
+  live.send('auth', config.api.key, handleAuth);
 };
 
 const handleAuth = () => {
   authorized = true;
   let args;
-  while (args = queue.shift()) send(...args);
+  while (args = queue.shift()) live.emit(...args);
 };
 
 auth();
-io.on('close', auth);
+live.on('close', auth);
 
-export default {off: ::io.off, on: ::io.on, send};
+export default live;

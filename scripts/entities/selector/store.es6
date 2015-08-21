@@ -104,7 +104,7 @@ export var fetch = function (options, cb) {
     done[key] = true;
   }
   if (done[key] || !options.size) return cb(null, true, options);
-  io.send('search', options, function (er, res) {
+  io.emit('search', options, function (er, res) {
     if (er) return cb(er);
     var items = _.map(res.hits.hits, function (hit) {
       return _.extend({_type: hit._type}, hit._source);

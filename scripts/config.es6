@@ -24,8 +24,8 @@ export default {
     }
   },
 
-  io: {
-    path: '/io',
-    uri: window.OSW_IO_URL || 'https://orgsync.com'
+  live: {
+    url: `${window.OSW_IO_URL || 'https://orgsync.com'}/io`
+      .replace(/^http/, 'ws')
   }
 };

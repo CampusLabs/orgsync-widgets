@@ -1,15 +1,14 @@
-//= require ./start
-//= require bower_components/amdainty/amdainty.js
-//= requireself
-//= require ./components/**/*
-//= require ./end
+// = require ./start
+// = require bower_components/amdainty/amdainty.js
+// = requireself
+// = require ./components/**/*
+// = require ./end
 
 import $ from 'jquery';
 import _ from 'underscore';
 import Cache from 'cache';
 import config from 'config';
 import elementQuery from 'elementQuery';
-import socket from 'socket.io';
 import React from 'react';
 import require from 'require';
 
@@ -39,9 +38,6 @@ export var unmount = function (el) {
 };
 
 export var unmountAll = _.partial(eachEl, unmount);
-
-export var io = socket(config.io.uri, config.io);
-io.on('connect', function () { io.emit('auth', config.api.key); });
 
 export var cache = new Cache({useLocalStorage: false});
 

@@ -2,6 +2,7 @@ import _ from 'underscore';
 import _str from 'underscore.string';
 import * as app from 'orgsync-widgets';
 import {getTerm, getName} from 'entities/selector/item';
+import io from 'io';
 import React from 'react';
 
 var update = React.addons.update;
@@ -103,7 +104,7 @@ export var fetch = function (options, cb) {
     done[key] = true;
   }
   if (done[key] || !options.size) return cb(null, true, options);
-  app.io.emit('search', options, function (er, res) {
+  io.send('search', options, function (er, res) {
     if (er) return cb(er);
     var items = _.map(res.hits.hits, function (hit) {
       return _.extend({_type: hit._type}, hit._source);

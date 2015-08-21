@@ -49095,7 +49095,7 @@ define('io', ['exports', 'module', 'config', 'live'], function (exports, module,
   var queue = [];
   var authorized = false;
 
-  var send = function send() {
+  live.emit = function () {
     for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
       args[_key] = arguments[_key];
     }
@@ -49113,13 +49113,13 @@ define('io', ['exports', 'module', 'config', 'live'], function (exports, module,
   var handleAuth = function handleAuth() {
     authorized = true;
     var args = undefined;
-    while (args = queue.shift()) send.apply(undefined, _toConsumableArray(args));
+    while (args = queue.shift()) live.emit.apply(live, _toConsumableArray(args));
   };
 
   auth();
   live.on('close', auth);
 
-  module.exports = { send: send, live: live };
+  module.exports = live;
 });
 // scripts/entities/selector/store.es6
 define('entities/selector/store', ['exports', 'underscore', 'underscore.string', 'orgsync-widgets', 'entities/selector/item', 'io', 'react'], function (exports, _underscore, _underscoreString, _orgsyncWidgets, _entitiesSelectorItem, _io, _react) {
@@ -49234,7 +49234,7 @@ define('entities/selector/store', ['exports', 'underscore', 'underscore.string',
       done[key] = true;
     }
     if (done[key] || !options.size) return cb(null, true, options);
-    _io2['default'].send('search', options, function (er, res) {
+    _io2['default'].emit('search', options, function (er, res) {
       if (er) return cb(er);
       var items = _2['default'].map(res.hits.hits, function (hit) {
         return _2['default'].extend({ _type: hit._type }, hit._source);

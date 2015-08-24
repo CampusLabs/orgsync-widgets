@@ -39761,7 +39761,7 @@ define('components/photos/show', ['exports', 'module', 'components/comments/inde
           {
             className: 'osw-photos-show-image',
             onClick: this.handleImageClick,
-            style: { backgroundImage: 'url(\'' + photo.full_url + '\')' }
+            style: { backgroundImage: "url('" + photo.full_url + "')" }
           },
           this.renderDescription()
         ),
@@ -40824,7 +40824,7 @@ define('components/bookmarks/show', ['exports', 'module', 'underscore', 'api', '
 
     renderDescription: function renderDescription(desc) {
       if (desc === undefined) return;
-      return desc.replace(/(\r\n|\n|\r)/g, '<br />');
+      return desc.replace(/(\r\n|\n|\r)/g, "<br />");
     },
 
     render: function render() {
@@ -41498,24 +41498,32 @@ define('components/event-filters/list-item', ['exports', 'module', 'cursors', 'c
       this.update({ eventFilter: { active: { $set: ev.target.checked } } });
     },
 
+    renderCheckbox: function renderCheckbox() {
+      var eventFilter = this.state.eventFilter;
+      if (eventFilter.active) {
+        var icon = _React['default'].createElement(_Icon['default'], { name: 'check', className: 'osw-checkbox osw-checkbox-checked', style: { 'background-color': '#' + eventFilter.hex } });
+      } else {
+        var icon = _React['default'].createElement(_Icon['default'], { name: 'check', className: 'osw-checkbox' });
+      }
+
+      return icon;
+    },
+
     render: function render() {
       var eventFilter = this.state.eventFilter;
       return _React['default'].createElement(
         'label',
         { className: 'osw-event-filters-list-item' },
-        _React['default'].createElement(_Icon['default'], {
-          className: 'osw-event-filters-list-item-icon',
-          name: ICON_MAP[eventFilter.type],
-          style: { color: '#' + eventFilter.hex }
-        }),
         _React['default'].createElement(
           'div',
           { className: 'osw-event-filters-list-item-name' },
+          this.renderCheckbox(),
           _React['default'].createElement('input', {
             className: 'osw-event-filters-list-item-checkbox',
             type: 'checkbox',
             checked: eventFilter.active,
-            onChange: this.handleChange
+            onChange: this.handleChange,
+            style: { display: 'none' }
           }),
           eventFilter.name
         )
@@ -44247,27 +44255,27 @@ define('components/events/show', ['exports', 'module', 'underscore', 'underscore
         // HACK: Remove this condition once IE9 support is dropped.
         // https://hacks.mozilla.org/2009/07/cross-site-xmlhttprequest-with-cors/
       } else if ('withCredentials' in new XMLHttpRequest()) {
-        var userAction = ACTION_MAP[event.rsvp];
-        buttons = actions.map(function (action) {
-          return _React['default'].createElement(
-            'label',
-            { key: action },
-            _React['default'].createElement('input', {
-              type: 'radio',
-              name: 'rsvp',
-              checked: action === userAction,
-              onChange: _2['default'].partial(this.setRsvp, STATUS_MAP[action])
-            }),
-            action
+          var userAction = ACTION_MAP[event.rsvp];
+          buttons = actions.map(function (action) {
+            return _React['default'].createElement(
+              'label',
+              { key: action },
+              _React['default'].createElement('input', {
+                type: 'radio',
+                name: 'rsvp',
+                checked: action === userAction,
+                onChange: _2['default'].partial(this.setRsvp, STATUS_MAP[action])
+              }),
+              action
+            );
+          }, this);
+        } else {
+          buttons = _React['default'].createElement(
+            _Button['default'],
+            { href: event.links.web, target: '_parent' },
+            'RSVP'
           );
-        }, this);
-      } else {
-        buttons = _React['default'].createElement(
-          _Button['default'],
-          { href: event.links.web, target: '_parent' },
-          'RSVP'
-        );
-      }
+        }
       return _React['default'].createElement(
         'div',
         { className: 'osw-events-show-rsvp-action' },
@@ -47538,9 +47546,9 @@ define('components/polls/results', ['exports', 'module', 'underscore', 'react'],
 
     calculatePercentage: function calculatePercentage(votes, maxVotes, maxWidth, minWidth) {
       if (votes === 0) {
-        return minWidth + '%';
+        return minWidth + "%";
       } else {
-        return parseInt(votes / maxVotes * (maxWidth - minWidth) + minWidth) + '%';
+        return parseInt(votes / maxVotes * (maxWidth - minWidth) + minWidth) + "%";
       }
     },
 
@@ -47856,7 +47864,7 @@ define('components/polls/list-item', ['exports', 'module', 'underscore', 'cursor
     },
 
     renderVoteCount: function renderVoteCount(poll) {
-      if (poll.vote_count > 999) return '999+';
+      if (poll.vote_count > 999) return "999+";
       return poll.vote_count;
     },
 
@@ -48781,7 +48789,7 @@ define('components/selector/result', ['exports', 'module', 'underscore', 'unders
       var src = (0, _entitiesSelectorItem.getPictureUrl)(this.props.item);
       if (!src) return {};
       if (src[0] === '/') src = 'https://orgsync.com' + src;
-      return { backgroundImage: 'url(\'' + src + '\')' };
+      return { backgroundImage: "url('" + src + "')" };
     },
 
     renderIcon: function renderIcon() {

@@ -19,21 +19,29 @@ export default React.createClass({
     this.update({eventFilter: {active: {$set: ev.target.checked}}});
   },
 
+  renderCheckbox: function () {
+    var eventFilter = this.state.eventFilter;
+    if (eventFilter.active) {
+      var icon = <Icon name='check' className='osw-checkbox osw-checkbox-checked' style={{'background-color': '#' + eventFilter.hex}} />
+    } else {
+      var icon = <Icon name='check' className='osw-checkbox' />
+    }
+
+    return icon;
+  },
+
   render: function () {
     var eventFilter = this.state.eventFilter;
     return (
       <label className='osw-event-filters-list-item'>
-        <Icon
-          className='osw-event-filters-list-item-icon'
-          name={ICON_MAP[eventFilter.type]}
-          style={{color: '#' + eventFilter.hex}}
-        />
         <div className='osw-event-filters-list-item-name'>
+          {this.renderCheckbox()}
           <input
             className='osw-event-filters-list-item-checkbox'
             type='checkbox'
             checked={eventFilter.active}
             onChange={this.handleChange}
+            style={{display: 'none'}}
           />
           {eventFilter.name}
         </div>

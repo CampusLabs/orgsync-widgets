@@ -53059,13 +53059,13 @@ define('components/events/index', ['exports', 'module', 'underscore', 'component
         { className: 'button-group admin-button-group' },
         _React['default'].createElement(
           'a',
-          { href: '{baseURL}/events/show_grid', className: 'hide-for-small-only' },
+          { href: baseURL + '/events/show_grid', className: 'hide-for-small-only' },
           _React['default'].createElement('i', { className: 'icon-involvement' }),
           'Attendance'
         ),
         _React['default'].createElement(
           'a',
-          { href: '{baseURL}/events/forms', className: 'hide-for-small-only' },
+          { href: baseURL + '/events/forms', className: 'hide-for-small-only' },
           _React['default'].createElement('i', { className: 'icon-form' }),
           'Event Forms'
         ),
@@ -53089,7 +53089,7 @@ define('components/events/index', ['exports', 'module', 'underscore', 'component
                 null,
                 _React['default'].createElement(
                   'a',
-                  { href: '{baseURL}/admin_reports/export_turnout?export=hours',
+                  { href: baseURL + '/admin_reports/export_turnout?export=hours',
                     className: 'js-no-pjax icon-download',
                     'data-export-queue': 'true' },
                   'Event Hours'
@@ -53100,7 +53100,7 @@ define('components/events/index', ['exports', 'module', 'underscore', 'component
                 null,
                 _React['default'].createElement(
                   'a',
-                  { href: '{baseURL}/admin_reports/export_turnout?export=attendance',
+                  { href: baseURL + '/admin_reports/export_turnout?export=attendance',
                     className: 'js-no-pjax icon-download',
                     'data-export-queue': 'true' },
                   'Attendance'
@@ -53111,7 +53111,7 @@ define('components/events/index', ['exports', 'module', 'underscore', 'component
                 null,
                 _React['default'].createElement(
                   'a',
-                  { href: '{baseURL}/events/export_all_event_members',
+                  { href: baseURL + '/events/export_all_event_members',
                     className: 'js-no-pjax icon-download',
                     'data-export-queue': 'true' },
                   'RSVPs'

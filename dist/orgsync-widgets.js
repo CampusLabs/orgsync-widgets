@@ -49892,6 +49892,41 @@ define('components/ui/auto-textbox', ['exports', 'module', 'jquery', 'cursors', 
     }
   });
 });
+// scripts/components/ui/checkbox.es6
+define('components/ui/checkbox', ['exports', 'module', 'utils/join-class-names', 'react'], function (exports, module, _utilsJoinClassNames, _react) {
+  'use strict';
+
+  function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+
+  var _joinClassNames = _interopRequireDefault(_utilsJoinClassNames);
+
+  var _React = _interopRequireDefault(_react);
+
+  module.exports = _React['default'].createClass({
+    displayName: 'checkbox',
+
+    mixins: [Cursors],
+
+    setInitialState: function setInitialState() {
+      boolState: this.props.boolState;
+    },
+
+    render: function render() {
+
+      var classes = 'osw-checkbox';
+
+      if (this.state.boolState) {
+        if (this.props.colored) {
+          classes += ' osw-checkbox-colored-checked';
+        } else {
+          classes += ' osw-checkbox-checked';
+        }
+      }
+
+      return _React['default'].createElement(Icon, { name: 'check', className: classes });
+    }
+  });
+});
     window.jQuery.noConflict(true);
 
     return require('orgsync-widgets');

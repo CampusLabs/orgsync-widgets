@@ -1,11 +1,18 @@
-import joinClassNames from 'utils/join-class-names';
+import Icon from 'components/ui/icon';
 import React from 'react';
 
 export default React.createClass({
-  mixins: [Cursors],
 
-  setInitialState: function () {
-    boolState: this.props.boolState;
+  getDefaultProps: function () {
+    return {
+      boolState: false
+    }
+  },
+
+  getInitialState: function () {
+    return {
+      boolState: this.props.boolState
+    };
   },
 
   render: function () {
@@ -20,8 +27,13 @@ export default React.createClass({
       }
     }
 
+    var styles = {}
+    if (this.props.color) {
+      styles = {background: '#' + this.props.color}
+    }
+    console.log(this.state.boolState);
     return (
-      <Icon name='check' className={classes} />
+      <Icon name='check' className={classes} style={styles} />
     );
   }
 });

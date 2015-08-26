@@ -1,3 +1,4 @@
+import Checkbox from 'components/ui/checkbox';
 import Cursors from 'cursors';
 import Icon from 'components/ui/icon';
 import React from 'react';
@@ -19,23 +20,12 @@ export default React.createClass({
     this.update({eventFilter: {active: {$set: ev.target.checked}}});
   },
 
-  renderCheckbox: function () {
-    var eventFilter = this.state.eventFilter;
-    if (eventFilter.active) {
-      var icon = <Icon name='check' className='osw-checkbox osw-checkbox-checked' style={{'background-color': '#' + eventFilter.hex}} />
-    } else {
-      var icon = <Icon name='check' className='osw-checkbox' />
-    }
-
-    return icon;
-  },
-
   render: function () {
     var eventFilter = this.state.eventFilter;
     return (
       <label className='osw-event-filters-list-item'>
         <div className='osw-event-filters-list-item-name'>
-          {this.renderCheckbox()}
+          <Checkbox cursors={{boolState: this.getCursor('eventFilter', 'active')}} color={eventFilter.hex} />
           <input
             className='osw-event-filters-list-item-checkbox'
             type='checkbox'

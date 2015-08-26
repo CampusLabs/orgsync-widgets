@@ -41467,11 +41467,59 @@ define('components/builder/index', ['exports', 'module', 'underscore', 'undersco
     }
   });
 });
-// scripts/components/event-filters/list-item.es6
-define('components/event-filters/list-item', ['exports', 'module', 'cursors', 'components/ui/icon', 'react'], function (exports, module, _cursors, _componentsUiIcon, _react) {
+// scripts/components/ui/checkbox.es6
+define('components/ui/checkbox', ['exports', 'module', 'components/ui/icon', 'react'], function (exports, module, _componentsUiIcon, _react) {
   'use strict';
 
   function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+
+  var _Icon = _interopRequireDefault(_componentsUiIcon);
+
+  var _React = _interopRequireDefault(_react);
+
+  module.exports = _React['default'].createClass({
+    displayName: 'checkbox',
+
+    getDefaultProps: function getDefaultProps() {
+      return {
+        boolState: false
+      };
+    },
+
+    getInitialState: function getInitialState() {
+      return {
+        boolState: this.props.boolState
+      };
+    },
+
+    render: function render() {
+
+      var classes = 'osw-checkbox';
+
+      if (this.state.boolState) {
+        if (this.props.colored) {
+          classes += ' osw-checkbox-colored-checked';
+        } else {
+          classes += ' osw-checkbox-checked';
+        }
+      }
+
+      var styles = {};
+      if (this.props.color) {
+        styles = { background: '#' + this.props.color };
+      }
+      console.log(this.state.boolState);
+      return _React['default'].createElement(_Icon['default'], { name: 'check', className: classes, style: styles });
+    }
+  });
+});
+// scripts/components/event-filters/list-item.es6
+define('components/event-filters/list-item', ['exports', 'module', 'components/ui/checkbox', 'cursors', 'components/ui/icon', 'react'], function (exports, module, _componentsUiCheckbox, _cursors, _componentsUiIcon, _react) {
+  'use strict';
+
+  function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+
+  var _Checkbox = _interopRequireDefault(_componentsUiCheckbox);
 
   var _Cursors = _interopRequireDefault(_cursors);
 
@@ -41498,17 +41546,6 @@ define('components/event-filters/list-item', ['exports', 'module', 'cursors', 'c
       this.update({ eventFilter: { active: { $set: ev.target.checked } } });
     },
 
-    renderCheckbox: function renderCheckbox() {
-      var eventFilter = this.state.eventFilter;
-      if (eventFilter.active) {
-        var icon = _React['default'].createElement(_Icon['default'], { name: 'check', className: 'osw-checkbox osw-checkbox-checked', style: { 'background-color': '#' + eventFilter.hex } });
-      } else {
-        var icon = _React['default'].createElement(_Icon['default'], { name: 'check', className: 'osw-checkbox' });
-      }
-
-      return icon;
-    },
-
     render: function render() {
       var eventFilter = this.state.eventFilter;
       return _React['default'].createElement(
@@ -41517,7 +41554,7 @@ define('components/event-filters/list-item', ['exports', 'module', 'cursors', 'c
         _React['default'].createElement(
           'div',
           { className: 'osw-event-filters-list-item-name' },
-          this.renderCheckbox(),
+          _React['default'].createElement(_Checkbox['default'], { cursors: { boolState: this.getCursor('eventFilter', 'active') }, color: eventFilter.hex }),
           _React['default'].createElement('input', {
             className: 'osw-event-filters-list-item-checkbox',
             type: 'checkbox',
@@ -49889,41 +49926,6 @@ define('components/ui/auto-textbox', ['exports', 'module', 'jquery', 'cursors', 
 
     render: function render() {
       return _React['default'].createElement('textarea', this.props);
-    }
-  });
-});
-// scripts/components/ui/checkbox.es6
-define('components/ui/checkbox', ['exports', 'module', 'utils/join-class-names', 'react'], function (exports, module, _utilsJoinClassNames, _react) {
-  'use strict';
-
-  function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
-
-  var _joinClassNames = _interopRequireDefault(_utilsJoinClassNames);
-
-  var _React = _interopRequireDefault(_react);
-
-  module.exports = _React['default'].createClass({
-    displayName: 'checkbox',
-
-    mixins: [Cursors],
-
-    setInitialState: function setInitialState() {
-      boolState: this.props.boolState;
-    },
-
-    render: function render() {
-
-      var classes = 'osw-checkbox';
-
-      if (this.state.boolState) {
-        if (this.props.colored) {
-          classes += ' osw-checkbox-colored-checked';
-        } else {
-          classes += ' osw-checkbox-checked';
-        }
-      }
-
-      return _React['default'].createElement(Icon, { name: 'check', className: classes });
     }
   });
 });

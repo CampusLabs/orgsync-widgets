@@ -42695,7 +42695,7 @@ define('../bower_components/velcro/config', ["exports", "module"], function (exp
   };
 });
 // scripts/components/event-filters/index.es6
-define('components/event-filters/index', ['exports', 'module', 'underscore', 'api', 'components/ui/checkbox', 'cursors', 'components/event-filters/list-item', 'react', 'tinycolor', '../bower_components/velcro/config'], function (exports, module, _underscore, _api, _componentsUiCheckbox, _cursors, _componentsEventFiltersListItem, _react, _tinycolor, _bower_componentsVelcroConfig) {
+define('components/event-filters/index', ['exports', 'module', 'underscore', 'api', 'cursors', 'components/event-filters/list-item', 'react', 'tinycolor', '../bower_components/velcro/config'], function (exports, module, _underscore, _api, _cursors, _componentsEventFiltersListItem, _react, _tinycolor, _bower_componentsVelcroConfig) {
   'use strict';
 
   function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
@@ -42703,8 +42703,6 @@ define('components/event-filters/index', ['exports', 'module', 'underscore', 'ap
   var _2 = _interopRequireDefault(_underscore);
 
   var _api2 = _interopRequireDefault(_api);
-
-  var _Checkbox = _interopRequireDefault(_componentsUiCheckbox);
 
   var _Cursors = _interopRequireDefault(_cursors);
 

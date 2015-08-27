@@ -2382,13 +2382,10 @@
       color: #fff; }
 /* styles/ui/custom-checkbox.scss */
 .orgsync-widget .osw-checkbox {
-  background-color: #fff;
-  background-image: -webkit-linear-gradient(#fff, #f9f9f9);
-  background-image: linear-gradient(#fff, #f9f9f9);
-  border: 1px solid #ccc;
+  background: #0079ff;
+  border: 1px solid transparent;
   border-radius: 3px;
-  box-shadow: inset 0 1px 1px #ccc;
-  color: #dedede;
+  color: #fff;
   display: inline-block;
   height: 14px;
   margin-right: 5px;
@@ -2399,12 +2396,15 @@
     left: 1px;
     position: absolute;
     top: 0px; }
-.orgsync-widget .osw-checkbox-checked, .orgsync-widget .osw-checkbox-colored-checked {
-  background: #0079ff;
-  border: 1px solid transparent;
-  color: #fff; }
-.orgsync-widget .osw-checkbox-colored-checked {
-  background: none; }
+.orgsync-widget .osw-checkbox-unchecked {
+  background-color: #fff;
+  background-image: -webkit-linear-gradient(#fff, #f9f9f9);
+  background-image: linear-gradient(#fff, #f9f9f9);
+  border: 1px solid #ccc;
+  box-shadow: inset 0 1px 1px #ccc;
+  color: #dedede; }
+.orgsync-widget .osw-checkbox-colored.osw-checkbox-unchecked {
+  background: none !important; }
 /* styles/ui/media.scss */
 .osw-media {
   line-height: 1.2em;

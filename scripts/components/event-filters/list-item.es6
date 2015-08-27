@@ -6,14 +6,6 @@ import React from 'react';
 export default React.createClass({
   mixins: [Cursors],
 
-  getInitialState: function () {
-    return {
-      eventFilter: {
-        active: true
-      }
-    }
-  },
-
   render: function () {
     var eventFilter = this.state.eventFilter;
     return (

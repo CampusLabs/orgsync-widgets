@@ -9,33 +9,25 @@ export default React.createClass({
     this.update({boolState:{$set: ev.target.checked}});
   },
 
-  renderCheck: function () {
-    if (!this.state.boolState) return;
-    return (
-      <Icon name='check' />
-    );
-  },
-
   render: function () {
 
-    var classes = 'osw-checkbox';
+    var cx = React.addons.classSet;
+    var classes = cx({
+      'osw-checkbox': true,
+      'osw-checkbox-colored': this.props.color,
+      'osw-checkbox-unchecked': !this.state.boolState
+    });
 
-    if (this.props.colored) {
-      classes += ' osw-checkbox-colored-checked'
-    } else {
-      classes += ' osw-checkbox-checked';
-    }
 
     var styles = {}
     if (this.props.color) {
       styles = {background: '#' + this.props.color}
     }
 
-
     return (
       <div>
         <div className={classes} style={styles}>
-          {this.renderCheck()}
+          <Icon name='check' />
         </div>
         <input
           type='checkbox'

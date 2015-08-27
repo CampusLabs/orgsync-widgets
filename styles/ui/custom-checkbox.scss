@@ -4,11 +4,10 @@ $sides: 14px;
 
 .orgsync-widget {
   .osw-checkbox {
-    @include linear-gradient(#fff, $grey-lightest);
-    border: 1px solid #ccc;
+    background: #0079ff;
+    border: 1px solid transparent;
     border-radius: 3px;
-    box-shadow: inset 0 1px 1px #ccc;
-    color: #dedede;
+    color: #fff;
     display: inline-block;
     height: $sides;
     margin-right: 5px;
@@ -23,14 +22,14 @@ $sides: 14px;
     }
   }
 
-  .osw-checkbox-checked,
-  .osw-checkbox-colored-checked {
-    background: #0079ff;
-    border: 1px solid transparent;
-    color: #fff;
+  .osw-checkbox-unchecked {
+    @include linear-gradient(#fff, $grey-lightest);
+    border: 1px solid #ccc;
+    box-shadow: inset 0 1px 1px #ccc;
+    color: #dedede;
   }
 
-  .osw-checkbox-colored-checked {
-    background: none;
+  .osw-checkbox-colored.osw-checkbox-unchecked {
+    background: none !important;
   }
 }

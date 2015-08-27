@@ -41488,20 +41488,14 @@ define('components/ui/checkbox', ['exports', 'module', 'cursors', 'components/ui
       this.update({ boolState: { $set: ev.target.checked } });
     },
 
-    renderCheck: function renderCheck() {
-      if (!this.state.boolState) return;
-      return _React['default'].createElement(_Icon['default'], { name: 'check' });
-    },
-
     render: function render() {
 
-      var classes = 'osw-checkbox';
-
-      if (this.props.colored) {
-        classes += ' osw-checkbox-colored-checked';
-      } else {
-        classes += ' osw-checkbox-checked';
-      }
+      var cx = _React['default'].addons.classSet;
+      var classes = cx({
+        'osw-checkbox': true,
+        'osw-checkbox-colored': this.props.color,
+        'osw-checkbox-unchecked': !this.state.boolState
+      });
 
       var styles = {};
       if (this.props.color) {
@@ -41514,7 +41508,7 @@ define('components/ui/checkbox', ['exports', 'module', 'cursors', 'components/ui
         _React['default'].createElement(
           'div',
           { className: classes, style: styles },
-          this.renderCheck()
+          _React['default'].createElement(_Icon['default'], { name: 'check' })
         ),
         _React['default'].createElement('input', {
           type: 'checkbox',
@@ -41545,14 +41539,6 @@ define('components/event-filters/list-item', ['exports', 'module', 'components/u
     displayName: 'list-item',
 
     mixins: [_Cursors['default']],
-
-    getInitialState: function getInitialState() {
-      return {
-        eventFilter: {
-          active: true
-        }
-      };
-    },
 
     render: function render() {
       var eventFilter = this.state.eventFilter;

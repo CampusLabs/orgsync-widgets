@@ -3,21 +3,15 @@ import Cursors from 'cursors';
 import Icon from 'components/ui/icon';
 import React from 'react';
 
-var ICON_MAP = {
-  category: 'book',
-  featured: 'promote',
-  organization: 'organization',
-  rsvp: 'check',
-  service_partner: 'service',
-  service_umbrella: 'service',
-  umbrella: 'umbrella'
-};
-
 export default React.createClass({
   mixins: [Cursors],
 
-  handleChange: function (ev) {
-    this.update({eventFilter: {active: {$set: ev.target.checked}}});
+  getInitialState: function () {
+    return {
+      eventFilter: {
+        active: true
+      }
+    }
   },
 
   render: function () {
@@ -25,15 +19,12 @@ export default React.createClass({
     return (
       <label className='osw-event-filters-list-item'>
         <div className='osw-event-filters-list-item-name'>
-          <Checkbox cursors={{boolState: this.getCursor('eventFilter', 'active')}} color={eventFilter.hex} />
-          <input
-            className='osw-event-filters-list-item-checkbox'
-            type='checkbox'
-            checked={eventFilter.active}
+          <Checkbox
+            cursors={{boolState: this.getCursor('eventFilter', 'active')}}
+            color={eventFilter.hex}
             onChange={this.handleChange}
-            style={{display: 'none'}}
+            label={eventFilter.name}
           />
-          {eventFilter.name}
         </div>
       </label>
     );

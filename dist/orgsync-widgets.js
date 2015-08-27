@@ -41468,10 +41468,12 @@ define('components/builder/index', ['exports', 'module', 'underscore', 'undersco
   });
 });
 // scripts/components/ui/checkbox.es6
-define('components/ui/checkbox', ['exports', 'module', 'components/ui/icon', 'react'], function (exports, module, _componentsUiIcon, _react) {
+define('components/ui/checkbox', ['exports', 'module', 'cursors', 'components/ui/icon', 'react'], function (exports, module, _cursors, _componentsUiIcon, _react) {
   'use strict';
 
   function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+
+  var _Cursors = _interopRequireDefault(_cursors);
 
   var _Icon = _interopRequireDefault(_componentsUiIcon);
 
@@ -41480,36 +41482,48 @@ define('components/ui/checkbox', ['exports', 'module', 'components/ui/icon', 're
   module.exports = _React['default'].createClass({
     displayName: 'checkbox',
 
-    getDefaultProps: function getDefaultProps() {
-      return {
-        boolState: false
-      };
+    mixins: [_Cursors['default']],
+
+    handleChange: function handleChange(ev) {
+      this.update({ boolState: { $set: ev.target.checked } });
     },
 
-    getInitialState: function getInitialState() {
-      return {
-        boolState: this.props.boolState
-      };
+    renderCheck: function renderCheck() {
+      if (!this.state.boolState) return;
+      return _React['default'].createElement(_Icon['default'], { name: 'check' });
     },
 
     render: function render() {
 
       var classes = 'osw-checkbox';
 
-      if (this.state.boolState) {
-        if (this.props.colored) {
-          classes += ' osw-checkbox-colored-checked';
-        } else {
-          classes += ' osw-checkbox-checked';
-        }
+      if (this.props.colored) {
+        classes += ' osw-checkbox-colored-checked';
+      } else {
+        classes += ' osw-checkbox-checked';
       }
 
       var styles = {};
       if (this.props.color) {
         styles = { background: '#' + this.props.color };
       }
-      console.log(this.state.boolState);
-      return _React['default'].createElement(_Icon['default'], { name: 'check', className: classes, style: styles });
+
+      return _React['default'].createElement(
+        'div',
+        null,
+        _React['default'].createElement(
+          'div',
+          { className: classes, style: styles },
+          this.renderCheck()
+        ),
+        _React['default'].createElement('input', {
+          type: 'checkbox',
+          checked: this.state.boolState,
+          onChange: this.handleChange,
+          style: { display: 'none' }
+        }),
+        this.props.label
+      );
     }
   });
 });
@@ -41527,23 +41541,17 @@ define('components/event-filters/list-item', ['exports', 'module', 'components/u
 
   var _React = _interopRequireDefault(_react);
 
-  var ICON_MAP = {
-    category: 'book',
-    featured: 'promote',
-    organization: 'organization',
-    rsvp: 'check',
-    service_partner: 'service',
-    service_umbrella: 'service',
-    umbrella: 'umbrella'
-  };
-
   module.exports = _React['default'].createClass({
     displayName: 'list-item',
 
     mixins: [_Cursors['default']],
 
-    handleChange: function handleChange(ev) {
-      this.update({ eventFilter: { active: { $set: ev.target.checked } } });
+    getInitialState: function getInitialState() {
+      return {
+        eventFilter: {
+          active: true
+        }
+      };
     },
 
     render: function render() {
@@ -41554,15 +41562,12 @@ define('components/event-filters/list-item', ['exports', 'module', 'components/u
         _React['default'].createElement(
           'div',
           { className: 'osw-event-filters-list-item-name' },
-          _React['default'].createElement(_Checkbox['default'], { cursors: { boolState: this.getCursor('eventFilter', 'active') }, color: eventFilter.hex }),
-          _React['default'].createElement('input', {
-            className: 'osw-event-filters-list-item-checkbox',
-            type: 'checkbox',
-            checked: eventFilter.active,
+          _React['default'].createElement(_Checkbox['default'], {
+            cursors: { boolState: this.getCursor('eventFilter', 'active') },
+            color: eventFilter.hex,
             onChange: this.handleChange,
-            style: { display: 'none' }
-          }),
-          eventFilter.name
+            label: eventFilter.name
+          })
         )
       );
     }
@@ -42704,7 +42709,7 @@ define('../bower_components/velcro/config', ["exports", "module"], function (exp
   };
 });
 // scripts/components/event-filters/index.es6
-define('components/event-filters/index', ['exports', 'module', 'underscore', 'api', 'cursors', 'components/event-filters/list-item', 'react', 'tinycolor', '../bower_components/velcro/config'], function (exports, module, _underscore, _api, _cursors, _componentsEventFiltersListItem, _react, _tinycolor, _bower_componentsVelcroConfig) {
+define('components/event-filters/index', ['exports', 'module', 'underscore', 'api', 'components/ui/checkbox', 'cursors', 'components/event-filters/list-item', 'react', 'tinycolor', '../bower_components/velcro/config'], function (exports, module, _underscore, _api, _componentsUiCheckbox, _cursors, _componentsEventFiltersListItem, _react, _tinycolor, _bower_componentsVelcroConfig) {
   'use strict';
 
   function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
@@ -42712,6 +42717,8 @@ define('components/event-filters/index', ['exports', 'module', 'underscore', 'ap
   var _2 = _interopRequireDefault(_underscore);
 
   var _api2 = _interopRequireDefault(_api);
+
+  var _Checkbox = _interopRequireDefault(_componentsUiCheckbox);
 
   var _Cursors = _interopRequireDefault(_cursors);
 

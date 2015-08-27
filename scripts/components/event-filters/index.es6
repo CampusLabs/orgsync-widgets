@@ -1,5 +1,6 @@
 import _ from 'underscore';
 import api from 'api';
+import Checkbox from 'components/ui/checkbox';
 import Cursors from 'cursors';
 import EventFilterListItem from 'components/event-filters/list-item';
 import React from 'react';

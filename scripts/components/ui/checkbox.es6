@@ -6,7 +6,7 @@ export default React.createClass({
   mixins: [Cursors],
 
   handleChange: function (ev) {
-    this.update({boolState:{$set: ev.target.checked}});
+    this.update({checked:{$set: ev.target.checked}});
   },
 
   render: function () {
@@ -15,7 +15,7 @@ export default React.createClass({
     var classes = cx({
       'osw-checkbox': true,
       'osw-checkbox-colored': this.props.color,
-      'osw-checkbox-unchecked': !this.state.boolState
+      'osw-checkbox-unchecked': !this.state.checked
     });
 
 
@@ -31,7 +31,7 @@ export default React.createClass({
         </div>
         <input
           type='checkbox'
-          checked={this.state.boolState}
+          checked={this.state.checked}
           onChange={this.handleChange}
           style={{display: 'none'}}
         />

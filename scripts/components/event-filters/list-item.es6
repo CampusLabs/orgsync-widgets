@@ -12,7 +12,7 @@ export default React.createClass({
       <label className='osw-event-filters-list-item'>
         <div className='osw-event-filters-list-item-name'>
           <Checkbox
-            cursors={{boolState: this.getCursor('eventFilter', 'active')}}
+            cursors={{checked: this.getCursor('eventFilter', 'active')}}
             color={eventFilter.hex}
             onChange={this.handleChange}
             label={eventFilter.name}

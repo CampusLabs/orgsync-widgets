@@ -41485,7 +41485,7 @@ define('components/ui/checkbox', ['exports', 'module', 'cursors', 'components/ui
     mixins: [_Cursors['default']],
 
     handleChange: function handleChange(ev) {
-      this.update({ boolState: { $set: ev.target.checked } });
+      this.update({ checked: { $set: ev.target.checked } });
     },
 
     render: function render() {
@@ -41494,7 +41494,7 @@ define('components/ui/checkbox', ['exports', 'module', 'cursors', 'components/ui
       var classes = cx({
         'osw-checkbox': true,
         'osw-checkbox-colored': this.props.color,
-        'osw-checkbox-unchecked': !this.state.boolState
+        'osw-checkbox-unchecked': !this.state.checked
       });
 
       var styles = {};
@@ -41512,7 +41512,7 @@ define('components/ui/checkbox', ['exports', 'module', 'cursors', 'components/ui
         ),
         _React['default'].createElement('input', {
           type: 'checkbox',
-          checked: this.state.boolState,
+          checked: this.state.checked,
           onChange: this.handleChange,
           style: { display: 'none' }
         }),
@@ -41549,7 +41549,7 @@ define('components/event-filters/list-item', ['exports', 'module', 'components/u
           'div',
           { className: 'osw-event-filters-list-item-name' },
           _React['default'].createElement(_Checkbox['default'], {
-            cursors: { boolState: this.getCursor('eventFilter', 'active') },
+            cursors: { checked: this.getCursor('eventFilter', 'active') },
             color: eventFilter.hex,
             onChange: this.handleChange,
             label: eventFilter.name

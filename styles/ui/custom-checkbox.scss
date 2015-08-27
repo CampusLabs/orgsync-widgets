@@ -1,6 +1,6 @@
 @import '../config';
 
-$sides: 14px;
+$side: 14px;
 
 .orgsync-widget {
   .osw-checkbox {
@@ -9,16 +9,16 @@ $sides: 14px;
     border-radius: 3px;
     color: #fff;
     display: inline-block;
-    height: $sides;
+    height: $side;
     margin-right: 5px;
     position: relative;
     top: 3px;
-    width: $sides;
+    width: $side;
 
-    i {
-      left: ($sides - 12)/2;
+    .osw-icon{
+      left: ($side - 12)/2;
       position: absolute;
-      top: ($sides - 14)/2;
+      top: ($side - 14)/2;
     }
   }
 

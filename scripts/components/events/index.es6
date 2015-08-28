@@ -328,35 +328,40 @@ export default React.createClass({
     var baseURL = '/' + this.props.portalId;
 
     return (
-      <div className='button-group admin-button-group'>
-        <a href={baseURL + '/events/show_grid'} className='hide-for-small-only'>
-          <i className='icon-involvement'></i>Attendance
-        </a>
-        <a href={baseURL + '/events/forms'} className='hide-for-small-only'>
-          <i className='icon-form'></i>Event Forms
-        </a>
-        <div className='has-dropdown click-dropdown'>
-          <a href='#' className='button share-button has-icon'>
-            <i className=' icon-down'></i>Export
+      <div>
+        <div className='manage-categories'>
+          <a href={baseURL + '/7799/events/categories'} data-popup="{'type': 'profile'}">Manage Categories</a>
+        </div>
+        <div className='button-group admin-button-group'>
+          <a href={baseURL + '/events/show_grid'} className='hide-for-small-only'>
+            <i className='icon-involvement'></i>Attendance
           </a>
-          <div className="dropdown dropdown-left">
-            <ul className="button-list">
-              <li>
-                <a href={baseURL + '/admin_reports/export_turnout?export=hours'}
-                    className='js-no-pjax icon-download'
-                    data-export-queue='true'>Event Hours</a>
-              </li>
-              <li>
-                <a href={baseURL + '/admin_reports/export_turnout?export=attendance'}
-                    className='js-no-pjax icon-download'
-                    data-export-queue='true'>Attendance</a>
-              </li>
-              <li>
-                <a href={baseURL + '/events/export_all_event_members'}
-                    className='js-no-pjax icon-download'
-                    data-export-queue='true'>RSVPs</a>
-              </li>
-            </ul>
+          <a href={baseURL + '/events/forms'} className='hide-for-small-only'>
+            <i className='icon-form'></i>Event Forms
+          </a>
+          <div className='has-dropdown click-dropdown'>
+            <a href='#' className='button share-button has-icon'>
+              <i className=' icon-down'></i>Export
+            </a>
+            <div className="dropdown dropdown-left">
+              <ul className="button-list">
+                <li>
+                  <a href={baseURL + '/admin_reports/export_turnout?export=hours'}
+                      className='js-no-pjax icon-download'
+                      data-export-queue='true'>Event Hours</a>
+                </li>
+                <li>
+                  <a href={baseURL + '/admin_reports/export_turnout?export=attendance'}
+                      className='js-no-pjax icon-download'
+                      data-export-queue='true'>Attendance</a>
+                </li>
+                <li>
+                  <a href={baseURL + '/events/export_all_event_members'}
+                      className='js-no-pjax icon-download'
+                      data-export-queue='true'>RSVPs</a>
+                </li>
+              </ul>
+            </div>
           </div>
         </div>
       </div>
@@ -379,6 +384,7 @@ export default React.createClass({
             url={this.getEventsUrl() + '/filters'}
             activeIds={this.props.activeEventFilterIds}
             useSharedHeader={!!this.props.portalId}
+            isAdmin={this.props.isAdmin}
             cursors={{
               events: this.getCursor('events'),
               eventFilters: this.getCursor('eventFilters')

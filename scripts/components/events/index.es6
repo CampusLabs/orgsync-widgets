@@ -330,7 +330,7 @@ export default React.createClass({
     return (
       <div>
         <div className='manage-categories'>
-          <a href={baseURL + '/7799/events/categories'} data-popup="{'type': 'profile'}">Manage Categories</a>
+          <a href={baseURL + '/events/categories'} data-popup="{'type': 'profile'}">Manage Categories</a>
         </div>
         <div className='button-group admin-button-group'>
           <a href={baseURL + '/events/show_grid'} className='hide-for-small-only'>

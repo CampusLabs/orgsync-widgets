@@ -33,8 +33,7 @@ export default React.createClass({
       tz: tz,
       view: 'calendar',
       isAdmin: false,
-      onGoing: [{"thumbnail":"<div aria-hidden=\"true\" class=\"event-wrapper\"><div class=\"event-month\">AUG</div><div class=\"event-day\">28</div></div>","link_and_title":"<a href=\"/38582/opportunities/956840/occurrences/2086375\">asdf</a>","time":"12:00 AM"},{"thumbnail":"<div aria-hidden=\"true\" class=\"event-wrapper\"><div class=\"event-month\">AUG</div><div class=\"event-day\">28</div></div>","link_and_title":"<a href=\"/38582/opportunities/956841/occurrences/2086376\">asdfa</a>","time":"12:00 AM"}]
-
+      onGoing: null
     };
   },
 

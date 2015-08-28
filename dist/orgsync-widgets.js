@@ -53059,10 +53059,10 @@ define('components/events/index', ['exports', 'module', 'underscore', 'component
         null,
         _React['default'].createElement(
           'div',
-          { className: 'manage-categories' },
+          { className: 'events-manage-categories' },
           _React['default'].createElement(
             'a',
-            { href: baseURL + '/7799/events/categories', 'data-popup': '{\'type\': \'profile\'}' },
+            { href: baseURL + '/events/categories', 'data-popup': '{\'type\': \'profile\'}' },
             'Manage Categories'
           )
         ),

@@ -329,7 +329,7 @@ export default React.createClass({
 
     return (
       <div>
-        <div className='manage-categories'>
+        <div className='events-manage-categories'>
           <a href={baseURL + '/events/categories'} data-popup="{'type': 'profile'}">Manage Categories</a>
         </div>
         <div className='button-group admin-button-group'>

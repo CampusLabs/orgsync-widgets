@@ -3,6 +3,7 @@ import Button from 'components/ui/button';
 import ButtonGroup from 'components/ui/button-group';
 import Calendar from 'components/events/calendar';
 import List from 'components/events/list';
+import OnGoing from 'components/events/on-going-panel';
 import Cursors from 'cursors';
 import EventFiltersIndex from 'components/event-filters/index';
 import Icon from 'components/ui/icon';
@@ -31,7 +32,9 @@ export default React.createClass({
       query: '',
       tz: tz,
       view: 'calendar',
-      isAdmin: false
+      isAdmin: false,
+      onGoing: [{"thumbnail":"<div aria-hidden=\"true\" class=\"event-wrapper\"><div class=\"event-month\">AUG</div><div class=\"event-day\">28</div></div>","link_and_title":"<a href=\"/38582/opportunities/956840/occurrences/2086375\">asdf</a>","time":"12:00 AM"},{"thumbnail":"<div aria-hidden=\"true\" class=\"event-wrapper\"><div class=\"event-month\">AUG</div><div class=\"event-day\">28</div></div>","link_and_title":"<a href=\"/38582/opportunities/956841/occurrences/2086376\">asdfa</a>","time":"12:00 AM"}]
+
     };
   },
 
@@ -323,6 +326,13 @@ export default React.createClass({
     }
   },
 
+  renderOnGoing: function () {
+    if(!this.props.onGoing) return;
+    return (
+      <OnGoing events={this.props.onGoing} />
+    );
+  },
+
   renderOSAdminButtons: function () {
     if (!this.props.isAdmin) return;
     var baseURL = '/' + this.props.portalId;
@@ -391,6 +401,7 @@ export default React.createClass({
             }}
           />
           {this.renderOSAdminButtons()}
+          {this.renderOnGoing()}
         </div>
         <div className={this.getMainClassName()}>
           <div className='osw-events-index-header'>

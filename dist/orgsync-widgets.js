@@ -52329,6 +52329,68 @@ define('components/events/list', ['exports', 'module', 'underscore', 'cursors', 
     }
   });
 });
+// scripts/components/events/on-going-panel.es6
+define('components/events/on-going-panel', ['exports', 'module', 'underscore', 'react'], function (exports, module, _underscore, _react) {
+  'use strict';
+
+  function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+
+  var _2 = _interopRequireDefault(_underscore);
+
+  var _React = _interopRequireDefault(_react);
+
+  module.exports = _React['default'].createClass({
+    displayName: 'on-going-panel',
+
+    displayEvent: function displayEvent(event) {
+      return _React['default'].createElement(
+        'li',
+        { className: 'media' },
+        _React['default'].createElement('div', { className: 'pull-left',
+          dangerouslySetInnerHTML: {
+            __html: event.thumbnail
+          } }),
+        _React['default'].createElement(
+          'div',
+          { className: 'media-body' },
+          _React['default'].createElement('span', { dangerouslySetInnerHTML: {
+              __html: event.link_and_title
+            } }),
+          _React['default'].createElement(
+            'div',
+            { className: 'subtle-text' },
+            event.time
+          )
+        )
+      );
+    },
+
+    render: function render() {
+      return _React['default'].createElement(
+        'div',
+        { className: 'panel' },
+        _React['default'].createElement(
+          'div',
+          { className: 'panel-header' },
+          _React['default'].createElement(
+            'h4',
+            null,
+            'Ongoing Events'
+          )
+        ),
+        _React['default'].createElement(
+          'div',
+          { className: 'panel-body' },
+          _React['default'].createElement(
+            'ul',
+            { className: 'media-list' },
+            _2['default'].map(this.props.events, this.displayEvent)
+          )
+        )
+      );
+    }
+  });
+});
 // bower_components/jstz/jstz.js
 /**
  * This script gives you the zone info key representing your device's time zone setting.
@@ -52704,7 +52766,7 @@ define('tz', ['exports', 'module', 'jstz'], function (exports, module, _jstz) {
   module.exports = _jstz2['default'].determine().name();
 });
 // scripts/components/events/index.es6
-define('components/events/index', ['exports', 'module', 'underscore', 'components/ui/button', 'components/ui/button-group', 'components/events/calendar', 'components/events/list', 'cursors', 'components/event-filters/index', 'components/ui/icon', 'react', 'tz', 'entities/event'], function (exports, module, _underscore, _componentsUiButton, _componentsUiButtonGroup, _componentsEventsCalendar, _componentsEventsList, _cursors, _componentsEventFiltersIndex, _componentsUiIcon, _react, _tz, _entitiesEvent) {
+define('components/events/index', ['exports', 'module', 'underscore', 'components/ui/button', 'components/ui/button-group', 'components/events/calendar', 'components/events/list', 'components/events/on-going-panel', 'cursors', 'components/event-filters/index', 'components/ui/icon', 'react', 'tz', 'entities/event'], function (exports, module, _underscore, _componentsUiButton, _componentsUiButtonGroup, _componentsEventsCalendar, _componentsEventsList, _componentsEventsOnGoingPanel, _cursors, _componentsEventFiltersIndex, _componentsUiIcon, _react, _tz, _entitiesEvent) {
   'use strict';
 
   function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
@@ -52718,6 +52780,8 @@ define('components/events/index', ['exports', 'module', 'underscore', 'component
   var _Calendar = _interopRequireDefault(_componentsEventsCalendar);
 
   var _List = _interopRequireDefault(_componentsEventsList);
+
+  var _OnGoing = _interopRequireDefault(_componentsEventsOnGoingPanel);
 
   var _Cursors = _interopRequireDefault(_cursors);
 
@@ -52747,7 +52811,9 @@ define('components/events/index', ['exports', 'module', 'underscore', 'component
         query: '',
         tz: _tz2['default'],
         view: 'calendar',
-        isAdmin: false
+        isAdmin: false,
+        onGoing: [{ "thumbnail": "<div aria-hidden=\"true\" class=\"event-wrapper\"><div class=\"event-month\">AUG</div><div class=\"event-day\">28</div></div>", "link_and_title": "<a href=\"/38582/opportunities/956840/occurrences/2086375\">asdf</a>", "time": "12:00 AM" }, { "thumbnail": "<div aria-hidden=\"true\" class=\"event-wrapper\"><div class=\"event-month\">AUG</div><div class=\"event-day\">28</div></div>", "link_and_title": "<a href=\"/38582/opportunities/956841/occurrences/2086376\">asdfa</a>", "time": "12:00 AM" }]
+
       };
     },
 
@@ -53050,6 +53116,11 @@ define('components/events/index', ['exports', 'module', 'underscore', 'component
       }
     },
 
+    renderOnGoing: function renderOnGoing() {
+      if (!this.props.onGoing) return;
+      return _React['default'].createElement(_OnGoing['default'], { events: this.props.onGoing });
+    },
+
     renderOSAdminButtons: function renderOSAdminButtons() {
       if (!this.props.isAdmin) return;
       var baseURL = '/' + this.props.portalId;
@@ -53165,7 +53236,8 @@ define('components/events/index', ['exports', 'module', 'underscore', 'component
               eventFilters: this.getCursor('eventFilters')
             }
           }),
-          this.renderOSAdminButtons()
+          this.renderOSAdminButtons(),
+          this.renderOnGoing()
         ),
         _React['default'].createElement(
           'div',

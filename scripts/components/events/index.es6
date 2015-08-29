@@ -328,7 +328,7 @@ export default React.createClass({
   renderOnGoing: function () {
     if(!this.props.onGoing.events) return;
     var baseURL = '/' + this.props.portalId;
-    
+
     return (
       <OnGoing
         events={this.props.onGoing.events}

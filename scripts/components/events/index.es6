@@ -33,7 +33,7 @@ export default React.createClass({
       tz: tz,
       view: 'calendar',
       isAdmin: false,
-      onGoing: {events: null, past: true}
+      onGoing: {events: [], past: false}
     };
   },
 
@@ -326,7 +326,7 @@ export default React.createClass({
   },
 
   renderOnGoing: function () {
-    if(!this.props.onGoing.events) return;
+    if(this.props.onGoing.events.length == 0) return;
     var baseURL = '/' + this.props.portalId;
 
     return (

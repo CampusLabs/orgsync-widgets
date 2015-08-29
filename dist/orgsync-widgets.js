@@ -52835,7 +52835,7 @@ define('components/events/index', ['exports', 'module', 'underscore', 'component
         tz: _tz2['default'],
         view: 'calendar',
         isAdmin: false,
-        onGoing: { events: null, past: true }
+        onGoing: { events: [], past: false }
       };
     },
 
@@ -53139,7 +53139,7 @@ define('components/events/index', ['exports', 'module', 'underscore', 'component
     },
 
     renderOnGoing: function renderOnGoing() {
-      if (!this.props.onGoing.events) return;
+      if (this.props.onGoing.events.length == 0) return;
       var baseURL = '/' + this.props.portalId;
 
       return _React['default'].createElement(_OnGoing['default'], {

@@ -52374,6 +52374,7 @@ define('components/events/on-going-panel', ['exports', 'module', 'underscore', '
     },
 
     render: function render() {
+      if (this.props.events) return;
 
       if (this.props.past) {
         var title = 'Past Ongoing Events';

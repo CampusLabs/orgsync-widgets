@@ -31,7 +31,8 @@ export default React.createClass({
   },
 
   render: function () {
-
+    if (this.props.events) return;
+    
     if (this.props.past) {
       var title = 'Past Ongoing Events';
     } else {

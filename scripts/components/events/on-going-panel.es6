@@ -5,6 +5,7 @@ export default React.createClass({
 
   getDefaultProps: function () {
     return {
+      baseURL: '',
       events: [],
       past: false
     }
@@ -46,7 +47,7 @@ export default React.createClass({
           </ul>
         </div>
         <div className='panel-footer'>
-          <a href='/events/ongoing?past=true' className='see-all-link'>
+          <a href={baseURL + '/events/ongoing?past=true'} className='see-all-link'>
             See All
           </a>
         </div>

@@ -52344,6 +52344,7 @@ define('components/events/on-going-panel', ['exports', 'module', 'underscore', '
 
     getDefaultProps: function getDefaultProps() {
       return {
+        baseURL: '',
         events: [],
         past: false
       };
@@ -52406,7 +52407,7 @@ define('components/events/on-going-panel', ['exports', 'module', 'underscore', '
           { className: 'panel-footer' },
           _React['default'].createElement(
             'a',
-            { href: '/events/ongoing?past=true', className: 'see-all-link' },
+            { href: baseURL + '/events/ongoing?past=true', className: 'see-all-link' },
             'See All'
           )
         )
@@ -53140,9 +53141,12 @@ define('components/events/index', ['exports', 'module', 'underscore', 'component
 
     renderOnGoing: function renderOnGoing() {
       if (!this.props.onGoing.events) return;
+      var baseURL = '/' + this.props.portalId;
+
       return _React['default'].createElement(_OnGoing['default'], {
         events: this.props.onGoing.events,
-        past: this.props.onGoing.past
+        past: this.props.onGoing.past,
+        baseURL: baseURL
       });
     },
 

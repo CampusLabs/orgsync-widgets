@@ -52342,6 +52342,13 @@ define('components/events/on-going-panel', ['exports', 'module', 'underscore', '
   module.exports = _React['default'].createClass({
     displayName: 'on-going-panel',
 
+    getDefaultProps: function getDefaultProps() {
+      return {
+        events: [],
+        past: false
+      };
+    },
+
     displayEvent: function displayEvent(event) {
       return _React['default'].createElement(
         'li',
@@ -52366,6 +52373,13 @@ define('components/events/on-going-panel', ['exports', 'module', 'underscore', '
     },
 
     render: function render() {
+
+      if (this.props.past) {
+        var title = 'Past Ongoing Events';
+      } else {
+        var title = 'Upcoming Ongoing Events';
+      }
+
       return _React['default'].createElement(
         'div',
         { className: 'panel' },
@@ -52375,7 +52389,7 @@ define('components/events/on-going-panel', ['exports', 'module', 'underscore', '
           _React['default'].createElement(
             'h4',
             null,
-            'Ongoing Events'
+            title
           )
         ),
         _React['default'].createElement(
@@ -52385,6 +52399,15 @@ define('components/events/on-going-panel', ['exports', 'module', 'underscore', '
             'ul',
             { className: 'media-list' },
             _2['default'].map(this.props.events, this.displayEvent)
+          )
+        ),
+        _React['default'].createElement(
+          'div',
+          { className: 'panel-footer' },
+          _React['default'].createElement(
+            'a',
+            { href: '/events/ongoing?past=true', className: 'see-all-link' },
+            'See All'
           )
         )
       );
@@ -52812,7 +52835,7 @@ define('components/events/index', ['exports', 'module', 'underscore', 'component
         tz: _tz2['default'],
         view: 'calendar',
         isAdmin: false,
-        onGoing: null
+        onGoing: { events: null, past: true }
       };
     },
 
@@ -53116,8 +53139,11 @@ define('components/events/index', ['exports', 'module', 'underscore', 'component
     },
 
     renderOnGoing: function renderOnGoing() {
-      if (!this.props.onGoing) return;
-      return _React['default'].createElement(_OnGoing['default'], { events: this.props.onGoing });
+      if (!this.props.onGoing.events) return;
+      return _React['default'].createElement(_OnGoing['default'], {
+        events: this.props.onGoing.events,
+        past: this.props.onGoing.past
+      });
     },
 
     renderOSAdminButtons: function renderOSAdminButtons() {

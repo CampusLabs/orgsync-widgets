@@ -33,7 +33,7 @@ export default React.createClass({
       tz: tz,
       view: 'calendar',
       isAdmin: false,
-      onGoing: null
+      onGoing: {events: null, past: true}
     };
   },
 
@@ -326,9 +326,12 @@ export default React.createClass({
   },
 
   renderOnGoing: function () {
-    if(!this.props.onGoing) return;
+    if(!this.props.onGoing.events) return;
     return (
-      <OnGoing events={this.props.onGoing} />
+      <OnGoing
+        events={this.props.onGoing.events}
+        past={this.props.onGoing.past}
+      />
     );
   },
 

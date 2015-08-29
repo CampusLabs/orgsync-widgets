@@ -3,6 +3,13 @@ import React from 'react';
 
 export default React.createClass({
 
+  getDefaultProps: function () {
+    return {
+      events: [],
+      past: false
+    }
+  },
+
   displayEvent: function (event) {
     return (
       <li className='media'>
@@ -23,13 +30,25 @@ export default React.createClass({
   },
 
   render: function () {
+
+    if (this.props.past) {
+      var title = 'Past Ongoing Events';
+    } else {
+      var title = 'Upcoming Ongoing Events';
+    }
+
     return (
       <div className='panel'>
-        <div className='panel-header'><h4>Ongoing Events</h4></div>
+        <div className='panel-header'><h4>{title}</h4></div>
         <div className='panel-body'>
           <ul className='media-list'>
             {_.map(this.props.events, this.displayEvent)}
           </ul>
+        </div>
+        <div className='panel-footer'>
+          <a href='/events/ongoing?past=true' className='see-all-link'>
+            See All
+          </a>
         </div>
       </div>
     );

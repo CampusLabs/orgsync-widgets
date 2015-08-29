@@ -47,7 +47,7 @@ export default React.createClass({
           </ul>
         </div>
         <div className='panel-footer'>
-          <a href={baseURL + '/events/ongoing?past=true'} className='see-all-link'>
+          <a href={this.props.baseURL + '/events/ongoing?past=true'} className='see-all-link'>
             See All
           </a>
         </div>

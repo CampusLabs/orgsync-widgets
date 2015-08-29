@@ -52407,7 +52407,7 @@ define('components/events/on-going-panel', ['exports', 'module', 'underscore', '
           { className: 'panel-footer' },
           _React['default'].createElement(
             'a',
-            { href: baseURL + '/events/ongoing?past=true', className: 'see-all-link' },
+            { href: this.props.baseURL + '/events/ongoing?past=true', className: 'see-all-link' },
             'See All'
           )
         )

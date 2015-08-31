@@ -46069,15 +46069,29 @@ define('components/events/index', ['exports', 'module', 'underscore', 'component
 
       return _React['default'].createElement(
         'div',
-        { className: 'button-group admin-button-group' },
-        this.renderAttendanceButton(baseURL),
+        null,
         _React['default'].createElement(
-          'a',
-          { href: baseURL + '/events/forms', className: 'hide-for-small-only' },
-          _React['default'].createElement('i', { className: 'icon-form' }),
-          'Event Forms'
+          'div',
+          { className: 'events-manage-categories' },
+          _React['default'].createElement(
+            'a',
+            { href: baseURL + '/events/categories',
+              'data-popup': '{\'type\': \'profile\'}' },
+            'Manage Categories'
+          )
         ),
-        this.renderExportButtons(baseURL)
+        _React['default'].createElement(
+          'div',
+          { className: 'button-group admin-button-group' },
+          this.renderAttendanceButton(baseURL),
+          _React['default'].createElement(
+            'a',
+            { href: baseURL + '/events/forms', className: 'hide-for-small-only' },
+            _React['default'].createElement('i', { className: 'icon-form' }),
+            'Event Forms'
+          ),
+          this.renderExportButtons(baseURL)
+        )
       );
     },
 

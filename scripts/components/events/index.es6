@@ -326,14 +326,20 @@ export default React.createClass({
     var baseURL = '/' + this.props.portalId;
 
     return (
-      <div className='button-group admin-button-group'>
-        {this.renderAttendanceButton(baseURL)}
+      <div>
+        <div className='events-manage-categories'>
+          <a href={baseURL + '/events/categories'}
+            data-popup="{'type': 'profile'}">Manage Categories</a>
+        </div>
+        <div className='button-group admin-button-group'>
+          {this.renderAttendanceButton(baseURL)}
 
-        <a href={baseURL + '/events/forms'} className='hide-for-small-only'>
-          <i className='icon-form'></i>Event Forms
-        </a>
+          <a href={baseURL + '/events/forms'} className='hide-for-small-only'>
+            <i className='icon-form'></i>Event Forms
+          </a>
 
-        {this.renderExportButtons(baseURL)}
+          {this.renderExportButtons(baseURL)}
+        </div>
       </div>
     );
   },

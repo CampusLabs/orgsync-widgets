@@ -45757,6 +45757,10 @@ define('components/events/index', ['exports', 'module', 'underscore', 'component
       this.update({ width: { $set: rect.width } });
     },
 
+    getBaseURL: function getBaseURL() {
+      return '/' + this.props.portalId;
+    },
+
     getFilteredEvents: function getFilteredEvents() {
       var events = this.state.events;
       var query = this.state.query;
@@ -45980,26 +45984,30 @@ define('components/events/index', ['exports', 'module', 'underscore', 'component
       );
     },
 
-    renderAttendanceButton: function renderAttendanceButton(baseURL) {
+    renderAttendanceButton: function renderAttendanceButton() {
       if (this.props.isService) return;
 
       return _React['default'].createElement(
         'a',
-        { href: baseURL + '/events/show_grid', className: 'hide-for-small-only' },
+        { href: this.getBaseURL() + '/events/show_grid', className: 'hide-for-small-only' },
         _React['default'].createElement('i', { className: 'icon-involvement' }),
         'Attendance'
       );
     },
 
-    renderServiceExportButton: function renderServiceExportButton(baseURL) {
-      if (!_2['default'].contains(this.props.permissions, 'serviceUpdate') || !this.props.isService) return;
+    renderServiceExportButton: function renderServiceExportButton() {
+      var _props = this.props;
+      var permissions = _props.permissions;
+      var isService = _props.isService;
+
+      if (!_2['default'].contains(permissions, 'serviceUpdate') || !isService) return;
 
       return _React['default'].createElement(
         'li',
         null,
         _React['default'].createElement(
           'a',
-          { href: baseURL + '/opportunities/export_posted_hours',
+          { href: this.getBaseURL() + '/opportunities/export_posted_hours',
             className: 'js-no-pjax icon-download',
             'data-export-queue': 'true' },
           'Service Hours'
@@ -46007,65 +46015,8 @@ define('components/events/index', ['exports', 'module', 'underscore', 'component
       );
     },
 
-    renderExportButtons: function renderExportButtons(baseURL) {
-      return _React['default'].createElement(
-        'div',
-        { className: 'has-dropdown click-dropdown' },
-        _React['default'].createElement(
-          'a',
-          { href: '#', className: 'button share-button has-icon' },
-          _React['default'].createElement('i', { className: ' icon-down' }),
-          'Export'
-        ),
-        _React['default'].createElement(
-          'div',
-          { className: 'dropdown dropdown-left' },
-          _React['default'].createElement(
-            'ul',
-            { className: 'button-list' },
-            _React['default'].createElement(
-              'li',
-              null,
-              _React['default'].createElement(
-                'a',
-                { href: baseURL + '/admin_reports/export_turnout?export=hours',
-                  className: 'js-no-pjax icon-download',
-                  'data-export-queue': 'true' },
-                'Event Hours'
-              )
-            ),
-            _React['default'].createElement(
-              'li',
-              null,
-              _React['default'].createElement(
-                'a',
-                { href: baseURL + '/admin_reports/export_turnout?export=attendance',
-                  className: 'js-no-pjax icon-download',
-                  'data-export-queue': 'true' },
-                'Attendance'
-              )
-            ),
-            _React['default'].createElement(
-              'li',
-              null,
-              _React['default'].createElement(
-                'a',
-                { href: baseURL + '/events/export_all_event_members',
-                  className: 'js-no-pjax icon-download',
-                  'data-export-queue': 'true' },
-                'RSVPs'
-              )
-            ),
-            this.renderServiceExportButton()
-          )
-        )
-      );
-    },
-
     renderAdminButtons: function renderAdminButtons() {
       if (!this.props.permissions.length) return;
-
-      var baseURL = '/' + this.props.portalId;
 
       return _React['default'].createElement(
         'div',
@@ -46075,7 +46026,7 @@ define('components/events/index', ['exports', 'module', 'underscore', 'component
           { className: 'events-manage-categories' },
           _React['default'].createElement(
             'a',
-            { href: baseURL + '/events/categories',
+            { href: this.getBaseURL() + '/events/categories',
               'data-popup': '{\'type\': \'profile\'}' },
             'Manage Categories'
           )
@@ -46083,14 +46034,65 @@ define('components/events/index', ['exports', 'module', 'underscore', 'component
         _React['default'].createElement(
           'div',
           { className: 'button-group admin-button-group' },
-          this.renderAttendanceButton(baseURL),
+          this.renderAttendanceButton(),
           _React['default'].createElement(
             'a',
-            { href: baseURL + '/events/forms', className: 'hide-for-small-only' },
+            { href: this.getBaseURL() + '/events/forms', className: 'hide-for-small-only' },
             _React['default'].createElement('i', { className: 'icon-form' }),
             'Event Forms'
           ),
-          this.renderExportButtons(baseURL)
+          _React['default'].createElement(
+            'div',
+            { className: 'has-dropdown click-dropdown' },
+            _React['default'].createElement(
+              'a',
+              { href: '#', className: 'button share-button has-icon' },
+              _React['default'].createElement('i', { className: 'icon-down' }),
+              'Export'
+            ),
+            _React['default'].createElement(
+              'div',
+              { className: 'dropdown dropdown-left' },
+              _React['default'].createElement(
+                'ul',
+                { className: 'button-list' },
+                _React['default'].createElement(
+                  'li',
+                  null,
+                  _React['default'].createElement(
+                    'a',
+                    { href: this.getBaseURL() + '/admin_reports/export_turnout?export=hours',
+                      className: 'js-no-pjax icon-download',
+                      'data-export-queue': 'true' },
+                    'Event Hours'
+                  )
+                ),
+                _React['default'].createElement(
+                  'li',
+                  null,
+                  _React['default'].createElement(
+                    'a',
+                    { href: this.getBaseURL() + '/admin_reports/export_turnout?export=attendance',
+                      className: 'js-no-pjax icon-download',
+                      'data-export-queue': 'true' },
+                    'Attendance'
+                  )
+                ),
+                _React['default'].createElement(
+                  'li',
+                  null,
+                  _React['default'].createElement(
+                    'a',
+                    { href: this.getBaseURL() + '/events/export_all_event_members',
+                      className: 'js-no-pjax icon-download',
+                      'data-export-queue': 'true' },
+                    'RSVPs'
+                  )
+                ),
+                this.renderServiceExportButton()
+              )
+            )
+          )
         )
       );
     },

@@ -64,6 +64,10 @@ export default React.createClass({
     this.update({width: {$set: rect.width}});
   },
 
+  getBaseURL: function () {
+    return '/' + this.props.portalId;
+  },
+
   getFilteredEvents: function () {
     var events = this.state.events;
     var query = this.state.query;
@@ -268,77 +272,70 @@ export default React.createClass({
     );
   },
 
-  renderAttendanceButton: function (baseURL) {
+  renderAttendanceButton: function () {
     if (this.props.isService) return;
 
     return (
-      <a href={baseURL + '/events/show_grid'} className='hide-for-small-only'>
+      <a href={`${this.getBaseURL()}/events/show_grid`} className='hide-for-small-only'>
         <i className='icon-involvement'></i>Attendance
       </a>
     );
   },
 
-  renderServiceExportButton: function (baseURL) {
-    if (!_.contains(this.props.permissions, 'serviceUpdate') || !this.props.isService) return;
+  renderServiceExportButton: function () {
+    const {permissions, isService} = this.props;
+    if (!_.contains(permissions, 'serviceUpdate') || !isService) return;
 
     return (
       <li>
-        <a href={baseURL + '/opportunities/export_posted_hours'}
+        <a href={`${this.getBaseURL()}/opportunities/export_posted_hours`}
             className='js-no-pjax icon-download'
             data-export-queue='true'>Service Hours</a>
       </li>
     );
   },
 
-  renderExportButtons: function (baseURL) {
-    return (
-      <div className='has-dropdown click-dropdown'>
-        <a href='#' className='button share-button has-icon'>
-         <i className=' icon-down'></i>Export
-        </a>
-        <div className="dropdown dropdown-left">
-         <ul className="button-list">
-           <li>
-             <a href={baseURL + '/admin_reports/export_turnout?export=hours'}
-                 className='js-no-pjax icon-download'
-                 data-export-queue='true'>Event Hours</a>
-           </li>
-           <li>
-             <a href={baseURL + '/admin_reports/export_turnout?export=attendance'}
-                 className='js-no-pjax icon-download'
-                 data-export-queue='true'>Attendance</a>
-           </li>
-           <li>
-             <a href={baseURL + '/events/export_all_event_members'}
-                 className='js-no-pjax icon-download'
-                 data-export-queue='true'>RSVPs</a>
-           </li>
-           {this.renderServiceExportButton()}
-         </ul>
-        </div>
-      </div>
-    );
-  },
-
   renderAdminButtons: function () {
     if (!this.props.permissions.length) return;
-
-    var baseURL = '/' + this.props.portalId;
 
     return (
       <div>
         <div className='events-manage-categories'>
-          <a href={baseURL + '/events/categories'}
+          <a href={`${this.getBaseURL()}/events/categories`}
             data-popup="{'type': 'profile'}">Manage Categories</a>
         </div>
         <div className='button-group admin-button-group'>
-          {this.renderAttendanceButton(baseURL)}
+          {this.renderAttendanceButton()}
 
-          <a href={baseURL + '/events/forms'} className='hide-for-small-only'>
+          <a href={`${this.getBaseURL()}/events/forms`} className='hide-for-small-only'>
             <i className='icon-form'></i>Event Forms
           </a>
 
-          {this.renderExportButtons(baseURL)}
+          <div className='has-dropdown click-dropdown'>
+            <a href='#' className='button share-button has-icon'>
+             <i className='icon-down'></i>Export
+            </a>
+            <div className="dropdown dropdown-left">
+             <ul className="button-list">
+               <li>
+                 <a href={`${this.getBaseURL()}/admin_reports/export_turnout?export=hours`}
+                     className='js-no-pjax icon-download'
+                     data-export-queue='true'>Event Hours</a>
+               </li>
+               <li>
+                 <a href={`${this.getBaseURL()}/admin_reports/export_turnout?export=attendance`}
+                     className='js-no-pjax icon-download'
+                     data-export-queue='true'>Attendance</a>
+               </li>
+               <li>
+                 <a href={`${this.getBaseURL()}/events/export_all_event_members`}
+                     className='js-no-pjax icon-download'
+                     data-export-queue='true'>RSVPs</a>
+               </li>
+               {this.renderServiceExportButton()}
+             </ul>
+            </div>
+          </div>
         </div>
       </div>
     );

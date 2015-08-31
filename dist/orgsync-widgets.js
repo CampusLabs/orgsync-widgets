@@ -44854,6 +44854,7 @@ define('components/events/week', ['exports', 'module', 'underscore', 'cursors', 
       var added = [];
       var tz = this.props.tz;
       var grid = _2['default'].times(rows, _2['default'].partial(_2['default'].times, 7, _2['default'].constant(null)));
+      var eventsForDate = {};
       _2['default'].times(7, function (x) {
         var dateMom = (0, _entitiesEvent.getMoment)(this.props.date, tz).day(x);
         var iso = dateMom.toISOString();
@@ -44861,33 +44862,23 @@ define('components/events/week', ['exports', 'module', 'underscore', 'cursors', 
 
         // Find events for this day, then remove the events that have already been
         // added previously in the grid.
-        var events = _2['default'].difference(this.getEventsForDate(date), added);
+        eventsForDate[x] = this.getEventsForDate(date);
+        var events = _2['default'].difference(eventsForDate[x], added);
         _2['default'].times(rows, function (y) {
-          var i;
           if (!events.length) return;
 
           // Show the more message.
-          if (y === rows - 1 && events.length > 1) {
+          var more = eventsForDate[x].length - rows + 1;
+          if (y === rows - 1 && more > 1) {
             var prev = grid[y][x];
-            grid[y][x] = { more: events.length, date: date };
+            grid[y][x] = { more: more, date: date };
 
             // This is tricky. If a previous event was overlapping what will be
             // our more message, it is necessary to move backward and change the
             // space that event took up to say "1 more..." as well.
-            if (prev && (prev === true || prev.id === grid[y][x - 1].id)) {
-              var id = prev.id;
-
-              // Walk back down the row, stopping at `null` and `more` tds.
-              for (i = x - 1; i >= 0 && grid[y][i] && !grid[y][i].more; --i) {
-                var td = grid[y][i];
-
-                // If the id of the event has been found and the current td id
-                // does not match, time to go. The `id` aspect here is necessary
-                // for the special case below.
-                if (id && td.id && id !== td.id) break;
-                if (!id && td.id) id = td.id;
-                grid[y][i].more = 1;
-              }
+            var _event = prev && prev.event;
+            for (var i = x - 1, td = undefined; _event && i >= 0 && (td = grid[y][i]) && td.event === _event; --i) {
+              td.more = 1;
             }
           }
 
@@ -44901,7 +44892,13 @@ define('components/events/week', ['exports', 'module', 'underscore', 'cursors', 
           var colSpan = Math.min(daySpan, 7 - x);
 
           // Mark spots this event takes up as taken.
-          for (i = x + 1; i < x + colSpan; i++) grid[y][i] = true;
+          for (var i = x + 1; i < x + colSpan; i++) {
+            grid[y][i] = {
+              colspan: 0,
+              date: dateMom.clone().day(i).format('YYYY-MM-DD'),
+              event: event
+            };
+          }
 
           // This is the special case where an event starts on one day at non-
           // midnight and ends on a different day. For this case we have to create
@@ -44965,7 +44962,6 @@ define('components/events/week', ['exports', 'module', 'underscore', 'cursors', 
     },
 
     renderTd: function renderTd(td, y) {
-      if (td === true) return;
       if (td === null) return _React['default'].createElement(_Td['default'], { key: 'empty-' + y });
       if (td.more) {
         return _React['default'].createElement(_Td['default'], {
@@ -44974,6 +44970,7 @@ define('components/events/week', ['exports', 'module', 'underscore', 'cursors', 
           openDate: _2['default'].partial(this.openDate, td.date)
         });
       }
+      if (!td.colSpan) return;
       var i = this.state.allEvents.indexOf(td.event);
       return _React['default'].createElement(_Td['default'], {
         key: 'event-' + td.event.id + '-' + y,

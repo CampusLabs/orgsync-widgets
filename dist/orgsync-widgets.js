@@ -44024,7 +44024,7 @@ define('entities/event', ['exports', 'underscore', 'underscore.string', 'api', '
   exports.fetch = fetch;
 });
 // scripts/components/events/show.es6
-define('components/events/show', ['exports', 'module', 'underscore', 'underscore.string', 'api', 'components/ui/button', 'cursors', 'components/ui/icon', 'react', 'components/ui/sep', 'entities/event'], function (exports, module, _underscore, _underscoreString, _api, _componentsUiButton, _cursors, _componentsUiIcon, _react, _componentsUiSep, _entitiesEvent) {
+define('components/events/show', ['exports', 'module', 'underscore', 'underscore.string', 'api', 'components/ui/button', 'cursors', 'components/ui/icon', 'react', 'components/ui/sep', 'entities/account', 'entities/event'], function (exports, module, _underscore, _underscoreString, _api, _componentsUiButton, _cursors, _componentsUiIcon, _react, _componentsUiSep, _entitiesAccount, _entitiesEvent) {
   'use strict';
 
   function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
@@ -44205,7 +44205,7 @@ define('components/events/show', ['exports', 'module', 'underscore', 'underscore
       return _React['default'].createElement(
         'span',
         { key: attendee.id, className: 'osw-events-show-attendee' },
-        _React['default'].createElement('img', { src: attendee.picture_url, alt: alt, title: alt })
+        _React['default'].createElement('img', { src: (0, _entitiesAccount.getPictureUrl)(attendee), alt: alt, title: alt })
       );
     },
 

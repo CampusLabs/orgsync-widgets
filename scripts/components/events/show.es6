@@ -7,6 +7,7 @@ import Icon from 'components/ui/icon';
 import React from 'react';
 import Sep from 'components/ui/sep';
 
+import {getPictureUrl} from 'entities/account';
 import {getMoment, isAllDay, mergeResponse} from 'entities/event';
 
 var DATE_FORMAT = 'dddd, MMM D, YYYY';
@@ -137,7 +138,7 @@ export default React.createClass({
     var alt = attendee.display_name;
     return (
       <span key={attendee.id} className='osw-events-show-attendee'>
-        <img src={attendee.picture_url} alt={alt} title={alt} />
+        <img src={getPictureUrl(attendee)} alt={alt} title={alt} />
       </span>
     );
   },

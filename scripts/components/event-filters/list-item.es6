@@ -7,7 +7,6 @@ export default React.createClass({
   mixins: [Cursors],
 
   handleChange: function (ev) {
-    console.log(ev.target);
     this.update({eventFilter: {active: {$set: ev.target.checked}}});
   },
 

@@ -41493,7 +41493,7 @@ define('components/ui/checkbox', ['exports', 'module', 'cursors', 'components/ui
       });
 
       var styles = {};
-      if (this.props.color) {
+      if (this.props.color && this.props.checked) {
         styles = { background: '#' + this.props.color };
       }
 
@@ -41535,7 +41535,6 @@ define('components/event-filters/list-item', ['exports', 'module', 'components/u
     mixins: [_Cursors['default']],
 
     handleChange: function handleChange(ev) {
-      console.log(ev.target);
       this.update({ eventFilter: { active: { $set: ev.target.checked } } });
     },
 

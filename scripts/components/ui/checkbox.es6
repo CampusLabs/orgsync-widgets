@@ -14,7 +14,7 @@ export default React.createClass({
     });
 
     var styles = {}
-    if (this.props.color) {
+    if (this.props.color && this.props.checked) {
       styles = {background: '#' + this.props.color}
     }
 

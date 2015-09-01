@@ -42798,7 +42798,7 @@ define('components/event-filters/index', ['exports', 'module', 'underscore', 'ap
     toggle: function toggle(eventFilters, ev) {
       this.update(_2['default'].reduce(eventFilters, function (deltas, eventFilter) {
         var i = _2['default'].indexOf(this.state.eventFilters, eventFilter);
-        deltas.eventFilters[i] = { active: { $set: !ev } };
+        deltas.eventFilters[i] = { active: { $set: ev.target.checked } };
         return deltas;
       }, { eventFilters: {} }, this));
     },
@@ -42814,7 +42814,7 @@ define('components/event-filters/index', ['exports', 'module', 'underscore', 'ap
         className: 'osw-event-filters-list-item',
         checked: isChecked,
         label: header,
-        handleChange: this.toggle
+        handleChange: _2['default'].partial(this.toggle, section.eventFilters)
       });
     },
 

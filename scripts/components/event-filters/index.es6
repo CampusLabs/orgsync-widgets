@@ -98,7 +98,7 @@ export default React.createClass({
   toggle: function (eventFilters, ev) {
     this.update(_.reduce(eventFilters, function (deltas, eventFilter) {
       var i = _.indexOf(this.state.eventFilters, eventFilter);
-      deltas.eventFilters[i] = {active: {$set: !ev}};
+      deltas.eventFilters[i] = {active: {$set: ev.target.checked}};
       return deltas;
     }, {eventFilters: {}}, this));
   },
@@ -115,7 +115,7 @@ export default React.createClass({
         className={'osw-event-filters-list-item'}
         checked={isChecked}
         label={header}
-        handleChange={this.toggle}
+        handleChange={_.partial(this.toggle, section.eventFilters)}
       />
     );
   },

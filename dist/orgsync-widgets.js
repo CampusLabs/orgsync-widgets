@@ -41467,8 +41467,8 @@ define('components/builder/index', ['exports', 'module', 'underscore', 'undersco
     }
   });
 });
-// scripts/components/event-filters/list-item.es6
-define('components/event-filters/list-item', ['exports', 'module', 'cursors', 'components/ui/icon', 'react'], function (exports, module, _cursors, _componentsUiIcon, _react) {
+// scripts/components/ui/checkbox.es6
+define('components/ui/checkbox', ['exports', 'module', 'cursors', 'components/ui/icon', 'react'], function (exports, module, _cursors, _componentsUiIcon, _react) {
   'use strict';
 
   function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
@@ -41479,15 +41479,55 @@ define('components/event-filters/list-item', ['exports', 'module', 'cursors', 'c
 
   var _React = _interopRequireDefault(_react);
 
-  var ICON_MAP = {
-    category: 'book',
-    featured: 'promote',
-    organization: 'organization',
-    rsvp: 'check',
-    service_partner: 'service',
-    service_umbrella: 'service',
-    umbrella: 'umbrella'
-  };
+  module.exports = _React['default'].createClass({
+    displayName: 'checkbox',
+
+    mixins: [_Cursors['default']],
+
+    render: function render() {
+      var cx = _React['default'].addons.classSet;
+      var classes = cx({
+        'osw-checkbox': true,
+        'osw-checkbox-colored': this.props.color,
+        'osw-checkbox-unchecked': !this.props.checked
+      });
+
+      var styles = {};
+      if (this.props.color) {
+        styles = { background: '#' + this.props.color };
+      }
+
+      return _React['default'].createElement(
+        'div',
+        { onClick: this.props.handleChange, className: this.props.className },
+        _React['default'].createElement(
+          'div',
+          { className: classes, style: styles },
+          _React['default'].createElement(_Icon['default'], { name: 'check' })
+        ),
+        _React['default'].createElement('input', {
+          type: 'checkbox',
+          defaultChecked: this.props.checked,
+          style: { display: 'none' }
+        }),
+        this.props.label
+      );
+    }
+  });
+});
+// scripts/components/event-filters/list-item.es6
+define('components/event-filters/list-item', ['exports', 'module', 'components/ui/checkbox', 'cursors', 'components/ui/icon', 'react'], function (exports, module, _componentsUiCheckbox, _cursors, _componentsUiIcon, _react) {
+  'use strict';
+
+  function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+
+  var _Checkbox = _interopRequireDefault(_componentsUiCheckbox);
+
+  var _Cursors = _interopRequireDefault(_cursors);
+
+  var _Icon = _interopRequireDefault(_componentsUiIcon);
+
+  var _React = _interopRequireDefault(_react);
 
   module.exports = _React['default'].createClass({
     displayName: 'list-item',
@@ -41495,6 +41535,7 @@ define('components/event-filters/list-item', ['exports', 'module', 'cursors', 'c
     mixins: [_Cursors['default']],
 
     handleChange: function handleChange(ev) {
+      console.log(ev.target);
       this.update({ eventFilter: { active: { $set: ev.target.checked } } });
     },
 
@@ -41503,21 +41544,15 @@ define('components/event-filters/list-item', ['exports', 'module', 'cursors', 'c
       return _React['default'].createElement(
         'label',
         { className: 'osw-event-filters-list-item' },
-        _React['default'].createElement(_Icon['default'], {
-          className: 'osw-event-filters-list-item-icon',
-          name: ICON_MAP[eventFilter.type],
-          style: { color: '#' + eventFilter.hex }
-        }),
         _React['default'].createElement(
           'div',
           { className: 'osw-event-filters-list-item-name' },
-          _React['default'].createElement('input', {
-            className: 'osw-event-filters-list-item-checkbox',
-            type: 'checkbox',
-            checked: eventFilter.active,
-            onChange: this.handleChange
-          }),
-          eventFilter.name
+          _React['default'].createElement(_Checkbox['default'], {
+            checked: this.state.eventFilter.active,
+            color: eventFilter.hex,
+            label: eventFilter.name,
+            handleChange: this.handleChange
+          })
         )
       );
     }
@@ -42659,7 +42694,7 @@ define('../bower_components/velcro/config', ["exports", "module"], function (exp
   };
 });
 // scripts/components/event-filters/index.es6
-define('components/event-filters/index', ['exports', 'module', 'underscore', 'api', 'cursors', 'components/event-filters/list-item', 'react', 'tinycolor', '../bower_components/velcro/config'], function (exports, module, _underscore, _api, _cursors, _componentsEventFiltersListItem, _react, _tinycolor, _bower_componentsVelcroConfig) {
+define('components/event-filters/index', ['exports', 'module', 'underscore', 'api', 'components/ui/checkbox', 'cursors', 'components/event-filters/list-item', 'react', 'tinycolor', '../bower_components/velcro/config'], function (exports, module, _underscore, _api, _componentsUiCheckbox, _cursors, _componentsEventFiltersListItem, _react, _tinycolor, _bower_componentsVelcroConfig) {
   'use strict';
 
   function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
@@ -42667,6 +42702,8 @@ define('components/event-filters/index', ['exports', 'module', 'underscore', 'ap
   var _2 = _interopRequireDefault(_underscore);
 
   var _api2 = _interopRequireDefault(_api);
+
+  var _Checkbox = _interopRequireDefault(_componentsUiCheckbox);
 
   var _Cursors = _interopRequireDefault(_cursors);
 
@@ -42762,7 +42799,7 @@ define('components/event-filters/index', ['exports', 'module', 'underscore', 'ap
     toggle: function toggle(eventFilters, ev) {
       this.update(_2['default'].reduce(eventFilters, function (deltas, eventFilter) {
         var i = _2['default'].indexOf(this.state.eventFilters, eventFilter);
-        deltas.eventFilters[i] = { active: { $set: ev.target.checked } };
+        deltas.eventFilters[i] = { active: { $set: !this.state.eventFilters[i].active } };
         return deltas;
       }, { eventFilters: {} }, this));
     },
@@ -42773,22 +42810,13 @@ define('components/event-filters/index', ['exports', 'module', 'underscore', 'ap
       if (this.props.useSharedHeader && header === PORTALS_HEADER) {
         header = 'Shared';
       }
-      return _React['default'].createElement(
-        'label',
-        { className: 'osw-event-filters-list-item osw-event-filters-list-item-header'
-        },
-        _React['default'].createElement(
-          'div',
-          { className: 'osw-event-filters-list-item-name' },
-          _React['default'].createElement('input', {
-            className: 'osw-event-filters-list-item-checkbox',
-            type: 'checkbox',
-            checked: _2['default'].every(section.eventFilters, 'active'),
-            onChange: _2['default'].partial(this.toggle, section.eventFilters)
-          }),
-          header
-        )
-      );
+      var isChecked = _2['default'].every(section.eventFilters, 'active');
+      return _React['default'].createElement(_Checkbox['default'], {
+        className: 'osw-event-filters-list-item',
+        checked: isChecked,
+        label: header,
+        handleChange: _2['default'].partial(this.toggle, section.eventFilters)
+      });
     },
 
     renderEventFilter: function renderEventFilter(eventFilter) {

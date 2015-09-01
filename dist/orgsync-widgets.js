@@ -42802,7 +42802,7 @@ define('components/event-filters/index', ['exports', 'module', 'underscore', 'ap
       }
 
       return _React['default'].createElement(_Checkbox['default'], {
-        className: 'osw-event-filters-list-item',
+        className: 'osw-event-filters-list-item osw-event-filters-header',
         checked: isChecked,
         label: header,
         handleChange: _2['default'].partial(this.toggle, section.eventFilters)

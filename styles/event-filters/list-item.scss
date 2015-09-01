@@ -12,6 +12,10 @@
     @include ellipsis;
     color: $grey-darker;
   }
+  
+  .osw-event-filters-header{
+    font-weight: bold;
+  }
 
   .osw-event-filters-list-item-checkbox {
     margin-right: 5px;

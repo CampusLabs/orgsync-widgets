@@ -14,7 +14,6 @@ export default React.createClass({
           <Checkbox
             cursors={{checked: this.getCursor('eventFilter', 'active')}}
             color={eventFilter.hex}
-            onChange={this.handleChange}
             label={eventFilter.name}
           />
         </div>

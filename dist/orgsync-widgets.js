@@ -41551,7 +41551,6 @@ define('components/event-filters/list-item', ['exports', 'module', 'components/u
           _React['default'].createElement(_Checkbox['default'], {
             cursors: { checked: this.getCursor('eventFilter', 'active') },
             color: eventFilter.hex,
-            onChange: this.handleChange,
             label: eventFilter.name
           })
         )

@@ -18,7 +18,6 @@ export default React.createClass({
       'osw-checkbox-unchecked': !this.state.checked
     });
 
-
     var styles = {}
     if (this.props.color) {
       styles = {background: '#' + this.props.color}

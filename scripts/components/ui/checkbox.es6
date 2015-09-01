@@ -1,9 +1,7 @@
-import Cursors from 'cursors';
 import Icon from 'components/ui/icon';
 import React from 'react';
 
 export default React.createClass({
-  mixins: [Cursors],
 
   render: function () {
     var cx = React.addons.classSet;

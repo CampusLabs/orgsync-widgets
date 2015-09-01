@@ -41468,12 +41468,10 @@ define('components/builder/index', ['exports', 'module', 'underscore', 'undersco
   });
 });
 // scripts/components/ui/checkbox.es6
-define('components/ui/checkbox', ['exports', 'module', 'cursors', 'components/ui/icon', 'react'], function (exports, module, _cursors, _componentsUiIcon, _react) {
+define('components/ui/checkbox', ['exports', 'module', 'components/ui/icon', 'react'], function (exports, module, _componentsUiIcon, _react) {
   'use strict';
 
   function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
-
-  var _Cursors = _interopRequireDefault(_cursors);
 
   var _Icon = _interopRequireDefault(_componentsUiIcon);
 
@@ -41481,8 +41479,6 @@ define('components/ui/checkbox', ['exports', 'module', 'cursors', 'components/ui
 
   module.exports = _React['default'].createClass({
     displayName: 'checkbox',
-
-    mixins: [_Cursors['default']],
 
     render: function render() {
       var cx = _React['default'].addons.classSet;

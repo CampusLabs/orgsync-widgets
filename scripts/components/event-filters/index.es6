@@ -1,5 +1,6 @@
 import _ from 'underscore';
 import api from 'api';
+import Checkbox from 'components/ui/checkbox';
 import Cursors from 'cursors';
 import EventFilterListItem from 'components/event-filters/list-item';
 import React from 'react';
@@ -97,7 +98,7 @@ export default React.createClass({
   toggle: function (eventFilters, ev) {
     this.update(_.reduce(eventFilters, function (deltas, eventFilter) {
       var i = _.indexOf(this.state.eventFilters, eventFilter);
-      deltas.eventFilters[i] = {active: {$set: ev.target.checked}};
+      deltas.eventFilters[i] = {active: {$set: !ev}};
       return deltas;
     }, {eventFilters: {}}, this));
   },
@@ -108,20 +109,14 @@ export default React.createClass({
     if (this.props.useSharedHeader && header === PORTALS_HEADER) {
       header = 'Shared';
     }
+    var isChecked = _.every(section.eventFilters, 'active');
     return (
-      <label className=
-        'osw-event-filters-list-item osw-event-filters-list-item-header'
-      >
-        <div className='osw-event-filters-list-item-name'>
-          <input
-            className='osw-event-filters-list-item-checkbox'
-            type='checkbox'
-            checked={_.every(section.eventFilters, 'active')}
-            onChange={_.partial(this.toggle, section.eventFilters)}
-          />
-          {header}
-        </div>
-      </label>
+      <Checkbox
+        className={'osw-event-filters-list-item'}
+        checked={isChecked}
+        label={header}
+        handleChange={this.toggle}
+      />
     );
   },
 

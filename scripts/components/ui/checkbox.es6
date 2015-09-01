@@ -19,7 +19,7 @@ export default React.createClass({
     }
 
     return (
-      <div onClick={this.props.handleChange}>
+      <div onClick={this.props.handleChange} className={this.props.className}>
         <div className={classes} style={styles}>
           <Icon name='check' />
         </div>

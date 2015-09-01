@@ -5,9 +5,9 @@
     @include clearfix;
     background: #fff;
     border-left: 5px solid $grey;
-    border-bottom: 1px solid $grey;
+    border-bottom: 1px solid #dedede;
     cursor: pointer;
-    padding: 10px 10px 10px 20px;
+    padding: 10px 10px 10px 15px;
   }
 
   .osw-events-list-item-picture-container {
@@ -34,14 +34,14 @@
 
   .osw-events-list-item-date {
     @include border-bottom-radius(3px);
-    background: $grey-lightest;
+    background: #f4f4f4;
     color: $grey-darker;
     font-size: 14px;
     line-height: 25px;
   }
 
   .osw-events-list-item-info {
-    padding-top: 8px;
+    padding-top: 2px;
   }
 
   .osw-events-list-item-title {
@@ -52,6 +52,8 @@
 
   .osw-events-list-item-subtext {
     @include subtle-text;
+    font-size: 13px;
+    line-height: 1.5em;
   }
 
   .osw-events-list-item-maybe-attending {

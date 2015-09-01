@@ -44272,7 +44272,7 @@ define('components/events/show', ['exports', 'module', 'underscore', 'underscore
         'div',
         { className: 'osw-events-show-rsvp-action' },
         _React['default'].createElement(
-          'div',
+          'strong',
           null,
           'Will you be attending?'
         ),

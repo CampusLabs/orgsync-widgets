@@ -558,7 +558,8 @@
 .orgsync-widget {
   font-size: 12px;
   line-height: 1.2;
-  word-wrap: break-word; }
+  word-wrap: break-word;
+  -webkit-font-smoothing: antialiased; }
   .orgsync-widget, .orgsync-widget input, .orgsync-widget select, .orgsync-widget textarea {
     color: #222;
     font-family: Helvetica, arial, freesans, clean, sans-serif; }
@@ -1087,9 +1088,9 @@
   float: right; }
 /* styles/events/list-date.scss */
 .orgsync-widget .osw-events-list-date-header {
-  background: #f2f3f6;
-  border-left: 1px solid #e2e5e8;
-  color: #979ea5;
+  background: #f4f4f4;
+  border-left: 1px solid 3px solid #e2e5e8;
+  color: #999;
   font-size: 12px;
   letter-spacing: .05em;
   padding: 8px;
@@ -1103,9 +1104,9 @@
 .orgsync-widget .osw-events-list-item-content {
   background: #fff;
   border-left: 5px solid #ccc;
-  border-bottom: 1px solid #ccc;
+  border-bottom: 1px solid #dedede;
   cursor: pointer;
-  padding: 10px 10px 10px 20px; }
+  padding: 10px 10px 10px 15px; }
   .orgsync-widget .osw-events-list-item-content::after {
     clear: both;
     content: "";
@@ -1134,19 +1135,21 @@
 .orgsync-widget .osw-events-list-item-date {
   border-bottom-left-radius: 3px;
   border-bottom-right-radius: 3px;
-  background: #f9f9f9;
+  background: #f4f4f4;
   color: #797979;
   font-size: 14px;
   line-height: 25px; }
 .orgsync-widget .osw-events-list-item-info {
-  padding-top: 8px; }
+  padding-top: 2px; }
 .orgsync-widget .osw-events-list-item-title {
   color: #0079ff;
   font-size: 16px;
   line-height: 22px; }
 .orgsync-widget .osw-events-list-item-subtext {
   color: #797979;
-  font-size: 14px; }
+  font-size: 14px;
+  font-size: 13px;
+  line-height: 1.5em; }
 .orgsync-widget .osw-events-list-item-maybe-attending {
   color: #e57d02; }
 .orgsync-widget .osw-events-list-item-attending {
@@ -1161,7 +1164,7 @@
   white-space: nowrap; }
 /* styles/events/show.scss */
 .orgsync-widget .osw-events-show {
-  padding: 20px; }
+  padding: 30px; }
   .orgsync-widget .osw-events-show::after {
     clear: both;
     content: "";
@@ -1189,6 +1192,7 @@
   border-top-right-radius: 3px;
   color: white;
   background: #de6444;
+  box-shadow: 1px 0 0 #de6444;
   font-size: 16px;
   line-height: 30px;
   text-transform: uppercase; }
@@ -1196,19 +1200,17 @@
   border-bottom-left-radius: 3px;
   border-bottom-right-radius: 3px;
   color: #797979;
-  background: #f9f9f9;
+  background: #f4f4f4;
+  box-shadow: 1px 1px 0px #dedede;
   font-size: 40px;
   line-height: 60px; }
 .orgsync-widget .osw-events-show-info {
   overflow: hidden; }
 .orgsync-widget .osw-events-show-title {
   display: block;
-  padding-bottom: 10px;
+  padding: 10px 0;
   font-size: 21px; }
-.orgsync-widget .osw-events-show-time, .orgsync-widget .osw-events-show-portal-name {
-  margin-right: 5px; }
 .orgsync-widget .osw-events-show-add-to-calendar {
-  margin-top: 5px;
   font-size: 12px; }
 .orgsync-widget .osw-events-show-maybe-attending {
   color: #e57d02; }
@@ -1219,22 +1221,21 @@
   content: "";
   display: table; }
 .orgsync-widget .osw-events-show-section > .oswi {
+  color: #aaa;
   float: left;
-  margin-top: 5px;
-  text-align: center;
-  width: 30px;
   font-size: 21px;
-  color: #ccc; }
+  text-align: center;
+  width: 20px; }
 .orgsync-widget .osw-events-show-section-main {
-  padding: 10px 0 10px 5px;
+  padding: 3px 8px 8px 12px;
   overflow: hidden;
   font-size: 15px;
-  line-height: 1.4em; }
+  line-height: 1.4em;
+  margin-bottom: 15px; }
 .orgsync-widget .osw-events-show-time {
   color: #797979;
-  font-size: 14px; }
-.orgsync-widget .osw-events-show-location, .orgsync-widget .osw-events-show-portal-name {
-  color: #2b2b2b; }
+  font-size: 14px;
+  line-height: 2em; }
 .orgsync-widget .osw-events-show-attendees {
   padding-bottom: 10px; }
 .orgsync-widget .osw-events-show-attendee img {

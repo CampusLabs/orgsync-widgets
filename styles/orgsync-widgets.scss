@@ -9,7 +9,8 @@
   font-size: 12px;
   line-height: 1.2;
   word-wrap: break-word;
-
+  -webkit-font-smoothing: antialiased;
+  
   &,
   input,
   select,

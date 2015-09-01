@@ -1,5 +1,6 @@
 import _ from 'underscore';
 import api from 'api';
+import Checkbox from 'components/ui/checkbox';
 import Cursors from 'cursors';
 import EventFilterListItem from 'components/event-filters/list-item';
 import React from 'react';
@@ -105,23 +106,19 @@ export default React.createClass({
   renderHeader: function (section) {
     if (!section.header) return;
     var header = section.header;
+    var isChecked = _.every(section.eventFilters, 'active');
+
     if (this.props.useSharedHeader && header === PORTALS_HEADER) {
       header = 'Shared';
     }
+
     return (
-      <label className=
-        'osw-event-filters-list-item osw-event-filters-list-item-header'
-      >
-        <div className='osw-event-filters-list-item-name'>
-          <input
-            className='osw-event-filters-list-item-checkbox'
-            type='checkbox'
-            checked={_.every(section.eventFilters, 'active')}
-            onChange={_.partial(this.toggle, section.eventFilters)}
+          <Checkbox
+            className='osw-event-filters-list-item'
+            checked={isChecked}
+            label={header}
+            handleChange={_.partial(this.toggle, section.eventFilters)}
           />
-          {header}
-        </div>
-      </label>
     );
   },
 

@@ -1,0 +1,31 @@
+@import '../config';
+
+$side: 14px;
+
+.orgsync-widget {
+  .osw-checkbox {
+    background: #0079ff;
+    border: 1px solid transparent;
+    border-radius: 3px;
+    color: #fff;
+    display: inline-block;
+    height: $side;
+    margin-right: 5px;
+    position: relative;
+    top: 3px;
+    width: $side;
+
+    .oswi-check {
+      left: ($side - 12)/2;
+      position: absolute;
+      top: ($side - 14)/2;
+    }
+  }
+
+  .osw-checkbox-unchecked {
+    @include linear-gradient(#fff, $grey-lightest);
+    border: 1px solid #ccc;
+    box-shadow: inset 0 1px 1px #ccc;
+    color: #dedede;
+  }
+}

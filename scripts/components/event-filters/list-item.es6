@@ -13,16 +13,13 @@ export default React.createClass({
   render: function () {
     var eventFilter = this.state.eventFilter;
     return (
-      <label className='osw-event-filters-list-item'>
-        <div className='osw-event-filters-list-item-name'>
-          <Checkbox
-            checked={this.state.eventFilter.active}
-            color={eventFilter.hex}
-            label={eventFilter.name}
-            handleChange={this.handleChange}
-          />
-        </div>
-      </label>
+      <Checkbox
+        checked={this.state.eventFilter.active}
+        className='osw-event-filters-list-item'
+        color={eventFilter.hex}
+        label={eventFilter.name}
+        handleChange={this.handleChange}
+      />
     );
   }
 });

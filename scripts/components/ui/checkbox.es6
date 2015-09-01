@@ -19,7 +19,7 @@ export default React.createClass({
     }
 
     return (
-      <div onClick={this.props.handleChange} className={this.props.className}>
+      <label onClick={this.props.handleChange} className={this.props.className}>
         <div className={classes} style={styles}>
           <Icon name='check' />
         </div>
@@ -29,7 +29,7 @@ export default React.createClass({
           style={{display: 'none'}}
         />
         {this.props.label}
-      </div>
+      </label>
     );
   }
 });

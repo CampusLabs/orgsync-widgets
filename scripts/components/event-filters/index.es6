@@ -98,7 +98,7 @@ export default React.createClass({
   toggle: function (eventFilters, ev) {
     this.update(_.reduce(eventFilters, function (deltas, eventFilter) {
       var i = _.indexOf(this.state.eventFilters, eventFilter);
-      deltas.eventFilters[i] = {active: {$set: !this.state.eventFilters[i].active}};
+      deltas.eventFilters[i] = {active: {$set: ev.target.checked}};
       return deltas;
     }, {eventFilters: {}}, this));
   },
@@ -106,17 +106,19 @@ export default React.createClass({
   renderHeader: function (section) {
     if (!section.header) return;
     var header = section.header;
+    var isChecked = _.every(section.eventFilters, 'active');
+
     if (this.props.useSharedHeader && header === PORTALS_HEADER) {
       header = 'Shared';
     }
-    var isChecked = _.every(section.eventFilters, 'active');
+
     return (
-      <Checkbox
-        className='osw-event-filters-list-item'
-        checked={isChecked}
-        label={header}
-        handleChange={_.partial(this.toggle, section.eventFilters)}
-      />
+          <Checkbox
+            className='osw-event-filters-list-item'
+            checked={isChecked}
+            label={header}
+            handleChange={_.partial(this.toggle, section.eventFilters)}
+          />
     );
   },
 

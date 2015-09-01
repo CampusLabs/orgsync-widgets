@@ -41498,7 +41498,7 @@ define('components/ui/checkbox', ['exports', 'module', 'cursors', 'components/ui
       }
 
       return _React['default'].createElement(
-        'div',
+        'label',
         { onClick: this.props.handleChange, className: this.props.className },
         _React['default'].createElement(
           'div',
@@ -41540,20 +41540,13 @@ define('components/event-filters/list-item', ['exports', 'module', 'components/u
 
     render: function render() {
       var eventFilter = this.state.eventFilter;
-      return _React['default'].createElement(
-        'label',
-        { className: 'osw-event-filters-list-item' },
-        _React['default'].createElement(
-          'div',
-          { className: 'osw-event-filters-list-item-name' },
-          _React['default'].createElement(_Checkbox['default'], {
-            checked: this.state.eventFilter.active,
-            color: eventFilter.hex,
-            label: eventFilter.name,
-            handleChange: this.handleChange
-          })
-        )
-      );
+      return _React['default'].createElement(_Checkbox['default'], {
+        checked: this.state.eventFilter.active,
+        className: 'osw-event-filters-list-item',
+        color: eventFilter.hex,
+        label: eventFilter.name,
+        handleChange: this.handleChange
+      });
     }
   });
 });
@@ -42798,7 +42791,7 @@ define('components/event-filters/index', ['exports', 'module', 'underscore', 'ap
     toggle: function toggle(eventFilters, ev) {
       this.update(_2['default'].reduce(eventFilters, function (deltas, eventFilter) {
         var i = _2['default'].indexOf(this.state.eventFilters, eventFilter);
-        deltas.eventFilters[i] = { active: { $set: !this.state.eventFilters[i].active } };
+        deltas.eventFilters[i] = { active: { $set: ev.target.checked } };
         return deltas;
       }, { eventFilters: {} }, this));
     },
@@ -42806,10 +42799,12 @@ define('components/event-filters/index', ['exports', 'module', 'underscore', 'ap
     renderHeader: function renderHeader(section) {
       if (!section.header) return;
       var header = section.header;
+      var isChecked = _2['default'].every(section.eventFilters, 'active');
+
       if (this.props.useSharedHeader && header === PORTALS_HEADER) {
         header = 'Shared';
       }
-      var isChecked = _2['default'].every(section.eventFilters, 'active');
+
       return _React['default'].createElement(_Checkbox['default'], {
         className: 'osw-event-filters-list-item',
         checked: isChecked,

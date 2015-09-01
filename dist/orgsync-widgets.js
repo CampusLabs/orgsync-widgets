@@ -41484,22 +41484,12 @@ define('components/ui/checkbox', ['exports', 'module', 'cursors', 'components/ui
 
     mixins: [_Cursors['default']],
 
-    getInitialState: function getInitialState() {
-      return {
-        checked: this.props.checked
-      };
-    },
-
-    handleClick: function handleClick(ev) {
-      this.update({ checked: { $set: !this.state.checked } });
-    },
-
     render: function render() {
       var cx = _React['default'].addons.classSet;
       var classes = cx({
         'osw-checkbox': true,
         'osw-checkbox-colored': this.props.color,
-        'osw-checkbox-unchecked': !this.state.checked
+        'osw-checkbox-unchecked': !this.props.checked
       });
 
       var styles = {};
@@ -41509,7 +41499,7 @@ define('components/ui/checkbox', ['exports', 'module', 'cursors', 'components/ui
 
       return _React['default'].createElement(
         'div',
-        { onClick: this.handleClick },
+        { onClick: this.props.handleChange },
         _React['default'].createElement(
           'div',
           { className: classes, style: styles },
@@ -41517,7 +41507,7 @@ define('components/ui/checkbox', ['exports', 'module', 'cursors', 'components/ui
         ),
         _React['default'].createElement('input', {
           type: 'checkbox',
-          defaultChecked: this.state.checked,
+          defaultChecked: this.props.checked,
           style: { display: 'none' }
         }),
         this.props.label
@@ -41545,12 +41535,11 @@ define('components/event-filters/list-item', ['exports', 'module', 'components/u
     mixins: [_Cursors['default']],
 
     handleChange: function handleChange(ev) {
-      this.update({ eventFilter: { active: { $set: !ev } } });
+      this.update({ eventFilter: { active: { $set: ev.target.checked } } });
     },
 
     render: function render() {
       var eventFilter = this.state.eventFilter;
-      console.log(this.state.eventFilter.active);
       return _React['default'].createElement(
         'label',
         { className: 'osw-event-filters-list-item' },
@@ -41561,7 +41550,7 @@ define('components/event-filters/list-item', ['exports', 'module', 'components/u
             checked: this.state.eventFilter.active,
             color: eventFilter.hex,
             label: eventFilter.name,
-            clickHandler: this.handleChange
+            handleChange: this.handleChange
           })
         )
       );

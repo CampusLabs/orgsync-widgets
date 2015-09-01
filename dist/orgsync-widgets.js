@@ -41535,6 +41535,7 @@ define('components/event-filters/list-item', ['exports', 'module', 'components/u
     mixins: [_Cursors['default']],
 
     handleChange: function handleChange(ev) {
+      console.log(ev.target);
       this.update({ eventFilter: { active: { $set: ev.target.checked } } });
     },
 
@@ -42798,7 +42799,7 @@ define('components/event-filters/index', ['exports', 'module', 'underscore', 'ap
     toggle: function toggle(eventFilters, ev) {
       this.update(_2['default'].reduce(eventFilters, function (deltas, eventFilter) {
         var i = _2['default'].indexOf(this.state.eventFilters, eventFilter);
-        deltas.eventFilters[i] = { active: { $set: ev.target.checked } };
+        deltas.eventFilters[i] = { active: { $set: !this.state.eventFilters[i].active } };
         return deltas;
       }, { eventFilters: {} }, this));
     },

@@ -19,11 +19,13 @@ const WIDGETS = {
     moduleName: 'events/index',
     props: [
       'communityId',
+      'isService',
       'portalId',
       'view',
       'lockView',
       'tz',
-      'activeEventFilterIds'
+      'activeEventFilterIds',
+      'permissions',
     ]
   },
   Files: {

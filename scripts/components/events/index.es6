@@ -27,7 +27,9 @@ export default React.createClass({
       eventFilters: [],
       events: [],
       filtersAreShowing: true,
+      isService: false,
       lockView: false,
+      permissions: [],
       query: '',
       tz: tz,
       view: 'calendar'
@@ -60,6 +62,10 @@ export default React.createClass({
   setWidth: function () {
     var rect = this.getDOMNode().getBoundingClientRect();
     this.update({width: {$set: rect.width}});
+  },
+
+  getBaseURL: function () {
+    return '/' + this.props.portalId;
   },
 
   getFilteredEvents: function () {
@@ -266,6 +272,75 @@ export default React.createClass({
     );
   },
 
+  renderAttendanceButton: function () {
+    if (this.props.isService) return;
+
+    return (
+      <a href={`${this.getBaseURL()}/events/show_grid`} className='hide-for-small-only'>
+        <i className='icon-involvement'></i>Attendance
+      </a>
+    );
+  },
+
+  renderServiceExportButton: function () {
+    const {permissions, isService} = this.props;
+    if (!_.contains(permissions, 'serviceUpdate') || !isService) return;
+
+    return (
+      <li>
+        <a href={`${this.getBaseURL()}/opportunities/export_posted_hours`}
+            className='js-no-pjax icon-download'
+            data-export-queue='true'>Service Hours</a>
+      </li>
+    );
+  },
+
+  renderAdminButtons: function () {
+    if (!this.props.permissions.length) return;
+
+    return (
+      <div>
+        <div className='events-manage-categories'>
+          <a href={`${this.getBaseURL()}/events/categories`}
+            data-popup="{'type': 'profile'}">Manage Categories</a>
+        </div>
+        <div className='button-group admin-button-group'>
+          {this.renderAttendanceButton()}
+
+          <a href={`${this.getBaseURL()}/events/forms`} className='hide-for-small-only'>
+            <i className='icon-form'></i>Event Forms
+          </a>
+
+          <div className='has-dropdown click-dropdown'>
+            <a href='#' className='button share-button has-icon'>
+             <i className='icon-down'></i>Export
+            </a>
+            <div className="dropdown dropdown-left">
+             <ul className="button-list">
+               <li>
+                 <a href={`${this.getBaseURL()}/admin_reports/export_turnout?export=hours`}
+                     className='js-no-pjax icon-download'
+                     data-export-queue='true'>Event Hours</a>
+               </li>
+               <li>
+                 <a href={`${this.getBaseURL()}/admin_reports/export_turnout?export=attendance`}
+                     className='js-no-pjax icon-download'
+                     data-export-queue='true'>Attendance</a>
+               </li>
+               <li>
+                 <a href={`${this.getBaseURL()}/events/export_all_event_members`}
+                     className='js-no-pjax icon-download'
+                     data-export-queue='true'>RSVPs</a>
+               </li>
+               {this.renderServiceExportButton()}
+             </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  },
+
   renderViewControls: function () {
     return this.getView() === 'calendar' ?
       this.renderCalendarControls() :
@@ -343,6 +418,7 @@ export default React.createClass({
               eventFilters: this.getCursor('eventFilters')
             }}
           />
+          {this.renderAdminButtons()}
         </div>
         <div className={this.getMainClassName()}>
           <div className='osw-events-index-header'>

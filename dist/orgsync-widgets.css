@@ -1201,8 +1201,6 @@
   line-height: 60px; }
 .orgsync-widget .osw-events-show-info {
   overflow: hidden; }
-  .orgsync-widget .osw-events-show-info a {
-    color: #797979; }
 .orgsync-widget .osw-events-show-title {
   display: block;
   padding-bottom: 10px;
@@ -1258,7 +1256,7 @@
   font-size: 14px;
   text-align: right; }
 .orgsync-widget .osw-events-show-popup {
-  max-width: 500px; }
+  max-width: 600px; }
   .orgsync-widget .osw-events-show-popup[min-width~='480px'] .osw-events-show-picture-container {
     float: left;
     margin: 0 20px 0 0; }

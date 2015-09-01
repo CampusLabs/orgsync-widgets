@@ -48,9 +48,6 @@
 
   .osw-events-show-info {
     overflow: hidden;
-    a {
-      color: $grey-darker;
-    }
   }
 
   .osw-events-show-title {
@@ -144,7 +141,7 @@
   }
 
   .osw-events-show-popup {
-    max-width: 500px;
+    max-width: 600px;
 
     &[min-width~='480px'] .osw-events-show-picture-container {
       float: left;

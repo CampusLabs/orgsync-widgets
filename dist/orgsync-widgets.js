@@ -41293,7 +41293,7 @@ define('components/builder/index', ['exports', 'module', 'underscore', 'undersco
     },
     Events: {
       moduleName: 'events/index',
-      props: ['communityId', 'portalId', 'view', 'lockView', 'tz', 'activeEventFilterIds']
+      props: ['communityId', 'isService', 'portalId', 'view', 'lockView', 'tz', 'activeEventFilterIds', 'permissions']
     },
     Files: {
       moduleName: 'files/index',
@@ -44060,7 +44060,7 @@ define('entities/event', ['exports', 'underscore', 'underscore.string', 'api', '
   exports.fetch = fetch;
 });
 // scripts/components/events/show.es6
-define('components/events/show', ['exports', 'module', 'underscore', 'underscore.string', 'api', 'components/ui/button', 'cursors', 'components/ui/icon', 'react', 'components/ui/sep', 'entities/event'], function (exports, module, _underscore, _underscoreString, _api, _componentsUiButton, _cursors, _componentsUiIcon, _react, _componentsUiSep, _entitiesEvent) {
+define('components/events/show', ['exports', 'module', 'underscore', 'underscore.string', 'api', 'components/ui/button', 'cursors', 'components/ui/icon', 'react', 'components/ui/sep', 'entities/account', 'entities/event'], function (exports, module, _underscore, _underscoreString, _api, _componentsUiButton, _cursors, _componentsUiIcon, _react, _componentsUiSep, _entitiesAccount, _entitiesEvent) {
   'use strict';
 
   function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
@@ -44241,7 +44241,7 @@ define('components/events/show', ['exports', 'module', 'underscore', 'underscore
       return _React['default'].createElement(
         'span',
         { key: attendee.id, className: 'osw-events-show-attendee' },
-        _React['default'].createElement('img', { src: attendee.picture_url, alt: alt, title: alt })
+        _React['default'].createElement('img', { src: (0, _entitiesAccount.getPictureUrl)(attendee), alt: alt, title: alt })
       );
     },
 
@@ -44890,6 +44890,7 @@ define('components/events/week', ['exports', 'module', 'underscore', 'cursors', 
       var added = [];
       var tz = this.props.tz;
       var grid = _2['default'].times(rows, _2['default'].partial(_2['default'].times, 7, _2['default'].constant(null)));
+      var eventsForDate = {};
       _2['default'].times(7, function (x) {
         var dateMom = (0, _entitiesEvent.getMoment)(this.props.date, tz).day(x);
         var iso = dateMom.toISOString();
@@ -44897,33 +44898,23 @@ define('components/events/week', ['exports', 'module', 'underscore', 'cursors', 
 
         // Find events for this day, then remove the events that have already been
         // added previously in the grid.
-        var events = _2['default'].difference(this.getEventsForDate(date), added);
+        eventsForDate[x] = this.getEventsForDate(date);
+        var events = _2['default'].difference(eventsForDate[x], added);
         _2['default'].times(rows, function (y) {
-          var i;
           if (!events.length) return;
 
           // Show the more message.
-          if (y === rows - 1 && events.length > 1) {
+          var more = eventsForDate[x].length - rows + 1;
+          if (y === rows - 1 && more > 1) {
             var prev = grid[y][x];
-            grid[y][x] = { more: events.length, date: date };
+            grid[y][x] = { more: more, date: date };
 
             // This is tricky. If a previous event was overlapping what will be
             // our more message, it is necessary to move backward and change the
             // space that event took up to say "1 more..." as well.
-            if (prev && (prev === true || prev.id === grid[y][x - 1].id)) {
-              var id = prev.id;
-
-              // Walk back down the row, stopping at `null` and `more` tds.
-              for (i = x - 1; i >= 0 && grid[y][i] && !grid[y][i].more; --i) {
-                var td = grid[y][i];
-
-                // If the id of the event has been found and the current td id
-                // does not match, time to go. The `id` aspect here is necessary
-                // for the special case below.
-                if (id && td.id && id !== td.id) break;
-                if (!id && td.id) id = td.id;
-                grid[y][i].more = 1;
-              }
+            var _event = prev && prev.event;
+            for (var i = x - 1, td = undefined; _event && i >= 0 && (td = grid[y][i]) && td.event === _event; --i) {
+              td.more = 1;
             }
           }
 
@@ -44937,7 +44928,13 @@ define('components/events/week', ['exports', 'module', 'underscore', 'cursors', 
           var colSpan = Math.min(daySpan, 7 - x);
 
           // Mark spots this event takes up as taken.
-          for (i = x + 1; i < x + colSpan; i++) grid[y][i] = true;
+          for (var i = x + 1; i < x + colSpan; i++) {
+            grid[y][i] = {
+              colspan: 0,
+              date: dateMom.clone().day(i).format('YYYY-MM-DD'),
+              event: event
+            };
+          }
 
           // This is the special case where an event starts on one day at non-
           // midnight and ends on a different day. For this case we have to create
@@ -45001,7 +44998,6 @@ define('components/events/week', ['exports', 'module', 'underscore', 'cursors', 
     },
 
     renderTd: function renderTd(td, y) {
-      if (td === true) return;
       if (td === null) return _React['default'].createElement(_Td['default'], { key: 'empty-' + y });
       if (td.more) {
         return _React['default'].createElement(_Td['default'], {
@@ -45010,6 +45006,7 @@ define('components/events/week', ['exports', 'module', 'underscore', 'cursors', 
           openDate: _2['default'].partial(this.openDate, td.date)
         });
       }
+      if (!td.colSpan) return;
       var i = this.state.allEvents.indexOf(td.event);
       return _React['default'].createElement(_Td['default'], {
         key: 'event-' + td.event.id + '-' + y,
@@ -45759,7 +45756,9 @@ define('components/events/index', ['exports', 'module', 'underscore', 'component
         eventFilters: [],
         events: [],
         filtersAreShowing: true,
+        isService: false,
         lockView: false,
+        permissions: [],
         query: '',
         tz: _tz2['default'],
         view: 'calendar'
@@ -45792,6 +45791,10 @@ define('components/events/index', ['exports', 'module', 'underscore', 'component
     setWidth: function setWidth() {
       var rect = this.getDOMNode().getBoundingClientRect();
       this.update({ width: { $set: rect.width } });
+    },
+
+    getBaseURL: function getBaseURL() {
+      return '/' + this.props.portalId;
     },
 
     getFilteredEvents: function getFilteredEvents() {
@@ -46017,6 +46020,119 @@ define('components/events/index', ['exports', 'module', 'underscore', 'component
       );
     },
 
+    renderAttendanceButton: function renderAttendanceButton() {
+      if (this.props.isService) return;
+
+      return _React['default'].createElement(
+        'a',
+        { href: this.getBaseURL() + '/events/show_grid', className: 'hide-for-small-only' },
+        _React['default'].createElement('i', { className: 'icon-involvement' }),
+        'Attendance'
+      );
+    },
+
+    renderServiceExportButton: function renderServiceExportButton() {
+      var _props = this.props;
+      var permissions = _props.permissions;
+      var isService = _props.isService;
+
+      if (!_2['default'].contains(permissions, 'serviceUpdate') || !isService) return;
+
+      return _React['default'].createElement(
+        'li',
+        null,
+        _React['default'].createElement(
+          'a',
+          { href: this.getBaseURL() + '/opportunities/export_posted_hours',
+            className: 'js-no-pjax icon-download',
+            'data-export-queue': 'true' },
+          'Service Hours'
+        )
+      );
+    },
+
+    renderAdminButtons: function renderAdminButtons() {
+      if (!this.props.permissions.length) return;
+
+      return _React['default'].createElement(
+        'div',
+        null,
+        _React['default'].createElement(
+          'div',
+          { className: 'events-manage-categories' },
+          _React['default'].createElement(
+            'a',
+            { href: this.getBaseURL() + '/events/categories',
+              'data-popup': '{\'type\': \'profile\'}' },
+            'Manage Categories'
+          )
+        ),
+        _React['default'].createElement(
+          'div',
+          { className: 'button-group admin-button-group' },
+          this.renderAttendanceButton(),
+          _React['default'].createElement(
+            'a',
+            { href: this.getBaseURL() + '/events/forms', className: 'hide-for-small-only' },
+            _React['default'].createElement('i', { className: 'icon-form' }),
+            'Event Forms'
+          ),
+          _React['default'].createElement(
+            'div',
+            { className: 'has-dropdown click-dropdown' },
+            _React['default'].createElement(
+              'a',
+              { href: '#', className: 'button share-button has-icon' },
+              _React['default'].createElement('i', { className: 'icon-down' }),
+              'Export'
+            ),
+            _React['default'].createElement(
+              'div',
+              { className: 'dropdown dropdown-left' },
+              _React['default'].createElement(
+                'ul',
+                { className: 'button-list' },
+                _React['default'].createElement(
+                  'li',
+                  null,
+                  _React['default'].createElement(
+                    'a',
+                    { href: this.getBaseURL() + '/admin_reports/export_turnout?export=hours',
+                      className: 'js-no-pjax icon-download',
+                      'data-export-queue': 'true' },
+                    'Event Hours'
+                  )
+                ),
+                _React['default'].createElement(
+                  'li',
+                  null,
+                  _React['default'].createElement(
+                    'a',
+                    { href: this.getBaseURL() + '/admin_reports/export_turnout?export=attendance',
+                      className: 'js-no-pjax icon-download',
+                      'data-export-queue': 'true' },
+                    'Attendance'
+                  )
+                ),
+                _React['default'].createElement(
+                  'li',
+                  null,
+                  _React['default'].createElement(
+                    'a',
+                    { href: this.getBaseURL() + '/events/export_all_event_members',
+                      className: 'js-no-pjax icon-download',
+                      'data-export-queue': 'true' },
+                    'RSVPs'
+                  )
+                ),
+                this.renderServiceExportButton()
+              )
+            )
+          )
+        )
+      );
+    },
+
     renderViewControls: function renderViewControls() {
       return this.getView() === 'calendar' ? this.renderCalendarControls() : this.renderListControls();
     },
@@ -46092,7 +46208,8 @@ define('components/events/index', ['exports', 'module', 'underscore', 'component
               events: this.getCursor('events'),
               eventFilters: this.getCursor('eventFilters')
             }
-          })
+          }),
+          this.renderAdminButtons()
         ),
         _React['default'].createElement(
           'div',

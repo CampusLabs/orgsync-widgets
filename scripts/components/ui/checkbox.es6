@@ -5,12 +5,17 @@ import React from 'react';
 export default React.createClass({
   mixins: [Cursors],
 
-  handleChange: function (ev) {
-    this.update({checked:{$set: ev.target.checked}});
+  getInitialState: function () {
+    return {
+      checked: this.props.checked
+    }
+  },
+
+  handleClick: function (ev) {
+    this.update({checked: {$set: !this.state.checked}});
   },
 
   render: function () {
-
     var cx = React.addons.classSet;
     var classes = cx({
       'osw-checkbox': true,
@@ -24,14 +29,13 @@ export default React.createClass({
     }
 
     return (
-      <div>
+      <div onClick={this.handleClick}>
         <div className={classes} style={styles}>
           <Icon name='check' />
         </div>
         <input
           type='checkbox'
-          checked={this.state.checked}
-          onChange={this.handleChange}
+          defaultChecked={this.state.checked}
           style={{display: 'none'}}
         />
         {this.props.label}

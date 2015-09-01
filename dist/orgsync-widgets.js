@@ -41484,12 +41484,17 @@ define('components/ui/checkbox', ['exports', 'module', 'cursors', 'components/ui
 
     mixins: [_Cursors['default']],
 
-    handleChange: function handleChange(ev) {
-      this.update({ checked: { $set: ev.target.checked } });
+    getInitialState: function getInitialState() {
+      return {
+        checked: this.props.checked
+      };
+    },
+
+    handleClick: function handleClick(ev) {
+      this.update({ checked: { $set: !this.state.checked } });
     },
 
     render: function render() {
-
       var cx = _React['default'].addons.classSet;
       var classes = cx({
         'osw-checkbox': true,
@@ -41504,7 +41509,7 @@ define('components/ui/checkbox', ['exports', 'module', 'cursors', 'components/ui
 
       return _React['default'].createElement(
         'div',
-        null,
+        { onClick: this.handleClick },
         _React['default'].createElement(
           'div',
           { className: classes, style: styles },
@@ -41512,8 +41517,7 @@ define('components/ui/checkbox', ['exports', 'module', 'cursors', 'components/ui
         ),
         _React['default'].createElement('input', {
           type: 'checkbox',
-          checked: this.state.checked,
-          onChange: this.handleChange,
+          defaultChecked: this.state.checked,
           style: { display: 'none' }
         }),
         this.props.label
@@ -41540,8 +41544,13 @@ define('components/event-filters/list-item', ['exports', 'module', 'components/u
 
     mixins: [_Cursors['default']],
 
+    handleChange: function handleChange(ev) {
+      this.update({ eventFilter: { active: { $set: !ev } } });
+    },
+
     render: function render() {
       var eventFilter = this.state.eventFilter;
+      console.log(this.state.eventFilter.active);
       return _React['default'].createElement(
         'label',
         { className: 'osw-event-filters-list-item' },
@@ -41549,9 +41558,10 @@ define('components/event-filters/list-item', ['exports', 'module', 'components/u
           'div',
           { className: 'osw-event-filters-list-item-name' },
           _React['default'].createElement(_Checkbox['default'], {
-            cursors: { checked: this.getCursor('eventFilter', 'active') },
+            checked: this.state.eventFilter.active,
             color: eventFilter.hex,
-            label: eventFilter.name
+            label: eventFilter.name,
+            clickHandler: this.handleChange
           })
         )
       );

@@ -1157,6 +1157,9 @@
   font-size: 14px;
   font-size: 13px;
   line-height: 1.5em; }
+.orgsync-widget .osw-events-list-item-maybe-attending, .orgsync-widget .osw-events-list-item-attending {
+  font-weight: bold;
+  margin-left: 8px; }
 .orgsync-widget .osw-events-list-item-maybe-attending {
   color: #e57d02; }
 .orgsync-widget .osw-events-list-item-attending {

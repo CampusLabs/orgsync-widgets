@@ -102,6 +102,19 @@ export default React.createClass({
     );
   },
 
+  renderPortalName: function (event) {
+    if (event.portal.id === this.props.portalId) return;
+
+    return (
+      <span>
+        <Sep />
+        <span className='osw-events-list-item-portal-name'>
+          {event.portal.name}
+        </span>
+      </span>
+    );
+  },
+
   render: function () {
     var event = this.state.event;
     var src = event.thumbnail_url;
@@ -121,10 +134,7 @@ export default React.createClass({
               <span className='osw-events-list-item-time'>
                 {this.getTime()}
               </span>
-              <Sep />
-              <span className='osw-events-list-item-portal-name'>
-                {event.portal.name}
-              </span>
+              {this.renderPortalName(event)}
               {this.renderRsvp()}
             </div>
           </div>

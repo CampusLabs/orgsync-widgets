@@ -373,6 +373,7 @@ export default React.createClass({
           eventFilters={this.getActiveEventFilters()}
           eventsUrl={this.getEventsUrl()}
           tz={this.state.tz}
+          portalId={this.props.portalId}
           cursors={{
             allEvents: this.getCursor('events'),
             ranges: this.getCursor('ranges')
@@ -387,6 +388,7 @@ export default React.createClass({
           eventFilters={this.getActiveEventFilters()}
           eventsUrl={this.getEventsUrl()}
           tz={this.state.tz}
+          portalId={this.props.portalId}
           past={true}
           cursors={{
             allEvents: this.getCursor('events'),

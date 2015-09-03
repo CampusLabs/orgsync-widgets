@@ -44713,6 +44713,21 @@ define('components/events/list-item', ['exports', 'module', 'underscore.string',
       );
     },
 
+    renderPortalName: function renderPortalName(event) {
+      if (event.portal.id === this.props.portalId) return;
+
+      return _React['default'].createElement(
+        'span',
+        null,
+        _React['default'].createElement(_Sep['default'], null),
+        _React['default'].createElement(
+          'span',
+          { className: 'osw-events-list-item-portal-name' },
+          event.portal.name
+        )
+      );
+    },
+
     render: function render() {
       var event = this.state.event;
       var src = event.thumbnail_url;
@@ -44747,12 +44762,7 @@ define('components/events/list-item', ['exports', 'module', 'underscore.string',
                 { className: 'osw-events-list-item-time' },
                 this.getTime()
               ),
-              _React['default'].createElement(_Sep['default'], null),
-              _React['default'].createElement(
-                'span',
-                { className: 'osw-events-list-item-portal-name' },
-                event.portal.name
-              ),
+              this.renderPortalName(event),
               this.renderRsvp()
             )
           )
@@ -44789,6 +44799,7 @@ define('components/events/list-date', ['exports', 'module', 'cursors', 'react-li
         key: event.id,
         date: this.props.date,
         eventFilters: this.props.eventFilters,
+        portalId: this.props.portalId,
         tz: this.props.tz,
         cursors: { event: this.getCursor('allEvents', i) }
       });
@@ -45290,6 +45301,7 @@ define('components/events/list', ['exports', 'module', 'underscore', 'cursors', 
         date: date[0],
         events: date[1],
         eventFilters: this.props.eventFilters,
+        portalId: this.props.portalId,
         tz: this.props.tz,
         cursors: { allEvents: this.getCursor('allEvents') }
       });
@@ -46142,6 +46154,7 @@ define('components/events/index', ['exports', 'module', 'underscore', 'component
             eventFilters: this.getActiveEventFilters(),
             eventsUrl: this.getEventsUrl(),
             tz: this.state.tz,
+            portalId: this.props.portalId,
             cursors: {
               allEvents: this.getCursor('events'),
               ranges: this.getCursor('ranges')
@@ -46154,6 +46167,7 @@ define('components/events/index', ['exports', 'module', 'underscore', 'component
             eventFilters: this.getActiveEventFilters(),
             eventsUrl: this.getEventsUrl(),
             tz: this.state.tz,
+            portalId: this.props.portalId,
             past: true,
             cursors: {
               allEvents: this.getCursor('events'),

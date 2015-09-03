@@ -10,7 +10,7 @@
   line-height: 1.2;
   word-wrap: break-word;
   -webkit-font-smoothing: antialiased;
-  
+
   &,
   input,
   select,
@@ -187,5 +187,12 @@
         padding-right: 25px;
       }
     }
+  }
+
+  .osw-blank-slate-message{
+    background: $grey-lightest;
+    border-bottom: 1px solid #eee;
+    font-size: 14px;
+    padding: 40px;
   }
 }

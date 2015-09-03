@@ -44797,7 +44797,7 @@ define('components/events/list-date', ['exports', 'module', 'cursors', 'react-li
     renderEmpty: function renderEmpty() {
       return _React['default'].createElement(
         'div',
-        { className: 'osw-inset-block' },
+        { className: 'osw-blank-slate-message' },
         'There are no events to show.'
       );
     },
@@ -45306,7 +45306,7 @@ define('components/events/list', ['exports', 'module', 'underscore', 'cursors', 
     renderEmpty: function renderEmpty() {
       return _React['default'].createElement(
         'div',
-        { className: 'osw-inset-block' },
+        { className: 'osw-blank-slate-message' },
         'There are no events to show.'
       );
     },

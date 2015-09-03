@@ -684,6 +684,11 @@
       pointer-events: none; }
     .orgsync-widget .osw-field.osw-dropdown input, .orgsync-widget .osw-field.osw-dropdown select {
       padding-right: 25px; }
+  .orgsync-widget .osw-blank-slate-message {
+    background: #f9f9f9;
+    border-bottom: 1px solid #eee;
+    font-size: 14px;
+    padding: 40px; }
 /* styles/accounts/list-item.scss */
 .orgsync-widget .osw-accounts-list-item::after {
   clear: both;
@@ -2373,8 +2378,8 @@
     background-image: -webkit-linear-gradient(#f9f9f9, #e2e2e2);
     background-image: linear-gradient(#f9f9f9, #e2e2e2); }
   .orgsync-widget .osw-button:not(.osw-button-disabled):active, .orgsync-widget .osw-button:not(.osw-button-disabled).osw-button-selected {
-    background: #22809d;
-    border-color: #22809d;
+    background: #555;
+    border-color: #555;
     color: #fff; }
   .orgsync-widget .osw-button.osw-button-disabled {
     background: #e2e2e2; }

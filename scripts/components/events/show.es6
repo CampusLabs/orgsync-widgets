@@ -195,7 +195,7 @@ export default React.createClass({
     }
     return (
       <div className='osw-events-show-rsvp-action'>
-        <div>Will you be attending?</div>
+        <strong>Will you be attending?</strong>
         {
           buttons ?
           <div className='osw-events-show-actions'>{buttons}</div> :

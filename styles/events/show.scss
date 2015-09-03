@@ -2,7 +2,7 @@
 
 .orgsync-widget {
   .osw-events-show {
-    padding: 20px;
+    padding: 30px;
     @include clearfix;
 
     a:not(.osw-button) {
@@ -33,6 +33,7 @@
     @include border-top-radius(3px);
     color: white;
     background: $red;
+    box-shadow: 1px 0 0 $red;
     font-size: 16px;
     line-height: 30px;
     text-transform: uppercase;
@@ -41,31 +42,23 @@
   .osw-events-show-date {
     @include border-bottom-radius(3px);
     color: $grey-darker;
-    background: $grey-lightest;
+    background: #f4f4f4;
+    box-shadow: 1px 1px 0px #dedede;
     font-size: 40px;
     line-height: 60px;
   }
 
   .osw-events-show-info {
     overflow: hidden;
-    a {
-      color: $grey-darker;
-    }
   }
 
   .osw-events-show-title {
     display: block;
-    padding-bottom: 10px;
+    padding: 10px 0;
     font-size: 21px;
   }
 
-  .osw-events-show-time,
-  .osw-events-show-portal-name {
-    margin-right: 5px;
-  }
-
   .osw-events-show-add-to-calendar {
-    margin-top: 5px;
     font-size: 12px;
   }
 
@@ -81,29 +74,25 @@
     @include clearfix;
 
     > .oswi {
+      color: #aaa;
       float: left;
-      margin-top: 5px;
-      text-align: center;
-      width: 30px;
       font-size: 21px;
-      color: $grey;
+      text-align: center;
+      width: 20px;
     }
   }
 
   .osw-events-show-section-main {
-    padding: 10px 0 10px 5px;
+    padding: 3px 8px 8px 12px;
     overflow: hidden;
     font-size: 15px;
     line-height: 1.4em;
+    margin-bottom: 15px;
   }
 
   .osw-events-show-time {
     @include subtle-text;
-  }
-
-  .osw-events-show-location,
-  .osw-events-show-portal-name {
-    color: $grey-darkest;
+    line-height: 2em;
   }
 
   .osw-events-show-attendees {
@@ -144,7 +133,7 @@
   }
 
   .osw-events-show-popup {
-    max-width: 500px;
+    max-width: 600px;
 
     &[min-width~='480px'] .osw-events-show-picture-container {
       float: left;

@@ -42802,7 +42802,7 @@ define('components/event-filters/index', ['exports', 'module', 'underscore', 'ap
       }
 
       return _React['default'].createElement(_Checkbox['default'], {
-        className: 'osw-event-filters-list-item',
+        className: 'osw-event-filters-list-item osw-event-filters-header',
         checked: isChecked,
         label: header,
         handleChange: _2['default'].partial(this.toggle, section.eventFilters)
@@ -44290,7 +44290,7 @@ define('components/events/show', ['exports', 'module', 'underscore', 'underscore
         'div',
         { className: 'osw-events-show-rsvp-action' },
         _React['default'].createElement(
-          'div',
+          'strong',
           null,
           'Will you be attending?'
         ),
@@ -44797,7 +44797,7 @@ define('components/events/list-date', ['exports', 'module', 'cursors', 'react-li
     renderEmpty: function renderEmpty() {
       return _React['default'].createElement(
         'div',
-        { className: 'osw-inset-block' },
+        { className: 'osw-blank-slate-message' },
         'There are no events to show.'
       );
     },
@@ -45306,7 +45306,7 @@ define('components/events/list', ['exports', 'module', 'underscore', 'cursors', 
     renderEmpty: function renderEmpty() {
       return _React['default'].createElement(
         'div',
-        { className: 'osw-inset-block' },
+        { className: 'osw-blank-slate-message' },
         'There are no events to show.'
       );
     },

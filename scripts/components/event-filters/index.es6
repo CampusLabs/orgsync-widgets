@@ -114,7 +114,7 @@ export default React.createClass({
 
     return (
           <Checkbox
-            className='osw-event-filters-list-item'
+            className='osw-event-filters-list-item osw-event-filters-header'
             checked={isChecked}
             label={header}
             handleChange={_.partial(this.toggle, section.eventFilters)}

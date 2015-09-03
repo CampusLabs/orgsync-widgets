@@ -88,7 +88,7 @@ export default React.createClass({
   },
 
   renderEmpty: function () {
-    return <div className='osw-inset-block'>There are no events to show.</div>;
+    return <div className='osw-blank-slate-message'>There are no events to show.</div>;
   },
 
   render: function () {

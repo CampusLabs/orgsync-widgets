@@ -44728,6 +44728,12 @@ define('components/events/list-item', ['exports', 'module', 'underscore.string',
       );
     },
 
+    renderEventTypeIcon: function renderEventTypeIcon(event) {
+      if (event.portal.umbrella_id) return;
+
+      return _React['default'].createElement(_Icon['default'], { name: 'umbrella', className: 'osw-event-type-icon' });
+    },
+
     render: function render() {
       var event = this.state.event;
       var src = event.thumbnail_url;
@@ -44746,6 +44752,7 @@ define('components/events/list-item', ['exports', 'module', 'underscore.string',
             { className: 'osw-events-list-item-picture-container' },
             src ? _React['default'].createElement('img', { src: src }) : this.renderDefaultPicture()
           ),
+          this.renderEventTypeIcon(event),
           _React['default'].createElement(
             'div',
             { className: 'osw-events-list-item-info' },

@@ -115,6 +115,14 @@ export default React.createClass({
     );
   },
 
+  renderEventTypeIcon: function (event) {
+    if (event.portal.umbrella_id) return;
+  
+    return (
+      <Icon name='umbrella' className='osw-event-type-icon'/>
+    );
+  },
+
   render: function () {
     var event = this.state.event;
     var src = event.thumbnail_url;
@@ -128,6 +136,7 @@ export default React.createClass({
           <div className='osw-events-list-item-picture-container'>
             {src ? <img src={src} /> : this.renderDefaultPicture()}
           </div>
+          {this.renderEventTypeIcon(event)}
           <div className='osw-events-list-item-info'>
             <div className='osw-events-list-item-title'>{event.title}</div>
             <div className='osw-events-list-item-subtext'>

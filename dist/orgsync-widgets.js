@@ -45340,7 +45340,6 @@ define('components/events/ongoing-panel', ['exports', 'module', 'underscore', 'a
 
   var LIST_LENGTH = 3;
   var YEAR_LIMIT = 2;
-  var FORMAT = 'h:mm A';
 
   module.exports = _React['default'].createClass({
     displayName: 'ongoing-panel',
@@ -45351,8 +45350,7 @@ define('components/events/ongoing-panel', ['exports', 'module', 'underscore', 'a
       return {
         isLoading: false,
         error: null,
-        events: [],
-        isEmpty: false
+        events: []
       };
     },
 
@@ -45384,8 +45382,7 @@ define('components/events/ongoing-panel', ['exports', 'module', 'underscore', 'a
       this.update({
         isLoading: { $set: false },
         error: { $set: null },
-        events: { $set: events.data },
-        isEmpty: { $set: events.data.length <= 0 }
+        events: { $set: events.data }
       });
     },
 
@@ -45418,7 +45415,7 @@ define('components/events/ongoing-panel', ['exports', 'module', 'underscore', 'a
     },
 
     renderEmpty: function renderEmpty() {
-      if (!this.state.isEmpty) return;
+      if (this.state.events.length > 0) return;
 
       return _React['default'].createElement(
         'div',
@@ -45429,7 +45426,6 @@ define('components/events/ongoing-panel', ['exports', 'module', 'underscore', 'a
 
     renderLoading: function renderLoading() {
       if (!this.state.isLoading) return;
-
       return _React['default'].createElement(
         'div',
         { className: 'osw-inset-block' },
@@ -45438,7 +45434,6 @@ define('components/events/ongoing-panel', ['exports', 'module', 'underscore', 'a
     },
 
     render: function render() {
-
       return _React['default'].createElement(
         'div',
         { className: 'panel' },
@@ -45448,8 +45443,7 @@ define('components/events/ongoing-panel', ['exports', 'module', 'underscore', 'a
           _React['default'].createElement(
             'h4',
             null,
-            this.state.past ? 'Past' : 'Upcoming',
-            ' Ongoing Events'
+            'Upcoming Ongoing Events'
           )
         ),
         _React['default'].createElement(
@@ -45468,7 +45462,7 @@ define('components/events/ongoing-panel', ['exports', 'module', 'underscore', 'a
           { className: 'panel-footer' },
           _React['default'].createElement(
             'a',
-            { href: this.props.baseUrl + '/events/ongoing?past=' + this.state.past,
+            { href: this.props.baseUrl + '/events/ongoing',
               className: 'see-all-link' },
             'See All'
           )

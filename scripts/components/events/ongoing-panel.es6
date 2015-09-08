@@ -6,7 +6,6 @@ import React from 'react';
 
 var LIST_LENGTH = 3;
 var YEAR_LIMIT = 2;
-var FORMAT = 'h:mm A';
 
 export default React.createClass({
   mixins: [Cursors],
@@ -15,8 +14,7 @@ export default React.createClass({
     return {
       isLoading: false,
       error: null,
-      events: [],
-      isEmpty: false
+      events: []
     }
   },
 
@@ -48,8 +46,7 @@ export default React.createClass({
     this.update({
       isLoading: {$set: false},
       error: {$set: null},
-      events: {$set: events.data},
-      isEmpty: {$set: events.data.length <= 0}
+      events: {$set: events.data}
     });
   },
 
@@ -72,7 +69,7 @@ export default React.createClass({
   },
 
   renderEmpty: function () {
-    if (!this.state.isEmpty) return;
+    if (this.state.events.length > 0) return;
 
     return (
       <div className='osw-blank-slate-message'>
@@ -83,17 +80,14 @@ export default React.createClass({
 
   renderLoading: function () {
     if (!this.state.isLoading) return;
-
     return <div className='osw-inset-block'>Loading...</div>;
   },
 
   render: function () {
-
-
     return (
       <div className='panel'>
         <div className='panel-header'>
-          <h4>{ this.state.past ? 'Past' : 'Upcoming' } Ongoing Events</h4>
+          <h4>Upcoming Ongoing Events</h4>
         </div>
         <div className='panel-body'>
           {this.renderLoading()}
@@ -103,7 +97,7 @@ export default React.createClass({
           </ul>
         </div>
         <div className='panel-footer'>
-          <a href={`${this.props.baseUrl}/events/ongoing?past=${this.state.past}`}
+          <a href={`${this.props.baseUrl}/events/ongoing`}
             className='see-all-link'>See All</a>
         </div>
       </div>

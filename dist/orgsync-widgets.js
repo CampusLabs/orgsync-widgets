@@ -45444,7 +45444,7 @@ define('components/events/ongoing-panel', ['exports', 'module', 'underscore', 'a
           _React['default'].createElement(
             'h4',
             null,
-            'Upcoming Ongoing Events'
+            'Ongoing Events'
           )
         ),
         _React['default'].createElement(

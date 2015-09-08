@@ -88,7 +88,7 @@ export default React.createClass({
     return (
       <div className='panel'>
         <div className='panel-header'>
-          <h4>Upcoming Ongoing Events</h4>
+          <h4>Ongoing Events</h4>
         </div>
         <div className='panel-body'>
           {this.renderLoading()}

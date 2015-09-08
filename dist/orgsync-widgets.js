@@ -45347,12 +45347,6 @@ define('components/events/ongoing-panel', ['exports', 'module', 'underscore', 'a
 
     mixins: [_Cursors['default']],
 
-    getDefaultProps: function getDefaultProps() {
-      return {
-        past: false
-      };
-    },
-
     getInitialState: function getInitialState() {
       return {
         isLoading: false,
@@ -45366,21 +45360,18 @@ define('components/events/ongoing-panel', ['exports', 'module', 'underscore', 'a
       this.fetch();
     },
 
-    fetch: function fetch(past) {
+    fetch: function fetch() {
       if (this.state.isLoading || this.state.error) return;
       this.update({ isLoading: { $set: true }, error: { $set: null } });
 
-      var options = {
-        url: this.props.eventsUrl
-      };
-
       var now = (0, _entitiesEvent.getMoment)(void 0, this.props.tz);
-      var past = past || this.state.past;
+      var past = this.state.past;
+      var options = {};
 
       options[past ? 'before' : 'after'] = now.toISOString();
       options[past ? 'after' : 'before'] = now.add((past ? -1 : 1) * YEAR_LIMIT, 'years').toISOString();
       if (past) options.direction = 'backwards';
-      _api2['default'].get(options.url, {
+      _api2['default'].get(this.props.eventsUrl, {
         upcoming: !past,
         per_page: 3,
         after: options.after,
@@ -45395,7 +45386,7 @@ define('components/events/ongoing-panel', ['exports', 'module', 'underscore', 'a
 
       if (events.data.length <= 0) {
         this.update({ past: { $set: true } });
-        (0, _entitiesEvent.fetch)(true);
+        this.fetch();
       } else {
         this.update({
           isLoading: { $set: false },
@@ -45451,6 +45442,8 @@ define('components/events/ongoing-panel', ['exports', 'module', 'underscore', 'a
     },
 
     render: function render() {
+      if (this.state.events.length <= 0) return _React['default'].createElement('div', null);
+
       return _React['default'].createElement(
         'div',
         { className: 'panel' },

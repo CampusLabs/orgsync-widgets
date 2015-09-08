@@ -1,7 +1,7 @@
 import _ from 'underscore';
 import api from 'api';
 import Cursors from 'cursors';
-import {fetch, getMoment} from 'entities/event';
+import {getMoment} from 'entities/event';
 import React from 'react';
 
 var LIST_LENGTH = 3;
@@ -10,12 +10,6 @@ var FORMAT = 'h:mm A';
 
 export default React.createClass({
   mixins: [Cursors],
-
-  getDefaultProps: function () {
-    return {
-      past: false
-    }
-  },
 
   getInitialState: function () {
     return {
@@ -30,22 +24,19 @@ export default React.createClass({
     this.fetch();
   },
 
-  fetch: function (past) {
+  fetch: function () {
     if (this.state.isLoading || this.state.error) return;
     this.update({isLoading: {$set: true}, error: {$set: null}});
 
-    var options = {
-      url: this.props.eventsUrl
-    };
-
     var now = getMoment(void 0, this.props.tz);
-    var past = past || this.state.past;
+    var past = this.state.past;
+    var options = {}
 
       options[past ? 'before' : 'after'] = now.toISOString();
       options[past ? 'after' : 'before'] =
         now.add((past ? -1 : 1) * YEAR_LIMIT, 'years').toISOString();
     if (past) options.direction = 'backwards';
-    api.get(options.url, {
+    api.get(this.props.eventsUrl, {
       upcoming: !past,
       per_page: 3,
       after: options.after,
@@ -60,7 +51,7 @@ export default React.createClass({
 
     if (events.data.length <= 0) {
       this.update({ past: {$set: true}});
-      fetch(true);
+      this.fetch();
     } else {
       this.update({
         isLoading: {$set: false},
@@ -102,6 +93,8 @@ export default React.createClass({
   },
 
   render: function () {
+    if (this.state.events.length <= 0) return <div></div>;
+
     return (
       <div className='panel'>
         <div className='panel-header'>

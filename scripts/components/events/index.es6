@@ -274,6 +274,19 @@ export default React.createClass({
     );
   },
 
+  renderOngoingPanel: function () {
+    if (!this.props.isService) return;
+
+    return (
+      <OngoingPanel
+        baseUrl={this.getBaseURL()}
+        eventsUrl={this.getEventsUrl()}
+        tz={this.state.tz}
+        date={this.state.date}
+      />
+    );
+  },
+
   renderAttendanceButton: function () {
     if (this.props.isService) return;
 
@@ -421,12 +434,7 @@ export default React.createClass({
             }}
           />
           {this.renderAdminButtons()}
-          <OngoingPanel
-            baseUrl={this.getBaseURL()}
-            eventsUrl={this.getEventsUrl()}
-            tz={this.state.tz}
-            date={this.state.date}
-          />
+          {this.renderOngoingPanel()}
         </div>
         <div className={this.getMainClassName()}>
           <div className='osw-events-index-header'>

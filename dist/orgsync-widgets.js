@@ -45352,7 +45352,7 @@ define('components/events/ongoing-panel', ['exports', 'module', 'underscore', 'a
         isLoading: false,
         error: null,
         events: [],
-        past: false
+        isEmpty: false
       };
     },
 
@@ -45365,35 +45365,28 @@ define('components/events/ongoing-panel', ['exports', 'module', 'underscore', 'a
       this.update({ isLoading: { $set: true }, error: { $set: null } });
 
       var now = (0, _entitiesEvent.getMoment)(void 0, this.props.tz);
-      var past = this.state.past;
       var options = {};
 
-      options[past ? 'before' : 'after'] = now.toISOString();
-      options[past ? 'after' : 'before'] = now.add((past ? -1 : 1) * YEAR_LIMIT, 'years').toISOString();
-      if (past) options.direction = 'backwards';
+      options['after'] = now.toISOString();
+      options['before'] = now.add(YEAR_LIMIT, 'years').toISOString();
+
       _api2['default'].get(this.props.eventsUrl, {
-        upcoming: !past,
-        per_page: 3,
+        upcoming: true,
+        per_page: LIST_LENGTH,
         after: options.after,
         before: options.before,
-        direction: options.direction,
         restrict_to_portal: false
       }, _2['default'].partial(this.handleFetch));
     },
 
     handleFetch: function handleFetch(er, events) {
       if (er) return console.log(er);
-
-      if (events.data.length <= 0) {
-        this.update({ past: { $set: true } });
-        this.fetch();
-      } else {
-        this.update({
-          isLoading: { $set: false },
-          error: { $set: null },
-          events: { $set: events.data }
-        });
-      }
+      this.update({
+        isLoading: { $set: false },
+        error: { $set: null },
+        events: { $set: events.data },
+        isEmpty: { $set: events.data.length <= 0 }
+      });
     },
 
     renderListItem: function renderListItem(event) {
@@ -45424,16 +45417,19 @@ define('components/events/ongoing-panel', ['exports', 'module', 'underscore', 'a
       );
     },
 
-    renderList: function renderList() {
+    renderEmpty: function renderEmpty() {
+      if (!this.state.isEmpty) return;
+
       return _React['default'].createElement(
-        'ul',
-        { className: 'media-list' },
-        _2['default'].map(this.state.events, this.renderListItem)
+        'div',
+        { className: 'osw-blank-slate-message' },
+        'No upcoming events to show.'
       );
     },
 
     renderLoading: function renderLoading() {
       if (!this.state.isLoading) return;
+
       return _React['default'].createElement(
         'div',
         { className: 'osw-inset-block' },
@@ -45442,7 +45438,6 @@ define('components/events/ongoing-panel', ['exports', 'module', 'underscore', 'a
     },
 
     render: function render() {
-      if (this.state.events.length <= 0) return _React['default'].createElement('div', null);
 
       return _React['default'].createElement(
         'div',
@@ -45461,7 +45456,12 @@ define('components/events/ongoing-panel', ['exports', 'module', 'underscore', 'a
           'div',
           { className: 'panel-body' },
           this.renderLoading(),
-          this.renderList()
+          this.renderEmpty(),
+          _React['default'].createElement(
+            'ul',
+            { className: 'media-list' },
+            _2['default'].map(this.state.events, this.renderListItem)
+          )
         ),
         _React['default'].createElement(
           'div',
@@ -46158,6 +46158,17 @@ define('components/events/index', ['exports', 'module', 'underscore', 'component
       );
     },
 
+    renderOngoingPanel: function renderOngoingPanel() {
+      if (!this.props.isService) return;
+
+      return _React['default'].createElement(_OngoingPanel['default'], {
+        baseUrl: this.getBaseURL(),
+        eventsUrl: this.getEventsUrl(),
+        tz: this.state.tz,
+        date: this.state.date
+      });
+    },
+
     renderAttendanceButton: function renderAttendanceButton() {
       if (this.props.isService) return;
 
@@ -46348,12 +46359,7 @@ define('components/events/index', ['exports', 'module', 'underscore', 'component
             }
           }),
           this.renderAdminButtons(),
-          _React['default'].createElement(_OngoingPanel['default'], {
-            baseUrl: this.getBaseURL(),
-            eventsUrl: this.getEventsUrl(),
-            tz: this.state.tz,
-            date: this.state.date
-          })
+          this.renderOngoingPanel()
         ),
         _React['default'].createElement(
           'div',

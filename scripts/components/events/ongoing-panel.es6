@@ -16,7 +16,7 @@ export default React.createClass({
       isLoading: false,
       error: null,
       events: [],
-      past: false
+      isEmpty: false
     }
   },
 
@@ -29,36 +29,28 @@ export default React.createClass({
     this.update({isLoading: {$set: true}, error: {$set: null}});
 
     var now = getMoment(void 0, this.props.tz);
-    var past = this.state.past;
     var options = {}
 
-      options[past ? 'before' : 'after'] = now.toISOString();
-      options[past ? 'after' : 'before'] =
-        now.add((past ? -1 : 1) * YEAR_LIMIT, 'years').toISOString();
-    if (past) options.direction = 'backwards';
+    options['after'] = now.toISOString();
+    options['before'] = now.add(YEAR_LIMIT, 'years').toISOString();
+
     api.get(this.props.eventsUrl, {
-      upcoming: !past,
-      per_page: 3,
+      upcoming: true,
+      per_page: LIST_LENGTH,
       after: options.after,
       before: options.before,
-      direction: options.direction,
       restrict_to_portal: false
     }, _.partial(this.handleFetch));
   },
 
   handleFetch: function (er, events) {
     if (er) return console.log(er);
-
-    if (events.data.length <= 0) {
-      this.update({ past: {$set: true}});
-      this.fetch();
-    } else {
-      this.update({
-        isLoading: {$set: false},
-        error: {$set: null},
-        events: {$set: events.data}
-      });
-    }
+    this.update({
+      isLoading: {$set: false},
+      error: {$set: null},
+      events: {$set: events.data},
+      isEmpty: {$set: events.data.length <= 0}
+    });
   },
 
   renderListItem: function (event) {
@@ -79,21 +71,24 @@ export default React.createClass({
     );
   },
 
-  renderList: function () {
+  renderEmpty: function () {
+    if (!this.state.isEmpty) return;
+
     return (
-      <ul className='media-list'>
-        {_.map(this.state.events, this.renderListItem)}
-      </ul>
+      <div className='osw-blank-slate-message'>
+        No upcoming events to show.
+      </div>
     );
   },
 
   renderLoading: function () {
     if (!this.state.isLoading) return;
+
     return <div className='osw-inset-block'>Loading...</div>;
   },
 
   render: function () {
-    if (this.state.events.length <= 0) return <div></div>;
+
 
     return (
       <div className='panel'>
@@ -102,7 +97,10 @@ export default React.createClass({
         </div>
         <div className='panel-body'>
           {this.renderLoading()}
-          {this.renderList()}
+          {this.renderEmpty()}
+          <ul className='media-list'>
+            {_.map(this.state.events, this.renderListItem)}
+          </ul>
         </div>
         <div className='panel-footer'>
           <a href={`${this.props.baseUrl}/events/ongoing?past=${this.state.past}`}

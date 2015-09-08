@@ -45325,7 +45325,7 @@ define('components/events/list', ['exports', 'module', 'underscore', 'cursors', 
   });
 });
 // scripts/components/events/ongoing-panel.es6
-define('components/events/ongoing-panel', ['exports', 'module', 'underscore', 'cursors', 'react', 'entities/event'], function (exports, module, _underscore, _cursors, _react, _entitiesEvent) {
+define('components/events/ongoing-panel', ['exports', 'module', 'underscore', 'cursors', 'react'], function (exports, module, _underscore, _cursors, _react) {
   'use strict';
 
   function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
@@ -45337,7 +45337,6 @@ define('components/events/ongoing-panel', ['exports', 'module', 'underscore', 'c
   var _React = _interopRequireDefault(_react);
 
   var LIST_LENGTH = 3;
-  var YEAR_LIMIT = 2;
 
   module.exports = _React['default'].createClass({
     displayName: 'ongoing-panel',

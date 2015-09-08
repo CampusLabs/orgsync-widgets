@@ -3,6 +3,7 @@ import Button from 'components/ui/button';
 import ButtonGroup from 'components/ui/button-group';
 import Calendar from 'components/events/calendar';
 import List from 'components/events/list';
+import OngoingPanel from 'components/events/ongoing-panel';
 import Cursors from 'cursors';
 import EventFiltersIndex from 'components/event-filters/index';
 import Icon from 'components/ui/icon';
@@ -29,6 +30,7 @@ export default React.createClass({
       filtersAreShowing: true,
       isService: false,
       lockView: false,
+      ongoingEvents: [],
       permissions: [],
       query: '',
       tz: tz,
@@ -419,6 +421,14 @@ export default React.createClass({
             }}
           />
           {this.renderAdminButtons()}
+          <OngoingPanel
+            eventsUrl={this.getEventsUrl()}
+            tz={this.state.tz}
+            cursors={{
+              ongoingEvents: this.getCursor('ongoingEvents'),
+              ranges: this.getCursor('ranges')
+            }}
+          />
         </div>
         <div className={this.getMainClassName()}>
           <div className='osw-events-index-header'>

@@ -45324,6 +45324,93 @@ define('components/events/list', ['exports', 'module', 'underscore', 'cursors', 
     }
   });
 });
+// scripts/components/events/ongoing-panel.es6
+define('components/events/ongoing-panel', ['exports', 'module', 'underscore', 'cursors', 'react', 'entities/event'], function (exports, module, _underscore, _cursors, _react, _entitiesEvent) {
+  'use strict';
+
+  function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+
+  var _2 = _interopRequireDefault(_underscore);
+
+  var _Cursors = _interopRequireDefault(_cursors);
+
+  var _React = _interopRequireDefault(_react);
+
+  var LIST_LENGTH = 3;
+  var YEAR_LIMIT = 2;
+
+  module.exports = _React['default'].createClass({
+    displayName: 'ongoing-panel',
+
+    mixins: [_Cursors['default']],
+
+    getDefaultProps: function getDefaultProps() {
+      return {
+        past: false
+      };
+    },
+
+    renderList: function renderList() {
+      return _React['default'].createElement(
+        'ul',
+        { className: 'media-list' },
+        _React['default'].createElement(
+          'li',
+          { className: 'media' },
+          _React['default'].createElement(
+            'div',
+            { className: 'pull-left' },
+            _React['default'].createElement('img', { className: 'event-thumbnail' })
+          ),
+          _React['default'].createElement(
+            'div',
+            { className: 'media-body' },
+            _React['default'].createElement(
+              'a',
+              { href: '#' },
+              'Event Name',
+              _React['default'].createElement(
+                'div',
+                { className: 'subtle-text' },
+                'Event Time'
+              )
+            )
+          )
+        )
+      );
+    },
+
+    render: function render() {
+      return _React['default'].createElement(
+        'div',
+        { className: 'panel' },
+        _React['default'].createElement(
+          'div',
+          { className: 'panel-header' },
+          _React['default'].createElement(
+            'h4',
+            null,
+            'Upcoming Ongoing Events'
+          )
+        ),
+        _React['default'].createElement(
+          'div',
+          { className: 'panel-body' },
+          this.renderList()
+        ),
+        _React['default'].createElement(
+          'div',
+          { className: 'panel-footer' },
+          _React['default'].createElement(
+            'a',
+            { href: '#', className: 'see-all-link' },
+            'See All'
+          )
+        )
+      );
+    }
+  });
+});
 // bower_components/jstz/jstz.js
 /**
  * This script gives you the zone info key representing your device's time zone setting.
@@ -45699,7 +45786,7 @@ define('tz', ['exports', 'module', 'jstz'], function (exports, module, _jstz) {
   module.exports = _jstz2['default'].determine().name();
 });
 // scripts/components/events/index.es6
-define('components/events/index', ['exports', 'module', 'underscore', 'components/ui/button', 'components/ui/button-group', 'components/events/calendar', 'components/events/list', 'cursors', 'components/event-filters/index', 'components/ui/icon', 'react', 'tz', 'entities/event'], function (exports, module, _underscore, _componentsUiButton, _componentsUiButtonGroup, _componentsEventsCalendar, _componentsEventsList, _cursors, _componentsEventFiltersIndex, _componentsUiIcon, _react, _tz, _entitiesEvent) {
+define('components/events/index', ['exports', 'module', 'underscore', 'components/ui/button', 'components/ui/button-group', 'components/events/calendar', 'components/events/list', 'components/events/ongoing-panel', 'cursors', 'components/event-filters/index', 'components/ui/icon', 'react', 'tz', 'entities/event'], function (exports, module, _underscore, _componentsUiButton, _componentsUiButtonGroup, _componentsEventsCalendar, _componentsEventsList, _componentsEventsOngoingPanel, _cursors, _componentsEventFiltersIndex, _componentsUiIcon, _react, _tz, _entitiesEvent) {
   'use strict';
 
   function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
@@ -45713,6 +45800,8 @@ define('components/events/index', ['exports', 'module', 'underscore', 'component
   var _Calendar = _interopRequireDefault(_componentsEventsCalendar);
 
   var _List = _interopRequireDefault(_componentsEventsList);
+
+  var _OngoingPanel = _interopRequireDefault(_componentsEventsOngoingPanel);
 
   var _Cursors = _interopRequireDefault(_cursors);
 
@@ -45740,6 +45829,7 @@ define('components/events/index', ['exports', 'module', 'underscore', 'component
         filtersAreShowing: true,
         isService: false,
         lockView: false,
+        ongoingEvents: [],
         permissions: [],
         query: '',
         tz: _tz2['default'],
@@ -46191,7 +46281,15 @@ define('components/events/index', ['exports', 'module', 'underscore', 'component
               eventFilters: this.getCursor('eventFilters')
             }
           }),
-          this.renderAdminButtons()
+          this.renderAdminButtons(),
+          _React['default'].createElement(_OngoingPanel['default'], {
+            eventsUrl: this.getEventsUrl(),
+            tz: this.state.tz,
+            cursors: {
+              ongoingEvents: this.getCursor('ongoingEvents'),
+              ranges: this.getCursor('ranges')
+            }
+          })
         ),
         _React['default'].createElement(
           'div',

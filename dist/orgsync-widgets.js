@@ -45325,18 +45325,21 @@ define('components/events/list', ['exports', 'module', 'underscore', 'cursors', 
   });
 });
 // scripts/components/events/ongoing-panel.es6
-define('components/events/ongoing-panel', ['exports', 'module', 'underscore', 'cursors', 'react'], function (exports, module, _underscore, _cursors, _react) {
+define('components/events/ongoing-panel', ['exports', 'module', 'underscore', 'api', 'cursors', 'entities/event', 'react'], function (exports, module, _underscore, _api, _cursors, _entitiesEvent, _react) {
   'use strict';
 
   function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 
   var _2 = _interopRequireDefault(_underscore);
 
+  var _api2 = _interopRequireDefault(_api);
+
   var _Cursors = _interopRequireDefault(_cursors);
 
   var _React = _interopRequireDefault(_react);
 
   var LIST_LENGTH = 3;
+  var YEAR_LIMIT = 2;
 
   module.exports = _React['default'].createClass({
     displayName: 'ongoing-panel',
@@ -45349,33 +45352,85 @@ define('components/events/ongoing-panel', ['exports', 'module', 'underscore', 'c
       };
     },
 
+    getInitialState: function getInitialState() {
+      return {
+        isLoading: false,
+        error: null,
+        events: [{
+          title: 'Event Title',
+          date: 'Event Date',
+          image: 'http://photos.orgsync.com/9lqs3un3sgmkyhn_90.jpg',
+          link: 'http://orgsync.com.dev/25567/events/779390/occurrences/1617318'
+        }],
+        ranges: []
+      };
+    },
+
+    componentDidMount: function componentDidMount() {
+      this.fetch();
+    },
+
+    fetch: function fetch() {
+      if (this.state.isLoading || this.state.error) return;
+      this.update({ isLoading: { $set: true }, error: { $set: null } });
+
+      var options = {
+        ranges: this.state.ranges,
+        events: this.state.allEvents,
+        url: this.props.eventsUrl
+      };
+
+      var now = (0, _entitiesEvent.getMoment)(void 0, this.props.tz);
+      var past = this.props.past;
+
+      options[past ? 'before' : 'after'] = now.toISOString();
+      options[past ? 'after' : 'before'] = now.add((past ? -1 : 1) * YEAR_LIMIT, 'years').toISOString();
+      if (past) options.direction = 'backwards';
+      _api2['default'].get(options.url, {
+        upcoming: past,
+        per_page: 3,
+        after: options.after,
+        before: options.before,
+        direction: options.direction,
+        restrict_to_portal: false
+      }, _2['default'].partial(this.handleFetch, options));
+    },
+
+    handleFetch: function handleFetch(er, events) {
+      console.log(er, events);
+    },
+
+    renderListItem: function renderListItem(event) {
+      return _React['default'].createElement(
+        'li',
+        { className: 'media' },
+        _React['default'].createElement(
+          'div',
+          { className: 'pull-left' },
+          _React['default'].createElement('img', { className: 'event-thumbnail', src: event.image })
+        ),
+        _React['default'].createElement(
+          'div',
+          { className: 'media-body' },
+          _React['default'].createElement(
+            'a',
+            { href: event.link },
+            event.title,
+            _React['default'].createElement(
+              'div',
+              { className: 'subtle-text' },
+              event.date
+            )
+          )
+        )
+      );
+    },
+
     renderList: function renderList() {
       return _React['default'].createElement(
         'ul',
         { className: 'media-list' },
-        _React['default'].createElement(
-          'li',
-          { className: 'media' },
-          _React['default'].createElement(
-            'div',
-            { className: 'pull-left' },
-            _React['default'].createElement('img', { className: 'event-thumbnail' })
-          ),
-          _React['default'].createElement(
-            'div',
-            { className: 'media-body' },
-            _React['default'].createElement(
-              'a',
-              { href: '#' },
-              'Event Name',
-              _React['default'].createElement(
-                'div',
-                { className: 'subtle-text' },
-                'Event Time'
-              )
-            )
-          )
-        )
+        _2['default'].map(this.state.events, this.renderListItem)
       );
     },
 
@@ -45403,7 +45458,8 @@ define('components/events/ongoing-panel', ['exports', 'module', 'underscore', 'c
           { className: 'panel-footer' },
           _React['default'].createElement(
             'a',
-            { href: this.props.baseUrl + '/events/ongoing?past=' + this.props.past, className: 'see-all-link' },
+            { href: this.props.baseUrl + '/events/ongoing?past=' + this.props.past,
+              className: 'see-all-link' },
             'See All'
           )
         )
@@ -46283,7 +46339,10 @@ define('components/events/index', ['exports', 'module', 'underscore', 'component
           }),
           this.renderAdminButtons(),
           _React['default'].createElement(_OngoingPanel['default'], {
-            baseUrl: this.getBaseURL()
+            baseUrl: this.getBaseURL(),
+            eventsUrl: this.getEventsUrl(),
+            tz: this.state.tz,
+            date: this.state.date
           })
         ),
         _React['default'].createElement(

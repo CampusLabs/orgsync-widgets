@@ -423,6 +423,9 @@ export default React.createClass({
           {this.renderAdminButtons()}
           <OngoingPanel
             baseUrl={this.getBaseURL()}
+            eventsUrl={this.getEventsUrl()}
+            tz={this.state.tz}
+            date={this.state.date}
           />
         </div>
         <div className={this.getMainClassName()}>

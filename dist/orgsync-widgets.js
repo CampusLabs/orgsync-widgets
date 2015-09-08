@@ -45340,6 +45340,7 @@ define('components/events/ongoing-panel', ['exports', 'module', 'underscore', 'a
 
   var LIST_LENGTH = 3;
   var YEAR_LIMIT = 2;
+  var FORMAT = 'h:mm A';
 
   module.exports = _React['default'].createClass({
     displayName: 'ongoing-panel',
@@ -45356,13 +45357,8 @@ define('components/events/ongoing-panel', ['exports', 'module', 'underscore', 'a
       return {
         isLoading: false,
         error: null,
-        events: [{
-          title: 'Event Title',
-          date: 'Event Date',
-          image: 'http://photos.orgsync.com/9lqs3un3sgmkyhn_90.jpg',
-          link: 'http://orgsync.com.dev/25567/events/779390/occurrences/1617318'
-        }],
-        ranges: []
+        events: [],
+        past: false
       };
     },
 
@@ -45370,56 +45366,67 @@ define('components/events/ongoing-panel', ['exports', 'module', 'underscore', 'a
       this.fetch();
     },
 
-    fetch: function fetch() {
+    fetch: function fetch(past) {
       if (this.state.isLoading || this.state.error) return;
       this.update({ isLoading: { $set: true }, error: { $set: null } });
 
       var options = {
-        ranges: this.state.ranges,
-        events: this.state.allEvents,
         url: this.props.eventsUrl
       };
 
       var now = (0, _entitiesEvent.getMoment)(void 0, this.props.tz);
-      var past = this.props.past;
+      var past = past || this.state.past;
 
       options[past ? 'before' : 'after'] = now.toISOString();
       options[past ? 'after' : 'before'] = now.add((past ? -1 : 1) * YEAR_LIMIT, 'years').toISOString();
       if (past) options.direction = 'backwards';
       _api2['default'].get(options.url, {
-        upcoming: past,
+        upcoming: !past,
         per_page: 3,
         after: options.after,
         before: options.before,
         direction: options.direction,
         restrict_to_portal: false
-      }, _2['default'].partial(this.handleFetch, options));
+      }, _2['default'].partial(this.handleFetch));
     },
 
     handleFetch: function handleFetch(er, events) {
-      console.log(er, events);
+      if (er) return console.log(er);
+
+      if (events.data.length <= 0) {
+        this.update({ past: { $set: true } });
+        (0, _entitiesEvent.fetch)(true);
+      } else {
+        this.update({
+          isLoading: { $set: false },
+          error: { $set: null },
+          events: { $set: events.data }
+        });
+      }
     },
 
     renderListItem: function renderListItem(event) {
+      var dateMom = (0, _entitiesEvent.getMoment)(event.date, this.props.tz);
+
       return _React['default'].createElement(
         'li',
         { className: 'media' },
         _React['default'].createElement(
           'div',
           { className: 'pull-left' },
-          _React['default'].createElement('img', { className: 'event-thumbnail', src: event.image })
+          _React['default'].createElement('img', { className: 'event-thumbnail', src: event.thumbnail_url })
         ),
         _React['default'].createElement(
           'div',
           { className: 'media-body' },
           _React['default'].createElement(
             'a',
-            { href: event.link },
+            { href: event.dates[0].links.web },
             event.title,
             _React['default'].createElement(
               'div',
               { className: 'subtle-text' },
-              event.date
+              dateMom.format('MMMM D, YYYY')
             )
           )
         )
@@ -45434,6 +45441,15 @@ define('components/events/ongoing-panel', ['exports', 'module', 'underscore', 'a
       );
     },
 
+    renderLoading: function renderLoading() {
+      if (!this.state.isLoading) return;
+      return _React['default'].createElement(
+        'div',
+        { className: 'osw-inset-block' },
+        'Loading...'
+      );
+    },
+
     render: function render() {
       return _React['default'].createElement(
         'div',
@@ -45444,13 +45460,14 @@ define('components/events/ongoing-panel', ['exports', 'module', 'underscore', 'a
           _React['default'].createElement(
             'h4',
             null,
-            this.props.past ? 'Past' : 'Upcoming',
+            this.state.past ? 'Past' : 'Upcoming',
             ' Ongoing Events'
           )
         ),
         _React['default'].createElement(
           'div',
           { className: 'panel-body' },
+          this.renderLoading(),
           this.renderList()
         ),
         _React['default'].createElement(
@@ -45458,7 +45475,7 @@ define('components/events/ongoing-panel', ['exports', 'module', 'underscore', 'a
           { className: 'panel-footer' },
           _React['default'].createElement(
             'a',
-            { href: this.props.baseUrl + '/events/ongoing?past=' + this.props.past,
+            { href: this.props.baseUrl + '/events/ongoing?past=' + this.state.past,
               className: 'see-all-link' },
             'See All'
           )

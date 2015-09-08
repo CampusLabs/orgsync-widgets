@@ -45389,7 +45389,8 @@ define('components/events/ongoing-panel', ['exports', 'module', 'underscore', 'c
           _React['default'].createElement(
             'h4',
             null,
-            'Upcoming Ongoing Events'
+            this.props.past ? 'Past' : 'Upcoming',
+            ' Ongoing Events'
           )
         ),
         _React['default'].createElement(
@@ -45402,7 +45403,7 @@ define('components/events/ongoing-panel', ['exports', 'module', 'underscore', 'c
           { className: 'panel-footer' },
           _React['default'].createElement(
             'a',
-            { href: '#', className: 'see-all-link' },
+            { href: this.props.baseUrl + '/events/ongoing?past=' + this.props.past, className: 'see-all-link' },
             'See All'
           )
         )
@@ -46282,12 +46283,7 @@ define('components/events/index', ['exports', 'module', 'underscore', 'component
           }),
           this.renderAdminButtons(),
           _React['default'].createElement(_OngoingPanel['default'], {
-            eventsUrl: this.getEventsUrl(),
-            tz: this.state.tz,
-            cursors: {
-              ongoingEvents: this.getCursor('ongoingEvents'),
-              ranges: this.getCursor('ranges')
-            }
+            baseUrl: this.getBaseURL()
           })
         ),
         _React['default'].createElement(

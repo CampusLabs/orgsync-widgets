@@ -35,13 +35,13 @@ export default React.createClass({
     return (
       <div className='panel'>
         <div className='panel-header'>
-          <h4>Upcoming Ongoing Events</h4>
+          <h4>{ this.props.past ? 'Past' : 'Upcoming' } Ongoing Events</h4>
         </div>
         <div className='panel-body'>
           {this.renderList()}
         </div>
         <div className='panel-footer'>
-          <a href='#' className='see-all-link'>See All</a>
+          <a href={`${this.props.baseUrl}/events/ongoing?past=${this.props.past}`} className='see-all-link'>See All</a>
         </div>
       </div>
     );

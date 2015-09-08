@@ -422,12 +422,7 @@ export default React.createClass({
           />
           {this.renderAdminButtons()}
           <OngoingPanel
-            eventsUrl={this.getEventsUrl()}
-            tz={this.state.tz}
-            cursors={{
-              ongoingEvents: this.getCursor('ongoingEvents'),
-              ranges: this.getCursor('ranges')
-            }}
+            baseUrl={this.getBaseURL()}
           />
         </div>
         <div className={this.getMainClassName()}>

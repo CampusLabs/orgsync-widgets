@@ -37,7 +37,8 @@ export default React.createClass({
       per_page: LIST_LENGTH,
       after: options.after,
       before: options.before,
-      restrict_to_portal: false
+      restrict_to_portal: false,
+      'occurrence_types[]': 'ongoing'
     }, _.partial(this.handleFetch));
   },
 

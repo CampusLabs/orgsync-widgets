@@ -45373,7 +45373,8 @@ define('components/events/ongoing-panel', ['exports', 'module', 'underscore', 'a
         per_page: LIST_LENGTH,
         after: options.after,
         before: options.before,
-        restrict_to_portal: false
+        restrict_to_portal: false,
+        'occurrence_types[]': 'ongoing'
       }, _2['default'].partial(this.handleFetch));
     },
 

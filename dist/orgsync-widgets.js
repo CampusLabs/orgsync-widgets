@@ -44672,7 +44672,7 @@ define('components/events/list-item', ['exports', 'module', 'underscore.string',
       if (!icon) return;
       return _React['default'].createElement(
         'span',
-        { className: 'osw-events-list-item-' + _str2['default'].slugify(rsvp) },
+        { className: 'osw-rsvp-status osw-events-list-item-' + _str2['default'].slugify(rsvp) },
         _React['default'].createElement(_Icon['default'], { name: icon }),
         ' ',
         rsvp

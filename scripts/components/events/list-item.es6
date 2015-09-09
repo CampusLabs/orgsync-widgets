@@ -66,7 +66,7 @@ export default React.createClass({
       null;
     if (!icon) return;
     return (
-      <span className={'osw-events-list-item-' + _str.slugify(rsvp)}>
+      <span className={'osw-rsvp-status osw-events-list-item-' + _str.slugify(rsvp)}>
         <Icon name={icon} /> {rsvp}
       </span>
     );

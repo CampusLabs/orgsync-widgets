@@ -981,6 +981,8 @@
 /* styles/config.scss */
 /* styles/event-filters/index.scss */
 .orgsync-widget .osw-event-filters-index {
+  background: #fff;
+  box-shadow: none;
   overflow: auto;
   max-height: 598px; }
   .orgsync-widget .osw-event-filters-index.osw-inset-block {

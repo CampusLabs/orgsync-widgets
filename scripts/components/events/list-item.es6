@@ -116,12 +116,12 @@ export default React.createClass({
   },
 
   renderEventTypeIcon: function (event) {
-    if (event.portal.umbrella_id) return;
-
     if (event.is_opportunity) {
       return <Icon name='service' className='osw-event-type-icon'/>;
-    } else {
+    } else if (!event.portal.umbrella_id) {
       return <Icon name='umbrella' className='osw-event-type-icon'/>;
+    } else {
+      return;
     }
   },
 

@@ -44729,12 +44729,12 @@ define('components/events/list-item', ['exports', 'module', 'underscore.string',
     },
 
     renderEventTypeIcon: function renderEventTypeIcon(event) {
-      if (event.portal.umbrella_id) return;
-
       if (event.is_opportunity) {
         return _React['default'].createElement(_Icon['default'], { name: 'service', className: 'osw-event-type-icon' });
-      } else {
+      } else if (!event.portal.umbrella_id) {
         return _React['default'].createElement(_Icon['default'], { name: 'umbrella', className: 'osw-event-type-icon' });
+      } else {
+        return;
       }
     },
 

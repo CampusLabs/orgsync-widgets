@@ -51,13 +51,25 @@ export default React.createClass({
     });
   },
 
+  renderDefaultPicture: function (dateMom) {
+    return (
+      <div>
+        <div className='osw-events-list-item-month'>
+          {dateMom.format('MMM')}
+          </div>
+        <div className='osw-events-list-item-date'>{dateMom.format('D')}</div>
+      </div>
+    );
+  },
+
   renderListItem: function (event) {
     var dateMom = getMoment(event.date, this.props.tz);
-
+    var src = event.thumbnail_url;
+    
     return (
       <li className='media'>
         <div className='pull-left'>
-          <img className='event-thumbnail' src={event.thumbnail_url} />
+          {src ? <img src={src} className='event-thumbnail'/> : this.renderDefaultPicture(dateMom)}
         </div>
         <div className='media-body'>
           <a href={event.dates[0].links.web}>

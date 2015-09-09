@@ -45387,8 +45387,26 @@ define('components/events/ongoing-panel', ['exports', 'module', 'underscore', 'a
       });
     },
 
+    renderDefaultPicture: function renderDefaultPicture(dateMom) {
+      return _React['default'].createElement(
+        'div',
+        null,
+        _React['default'].createElement(
+          'div',
+          { className: 'osw-events-list-item-month' },
+          dateMom.format('MMM')
+        ),
+        _React['default'].createElement(
+          'div',
+          { className: 'osw-events-list-item-date' },
+          dateMom.format('D')
+        )
+      );
+    },
+
     renderListItem: function renderListItem(event) {
       var dateMom = (0, _entitiesEvent.getMoment)(event.date, this.props.tz);
+      var src = event.thumbnail_url;
 
       return _React['default'].createElement(
         'li',
@@ -45396,7 +45414,7 @@ define('components/events/ongoing-panel', ['exports', 'module', 'underscore', 'a
         _React['default'].createElement(
           'div',
           { className: 'pull-left' },
-          _React['default'].createElement('img', { className: 'event-thumbnail', src: event.thumbnail_url })
+          src ? _React['default'].createElement('img', { src: src, className: 'event-thumbnail' }) : this.renderDefaultPicture(dateMom)
         ),
         _React['default'].createElement(
           'div',

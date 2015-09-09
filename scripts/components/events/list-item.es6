@@ -102,7 +102,8 @@ export default React.createClass({
     );
   },
 
-  renderPortalName: function (event) {
+  renderPortalName: function () {
+    var event = this.state.event;
     if (event.portal.id === this.props.portalId) return;
 
     return (
@@ -115,7 +116,8 @@ export default React.createClass({
     );
   },
 
-  renderEventTypeIcon: function (event) {
+  renderEventTypeIcon: function () {
+    var event = this.state.event;
     if (event.is_opportunity) {
       return <Icon name='service' className='osw-event-type-icon'/>;
     } else if (!event.portal.umbrella_id) {
@@ -138,14 +140,14 @@ export default React.createClass({
           <div className='osw-events-list-item-picture-container'>
             {src ? <img src={src} /> : this.renderDefaultPicture()}
           </div>
-          {this.renderEventTypeIcon(event)}
+          {this.renderEventTypeIcon()}
           <div className='osw-events-list-item-info'>
             <div className='osw-events-list-item-title'>{event.title}</div>
             <div className='osw-events-list-item-subtext'>
               <span className='osw-events-list-item-time'>
                 {this.getTime()}
               </span>
-              {this.renderPortalName(event)}
+              {this.renderPortalName()}
               {this.renderRsvp()}
             </div>
           </div>

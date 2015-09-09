@@ -44713,7 +44713,8 @@ define('components/events/list-item', ['exports', 'module', 'underscore.string',
       );
     },
 
-    renderPortalName: function renderPortalName(event) {
+    renderPortalName: function renderPortalName() {
+      var event = this.state.event;
       if (event.portal.id === this.props.portalId) return;
 
       return _React['default'].createElement(
@@ -44728,7 +44729,8 @@ define('components/events/list-item', ['exports', 'module', 'underscore.string',
       );
     },
 
-    renderEventTypeIcon: function renderEventTypeIcon(event) {
+    renderEventTypeIcon: function renderEventTypeIcon() {
+      var event = this.state.event;
       if (event.is_opportunity) {
         return _React['default'].createElement(_Icon['default'], { name: 'service', className: 'osw-event-type-icon' });
       } else if (!event.portal.umbrella_id) {
@@ -44756,7 +44758,7 @@ define('components/events/list-item', ['exports', 'module', 'underscore.string',
             { className: 'osw-events-list-item-picture-container' },
             src ? _React['default'].createElement('img', { src: src }) : this.renderDefaultPicture()
           ),
-          this.renderEventTypeIcon(event),
+          this.renderEventTypeIcon(),
           _React['default'].createElement(
             'div',
             { className: 'osw-events-list-item-info' },
@@ -44773,7 +44775,7 @@ define('components/events/list-item', ['exports', 'module', 'underscore.string',
                 { className: 'osw-events-list-item-time' },
                 this.getTime()
               ),
-              this.renderPortalName(event),
+              this.renderPortalName(),
               this.renderRsvp()
             )
           )

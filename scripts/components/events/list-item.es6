@@ -129,18 +129,19 @@ export default React.createClass({
     if (event.is_opportunity) {
       return <Icon name='service' className='osw-event-type-icon'/>;
     }
-    
+
     if (!event.portal.umbrella_id) {
       return <Icon name='umbrella' className='osw-event-type-icon'/>;
     }
   },
 
   renderCategory: function () {
-    if (this.state.event.category.name === 'General') return;
+    const {name} = this.state.event.category;
+    if (name === 'General') return;
     return (
       <span className='osw-events-list-item-category'
         style={this.getStyle()}>
-        {this.state.event.category.name}
+        {name}
       </span>
     );
   },

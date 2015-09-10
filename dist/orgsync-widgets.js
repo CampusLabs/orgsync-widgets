@@ -44750,12 +44750,14 @@ define('components/events/list-item', ['exports', 'module', 'underscore.string',
     },
 
     renderCategory: function renderCategory() {
-      if (this.state.event.category.name === 'General') return;
+      var name = this.state.event.category.name;
+
+      if (name === 'General') return;
       return _React['default'].createElement(
         'span',
         { className: 'osw-events-list-item-category',
           style: this.getStyle() },
-        this.state.event.category.name
+        name
       );
     },
 

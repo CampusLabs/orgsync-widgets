@@ -19,12 +19,20 @@ export default React.createClass({
     };
   },
 
+  handleClick: function () {
+    this.props.redirect ? this.goToShow() : this.openShow();
+  },
+
   openShow: function () {
     this.update({showIsOpen: {$set: true}});
   },
 
   closeShow: function () {
     this.update({showIsOpen: {$set: false}});
+  },
+
+  goToShow: function () {
+    location.assign(this.state.event.links.web)
   },
 
   formatWithVerb: function (time, verb) {
@@ -54,7 +62,7 @@ export default React.createClass({
 
   getStyle: function () {
     var color = getColor(this.state.event, this.props.eventFilters);
-    if (color) return {borderLeftColor: '#' + color};
+    if (color) return {backgroundColor: '#' + color};
   },
 
   renderRsvp: function () {
@@ -66,7 +74,7 @@ export default React.createClass({
       null;
     if (!icon) return;
     return (
-      <span className={'osw-events-list-item-' + _str.slugify(rsvp)}>
+      <span className={'osw-rsvp-status osw-events-list-item-' + _str.slugify(rsvp)}>
         <Icon name={icon} /> {rsvp}
       </span>
     );
@@ -102,6 +110,42 @@ export default React.createClass({
     );
   },
 
+  renderPortalName: function () {
+    const {portal} = this.state.event;
+    if (portal.id === this.props.portalId) return;
+
+    return (
+      <span>
+        <Sep />
+        <span className='osw-events-list-item-portal-name'>
+          {portal.name}
+        </span>
+      </span>
+    );
+  },
+
+  renderEventTypeIcon: function () {
+    var event = this.state.event;
+    if (event.is_opportunity) {
+      return <Icon name='service' className='osw-event-type-icon'/>;
+    }
+
+    if (!event.portal.umbrella_id) {
+      return <Icon name='umbrella' className='osw-event-type-icon'/>;
+    }
+  },
+
+  renderCategory: function () {
+    const {name} = this.state.event.category;
+    if (name === 'General') return;
+    return (
+      <span className='osw-events-list-item-category'
+        style={this.getStyle()}>
+        {name}
+      </span>
+    );
+  },
+
   render: function () {
     var event = this.state.event;
     var src = event.thumbnail_url;
@@ -109,22 +153,22 @@ export default React.createClass({
       <div className='osw-events-list-item'>
         <div
           className='osw-events-list-item-content'
-          style={this.getStyle()}
-          onClick={this.openShow}
+          onClick={this.handleClick}
         >
           <div className='osw-events-list-item-picture-container'>
             {src ? <img src={src} /> : this.renderDefaultPicture()}
           </div>
+          {this.renderEventTypeIcon()}
           <div className='osw-events-list-item-info'>
-            <div className='osw-events-list-item-title'>{event.title}</div>
+            <div className='osw-events-list-item-title'>
+              {event.title}
+              {this.renderCategory()}
+            </div>
             <div className='osw-events-list-item-subtext'>
               <span className='osw-events-list-item-time'>
                 {this.getTime()}
               </span>
-              <Sep />
-              <span className='osw-events-list-item-portal-name'>
-                {event.portal.name}
-              </span>
+              {this.renderPortalName()}
               {this.renderRsvp()}
             </div>
           </div>

@@ -41653,7 +41653,7 @@ define('components/builder/index', ['exports', 'module', 'underscore', 'undersco
     },
     Events: {
       moduleName: 'events/index',
-      props: ['communityId', 'isService', 'portalId', 'view', 'lockView', 'tz', 'activeEventFilterIds', 'permissions']
+      props: ['communityId', 'isService', 'portalId', 'view', 'lockView', 'tz', 'activeEventFilterIds', 'permissions', 'redirect']
     },
     Files: {
       moduleName: 'files/index',
@@ -45035,12 +45035,20 @@ define('components/events/list-item', ['exports', 'module', 'underscore.string',
       };
     },
 
+    handleClick: function handleClick() {
+      this.props.redirect ? this.goToShow() : this.openShow();
+    },
+
     openShow: function openShow() {
       this.update({ showIsOpen: { $set: true } });
     },
 
     closeShow: function closeShow() {
       this.update({ showIsOpen: { $set: false } });
+    },
+
+    goToShow: function goToShow() {
+      location.assign(this.state.event.links.web);
     },
 
     formatWithVerb: function formatWithVerb(time, verb) {
@@ -45070,7 +45078,7 @@ define('components/events/list-item', ['exports', 'module', 'underscore.string',
 
     getStyle: function getStyle() {
       var color = (0, _entitiesEvent.getColor)(this.state.event, this.props.eventFilters);
-      if (color) return { borderLeftColor: '#' + color };
+      if (color) return { backgroundColor: '#' + color };
     },
 
     renderRsvp: function renderRsvp() {
@@ -45079,7 +45087,7 @@ define('components/events/list-item', ['exports', 'module', 'underscore.string',
       if (!icon) return;
       return _React['default'].createElement(
         'span',
-        { className: 'osw-events-list-item-' + _str2['default'].slugify(rsvp) },
+        { className: 'osw-rsvp-status osw-events-list-item-' + _str2['default'].slugify(rsvp) },
         _React['default'].createElement(_Icon['default'], { name: icon }),
         ' ',
         rsvp
@@ -45120,6 +45128,46 @@ define('components/events/list-item', ['exports', 'module', 'underscore.string',
       );
     },
 
+    renderPortalName: function renderPortalName() {
+      var portal = this.state.event.portal;
+
+      if (portal.id === this.props.portalId) return;
+
+      return _React['default'].createElement(
+        'span',
+        null,
+        _React['default'].createElement(_Sep['default'], null),
+        _React['default'].createElement(
+          'span',
+          { className: 'osw-events-list-item-portal-name' },
+          portal.name
+        )
+      );
+    },
+
+    renderEventTypeIcon: function renderEventTypeIcon() {
+      var event = this.state.event;
+      if (event.is_opportunity) {
+        return _React['default'].createElement(_Icon['default'], { name: 'service', className: 'osw-event-type-icon' });
+      }
+
+      if (!event.portal.umbrella_id) {
+        return _React['default'].createElement(_Icon['default'], { name: 'umbrella', className: 'osw-event-type-icon' });
+      }
+    },
+
+    renderCategory: function renderCategory() {
+      var name = this.state.event.category.name;
+
+      if (name === 'General') return;
+      return _React['default'].createElement(
+        'span',
+        { className: 'osw-events-list-item-category',
+          style: this.getStyle() },
+        name
+      );
+    },
+
     render: function render() {
       var event = this.state.event;
       var src = event.thumbnail_url;
@@ -45130,21 +45178,22 @@ define('components/events/list-item', ['exports', 'module', 'underscore.string',
           'div',
           {
             className: 'osw-events-list-item-content',
-            style: this.getStyle(),
-            onClick: this.openShow
+            onClick: this.handleClick
           },
           _React['default'].createElement(
             'div',
             { className: 'osw-events-list-item-picture-container' },
             src ? _React['default'].createElement('img', { src: src }) : this.renderDefaultPicture()
           ),
+          this.renderEventTypeIcon(),
           _React['default'].createElement(
             'div',
             { className: 'osw-events-list-item-info' },
             _React['default'].createElement(
               'div',
               { className: 'osw-events-list-item-title' },
-              event.title
+              event.title,
+              this.renderCategory()
             ),
             _React['default'].createElement(
               'div',
@@ -45154,12 +45203,7 @@ define('components/events/list-item', ['exports', 'module', 'underscore.string',
                 { className: 'osw-events-list-item-time' },
                 this.getTime()
               ),
-              _React['default'].createElement(_Sep['default'], null),
-              _React['default'].createElement(
-                'span',
-                { className: 'osw-events-list-item-portal-name' },
-                event.portal.name
-              ),
+              this.renderPortalName(),
               this.renderRsvp()
             )
           )
@@ -45196,6 +45240,8 @@ define('components/events/list-date', ['exports', 'module', 'cursors', 'react-li
         key: event.id,
         date: this.props.date,
         eventFilters: this.props.eventFilters,
+        redirect: this.props.redirect,
+        portalId: this.props.portalId,
         tz: this.props.tz,
         cursors: { event: this.getCursor('allEvents', i) }
       });
@@ -45697,6 +45743,8 @@ define('components/events/list', ['exports', 'module', 'underscore', 'cursors', 
         date: date[0],
         events: date[1],
         eventFilters: this.props.eventFilters,
+        redirect: this.props.redirect,
+        portalId: this.props.portalId,
         tz: this.props.tz,
         cursors: { allEvents: this.getCursor('allEvents') }
       });
@@ -46147,6 +46195,7 @@ define('components/events/index', ['exports', 'module', 'underscore', 'component
         filtersAreShowing: true,
         isService: false,
         lockView: false,
+        redirect: false,
         permissions: [],
         query: '',
         tz: _tz2['default'],
@@ -46548,7 +46597,9 @@ define('components/events/index', ['exports', 'module', 'underscore', 'component
             events: this.getFilteredEvents(),
             eventFilters: this.getActiveEventFilters(),
             eventsUrl: this.getEventsUrl(),
+            redirect: this.props.redirect,
             tz: this.state.tz,
+            portalId: this.props.portalId,
             cursors: {
               allEvents: this.getCursor('events'),
               ranges: this.getCursor('ranges')
@@ -46560,7 +46611,9 @@ define('components/events/index', ['exports', 'module', 'underscore', 'component
             events: this.getFilteredEvents(),
             eventFilters: this.getActiveEventFilters(),
             eventsUrl: this.getEventsUrl(),
+            redirect: this.props.redirect,
             tz: this.state.tz,
+            portalId: this.props.portalId,
             past: true,
             cursors: {
               allEvents: this.getCursor('events'),

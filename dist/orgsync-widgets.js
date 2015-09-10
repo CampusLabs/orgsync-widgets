@@ -44671,7 +44671,7 @@ define('components/events/list-item', ['exports', 'module', 'underscore.string',
 
     getStyle: function getStyle() {
       var color = (0, _entitiesEvent.getColor)(this.state.event, this.props.eventFilters);
-      if (color) return { borderLeftColor: '#' + color };
+      if (color) return { 'background-color': '#' + color };
     },
 
     renderRsvp: function renderRsvp() {
@@ -44748,6 +44748,16 @@ define('components/events/list-item', ['exports', 'module', 'underscore.string',
       }
     },
 
+    renderCategory: function renderCategory() {
+      if (this.state.event.category.name === 'General') return;
+      return _React['default'].createElement(
+        'span',
+        { className: 'osw-events-list-item-category',
+          style: this.getStyle() },
+        this.state.event.category.name
+      );
+    },
+
     render: function render() {
       var event = this.state.event;
       var src = event.thumbnail_url;
@@ -44758,7 +44768,6 @@ define('components/events/list-item', ['exports', 'module', 'underscore.string',
           'div',
           {
             className: 'osw-events-list-item-content',
-            style: this.getStyle(),
             onClick: this.handleClick
           },
           _React['default'].createElement(
@@ -44773,7 +44782,8 @@ define('components/events/list-item', ['exports', 'module', 'underscore.string',
             _React['default'].createElement(
               'div',
               { className: 'osw-events-list-item-title' },
-              event.title
+              event.title,
+              this.renderCategory()
             ),
             _React['default'].createElement(
               'div',

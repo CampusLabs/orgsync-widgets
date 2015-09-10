@@ -1112,7 +1112,6 @@
 /* styles/events/list-item.scss */
 .orgsync-widget .osw-events-list-item-content {
   background: #fff;
-  border-left: 5px solid #ccc;
   border-bottom: 1px solid #dedede;
   cursor: pointer;
   padding: 10px 10px 10px 15px; }
@@ -1181,6 +1180,16 @@
   line-height: 50px;
   text-align: center;
   width: 50px; }
+.orgsync-widget .osw-events-list-item-category {
+  border-radius: 3px;
+  color: #fff;
+  display: inline-block;
+  font-size: 13px;
+  line-height: 18px;
+  margin-left: 8px;
+  padding: 0 3px;
+  position: relative;
+  top: -2px; }
 /* styles/events/show.scss */
 .orgsync-widget .osw-events-show {
   padding: 30px; }

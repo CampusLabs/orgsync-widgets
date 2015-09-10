@@ -62,7 +62,7 @@ export default React.createClass({
 
   getStyle: function () {
     var color = getColor(this.state.event, this.props.eventFilters);
-    if (color) return {borderLeftColor: '#' + color};
+    if (color) return {'background-color': '#' + color};
   },
 
   renderRsvp: function () {
@@ -135,6 +135,16 @@ export default React.createClass({
     }
   },
 
+  renderCategory: function () {
+    if (this.state.event.category.name === 'General') return;
+    return (
+      <span className='osw-events-list-item-category'
+        style={this.getStyle()}>
+        {this.state.event.category.name}
+      </span>
+    );
+  },
+
   render: function () {
     var event = this.state.event;
     var src = event.thumbnail_url;
@@ -142,7 +152,6 @@ export default React.createClass({
       <div className='osw-events-list-item'>
         <div
           className='osw-events-list-item-content'
-          style={this.getStyle()}
           onClick={this.handleClick}
         >
           <div className='osw-events-list-item-picture-container'>
@@ -150,7 +159,10 @@ export default React.createClass({
           </div>
           {this.renderEventTypeIcon()}
           <div className='osw-events-list-item-info'>
-            <div className='osw-events-list-item-title'>{event.title}</div>
+            <div className='osw-events-list-item-title'>
+              {event.title}
+              {this.renderCategory()}
+            </div>
             <div className='osw-events-list-item-subtext'>
               <span className='osw-events-list-item-time'>
                 {this.getTime()}

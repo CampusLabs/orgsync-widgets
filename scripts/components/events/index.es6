@@ -28,7 +28,6 @@ export default React.createClass({
       eventFilters: [],
       events: [],
       filtersAreShowing: true,
-      isService: false,
       lockView: false,
       ongoingEvents: [],
       permissions: [],
@@ -275,8 +274,6 @@ export default React.createClass({
   },
 
   renderOngoingPanel: function () {
-    if (!this.props.isService) return;
-
     return (
       <OngoingPanel
         baseUrl={this.getBaseURL()}

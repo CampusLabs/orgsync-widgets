@@ -65,7 +65,7 @@ export default React.createClass({
   renderListItem: function (event) {
     var dateMom = getMoment(event.date, this.props.tz);
     var src = event.thumbnail_url;
-    
+
     return (
       <li className='media'>
         <div className='pull-left'>
@@ -97,6 +97,8 @@ export default React.createClass({
   },
 
   render: function () {
+    if (!this.state.events.length) return <div></div>;
+
     return (
       <div className='panel'>
         <div className='panel-header'>

@@ -45453,6 +45453,8 @@ define('components/events/ongoing-panel', ['exports', 'module', 'underscore', 'a
     },
 
     render: function render() {
+      if (!this.state.events.length) return _React['default'].createElement('div', null);
+
       return _React['default'].createElement(
         'div',
         { className: 'panel' },
@@ -45906,7 +45908,6 @@ define('components/events/index', ['exports', 'module', 'underscore', 'component
         eventFilters: [],
         events: [],
         filtersAreShowing: true,
-        isService: false,
         lockView: false,
         ongoingEvents: [],
         permissions: [],
@@ -46172,8 +46173,6 @@ define('components/events/index', ['exports', 'module', 'underscore', 'component
     },
 
     renderOngoingPanel: function renderOngoingPanel() {
-      if (!this.props.isService) return;
-
       return _React['default'].createElement(_OngoingPanel['default'], {
         baseUrl: this.getBaseURL(),
         eventsUrl: this.getEventsUrl(),

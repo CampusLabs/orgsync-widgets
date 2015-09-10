@@ -45897,7 +45897,7 @@ define('components/events/list', ['exports', 'module', 'underscore', 'cursors', 
     },
 
     renderOngoingEvents: function renderOngoingEvents() {
-      if (!this.props.rolloutNewEvents) return;
+      if (!this.props.rolloutNewEvents || this.props.query) return;
 
       return _React['default'].createElement(_Ongoing['default'], {
         baseUrl: this.props.baseUrl,
@@ -46767,6 +46767,7 @@ define('components/events/index', ['exports', 'module', 'underscore', 'component
             eventFilters: this.getActiveEventFilters(),
             eventsUrl: this.getEventsUrl(),
             baseUrl: this.getBaseURL(),
+            query: this.state.query,
             redirect: this.props.redirect,
             rolloutNewEvents: this.props.rolloutNewEvents,
             tz: this.state.tz,
@@ -46783,6 +46784,7 @@ define('components/events/index', ['exports', 'module', 'underscore', 'component
             eventFilters: this.getActiveEventFilters(),
             eventsUrl: this.getEventsUrl(),
             baseUrl: this.getBaseURL(),
+            query: this.state.query,
             redirect: this.props.redirect,
             rolloutNewEvents: this.props.rolloutNewEvents,
             tz: this.state.tz,

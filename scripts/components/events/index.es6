@@ -383,6 +383,7 @@ export default React.createClass({
           eventFilters={this.getActiveEventFilters()}
           eventsUrl={this.getEventsUrl()}
           baseUrl={this.getBaseURL()}
+          query={this.state.query}
           redirect={this.props.redirect}
           rolloutNewEvents={this.props.rolloutNewEvents}
           tz={this.state.tz}
@@ -401,6 +402,7 @@ export default React.createClass({
           eventFilters={this.getActiveEventFilters()}
           eventsUrl={this.getEventsUrl()}
           baseUrl={this.getBaseURL()}
+          query={this.state.query}
           redirect={this.props.redirect}
           rolloutNewEvents={this.props.rolloutNewEvents}
           tz={this.state.tz}

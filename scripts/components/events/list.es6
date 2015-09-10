@@ -87,8 +87,8 @@ export default React.createClass({
   },
 
   renderOngoingEvents: function () {
-    if (!this.props.rolloutNewEvents) return;
-    
+    if (!this.props.rolloutNewEvents || this.props.query) return;
+
     return (
       <Ongoing
         baseUrl={this.props.baseUrl}

@@ -45300,18 +45300,6 @@ define('components/events/ongoing', ['exports', 'module', 'underscore', 'api', '
       );
     },
 
-    renderTitle: function renderTitle() {
-      return _React['default'].createElement(
-        'span',
-        null,
-        'View ',
-        this.state.events.length,
-        ' ',
-        this.props.past ? 'Past ' : '',
-        'Ongoing Events'
-      );
-    },
-
     render: function render() {
       if (!this.state.events.length) return _React['default'].createElement('div', null);
 
@@ -45342,7 +45330,15 @@ define('components/events/ongoing', ['exports', 'module', 'underscore', 'api', '
               _React['default'].createElement(
                 'span',
                 { className: 'osw-view-ongoing-link' },
-                this.renderTitle(),
+                _React['default'].createElement(
+                  'span',
+                  null,
+                  'View ',
+                  this.state.events.length,
+                  ' ',
+                  this.props.past ? 'Past ' : '',
+                  'Ongoing Events'
+                ),
                 _React['default'].createElement('br', null),
                 _React['default'].createElement(
                   'span',

@@ -75,14 +75,6 @@ export default React.createClass({
     return <div className='osw-inset-block'>Loading...</div>;
   },
 
-  renderTitle: function () {
-    return (
-      <span>
-        View {this.state.events.length} {this.props.past ? 'Past ' : ''}
-        Ongoing Events
-      </span>
-    );
-  },
 
   render: function () {
     if (!this.state.events.length) return <div></div>;
@@ -101,7 +93,10 @@ export default React.createClass({
                 {this.state.events.length}
               </div>
               <span className='osw-view-ongoing-link'>
-                {this.renderTitle()}<br/>
+                <span>
+                  View {this.state.events.length} {this.props.past ? 'Past ' : ''}
+                  Ongoing Events
+                </span><br/>
                 <span className='osw-subtle-text'>Ongoing Events typically have flexible dates and times</span>
               </span>
             </a>

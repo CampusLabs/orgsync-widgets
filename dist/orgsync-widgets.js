@@ -41653,7 +41653,7 @@ define('components/builder/index', ['exports', 'module', 'underscore', 'undersco
     },
     Events: {
       moduleName: 'events/index',
-      props: ['communityId', 'isService', 'portalId', 'view', 'lockView', 'tz', 'activeEventFilterIds', 'permissions', 'redirect']
+      props: ['communityId', 'isService', 'portalId', 'view', 'lockView', 'tz', 'activeEventFilterIds', 'permissions', 'redirect', 'rolloutNewEvents']
     },
     Files: {
       moduleName: 'files/index',
@@ -45896,6 +45896,8 @@ define('components/events/list', ['exports', 'module', 'underscore', 'cursors', 
     },
 
     renderOngoingEvents: function renderOngoingEvents() {
+      if (!this.props.rolloutNewEvents) return;
+
       return _React['default'].createElement(_Ongoing['default'], {
         baseUrl: this.props.baseUrl,
         eventsUrl: this.props.eventsUrl,
@@ -46354,6 +46356,7 @@ define('components/events/index', ['exports', 'module', 'underscore', 'component
         filtersAreShowing: true,
         lockView: false,
         redirect: false,
+        rolloutNewEvents: false,
         permissions: [],
         query: '',
         tz: _tz2['default'],
@@ -46757,6 +46760,7 @@ define('components/events/index', ['exports', 'module', 'underscore', 'component
             eventsUrl: this.getEventsUrl(),
             baseUrl: this.getBaseURL(),
             redirect: this.props.redirect,
+            rolloutNewEvents: this.props.rolloutNewEvents,
             tz: this.state.tz,
             portalId: this.props.portalId,
             cursors: {
@@ -46770,7 +46774,9 @@ define('components/events/index', ['exports', 'module', 'underscore', 'component
             events: this.getFilteredEvents(),
             eventFilters: this.getActiveEventFilters(),
             eventsUrl: this.getEventsUrl(),
+            baseUrl: this.getBaseURL(),
             redirect: this.props.redirect,
+            rolloutNewEvents: this.props.rolloutNewEvents,
             tz: this.state.tz,
             portalId: this.props.portalId,
             past: true,

@@ -26,7 +26,8 @@ const WIDGETS = {
       'tz',
       'activeEventFilterIds',
       'permissions',
-      'redirect'
+      'redirect',
+      'rolloutNewEvents'
     ]
   },
   Files: {

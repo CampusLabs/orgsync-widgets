@@ -45301,7 +45301,7 @@ define('components/events/ongoing', ['exports', 'module', 'underscore', 'api', '
     },
 
     render: function render() {
-      if (!this.state.events.length) return _React['default'].createElement('div', null);
+      if (!this.state.events.length) return null;
 
       return _React['default'].createElement(
         'div',
@@ -45367,7 +45367,7 @@ define('components/events/list', ['exports', 'module', 'underscore', 'cursors', 
 
   var _ListDate = _interopRequireDefault(_componentsEventsListDate);
 
-  var _OnGoing = _interopRequireDefault(_componentsEventsOngoing);
+  var _Ongoing = _interopRequireDefault(_componentsEventsOngoing);
 
   var _React = _interopRequireDefault(_react);
 
@@ -45441,7 +45441,7 @@ define('components/events/list', ['exports', 'module', 'underscore', 'cursors', 
     },
 
     renderOngoingEvents: function renderOngoingEvents() {
-      return _React['default'].createElement(_OnGoing['default'], {
+      return _React['default'].createElement(_Ongoing['default'], {
         baseUrl: this.props.baseUrl,
         eventsUrl: this.props.eventsUrl,
         tz: this.props.tz,

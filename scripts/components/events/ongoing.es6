@@ -77,7 +77,7 @@ export default React.createClass({
 
 
   render: function () {
-    if (!this.state.events.length) return <div></div>;
+    if (!this.state.events.length) return null;
 
     return (
       <div>

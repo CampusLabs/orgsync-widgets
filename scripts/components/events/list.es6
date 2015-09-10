@@ -2,7 +2,7 @@ import _ from 'underscore';
 import Cursors from 'cursors';
 import List from 'react-list';
 import ListDate from 'components/events/list-date';
-import OnGoing from 'components/events/ongoing';
+import Ongoing from 'components/events/ongoing';
 import React from 'react';
 
 import {
@@ -86,7 +86,7 @@ export default React.createClass({
 
   renderOngoingEvents: function () {
     return (
-      <OnGoing
+      <Ongoing
         baseUrl={this.props.baseUrl}
         eventsUrl={this.props.eventsUrl}
         tz={this.props.tz}

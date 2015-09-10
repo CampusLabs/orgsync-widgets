@@ -62,7 +62,7 @@ export default React.createClass({
 
   getStyle: function () {
     var color = getColor(this.state.event, this.props.eventFilters);
-    if (color) return {'background-color': '#' + color};
+    if (color) return {backgroundColor: '#' + color};
   },
 
   renderRsvp: function () {

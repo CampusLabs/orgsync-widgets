@@ -44671,7 +44671,7 @@ define('components/events/list-item', ['exports', 'module', 'underscore.string',
 
     getStyle: function getStyle() {
       var color = (0, _entitiesEvent.getColor)(this.state.event, this.props.eventFilters);
-      if (color) return { 'background-color': '#' + color };
+      if (color) return { backgroundColor: '#' + color };
     },
 
     renderRsvp: function renderRsvp() {

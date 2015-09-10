@@ -4,7 +4,6 @@
   .osw-events-list-item-content {
     @include clearfix;
     background: #fff;
-    border-left: 5px solid $grey;
     border-bottom: 1px solid #dedede;
     cursor: pointer;
     padding: 10px 10px 10px 15px;
@@ -56,8 +55,7 @@
     line-height: 1.5em;
   }
 
-  .osw-events-list-item-maybe-attending,
-  .osw-events-list-item-attending {
+  .osw-rsvp-status {
     font-weight: bold;
     margin-left: 8px;
   }
@@ -101,10 +99,30 @@
     line-height: 1.2em;
     padding: 8px 0 0 10px;
     vertical-align: top;
+    .osw-subtle-text {
+      @include subtle-text;
+      font-size: 13px;
+    }
   }
 
-  .osw-view-ongoing-link .osw-subtle-text{
-    @include subtle-text;
+  .osw-event-type-icon {
+    float: right;
+    font-size: 21px;
+    height: 50px;
+    line-height: 50px;
+    text-align: center;
+    width: 50px;
+  }
+
+  .osw-events-list-item-category {
+    border-radius: 3px;
+    color: #fff;
+    display: inline-block;
     font-size: 13px;
+    line-height: 18px;
+    margin-left: 8px;
+    padding: 0 3px;
+    position: relative;
+    top: -2px;
   }
 }

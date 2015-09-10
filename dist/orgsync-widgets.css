@@ -981,6 +981,8 @@
 /* styles/config.scss */
 /* styles/event-filters/index.scss */
 .orgsync-widget .osw-event-filters-index {
+  background: #fff;
+  box-shadow: none;
   overflow: auto;
   max-height: 598px; }
   .orgsync-widget .osw-event-filters-index.osw-inset-block {
@@ -1110,7 +1112,6 @@
 /* styles/events/list-item.scss */
 .orgsync-widget .osw-events-list-item-content {
   background: #fff;
-  border-left: 5px solid #ccc;
   border-bottom: 1px solid #dedede;
   cursor: pointer;
   padding: 10px 10px 10px 15px; }
@@ -1157,7 +1158,7 @@
   font-size: 14px;
   font-size: 13px;
   line-height: 1.5em; }
-.orgsync-widget .osw-events-list-item-maybe-attending, .orgsync-widget .osw-events-list-item-attending {
+.orgsync-widget .osw-rsvp-status {
   font-weight: bold;
   margin-left: 8px; }
 .orgsync-widget .osw-events-list-item-maybe-attending {
@@ -1190,10 +1191,27 @@
   line-height: 1.2em;
   padding: 8px 0 0 10px;
   vertical-align: top; }
-.orgsync-widget .osw-view-ongoing-link .osw-subtle-text {
-  color: #797979;
-  font-size: 14px;
-  font-size: 13px; }
+  .orgsync-widget .osw-view-ongoing-link .osw-subtle-text {
+    color: #797979;
+    font-size: 14px;
+    font-size: 13px; }
+.orgsync-widget .osw-event-type-icon {
+  float: right;
+  font-size: 21px;
+  height: 50px;
+  line-height: 50px;
+  text-align: center;
+  width: 50px; }
+.orgsync-widget .osw-events-list-item-category {
+  border-radius: 3px;
+  color: #fff;
+  display: inline-block;
+  font-size: 13px;
+  line-height: 18px;
+  margin-left: 8px;
+  padding: 0 3px;
+  position: relative;
+  top: -2px; }
 /* styles/events/show.scss */
 .orgsync-widget .osw-events-show {
   padding: 30px; }

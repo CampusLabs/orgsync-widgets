@@ -44722,8 +44722,9 @@ define('components/events/list-item', ['exports', 'module', 'underscore.string',
     },
 
     renderPortalName: function renderPortalName() {
-      var event = this.state.event;
-      if (event.portal.id === this.props.portalId) return;
+      var portal = this.state.event.portal;
+
+      if (portal.id === this.props.portalId) return;
 
       return _React['default'].createElement(
         'span',
@@ -44732,7 +44733,7 @@ define('components/events/list-item', ['exports', 'module', 'underscore.string',
         _React['default'].createElement(
           'span',
           { className: 'osw-events-list-item-portal-name' },
-          event.portal.name
+          portal.name
         )
       );
     },

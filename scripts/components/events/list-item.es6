@@ -111,14 +111,14 @@ export default React.createClass({
   },
 
   renderPortalName: function () {
-    var event = this.state.event;
-    if (event.portal.id === this.props.portalId) return;
+    const {portal} = this.state.event;
+    if (portal.id === this.props.portalId) return;
 
     return (
       <span>
         <Sep />
         <span className='osw-events-list-item-portal-name'>
-          {event.portal.name}
+          {portal.name}
         </span>
       </span>
     );

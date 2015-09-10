@@ -45445,7 +45445,6 @@ define('components/events/list', ['exports', 'module', 'underscore', 'cursors', 
         baseUrl: this.props.baseUrl,
         eventsUrl: this.props.eventsUrl,
         tz: this.props.tz,
-        date: this.props.date,
         past: this.props.past
       });
     },
@@ -45899,7 +45898,6 @@ define('components/events/index', ['exports', 'module', 'underscore', 'component
         events: [],
         filtersAreShowing: true,
         lockView: false,
-        ongoingEvents: [],
         permissions: [],
         query: '',
         tz: _tz2['default'],

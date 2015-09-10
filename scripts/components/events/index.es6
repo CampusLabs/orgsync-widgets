@@ -28,7 +28,6 @@ export default React.createClass({
       events: [],
       filtersAreShowing: true,
       lockView: false,
-      ongoingEvents: [],
       permissions: [],
       query: '',
       tz: tz,

@@ -90,7 +90,6 @@ export default React.createClass({
         baseUrl={this.props.baseUrl}
         eventsUrl={this.props.eventsUrl}
         tz={this.props.tz}
-        date={this.props.date}
         past={this.props.past}
       />
     )

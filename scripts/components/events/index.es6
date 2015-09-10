@@ -3,7 +3,6 @@ import Button from 'components/ui/button';
 import ButtonGroup from 'components/ui/button-group';
 import Calendar from 'components/events/calendar';
 import List from 'components/events/list';
-import OngoingPanel from 'components/events/ongoing-panel';
 import Cursors from 'cursors';
 import EventFiltersIndex from 'components/event-filters/index';
 import Icon from 'components/ui/icon';
@@ -273,17 +272,6 @@ export default React.createClass({
     );
   },
 
-  renderOngoingPanel: function () {
-    return (
-      <OngoingPanel
-        baseUrl={this.getBaseURL()}
-        eventsUrl={this.getEventsUrl()}
-        tz={this.state.tz}
-        date={this.state.date}
-      />
-    );
-  },
-
   renderAttendanceButton: function () {
     if (this.props.isService) return;
 
@@ -384,6 +372,7 @@ export default React.createClass({
           events={this.getFilteredEvents()}
           eventFilters={this.getActiveEventFilters()}
           eventsUrl={this.getEventsUrl()}
+          baseUrl={this.getBaseURL()}
           tz={this.state.tz}
           cursors={{
             allEvents: this.getCursor('events'),
@@ -431,7 +420,6 @@ export default React.createClass({
             }}
           />
           {this.renderAdminButtons()}
-          {this.renderOngoingPanel()}
         </div>
         <div className={this.getMainClassName()}>
           <div className='osw-events-index-header'>

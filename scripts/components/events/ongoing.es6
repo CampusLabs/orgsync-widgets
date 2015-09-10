@@ -10,6 +10,12 @@ var YEAR_LIMIT = 2;
 export default React.createClass({
   mixins: [Cursors],
 
+  getDefaultProps: function () {
+    return {
+      past: false
+    }
+  },
+
   getInitialState: function () {
     return {
       isLoading: false,
@@ -29,8 +35,11 @@ export default React.createClass({
     var now = getMoment(void 0, this.props.tz);
     var options = {}
 
-    options['after'] = now.toISOString();
-    options['before'] = now.add(YEAR_LIMIT, 'years').toISOString();
+    var past = this.props.past;
+    var now = getMoment(void 0, this.props.tz);
+    options[past ? 'before' : 'after'] = now.toISOString();
+    options[past ? 'after' : 'before'] =
+      now.add((past ? -1 : 1) * YEAR_LIMIT, 'years').toISOString();
 
     api.get(this.props.eventsUrl, {
       upcoming: true,
@@ -96,24 +105,36 @@ export default React.createClass({
     return <div className='osw-inset-block'>Loading...</div>;
   },
 
+  getTitle: function () {
+    if (this.props.past) {
+      return <span>View {this.state.events.length} Past Ongoing Events</span>;
+    } else {
+      return <span>View {this.state.events.length} Ongoing Events</span>;
+    }
+  },
+
   render: function () {
     if (!this.state.events.length) return <div></div>;
 
     return (
-      <div className='panel'>
-        <div className='panel-header'>
-          <h4>Ongoing Events</h4>
+      <div>
+        <div className='osw-events-list-date-header'>
+          OnGoing Events
         </div>
-        <div className='panel-body'>
-          {this.renderLoading()}
-          {this.renderEmpty()}
-          <ul className='media-list'>
-            {_.map(this.state.events, this.renderListItem)}
-          </ul>
-        </div>
-        <div className='panel-footer'>
-          <a href={`${this.props.baseUrl}/events/ongoing`}
-            className='see-all-link'>See All</a>
+        <div className='osw-events-list-item osw-ongoing-notice'>
+          <div className='osw-events-list-item-content'>
+            {this.renderLoading()}
+            {this.renderEmpty()}
+            <a href={`${this.props.baseUrl}/events/ongoing?past=${this.props.past}`}>
+              <div className='osw-ongoing-callout'>
+                {this.state.events.length}
+              </div>
+              <span className='osw-view-ongoing-link'>
+                {this.getTitle()}<br/>
+                <span className='osw-subtle-text'>Ongoing Events typically have flexible dates and times</span>
+              </span>
+            </a>
+          </div>
         </div>
       </div>
     );

@@ -61,7 +61,7 @@
     font-weight: bold;
     margin-left: 8px;
   }
-  
+
   .osw-events-list-item-maybe-attending {
     color: $orange;
   }
@@ -77,5 +77,34 @@
   .osw-events-list-item-title,
   .osw-events-list-item-subtext {
     @include ellipsis;
+  }
+
+  .osw-ongoing-notice a{
+    text-decoration: none;
+  }
+
+  .osw-ongoing-callout {
+    border: 1px solid $grey-lighter;
+    border-radius: 3px;
+    color: $grey;
+    display: inline-block;
+    font-size: 24px;
+    font-weight: bold;
+    padding: 10px 20px;
+    vertical-align: top;
+  }
+
+  .osw-view-ongoing-link {
+    border: 0;
+    display: inline-block;
+    font-size: 15px;
+    line-height: 1.2em;
+    padding: 8px 0 0 10px;
+    vertical-align: top;
+  }
+
+  .osw-view-ongoing-link .osw-subtle-text{
+    @include subtle-text;
+    font-size: 13px;
   }
 }

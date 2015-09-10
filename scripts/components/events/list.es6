@@ -2,6 +2,7 @@ import _ from 'underscore';
 import Cursors from 'cursors';
 import List from 'react-list';
 import ListDate from 'components/events/list-date';
+import OnGoing from 'components/events/ongoing';
 import React from 'react';
 
 import {
@@ -83,6 +84,18 @@ export default React.createClass({
     );
   },
 
+  renderOngoingEvents: function () {
+    return (
+      <OnGoing
+        baseUrl={this.props.baseUrl}
+        eventsUrl={this.props.eventsUrl}
+        tz={this.props.tz}
+        date={this.props.date}
+        past={this.props.past}
+      />
+    )
+  },
+
   renderLoading: function () {
     return <div className='osw-inset-block'>Loading...</div>;
   },
@@ -93,15 +106,18 @@ export default React.createClass({
 
   render: function () {
     return (
-      <List
-        className='osw-events-list'
-        items={this.getDates()}
-        renderItem={this.renderDate}
-        renderLoading={this.renderLoading}
-        renderEmpty={this.renderEmpty}
-        fetch={this.fetch}
-        fetchInitially={true}
-      />
+      <div>
+        {this.renderOngoingEvents()}
+        <List
+          className='osw-events-list'
+          items={this.getDates()}
+          renderItem={this.renderDate}
+          renderLoading={this.renderLoading}
+          renderEmpty={this.renderEmpty}
+          fetch={this.fetch}
+          fetchInitially={true}
+        />
+      </div>
     );
   }
 });

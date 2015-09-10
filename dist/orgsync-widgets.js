@@ -41653,7 +41653,7 @@ define('components/builder/index', ['exports', 'module', 'underscore', 'undersco
     },
     Events: {
       moduleName: 'events/index',
-      props: ['communityId', 'isService', 'portalId', 'view', 'lockView', 'tz', 'activeEventFilterIds', 'permissions', 'redirect']
+      props: ['communityId', 'isService', 'portalId', 'view', 'lockView', 'tz', 'activeEventFilterIds', 'permissions', 'redirect', 'rolloutNewEvents']
     },
     Files: {
       moduleName: 'files/index',
@@ -45663,8 +45663,151 @@ define('components/ui/button-group', ['exports', 'module', 'cursors', 'utils/joi
     }
   });
 });
+// scripts/components/events/ongoing.es6
+define('components/events/ongoing', ['exports', 'module', 'underscore', 'api', 'cursors', 'entities/event', 'react'], function (exports, module, _underscore, _api, _cursors, _entitiesEvent, _react) {
+  'use strict';
+
+  function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+
+  var _2 = _interopRequireDefault(_underscore);
+
+  var _api2 = _interopRequireDefault(_api);
+
+  var _Cursors = _interopRequireDefault(_cursors);
+
+  var _React = _interopRequireDefault(_react);
+
+  var LIST_LENGTH = 3;
+  var YEAR_LIMIT = 2;
+
+  module.exports = _React['default'].createClass({
+    displayName: 'ongoing',
+
+    mixins: [_Cursors['default']],
+
+    getDefaultProps: function getDefaultProps() {
+      return {
+        past: false
+      };
+    },
+
+    getInitialState: function getInitialState() {
+      return {
+        isLoading: false,
+        error: null,
+        events: []
+      };
+    },
+
+    componentDidMount: function componentDidMount() {
+      this.fetch();
+    },
+
+    fetch: function fetch() {
+      if (this.state.isLoading || this.state.error) return;
+      this.update({ isLoading: { $set: true }, error: { $set: null } });
+
+      var now = (0, _entitiesEvent.getMoment)(void 0, this.props.tz);
+      var options = {};
+
+      var past = this.props.past;
+      var now = (0, _entitiesEvent.getMoment)(void 0, this.props.tz);
+      options[past ? 'before' : 'after'] = now.toISOString();
+      options[past ? 'after' : 'before'] = now.add((past ? -1 : 1) * YEAR_LIMIT, 'years').toISOString();
+
+      _api2['default'].get(this.props.eventsUrl, {
+        upcoming: true,
+        per_page: LIST_LENGTH,
+        after: options.after,
+        before: options.before,
+        restrict_to_portal: false,
+        'occurrence_types[]': 'ongoing'
+      }, _2['default'].partial(this.handleFetch));
+    },
+
+    handleFetch: function handleFetch(er, events) {
+      if (er) return console.log(er);
+      this.update({
+        isLoading: { $set: false },
+        error: { $set: null },
+        events: { $set: events.data }
+      });
+    },
+
+    renderEmpty: function renderEmpty() {
+      if (this.state.events.length > 0) return;
+
+      return _React['default'].createElement(
+        'div',
+        { className: 'osw-blank-slate-message' },
+        'No upcoming events to show.'
+      );
+    },
+
+    renderLoading: function renderLoading() {
+      if (!this.state.isLoading) return;
+      return _React['default'].createElement(
+        'div',
+        { className: 'osw-inset-block' },
+        'Loading...'
+      );
+    },
+
+    render: function render() {
+      if (!this.state.events.length) return null;
+
+      return _React['default'].createElement(
+        'div',
+        null,
+        _React['default'].createElement(
+          'div',
+          { className: 'osw-events-list-date-header' },
+          'OnGoing Events'
+        ),
+        _React['default'].createElement(
+          'div',
+          { className: 'osw-events-list-item osw-ongoing-notice' },
+          _React['default'].createElement(
+            'div',
+            { className: 'osw-events-list-item-content' },
+            this.renderLoading(),
+            this.renderEmpty(),
+            _React['default'].createElement(
+              'a',
+              { href: this.props.baseUrl + '/events/ongoing?past=' + this.props.past },
+              _React['default'].createElement(
+                'div',
+                { className: 'osw-ongoing-callout' },
+                this.state.events.length
+              ),
+              _React['default'].createElement(
+                'span',
+                { className: 'osw-view-ongoing-link' },
+                _React['default'].createElement(
+                  'span',
+                  null,
+                  'View ',
+                  this.state.events.length,
+                  ' ',
+                  this.props.past ? 'Past ' : '',
+                  'Ongoing Events'
+                ),
+                _React['default'].createElement('br', null),
+                _React['default'].createElement(
+                  'span',
+                  { className: 'osw-subtle-text' },
+                  'Ongoing Events typically have flexible dates and times'
+                )
+              )
+            )
+          )
+        )
+      );
+    }
+  });
+});
 // scripts/components/events/list.es6
-define('components/events/list', ['exports', 'module', 'underscore', 'cursors', 'react-list', 'components/events/list-date', 'react', 'entities/event'], function (exports, module, _underscore, _cursors, _reactList, _componentsEventsListDate, _react, _entitiesEvent) {
+define('components/events/list', ['exports', 'module', 'underscore', 'cursors', 'react-list', 'components/events/list-date', 'components/events/ongoing', 'react', 'entities/event'], function (exports, module, _underscore, _cursors, _reactList, _componentsEventsListDate, _componentsEventsOngoing, _react, _entitiesEvent) {
   'use strict';
 
   function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
@@ -45676,6 +45819,8 @@ define('components/events/list', ['exports', 'module', 'underscore', 'cursors', 
   var _List = _interopRequireDefault(_reactList);
 
   var _ListDate = _interopRequireDefault(_componentsEventsListDate);
+
+  var _Ongoing = _interopRequireDefault(_componentsEventsOngoing);
 
   var _React = _interopRequireDefault(_react);
 
@@ -45750,6 +45895,17 @@ define('components/events/list', ['exports', 'module', 'underscore', 'cursors', 
       });
     },
 
+    renderOngoingEvents: function renderOngoingEvents() {
+      if (!this.props.rolloutNewEvents) return;
+
+      return _React['default'].createElement(_Ongoing['default'], {
+        baseUrl: this.props.baseUrl,
+        eventsUrl: this.props.eventsUrl,
+        tz: this.props.tz,
+        past: this.props.past
+      });
+    },
+
     renderLoading: function renderLoading() {
       return _React['default'].createElement(
         'div',
@@ -45767,15 +45923,20 @@ define('components/events/list', ['exports', 'module', 'underscore', 'cursors', 
     },
 
     render: function render() {
-      return _React['default'].createElement(_List['default'], {
-        className: 'osw-events-list',
-        items: this.getDates(),
-        renderItem: this.renderDate,
-        renderLoading: this.renderLoading,
-        renderEmpty: this.renderEmpty,
-        fetch: this.fetch,
-        fetchInitially: true
-      });
+      return _React['default'].createElement(
+        'div',
+        null,
+        this.renderOngoingEvents(),
+        _React['default'].createElement(_List['default'], {
+          className: 'osw-events-list',
+          items: this.getDates(),
+          renderItem: this.renderDate,
+          renderLoading: this.renderLoading,
+          renderEmpty: this.renderEmpty,
+          fetch: this.fetch,
+          fetchInitially: true
+        })
+      );
     }
   });
 });
@@ -46193,9 +46354,9 @@ define('components/events/index', ['exports', 'module', 'underscore', 'component
         eventFilters: [],
         events: [],
         filtersAreShowing: true,
-        isService: false,
         lockView: false,
         redirect: false,
+        rolloutNewEvents: false,
         permissions: [],
         query: '',
         tz: _tz2['default'],
@@ -46597,7 +46758,9 @@ define('components/events/index', ['exports', 'module', 'underscore', 'component
             events: this.getFilteredEvents(),
             eventFilters: this.getActiveEventFilters(),
             eventsUrl: this.getEventsUrl(),
+            baseUrl: this.getBaseURL(),
             redirect: this.props.redirect,
+            rolloutNewEvents: this.props.rolloutNewEvents,
             tz: this.state.tz,
             portalId: this.props.portalId,
             cursors: {
@@ -46611,7 +46774,9 @@ define('components/events/index', ['exports', 'module', 'underscore', 'component
             events: this.getFilteredEvents(),
             eventFilters: this.getActiveEventFilters(),
             eventsUrl: this.getEventsUrl(),
+            baseUrl: this.getBaseURL(),
             redirect: this.props.redirect,
+            rolloutNewEvents: this.props.rolloutNewEvents,
             tz: this.state.tz,
             portalId: this.props.portalId,
             past: true,

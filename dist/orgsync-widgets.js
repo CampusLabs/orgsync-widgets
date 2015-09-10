@@ -45790,7 +45790,8 @@ define('components/events/ongoing', ['exports', 'module', 'underscore', 'api', '
                   this.state.events.length,
                   ' ',
                   this.props.past ? 'Past ' : '',
-                  'Ongoing Events'
+                  'Ongoing Event',
+                  this.state.events.length > 1 ? 's' : ''
                 ),
                 _React['default'].createElement('br', null),
                 _React['default'].createElement(
@@ -45896,7 +45897,7 @@ define('components/events/list', ['exports', 'module', 'underscore', 'cursors', 
     },
 
     renderOngoingEvents: function renderOngoingEvents() {
-      if (!this.props.rolloutNewEvents) return;
+      if (!this.props.rolloutNewEvents || this.props.query) return;
 
       return _React['default'].createElement(_Ongoing['default'], {
         baseUrl: this.props.baseUrl,
@@ -46354,6 +46355,7 @@ define('components/events/index', ['exports', 'module', 'underscore', 'component
         eventFilters: [],
         events: [],
         filtersAreShowing: true,
+        isService: false,
         lockView: false,
         redirect: false,
         rolloutNewEvents: false,
@@ -46650,22 +46652,28 @@ define('components/events/index', ['exports', 'module', 'underscore', 'component
       );
     },
 
+    renderManageCategories: function renderManageCategories() {
+      if (this.props.isService) return;
+
+      return _React['default'].createElement(
+        'div',
+        { className: 'events-manage-categories' },
+        _React['default'].createElement(
+          'a',
+          { href: this.getBaseURL() + '/events/categories',
+            'data-popup': '{\'type\': \'profile\'}' },
+          'Manage Categories'
+        )
+      );
+    },
+
     renderAdminButtons: function renderAdminButtons() {
       if (!this.props.permissions.length) return;
 
       return _React['default'].createElement(
         'div',
         null,
-        _React['default'].createElement(
-          'div',
-          { className: 'events-manage-categories' },
-          _React['default'].createElement(
-            'a',
-            { href: this.getBaseURL() + '/events/categories',
-              'data-popup': '{\'type\': \'profile\'}' },
-            'Manage Categories'
-          )
-        ),
+        this.renderManageCategories(),
         _React['default'].createElement(
           'div',
           { className: 'button-group admin-button-group' },
@@ -46759,6 +46767,7 @@ define('components/events/index', ['exports', 'module', 'underscore', 'component
             eventFilters: this.getActiveEventFilters(),
             eventsUrl: this.getEventsUrl(),
             baseUrl: this.getBaseURL(),
+            query: this.state.query,
             redirect: this.props.redirect,
             rolloutNewEvents: this.props.rolloutNewEvents,
             tz: this.state.tz,
@@ -46775,6 +46784,7 @@ define('components/events/index', ['exports', 'module', 'underscore', 'component
             eventFilters: this.getActiveEventFilters(),
             eventsUrl: this.getEventsUrl(),
             baseUrl: this.getBaseURL(),
+            query: this.state.query,
             redirect: this.props.redirect,
             rolloutNewEvents: this.props.rolloutNewEvents,
             tz: this.state.tz,

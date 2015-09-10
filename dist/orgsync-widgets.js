@@ -44641,7 +44641,7 @@ define('components/events/list-item', ['exports', 'module', 'underscore.string',
     },
 
     goToShow: function goToShow() {
-      window.location.href = this.state.event.links.web;
+      location.assign(this.state.event.links.web);
     },
 
     formatWithVerb: function formatWithVerb(time, verb) {

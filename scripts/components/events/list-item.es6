@@ -32,7 +32,7 @@ export default React.createClass({
   },
 
   goToShow: function () {
-    window.location.href = this.state.event.links.web;
+    location.assign(this.state.event.links.web)
   },
 
   formatWithVerb: function (time, verb) {

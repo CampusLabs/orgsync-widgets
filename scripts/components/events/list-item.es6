@@ -19,12 +19,20 @@ export default React.createClass({
     };
   },
 
+  handleClick: function () {
+    this.props.listLinksOpenPopup ? this.openShow() : this.goToShow();
+  },
+
   openShow: function () {
     this.update({showIsOpen: {$set: true}});
   },
 
   closeShow: function () {
     this.update({showIsOpen: {$set: false}});
+  },
+
+  goToShow: function () {
+    window.location.href = this.state.event.links.web;
   },
 
   formatWithVerb: function (time, verb) {
@@ -135,7 +143,7 @@ export default React.createClass({
         <div
           className='osw-events-list-item-content'
           style={this.getStyle()}
-          onClick={this.openShow}
+          onClick={this.handleClick}
         >
           <div className='osw-events-list-item-picture-container'>
             {src ? <img src={src} /> : this.renderDefaultPicture()}

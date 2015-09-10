@@ -41293,7 +41293,7 @@ define('components/builder/index', ['exports', 'module', 'underscore', 'undersco
     },
     Events: {
       moduleName: 'events/index',
-      props: ['communityId', 'isService', 'portalId', 'view', 'lockView', 'tz', 'activeEventFilterIds', 'permissions']
+      props: ['communityId', 'isService', 'portalId', 'view', 'lockView', 'tz', 'activeEventFilterIds', 'permissions', 'listLinksOpenPopup']
     },
     Files: {
       moduleName: 'files/index',
@@ -44628,12 +44628,20 @@ define('components/events/list-item', ['exports', 'module', 'underscore.string',
       };
     },
 
+    handleClick: function handleClick() {
+      this.props.listLinksOpenPopup ? this.openShow() : this.goToShow();
+    },
+
     openShow: function openShow() {
       this.update({ showIsOpen: { $set: true } });
     },
 
     closeShow: function closeShow() {
       this.update({ showIsOpen: { $set: false } });
+    },
+
+    goToShow: function goToShow() {
+      window.location.href = this.state.event.links.web;
     },
 
     formatWithVerb: function formatWithVerb(time, verb) {
@@ -44751,7 +44759,7 @@ define('components/events/list-item', ['exports', 'module', 'underscore.string',
           {
             className: 'osw-events-list-item-content',
             style: this.getStyle(),
-            onClick: this.openShow
+            onClick: this.handleClick
           },
           _React['default'].createElement(
             'div',
@@ -44812,6 +44820,7 @@ define('components/events/list-date', ['exports', 'module', 'cursors', 'react-li
         key: event.id,
         date: this.props.date,
         eventFilters: this.props.eventFilters,
+        listLinksOpenPopup: this.props.listLinksOpenPopup,
         portalId: this.props.portalId,
         tz: this.props.tz,
         cursors: { event: this.getCursor('allEvents', i) }
@@ -45314,6 +45323,7 @@ define('components/events/list', ['exports', 'module', 'underscore', 'cursors', 
         date: date[0],
         events: date[1],
         eventFilters: this.props.eventFilters,
+        listLinksOpenPopup: this.props.listLinksOpenPopup,
         portalId: this.props.portalId,
         tz: this.props.tz,
         cursors: { allEvents: this.getCursor('allEvents') }
@@ -45765,6 +45775,7 @@ define('components/events/index', ['exports', 'module', 'underscore', 'component
         filtersAreShowing: true,
         isService: false,
         lockView: false,
+        listLinksOpenPopup: true,
         permissions: [],
         query: '',
         tz: _tz2['default'],
@@ -46166,6 +46177,7 @@ define('components/events/index', ['exports', 'module', 'underscore', 'component
             events: this.getFilteredEvents(),
             eventFilters: this.getActiveEventFilters(),
             eventsUrl: this.getEventsUrl(),
+            listLinksOpenPopup: this.props.listLinksOpenPopup,
             tz: this.state.tz,
             portalId: this.props.portalId,
             cursors: {
@@ -46179,6 +46191,7 @@ define('components/events/index', ['exports', 'module', 'underscore', 'component
             events: this.getFilteredEvents(),
             eventFilters: this.getActiveEventFilters(),
             eventsUrl: this.getEventsUrl(),
+            listLinksOpenPopup: this.props.listLinksOpenPopup,
             tz: this.state.tz,
             portalId: this.props.portalId,
             past: true,

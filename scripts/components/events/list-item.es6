@@ -128,10 +128,10 @@ export default React.createClass({
     var event = this.state.event;
     if (event.is_opportunity) {
       return <Icon name='service' className='osw-event-type-icon'/>;
-    } else if (!event.portal.umbrella_id) {
+    }
+    
+    if (!event.portal.umbrella_id) {
       return <Icon name='umbrella' className='osw-event-type-icon'/>;
-    } else {
-      return;
     }
   },
 

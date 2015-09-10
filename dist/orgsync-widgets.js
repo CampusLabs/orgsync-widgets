@@ -44742,10 +44742,10 @@ define('components/events/list-item', ['exports', 'module', 'underscore.string',
       var event = this.state.event;
       if (event.is_opportunity) {
         return _React['default'].createElement(_Icon['default'], { name: 'service', className: 'osw-event-type-icon' });
-      } else if (!event.portal.umbrella_id) {
+      }
+
+      if (!event.portal.umbrella_id) {
         return _React['default'].createElement(_Icon['default'], { name: 'umbrella', className: 'osw-event-type-icon' });
-      } else {
-        return;
       }
     },
 

@@ -1177,11 +1177,11 @@
 .orgsync-widget .osw-ongoing-callout {
   border: 1px solid #e2e2e2;
   border-radius: 3px;
-  color: #ccc;
+  color: #999;
   display: inline-block;
   font-size: 24px;
   font-weight: bold;
-  padding: 10px 20px;
+  padding: 10px 18px;
   vertical-align: top; }
 .orgsync-widget .osw-view-ongoing-link {
   border: 0;

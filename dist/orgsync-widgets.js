@@ -45281,52 +45281,6 @@ define('components/events/ongoing', ['exports', 'module', 'underscore', 'api', '
       });
     },
 
-    renderDefaultPicture: function renderDefaultPicture(dateMom) {
-      return _React['default'].createElement(
-        'div',
-        null,
-        _React['default'].createElement(
-          'div',
-          { className: 'osw-events-list-item-month' },
-          dateMom.format('MMM')
-        ),
-        _React['default'].createElement(
-          'div',
-          { className: 'osw-events-list-item-date' },
-          dateMom.format('D')
-        )
-      );
-    },
-
-    renderListItem: function renderListItem(event) {
-      var dateMom = (0, _entitiesEvent.getMoment)(event.date, this.props.tz);
-      var src = event.thumbnail_url;
-
-      return _React['default'].createElement(
-        'li',
-        { className: 'media' },
-        _React['default'].createElement(
-          'div',
-          { className: 'pull-left' },
-          src ? _React['default'].createElement('img', { src: src, className: 'event-thumbnail' }) : this.renderDefaultPicture(dateMom)
-        ),
-        _React['default'].createElement(
-          'div',
-          { className: 'media-body' },
-          _React['default'].createElement(
-            'a',
-            { href: event.dates[0].links.web },
-            event.title,
-            _React['default'].createElement(
-              'div',
-              { className: 'subtle-text' },
-              dateMom.format('MMMM D, YYYY')
-            )
-          )
-        )
-      );
-    },
-
     renderEmpty: function renderEmpty() {
       if (this.state.events.length > 0) return;
 
@@ -45346,24 +45300,16 @@ define('components/events/ongoing', ['exports', 'module', 'underscore', 'api', '
       );
     },
 
-    getTitle: function getTitle() {
-      if (this.props.past) {
-        return _React['default'].createElement(
-          'span',
-          null,
-          'View ',
-          this.state.events.length,
-          ' Past Ongoing Events'
-        );
-      } else {
-        return _React['default'].createElement(
-          'span',
-          null,
-          'View ',
-          this.state.events.length,
-          ' Ongoing Events'
-        );
-      }
+    renderTitle: function renderTitle() {
+      return _React['default'].createElement(
+        'span',
+        null,
+        'View ',
+        this.state.events.length,
+        ' ',
+        this.props.past ? 'Past ' : '',
+        'Ongoing Events'
+      );
     },
 
     render: function render() {
@@ -45396,7 +45342,7 @@ define('components/events/ongoing', ['exports', 'module', 'underscore', 'api', '
               _React['default'].createElement(
                 'span',
                 { className: 'osw-view-ongoing-link' },
-                this.getTitle(),
+                this.renderTitle(),
                 _React['default'].createElement('br', null),
                 _React['default'].createElement(
                   'span',

@@ -60,36 +60,6 @@ export default React.createClass({
     });
   },
 
-  renderDefaultPicture: function (dateMom) {
-    return (
-      <div>
-        <div className='osw-events-list-item-month'>
-          {dateMom.format('MMM')}
-          </div>
-        <div className='osw-events-list-item-date'>{dateMom.format('D')}</div>
-      </div>
-    );
-  },
-
-  renderListItem: function (event) {
-    var dateMom = getMoment(event.date, this.props.tz);
-    var src = event.thumbnail_url;
-
-    return (
-      <li className='media'>
-        <div className='pull-left'>
-          {src ? <img src={src} className='event-thumbnail'/> : this.renderDefaultPicture(dateMom)}
-        </div>
-        <div className='media-body'>
-          <a href={event.dates[0].links.web}>
-            {event.title}
-            <div className='subtle-text'>{dateMom.format('MMMM D, YYYY')}</div>
-          </a>
-        </div>
-      </li>
-    );
-  },
-
   renderEmpty: function () {
     if (this.state.events.length > 0) return;
 
@@ -105,12 +75,13 @@ export default React.createClass({
     return <div className='osw-inset-block'>Loading...</div>;
   },
 
-  getTitle: function () {
-    if (this.props.past) {
-      return <span>View {this.state.events.length} Past Ongoing Events</span>;
-    } else {
-      return <span>View {this.state.events.length} Ongoing Events</span>;
-    }
+  renderTitle: function () {
+    return (
+      <span>
+        View {this.state.events.length} {this.props.past ? 'Past ' : ''}
+        Ongoing Events
+      </span>
+    );
   },
 
   render: function () {
@@ -130,7 +101,7 @@ export default React.createClass({
                 {this.state.events.length}
               </div>
               <span className='osw-view-ongoing-link'>
-                {this.getTitle()}<br/>
+                {this.renderTitle()}<br/>
                 <span className='osw-subtle-text'>Ongoing Events typically have flexible dates and times</span>
               </span>
             </a>

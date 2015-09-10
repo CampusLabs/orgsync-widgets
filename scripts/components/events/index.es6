@@ -29,7 +29,7 @@ export default React.createClass({
       filtersAreShowing: true,
       isService: false,
       lockView: false,
-      listLinksOpenPopup: true,
+      redirect: false,
       permissions: [],
       query: '',
       tz: tz,
@@ -373,7 +373,7 @@ export default React.createClass({
           events={this.getFilteredEvents()}
           eventFilters={this.getActiveEventFilters()}
           eventsUrl={this.getEventsUrl()}
-          listLinksOpenPopup={this.props.listLinksOpenPopup}
+          redirect={this.props.redirect}
           tz={this.state.tz}
           portalId={this.props.portalId}
           cursors={{
@@ -389,7 +389,7 @@ export default React.createClass({
           events={this.getFilteredEvents()}
           eventFilters={this.getActiveEventFilters()}
           eventsUrl={this.getEventsUrl()}
-          listLinksOpenPopup={this.props.listLinksOpenPopup}
+          redirect={this.props.redirect}
           tz={this.state.tz}
           portalId={this.props.portalId}
           past={true}

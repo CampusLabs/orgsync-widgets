@@ -20,7 +20,7 @@ export default React.createClass({
   },
 
   handleClick: function () {
-    this.props.listLinksOpenPopup ? this.openShow() : this.goToShow();
+    this.props.redirect ? this.goToShow() : this.openShow();
   },
 
   openShow: function () {

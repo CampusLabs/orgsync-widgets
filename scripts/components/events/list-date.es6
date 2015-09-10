@@ -17,7 +17,7 @@ export default React.createClass({
         key={event.id}
         date={this.props.date}
         eventFilters={this.props.eventFilters}
-        listLinksOpenPopup={this.props.listLinksOpenPopup}
+        redirect={this.props.redirect}
         portalId={this.props.portalId}
         tz={this.props.tz}
         cursors={{event: this.getCursor('allEvents', i)}}

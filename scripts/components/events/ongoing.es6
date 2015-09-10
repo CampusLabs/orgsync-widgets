@@ -95,7 +95,7 @@ export default React.createClass({
               <span className='osw-view-ongoing-link'>
                 <span>
                   View {this.state.events.length} {this.props.past ? 'Past ' : ''}
-                  Ongoing Events
+                  Ongoing Event{this.state.events.length > 1 ? 's' : ''}
                 </span><br/>
                 <span className='osw-subtle-text'>Ongoing Events typically have flexible dates and times</span>
               </span>

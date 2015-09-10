@@ -45790,7 +45790,8 @@ define('components/events/ongoing', ['exports', 'module', 'underscore', 'api', '
                   this.state.events.length,
                   ' ',
                   this.props.past ? 'Past ' : '',
-                  'Ongoing Events'
+                  'Ongoing Event',
+                  this.state.events.length > 1 ? 's' : ''
                 ),
                 _React['default'].createElement('br', null),
                 _React['default'].createElement(

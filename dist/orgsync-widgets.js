@@ -46354,6 +46354,7 @@ define('components/events/index', ['exports', 'module', 'underscore', 'component
         eventFilters: [],
         events: [],
         filtersAreShowing: true,
+        isService: false,
         lockView: false,
         redirect: false,
         rolloutNewEvents: false,
@@ -46650,22 +46651,28 @@ define('components/events/index', ['exports', 'module', 'underscore', 'component
       );
     },
 
+    renderManageCategories: function renderManageCategories() {
+      if (this.props.isService) return;
+
+      return _React['default'].createElement(
+        'div',
+        { className: 'events-manage-categories' },
+        _React['default'].createElement(
+          'a',
+          { href: this.getBaseURL() + '/events/categories',
+            'data-popup': '{\'type\': \'profile\'}' },
+          'Manage Categories'
+        )
+      );
+    },
+
     renderAdminButtons: function renderAdminButtons() {
       if (!this.props.permissions.length) return;
 
       return _React['default'].createElement(
         'div',
         null,
-        _React['default'].createElement(
-          'div',
-          { className: 'events-manage-categories' },
-          _React['default'].createElement(
-            'a',
-            { href: this.getBaseURL() + '/events/categories',
-              'data-popup': '{\'type\': \'profile\'}' },
-            'Manage Categories'
-          )
-        ),
+        this.renderManageCategories(),
         _React['default'].createElement(
           'div',
           { className: 'button-group admin-button-group' },

@@ -27,6 +27,7 @@ export default React.createClass({
       eventFilters: [],
       events: [],
       filtersAreShowing: true,
+      isService: false,
       lockView: false,
       redirect: false,
       rolloutNewEvents: false,
@@ -296,15 +297,23 @@ export default React.createClass({
     );
   },
 
+  renderManageCategories: function () {
+    if (this.props.isService) return;
+
+    return (
+      <div className='events-manage-categories'>
+        <a href={`${this.getBaseURL()}/events/categories`}
+          data-popup="{'type': 'profile'}">Manage Categories</a>
+      </div>
+    );
+  },
+
   renderAdminButtons: function () {
     if (!this.props.permissions.length) return;
 
     return (
       <div>
-        <div className='events-manage-categories'>
-          <a href={`${this.getBaseURL()}/events/categories`}
-            data-popup="{'type': 'profile'}">Manage Categories</a>
-        </div>
+        {this.renderManageCategories()}
         <div className='button-group admin-button-group'>
           {this.renderAttendanceButton()}
 

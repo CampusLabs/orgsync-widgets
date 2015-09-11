@@ -1034,25 +1034,28 @@
   height: 700px;
   position: relative; }
 .orgsync-widget .osw-events-index-sidebar {
-  padding-top: 36px;
+  padding-top: 0;
+  position: absolute;
+  left: 80%;
   width: 20%; }
 .orgsync-widget .osw-events-index-search {
-  padding: 5px 5px 0; }
+  display: inline-block;
+  margin-right: 10px;
+  max-width: 200px; }
   .orgsync-widget .osw-events-index-search .osw-field {
     width: 100%; }
 .orgsync-widget .osw-events-index-main {
   -webkit-transition: all .5s cubic-bezier(0.19, 1, 0.22, 1);
   transition: all .5s cubic-bezier(0.19, 1, 0.22, 1);
-  left: 20%;
   position: absolute;
-  top: 0;
   width: 80%; }
 .orgsync-widget .osw-events-index-full-width {
   left: 0;
   width: 100%; }
 .orgsync-widget .osw-events-index-header {
   height: 30px;
-  padding: 5px; }
+  overflow: hidden;
+  padding: 5px 0 5px 0; }
   .orgsync-widget .osw-events-index-header::after {
     clear: both;
     content: "";
@@ -1063,12 +1066,15 @@
   padding: 5px 10px 0 0;
   text-align: right; }
 .orgsync-widget .osw-events-index-left {
-  float: left; }
+  display: inline-block; }
 .orgsync-widget .osw-events-index-view-tabs {
   display: inline-block;
   margin-left: 5px; }
 .orgsync-widget .osw-events-index-list-controls, .orgsync-widget .osw-events-index-calendar-controls {
   text-align: center; }
+.orgsync-widget .osw-events-index-calendar-controls {
+  display: inline-block;
+  width: 71%; }
 .orgsync-widget .osw-events-index-list-controls {
   float: right; }
 .orgsync-widget .osw-events-index-view {

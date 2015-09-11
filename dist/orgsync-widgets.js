@@ -46525,7 +46525,7 @@ define('components/events/index', ['exports', 'module', 'underscore', 'component
     },
 
     renderFiltersToggle: function renderFiltersToggle() {
-      if (this.isListLocked()) return;
+      if (!this.isListLocked()) return;
       return _React['default'].createElement(
         _Button['default'],
         {
@@ -46804,40 +46804,25 @@ define('components/events/index', ['exports', 'module', 'underscore', 'component
         { className: 'osw-events-index' },
         _React['default'].createElement(
           'div',
-          { className: 'osw-events-index-sidebar' },
-          _React['default'].createElement(
-            'div',
-            { className: 'osw-events-index-search' },
-            _React['default'].createElement(
-              'div',
-              { className: 'osw-field oswi oswi-magnify' },
-              _React['default'].createElement('input', {
-                value: this.state.query,
-                onChange: this.handleQueryChange
-              })
-            )
-          ),
-          _React['default'].createElement(_EventFiltersIndex['default'], {
-            url: this.getEventsUrl() + '/filters',
-            activeIds: this.props.activeEventFilterIds,
-            useSharedHeader: !!this.props.portalId,
-            cursors: {
-              events: this.getCursor('events'),
-              eventFilters: this.getCursor('eventFilters')
-            }
-          }),
-          this.renderAdminButtons()
-        ),
-        _React['default'].createElement(
-          'div',
           { className: this.getMainClassName() },
           _React['default'].createElement(
             'div',
             { className: 'osw-events-index-header' },
             _React['default'].createElement(
               'div',
+              { className: 'osw-events-index-search' },
+              _React['default'].createElement(
+                'div',
+                { className: 'osw-field oswi oswi-magnify' },
+                _React['default'].createElement('input', {
+                  value: this.state.query,
+                  onChange: this.handleQueryChange
+                })
+              )
+            ),
+            _React['default'].createElement(
+              'div',
               { className: 'osw-events-index-left' },
-              this.renderFiltersToggle(),
               this.renderViewTabs()
             ),
             this.renderViewControls()
@@ -46848,6 +46833,21 @@ define('components/events/index', ['exports', 'module', 'underscore', 'component
             this.renderView()
           ),
           this.renderTz()
+        ),
+        _React['default'].createElement(
+          'div',
+          { className: 'osw-events-index-sidebar' },
+          this.renderFiltersToggle(),
+          _React['default'].createElement(_EventFiltersIndex['default'], {
+            url: this.getEventsUrl() + '/filters',
+            activeIds: this.props.activeEventFilterIds,
+            useSharedHeader: !!this.props.portalId,
+            cursors: {
+              events: this.getCursor('events'),
+              eventFilters: this.getCursor('eventFilters')
+            }
+          }),
+          this.renderAdminButtons()
         )
       );
     }

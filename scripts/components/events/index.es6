@@ -427,6 +427,7 @@ export default React.createClass({
                 <input
                   value={this.state.query}
                   onChange={this.handleQueryChange}
+                  placeholder='Search for an event'
                 />
               </div>
             </div>

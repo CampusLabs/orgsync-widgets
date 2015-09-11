@@ -46816,7 +46816,8 @@ define('components/events/index', ['exports', 'module', 'underscore', 'component
                 { className: 'osw-field oswi oswi-magnify' },
                 _React['default'].createElement('input', {
                   value: this.state.query,
-                  onChange: this.handleQueryChange
+                  onChange: this.handleQueryChange,
+                  placeholder: 'Search for an event'
                 })
               )
             ),

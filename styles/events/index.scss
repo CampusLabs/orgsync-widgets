@@ -62,6 +62,7 @@
   .osw-events-index-view-tabs {
     display: inline-block;
     float: right;
+    max-width: 15%;
   }
 
   .osw-events-index-list-controls,
@@ -72,7 +73,7 @@
   .osw-events-index-calendar-controls {
     display: inline-block;
     float: left;
-    width: 65%;
+    width: 62%;
   }
 
   .osw-events-index-list-controls {

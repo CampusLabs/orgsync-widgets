@@ -4,6 +4,7 @@
   .osw-event-filters-list-item {
     cursor: pointer;
     display: block;
+    font-size: 13px;
     line-height: 2;
     padding: 2px;
   }
@@ -12,8 +13,9 @@
     @include ellipsis;
     color: $grey-darker;
   }
-  
+
   .osw-event-filters-header{
+    border-bottom: 1px solid #dedede;
     font-weight: bold;
   }
 

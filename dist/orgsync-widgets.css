@@ -996,6 +996,7 @@
 .orgsync-widget .osw-event-filters-list-item {
   cursor: pointer;
   display: block;
+  font-size: 13px;
   line-height: 2;
   padding: 2px; }
 .orgsync-widget .osw-event-filters-list-item-name {
@@ -1005,6 +1006,7 @@
   white-space: nowrap;
   color: #797979; }
 .orgsync-widget .osw-event-filters-header {
+  border-bottom: 1px solid #dedede;
   font-weight: bold; }
 .orgsync-widget .osw-event-filters-list-item-checkbox {
   margin-right: 5px; }
@@ -1074,13 +1076,14 @@
   display: inline-block; }
 .orgsync-widget .osw-events-index-view-tabs {
   display: inline-block;
-  float: right; }
+  float: right;
+  max-width: 15%; }
 .orgsync-widget .osw-events-index-list-controls, .orgsync-widget .osw-events-index-calendar-controls {
   text-align: center; }
 .orgsync-widget .osw-events-index-calendar-controls {
   display: inline-block;
   float: left;
-  width: 65%; }
+  width: 62%; }
 .orgsync-widget .osw-events-index-list-controls {
   float: right;
   margin-right: 20px; }

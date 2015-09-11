@@ -135,6 +135,7 @@ export default React.createClass({
   renderSection: function (section, i) {
     return (
       <div key={i}>
+        {i ? <hr /> : null}
         {this.renderHeader(section)}
         {_.map(section.eventFilters, this.renderEventFilter)}
       </div>

@@ -43228,6 +43228,7 @@ define('components/event-filters/index', ['exports', 'module', 'underscore', 'ap
       return _React['default'].createElement(
         'div',
         { key: i },
+        i ? _React['default'].createElement('hr', null) : null,
         this.renderHeader(section),
         _2['default'].map(section.eventFilters, this.renderEventFilter)
       );

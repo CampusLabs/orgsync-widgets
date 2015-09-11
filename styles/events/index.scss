@@ -16,8 +16,10 @@
   .osw-events-index-search {
     display: inline-block;
     float: left;
+    height: 30px;
     margin-right: 10px;
-    max-width: 200px;
+    max-width: 23%;
+    width: 100%;
 
     .osw-field {
       width: 100%;
@@ -39,6 +41,11 @@
     overflow: hidden;
     padding: 5px 0 5px 0;
     @include clearfix;
+  }
+
+  .osw-events-index-header button{
+    padding-bottom: 2px;
+    padding-top: 2px;
   }
 
   .osw-events-index-tz {
@@ -65,7 +72,7 @@
   .osw-events-index-calendar-controls {
     display: inline-block;
     float: left;
-    width: 71%;
+    width: 65%;
   }
 
   .osw-events-index-list-controls {
@@ -88,6 +95,7 @@
     border-radius: 0;
     cursor: pointer;
     font-size: 20px;
+    line-height: 30px;
     outline: none;
     vertical-align: middle;
   }

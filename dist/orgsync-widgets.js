@@ -46821,11 +46821,7 @@ define('components/events/index', ['exports', 'module', 'underscore', 'component
                 })
               )
             ),
-            _React['default'].createElement(
-              'div',
-              { className: 'osw-events-index-left' },
-              this.renderViewTabs()
-            ),
+            this.renderViewTabs(),
             this.renderViewControls()
           ),
           _React['default'].createElement(

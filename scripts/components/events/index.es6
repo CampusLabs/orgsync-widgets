@@ -431,9 +431,7 @@ export default React.createClass({
                 />
               </div>
             </div>
-            <div className='osw-events-index-left'>
-              {this.renderViewTabs()}
-            </div>
+            {this.renderViewTabs()}
             {this.renderViewControls()}
           </div>
           <div className='osw-events-index-view'>{this.renderView()}</div>

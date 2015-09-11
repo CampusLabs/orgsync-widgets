@@ -35,6 +35,9 @@
   .osw-events-index-full-width {
     left: 0;
     width: 100%;
+    & + .osw-events-index-sidebar{
+      display: none;
+    }
   }
 
   .osw-events-index-full-width + .osw-events-index-sidebar {
@@ -107,5 +110,16 @@
   .osw-events-index-incr {
     float: right;
     margin-right: 10px;
+  }
+
+  @media only screen and (max-width: 760px) {
+    .osw-events-index-calendar-controls{
+      clear: both;
+      padding-top: 10px;
+      text-align: left;
+      .osw-events-index-incr{
+        margin: 0;
+      }
+    }
   }
 }

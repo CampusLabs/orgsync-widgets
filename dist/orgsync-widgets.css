@@ -1057,6 +1057,8 @@
 .orgsync-widget .osw-events-index-full-width {
   left: 0;
   width: 100%; }
+  .orgsync-widget .osw-events-index-full-width + .osw-events-index-sidebar {
+    display: none; }
 .orgsync-widget .osw-events-index-full-width + .osw-events-index-sidebar {
   display: none; }
 .orgsync-widget .osw-events-index-header {
@@ -1110,6 +1112,13 @@
 .orgsync-widget .osw-events-index-incr {
   float: right;
   margin-right: 10px; }
+@media only screen and (max-width: 760px) {
+  .orgsync-widget .osw-events-index-calendar-controls {
+    clear: both;
+    padding-top: 10px;
+    text-align: left; }
+    .orgsync-widget .osw-events-index-calendar-controls .osw-events-index-incr {
+      margin: 0; } }
 /* styles/events/list-date.scss */
 .orgsync-widget .osw-events-list-date-header {
   background: #f4f4f4;

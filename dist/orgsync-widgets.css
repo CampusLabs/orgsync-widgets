@@ -986,7 +986,7 @@
   overflow: auto;
   max-height: 598px; }
   .orgsync-widget .osw-event-filters-index.osw-inset-block {
-    padding: 5px; }
+    padding: 10px; }
   .orgsync-widget .osw-event-filters-index hr {
     margin: 5px 0;
     border: 0;
@@ -996,6 +996,7 @@
 .orgsync-widget .osw-event-filters-list-item {
   cursor: pointer;
   display: block;
+  font-size: 13px;
   line-height: 2;
   padding: 2px; }
 .orgsync-widget .osw-event-filters-list-item-name {
@@ -1005,6 +1006,7 @@
   white-space: nowrap;
   color: #797979; }
 .orgsync-widget .osw-event-filters-header {
+  font-size: 14px;
   font-weight: bold; }
 .orgsync-widget .osw-event-filters-list-item-checkbox {
   margin-right: 5px; }
@@ -1034,43 +1036,56 @@
   height: 700px;
   position: relative; }
 .orgsync-widget .osw-events-index-sidebar {
-  padding-top: 36px;
+  left: 80%;
+  padding-top: 0;
+  position: absolute;
   width: 20%; }
 .orgsync-widget .osw-events-index-search {
-  padding: 5px 5px 0; }
+  display: inline-block;
+  float: left;
+  height: 30px;
+  margin-right: 10px;
+  max-width: 23%;
+  width: 100%; }
   .orgsync-widget .osw-events-index-search .osw-field {
     width: 100%; }
 .orgsync-widget .osw-events-index-main {
   -webkit-transition: all .5s cubic-bezier(0.19, 1, 0.22, 1);
   transition: all .5s cubic-bezier(0.19, 1, 0.22, 1);
-  left: 20%;
   position: absolute;
-  top: 0;
   width: 80%; }
 .orgsync-widget .osw-events-index-full-width {
   left: 0;
   width: 100%; }
+  .orgsync-widget .osw-events-index-full-width + .osw-events-index-sidebar {
+    display: none; }
+.orgsync-widget .osw-events-index-full-width + .osw-events-index-sidebar {
+  display: none; }
 .orgsync-widget .osw-events-index-header {
-  height: 30px;
-  padding: 5px; }
+  overflow: hidden;
+  padding: 5px 0; }
   .orgsync-widget .osw-events-index-header::after {
     clear: both;
     content: "";
     display: table; }
+  .orgsync-widget .osw-events-index-header button {
+    padding-bottom: 2px;
+    padding-top: 2px; }
 .orgsync-widget .osw-events-index-tz {
   color: #797979;
   font-size: 11px;
   padding: 5px 10px 0 0;
   text-align: right; }
 .orgsync-widget .osw-events-index-left {
-  float: left; }
+  display: inline-block; }
 .orgsync-widget .osw-events-index-view-tabs {
   display: inline-block;
-  margin-left: 5px; }
+  float: right; }
 .orgsync-widget .osw-events-index-list-controls, .orgsync-widget .osw-events-index-calendar-controls {
   text-align: center; }
 .orgsync-widget .osw-events-index-list-controls {
-  float: right; }
+  float: right;
+  margin-right: 20px; }
 .orgsync-widget .osw-events-index-view {
   background: #fff;
   border: 1px solid #e2e5e8;
@@ -1087,6 +1102,7 @@
   border-radius: 0;
   cursor: pointer;
   font-size: 20px;
+  line-height: 30px;
   outline: none;
   vertical-align: middle; }
 .orgsync-widget .osw-events-index-month {
@@ -1094,7 +1110,15 @@
   font-weight: bold;
   margin-right: 5px; }
 .orgsync-widget .osw-events-index-incr {
-  float: right; }
+  float: right;
+  margin-right: 10px; }
+@media only screen and (max-width: 760px) {
+  .orgsync-widget .osw-events-index-calendar-controls {
+    clear: both;
+    padding-top: 10px;
+    text-align: left; }
+    .orgsync-widget .osw-events-index-calendar-controls .osw-events-index-incr {
+      margin: 0; } }
 /* styles/events/list-date.scss */
 .orgsync-widget .osw-events-list-date-header {
   background: #f4f4f4;

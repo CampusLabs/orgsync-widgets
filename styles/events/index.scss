@@ -7,12 +7,19 @@
   }
 
   .osw-events-index-sidebar {
-    padding-top: 36px;
+    left: 80%;
+    padding-top: 0;
+    position: absolute;
     width: 20%;
   }
 
   .osw-events-index-search {
-    padding: 5px 5px 0;
+    display: inline-block;
+    float: left;
+    height: 30px;
+    margin-right: 10px;
+    max-width: 23%;
+    width: 100%;
 
     .osw-field {
       width: 100%;
@@ -21,21 +28,31 @@
 
   .osw-events-index-main {
     @include transition(all .5s $ease-out-expo);
-    left: 20%;
     position: absolute;
-    top: 0;
     width: 80%;
   }
 
   .osw-events-index-full-width {
     left: 0;
     width: 100%;
+    & + .osw-events-index-sidebar{
+      display: none;
+    }
+  }
+
+  .osw-events-index-full-width + .osw-events-index-sidebar {
+    display: none;
   }
 
   .osw-events-index-header {
-    height: 30px;
-    padding: 5px;
     @include clearfix;
+    overflow: hidden;
+    padding: 5px 0;
+
+    button {
+      padding-bottom: 2px;
+      padding-top: 2px;
+    }
   }
 
   .osw-events-index-tz {
@@ -46,12 +63,12 @@
   }
 
   .osw-events-index-left {
-    float: left;
+    display: inline-block;
   }
 
   .osw-events-index-view-tabs {
     display: inline-block;
-    margin-left: 5px;
+    float: right;
   }
 
   .osw-events-index-list-controls,
@@ -61,6 +78,7 @@
 
   .osw-events-index-list-controls {
     float: right;
+    margin-right: 20px;
   }
 
   .osw-events-index-view {
@@ -78,6 +96,7 @@
     border-radius: 0;
     cursor: pointer;
     font-size: 20px;
+    line-height: 30px;
     outline: none;
     vertical-align: middle;
   }
@@ -90,5 +109,17 @@
 
   .osw-events-index-incr {
     float: right;
+    margin-right: 10px;
+  }
+
+  @media only screen and (max-width: 760px) {
+    .osw-events-index-calendar-controls{
+      clear: both;
+      padding-top: 10px;
+      text-align: left;
+      .osw-events-index-incr{
+        margin: 0;
+      }
+    }
   }
 }

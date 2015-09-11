@@ -197,7 +197,7 @@ export default React.createClass({
   },
 
   renderFiltersToggle: function () {
-    if (this.isListLocked()) return;
+    if (!this.isListLocked()) return;
     return (
       <Button
         className='osw-events-index-toggle-filters'
@@ -420,15 +420,25 @@ export default React.createClass({
   render: function () {
     return (
       <div className='osw-events-index'>
-        <div className='osw-events-index-sidebar'>
-          <div className='osw-events-index-search'>
-            <div className='osw-field oswi oswi-magnify'>
-              <input
-                value={this.state.query}
-                onChange={this.handleQueryChange}
-              />
+        <div className={this.getMainClassName()}>
+          <div className='osw-events-index-header'>
+            <div className='osw-events-index-search'>
+              <div className='osw-field oswi oswi-magnify'>
+                <input
+                  value={this.state.query}
+                  onChange={this.handleQueryChange}
+                  placeholder='Search for an event'
+                />
+              </div>
             </div>
+            {this.renderViewTabs()}
+            {this.renderViewControls()}
           </div>
+          <div className='osw-events-index-view'>{this.renderView()}</div>
+          {this.renderTz()}
+        </div>
+        <div className='osw-events-index-sidebar'>
+          {this.renderFiltersToggle()}
           <EventFiltersIndex
             url={this.getEventsUrl() + '/filters'}
             activeIds={this.props.activeEventFilterIds}
@@ -439,17 +449,6 @@ export default React.createClass({
             }}
           />
           {this.renderAdminButtons()}
-        </div>
-        <div className={this.getMainClassName()}>
-          <div className='osw-events-index-header'>
-            <div className='osw-events-index-left'>
-              {this.renderFiltersToggle()}
-              {this.renderViewTabs()}
-            </div>
-            {this.renderViewControls()}
-          </div>
-          <div className='osw-events-index-view'>{this.renderView()}</div>
-          {this.renderTz()}
         </div>
       </div>
     );

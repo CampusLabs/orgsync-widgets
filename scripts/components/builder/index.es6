@@ -95,13 +95,28 @@ const DEFAULT_STATE = {
 export default React.createClass({
   mixins: [Cursors],
 
+  getDefaultProps: function () {
+    return {
+      persistSettings: true
+    }
+  },
+
   getInitialState: function () {
-    let state;
-    try { state = JSON.parse(localStorage.getItem(PERSIST_KEY)); }
-    catch (er) {}
-    return _.extend({}, state || DEFAULT_STATE, {
-      apiKey: api.key
-    });
+    console.log(this.props);
+
+    if (this.props.persistSettings) {
+      let state;
+      try { state = JSON.parse(localStorage.getItem(PERSIST_KEY)); }
+      catch (er) {}
+      return _.extend({}, state || DEFAULT_STATE, {
+        apiKey: api.key
+      });
+    } else {
+      return {
+        widget: _.keys(WIDGETS)[0],
+        props: this.props
+      }
+    }
   },
 
   componentDidUpdate: function () {

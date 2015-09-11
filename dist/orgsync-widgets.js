@@ -41691,14 +41691,29 @@ define('components/builder/index', ['exports', 'module', 'underscore', 'undersco
 
     mixins: [_Cursors['default']],
 
+    getDefaultProps: function getDefaultProps() {
+      return {
+        persistSettings: true
+      };
+    },
+
     getInitialState: function getInitialState() {
-      var state = undefined;
-      try {
-        state = JSON.parse(localStorage.getItem(PERSIST_KEY));
-      } catch (er) {}
-      return _2['default'].extend({}, state || DEFAULT_STATE, {
-        apiKey: _api2['default'].key
-      });
+      console.log(this.props);
+
+      if (this.props.persistSettings) {
+        var state = undefined;
+        try {
+          state = JSON.parse(localStorage.getItem(PERSIST_KEY));
+        } catch (er) {}
+        return _2['default'].extend({}, state || DEFAULT_STATE, {
+          apiKey: _api2['default'].key
+        });
+      } else {
+        return {
+          widget: _2['default'].keys(WIDGETS)[0],
+          props: this.props
+        };
+      }
     },
 
     componentDidUpdate: function componentDidUpdate() {

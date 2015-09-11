@@ -1006,7 +1006,7 @@
   white-space: nowrap;
   color: #797979; }
 .orgsync-widget .osw-event-filters-header {
-  border-bottom: 1px solid #dedede;
+  font-size: 14px;
   font-weight: bold; }
 .orgsync-widget .osw-event-filters-list-item-checkbox {
   margin-right: 5px; }

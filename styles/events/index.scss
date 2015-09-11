@@ -37,6 +37,10 @@
     width: 100%;
   }
 
+  .osw-events-index-full-width + .osw-events-index-sidebar {
+    display: none;
+  }
+
   .osw-events-index-header {
     @include clearfix;
     overflow: hidden;

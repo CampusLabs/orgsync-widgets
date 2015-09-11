@@ -1057,6 +1057,8 @@
 .orgsync-widget .osw-events-index-full-width {
   left: 0;
   width: 100%; }
+.orgsync-widget .osw-events-index-full-width + .osw-events-index-sidebar {
+  display: none; }
 .orgsync-widget .osw-events-index-header {
   overflow: hidden;
   padding: 5px 0; }

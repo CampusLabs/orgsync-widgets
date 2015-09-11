@@ -97,14 +97,14 @@ export default React.createClass({
 
   getDefaultProps: function () {
     return {
-      persistSettings: true
+      devMode: false
     }
   },
 
   getInitialState: function () {
     console.log(this.props);
 
-    if (this.props.persistSettings) {
+    if (this.props.devMode) {
       let state;
       try { state = JSON.parse(localStorage.getItem(PERSIST_KEY)); }
       catch (er) {}

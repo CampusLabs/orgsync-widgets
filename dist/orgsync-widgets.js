@@ -41693,14 +41693,14 @@ define('components/builder/index', ['exports', 'module', 'underscore', 'undersco
 
     getDefaultProps: function getDefaultProps() {
       return {
-        persistSettings: true
+        devMode: false
       };
     },
 
     getInitialState: function getInitialState() {
       console.log(this.props);
 
-      if (this.props.persistSettings) {
+      if (this.props.devMode) {
         var state = undefined;
         try {
           state = JSON.parse(localStorage.getItem(PERSIST_KEY));

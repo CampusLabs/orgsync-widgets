@@ -7,9 +7,9 @@
   }
 
   .osw-events-index-sidebar {
+    left: 80%;
     padding-top: 0;
     position: absolute;
-    left: 80%;
     width: 20%;
   }
 
@@ -38,14 +38,14 @@
   }
 
   .osw-events-index-header {
-    overflow: hidden;
-    padding: 5px 0 5px 0;
     @include clearfix;
-  }
+    overflow: hidden;
+    padding: 5px 0;
 
-  .osw-events-index-header button{
-    padding-bottom: 2px;
-    padding-top: 2px;
+    button {
+      padding-bottom: 2px;
+      padding-top: 2px;
+    }
   }
 
   .osw-events-index-tz {
@@ -62,18 +62,11 @@
   .osw-events-index-view-tabs {
     display: inline-block;
     float: right;
-    max-width: 15%;
   }
 
   .osw-events-index-list-controls,
   .osw-events-index-calendar-controls {
     text-align: center;
-  }
-
-  .osw-events-index-calendar-controls {
-    display: inline-block;
-    float: left;
-    width: 62%;
   }
 
   .osw-events-index-list-controls {
@@ -109,5 +102,6 @@
 
   .osw-events-index-incr {
     float: right;
+    margin-right: 10px;
   }
 }

@@ -1036,9 +1036,9 @@
   height: 700px;
   position: relative; }
 .orgsync-widget .osw-events-index-sidebar {
+  left: 80%;
   padding-top: 0;
   position: absolute;
-  left: 80%;
   width: 20%; }
 .orgsync-widget .osw-events-index-search {
   display: inline-block;
@@ -1059,14 +1059,14 @@
   width: 100%; }
 .orgsync-widget .osw-events-index-header {
   overflow: hidden;
-  padding: 5px 0 5px 0; }
+  padding: 5px 0; }
   .orgsync-widget .osw-events-index-header::after {
     clear: both;
     content: "";
     display: table; }
-.orgsync-widget .osw-events-index-header button {
-  padding-bottom: 2px;
-  padding-top: 2px; }
+  .orgsync-widget .osw-events-index-header button {
+    padding-bottom: 2px;
+    padding-top: 2px; }
 .orgsync-widget .osw-events-index-tz {
   color: #797979;
   font-size: 11px;
@@ -1076,14 +1076,9 @@
   display: inline-block; }
 .orgsync-widget .osw-events-index-view-tabs {
   display: inline-block;
-  float: right;
-  max-width: 15%; }
+  float: right; }
 .orgsync-widget .osw-events-index-list-controls, .orgsync-widget .osw-events-index-calendar-controls {
   text-align: center; }
-.orgsync-widget .osw-events-index-calendar-controls {
-  display: inline-block;
-  float: left;
-  width: 62%; }
 .orgsync-widget .osw-events-index-list-controls {
   float: right;
   margin-right: 20px; }
@@ -1111,7 +1106,8 @@
   font-weight: bold;
   margin-right: 5px; }
 .orgsync-widget .osw-events-index-incr {
-  float: right; }
+  float: right;
+  margin-right: 10px; }
 /* styles/events/list-date.scss */
 .orgsync-widget .osw-events-list-date-header {
   background: #f4f4f4;

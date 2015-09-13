@@ -3,6 +3,7 @@ import _str from 'underscore.string';
 import api from 'api';
 import Button from 'components/ui/button';
 import Cursors from 'cursors';
+import Popup from 'components/ui/popup';
 import React from 'react';
 
 const PERSIST_KEY = 'OSW_BUILDER';
@@ -278,6 +279,15 @@ export default React.createClass({
     );
   },
 
+  renderEmbedInstructions: function () {
+    return (
+      <div>
+        <strong>Embed HTML:</strong>
+        {this.renderHtml()}
+      </div>
+    );
+  },
+
   renderPreview: function () {
     if(!this.state.displayPreview) return;
 
@@ -317,7 +327,7 @@ export default React.createClass({
   },
 
   renderPreviewLink: function () {
-    if (this.state.renderPreview) return;
+    if (this.state.previewOpen) return;
 
     return <Button onClick={this.handlePreviewChange}>Preview</Button>;
   },
@@ -337,17 +347,30 @@ export default React.createClass({
     );
   },
 
+  closeDisplayPreview: function () {
+    this.update({displayPreview: {$set: false}});
+  },
+
+  renderOlayPreview: function () {
+    if (this.props.devMode || !this.state.displayPreview) return;
+
+    return (
+      <Popup
+        name='preview'
+        title='Widget Preview'
+        close={this.closeDisplayPreview}>{this.renderPreview()}</Popup>
+    );
+  },
+
   render: function () {
     return (
       <div className='osw-builder-index'>
-        <div className='osw-builder-index-left'>
-          <h3>Settings</h3>
-          {this.renderApiKey()}
-          {this.renderWidgetSelector()}
-          {this.renderProps()}
-          {this.renderHtml()}
-          {this.renderPreviewLink()}
-        </div>
+        {this.renderApiKey()}
+        {this.renderWidgetSelector()}
+        {this.renderProps()}
+        {this.renderEmbedInstructions()}
+        {this.renderPreviewLink()}
+        {this.renderOlayPreview()}
         {this.renderPreview()}
       </div>
     );

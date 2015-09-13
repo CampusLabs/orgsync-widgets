@@ -41623,7 +41623,7 @@ define('components/bookmarks/index', ['exports', 'module', 'underscore', 'unders
   });
 });
 // scripts/components/builder/index.es6
-define('components/builder/index', ['exports', 'module', 'underscore', 'underscore.string', 'api', 'components/ui/button', 'cursors', 'react'], function (exports, module, _underscore, _underscoreString, _api, _componentsUiButton, _cursors, _react) {
+define('components/builder/index', ['exports', 'module', 'underscore', 'underscore.string', 'api', 'components/ui/button', 'cursors', 'components/ui/popup', 'react'], function (exports, module, _underscore, _underscoreString, _api, _componentsUiButton, _cursors, _componentsUiPopup, _react) {
   'use strict';
 
   var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
@@ -41639,6 +41639,8 @@ define('components/builder/index', ['exports', 'module', 'underscore', 'undersco
   var _Button = _interopRequireDefault(_componentsUiButton);
 
   var _Cursors = _interopRequireDefault(_cursors);
+
+  var _Popup = _interopRequireDefault(_componentsUiPopup);
 
   var _React = _interopRequireDefault(_react);
 
@@ -41871,6 +41873,19 @@ define('components/builder/index', ['exports', 'module', 'underscore', 'undersco
       );
     },
 
+    renderEmbedInstructions: function renderEmbedInstructions() {
+      return _React['default'].createElement(
+        'div',
+        null,
+        _React['default'].createElement(
+          'strong',
+          null,
+          'Embed HTML:'
+        ),
+        this.renderHtml()
+      );
+    },
+
     renderPreview: function renderPreview() {
       if (!this.state.displayPreview) return;
 
@@ -41915,7 +41930,7 @@ define('components/builder/index', ['exports', 'module', 'underscore', 'undersco
     },
 
     renderPreviewLink: function renderPreviewLink() {
-      if (this.state.renderPreview) return;
+      if (this.state.previewOpen) return;
 
       return _React['default'].createElement(
         _Button['default'],
@@ -41941,24 +41956,33 @@ define('components/builder/index', ['exports', 'module', 'underscore', 'undersco
       );
     },
 
+    closeDisplayPreview: function closeDisplayPreview() {
+      this.update({ displayPreview: { $set: false } });
+    },
+
+    renderOlayPreview: function renderOlayPreview() {
+      if (this.props.devMode || !this.state.displayPreview) return;
+
+      return _React['default'].createElement(
+        _Popup['default'],
+        {
+          name: 'preview',
+          title: 'Widget Preview',
+          close: this.closeDisplayPreview },
+        this.renderPreview()
+      );
+    },
+
     render: function render() {
       return _React['default'].createElement(
         'div',
         { className: 'osw-builder-index' },
-        _React['default'].createElement(
-          'div',
-          { className: 'osw-builder-index-left' },
-          _React['default'].createElement(
-            'h3',
-            null,
-            'Settings'
-          ),
-          this.renderApiKey(),
-          this.renderWidgetSelector(),
-          this.renderProps(),
-          this.renderHtml(),
-          this.renderPreviewLink()
-        ),
+        this.renderApiKey(),
+        this.renderWidgetSelector(),
+        this.renderProps(),
+        this.renderEmbedInstructions(),
+        this.renderPreviewLink(),
+        this.renderOlayPreview(),
         this.renderPreview()
       );
     }

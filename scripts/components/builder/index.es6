@@ -136,7 +136,7 @@ export default React.createClass({
   getDefaultProps: function () {
     return {
       devMode: false,
-      displayPreview: true,
+      displayPreview: false,
       modifiableProps: ['isService']
     }
   },
@@ -279,15 +279,6 @@ export default React.createClass({
     );
   },
 
-  renderEmbedInstructions: function () {
-    return (
-      <div>
-        <strong>Embed HTML:</strong>
-        {this.renderHtml()}
-      </div>
-    );
-  },
-
   renderPreview: function () {
     if(!this.state.displayPreview) return;
 
@@ -322,16 +313,6 @@ export default React.createClass({
     );
   },
 
-  handlePreviewChange: function () {
-    this.update({displayPreview: {$set: !this.state.displayPreview}});
-  },
-
-  renderPreviewLink: function () {
-    if (this.state.previewOpen) return;
-
-    return <Button onClick={this.handlePreviewChange}>Preview</Button>;
-  },
-
   renderWidgetSelector: function () {
     if (!this.props.devMode) return;
 
@@ -347,18 +328,18 @@ export default React.createClass({
     );
   },
 
-  closeDisplayPreview: function () {
-    this.update({displayPreview: {$set: false}});
+  toggleDisplayPreview: function () {
+    this.update({displayPreview: {$set: !this.state.displayPreview}});
   },
 
   renderOlayPreview: function () {
-    if (this.props.devMode || !this.state.displayPreview) return;
+    if (!this.state.displayPreview) return;
 
     return (
       <Popup
         name='preview'
         title='Widget Preview'
-        close={this.closeDisplayPreview}>{this.renderPreview()}</Popup>
+        close={this.toggleDisplayPreview}>{this.renderPreview()}</Popup>
     );
   },
 
@@ -368,10 +349,12 @@ export default React.createClass({
         {this.renderApiKey()}
         {this.renderWidgetSelector()}
         {this.renderProps()}
-        {this.renderEmbedInstructions()}
-        {this.renderPreviewLink()}
+        <div>
+          <strong>Embed HTML:</strong>
+          {this.renderHtml()}
+        </div>
+        <Button onClick={this.toggleDisplayPreview}>Preview</Button>
         {this.renderOlayPreview()}
-        {this.renderPreview()}
       </div>
     );
   }

@@ -41722,7 +41722,7 @@ define('components/builder/index', ['exports', 'module', 'underscore', 'undersco
     getDefaultProps: function getDefaultProps() {
       return {
         devMode: false,
-        displayPreview: true,
+        displayPreview: false,
         modifiableProps: ['isService']
       };
     },
@@ -41873,19 +41873,6 @@ define('components/builder/index', ['exports', 'module', 'underscore', 'undersco
       );
     },
 
-    renderEmbedInstructions: function renderEmbedInstructions() {
-      return _React['default'].createElement(
-        'div',
-        null,
-        _React['default'].createElement(
-          'strong',
-          null,
-          'Embed HTML:'
-        ),
-        this.renderHtml()
-      );
-    },
-
     renderPreview: function renderPreview() {
       if (!this.state.displayPreview) return;
 
@@ -41925,20 +41912,6 @@ define('components/builder/index', ['exports', 'module', 'underscore', 'undersco
       );
     },
 
-    handlePreviewChange: function handlePreviewChange() {
-      this.update({ displayPreview: { $set: !this.state.displayPreview } });
-    },
-
-    renderPreviewLink: function renderPreviewLink() {
-      if (this.state.previewOpen) return;
-
-      return _React['default'].createElement(
-        _Button['default'],
-        { onClick: this.handlePreviewChange },
-        'Preview'
-      );
-    },
-
     renderWidgetSelector: function renderWidgetSelector() {
       if (!this.props.devMode) return;
 
@@ -41956,19 +41929,19 @@ define('components/builder/index', ['exports', 'module', 'underscore', 'undersco
       );
     },
 
-    closeDisplayPreview: function closeDisplayPreview() {
-      this.update({ displayPreview: { $set: false } });
+    toggleDisplayPreview: function toggleDisplayPreview() {
+      this.update({ displayPreview: { $set: !this.state.displayPreview } });
     },
 
     renderOlayPreview: function renderOlayPreview() {
-      if (this.props.devMode || !this.state.displayPreview) return;
+      if (!this.state.displayPreview) return;
 
       return _React['default'].createElement(
         _Popup['default'],
         {
           name: 'preview',
           title: 'Widget Preview',
-          close: this.closeDisplayPreview },
+          close: this.toggleDisplayPreview },
         this.renderPreview()
       );
     },
@@ -41980,10 +41953,22 @@ define('components/builder/index', ['exports', 'module', 'underscore', 'undersco
         this.renderApiKey(),
         this.renderWidgetSelector(),
         this.renderProps(),
-        this.renderEmbedInstructions(),
-        this.renderPreviewLink(),
-        this.renderOlayPreview(),
-        this.renderPreview()
+        _React['default'].createElement(
+          'div',
+          null,
+          _React['default'].createElement(
+            'strong',
+            null,
+            'Embed HTML:'
+          ),
+          this.renderHtml()
+        ),
+        _React['default'].createElement(
+          _Button['default'],
+          { onClick: this.toggleDisplayPreview },
+          'Preview'
+        ),
+        this.renderOlayPreview()
       );
     }
   });

@@ -202,26 +202,43 @@ export default React.createClass({
     return <Component key={key} {...props} />;
   },
 
+  renderApiKey: function () {
+    if (!this.props.devMode) return;
+
+    return (
+      <div>
+        API Key<br />
+        <div className='osw-field'>
+          <input
+            value={this.state.apiKey}
+            onChange={this.handleApiKeyChange}
+          />
+        </div>
+      </div>
+    );
+  },
+
+  renderWidgetSelector: function () {
+    if (!this.props.devMode) return;
+
+    return (
+      <div className='osw-field osw-dropdown'>
+        <select
+          value={this.state.widget}
+          onChange={this.handleWidgetChange}
+        >
+          {this.renderWidgetOptions()}
+        </select>
+      </div>
+    );
+  },
+
   render: function () {
     return (
       <div className='osw-builder-index'>
         <div className='osw-builder-index-left'>
-          API Key<br />
-          <div className='osw-field'>
-            <input
-              value={this.state.apiKey}
-              onChange={this.handleApiKeyChange}
-            />
-          </div>
-          Widget<br />
-          <div className='osw-field osw-dropdown'>
-            <select
-              value={this.state.widget}
-              onChange={this.handleWidgetChange}
-            >
-              {this.renderWidgetOptions()}
-            </select>
-          </div>
+          {this.renderApiKey()}
+          {this.renderWidgetSelector()}
           {this.renderProps()}
           {this.renderHtml()}
         </div>

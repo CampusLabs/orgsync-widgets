@@ -41801,6 +41801,42 @@ define('components/builder/index', ['exports', 'module', 'underscore', 'undersco
       return _React['default'].createElement(Component, _extends({ key: key }, props));
     },
 
+    renderApiKey: function renderApiKey() {
+      if (!this.props.devMode) return;
+
+      return _React['default'].createElement(
+        'div',
+        null,
+        'API Key',
+        _React['default'].createElement('br', null),
+        _React['default'].createElement(
+          'div',
+          { className: 'osw-field' },
+          _React['default'].createElement('input', {
+            value: this.state.apiKey,
+            onChange: this.handleApiKeyChange
+          })
+        )
+      );
+    },
+
+    renderWidgetSelector: function renderWidgetSelector() {
+      if (!this.props.devMode) return;
+
+      return _React['default'].createElement(
+        'div',
+        { className: 'osw-field osw-dropdown' },
+        _React['default'].createElement(
+          'select',
+          {
+            value: this.state.widget,
+            onChange: this.handleWidgetChange
+          },
+          this.renderWidgetOptions()
+        )
+      );
+    },
+
     render: function render() {
       return _React['default'].createElement(
         'div',
@@ -41808,30 +41844,8 @@ define('components/builder/index', ['exports', 'module', 'underscore', 'undersco
         _React['default'].createElement(
           'div',
           { className: 'osw-builder-index-left' },
-          'API Key',
-          _React['default'].createElement('br', null),
-          _React['default'].createElement(
-            'div',
-            { className: 'osw-field' },
-            _React['default'].createElement('input', {
-              value: this.state.apiKey,
-              onChange: this.handleApiKeyChange
-            })
-          ),
-          'Widget',
-          _React['default'].createElement('br', null),
-          _React['default'].createElement(
-            'div',
-            { className: 'osw-field osw-dropdown' },
-            _React['default'].createElement(
-              'select',
-              {
-                value: this.state.widget,
-                onChange: this.handleWidgetChange
-              },
-              this.renderWidgetOptions()
-            )
-          ),
+          this.renderApiKey(),
+          this.renderWidgetSelector(),
           this.renderProps(),
           this.renderHtml()
         ),

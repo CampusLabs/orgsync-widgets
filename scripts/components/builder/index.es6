@@ -6,6 +6,42 @@ import React from 'react';
 
 const PERSIST_KEY = 'OSW_BUILDER';
 
+const WIDGET_OPTIONS = {
+  lockView: {
+    name: 'Lock the View',
+    description: 'Do not allow switching between list view and 30-day' ,
+    values: [
+      {name: 'True', value: 'true'},
+      {name: 'False', value: 'false'}
+    ]},
+  redirect: {
+    name: 'Links point to OrgSync Web App',
+    description: 'Don\'t point to a popup' ,
+    values: [
+      {name: 'true', value: 'true'},
+      {name: 'false', value: 'false'
+    }]},
+  view: {
+    name: 'Default View',
+    description: '',
+    values: [
+      {name: 'calendar', value: 'calendar'},
+      {name: 'upcoming', value: 'upcoming'},
+      {name: 'past', value: 'past'}
+    ]
+  },
+  isService: {
+    name: 'This is a service portal',
+    values: [
+      {name: 'True', value: 'true'},
+      {name: 'False', value: 'false'}
+    ]
+  },
+  tz: {
+    name: 'TimeZone'
+  }
+}
+
 const WIDGETS = {
   Albums: {
     moduleName: 'albums/index',
@@ -114,7 +150,8 @@ export default React.createClass({
     } else {
       return {
         widget: this.props.widget,
-        props: this.props
+        props: this.props,
+        apiKey: api.key
       }
     }
   },
@@ -144,18 +181,66 @@ export default React.createClass({
     );
   },
 
+  renderName: function (prop){
+    if (!WIDGET_OPTIONS[prop]) return prop;
+    return WIDGET_OPTIONS[prop].name;
+  },
+
+  renderDescription: function (prop){
+    if (!WIDGET_OPTIONS[prop]) return;
+    return WIDGET_OPTIONS[prop].description;
+  },
+
+  renderInput: function (prop) {
+    if (WIDGET_OPTIONS[prop] && WIDGET_OPTIONS[prop].values) {
+      return this.renderWidgetOptionsSelector(prop);
+    } else {
+      return this.renderWidgetOptionsTextInput(prop);
+    }
+  },
+
+  renderWidgetOptionsElement: function (prop) {
+    return (
+      <div className='osw-form-element'>
+        <strong>{this.renderName(prop)}</strong><br />
+        {this.renderDescription(prop)}
+        {this.renderInput(prop)}
+      </div>
+    );
+  },
+
+  renderWidgetOptionsTextInput: function (prop) {
+    return (
+      <div className='osw-field'>
+        <input
+          value={this.state.props[prop]}
+          onChange={_.partial(this.handlePropChange, prop)}
+        />
+      </div>
+    );
+  },
+
+  renderWidgetOptionsSelector: function (prop) {
+    return(
+      <div className='osw-field osw-dropdown'>
+        <select
+          value={this.state.props[prop]}
+          onChange={_.partial(this.handlePropChange, prop)}>
+            {_.map(WIDGET_OPTIONS[prop].values, function(value){
+              return <option key={value.value}>{value.name}</option>;
+            })}
+        </select>
+      </div>
+    );
+  },
+
   renderProp: function (prop) {
     if(!this.props.devMode && !_.contains(this.props.modifiableProps, prop)) return;
 
     return (
       <div key={prop}>
-        {prop}<br />
-        <div className='osw-field'>
-          <input
-            value={this.state.props[prop]}
-            onChange={_.partial(this.handlePropChange, prop)}
-          />
-        </div>
+        {_.contains(_.keys(WIDGET_OPTIONS), prop) ?
+          this.renderWidgetOptionsElement(prop) : this.renderWidgetOptionsElement(prop)}
       </div>
     );
   },
@@ -206,7 +291,7 @@ export default React.createClass({
     if (!this.props.devMode) return;
 
     return (
-      <div>
+      <div className='osw-form-element'>
         API Key<br />
         <div className='osw-field'>
           <input
@@ -222,7 +307,7 @@ export default React.createClass({
     if (!this.props.devMode) return;
 
     return (
-      <div className='osw-field osw-dropdown'>
+      <div className='osw-form-element osw-field osw-dropdown'>
         <select
           value={this.state.widget}
           onChange={this.handleWidgetChange}

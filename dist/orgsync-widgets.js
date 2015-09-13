@@ -41642,6 +41642,30 @@ define('components/builder/index', ['exports', 'module', 'underscore', 'undersco
 
   var PERSIST_KEY = 'OSW_BUILDER';
 
+  var WIDGET_OPTIONS = {
+    lockView: {
+      name: 'Lock the View',
+      description: 'Do not allow switching between list view and 30-day',
+      values: [{ name: 'True', value: 'true' }, { name: 'False', value: 'false' }] },
+    redirect: {
+      name: 'Links point to OrgSync Web App',
+      description: 'Don\'t point to a popup',
+      values: [{ name: 'true', value: 'true' }, { name: 'false', value: 'false'
+      }] },
+    view: {
+      name: 'Default View',
+      description: '',
+      values: [{ name: 'calendar', value: 'calendar' }, { name: 'upcoming', value: 'upcoming' }, { name: 'past', value: 'past' }]
+    },
+    isService: {
+      name: 'This is a service portal',
+      values: [{ name: 'True', value: 'true' }, { name: 'False', value: 'false' }]
+    },
+    tz: {
+      name: 'TimeZone'
+    }
+  };
+
   var WIDGETS = {
     Albums: {
       moduleName: 'albums/index',
@@ -41711,7 +41735,8 @@ define('components/builder/index', ['exports', 'module', 'underscore', 'undersco
       } else {
         return {
           widget: this.props.widget,
-          props: this.props
+          props: this.props,
+          apiKey: _api2['default'].key
         };
       }
     },
@@ -41745,22 +41770,77 @@ define('components/builder/index', ['exports', 'module', 'underscore', 'undersco
       });
     },
 
+    renderName: function renderName(prop) {
+      if (!WIDGET_OPTIONS[prop]) return prop;
+      return WIDGET_OPTIONS[prop].name;
+    },
+
+    renderDescription: function renderDescription(prop) {
+      if (!WIDGET_OPTIONS[prop]) return;
+      return WIDGET_OPTIONS[prop].description;
+    },
+
+    renderInput: function renderInput(prop) {
+      if (WIDGET_OPTIONS[prop] && WIDGET_OPTIONS[prop].values) {
+        return this.renderWidgetOptionsSelector(prop);
+      } else {
+        return this.renderWidgetOptionsTextInput(prop);
+      }
+    },
+
+    renderWidgetOptionsElement: function renderWidgetOptionsElement(prop) {
+      return _React['default'].createElement(
+        'div',
+        { className: 'osw-form-element' },
+        _React['default'].createElement(
+          'strong',
+          null,
+          this.renderName(prop)
+        ),
+        _React['default'].createElement('br', null),
+        this.renderDescription(prop),
+        this.renderInput(prop)
+      );
+    },
+
+    renderWidgetOptionsTextInput: function renderWidgetOptionsTextInput(prop) {
+      return _React['default'].createElement(
+        'div',
+        { className: 'osw-field' },
+        _React['default'].createElement('input', {
+          value: this.state.props[prop],
+          onChange: _2['default'].partial(this.handlePropChange, prop)
+        })
+      );
+    },
+
+    renderWidgetOptionsSelector: function renderWidgetOptionsSelector(prop) {
+      return _React['default'].createElement(
+        'div',
+        { className: 'osw-field osw-dropdown' },
+        _React['default'].createElement(
+          'select',
+          {
+            value: this.state.props[prop],
+            onChange: _2['default'].partial(this.handlePropChange, prop) },
+          _2['default'].map(WIDGET_OPTIONS[prop].values, function (value) {
+            return _React['default'].createElement(
+              'option',
+              { key: value.value },
+              value.name
+            );
+          })
+        )
+      );
+    },
+
     renderProp: function renderProp(prop) {
       if (!this.props.devMode && !_2['default'].contains(this.props.modifiableProps, prop)) return;
 
       return _React['default'].createElement(
         'div',
         { key: prop },
-        prop,
-        _React['default'].createElement('br', null),
-        _React['default'].createElement(
-          'div',
-          { className: 'osw-field' },
-          _React['default'].createElement('input', {
-            value: this.state.props[prop],
-            onChange: _2['default'].partial(this.handlePropChange, prop)
-          })
-        )
+        _2['default'].contains(_2['default'].keys(WIDGET_OPTIONS), prop) ? this.renderWidgetOptionsElement(prop) : this.renderWidgetOptionsElement(prop)
       );
     },
 
@@ -41806,7 +41886,7 @@ define('components/builder/index', ['exports', 'module', 'underscore', 'undersco
 
       return _React['default'].createElement(
         'div',
-        null,
+        { className: 'osw-form-element' },
         'API Key',
         _React['default'].createElement('br', null),
         _React['default'].createElement(
@@ -41825,7 +41905,7 @@ define('components/builder/index', ['exports', 'module', 'underscore', 'undersco
 
       return _React['default'].createElement(
         'div',
-        { className: 'osw-field osw-dropdown' },
+        { className: 'osw-form-element osw-field osw-dropdown' },
         _React['default'].createElement(
           'select',
           {

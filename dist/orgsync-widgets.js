@@ -41699,7 +41699,6 @@ define('components/builder/index', ['exports', 'module', 'underscore', 'undersco
     },
 
     getInitialState: function getInitialState() {
-      console.log(this.props);
 
       if (this.props.devMode) {
         var state = undefined;
@@ -41711,7 +41710,7 @@ define('components/builder/index', ['exports', 'module', 'underscore', 'undersco
         });
       } else {
         return {
-          widget: _2['default'].keys(WIDGETS)[0],
+          widget: this.props.widget,
           props: this.props
         };
       }

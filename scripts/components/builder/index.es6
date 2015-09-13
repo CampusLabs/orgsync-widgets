@@ -103,7 +103,6 @@ export default React.createClass({
   },
 
   getInitialState: function () {
-    console.log(this.props);
 
     if (this.props.devMode) {
       let state;
@@ -114,7 +113,7 @@ export default React.createClass({
       });
     } else {
       return {
-        widget: _.keys(WIDGETS)[0],
+        widget: this.props.widget,
         props: this.props
       }
     }

@@ -97,7 +97,8 @@ export default React.createClass({
 
   getDefaultProps: function () {
     return {
-      devMode: false
+      devMode: false,
+      modifiableProps: ['isService']
     }
   },
 
@@ -144,8 +145,10 @@ export default React.createClass({
     );
   },
 
-  renderProps: function () {
-    return _.map(WIDGETS[this.state.widget].props, prop =>
+  renderProp: function (prop) {
+    if(!this.props.devMode && !_.contains(this.props.modifiableProps, prop)) return;
+
+    return (
       <div key={prop}>
         {prop}<br />
         <div className='osw-field'>
@@ -156,6 +159,10 @@ export default React.createClass({
         </div>
       </div>
     );
+  },
+
+  renderProps: function () {
+    return _.map(WIDGETS[this.state.widget].props, this.renderProp);
   },
 
   getDataAttrs: function () {

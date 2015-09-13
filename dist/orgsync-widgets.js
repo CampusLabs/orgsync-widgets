@@ -41693,7 +41693,8 @@ define('components/builder/index', ['exports', 'module', 'underscore', 'undersco
 
     getDefaultProps: function getDefaultProps() {
       return {
-        devMode: false
+        devMode: false,
+        modifiableProps: ['isService']
       };
     },
 
@@ -41745,25 +41746,27 @@ define('components/builder/index', ['exports', 'module', 'underscore', 'undersco
       });
     },
 
-    renderProps: function renderProps() {
-      var _this = this;
+    renderProp: function renderProp(prop) {
+      if (!this.props.devMode && !_2['default'].contains(this.props.modifiableProps, prop)) return;
 
-      return _2['default'].map(WIDGETS[this.state.widget].props, function (prop) {
-        return _React['default'].createElement(
+      return _React['default'].createElement(
+        'div',
+        { key: prop },
+        prop,
+        _React['default'].createElement('br', null),
+        _React['default'].createElement(
           'div',
-          { key: prop },
-          prop,
-          _React['default'].createElement('br', null),
-          _React['default'].createElement(
-            'div',
-            { className: 'osw-field' },
-            _React['default'].createElement('input', {
-              value: _this.state.props[prop],
-              onChange: _2['default'].partial(_this.handlePropChange, prop)
-            })
-          )
-        );
-      });
+          { className: 'osw-field' },
+          _React['default'].createElement('input', {
+            value: this.state.props[prop],
+            onChange: _2['default'].partial(this.handlePropChange, prop)
+          })
+        )
+      );
+    },
+
+    renderProps: function renderProps() {
+      return _2['default'].map(WIDGETS[this.state.widget].props, this.renderProp);
     },
 
     getDataAttrs: function getDataAttrs() {

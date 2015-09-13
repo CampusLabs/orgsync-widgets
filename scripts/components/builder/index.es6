@@ -1,6 +1,7 @@
 import _ from 'underscore';
 import _str from 'underscore.string';
 import api from 'api';
+import Button from 'components/ui/button';
 import Cursors from 'cursors';
 import React from 'react';
 
@@ -134,6 +135,7 @@ export default React.createClass({
   getDefaultProps: function () {
     return {
       devMode: false,
+      displayPreview: true,
       modifiableProps: ['isService']
     }
   },
@@ -151,7 +153,8 @@ export default React.createClass({
       return {
         widget: this.props.widget,
         props: this.props,
-        apiKey: api.key
+        apiKey: api.key,
+        displayPreview: false
       }
     }
   },
@@ -276,6 +279,8 @@ export default React.createClass({
   },
 
   renderPreview: function () {
+    if(!this.state.displayPreview) return;
+
     var moduleName = `components/${WIDGETS[this.state.widget].moduleName}`;
     var Component = require(moduleName);
     var props = _.reduce(this.state.props, function (props, val, key) {
@@ -284,7 +289,11 @@ export default React.createClass({
       return props;
     }, {});
     var key = JSON.stringify(props);
-    return <Component key={key} {...props} />;
+    return (
+      <div className='osw-builder-index-right orgsync-widget'>
+        <Component key={key} {...props} />
+      </div>
+    );
   },
 
   renderApiKey: function () {
@@ -301,6 +310,16 @@ export default React.createClass({
         </div>
       </div>
     );
+  },
+
+  handlePreviewChange: function () {
+    this.update({displayPreview: {$set: !this.state.displayPreview}});
+  },
+
+  renderPreviewLink: function () {
+    if (this.state.renderPreview) return;
+
+    return <Button onClick={this.handlePreviewChange}>Preview</Button>;
   },
 
   renderWidgetSelector: function () {
@@ -322,15 +341,14 @@ export default React.createClass({
     return (
       <div className='osw-builder-index'>
         <div className='osw-builder-index-left'>
+          <h3>Settings</h3>
           {this.renderApiKey()}
           {this.renderWidgetSelector()}
           {this.renderProps()}
           {this.renderHtml()}
+          {this.renderPreviewLink()}
         </div>
-        <div className='osw-builder-index-right orgsync-widget'>
-          <h3>Preview</h3>
-          {this.renderPreview()}
-        </div>
+        {this.renderPreview()}
       </div>
     );
   }

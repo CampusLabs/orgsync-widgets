@@ -41623,7 +41623,7 @@ define('components/bookmarks/index', ['exports', 'module', 'underscore', 'unders
   });
 });
 // scripts/components/builder/index.es6
-define('components/builder/index', ['exports', 'module', 'underscore', 'underscore.string', 'api', 'cursors', 'react'], function (exports, module, _underscore, _underscoreString, _api, _cursors, _react) {
+define('components/builder/index', ['exports', 'module', 'underscore', 'underscore.string', 'api', 'components/ui/button', 'cursors', 'react'], function (exports, module, _underscore, _underscoreString, _api, _componentsUiButton, _cursors, _react) {
   'use strict';
 
   var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
@@ -41635,6 +41635,8 @@ define('components/builder/index', ['exports', 'module', 'underscore', 'undersco
   var _str2 = _interopRequireDefault(_underscoreString);
 
   var _api2 = _interopRequireDefault(_api);
+
+  var _Button = _interopRequireDefault(_componentsUiButton);
 
   var _Cursors = _interopRequireDefault(_cursors);
 
@@ -41718,6 +41720,7 @@ define('components/builder/index', ['exports', 'module', 'underscore', 'undersco
     getDefaultProps: function getDefaultProps() {
       return {
         devMode: false,
+        displayPreview: true,
         modifiableProps: ['isService']
       };
     },
@@ -41736,7 +41739,8 @@ define('components/builder/index', ['exports', 'module', 'underscore', 'undersco
         return {
           widget: this.props.widget,
           props: this.props,
-          apiKey: _api2['default'].key
+          apiKey: _api2['default'].key,
+          displayPreview: false
         };
       }
     },
@@ -41868,6 +41872,8 @@ define('components/builder/index', ['exports', 'module', 'underscore', 'undersco
     },
 
     renderPreview: function renderPreview() {
+      if (!this.state.displayPreview) return;
+
       var moduleName = 'components/' + WIDGETS[this.state.widget].moduleName;
       var Component = require(moduleName);
       var props = _2['default'].reduce(this.state.props, function (props, val, key) {
@@ -41878,7 +41884,11 @@ define('components/builder/index', ['exports', 'module', 'underscore', 'undersco
         return props;
       }, {});
       var key = JSON.stringify(props);
-      return _React['default'].createElement(Component, _extends({ key: key }, props));
+      return _React['default'].createElement(
+        'div',
+        { className: 'osw-builder-index-right orgsync-widget' },
+        _React['default'].createElement(Component, _extends({ key: key }, props))
+      );
     },
 
     renderApiKey: function renderApiKey() {
@@ -41897,6 +41907,20 @@ define('components/builder/index', ['exports', 'module', 'underscore', 'undersco
             onChange: this.handleApiKeyChange
           })
         )
+      );
+    },
+
+    handlePreviewChange: function handlePreviewChange() {
+      this.update({ displayPreview: { $set: !this.state.displayPreview } });
+    },
+
+    renderPreviewLink: function renderPreviewLink() {
+      if (this.state.renderPreview) return;
+
+      return _React['default'].createElement(
+        _Button['default'],
+        { onClick: this.handlePreviewChange },
+        'Preview'
       );
     },
 
@@ -41924,21 +41948,18 @@ define('components/builder/index', ['exports', 'module', 'underscore', 'undersco
         _React['default'].createElement(
           'div',
           { className: 'osw-builder-index-left' },
-          this.renderApiKey(),
-          this.renderWidgetSelector(),
-          this.renderProps(),
-          this.renderHtml()
-        ),
-        _React['default'].createElement(
-          'div',
-          { className: 'osw-builder-index-right orgsync-widget' },
           _React['default'].createElement(
             'h3',
             null,
-            'Preview'
+            'Settings'
           ),
-          this.renderPreview()
-        )
+          this.renderApiKey(),
+          this.renderWidgetSelector(),
+          this.renderProps(),
+          this.renderHtml(),
+          this.renderPreviewLink()
+        ),
+        this.renderPreview()
       );
     }
   });

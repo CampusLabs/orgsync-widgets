@@ -4,14 +4,17 @@
   .osw-builder-index-right{
     background: #f4f4f4;
     box-sizing: border-box;
-    h3{
+  }
+
+  .osw-builder-index-left,
+  .osw-builder-index-right {
+    h3 {
       border-bottom: 1px solid #dedede;
       padding: 10px;
     }
   }
 
   .osw-builder-index-left {
-    padding: 5px;
 
     .osw-form-element {
       line-height: 1.5em;

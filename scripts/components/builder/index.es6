@@ -328,6 +328,7 @@ export default React.createClass({
           {this.renderHtml()}
         </div>
         <div className='osw-builder-index-right orgsync-widget'>
+          <h3>Preview</h3>
           {this.renderPreview()}
         </div>
       </div>

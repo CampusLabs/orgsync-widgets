@@ -932,6 +932,12 @@
     content: "";
     display: table; }
 /* styles/builder/index.scss */
+.orgsync-widget .osw-builder-index-right {
+  background: #f4f4f4;
+  box-sizing: border-box; }
+  .orgsync-widget .osw-builder-index-right h3 {
+    border-bottom: 1px solid #dedede;
+    padding: 10px; }
 .orgsync-widget .osw-builder-index-left {
   padding: 5px; }
   .orgsync-widget .osw-builder-index-left .osw-form-element {

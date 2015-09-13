@@ -1,6 +1,15 @@
 @import '../config';
 
 .orgsync-widget {
+  .osw-builder-index-right{
+    background: #f4f4f4;
+    box-sizing: border-box;
+    h3{
+      border-bottom: 1px solid #dedede;
+      padding: 10px;
+    }
+  }
+
   .osw-builder-index-left {
     padding: 5px;
 

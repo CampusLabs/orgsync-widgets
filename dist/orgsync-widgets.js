@@ -41932,6 +41932,11 @@ define('components/builder/index', ['exports', 'module', 'underscore', 'undersco
         _React['default'].createElement(
           'div',
           { className: 'osw-builder-index-right orgsync-widget' },
+          _React['default'].createElement(
+            'h3',
+            null,
+            'Preview'
+          ),
           this.renderPreview()
         )
       );

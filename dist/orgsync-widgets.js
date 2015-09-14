@@ -46394,6 +46394,7 @@ define('components/events/index', ['exports', 'module', 'underscore', 'component
 
       var urlParams = [];
       var categories = [];
+      var paramsString = '';
 
       if (this.state.view != this.props.view) {
         urlParams.push('view=' + this.state.view);
@@ -46406,8 +46407,6 @@ define('components/events/index', ['exports', 'module', 'underscore', 'component
       if (categories.length > 0) {
         urlParams.push('categories=' + categories.join(','));
       }
-
-      var paramsString = '';
 
       if (urlParams.length > 0) {
         paramsString = '?' + urlParams.join('&');

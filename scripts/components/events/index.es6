@@ -62,6 +62,10 @@ export default React.createClass({
     window.removeEventListener('resize', this.setWidth);
   },
 
+  componentDidUpdate: function () {
+    history.replaceState(null, null, location.pathname + `?view=${this.state.view}`);
+  },
+
   setWidth: function () {
     var rect = this.getDOMNode().getBoundingClientRect();
     this.update({width: {$set: rect.width}});
@@ -105,8 +109,6 @@ export default React.createClass({
 
   handleQueryChange: function (ev) {
     this.update({query: {$set: ev.target.value}});
-    var stateObj = { query: ev.target.value };
-    history.pushState(stateObj, "updated", this.getBaseURL());
   },
 
   toggleFiltersAreShowing: function () {

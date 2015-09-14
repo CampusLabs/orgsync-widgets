@@ -46390,6 +46390,10 @@ define('components/events/index', ['exports', 'module', 'underscore', 'component
       window.removeEventListener('resize', this.setWidth);
     },
 
+    componentDidUpdate: function componentDidUpdate() {
+      history.replaceState(null, null, location.pathname + ('?view=' + this.state.view));
+    },
+
     setWidth: function setWidth() {
       var rect = this.getDOMNode().getBoundingClientRect();
       this.update({ width: { $set: rect.width } });
@@ -46429,8 +46433,6 @@ define('components/events/index', ['exports', 'module', 'underscore', 'component
 
     handleQueryChange: function handleQueryChange(ev) {
       this.update({ query: { $set: ev.target.value } });
-      var stateObj = { query: ev.target.value };
-      history.pushState(stateObj, "updated", this.getBaseURL());
     },
 
     toggleFiltersAreShowing: function toggleFiltersAreShowing() {

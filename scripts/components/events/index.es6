@@ -32,6 +32,7 @@ export default React.createClass({
       redirect: false,
       rolloutNewEvents: false,
       permissions: [],
+      pushState: false,
       query: '',
       tz: tz,
       view: 'calendar'
@@ -104,6 +105,8 @@ export default React.createClass({
 
   handleQueryChange: function (ev) {
     this.update({query: {$set: ev.target.value}});
+    var stateObj = { query: ev.target.value };
+    history.pushState(stateObj, "updated", this.getBaseURL());
   },
 
   toggleFiltersAreShowing: function () {

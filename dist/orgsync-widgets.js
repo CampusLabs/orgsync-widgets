@@ -41653,7 +41653,7 @@ define('components/builder/index', ['exports', 'module', 'underscore', 'undersco
     },
     Events: {
       moduleName: 'events/index',
-      props: ['communityId', 'isService', 'portalId', 'view', 'lockView', 'tz', 'activeEventFilterIds', 'permissions', 'redirect', 'rolloutNewEvents']
+      props: ['communityId', 'isService', 'portalId', 'view', 'lockView', 'tz', 'activeEventFilterIds', 'permissions', 'redirect', 'rolloutNewEvents', 'pushState']
     },
     Files: {
       moduleName: 'files/index',
@@ -46360,6 +46360,7 @@ define('components/events/index', ['exports', 'module', 'underscore', 'component
         redirect: false,
         rolloutNewEvents: false,
         permissions: [],
+        pushState: false,
         query: '',
         tz: _tz2['default'],
         view: 'calendar'
@@ -46428,6 +46429,8 @@ define('components/events/index', ['exports', 'module', 'underscore', 'component
 
     handleQueryChange: function handleQueryChange(ev) {
       this.update({ query: { $set: ev.target.value } });
+      var stateObj = { query: ev.target.value };
+      history.pushState(stateObj, "updated", this.getBaseURL());
     },
 
     toggleFiltersAreShowing: function toggleFiltersAreShowing() {

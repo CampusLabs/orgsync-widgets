@@ -27,7 +27,8 @@ const WIDGETS = {
       'activeEventFilterIds',
       'permissions',
       'redirect',
-      'rolloutNewEvents'
+      'rolloutNewEvents',
+      'pushState'
     ]
   },
   Files: {

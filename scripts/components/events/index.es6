@@ -77,7 +77,7 @@ export default React.createClass({
       if (cat.active) categories.push(cat.id.substring(9, cat.id.length));
     });
 
-    if (categories.length > 0) {
+    if (categories.length > 0 && categories.length != this.state.eventFilters.length) {
       urlParams.push(`categories=${categories.join(',')}`);
     }
 

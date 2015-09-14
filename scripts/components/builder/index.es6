@@ -28,7 +28,7 @@ const WIDGETS = {
       'permissions',
       'redirect',
       'rolloutNewEvents',
-      'pushState'
+      'shouldUpdateUrl'
     ]
   },
   Files: {

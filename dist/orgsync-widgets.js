@@ -46391,12 +46391,19 @@ define('components/events/index', ['exports', 'module', 'underscore', 'component
     },
 
     componentDidUpdate: function componentDidUpdate() {
+
+      var urlParams = '?view=' + this.state.view;
+
       var categories = [];
       this.state.eventFilters.map(function (cat) {
         if (cat.active) categories.push(cat.id.substring(9, cat.id.length));
       });
 
-      history.replaceState(null, null, location.pathname + ('?view=' + this.state.view + '&categories=' + categories.join(',')));
+      if (categories.length > 0) {
+        urlParams += '&categories=' + categories.join(',');
+      }
+
+      history.replaceState(null, null, location.pathname + urlParams);
     },
 
     setWidth: function setWidth() {

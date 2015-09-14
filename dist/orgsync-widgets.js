@@ -46391,10 +46391,12 @@ define('components/events/index', ['exports', 'module', 'underscore', 'component
     },
 
     componentDidUpdate: function componentDidUpdate() {
-      var categories = this.state.eventFilters.map(function (cat) {
-        return cat.id.substring(9, cat.id.length);
-      }).join(',');
-      history.replaceState(null, null, location.pathname + ('?view=' + this.state.view + '&categories=' + categories));
+      var categories = [];
+      this.state.eventFilters.map(function (cat) {
+        if (cat.active) categories.push(cat.id.substring(9, cat.id.length));
+      });
+
+      history.replaceState(null, null, location.pathname + ('?view=' + this.state.view + '&categories=' + categories.join(',')));
     },
 
     setWidth: function setWidth() {

@@ -46391,7 +46391,10 @@ define('components/events/index', ['exports', 'module', 'underscore', 'component
     },
 
     componentDidUpdate: function componentDidUpdate() {
-      history.replaceState(null, null, location.pathname + ('?view=' + this.state.view));
+      var categories = this.state.eventFilters.map(function (cat) {
+        return cat.id.substring(9, cat.id.length);
+      }).join(',');
+      history.replaceState(null, null, location.pathname + ('?view=' + this.state.view + '&categories=' + categories));
     },
 
     setWidth: function setWidth() {

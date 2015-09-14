@@ -41865,11 +41865,18 @@ define('components/builder/index', ['exports', 'module', 'underscore', 'undersco
       }));
     },
 
+    copyToClipboard: function copyToClipboard(event) {
+      var e = this.refs.code.getDOMNode();
+      e.focus();
+      e.select();
+      document.execCommand('copy');
+    },
+
     renderHtml: function renderHtml() {
       return _React['default'].createElement(
-        'pre',
-        { className: 'osw-inset-block' },
-        '\n<link href=\'https://orgsync.com/assets/orgsync-widgets.css\' rel=\'stylesheet\'>\n<script>window.OSW_API_KEY = \'' + _api2['default'].key + '\';</script>\n<script src=\'https://orgsync.com/assets/orgsync-widgets.js\' async></script>\n<div\n  class=\'orgsync-widget\'\n  ' + this.getDataAttrs().join('\n  ') + '\n></div>\n'
+        'textarea',
+        { rows: '7', className: 'osw-inset-block', ref: 'code', onClick: this.copyToClipboard },
+        '<link href=\'https://orgsync.com/assets/orgsync-widgets.css\' rel=\'stylesheet\'>\n  <script>window.OSW_API_KEY = \'' + _api2['default'].key + '\';</script>\n  <script src=\'https://orgsync.com/assets/orgsync-widgets.js\' async></script>\n  <div\n    class=\'orgsync-widget\'\n    ' + this.getDataAttrs().join('\n  ') + '\n  ></div>\n  '
       );
     },
 

@@ -1,21 +1,8 @@
 @import '../config';
 
 .orgsync-widget {
-  .osw-builder-index-right{
-    background: #f4f4f4;
-    box-sizing: border-box;
-  }
-
-  .osw-builder-index-left,
-  .osw-builder-index-right {
-    h3 {
-      border-bottom: 1px solid #dedede;
-      padding: 10px;
-    }
-  }
-
-  .osw-builder-index-left {
-
+  .osw-builder-index{
+    padding: 40px;
     .osw-form-element {
       line-height: 1.5em;
       padding: 10px;
@@ -24,6 +11,12 @@
 
     .osw-form-element.osw-dropdown:after {
       right: 25px;
+    }
+
+    textarea{
+      box-sizing: border-box;
+      display: block;
+      width: 100%;
     }
   }
 

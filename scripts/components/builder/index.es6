@@ -264,19 +264,25 @@ export default React.createClass({
     }));
   },
 
-  renderHtml: function () {
-    return (
-      <pre className='osw-inset-block'>{`
-<link href='https://orgsync.com/assets/orgsync-widgets.css' rel='stylesheet'>
-<script>window.OSW_API_KEY = '${api.key}';</script>
-<script src='https://orgsync.com/assets/orgsync-widgets.js' async></script>
-<div
-  class='orgsync-widget'
-  ${this.getDataAttrs().join('\n  ')}
-></div>
-`}
-      </pre>
-    );
+    copyToClipboard: function (event) {
+      var e = this.refs.code.getDOMNode();
+      e.focus();
+      e.select();
+      document.execCommand('copy')
+    },
+
+    renderHtml: function () {
+      return (
+        <textarea rows='7' className='osw-inset-block' ref='code' onClick={this.copyToClipboard}>{`<link href='https://orgsync.com/assets/orgsync-widgets.css' rel='stylesheet'>
+  <script>window.OSW_API_KEY = '${api.key}';</script>
+  <script src='https://orgsync.com/assets/orgsync-widgets.js' async></script>
+  <div
+    class='orgsync-widget'
+    ${this.getDataAttrs().join('\n  ')}
+  ></div>
+  `}
+        </textarea>
+      );
   },
 
   renderPreview: function () {

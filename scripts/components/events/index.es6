@@ -7,6 +7,7 @@ import Cursors from 'cursors';
 import EventFiltersIndex from 'components/event-filters/index';
 import Icon from 'components/ui/icon';
 import React from 'react';
+import superagent from 'superagent';
 import tz from 'tz';
 
 import {
@@ -16,6 +17,8 @@ import {
 } from 'entities/event';
 
 var LIST_LOCK_BREAKPOINT = 600;
+
+const serialize = superagent.serialize['application/x-www-form-urlencoded'];
 
 export default React.createClass({
   mixins: [Cursors],
@@ -32,7 +35,7 @@ export default React.createClass({
       redirect: false,
       rolloutNewEvents: false,
       permissions: [],
-      pushState: false,
+      shouldUpdateUrl: false,
       query: '',
       tz: tz,
       view: 'calendar'
@@ -63,29 +66,19 @@ export default React.createClass({
   },
 
   updateUrl: function () {
-    if (!this.props.pushState) return;
+    if (!this.props.shouldUpdateUrl) return;
 
-    var urlParams = [];
-    var categories = [];
-    var paramsString = '';
-
-    if (this.state.view != this.props.view) {
-      urlParams.push(`view=${this.state.view}`);
-    }
-
-    this.state.eventFilters.map(function(cat) {
-      if (cat.active) categories.push(cat.id.substring(9, cat.id.length));
+    const {eventFilters, view} = this.state;
+    const activeEventFilters = _.filter(eventFilters, 'active');
+    const params = serialize({
+      view,
+      active_event_filter_ids:
+        activeEventFilters.length < eventFilters.length ?
+        _.map(activeEventFilters, 'id') :
+        undefined
     });
 
-    if (categories.length > 0 && categories.length != this.state.eventFilters.length) {
-      urlParams.push(`categories=${categories.join(',')}`);
-    }
-
-    if (urlParams.length > 0) {
-      paramsString = '?' + urlParams.join('&');
-    }
-
-    history.replaceState(null, null, location.pathname + paramsString);
+    history.replaceState(null, null, `?${serialize(params)}`);
   },
 
   componentDidUpdate: function () {

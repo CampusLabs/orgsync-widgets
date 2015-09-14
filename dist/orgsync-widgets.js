@@ -46316,7 +46316,7 @@ define('tz', ['exports', 'module', 'jstz'], function (exports, module, _jstz) {
   module.exports = _jstz2['default'].determine().name();
 });
 // scripts/components/events/index.es6
-define('components/events/index', ['exports', 'module', 'underscore', 'components/ui/button', 'components/ui/button-group', 'components/events/calendar', 'components/events/list', 'cursors', 'components/event-filters/index', 'components/ui/icon', 'react', 'tz', 'entities/event'], function (exports, module, _underscore, _componentsUiButton, _componentsUiButtonGroup, _componentsEventsCalendar, _componentsEventsList, _cursors, _componentsEventFiltersIndex, _componentsUiIcon, _react, _tz, _entitiesEvent) {
+define('components/events/index', ['exports', 'module', 'underscore', 'components/ui/button', 'components/ui/button-group', 'components/events/calendar', 'components/events/list', 'cursors', 'components/event-filters/index', 'components/ui/icon', 'react', 'superagent', 'tz', 'entities/event'], function (exports, module, _underscore, _componentsUiButton, _componentsUiButtonGroup, _componentsEventsCalendar, _componentsEventsList, _cursors, _componentsEventFiltersIndex, _componentsUiIcon, _react, _superagent, _tz, _entitiesEvent) {
   'use strict';
 
   function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
@@ -46339,9 +46339,13 @@ define('components/events/index', ['exports', 'module', 'underscore', 'component
 
   var _React = _interopRequireDefault(_react);
 
+  var _superagent2 = _interopRequireDefault(_superagent);
+
   var _tz2 = _interopRequireDefault(_tz);
 
   var LIST_LOCK_BREAKPOINT = 600;
+
+  var serialize = _superagent2['default'].serialize['application/x-www-form-urlencoded'];
 
   module.exports = _React['default'].createClass({
     displayName: 'index',
@@ -46360,7 +46364,7 @@ define('components/events/index', ['exports', 'module', 'underscore', 'component
         redirect: false,
         rolloutNewEvents: false,
         permissions: [],
-        pushState: false,
+        shouldUpdateUrl: false,
         query: '',
         tz: _tz2['default'],
         view: 'calendar'
@@ -46391,29 +46395,19 @@ define('components/events/index', ['exports', 'module', 'underscore', 'component
     },
 
     updateUrl: function updateUrl() {
-      if (!this.props.pushState) return;
+      if (!this.props.shouldUpdateUrl) return;
 
-      var urlParams = [];
-      var categories = [];
-      var paramsString = '';
+      var _state = this.state;
+      var eventFilters = _state.eventFilters;
+      var view = _state.view;
 
-      if (this.state.view != this.props.view) {
-        urlParams.push('view=' + this.state.view);
-      }
-
-      this.state.eventFilters.map(function (cat) {
-        if (cat.active) categories.push(cat.id.substring(9, cat.id.length));
+      var activeEventFilters = _2['default'].filter(eventFilters, 'active');
+      var params = serialize({
+        view: view,
+        active_event_filter_ids: activeEventFilters.length < eventFilters.length ? _2['default'].map(activeEventFilters, 'id') : undefined
       });
 
-      if (categories.length > 0 && categories.length != this.state.eventFilters.length) {
-        urlParams.push('categories=' + categories.join(','));
-      }
-
-      if (urlParams.length > 0) {
-        paramsString = '?' + urlParams.join('&');
-      }
-
-      history.replaceState(null, null, location.pathname + paramsString);
+      history.replaceState(null, null, '?' + serialize(params));
     },
 
     componentDidUpdate: function componentDidUpdate() {

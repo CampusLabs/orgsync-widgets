@@ -62,7 +62,7 @@ export default React.createClass({
     window.removeEventListener('resize', this.setWidth);
   },
 
-  pushHistory: function () {
+  updateUrl: function () {
     if (!this.props.pushState) return;
 
     var urlParams = [];
@@ -89,7 +89,7 @@ export default React.createClass({
   },
 
   componentDidUpdate: function () {
-    this.pushHistory();
+    this.updateUrl();
   },
 
   setWidth: function () {

@@ -46390,7 +46390,7 @@ define('components/events/index', ['exports', 'module', 'underscore', 'component
       window.removeEventListener('resize', this.setWidth);
     },
 
-    pushHistory: function pushHistory() {
+    updateUrl: function updateUrl() {
       if (!this.props.pushState) return;
 
       var urlParams = [];
@@ -46417,7 +46417,7 @@ define('components/events/index', ['exports', 'module', 'underscore', 'component
     },
 
     componentDidUpdate: function componentDidUpdate() {
-      this.pushHistory();
+      this.updateUrl();
     },
 
     setWidth: function setWidth() {

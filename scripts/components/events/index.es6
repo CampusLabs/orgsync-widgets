@@ -64,18 +64,28 @@ export default React.createClass({
 
   componentDidUpdate: function () {
 
-    var urlParams = `?view=${this.state.view}`
-
+    var urlParams = [];
     var categories = [];
-    this.state.eventFilters.map(function(cat){
+
+    if (this.state.view != this.props.view) {
+      urlParams.push(`view=${this.state.view}`);
+    }
+
+    this.state.eventFilters.map(function(cat) {
       if (cat.active) categories.push(cat.id.substring(9, cat.id.length));
     });
 
     if (categories.length > 0) {
-      urlParams += `&categories=${categories.join(',')}`
+      urlParams.push(`categories=${categories.join(',')}`);
     }
 
-    history.replaceState(null, null, location.pathname + urlParams);
+    var paramsString = '';
+
+    if (urlParams.length > 0) {
+      paramsString = '?' + urlParams.join('&');
+    }
+
+    history.replaceState(null, null, location.pathname + paramsString);
   },
 
   setWidth: function () {

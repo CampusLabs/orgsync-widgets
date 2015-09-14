@@ -7,6 +7,7 @@ import Cursors from 'cursors';
 import EventFiltersIndex from 'components/event-filters/index';
 import Icon from 'components/ui/icon';
 import React from 'react';
+import superagent from 'superagent';
 import tz from 'tz';
 
 import {
@@ -16,6 +17,8 @@ import {
 } from 'entities/event';
 
 var LIST_LOCK_BREAKPOINT = 600;
+
+const serialize = superagent.serialize['application/x-www-form-urlencoded'];
 
 export default React.createClass({
   mixins: [Cursors],
@@ -32,6 +35,7 @@ export default React.createClass({
       redirect: false,
       rolloutNewEvents: false,
       permissions: [],
+      shouldUpdateUrl: false,
       query: '',
       tz: tz,
       view: 'calendar'
@@ -59,6 +63,26 @@ export default React.createClass({
 
   componentWillUnmount: function () {
     window.removeEventListener('resize', this.setWidth);
+  },
+
+  updateUrl: function () {
+    if (!this.props.shouldUpdateUrl) return;
+
+    const {eventFilters, view} = this.state;
+    const activeEventFilters = _.filter(eventFilters, 'active');
+    const params = serialize({
+      view,
+      active_event_filter_ids:
+        activeEventFilters.length < eventFilters.length ?
+        _.map(activeEventFilters, 'id') :
+        undefined
+    });
+
+    history.replaceState(null, null, `?${serialize(params)}`);
+  },
+
+  componentDidUpdate: function () {
+    this.updateUrl();
   },
 
   setWidth: function () {

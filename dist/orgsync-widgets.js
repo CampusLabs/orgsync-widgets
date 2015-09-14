@@ -46390,7 +46390,8 @@ define('components/events/index', ['exports', 'module', 'underscore', 'component
       window.removeEventListener('resize', this.setWidth);
     },
 
-    componentDidUpdate: function componentDidUpdate() {
+    pushHistory: function pushHistory() {
+      if (!this.props.pushState) return;
 
       var urlParams = [];
       var categories = [];
@@ -46413,6 +46414,10 @@ define('components/events/index', ['exports', 'module', 'underscore', 'component
       }
 
       history.replaceState(null, null, location.pathname + paramsString);
+    },
+
+    componentDidUpdate: function componentDidUpdate() {
+      this.pushHistory();
     },
 
     setWidth: function setWidth() {

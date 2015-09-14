@@ -62,7 +62,8 @@ export default React.createClass({
     window.removeEventListener('resize', this.setWidth);
   },
 
-  componentDidUpdate: function () {
+  pushHistory: function () {
+    if (!this.props.pushState) return;
 
     var urlParams = [];
     var categories = [];
@@ -85,6 +86,10 @@ export default React.createClass({
     }
 
     history.replaceState(null, null, location.pathname + paramsString);
+  },
+
+  componentDidUpdate: function () {
+    this.pushHistory();
   },
 
   setWidth: function () {

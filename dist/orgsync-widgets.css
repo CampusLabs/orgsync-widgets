@@ -1237,8 +1237,14 @@
   position: relative;
   top: -2px; }
 .orgsync-widget .osw-less-important .osw-events-list-item-content {
-  background: -webkit-repeating-linear-gradient(145deg, #f4f4f4, #f4f4f4 3px, #fff 3px, #fff 6px);
-  background: repeating-linear-gradient(-55deg, #f4f4f4, #f4f4f4 3px, #fff 3px, #fff 6px); }
+  background: -webkit-repeating-linear-gradient(145deg, #f9f9f9, #f9f9f9 3px, #fff 3px, #fff 6px);
+  background: repeating-linear-gradient(-55deg, #f9f9f9, #f9f9f9 3px, #fff 3px, #fff 6px); }
+.orgsync-widget .osw-events-list-pending {
+  color: #e57d02;
+  float: right;
+  font-size: 14px;
+  font-weight: bold;
+  line-height: 50px; }
 /* styles/events/show.scss */
 .orgsync-widget .osw-events-show {
   padding: 30px; }

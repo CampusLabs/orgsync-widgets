@@ -45704,6 +45704,16 @@ define('components/events/list-item', ['exports', 'module', 'underscore.string',
       );
     },
 
+    renderUnpublishedStatus: function renderUnpublishedStatus() {
+      if (this.state.event.is_published) return;
+
+      return _React['default'].createElement(
+        'span',
+        { className: 'osw-events-list-pending' },
+        'Pending Approval'
+      );
+    },
+
     render: function render() {
       var event = this.state.event;
       var src = event.thumbnail_url;
@@ -45725,6 +45735,7 @@ define('components/events/list-item', ['exports', 'module', 'underscore.string',
             src ? _React['default'].createElement('img', { src: src }) : this.renderDefaultPicture()
           ),
           this.renderEventTypeIcon(),
+          this.renderUnpublishedStatus(),
           _React['default'].createElement(
             'div',
             { className: 'osw-events-list-item-info' },

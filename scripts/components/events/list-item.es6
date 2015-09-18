@@ -146,6 +146,16 @@ export default React.createClass({
     );
   },
 
+  renderUnpublishedStatus: function () {
+    if (this.state.event.is_published) return;
+
+    return (
+      <span className='osw-events-list-pending'>
+        Pending Approval
+      </span>
+    );
+  },
+
   render: function () {
     var event = this.state.event;
     var src = event.thumbnail_url;
@@ -162,6 +172,7 @@ export default React.createClass({
             {src ? <img src={src} /> : this.renderDefaultPicture()}
           </div>
           {this.renderEventTypeIcon()}
+          {this.renderUnpublishedStatus()}
           <div className='osw-events-list-item-info'>
             <div className='osw-events-list-item-title'>
               {event.title}

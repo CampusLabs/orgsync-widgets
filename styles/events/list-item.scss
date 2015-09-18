@@ -127,6 +127,14 @@
   }
 
   .osw-less-important .osw-events-list-item-content{
-    background: repeating-linear-gradient( -55deg, #f4f4f4, #f4f4f4 3px, #fff 3px, #fff 6px );
+    background: repeating-linear-gradient( -55deg, #f9f9f9, #f9f9f9 3px, #fff 3px, #fff 6px );
+  }
+
+  .osw-events-list-pending{
+    color: $orange;
+    float: right;
+    font-size: 14px;
+    font-weight: bold;
+    line-height: 50px;
   }
 }

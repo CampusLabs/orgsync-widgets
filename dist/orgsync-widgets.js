@@ -45707,9 +45707,12 @@ define('components/events/list-item', ['exports', 'module', 'underscore.string',
     render: function render() {
       var event = this.state.event;
       var src = event.thumbnail_url;
+      var wrapperClass = 'osw-events-list-item';
+      if (!this.state.event.is_published) wrapperClass += ' osw-less-important';
+
       return _React['default'].createElement(
         'div',
-        { className: 'osw-events-list-item' },
+        { className: wrapperClass },
         _React['default'].createElement(
           'div',
           {

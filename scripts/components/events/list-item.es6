@@ -149,8 +149,11 @@ export default React.createClass({
   render: function () {
     var event = this.state.event;
     var src = event.thumbnail_url;
+    var wrapperClass = 'osw-events-list-item';
+    if (!this.state.event.is_published) wrapperClass += ' osw-less-important';
+
     return (
-      <div className='osw-events-list-item'>
+      <div className={wrapperClass}>
         <div
           className='osw-events-list-item-content'
           onClick={this.handleClick}

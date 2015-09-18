@@ -125,4 +125,8 @@
     position: relative;
     top: -2px;
   }
+
+  .osw-less-important .osw-events-list-item-content{
+    background: repeating-linear-gradient( -55deg, #f4f4f4, #f4f4f4 3px, #fff 3px, #fff 6px );
+  }
 }

@@ -1236,6 +1236,9 @@
   padding: 0 3px;
   position: relative;
   top: -2px; }
+.orgsync-widget .osw-less-important .osw-events-list-item-content {
+  background: -webkit-repeating-linear-gradient(145deg, #f4f4f4, #f4f4f4 3px, #fff 3px, #fff 6px);
+  background: repeating-linear-gradient(-55deg, #f4f4f4, #f4f4f4 3px, #fff 3px, #fff 6px); }
 /* styles/events/show.scss */
 .orgsync-widget .osw-events-show {
   padding: 30px; }

@@ -126,15 +126,27 @@
     top: -2px;
   }
 
-  .osw-less-important .osw-events-list-item-content{
+  .osw-events-list-unpublished .osw-events-list-item-content{
     background: repeating-linear-gradient( -55deg, #f9f9f9, #f9f9f9 3px, #fff 3px, #fff 6px );
   }
 
-  .osw-events-list-pending{
+  .osw-events-list-item-pending,
+  .osw-events-list-item-incomplete,
+  .osw-events-list-item-denied {
     color: $orange;
     float: right;
     font-size: 14px;
     font-weight: bold;
     line-height: 50px;
   }
+
+  .osw-events-list-item-incomplete{
+    color: $blue;
+  }
+
+  .osw-events-list-item-denied{
+    color: $red;
+  }
+
+
 }

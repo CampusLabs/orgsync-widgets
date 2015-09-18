@@ -147,11 +147,13 @@ export default React.createClass({
   },
 
   renderUnpublishedStatus: function () {
-    if (this.state.event.is_published) return;
+    if (this.state.event.status != 'Published') return;
+
+    var classes = `osw-events-list-item-${this.state.event.status.toLowercase()}`;
 
     return (
-      <span className='osw-events-list-pending'>
-        Pending Approval
+      <span className={classes}>
+        {this.state.event.status}
       </span>
     );
   },
@@ -160,8 +162,8 @@ export default React.createClass({
     var event = this.state.event;
     var src = event.thumbnail_url;
     var wrapperClass = 'osw-events-list-item';
-    if (!this.state.event.is_published) wrapperClass += ' osw-less-important';
 
+    if (event.status != 'Published') wrapperClass += ' osw-events-list-unpublished'
     return (
       <div className={wrapperClass}>
         <div

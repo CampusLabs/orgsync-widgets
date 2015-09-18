@@ -45705,12 +45705,14 @@ define('components/events/list-item', ['exports', 'module', 'underscore.string',
     },
 
     renderUnpublishedStatus: function renderUnpublishedStatus() {
-      if (this.state.event.is_published) return;
+      if (this.state.event.status != 'Published') return;
+
+      var classes = 'osw-events-list-item-' + this.state.event.status.toLowercase();
 
       return _React['default'].createElement(
         'span',
-        { className: 'osw-events-list-pending' },
-        'Pending Approval'
+        { className: classes },
+        this.state.event.status
       );
     },
 
@@ -45718,8 +45720,8 @@ define('components/events/list-item', ['exports', 'module', 'underscore.string',
       var event = this.state.event;
       var src = event.thumbnail_url;
       var wrapperClass = 'osw-events-list-item';
-      if (!this.state.event.is_published) wrapperClass += ' osw-less-important';
 
+      if (event.status != 'Published') wrapperClass += ' osw-events-list-unpublished';
       return _React['default'].createElement(
         'div',
         { className: wrapperClass },

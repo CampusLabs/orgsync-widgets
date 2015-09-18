@@ -25,13 +25,16 @@ export default React.createClass({
   fetch: function () {
     if (this.state.isLoading || this.state.error) return;
     this.update({isLoading: {$set: true}, error: {$set: null}});
-    fetch({
+    var options = {
       after: this.getStartMom().toISOString(),
       before: this.getEndMom().toISOString(),
       ranges: this.state.ranges,
       events: this.state.allEvents,
-      url: this.props.eventsUrl
-    }, this.handleFetch);
+      url: this.props.eventsUrl,
+    };
+
+    if (this.props.permissions.length) options.statuses = ['unpublished', 'published'];
+    fetch(options, this.handleFetch);
   },
 
   handleFetch: function (er, ranges, events) {

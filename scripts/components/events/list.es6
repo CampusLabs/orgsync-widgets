@@ -29,6 +29,8 @@ export default React.createClass({
     options[past ? 'after' : 'before'] =
       now.add((past ? -1 : 1) * YEAR_LIMIT, 'years').toISOString();
     if (past) options.direction = 'backwards';
+
+    if (this.props.permissions.length) options.statuses = ['unpublished', 'published'];
     fetch(options, _.partial(this.handleFetch, cb));
   },
 

@@ -18,7 +18,7 @@ export default React.createClass({
   mixins: [Cursors],
 
   fetch: function (cb) {
-    var options = {
+    const options = {
       ranges: this.state.ranges,
       events: this.state.allEvents,
       url: this.props.eventsUrl

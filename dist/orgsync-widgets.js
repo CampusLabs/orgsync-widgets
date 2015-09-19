@@ -41653,7 +41653,7 @@ define('components/builder/index', ['exports', 'module', 'underscore', 'undersco
     },
     Events: {
       moduleName: 'events/index',
-      props: ['communityId', 'isService', 'portalId', 'view', 'lockView', 'tz', 'activeEventFilterIds', 'permissions', 'redirect', 'rolloutNewEvents', 'shouldUpdateUrl']
+      props: ['communityId', 'isService', 'isUmbrella', 'portalId', 'view', 'lockView', 'tz', 'activeEventFilterIds', 'permissions', 'redirect', 'rolloutNewEvents', 'shouldUpdateUrl']
     },
     Files: {
       moduleName: 'files/index',
@@ -46360,6 +46360,7 @@ define('components/events/index', ['exports', 'module', 'underscore', 'component
         events: [],
         filtersAreShowing: true,
         isService: false,
+        isUmbrella: false,
         lockView: false,
         redirect: false,
         rolloutNewEvents: false,
@@ -46678,7 +46679,7 @@ define('components/events/index', ['exports', 'module', 'underscore', 'component
     },
 
     renderManageCategories: function renderManageCategories() {
-      if (this.props.isService) return;
+      if (this.props.isService && !this.props.isUmbrella) return;
 
       return _React['default'].createElement(
         'div',

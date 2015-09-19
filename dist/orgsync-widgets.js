@@ -45189,11 +45189,11 @@ define('components/events/list-item', ['exports', 'module', 'underscore.string',
           _React['default'].createElement(
             'div',
             { className: 'osw-events-list-item-info' },
+            this.renderCategory(),
             _React['default'].createElement(
               'div',
               { className: 'osw-events-list-item-title' },
-              event.title,
-              this.renderCategory()
+              event.title
             ),
             _React['default'].createElement(
               'div',

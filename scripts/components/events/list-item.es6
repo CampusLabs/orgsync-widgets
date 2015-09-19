@@ -160,9 +160,9 @@ export default React.createClass({
           </div>
           {this.renderEventTypeIcon()}
           <div className='osw-events-list-item-info'>
+            {this.renderCategory()}
             <div className='osw-events-list-item-title'>
               {event.title}
-              {this.renderCategory()}
             </div>
             <div className='osw-events-list-item-subtext'>
               <span className='osw-events-list-item-time'>

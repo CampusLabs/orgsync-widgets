@@ -57,6 +57,14 @@ export var getColor = function(event, filters) {
   return match && match.hex;
 };
 
+export var isLightColor = function (hexcode) {
+  var r = parseInt(hexcode.substr(0,2),16);
+  var g = parseInt(hexcode.substr(2,2),16);
+  var b = parseInt(hexcode.substr(4,2),16);
+  var yiq = ((r*299)+(g*587)+(b*114))/1000;
+  return (yiq >= 160) ? false : true;
+};
+
 var fixDate = function (date, isAllDay) {
   return isAllDay ? date.slice(0, 10) : moment.utc(date).toISOString();
 };

@@ -44889,6 +44889,15 @@ define('entities/event', ['exports', 'underscore', 'underscore.string', 'api', '
   };
 
   exports.getColor = getColor;
+  var isLightColor = function isLightColor(hexcode) {
+    var r = parseInt(hexcode.substr(0, 2), 16);
+    var g = parseInt(hexcode.substr(2, 2), 16);
+    var b = parseInt(hexcode.substr(4, 2), 16);
+    var yiq = (r * 299 + g * 587 + b * 114) / 1000;
+    return yiq >= 160 ? false : true;
+  };
+
+  exports.isLightColor = isLightColor;
   var fixDate = function fixDate(date, isAllDay) {
     return isAllDay ? date.slice(0, 10) : _moment['default'].utc(date).toISOString();
   };
@@ -45614,7 +45623,15 @@ define('components/events/list-item', ['exports', 'module', 'underscore.string',
 
     getStyle: function getStyle() {
       var color = (0, _entitiesEvent.getColor)(this.state.event, this.props.eventFilters);
-      if (color) return { backgroundColor: '#' + color };
+      var styles = {};
+
+      if (color) {
+        styles.backgroundColor = '#' + color;
+        if (isLightColor(color)) {
+          styles.color = 'rgba(0,0,0,0.7)';
+        }
+      }
+      return styles;
     },
 
     renderRsvp: function renderRsvp() {

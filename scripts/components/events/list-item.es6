@@ -6,7 +6,7 @@ import React from 'react';
 import Sep from 'components/ui/sep';
 import Show from 'components/events/show';
 
-import {getMoment, getColor} from 'entities/event';
+import {getMoment, getColor, isDark} from 'entities/event';
 
 var FORMAT = 'h:mm A';
 
@@ -62,7 +62,15 @@ export default React.createClass({
 
   getStyle: function () {
     var color = getColor(this.state.event, this.props.eventFilters);
-    if (color) return {backgroundColor: '#' + color};
+    var styles = {};
+
+    if (color) {
+      styles.backgroundColor = '#' + color;
+      if (isLightColor(color)) {
+        styles.color = 'rgba(0,0,0,0.7)';
+      }
+    }
+    return styles;
   },
 
   renderRsvp: function () {

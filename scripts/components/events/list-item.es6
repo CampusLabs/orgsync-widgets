@@ -6,7 +6,7 @@ import React from 'react';
 import Sep from 'components/ui/sep';
 import Show from 'components/events/show';
 
-import {getMoment, getColor, isDark} from 'entities/event';
+import {getMoment, getColor, isLightColor} from 'entities/event';
 
 var FORMAT = 'h:mm A';
 

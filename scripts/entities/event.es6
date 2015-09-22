@@ -62,7 +62,7 @@ export var isLightColor = function (hexcode) {
   var g = parseInt(hexcode.substr(2,2),16);
   var b = parseInt(hexcode.substr(4,2),16);
   var yiq = ((r*299)+(g*587)+(b*114))/1000;
-  return (yiq >= 160) ? false : true;
+  return (yiq >= 160) ? true : false;
 };
 
 var fixDate = function (date, isAllDay) {

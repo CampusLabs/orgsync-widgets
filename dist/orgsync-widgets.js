@@ -44894,7 +44894,7 @@ define('entities/event', ['exports', 'underscore', 'underscore.string', 'api', '
     var g = parseInt(hexcode.substr(2, 2), 16);
     var b = parseInt(hexcode.substr(4, 2), 16);
     var yiq = (r * 299 + g * 587 + b * 114) / 1000;
-    return yiq >= 160 ? false : true;
+    return yiq >= 160 ? true : false;
   };
 
   exports.isLightColor = isLightColor;
@@ -45627,7 +45627,7 @@ define('components/events/list-item', ['exports', 'module', 'underscore.string',
 
       if (color) {
         styles.backgroundColor = '#' + color;
-        if (isLightColor(color)) {
+        if ((0, _entitiesEvent.isLightColor)(color)) {
           styles.color = 'rgba(0,0,0,0.7)';
         }
       }

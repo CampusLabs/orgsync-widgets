@@ -140,6 +140,7 @@ export var fetch = function (options, cb) {
     after: options.after,
     before: options.before,
     direction: options.direction,
-    restrict_to_portal: false
+    restrict_to_portal: false,
+    statuses: options.statuses
   }, _.partial(handleFetch, options, cb));
 };

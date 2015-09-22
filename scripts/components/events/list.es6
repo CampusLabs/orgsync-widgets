@@ -18,7 +18,7 @@ export default React.createClass({
   mixins: [Cursors],
 
   fetch: function (cb) {
-    var options = {
+    const options = {
       ranges: this.state.ranges,
       events: this.state.allEvents,
       url: this.props.eventsUrl
@@ -29,6 +29,8 @@ export default React.createClass({
     options[past ? 'after' : 'before'] =
       now.add((past ? -1 : 1) * YEAR_LIMIT, 'years').toISOString();
     if (past) options.direction = 'backwards';
+
+    if (this.props.permissions.length) options.statuses = ['unpublished', 'published'];
     fetch(options, _.partial(this.handleFetch, cb));
   },
 

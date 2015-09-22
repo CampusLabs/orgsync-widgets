@@ -389,6 +389,7 @@ export default React.createClass({
         <Calendar
           key='calendar'
           weeks={6}
+          permissions={this.props.permissions}
           events={this.getFilteredEvents()}
           eventFilters={this.getActiveEventFilters()}
           eventsUrl={this.getEventsUrl()}
@@ -408,6 +409,7 @@ export default React.createClass({
           eventFilters={this.getActiveEventFilters()}
           eventsUrl={this.getEventsUrl()}
           baseUrl={this.getBaseURL()}
+          permissions={this.props.permissions}
           query={this.state.query}
           redirect={this.props.redirect}
           rolloutNewEvents={this.props.rolloutNewEvents}
@@ -427,6 +429,7 @@ export default React.createClass({
           eventFilters={this.getActiveEventFilters()}
           eventsUrl={this.getEventsUrl()}
           baseUrl={this.getBaseURL()}
+          permissions={this.props.permissions}
           query={this.state.query}
           redirect={this.props.redirect}
           rolloutNewEvents={this.props.rolloutNewEvents}

@@ -146,11 +146,29 @@ export default React.createClass({
     );
   },
 
+  renderUnpublishedStatus: function () {
+    if (this.state.event.status == 'Published') return;
+
+    var classes = `osw-events-list-item-${this.state.event.status.toLowerCase()}`;
+
+    return (
+      <span className={classes}>
+        {this.state.event.status}
+      </span>
+    );
+  },
+
   render: function () {
     var event = this.state.event;
     var src = event.thumbnail_url;
+    var wrapperClass = 'osw-events-list-item';
+
+    if (event.status != 'Published') {
+      wrapperClass += ' osw-events-list-unpublished';
+    }
+
     return (
-      <div className='osw-events-list-item'>
+      <div className={wrapperClass}>
         <div
           className='osw-events-list-item-content'
           onClick={this.handleClick}
@@ -159,6 +177,7 @@ export default React.createClass({
             {src ? <img src={src} /> : this.renderDefaultPicture()}
           </div>
           {this.renderEventTypeIcon()}
+          {this.renderUnpublishedStatus()}
           <div className='osw-events-list-item-info'>
             {this.renderCategory()}
             <div className='osw-events-list-item-title'>

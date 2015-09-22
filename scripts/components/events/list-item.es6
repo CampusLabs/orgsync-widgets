@@ -137,7 +137,7 @@ export default React.createClass({
 
   renderCategory: function () {
     const {name} = this.state.event.category;
-    if (name === 'General') return;
+    if (name === 'General' || this.state.event.status != 'Published') return;
     return (
       <span className='osw-events-list-item-category'
         style={this.getStyle()}>

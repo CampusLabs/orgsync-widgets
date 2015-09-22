@@ -45695,7 +45695,7 @@ define('components/events/list-item', ['exports', 'module', 'underscore.string',
     renderCategory: function renderCategory() {
       var name = this.state.event.category.name;
 
-      if (name === 'General') return;
+      if (name === 'General' || this.state.event.status != 'Published') return;
       return _React['default'].createElement(
         'span',
         { className: 'osw-events-list-item-category',

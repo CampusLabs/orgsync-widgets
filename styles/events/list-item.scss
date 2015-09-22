@@ -7,6 +7,7 @@
     border-bottom: 1px solid #dedede;
     cursor: pointer;
     padding: 10px 10px 10px 15px;
+    position: relative;
   }
 
   .osw-events-list-item-picture-container {
@@ -17,6 +18,7 @@
     margin-right: 15px;
     text-align: center;
     width: 50px;
+
     > img {
       width: 100%;
     }
@@ -41,6 +43,7 @@
 
   .osw-events-list-item-info {
     padding-top: 2px;
+    position: relative;
   }
 
   .osw-events-list-item-title {
@@ -77,7 +80,7 @@
     @include ellipsis;
   }
 
-  .osw-ongoing-notice a{
+  .osw-ongoing-notice a {
     text-decoration: none;
   }
 
@@ -99,6 +102,7 @@
     line-height: 1.2em;
     padding: 8px 0 0 10px;
     vertical-align: top;
+
     .osw-subtle-text {
       @include subtle-text;
       font-size: 13px;
@@ -106,12 +110,19 @@
   }
 
   .osw-event-type-icon {
-    float: right;
-    font-size: 21px;
-    height: 50px;
-    line-height: 50px;
+    background: $orange;
+    border: 2px solid #fff;
+    border-radius: 50%;
+    color: #fff;
+    font-size: 18px;
+    height: 25px;
+    left: 45px;
+    line-height: 20px;
+    padding: 0;
+    position: absolute;
     text-align: center;
-    width: 50px;
+    top: 35px;
+    width: 25px;
   }
 
   .osw-events-list-item-category {
@@ -122,8 +133,9 @@
     line-height: 18px;
     margin-left: 8px;
     padding: 0 3px;
-    position: relative;
-    top: -2px;
+    position: absolute;
+    right: 0;
+    top: 15px;
   }
 
   .osw-events-list-unpublished .osw-events-list-item-content{

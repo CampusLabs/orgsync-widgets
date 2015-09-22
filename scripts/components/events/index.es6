@@ -31,6 +31,7 @@ export default React.createClass({
       events: [],
       filtersAreShowing: true,
       isService: false,
+      isUmbrella: false,
       lockView: false,
       redirect: false,
       rolloutNewEvents: false,
@@ -322,7 +323,7 @@ export default React.createClass({
   },
 
   renderManageCategories: function () {
-    if (this.props.isService) return;
+    if (this.props.isService && !this.props.isUmbrella) return;
 
     return (
       <div className='events-manage-categories'>

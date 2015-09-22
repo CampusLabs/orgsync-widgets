@@ -1138,7 +1138,8 @@
   background: #fff;
   border-bottom: 1px solid #dedede;
   cursor: pointer;
-  padding: 10px 10px 10px 15px; }
+  padding: 10px 10px 10px 15px;
+  position: relative; }
   .orgsync-widget .osw-events-list-item-content::after {
     clear: both;
     content: "";
@@ -1172,7 +1173,8 @@
   font-size: 14px;
   line-height: 25px; }
 .orgsync-widget .osw-events-list-item-info {
-  padding-top: 2px; }
+  padding-top: 2px;
+  position: relative; }
 .orgsync-widget .osw-events-list-item-title {
   color: #0079ff;
   font-size: 16px;
@@ -1220,12 +1222,19 @@
     font-size: 14px;
     font-size: 13px; }
 .orgsync-widget .osw-event-type-icon {
-  float: right;
-  font-size: 21px;
-  height: 50px;
-  line-height: 50px;
+  background: #e57d02;
+  border: 2px solid #fff;
+  border-radius: 50%;
+  color: #fff;
+  font-size: 18px;
+  height: 25px;
+  left: 45px;
+  line-height: 20px;
+  padding: 0;
+  position: absolute;
   text-align: center;
-  width: 50px; }
+  top: 35px;
+  width: 25px; }
 .orgsync-widget .osw-events-list-item-category {
   border-radius: 3px;
   color: #fff;
@@ -1234,8 +1243,9 @@
   line-height: 18px;
   margin-left: 8px;
   padding: 0 3px;
-  position: relative;
-  top: -2px; }
+  position: absolute;
+  right: 0;
+  top: 15px; }
 .orgsync-widget .osw-events-list-unpublished .osw-events-list-item-content {
   background: -webkit-repeating-linear-gradient(145deg, #f9f9f9, #f9f9f9 3px, #fff 3px, #fff 6px);
   background: repeating-linear-gradient(-55deg, #f9f9f9, #f9f9f9 3px, #fff 3px, #fff 6px); }

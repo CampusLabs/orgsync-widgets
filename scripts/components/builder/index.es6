@@ -20,6 +20,7 @@ const WIDGETS = {
     props: [
       'communityId',
       'isService',
+      'isUmbrella',
       'portalId',
       'view',
       'lockView',

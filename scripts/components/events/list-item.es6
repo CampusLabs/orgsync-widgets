@@ -179,9 +179,9 @@ export default React.createClass({
           {this.renderEventTypeIcon()}
           {this.renderUnpublishedStatus()}
           <div className='osw-events-list-item-info'>
+            {this.renderCategory()}
             <div className='osw-events-list-item-title'>
               {event.title}
-              {this.renderCategory()}
             </div>
             <div className='osw-events-list-item-subtext'>
               <span className='osw-events-list-item-time'>

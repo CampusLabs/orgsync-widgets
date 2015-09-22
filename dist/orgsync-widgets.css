@@ -1222,11 +1222,11 @@
     font-size: 14px;
     font-size: 13px; }
 .orgsync-widget .osw-event-type-icon {
-  background: #e57d02;
-  border: 2px solid #fff;
+  background: white;
+  border: 1px solid #dedede;
   border-radius: 50%;
-  color: #fff;
-  font-size: 18px;
+  color: #ccc;
+  font-size: 17px;
   height: 25px;
   left: 45px;
   line-height: 20px;
@@ -1242,7 +1242,7 @@
   font-size: 13px;
   line-height: 18px;
   margin-left: 8px;
-  padding: 0 3px;
+  padding: 0 6px;
   position: absolute;
   right: 0;
   top: 15px; }

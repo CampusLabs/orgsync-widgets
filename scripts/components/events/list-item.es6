@@ -149,7 +149,7 @@ export default React.createClass({
   renderUnpublishedStatus: function () {
     if (this.state.event.status == 'Published') return;
 
-    var classes = `osw-events-list-item-${this.state.event.status.toLowercase()}`;
+    var classes = `osw-events-list-item-${this.state.event.status.toLowerCase()}`;
 
     return (
       <span className={classes}>

@@ -45707,7 +45707,7 @@ define('components/events/list-item', ['exports', 'module', 'underscore.string',
     renderUnpublishedStatus: function renderUnpublishedStatus() {
       if (this.state.event.status == 'Published') return;
 
-      var classes = 'osw-events-list-item-' + this.state.event.status.toLowercase();
+      var classes = 'osw-events-list-item-' + this.state.event.status.toLowerCase();
 
       return _React['default'].createElement(
         'span',

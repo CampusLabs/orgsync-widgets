@@ -162,7 +162,10 @@ export default React.createClass({
     var event = this.state.event;
     var src = event.thumbnail_url;
     var wrapperClass = 'osw-events-list-item';
-    if (event.status != 'Published') wrapperClass += ' osw-events-list-unpublished';
+
+    if (event.status != 'Published') {
+      wrapperClass += ' osw-events-list-unpublished';
+    }
 
     return (
       <div className={wrapperClass}>

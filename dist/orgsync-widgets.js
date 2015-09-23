@@ -42366,6 +42366,8 @@ define('components/builder/index', ['exports', 'module', 'underscore', 'undersco
 define('components/ui/checkbox', ['exports', 'module', 'components/ui/icon', 'react'], function (exports, module, _componentsUiIcon, _react) {
   'use strict';
 
+  var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+
   function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 
   var _Icon = _interopRequireDefault(_componentsUiIcon);
@@ -42376,32 +42378,40 @@ define('components/ui/checkbox', ['exports', 'module', 'components/ui/icon', 're
     displayName: 'checkbox',
 
     render: function render() {
-      var cx = _React['default'].addons.classSet;
-      var classes = cx({
-        'osw-checkbox': true,
-        'osw-checkbox-colored': this.props.color,
-        'osw-checkbox-unchecked': !this.props.checked
-      });
+      var _props = this.props;
+      var checked = _props.checked;
+      var className = _props.className;
+      var color = _props.color;
+      var handleChange = _props.handleChange;
+      var label = _props.label;
 
-      var styles = {};
-      if (this.props.color && this.props.checked) {
-        styles = { background: '#' + this.props.color };
+      var cx = _React['default'].addons.classSet;
+
+      var style = undefined;
+      if (color && checked) {
+        style = { background: '#' + (color === 'ffffff' ? 'dddddd' : color) };
       }
 
       return _React['default'].createElement(
         'label',
-        { onClick: this.props.handleChange, className: this.props.className },
+        { className: className },
         _React['default'].createElement(
           'div',
-          { className: classes, style: styles },
+          _extends({ style: style }, {
+            className: cx({
+              'osw-checkbox': true,
+              'osw-checkbox-colored': color,
+              'osw-checkbox-unchecked': !checked
+            })
+          }),
           _React['default'].createElement(_Icon['default'], { name: 'check' })
         ),
-        _React['default'].createElement('input', {
-          type: 'checkbox',
-          defaultChecked: this.props.checked,
-          style: { display: 'none' }
-        }),
-        this.props.label
+        _React['default'].createElement('input', _extends({ checked: checked }, {
+          onChange: handleChange,
+          style: { display: 'none' },
+          type: 'checkbox'
+        })),
+        label
       );
     }
   });
@@ -45408,6 +45418,7 @@ define('components/events/td', ['exports', 'module', 'cursors', 'components/ui/p
       var event = this.state.event;
       var color = (0, _entitiesEvent.getColor)(event, this.props.eventFilters);
       if (!color) return;
+      if (color === 'ffffff') color = '888888';
       var style = { borderColor: '#' + color };
       var tz = this.props.tz;
       if ((0, _entitiesEvent.isAllDay)(event, tz) || this.isContinued() || this.doesContinue()) {

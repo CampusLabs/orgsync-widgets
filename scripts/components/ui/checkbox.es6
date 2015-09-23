@@ -4,29 +4,33 @@ import React from 'react';
 export default React.createClass({
 
   render: function () {
-    var cx = React.addons.classSet;
-    var classes = cx({
-      'osw-checkbox': true,
-      'osw-checkbox-colored': this.props.color,
-      'osw-checkbox-unchecked': !this.props.checked
-    });
+    const {checked, className, color, handleChange, label} = this.props;
+    const cx = React.addons.classSet;
 
-    var styles = {}
-    if (this.props.color && this.props.checked) {
-      styles = {background: '#' + this.props.color}
+    let style;
+    if (color && checked) {
+      style = {background: `#${color === 'ffffff' ? 'dddddd' : color}`};
     }
 
     return (
-      <label onClick={this.props.handleChange} className={this.props.className}>
-        <div className={classes} style={styles}>
+      <label {...{className}}>
+        <div
+          {...{style}}
+          className={cx({
+            'osw-checkbox': true,
+            'osw-checkbox-colored': color,
+            'osw-checkbox-unchecked': !checked
+          })}
+        >
           <Icon name='check' />
         </div>
         <input
-          type='checkbox'
-          defaultChecked={this.props.checked}
+          {...{checked}}
+          onChange={handleChange}
           style={{display: 'none'}}
+          type='checkbox'
         />
-        {this.props.label}
+        {label}
       </label>
     );
   }

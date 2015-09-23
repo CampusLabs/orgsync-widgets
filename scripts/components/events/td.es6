@@ -38,6 +38,7 @@ export default React.createClass({
     var event = this.state.event;
     var color = getColor(event, this.props.eventFilters);
     if (!color) return;
+    if (color === 'ffffff') color = '888888';
     var style = {borderColor: '#' + color};
     var tz = this.props.tz;
     if (isAllDay(event, tz) || this.isContinued() || this.doesContinue()) {

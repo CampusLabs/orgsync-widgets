@@ -1342,13 +1342,16 @@
   border-radius: 50%; }
 .orgsync-widget .osw-events-show-actions {
   padding-top: 10px; }
-  .orgsync-widget .osw-events-show-actions .osw-button, .orgsync-widget .osw-events-show-actions label {
-    margin-bottom: 10px; }
-  .orgsync-widget .osw-events-show-actions input {
-    margin-right: 10px; }
-  .orgsync-widget .osw-events-show-actions label {
-    cursor: pointer;
-    display: block; }
+  .orgsync-widget .osw-events-show-actions .osw-button {
+    border-bottom-right-radius: 0;
+    border-top-right-radius: 0; }
+  .orgsync-widget .osw-events-show-actions .osw-button + .osw-button {
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+    border-left: 0; }
+  .orgsync-widget .osw-events-show-actions .osw-button:last-child {
+    border-bottom-right-radius: 3px;
+    border-top-right-radius: 3px; }
 .orgsync-widget .osw-events-show-see-full-details {
   margin-top: 10px;
   font-size: 14px;

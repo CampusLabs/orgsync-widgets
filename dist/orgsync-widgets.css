@@ -1239,11 +1239,11 @@
   border-radius: 3px;
   color: #fff;
   display: inline-block;
+  float: right;
   font-size: 13px;
   line-height: 18px;
   margin-left: 8px;
   padding: 0 6px;
-  position: absolute;
   right: 0;
   top: 15px; }
 .orgsync-widget .osw-events-list-unpublished .osw-events-list-item-content {

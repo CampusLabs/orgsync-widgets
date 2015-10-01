@@ -162,10 +162,6 @@ export default React.createClass({
     );
   },
 
-  renderRSVPIcon: function (icon) {
-    if (icon) return; <Icon name='check' />;
-  },
-
   renderRsvpAction: function () {
     var event = this.state.event;
     var actions = event.rsvp_actions;
@@ -181,7 +177,7 @@ export default React.createClass({
       buttons = actions.map(function (action) {
         return (
           <Button onClick={_.partial(this.setRsvp, STATUS_MAP[action])}>
-            {this.renderRSVPIcon(action == userAction)} {action}
+            {action === userAction ? <Icon name='check' /> : null} {action}
           </Button>
         );
       }, this);

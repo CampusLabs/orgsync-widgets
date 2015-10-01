@@ -45193,10 +45193,6 @@ define('components/events/show', ['exports', 'module', 'underscore', 'underscore
       );
     },
 
-    renderRSVPIcon: function renderRSVPIcon(icon) {
-      if (icon) return;_React['default'].createElement(_Icon['default'], { name: 'check' });
-    },
-
     renderRsvpAction: function renderRsvpAction() {
       var event = this.state.event;
       var actions = event.rsvp_actions;
@@ -45214,7 +45210,7 @@ define('components/events/show', ['exports', 'module', 'underscore', 'underscore
           return _React['default'].createElement(
             _Button['default'],
             { onClick: _2['default'].partial(this.setRsvp, STATUS_MAP[action]) },
-            this.renderRSVPIcon(action == userAction),
+            action === userAction ? _React['default'].createElement(_Icon['default'], { name: 'check' }) : null,
             ' ',
             action
           );

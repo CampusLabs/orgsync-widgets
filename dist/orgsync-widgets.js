@@ -45194,8 +45194,7 @@ define('components/events/show', ['exports', 'module', 'underscore', 'underscore
     },
 
     renderRSVPIcon: function renderRSVPIcon(icon) {
-      if (!icon) return;
-      return _React['default'].createElement(_Icon['default'], { name: 'check' });
+      if (icon) return;_React['default'].createElement(_Icon['default'], { name: 'check' });
     },
 
     renderRsvpAction: function renderRsvpAction() {
@@ -45209,21 +45208,18 @@ define('components/events/show', ['exports', 'module', 'underscore', 'underscore
           { href: event.pre_event_form, target: '_parent' },
           'Yes, Register Now'
         );
-
-        // HACK: Remove this condition once IE9 support is dropped.
-        // https://hacks.mozilla.org/2009/07/cross-site-xmlhttprequest-with-cors/
       } else {
-          var userAction = ACTION_MAP[event.rsvp];
-          buttons = actions.map(function (action) {
-            return _React['default'].createElement(
-              _Button['default'],
-              { onClick: _2['default'].partial(this.setRsvp, STATUS_MAP[action]) },
-              this.renderRSVPIcon(action == userAction),
-              ' ',
-              action
-            );
-          }, this);
-        }
+        var userAction = ACTION_MAP[event.rsvp];
+        buttons = actions.map(function (action) {
+          return _React['default'].createElement(
+            _Button['default'],
+            { onClick: _2['default'].partial(this.setRsvp, STATUS_MAP[action]) },
+            this.renderRSVPIcon(action == userAction),
+            ' ',
+            action
+          );
+        }, this);
+      }
       return _React['default'].createElement(
         'div',
         { className: 'osw-events-show-rsvp-action' },

@@ -163,8 +163,7 @@ export default React.createClass({
   },
 
   renderRSVPIcon: function (icon) {
-    if (!icon) return;
-    return <Icon name='check' />;
+    if (icon) return; <Icon name='check' />;
   },
 
   renderRsvpAction: function () {
@@ -177,9 +176,6 @@ export default React.createClass({
         <Button href={event.pre_event_form} target='_parent'>
           Yes, Register Now
         </Button>;
-
-    // HACK: Remove this condition once IE9 support is dropped.
-    // https://hacks.mozilla.org/2009/07/cross-site-xmlhttprequest-with-cors/
     } else {
       var userAction = ACTION_MAP[event.rsvp];
       buttons = actions.map(function (action) {

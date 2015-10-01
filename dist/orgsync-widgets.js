@@ -45214,31 +45214,18 @@ define('components/events/show', ['exports', 'module', 'underscore', 'underscore
           { href: event.pre_event_form, target: '_parent' },
           'Yes, Register Now'
         );
-
-        // HACK: Remove this condition once IE9 support is dropped.
-        // https://hacks.mozilla.org/2009/07/cross-site-xmlhttprequest-with-cors/
-      } else if ('withCredentials' in new XMLHttpRequest()) {
-          var userAction = ACTION_MAP[event.rsvp];
-          buttons = actions.map(function (action) {
-            return _React['default'].createElement(
-              'label',
-              { key: action },
-              _React['default'].createElement('input', {
-                type: 'radio',
-                name: 'rsvp',
-                checked: action === userAction,
-                onChange: _2['default'].partial(this.setRsvp, STATUS_MAP[action])
-              }),
-              action
-            );
-          }, this);
-        } else {
-          buttons = _React['default'].createElement(
+      } else {
+        var userAction = ACTION_MAP[event.rsvp];
+        buttons = actions.map(function (action) {
+          return _React['default'].createElement(
             _Button['default'],
-            { href: event.links.web, target: '_parent' },
-            'RSVP'
+            { onClick: _2['default'].partial(this.setRsvp, STATUS_MAP[action]) },
+            action === userAction ? _React['default'].createElement(_Icon['default'], { name: 'check' }) : null,
+            ' ',
+            action
           );
-        }
+        }, this);
+      }
       return _React['default'].createElement(
         'div',
         { className: 'osw-events-show-rsvp-action' },
@@ -45261,7 +45248,7 @@ define('components/events/show', ['exports', 'module', 'underscore', 'underscore
       var message = this.state.event.rsvp_message;
       if (message) message = _React['default'].createElement(
         'div',
-        null,
+        { className: 'osw-rsvp-message' },
         message
       );
       if (!_2['default'].any([attendees, rsvpAction, message])) return;

@@ -111,18 +111,18 @@
   .osw-events-show-actions {
     padding-top: 10px;
 
-    .osw-button,
-    label {
-      margin-bottom: 10px;
+    .osw-button{
+      border-bottom-right-radius: 0;
+      border-top-right-radius: 0;
     }
-
-    input {
-      margin-right: 10px;
+    .osw-button + .osw-button{
+      border-top-left-radius: 0;
+      border-bottom-left-radius: 0;
+      border-left: 0;
     }
-
-    label {
-      cursor: pointer;
-      display: block;
+    .osw-button:last-child{
+      border-bottom-right-radius: 3px;
+      border-top-right-radius: 3px;
     }
   }
 

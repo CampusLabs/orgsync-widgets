@@ -162,6 +162,11 @@ export default React.createClass({
     );
   },
 
+  renderRSVPIcon: function (icon) {
+    if (!icon) return;
+    return <Icon name='check' />;
+  },
+
   renderRsvpAction: function () {
     var event = this.state.event;
     var actions = event.rsvp_actions;
@@ -179,15 +184,9 @@ export default React.createClass({
       var userAction = ACTION_MAP[event.rsvp];
       buttons = actions.map(function (action) {
         return (
-          <label key={action}>
-            <input
-              type='radio'
-              name='rsvp'
-              checked={action === userAction}
-              onChange={_.partial(this.setRsvp, STATUS_MAP[action])}
-            />
-            {action}
-          </label>
+          <Button onClick={_.partial(this.setRsvp, STATUS_MAP[action])}>
+            {this.renderRSVPIcon(action == userAction)} {action}
+          </Button>
         );
       }, this);
     } else {

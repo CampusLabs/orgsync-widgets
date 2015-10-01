@@ -45203,6 +45203,11 @@ define('components/events/show', ['exports', 'module', 'underscore', 'underscore
       );
     },
 
+    renderRSVPIcon: function renderRSVPIcon(icon) {
+      if (!icon) return;
+      return _React['default'].createElement(_Icon['default'], { name: 'check' });
+    },
+
     renderRsvpAction: function renderRsvpAction() {
       var event = this.state.event;
       var actions = event.rsvp_actions;
@@ -45221,14 +45226,10 @@ define('components/events/show', ['exports', 'module', 'underscore', 'underscore
           var userAction = ACTION_MAP[event.rsvp];
           buttons = actions.map(function (action) {
             return _React['default'].createElement(
-              'label',
-              { key: action },
-              _React['default'].createElement('input', {
-                type: 'radio',
-                name: 'rsvp',
-                checked: action === userAction,
-                onChange: _2['default'].partial(this.setRsvp, STATUS_MAP[action])
-              }),
+              _Button['default'],
+              { onClick: _2['default'].partial(this.setRsvp, STATUS_MAP[action]) },
+              this.renderRSVPIcon(action == userAction),
+              ' ',
               action
             );
           }, this);

@@ -8,7 +8,6 @@ import React from 'react';
 import RsvpButtons from 'components/events/rsvp-buttons';
 import Sep from 'components/ui/sep';
 
-import {getPictureUrl} from 'entities/account';
 import {getMoment, isAllDay, mergeResponse} from 'entities/event';
 
 var DATE_FORMAT = 'dddd, MMM D, YYYY';
@@ -114,15 +113,6 @@ export default React.createClass({
           </a>
         </div>
       </Section>
-    );
-  },
-
-  renderAttendee: function (attendee) {
-    var alt = attendee.display_name;
-    return (
-      <span key={attendee.id} className='osw-events-show-attendee'>
-        <img src={getPictureUrl(attendee)} alt={alt} title={alt} />
-      </span>
     );
   },
 

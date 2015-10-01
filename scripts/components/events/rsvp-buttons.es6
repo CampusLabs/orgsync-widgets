@@ -5,6 +5,9 @@ import Cursors from 'cursors';
 import Icon from 'components/ui/icon';
 import React from 'react';
 
+import {getPictureUrl} from 'entities/account';
+import {getMoment, isAllDay, mergeResponse} from 'entities/event';
+
 var STATUS_MAP = {
   Yes: 'Attending',
   Maybe: 'Maybe Attending',
@@ -19,7 +22,6 @@ var ACTION_MAP = {
 };
 
 var Section = React.createClass({
-  mixins: [Cursors],
 
   render: function () {
     return (
@@ -34,6 +36,14 @@ var Section = React.createClass({
 });
 
 export default React.createClass({
+  mixins: [Cursors],
+
+  handleFetch: function (er, res) {
+    var deltas = {isLoading: {$set: false}};
+    if (er) deltas.error = {$set: er};
+    else deltas.event = {$merge: mergeResponse(this.state.event, res.data)};
+    this.update(deltas);
+  },
 
   renderRSVPIcon: function (icon) {
     if (!icon) return;
@@ -57,6 +67,15 @@ export default React.createClass({
           null
         }
       </div>
+    );
+  },
+
+  renderAttendee: function (attendee) {
+    var alt = attendee.display_name;
+    return (
+      <span key={attendee.id} className='osw-events-show-attendee'>
+        <img src={getPictureUrl(attendee)} alt={alt} title={alt} />
+      </span>
     );
   },
 

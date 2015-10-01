@@ -44985,7 +44985,7 @@ define('entities/event', ['exports', 'underscore', 'underscore.string', 'api', '
   exports.fetch = fetch;
 });
 // scripts/components/events/rsvp-buttons.es6
-define('components/events/rsvp-buttons', ['exports', 'module', 'underscore', 'api', 'components/ui/button', 'cursors', 'components/ui/icon', 'react'], function (exports, module, _underscore, _api, _componentsUiButton, _cursors, _componentsUiIcon, _react) {
+define('components/events/rsvp-buttons', ['exports', 'module', 'underscore', 'api', 'components/ui/button', 'cursors', 'components/ui/icon', 'react', 'entities/account', 'entities/event'], function (exports, module, _underscore, _api, _componentsUiButton, _cursors, _componentsUiIcon, _react, _entitiesAccount, _entitiesEvent) {
   'use strict';
 
   function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
@@ -45018,8 +45018,6 @@ define('components/events/rsvp-buttons', ['exports', 'module', 'underscore', 'ap
   var Section = _React['default'].createClass({
     displayName: 'Section',
 
-    mixins: [_Cursors['default']],
-
     render: function render() {
       return _React['default'].createElement(
         'div',
@@ -45036,6 +45034,14 @@ define('components/events/rsvp-buttons', ['exports', 'module', 'underscore', 'ap
 
   module.exports = _React['default'].createClass({
     displayName: 'rsvp-buttons',
+
+    mixins: [_Cursors['default']],
+
+    handleFetch: function handleFetch(er, res) {
+      var deltas = { isLoading: { $set: false } };
+      if (er) deltas.error = { $set: er };else deltas.event = { $merge: (0, _entitiesEvent.mergeResponse)(this.state.event, res.data) };
+      this.update(deltas);
+    },
 
     renderRSVPIcon: function renderRSVPIcon(icon) {
       if (!icon) return;
@@ -45063,6 +45069,15 @@ define('components/events/rsvp-buttons', ['exports', 'module', 'underscore', 'ap
             ' more...'
           )
         ) : null
+      );
+    },
+
+    renderAttendee: function renderAttendee(attendee) {
+      var alt = attendee.display_name;
+      return _React['default'].createElement(
+        'span',
+        { key: attendee.id, className: 'osw-events-show-attendee' },
+        _React['default'].createElement('img', { src: (0, _entitiesAccount.getPictureUrl)(attendee), alt: alt, title: alt })
       );
     },
 
@@ -45133,7 +45148,7 @@ define('components/events/rsvp-buttons', ['exports', 'module', 'underscore', 'ap
   });
 });
 // scripts/components/events/show.es6
-define('components/events/show', ['exports', 'module', 'underscore', 'underscore.string', 'api', 'components/ui/button', 'cursors', 'components/ui/icon', 'react', 'components/events/rsvp-buttons', 'components/ui/sep', 'entities/account', 'entities/event'], function (exports, module, _underscore, _underscoreString, _api, _componentsUiButton, _cursors, _componentsUiIcon, _react, _componentsEventsRsvpButtons, _componentsUiSep, _entitiesAccount, _entitiesEvent) {
+define('components/events/show', ['exports', 'module', 'underscore', 'underscore.string', 'api', 'components/ui/button', 'cursors', 'components/ui/icon', 'react', 'components/events/rsvp-buttons', 'components/ui/sep', 'entities/event'], function (exports, module, _underscore, _underscoreString, _api, _componentsUiButton, _cursors, _componentsUiIcon, _react, _componentsEventsRsvpButtons, _componentsUiSep, _entitiesEvent) {
   'use strict';
 
   function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
@@ -45290,15 +45305,6 @@ define('components/events/show', ['exports', 'module', 'underscore', 'underscore
             'Add to Google Calendar'
           )
         )
-      );
-    },
-
-    renderAttendee: function renderAttendee(attendee) {
-      var alt = attendee.display_name;
-      return _React['default'].createElement(
-        'span',
-        { key: attendee.id, className: 'osw-events-show-attendee' },
-        _React['default'].createElement('img', { src: (0, _entitiesAccount.getPictureUrl)(attendee), alt: alt, title: alt })
       );
     },
 

@@ -5,6 +5,7 @@ import Button from 'components/ui/button';
 import Cursors from 'cursors';
 import Icon from 'components/ui/icon';
 import React from 'react';
+import RsvpButtons from 'components/events/rsvp-buttons';
 import Sep from 'components/ui/sep';
 
 import {getPictureUrl} from 'entities/account';
@@ -12,19 +13,6 @@ import {getMoment, isAllDay, mergeResponse} from 'entities/event';
 
 var DATE_FORMAT = 'dddd, MMM D, YYYY';
 var TIME_FORMAT = 'h:mm A';
-
-var STATUS_MAP = {
-  Yes: 'Attending',
-  Maybe: 'Maybe Attending',
-  No: 'Not Attending'
-};
-
-var ACTION_MAP = {
-  Attending: 'Yes',
-  'Added by Admin': 'Yes',
-  'Maybe Attending': 'Maybe',
-  'Not Attending': 'No'
-};
 
 var Section = React.createClass({
   mixin: [Cursors],
@@ -71,11 +59,6 @@ export default React.createClass({
   fetch: function () {
     this.update({isLoading: {$set: true}, error: {$set: null}});
     api.get(this.state.event.links.show, this.handleFetch);
-  },
-
-  setRsvp: function (status) {
-    this.update({isLoading: {$set: true}, error: {$set: null}});
-    api.post(this.state.event.links.rsvp, {status: status}, this.handleFetch);
   },
 
   handleFetch: function (er, res) {
@@ -143,82 +126,6 @@ export default React.createClass({
     );
   },
 
-  renderAttendees: function () {
-    var event = this.state.event;
-    var sample = event.attendees_sample;
-    if (!_.size(sample)) return;
-    var more = event.total_attendees - sample.length;
-    return (
-      <div className='osw-events-show-attendees'>
-        {event.attendees_sample.map(this.renderAttendee)}
-        {
-          more ?
-          <div>
-            <a href={event.links.web} target='_parent'>And {more} more...</a>
-          </div> :
-          null
-        }
-      </div>
-    );
-  },
-
-  renderRSVPIcon: function (icon) {
-    if (!icon) return;
-    return <Icon name='check' />;
-  },
-
-  renderRsvpAction: function () {
-    var event = this.state.event;
-    var actions = event.rsvp_actions;
-    if (!_.size(actions)) return;
-    var buttons;
-    if (actions[0] === 'Register') {
-      buttons =
-        <Button href={event.pre_event_form} target='_parent'>
-          Yes, Register Now
-        </Button>;
-
-    // HACK: Remove this condition once IE9 support is dropped.
-    // https://hacks.mozilla.org/2009/07/cross-site-xmlhttprequest-with-cors/
-    } else if ('withCredentials' in new XMLHttpRequest()) {
-      var userAction = ACTION_MAP[event.rsvp];
-      buttons = actions.map(function (action) {
-        return (
-          <Button onClick={_.partial(this.setRsvp, STATUS_MAP[action])}>
-            {this.renderRSVPIcon(action == userAction)} {action}
-          </Button>
-        );
-      }, this);
-    } else {
-      buttons = <Button href={event.links.web} target='_parent'>RSVP</Button>;
-    }
-    return (
-      <div className='osw-events-show-rsvp-action'>
-        <strong>Will you be attending?</strong>
-        {
-          buttons ?
-          <div className='osw-events-show-actions'>{buttons}</div> :
-          null
-        }
-      </div>
-    );
-  },
-
-  renderRsvp: function () {
-    var attendees = this.renderAttendees();
-    var rsvpAction = this.renderRsvpAction();
-    var message = this.state.event.rsvp_message;
-    if (message) message = <div>{message}</div>;
-    if (!_.any([attendees, rsvpAction, message])) return;
-    return (
-      <Section icon='rsvp'>
-        {attendees}
-        {rsvpAction}
-        {message}
-      </Section>
-    );
-  },
-
   renderLocation: function () {
     var location = this.state.event.location;
     if (!location) return;
@@ -281,7 +188,7 @@ export default React.createClass({
           </a>
           {this.renderTime()}
           {this.renderLocation()}
-          {this.renderRsvp()}
+          <RsvpButtons cursors={{event: this.getCursor('event')}} />
           {this.renderPortalName()}
           {this.renderDescription()}
           <div className='osw-events-show-see-full-details'>

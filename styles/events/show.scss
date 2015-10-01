@@ -140,4 +140,9 @@
       margin: 0 20px 0 0;
     }
   }
+
+  .osw-rsvp-message{
+    @include subtle-text;
+    margin-top: 8px;
+  }
 }

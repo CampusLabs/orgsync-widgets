@@ -45212,7 +45212,7 @@ define('components/events/show', ['exports', 'module', 'underscore', 'underscore
 
         // HACK: Remove this condition once IE9 support is dropped.
         // https://hacks.mozilla.org/2009/07/cross-site-xmlhttprequest-with-cors/
-      } else if ('withCredentials' in new XMLHttpRequest()) {
+      } else {
           var userAction = ACTION_MAP[event.rsvp];
           buttons = actions.map(function (action) {
             return _React['default'].createElement(
@@ -45223,12 +45223,6 @@ define('components/events/show', ['exports', 'module', 'underscore', 'underscore
               action
             );
           }, this);
-        } else {
-          buttons = _React['default'].createElement(
-            _Button['default'],
-            { href: event.links.web, target: '_parent' },
-            'RSVP'
-          );
         }
       return _React['default'].createElement(
         'div',
@@ -45252,7 +45246,7 @@ define('components/events/show', ['exports', 'module', 'underscore', 'underscore
       var message = this.state.event.rsvp_message;
       if (message) message = _React['default'].createElement(
         'div',
-        null,
+        { className: 'osw-rsvp-message' },
         message
       );
       if (!_2['default'].any([attendees, rsvpAction, message])) return;

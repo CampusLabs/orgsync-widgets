@@ -180,7 +180,7 @@ export default React.createClass({
 
     // HACK: Remove this condition once IE9 support is dropped.
     // https://hacks.mozilla.org/2009/07/cross-site-xmlhttprequest-with-cors/
-    } else if ('withCredentials' in new XMLHttpRequest()) {
+    } else {
       var userAction = ACTION_MAP[event.rsvp];
       buttons = actions.map(function (action) {
         return (
@@ -189,8 +189,6 @@ export default React.createClass({
           </Button>
         );
       }, this);
-    } else {
-      buttons = <Button href={event.links.web} target='_parent'>RSVP</Button>;
     }
     return (
       <div className='osw-events-show-rsvp-action'>
@@ -208,7 +206,7 @@ export default React.createClass({
     var attendees = this.renderAttendees();
     var rsvpAction = this.renderRsvpAction();
     var message = this.state.event.rsvp_message;
-    if (message) message = <div>{message}</div>;
+    if (message) message = <div className='osw-rsvp-message'>{message}</div>;
     if (!_.any([attendees, rsvpAction, message])) return;
     return (
       <Section icon='rsvp'>

@@ -38,7 +38,7 @@ export default React.createClass({
   },
 
   renderAttendees: function () {
-    const event = this.state.event;
+    const {event} = this.state;
     var sample = event.attendees_sample;
     if (!_.size(sample)) return;
     var more = event.total_attendees - sample.length;
@@ -71,7 +71,7 @@ export default React.createClass({
   },
 
   renderRsvpAction: function () {
-    const event = this.state.event;
+    const {event} = this.state;
     const actions = event.rsvp_actions;
 
     if (!_.size(actions)) return;
@@ -109,7 +109,7 @@ export default React.createClass({
     var attendees = this.renderAttendees();
     var rsvpAction = this.renderRsvpAction();
     var message = this.state.event.rsvp_message;
-    if (message) message = <div>{message}</div>;
+    if (message) message = <div className='osw-rsvp-message'>{message}</div>;
     if (!_.any([attendees, rsvpAction, message])) return <div></div>;
     return (
       <Section icon='rsvp'>

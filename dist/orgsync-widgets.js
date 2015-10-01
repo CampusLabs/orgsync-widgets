@@ -45297,6 +45297,7 @@ define('components/events/rsvp-buttons', ['exports', 'module', 'underscore', 'ap
 
     renderAttendees: function renderAttendees() {
       var event = this.state.event;
+
       var sample = event.attendees_sample;
       if (!_2['default'].size(sample)) return;
       var more = event.total_attendees - sample.length;
@@ -45334,6 +45335,7 @@ define('components/events/rsvp-buttons', ['exports', 'module', 'underscore', 'ap
 
     renderRsvpAction: function renderRsvpAction() {
       var event = this.state.event;
+
       var actions = event.rsvp_actions;
 
       if (!_2['default'].size(actions)) return;
@@ -45380,7 +45382,7 @@ define('components/events/rsvp-buttons', ['exports', 'module', 'underscore', 'ap
       var message = this.state.event.rsvp_message;
       if (message) message = _React['default'].createElement(
         'div',
-        null,
+        { className: 'osw-rsvp-message' },
         message
       );
       if (!_2['default'].any([attendees, rsvpAction, message])) return _React['default'].createElement('div', null);

@@ -1361,6 +1361,10 @@
   .orgsync-widget .osw-events-show-popup[min-width~='480px'] .osw-events-show-picture-container {
     float: left;
     margin: 0 20px 0 0; }
+.orgsync-widget .osw-rsvp-message {
+  color: #797979;
+  font-size: 14px;
+  margin-top: 8px; }
 /* styles/events/td.scss */
 .orgsync-widget .osw-events-td {
   font-size: 12px;

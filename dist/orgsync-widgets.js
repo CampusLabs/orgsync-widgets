@@ -44984,172 +44984,13 @@ define('entities/event', ['exports', 'underscore', 'underscore.string', 'api', '
   };
   exports.fetch = fetch;
 });
-// scripts/components/events/rsvp-buttons.es6
-define('components/events/rsvp-buttons', ['exports', 'module', 'underscore', 'api', 'components/ui/button', 'cursors', 'components/ui/icon', 'react', 'entities/account', 'entities/event'], function (exports, module, _underscore, _api, _componentsUiButton, _cursors, _componentsUiIcon, _react, _entitiesAccount, _entitiesEvent) {
-  'use strict';
-
-  function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
-
-  var _2 = _interopRequireDefault(_underscore);
-
-  var _api2 = _interopRequireDefault(_api);
-
-  var _Button = _interopRequireDefault(_componentsUiButton);
-
-  var _Cursors = _interopRequireDefault(_cursors);
-
-  var _Icon = _interopRequireDefault(_componentsUiIcon);
-
-  var _React = _interopRequireDefault(_react);
-
-  var STATUS_MAP = {
-    Yes: 'Attending',
-    Maybe: 'Maybe Attending',
-    No: 'Not Attending'
-  };
-
-  var ACTION_MAP = {
-    Attending: 'Yes',
-    'Added by Admin': 'Yes',
-    'Maybe Attending': 'Maybe',
-    'Not Attending': 'No'
-  };
-
-  var Section = _React['default'].createClass({
-    displayName: 'Section',
-
-    render: function render() {
-      return _React['default'].createElement(
-        'div',
-        { className: 'osw-events-show-section' },
-        _React['default'].createElement(_Icon['default'], { name: this.props.icon }),
-        _React['default'].createElement(
-          'div',
-          { className: 'osw-events-show-section-main' },
-          this.props.children
-        )
-      );
-    }
-  });
-
-  module.exports = _React['default'].createClass({
-    displayName: 'rsvp-buttons',
-
-    mixins: [_Cursors['default']],
-
-    handleFetch: function handleFetch(er, res) {
-      var deltas = { isLoading: { $set: false } };
-      if (er) deltas.error = { $set: er };else deltas.event = { $merge: (0, _entitiesEvent.mergeResponse)(this.state.event, res.data) };
-      this.update(deltas);
-    },
-
-    renderRSVPIcon: function renderRSVPIcon(icon) {
-      if (!icon) return;
-      return _React['default'].createElement(_Icon['default'], { name: 'check' });
-    },
-
-    renderAttendees: function renderAttendees() {
-      console.log(this.state.event);
-      var event = this.state.event;
-      var sample = event.attendees_sample;
-      if (!_2['default'].size(sample)) return;
-      var more = event.total_attendees - sample.length;
-      return _React['default'].createElement(
-        'div',
-        { className: 'osw-events-show-attendees' },
-        event.attendees_sample.map(this.renderAttendee),
-        more ? _React['default'].createElement(
-          'div',
-          null,
-          _React['default'].createElement(
-            'a',
-            { href: event.links.web, target: '_parent' },
-            'And ',
-            more,
-            ' more...'
-          )
-        ) : null
-      );
-    },
-
-    renderAttendee: function renderAttendee(attendee) {
-      var alt = attendee.display_name;
-      return _React['default'].createElement(
-        'span',
-        { key: attendee.id, className: 'osw-events-show-attendee' },
-        _React['default'].createElement('img', { src: (0, _entitiesAccount.getPictureUrl)(attendee), alt: alt, title: alt })
-      );
-    },
-
-    setRsvp: function setRsvp(status) {
-      this.update({ isLoading: { $set: true }, error: { $set: null } });
-      _api2['default'].post(this.state.event.links.rsvp, { status: status }, this.handleFetch);
-    },
-
-    renderRsvpAction: function renderRsvpAction() {
-      var actions = this.state.event.rsvp_actions;
-      var event = this.state.event;
-      if (!_2['default'].size(actions)) return;
-      var buttons;
-
-      if (actions[0] === 'Register') {
-        buttons = _React['default'].createElement(
-          _Button['default'],
-          { href: event.pre_event_form, target: '_parent' },
-          'Yes, Register Now'
-        );
-      } else {
-        var userAction = ACTION_MAP[event.rsvp];
-        buttons = actions.map(function (action) {
-          return _React['default'].createElement(
-            _Button['default'],
-            { onClick: _2['default'].partial(this.setRsvp, STATUS_MAP[action]) },
-            this.renderRSVPIcon(action == userAction),
-            ' ',
-            action
-          );
-        }, this);
-      }
-
-      return _React['default'].createElement(
-        'div',
-        { className: 'osw-events-show-rsvp-action' },
-        _React['default'].createElement(
-          'strong',
-          null,
-          'Will you be attending?'
-        ),
-        buttons ? _React['default'].createElement(
-          'div',
-          { className: 'osw-events-show-actions' },
-          buttons
-        ) : null
-      );
-    },
-
-    render: function render() {
-      var attendees = this.renderAttendees();
-      var rsvpAction = this.renderRsvpAction();
-      var message = this.state.event.rsvp_message;
-      if (message) message = _React['default'].createElement(
-        'div',
-        null,
-        message
-      );
-      if (!_2['default'].any([attendees, rsvpAction, message])) return _React['default'].createElement('div', null);
-      return _React['default'].createElement(
-        Section,
-        { icon: 'rsvp' },
-        attendees,
-        rsvpAction,
-        message
-      );
-    }
-  });
-});
 // scripts/components/events/show.es6
-define('components/events/show', ['exports', 'module', 'underscore', 'underscore.string', 'api', 'components/ui/button', 'cursors', 'components/ui/icon', 'react', 'components/events/rsvp-buttons', 'components/ui/sep', 'entities/event'], function (exports, module, _underscore, _underscoreString, _api, _componentsUiButton, _cursors, _componentsUiIcon, _react, _componentsEventsRsvpButtons, _componentsUiSep, _entitiesEvent) {
+define('components/events/show', ['exports', 'underscore', 'underscore.string', 'api', 'components/ui/button', 'cursors', 'components/ui/icon', 'react', 'components/events/rsvp-buttons', 'components/ui/sep', 'entities/event'], function (exports, _underscore, _underscoreString, _api, _componentsUiButton, _cursors, _componentsUiIcon, _react, _componentsEventsRsvpButtons, _componentsUiSep, _entitiesEvent) {
   'use strict';
+
+  Object.defineProperty(exports, '__esModule', {
+    value: true
+  });
 
   function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 
@@ -45193,7 +45034,8 @@ define('components/events/show', ['exports', 'module', 'underscore', 'underscore
     }
   });
 
-  module.exports = _React['default'].createClass({
+  exports.Section = Section;
+  exports['default'] = _React['default'].createClass({
     displayName: 'show',
 
     mixins: [_Cursors['default']],
@@ -45402,6 +45244,152 @@ define('components/events/show', ['exports', 'module', 'underscore', 'underscore
             )
           )
         )
+      );
+    }
+  });
+});
+// scripts/components/events/rsvp-buttons.es6
+define('components/events/rsvp-buttons', ['exports', 'module', 'underscore', 'api', 'components/ui/button', 'cursors', 'components/ui/icon', 'react', 'entities/account', 'entities/event', 'components/events/show'], function (exports, module, _underscore, _api, _componentsUiButton, _cursors, _componentsUiIcon, _react, _entitiesAccount, _entitiesEvent, _componentsEventsShow) {
+  'use strict';
+
+  function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+
+  var _2 = _interopRequireDefault(_underscore);
+
+  var _api2 = _interopRequireDefault(_api);
+
+  var _Button = _interopRequireDefault(_componentsUiButton);
+
+  var _Cursors = _interopRequireDefault(_cursors);
+
+  var _Icon = _interopRequireDefault(_componentsUiIcon);
+
+  var _React = _interopRequireDefault(_react);
+
+  var STATUS_MAP = {
+    Yes: 'Attending',
+    Maybe: 'Maybe Attending',
+    No: 'Not Attending'
+  };
+
+  var ACTION_MAP = {
+    Attending: 'Yes',
+    'Added by Admin': 'Yes',
+    'Maybe Attending': 'Maybe',
+    'Not Attending': 'No'
+  };
+
+  module.exports = _React['default'].createClass({
+    displayName: 'rsvp-buttons',
+
+    mixins: [_Cursors['default']],
+
+    handleFetch: function handleFetch(er, res) {
+      var deltas = { isLoading: { $set: false } };
+      if (er) deltas.error = { $set: er };else deltas.event = { $merge: (0, _entitiesEvent.mergeResponse)(this.state.event, res.data) };
+      this.update(deltas);
+    },
+
+    renderRSVPIcon: function renderRSVPIcon(icon) {
+      if (!icon) return;
+      return _React['default'].createElement(_Icon['default'], { name: 'check' });
+    },
+
+    renderAttendees: function renderAttendees() {
+      var event = this.state.event;
+      var sample = event.attendees_sample;
+      if (!_2['default'].size(sample)) return;
+      var more = event.total_attendees - sample.length;
+      return _React['default'].createElement(
+        'div',
+        { className: 'osw-events-show-attendees' },
+        event.attendees_sample.map(this.renderAttendee),
+        more ? _React['default'].createElement(
+          'div',
+          null,
+          _React['default'].createElement(
+            'a',
+            { href: event.links.web, target: '_parent' },
+            'And ',
+            more,
+            ' more...'
+          )
+        ) : null
+      );
+    },
+
+    renderAttendee: function renderAttendee(attendee) {
+      var alt = attendee.display_name;
+      return _React['default'].createElement(
+        'span',
+        { key: attendee.id, className: 'osw-events-show-attendee' },
+        _React['default'].createElement('img', { src: (0, _entitiesAccount.getPictureUrl)(attendee), alt: alt, title: alt })
+      );
+    },
+
+    setRsvp: function setRsvp(status) {
+      this.update({ isLoading: { $set: true }, error: { $set: null } });
+      _api2['default'].post(this.state.event.links.rsvp, { status: status }, this.handleFetch);
+    },
+
+    renderRsvpAction: function renderRsvpAction() {
+      var event = this.state.event;
+      var actions = event.rsvp_actions;
+
+      if (!_2['default'].size(actions)) return;
+      var buttons;
+
+      if (actions[0] === 'Register') {
+        buttons = _React['default'].createElement(
+          _Button['default'],
+          { href: event.pre_event_form, target: '_parent' },
+          'Yes, Register Now'
+        );
+      } else {
+        var userAction = ACTION_MAP[event.rsvp];
+        buttons = actions.map(function (action) {
+          return _React['default'].createElement(
+            _Button['default'],
+            { onClick: _2['default'].partial(this.setRsvp, STATUS_MAP[action]) },
+            this.renderRSVPIcon(action == userAction),
+            ' ',
+            action
+          );
+        }, this);
+      }
+
+      return _React['default'].createElement(
+        'div',
+        { className: 'osw-events-show-rsvp-action' },
+        _React['default'].createElement(
+          'strong',
+          null,
+          'Will you be attending?'
+        ),
+        buttons ? _React['default'].createElement(
+          'div',
+          { className: 'osw-events-show-actions' },
+          buttons
+        ) : null
+      );
+    },
+
+    render: function render() {
+      var attendees = this.renderAttendees();
+      var rsvpAction = this.renderRsvpAction();
+      var message = this.state.event.rsvp_message;
+      if (message) message = _React['default'].createElement(
+        'div',
+        null,
+        message
+      );
+      if (!_2['default'].any([attendees, rsvpAction, message])) return _React['default'].createElement('div', null);
+      return _React['default'].createElement(
+        _componentsEventsShow.Section,
+        { icon: 'rsvp' },
+        attendees,
+        rsvpAction,
+        message
       );
     }
   });

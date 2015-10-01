@@ -6,7 +6,8 @@ import Icon from 'components/ui/icon';
 import React from 'react';
 
 import {getPictureUrl} from 'entities/account';
-import {getMoment, isAllDay, mergeResponse} from 'entities/event';
+import {mergeResponse} from 'entities/event';
+import {Section} from 'components/events/show';
 
 var STATUS_MAP = {
   Yes: 'Attending',
@@ -20,20 +21,6 @@ var ACTION_MAP = {
   'Maybe Attending': 'Maybe',
   'Not Attending': 'No'
 };
-
-var Section = React.createClass({
-
-  render: function () {
-    return (
-      <div className='osw-events-show-section'>
-        <Icon name={this.props.icon} />
-        <div className='osw-events-show-section-main'>
-          {this.props.children}
-        </div>
-      </div>
-    );
-  }
-});
 
 export default React.createClass({
   mixins: [Cursors],
@@ -51,8 +38,7 @@ export default React.createClass({
   },
 
   renderAttendees: function () {
-    console.log(this.state.event);
-    var event = this.state.event;
+    const event = this.state.event;
     var sample = event.attendees_sample;
     if (!_.size(sample)) return;
     var more = event.total_attendees - sample.length;
@@ -71,7 +57,7 @@ export default React.createClass({
   },
 
   renderAttendee: function (attendee) {
-    var alt = attendee.display_name;
+    const alt = attendee.display_name;
     return (
       <span key={attendee.id} className='osw-events-show-attendee'>
         <img src={getPictureUrl(attendee)} alt={alt} title={alt} />
@@ -85,8 +71,9 @@ export default React.createClass({
   },
 
   renderRsvpAction: function () {
-    var actions = this.state.event.rsvp_actions;
-    var event = this.state.event;
+    const event = this.state.event;
+    const actions = event.rsvp_actions;
+
     if (!_.size(actions)) return;
     var buttons;
 

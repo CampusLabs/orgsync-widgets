@@ -13,7 +13,7 @@ import {getMoment, isAllDay, mergeResponse} from 'entities/event';
 var DATE_FORMAT = 'dddd, MMM D, YYYY';
 var TIME_FORMAT = 'h:mm A';
 
-var Section = React.createClass({
+export var Section = React.createClass({
   mixin: [Cursors],
 
   render: function () {

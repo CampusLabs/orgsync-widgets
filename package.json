@@ -9,15 +9,15 @@
     "url": "https://github.com/orgsync/orgsync-widgets"
   },
   "devDependencies": {
-    "cogs": "1.0.5",
+    "cogs": "1.0.7",
     "cogs-transformer-autoprefixer": "1.0.0",
     "cogs-transformer-babel": "1.0.12",
     "cogs-transformer-concat-amd": "1.0.6",
     "cogs-transformer-directives": "1.0.3",
     "cogs-transformer-json": "1.0.3",
     "cogs-transformer-prepend-path": "1.0.2",
-    "cogs-transformer-sass": "1.0.3",
-    "eslint": "1.3.1",
-    "eslint-plugin-react": "3.3.2"
+    "cogs-transformer-sass": "1.0.4",
+    "eslint": "1.6.0",
+    "eslint-plugin-react": "3.5.1"
   }
 }

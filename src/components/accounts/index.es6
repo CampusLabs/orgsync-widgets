@@ -2,7 +2,7 @@ import _ from 'underscore';
 import api from 'api';
 import AccountsListItem from 'components/accounts/list-item';
 import Cursors from 'cursors';
-import List from 'react-list';
+import FetchList from 'components/ui/fetch-list';
 import React from 'react';
 
 var PER_PAGE = 100;
@@ -38,12 +38,12 @@ export default React.createClass({
 
   render: function () {
     return (
-      <List
+      <FetchList
         className='osw-accounts-index'
-        items={this.state.accounts}
-        renderItem={this.renderListItem}
         fetch={this.fetch}
-        uniform={true}
+        itemRenderer={this.renderListItem}
+        items={this.state.accounts}
+        type='uniform'
       />
     );
   }

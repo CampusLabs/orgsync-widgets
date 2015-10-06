@@ -4,6 +4,7 @@ import Cursors from 'cursors';
 import FileShow from 'components/files/file-show';
 import FolderShow from 'components/files/folder-show';
 import React from 'react';
+import ReactDOM from 'react-dom';
 
 let CSSTransitionGroup = React.addons.CSSTransitionGroup;
 
@@ -32,7 +33,7 @@ export default React.createClass({
 
   componentDidUpdate: function (__, prevState) {
     if (this.state.path !== prevState.path) {
-      window.scrollTo(0, this.getDOMNode().offsetTop);
+      window.scrollTo(0, ReactDOM.findDOMNode(this).offsetTop);
       this.lastPathLength = this.state.path.length;
     }
   },

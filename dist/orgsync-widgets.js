@@ -36423,6 +36423,150 @@ define('components/photos/list-item', ['exports', 'module', 'cursors', 'componen
     }
   });
 });
+// src/components/ui/fetch-list.es6
+define('components/ui/fetch-list', ['exports', 'module', 'underscore', 'react-list', 'react'], function (exports, module, _underscore, _reactList, _react) {
+  'use strict';
+
+  var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+
+  var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+
+  var _get = function get(_x, _x2, _x3) { var _again = true; _function: while (_again) { var object = _x, property = _x2, receiver = _x3; desc = parent = getter = undefined; _again = false; if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { _x = parent; _x2 = property; _x3 = receiver; _again = true; continue _function; } } else if ('value' in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } } };
+
+  function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+
+  function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
+
+  function _inherits(subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+  var _2 = _interopRequireDefault(_underscore);
+
+  var _ReactList = _interopRequireDefault(_reactList);
+
+  var _React = _interopRequireDefault(_react);
+
+  var _default = (function (_Component) {
+    _inherits(_default, _Component);
+
+    function _default() {
+      _classCallCheck(this, _default);
+
+      _get(Object.getPrototypeOf(_default.prototype), 'constructor', this).apply(this, arguments);
+
+      this.state = {
+        isLoaded: !this.props.fetch,
+        isLoading: this.props.isLoading,
+        error: this.props.error
+      };
+    }
+
+    _createClass(_default, [{
+      key: 'componentDidMount',
+      value: function componentDidMount() {
+        this.fetch();
+        this.fetch = _2['default'].debounce(this.fetch.bind(this));
+      }
+    }, {
+      key: 'fetch',
+      value: function fetch() {
+        if (this.state.isLoaded || this.isFetching || this.state.error) return;
+        this.setState({ isLoading: true, error: null });
+        this.isFetching = true;
+        this.props.fetch(this.handleFetch.bind(this));
+      }
+    }, {
+      key: 'handleFetch',
+      value: function handleFetch(er, isDone) {
+        this.isFetching = false;
+        this.setState({ isLoaded: !er && !!isDone, isLoading: false, error: er });
+      }
+    }, {
+      key: 'renderItem',
+      value: function renderItem(index, key) {
+        var _props = this.props;
+        var itemRenderer = _props.itemRenderer;
+        var items = _props.items;
+
+        if (index === items.length - 1) this.fetch();
+        return itemRenderer(items[index], key);
+      }
+    }, {
+      key: 'render',
+      value: function render() {
+        var _this = this;
+
+        var _props2 = this.props;
+        var emptyRenderer = _props2.emptyRenderer;
+        var errorRenderer = _props2.errorRenderer;
+        var items = _props2.items;
+        var loadingRenderer = _props2.loadingRenderer;
+        var _state = this.state;
+        var error = _state.error;
+        var isLoading = _state.isLoading;
+
+        return _React['default'].createElement(
+          'div',
+          this.props,
+          _React['default'].createElement(_ReactList['default'], _extends({}, this.props, {
+            length: items.length,
+            itemRenderer: this.renderItem.bind(this),
+            ref: function (c) {
+              return _this.list = c;
+            }
+          })),
+          isLoading ? loadingRenderer() : error ? errorRenderer(error) : !items.length ? emptyRenderer() : null
+        );
+      }
+    }], [{
+      key: 'propTypes',
+      value: {
+        emptyRenderer: _react.PropTypes.func,
+        error: _react.PropTypes.instanceOf(Error),
+        errorRenderer: _react.PropTypes.func,
+        fetch: _react.PropTypes.func,
+        isLoading: _react.PropTypes.bool,
+        items: _react.PropTypes.array,
+        itemRenderer: _react.PropTypes.func,
+        loadingRenderer: _react.PropTypes.func,
+        threshold: _react.PropTypes.number
+      },
+      enumerable: true
+    }, {
+      key: 'defaultProps',
+      value: {
+        emptyRenderer: function emptyRenderer() {
+          return _React['default'].createElement(
+            'div',
+            null,
+            'Nothing to show.'
+          );
+        },
+        errorRenderer: function errorRenderer(er) {
+          return _React['default'].createElement(
+            'div',
+            null,
+            er.toString()
+          );
+        },
+        isLoading: false,
+        items: [],
+        loadingRenderer: function loadingRenderer() {
+          return _React['default'].createElement(
+            'div',
+            null,
+            'Loading...'
+          );
+        },
+        threshold: 500
+      },
+      enumerable: true
+    }]);
+
+    return _default;
+  })(_react.Component);
+
+  module.exports = _default;
+});
 // node_modules/moment/moment.js
 //! moment.js
 //! version : 2.10.6
@@ -39701,7 +39845,7 @@ define('components/comments/new', ['exports', 'module', 'components/ui/button', 
   });
 });
 // src/components/comments/index.es6
-define('components/comments/index', ['exports', 'module', 'jquery', 'underscore', 'api', 'cursors', 'react-list', 'components/comments/list-item', 'components/comments/new', 'react'], function (exports, module, _jquery, _underscore, _api, _cursors, _reactList, _componentsCommentsListItem, _componentsCommentsNew, _react) {
+define('components/comments/index', ['exports', 'module', 'jquery', 'underscore', 'api', 'cursors', 'components/ui/fetch-list', 'components/comments/list-item', 'components/comments/new', 'react'], function (exports, module, _jquery, _underscore, _api, _cursors, _componentsUiFetchList, _componentsCommentsListItem, _componentsCommentsNew, _react) {
   'use strict';
 
   function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
@@ -39714,7 +39858,7 @@ define('components/comments/index', ['exports', 'module', 'jquery', 'underscore'
 
   var _Cursors = _interopRequireDefault(_cursors);
 
-  var _List = _interopRequireDefault(_reactList);
+  var _FetchList = _interopRequireDefault(_componentsUiFetchList);
 
   var _ListItem = _interopRequireDefault(_componentsCommentsListItem);
 
@@ -39760,13 +39904,13 @@ define('components/comments/index', ['exports', 'module', 'jquery', 'underscore'
       return _React['default'].createElement(
         'div',
         { className: 'osw-comments-index' },
-        _React['default'].createElement(_List['default'], {
+        _React['default'].createElement(_FetchList['default'], {
+          emptyRenderer: _$['default'].noop,
+          errorRenderer: this.renderError,
+          fetch: this.fetch,
+          itemRenderer: this.renderListItem,
           items: this.state.comments,
-          renderItem: this.renderListItem,
-          renderEmpty: _$['default'].noop,
-          renderLoading: _$['default'].noop,
-          renderError: this.renderError,
-          fetch: this.fetch
+          loadingRenderer: _$['default'].noop
         }),
         _React['default'].createElement(_New['default'], { url: this.props.newUrl })
       );
@@ -40116,7 +40260,7 @@ define('components/ui/popup', ['exports', 'module', 'element-query', 'components
   });
 });
 // src/components/photos/index.es6
-define('components/photos/index', ['exports', 'module', 'jquery', 'underscore', 'api', 'components/photos/list-item', 'components/photos/show', 'cursors', 'react-list', 'react', 'components/ui/popup'], function (exports, module, _jquery, _underscore, _api, _componentsPhotosListItem, _componentsPhotosShow, _cursors, _reactList, _react, _componentsUiPopup) {
+define('components/photos/index', ['exports', 'module', 'jquery', 'underscore', 'api', 'components/photos/list-item', 'components/photos/show', 'cursors', 'components/ui/fetch-list', 'react', 'components/ui/popup'], function (exports, module, _jquery, _underscore, _api, _componentsPhotosListItem, _componentsPhotosShow, _cursors, _componentsUiFetchList, _react, _componentsUiPopup) {
   'use strict';
 
   function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
@@ -40133,13 +40277,13 @@ define('components/photos/index', ['exports', 'module', 'jquery', 'underscore', 
 
   var _Cursors = _interopRequireDefault(_cursors);
 
-  var _List = _interopRequireDefault(_reactList);
+  var _FetchList = _interopRequireDefault(_componentsUiFetchList);
 
   var _React = _interopRequireDefault(_react);
 
   var _Popup = _interopRequireDefault(_componentsUiPopup);
 
-  var keyDirMap = { '37': -1, '39': 1 };
+  var keyDirMap = { 37: -1, 39: 1 };
 
   var PER_PAGE = 100;
 
@@ -40232,11 +40376,11 @@ define('components/photos/index', ['exports', 'module', 'jquery', 'underscore', 
       return _React['default'].createElement(
         'div',
         { className: 'osw-photos-index' },
-        _React['default'].createElement(_List['default'], {
+        _React['default'].createElement(_FetchList['default'], {
           className: 'osw-photos-index-list',
-          items: this.state.photos,
-          renderItem: this.renderListItem,
-          fetch: this.fetch
+          fetch: this.fetch,
+          itemRenderer: this.renderListItem,
+          items: this.state.photos
         }),
         _React['default'].createElement(
           _Popup['default'],
@@ -40300,7 +40444,7 @@ define('components/albums/show', ['exports', 'module', 'components/photos/index'
   });
 });
 // src/components/albums/index.es6
-define('components/albums/index', ['exports', 'module', 'jquery', 'underscore', 'api', 'components/albums/list-item', 'components/albums/show', 'cursors', 'react-list', 'react', 'components/ui/popup'], function (exports, module, _jquery, _underscore, _api, _componentsAlbumsListItem, _componentsAlbumsShow, _cursors, _reactList, _react, _componentsUiPopup) {
+define('components/albums/index', ['exports', 'module', 'jquery', 'underscore', 'api', 'components/albums/list-item', 'components/albums/show', 'cursors', 'components/ui/fetch-list', 'react', 'components/ui/popup'], function (exports, module, _jquery, _underscore, _api, _componentsAlbumsListItem, _componentsAlbumsShow, _cursors, _componentsUiFetchList, _react, _componentsUiPopup) {
   'use strict';
 
   function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
@@ -40317,13 +40461,13 @@ define('components/albums/index', ['exports', 'module', 'jquery', 'underscore', 
 
   var _Cursors = _interopRequireDefault(_cursors);
 
-  var _List = _interopRequireDefault(_reactList);
+  var _FetchList = _interopRequireDefault(_componentsUiFetchList);
 
   var _React = _interopRequireDefault(_react);
 
   var _Popup = _interopRequireDefault(_componentsUiPopup);
 
-  var keyDirMap = { '37': -1, '39': 1 };
+  var keyDirMap = { 37: -1, 39: 1 };
 
   var PER_PAGE = 100;
 
@@ -40413,11 +40557,11 @@ define('components/albums/index', ['exports', 'module', 'jquery', 'underscore', 
       return _React['default'].createElement(
         'div',
         { className: 'osw-albums-index' },
-        _React['default'].createElement(_List['default'], {
+        _React['default'].createElement(_FetchList['default'], {
           className: 'osw-albums-index-list',
-          items: this.state.albums,
-          renderItem: this.renderListItem,
-          fetch: this.fetch
+          fetch: this.fetch,
+          itemRenderer: this.renderListItem,
+          items: this.state.albums
         }),
         _React['default'].createElement(
           _Popup['default'],
@@ -41276,7 +41420,7 @@ define('components/ui/loading-block', ['exports', 'module', 'react'], function (
   });
 });
 // src/components/bookmarks/index.es6
-define('components/bookmarks/index', ['exports', 'module', 'underscore', 'underscore.string', 'api', 'components/bookmarks/list-item', 'cursors', 'components/shared/empty', 'components/ui/error-block', 'components/bookmarks/filters', 'react-list', 'components/ui/loading-block', 'react'], function (exports, module, _underscore, _underscoreString, _api, _componentsBookmarksListItem, _cursors, _componentsSharedEmpty, _componentsUiErrorBlock, _componentsBookmarksFilters, _reactList, _componentsUiLoadingBlock, _react) {
+define('components/bookmarks/index', ['exports', 'module', 'underscore', 'underscore.string', 'api', 'components/bookmarks/list-item', 'cursors', 'components/shared/empty', 'components/ui/error-block', 'components/bookmarks/filters', 'components/ui/fetch-list', 'components/ui/loading-block', 'react'], function (exports, module, _underscore, _underscoreString, _api, _componentsBookmarksListItem, _cursors, _componentsSharedEmpty, _componentsUiErrorBlock, _componentsBookmarksFilters, _componentsUiFetchList, _componentsUiLoadingBlock, _react) {
   'use strict';
 
   var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
@@ -41299,7 +41443,7 @@ define('components/bookmarks/index', ['exports', 'module', 'underscore', 'unders
 
   var _Filters = _interopRequireDefault(_componentsBookmarksFilters);
 
-  var _List = _interopRequireDefault(_reactList);
+  var _FetchList = _interopRequireDefault(_componentsUiFetchList);
 
   var _LoadingBlock = _interopRequireDefault(_componentsUiLoadingBlock);
 
@@ -41415,14 +41559,14 @@ define('components/bookmarks/index', ['exports', 'module', 'underscore', 'unders
         'div',
         { className: 'osw-bookmarks-index' },
         this.renderFilters(bookmarks),
-        _React['default'].createElement(_List['default'], _extends({}, this.props, {
-          items: bookmarks,
+        _React['default'].createElement(_FetchList['default'], _extends({}, this.props, {
+          emptyRenderer: this.renderEmpty,
+          errorRenderer: this.renderError,
           fetch: this.fetch,
-          renderLoading: this.renderLoading,
-          renderError: this.renderError,
-          renderItem: this.renderListItem,
-          renderEmpty: this.renderEmpty,
-          uniform: true
+          itemRenderer: this.renderListItem,
+          items: bookmarks,
+          loadingRenderer: this.renderLoading,
+          type: 'uniform'
         }))
       );
     }
@@ -44514,14 +44658,14 @@ define('components/events/list-item', ['exports', 'module', 'underscore.string',
   });
 });
 // src/components/events/list-date.es6
-define('components/events/list-date', ['exports', 'module', 'cursors', 'react-list', 'components/events/list-item', 'react', 'entities/event'], function (exports, module, _cursors, _reactList, _componentsEventsListItem, _react, _entitiesEvent) {
+define('components/events/list-date', ['exports', 'module', 'cursors', 'components/ui/fetch-list', 'components/events/list-item', 'react', 'entities/event'], function (exports, module, _cursors, _componentsUiFetchList, _componentsEventsListItem, _react, _entitiesEvent) {
   'use strict';
 
   function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 
   var _Cursors = _interopRequireDefault(_cursors);
 
-  var _List = _interopRequireDefault(_reactList);
+  var _FetchList = _interopRequireDefault(_componentsUiFetchList);
 
   var _ListItem = _interopRequireDefault(_componentsEventsListItem);
 
@@ -44568,11 +44712,11 @@ define('components/events/list-date', ['exports', 'module', 'cursors', 'react-li
           { className: 'osw-events-list-date-header' },
           prefix + dateMom.format('dddd, MMMM D, YYYY')
         ),
-        _React['default'].createElement(_List['default'], {
+        _React['default'].createElement(_FetchList['default'], {
+          emptyRenderer: this.renderEmpty,
+          itemRenderer: this.renderEvent,
           items: this.props.events,
-          renderItem: this.renderEvent,
-          renderEmpty: this.renderEmpty,
-          uniform: true
+          type: 'uniform'
         })
       );
     }
@@ -45111,7 +45255,7 @@ define('components/events/ongoing', ['exports', 'module', 'underscore', 'api', '
   });
 });
 // src/components/events/list.es6
-define('components/events/list', ['exports', 'module', 'underscore', 'cursors', 'react-list', 'components/events/list-date', 'components/events/ongoing', 'react', 'entities/event'], function (exports, module, _underscore, _cursors, _reactList, _componentsEventsListDate, _componentsEventsOngoing, _react, _entitiesEvent) {
+define('components/events/list', ['exports', 'module', 'underscore', 'cursors', 'components/ui/fetch-list', 'components/events/list-date', 'components/events/ongoing', 'react', 'entities/event'], function (exports, module, _underscore, _cursors, _componentsUiFetchList, _componentsEventsListDate, _componentsEventsOngoing, _react, _entitiesEvent) {
   'use strict';
 
   function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
@@ -45120,7 +45264,7 @@ define('components/events/list', ['exports', 'module', 'underscore', 'cursors', 
 
   var _Cursors = _interopRequireDefault(_cursors);
 
-  var _List = _interopRequireDefault(_reactList);
+  var _FetchList = _interopRequireDefault(_componentsUiFetchList);
 
   var _ListDate = _interopRequireDefault(_componentsEventsListDate);
 
@@ -45233,14 +45377,13 @@ define('components/events/list', ['exports', 'module', 'underscore', 'cursors', 
         'div',
         null,
         this.renderOngoingEvents(),
-        _React['default'].createElement(_List['default'], {
+        _React['default'].createElement(_FetchList['default'], {
           className: 'osw-events-list',
-          items: this.getDates(),
-          renderItem: this.renderDate,
-          renderLoading: this.renderLoading,
-          renderEmpty: this.renderEmpty,
+          emptyRenderer: this.renderEmpty,
           fetch: this.fetch,
-          fetchInitially: true
+          itemRenderer: this.renderDate,
+          items: this.getDates(),
+          loadingRenderer: this.renderLoading
         })
       );
     }
@@ -46576,7 +46719,7 @@ define('tz', ['exports', 'module', 'jstz'], function (exports, module, _jstz) {
   module.exports = _jstz2['default'].determine().name();
 });
 // src/components/events/index.es6
-define('components/events/index', ['exports', 'module', 'underscore', 'components/ui/button', 'components/ui/button-group', 'components/events/calendar', 'components/events/list', 'cursors', 'components/event-filters/index', 'components/ui/icon', 'react', 'superagent', 'tz', 'entities/event'], function (exports, module, _underscore, _componentsUiButton, _componentsUiButtonGroup, _componentsEventsCalendar, _componentsEventsList, _cursors, _componentsEventFiltersIndex, _componentsUiIcon, _react, _superagent, _tz, _entitiesEvent) {
+define('components/events/index', ['exports', 'module', 'underscore', 'components/ui/button', 'components/ui/button-group', 'components/events/calendar', 'components/events/list', 'cursors', 'components/event-filters/index', 'components/ui/icon', 'react', 'react-dom', 'superagent', 'tz', 'entities/event'], function (exports, module, _underscore, _componentsUiButton, _componentsUiButtonGroup, _componentsEventsCalendar, _componentsEventsList, _cursors, _componentsEventFiltersIndex, _componentsUiIcon, _react, _reactDom, _superagent, _tz, _entitiesEvent) {
   'use strict';
 
   function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
@@ -46598,6 +46741,8 @@ define('components/events/index', ['exports', 'module', 'underscore', 'component
   var _Icon = _interopRequireDefault(_componentsUiIcon);
 
   var _React = _interopRequireDefault(_react);
+
+  var _ReactDOM = _interopRequireDefault(_reactDom);
 
   var _superagent2 = _interopRequireDefault(_superagent);
 
@@ -46676,7 +46821,7 @@ define('components/events/index', ['exports', 'module', 'underscore', 'component
     },
 
     setWidth: function setWidth() {
-      var rect = this.getDOMNode().getBoundingClientRect();
+      var rect = _ReactDOM['default'].findDOMNode(this).getBoundingClientRect();
       this.update({ width: { $set: rect.width } });
     },
 
@@ -47562,7 +47707,7 @@ define('components/files/list-item', ['exports', 'module', 'cursors', 'entities/
   });
 });
 // src/components/files/folder-show.es6
-define('components/files/folder-show', ['exports', 'module', 'underscore', 'api', 'cursors', 'react-list', 'components/files/list-item', 'react'], function (exports, module, _underscore, _api, _cursors, _reactList, _componentsFilesListItem, _react) {
+define('components/files/folder-show', ['exports', 'module', 'underscore', 'api', 'cursors', 'components/ui/fetch-list', 'components/files/list-item', 'react'], function (exports, module, _underscore, _api, _cursors, _componentsUiFetchList, _componentsFilesListItem, _react) {
   'use strict';
 
   function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
@@ -47573,7 +47718,7 @@ define('components/files/folder-show', ['exports', 'module', 'underscore', 'api'
 
   var _Cursors = _interopRequireDefault(_cursors);
 
-  var _List = _interopRequireDefault(_reactList);
+  var _FetchList = _interopRequireDefault(_componentsUiFetchList);
 
   var _FilesListItem = _interopRequireDefault(_componentsFilesListItem);
 
@@ -47629,18 +47774,18 @@ define('components/files/folder-show', ['exports', 'module', 'underscore', 'api'
     },
 
     render: function render() {
-      return _React['default'].createElement(_List['default'], {
+      return _React['default'].createElement(_FetchList['default'], {
         className: 'osw-files-folder-show',
-        items: this.getFiles(),
-        renderItem: this.renderListItem,
         fetch: this.fetch,
-        uniform: true
+        itemRenderer: this.renderListItem,
+        items: this.getFiles(),
+        type: 'uniform'
       });
     }
   });
 });
 // src/components/files/index.es6
-define('components/files/index', ['exports', 'module', 'underscore', 'components/files/breadcrumb', 'cursors', 'components/files/file-show', 'components/files/folder-show', 'react'], function (exports, module, _underscore, _componentsFilesBreadcrumb, _cursors, _componentsFilesFileShow, _componentsFilesFolderShow, _react) {
+define('components/files/index', ['exports', 'module', 'underscore', 'components/files/breadcrumb', 'cursors', 'components/files/file-show', 'components/files/folder-show', 'react', 'react-dom'], function (exports, module, _underscore, _componentsFilesBreadcrumb, _cursors, _componentsFilesFileShow, _componentsFilesFolderShow, _react, _reactDom) {
   'use strict';
 
   function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
@@ -47656,6 +47801,8 @@ define('components/files/index', ['exports', 'module', 'underscore', 'components
   var _FolderShow = _interopRequireDefault(_componentsFilesFolderShow);
 
   var _React = _interopRequireDefault(_react);
+
+  var _ReactDOM = _interopRequireDefault(_reactDom);
 
   var CSSTransitionGroup = _React['default'].addons.CSSTransitionGroup;
 
@@ -47686,7 +47833,7 @@ define('components/files/index', ['exports', 'module', 'underscore', 'components
 
     componentDidUpdate: function componentDidUpdate(__, prevState) {
       if (this.state.path !== prevState.path) {
-        window.scrollTo(0, this.getDOMNode().offsetTop);
+        window.scrollTo(0, _ReactDOM['default'].findDOMNode(this).offsetTop);
         this.lastPathLength = this.state.path.length;
       }
     },
@@ -48092,7 +48239,7 @@ define('components/forms/list-item', ['exports', 'module', 'cursors', 'moment', 
   });
 });
 // src/components/forms/index.es6
-define('components/forms/index', ['exports', 'module', 'underscore', 'underscore.string', 'api', 'cursors', 'components/shared/empty', 'components/ui/error-block', 'components/forms/filters', 'components/forms/list-item', 'react-list', 'components/ui/loading-block', 'react'], function (exports, module, _underscore, _underscoreString, _api, _cursors, _componentsSharedEmpty, _componentsUiErrorBlock, _componentsFormsFilters, _componentsFormsListItem, _reactList, _componentsUiLoadingBlock, _react) {
+define('components/forms/index', ['exports', 'module', 'underscore', 'underscore.string', 'api', 'cursors', 'components/shared/empty', 'components/ui/error-block', 'components/forms/filters', 'components/forms/list-item', 'components/ui/fetch-list', 'components/ui/loading-block', 'react'], function (exports, module, _underscore, _underscoreString, _api, _cursors, _componentsSharedEmpty, _componentsUiErrorBlock, _componentsFormsFilters, _componentsFormsListItem, _componentsUiFetchList, _componentsUiLoadingBlock, _react) {
   'use strict';
 
   var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
@@ -48115,7 +48262,7 @@ define('components/forms/index', ['exports', 'module', 'underscore', 'underscore
 
   var _FormsListItem = _interopRequireDefault(_componentsFormsListItem);
 
-  var _List = _interopRequireDefault(_reactList);
+  var _FetchList = _interopRequireDefault(_componentsUiFetchList);
 
   var _LoadingBlock = _interopRequireDefault(_componentsUiLoadingBlock);
 
@@ -48243,14 +48390,14 @@ define('components/forms/index', ['exports', 'module', 'underscore', 'underscore
         'div',
         { className: 'osw-forms-index' },
         this.renderFilters(forms),
-        _React['default'].createElement(_List['default'], _extends({}, this.props, {
-          items: forms,
+        _React['default'].createElement(_FetchList['default'], _extends({}, this.props, {
+          emptyRenderer: this.renderEmpty,
+          errorRenderer: this.renderError,
           fetch: this.fetch,
-          renderLoading: this.renderLoading,
-          renderError: this.renderError,
-          renderItem: this.renderListItem,
-          renderEmpty: this.renderEmpty,
-          uniform: true
+          itemRenderer: this.renderListItem,
+          items: forms,
+          loadingRenderer: this.renderLoading,
+          type: 'uniform'
         }))
       );
     }
@@ -48433,7 +48580,7 @@ define('components/news-posts/list-item', ['exports', 'module', 'jquery', 'under
   });
 });
 // src/components/news-posts/index.es6
-define('components/news-posts/index', ['exports', 'module', 'underscore', 'api', 'cursors', 'react-list', 'components/news-posts/list-item', 'react'], function (exports, module, _underscore, _api, _cursors, _reactList, _componentsNewsPostsListItem, _react) {
+define('components/news-posts/index', ['exports', 'module', 'underscore', 'api', 'cursors', 'components/ui/fetch-list', 'components/news-posts/list-item', 'react'], function (exports, module, _underscore, _api, _cursors, _componentsUiFetchList, _componentsNewsPostsListItem, _react) {
   'use strict';
 
   function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
@@ -48444,7 +48591,7 @@ define('components/news-posts/index', ['exports', 'module', 'underscore', 'api',
 
   var _Cursors = _interopRequireDefault(_cursors);
 
-  var _List = _interopRequireDefault(_reactList);
+  var _FetchList = _interopRequireDefault(_componentsUiFetchList);
 
   var _NewsPostsListItem = _interopRequireDefault(_componentsNewsPostsListItem);
 
@@ -48492,11 +48639,11 @@ define('components/news-posts/index', ['exports', 'module', 'underscore', 'api',
     },
 
     render: function render() {
-      return _React['default'].createElement(_List['default'], {
+      return _React['default'].createElement(_FetchList['default'], {
         className: 'osw-news-posts-index',
-        items: this.state.newsPosts,
-        renderItem: this.renderListItem,
-        fetch: this.fetch
+        fetch: this.fetch,
+        itemRenderer: this.renderListItem,
+        items: this.state.newsPosts
       });
     }
   });
@@ -48959,7 +49106,7 @@ define('components/polls/list-item', ['exports', 'module', 'underscore', 'cursor
   });
 });
 // src/components/polls/index.es6
-define('components/polls/index', ['exports', 'module', 'underscore', 'underscore.string', 'api', 'cursors', 'components/shared/empty', 'components/ui/error-block', 'components/polls/filters', 'react-list', 'components/ui/loading-block', 'components/polls/list-item', 'react'], function (exports, module, _underscore, _underscoreString, _api, _cursors, _componentsSharedEmpty, _componentsUiErrorBlock, _componentsPollsFilters, _reactList, _componentsUiLoadingBlock, _componentsPollsListItem, _react) {
+define('components/polls/index', ['exports', 'module', 'underscore', 'underscore.string', 'api', 'cursors', 'components/shared/empty', 'components/ui/error-block', 'components/polls/filters', 'components/ui/fetch-list', 'components/ui/loading-block', 'components/polls/list-item', 'react'], function (exports, module, _underscore, _underscoreString, _api, _cursors, _componentsSharedEmpty, _componentsUiErrorBlock, _componentsPollsFilters, _componentsUiFetchList, _componentsUiLoadingBlock, _componentsPollsListItem, _react) {
   'use strict';
 
   var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
@@ -48980,7 +49127,7 @@ define('components/polls/index', ['exports', 'module', 'underscore', 'underscore
 
   var _Filters = _interopRequireDefault(_componentsPollsFilters);
 
-  var _List = _interopRequireDefault(_reactList);
+  var _FetchList = _interopRequireDefault(_componentsUiFetchList);
 
   var _LoadingBlock = _interopRequireDefault(_componentsUiLoadingBlock);
 
@@ -49118,14 +49265,14 @@ define('components/polls/index', ['exports', 'module', 'underscore', 'underscore
         'div',
         { className: 'osw-polls-index' },
         this.renderFilters(polls),
-        _React['default'].createElement(_List['default'], _extends({}, this.props, {
-          items: polls,
+        _React['default'].createElement(_FetchList['default'], _extends({}, this.props, {
+          emptyRenderer: this.renderEmpty,
+          errorRenderer: this.renderError,
           fetch: this.fetch,
-          renderLoading: this.renderLoading,
-          renderError: this.renderError,
-          renderItem: this.renderListItem,
-          renderEmpty: this.renderEmpty,
-          uniform: true
+          itemRenderer: this.renderListItem,
+          items: polls,
+          loadingRenderer: this.renderLoading,
+          type: 'uniform'
         }))
       );
     }
@@ -49318,140 +49465,6 @@ define('components/portals/filters', ['exports', 'module', 'components/shared/ca
       );
     }
   });
-});
-// src/components/ui/fetch-list.es6
-define('components/ui/fetch-list', ['exports', 'module', 'react-list', 'react'], function (exports, module, _reactList, _react) {
-  'use strict';
-
-  var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
-
-  var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
-
-  var _get = function get(_x, _x2, _x3) { var _again = true; _function: while (_again) { var object = _x, property = _x2, receiver = _x3; desc = parent = getter = undefined; _again = false; if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { _x = parent; _x2 = property; _x3 = receiver; _again = true; continue _function; } } else if ('value' in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } } };
-
-  function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
-
-  function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
-
-  function _inherits(subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-
-  var _ReactList = _interopRequireDefault(_reactList);
-
-  var _React = _interopRequireDefault(_react);
-
-  var _default = (function (_Component) {
-    _inherits(_default, _Component);
-
-    function _default() {
-      _classCallCheck(this, _default);
-
-      _get(Object.getPrototypeOf(_default.prototype), 'constructor', this).apply(this, arguments);
-
-      this.state = {
-        isLoaded: !this.props.fetch,
-        isLoading: this.props.isLoading,
-        error: this.props.error
-      };
-    }
-
-    _createClass(_default, [{
-      key: 'componentDidMount',
-      value: function componentDidMount() {
-        this.fetch();
-      }
-    }, {
-      key: 'fetch',
-      value: function fetch() {
-        if (this.state.isLoaded || this.isFetching || this.state.error) return;
-        this.setState({ isLoading: true, error: null });
-        this.isFetching = true;
-        this.props.fetch(this.handleFetch.bind(this));
-      }
-    }, {
-      key: 'handleFetch',
-      value: function handleFetch(er, isDone) {
-        this.isFetching = false;
-        this.setState({ isLoaded: !er && !!isDone, isLoading: false, error: er });
-      }
-    }, {
-      key: 'renderItem',
-      value: function renderItem(index, key) {
-        var _props = this.props;
-        var itemRenderer = _props.itemRenderer;
-        var items = _props.items;
-
-        if (index === items.length - 1) this.fetch();
-        return itemRenderer(items[index], key);
-      }
-    }, {
-      key: 'render',
-      value: function render() {
-        var _props2 = this.props;
-        var emptyRenderer = _props2.emptyRenderer;
-        var errorRenderer = _props2.errorRenderer;
-        var items = _props2.items;
-        var loadingRenderer = _props2.loadingRenderer;
-        var _state = this.state;
-        var error = _state.error;
-        var isLoading = _state.isLoading;
-
-        return _React['default'].createElement(
-          'div',
-          null,
-          _React['default'].createElement(_ReactList['default'], _extends({}, this.props, {
-            length: items.length,
-            itemRenderer: this.renderItem.bind(this)
-          })),
-          isLoading ? loadingRenderer() : error ? errorRenderer(error) : !items.length ? emptyRenderer() : null
-        );
-      }
-    }], [{
-      key: 'propTypes',
-      value: {
-        emptyRenderer: _react.PropTypes.func,
-        error: _react.PropTypes.instanceOf(Error),
-        errorRenderer: _react.PropTypes.func,
-        fetch: _react.PropTypes.func,
-        isLoading: _react.PropTypes.bool,
-        items: _react.PropTypes.array,
-        itemRenderer: _react.PropTypes.func,
-        loadingRenderer: _react.PropTypes.func
-      },
-      enumerable: true
-    }, {
-      key: 'defaultProps',
-      value: {
-        emptyRenderer: function emptyRenderer() {
-          return _React['default'].createElement(
-            'div',
-            null,
-            'Nothing to show.'
-          );
-        },
-        errorRenderer: function errorRenderer(er) {
-          return _React['default'].createElement(
-            'div',
-            null,
-            er.toString()
-          );
-        },
-        isLoading: false,
-        items: [],
-        loadingRenderer: function loadingRenderer() {
-          return _React['default'].createElement(
-            'div',
-            null,
-            'Loading...'
-          );
-        }
-      },
-      enumerable: true
-    }]);
-
-    return _default;
-  })(_react.Component);
-
-  module.exports = _default;
 });
 // src/components/portals/show.es6
 define('components/portals/show', ['exports', 'module', 'api', 'cursors', 'components/ui/button', 'components/ui/button-row', 'react'], function (exports, module, _api, _cursors, _componentsUiButton, _componentsUiButtonRow, _react) {
@@ -50484,7 +50497,7 @@ define('components/selector/token', ['exports', 'module', 'cursors', 'components
   });
 });
 // src/components/selector/index.es6
-define('components/selector/index', ['exports', 'module', 'underscore', 'orgsync-widgets', 'components/ui/button', 'cursors', 'react-list', 'components/ui/popup', 'react', 'components/selector/result', 'components/selector/scope', 'entities/selector/store', 'components/selector/token', 'entities/selector/item'], function (exports, module, _underscore, _orgsyncWidgets, _componentsUiButton, _cursors, _reactList, _componentsUiPopup, _react, _componentsSelectorResult, _componentsSelectorScope, _entitiesSelectorStore, _componentsSelectorToken, _entitiesSelectorItem) {
+define('components/selector/index', ['exports', 'module', 'underscore', 'orgsync-widgets', 'components/ui/button', 'cursors', 'components/ui/fetch-list', 'components/ui/popup', 'react', 'components/selector/result', 'components/selector/scope', 'entities/selector/store', 'components/selector/token', 'entities/selector/item'], function (exports, module, _underscore, _orgsyncWidgets, _componentsUiButton, _cursors, _componentsUiFetchList, _componentsUiPopup, _react, _componentsSelectorResult, _componentsSelectorScope, _entitiesSelectorStore, _componentsSelectorToken, _entitiesSelectorItem) {
   'use strict';
 
   var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
@@ -50497,7 +50510,7 @@ define('components/selector/index', ['exports', 'module', 'underscore', 'orgsync
 
   var _Cursors = _interopRequireDefault(_cursors);
 
-  var _List = _interopRequireDefault(_reactList);
+  var _FetchList = _interopRequireDefault(_componentsUiFetchList);
 
   var _Popup = _interopRequireDefault(_componentsUiPopup);
 
@@ -50560,7 +50573,7 @@ define('components/selector/index', ['exports', 'module', 'underscore', 'orgsync
 
     componentDidMount: function componentDidMount() {
       this.updateResults();
-      if (this.state.browseIsOpen) this.refs.query.getDOMNode().focus();
+      if (this.state.browseIsOpen) this.query.focus();
     },
 
     componentDidUpdate: function componentDidUpdate(__, prev) {
@@ -50636,7 +50649,7 @@ define('components/selector/index', ['exports', 'module', 'underscore', 'orgsync
           if (query) {
             this.update({ query: { $set: '' } });
           } else {
-            this.refs.query.getDOMNode().blur();
+            this.query.blur();
             this.update({ hasFocus: { $set: false }, hasMouse: { $set: false } });
           }
           return ev.preventDefault();
@@ -50701,7 +50714,7 @@ define('components/selector/index', ['exports', 'module', 'underscore', 'orgsync
     setActiveIndex: function setActiveIndex(i) {
       i = this.restrictIndex(this.state.results, i);
       this.update({ activeIndex: { $set: i } });
-      if (this.isMounted()) this.refs.results.scrollTo(this.state.results[i]);
+      if (this.isMounted()) this.results.list.scrollAround(i);
     },
 
     getClassName: function getClassName() {
@@ -50875,20 +50888,23 @@ define('components/selector/index', ['exports', 'module', 'underscore', 'orgsync
     },
 
     renderResults: function renderResults() {
+      var _this = this;
+
       if (!this.shouldShowResults()) return;
       var options = this.getSearchOptions();
-      return _React['default'].createElement(_List['default'], {
+      return _React['default'].createElement(_FetchList['default'], {
         key: _entitiesSelectorStore.getQueryKey(_2['default'].omit(options, 'dataset')),
-        ref: 'results',
+        ref: function (c) {
+          return _this.results = c;
+        },
         className: 'osw-selector-index-results',
         items: this.state.results,
-        renderItem: this.renderResult,
-        renderLoading: this.renderLoading,
-        renderEmpty: this.renderEmpty,
-        renderError: this.renderError,
+        itemRenderer: this.renderResult,
+        loadingRenderer: this.renderLoading,
+        emptyRenderer: this.renderEmpty,
+        errorRenderer: this.renderError,
         fetch: this.fetch,
-        fetchInitially: !_orgsyncWidgets.cache.get(_entitiesSelectorStore.getQueryKey(options)),
-        uniform: true,
+        type: 'uniform',
         renderPageSize: this.props.renderPageSize,
         updateForActiveIndex: this.state.activeIndex,
         updateForValue: this.state.value
@@ -50939,7 +50955,7 @@ define('components/selector/index', ['exports', 'module', 'underscore', 'orgsync
       return _React['default'].createElement(
         'div',
         { className: 'osw-selector-index-left' },
-        _React['default'].createElement(_List['default'], {
+        _React['default'].createElement(List, {
           className: 'osw-selector-index-scopes',
           items: this.props.scopes,
           renderItem: this.renderScope,
@@ -50951,6 +50967,8 @@ define('components/selector/index', ['exports', 'module', 'underscore', 'orgsync
     },
 
     renderMiddle: function renderMiddle() {
+      var _this2 = this;
+
       return _React['default'].createElement(
         'div',
         { className: 'osw-selector-index-middle' },
@@ -50968,7 +50986,9 @@ define('components/selector/index', ['exports', 'module', 'underscore', 'orgsync
             'div',
             { className: 'osw-selector-index-query' },
             _React['default'].createElement('input', {
-              ref: 'query',
+              ref: function (c) {
+                return _this2.query = c;
+              },
               value: this.state.query,
               onChange: this.handleQueryChange,
               placeholder: this.props.placeholder,
@@ -50990,7 +51010,7 @@ define('components/selector/index', ['exports', 'module', 'underscore', 'orgsync
           { className: 'osw-selector-index-right-header' },
           'Selected'
         ),
-        _React['default'].createElement(_List['default'], {
+        _React['default'].createElement(List, {
           className: 'osw-selector-index-selected-results',
           items: this.state.value,
           renderItem: this.renderSelectedResult,
@@ -51028,7 +51048,7 @@ define('components/selector/index', ['exports', 'module', 'underscore', 'orgsync
   module.exports = SelectorIndex;
 });
 // src/components/ui/auto-textbox.es6
-define('components/ui/auto-textbox', ['exports', 'module', 'jquery', 'cursors', 'react'], function (exports, module, _jquery, _cursors, _react) {
+define('components/ui/auto-textbox', ['exports', 'module', 'jquery', 'cursors', 'react', 'react-dom'], function (exports, module, _jquery, _cursors, _react, _reactDom) {
   'use strict';
 
   function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
@@ -51038,6 +51058,8 @@ define('components/ui/auto-textbox', ['exports', 'module', 'jquery', 'cursors', 
   var _Cursors = _interopRequireDefault(_cursors);
 
   var _React = _interopRequireDefault(_react);
+
+  var _ReactDOM = _interopRequireDefault(_reactDom);
 
   module.exports = _React['default'].createClass({
     displayName: 'auto-textbox',
@@ -51058,7 +51080,7 @@ define('components/ui/auto-textbox', ['exports', 'module', 'jquery', 'cursors', 
     },
 
     resize: function resize() {
-      var el = this.getDOMNode();
+      var el = _ReactDOM['default'].findDOMNode(this);
       var $el = (0, _$['default'])(el);
       var minHeight = el.style.minHeight;
       $el.css({ minHeight: 0, height: 0 });

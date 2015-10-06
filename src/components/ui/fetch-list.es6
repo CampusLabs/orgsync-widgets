@@ -1,3 +1,4 @@
+import _ from 'underscore';
 import ReactList from 'react-list';
 import React, {Component, PropTypes} from 'react';
 
@@ -10,7 +11,8 @@ export default class extends Component {
     isLoading: PropTypes.bool,
     items: PropTypes.array,
     itemRenderer: PropTypes.func,
-    loadingRenderer: PropTypes.func
+    loadingRenderer: PropTypes.func,
+    threshold: PropTypes.number
   }
 
   static defaultProps = {
@@ -18,7 +20,8 @@ export default class extends Component {
     errorRenderer: er => <div>{er.toString()}</div>,
     isLoading: false,
     items: [],
-    loadingRenderer: () => <div>Loading...</div>
+    loadingRenderer: () => <div>Loading...</div>,
+    threshold: 500
   }
 
   state = {
@@ -29,6 +32,7 @@ export default class extends Component {
 
   componentDidMount() {
     this.fetch();
+    this.fetch = _.debounce(::this.fetch);
   }
 
   fetch() {
@@ -53,11 +57,12 @@ export default class extends Component {
     const {emptyRenderer, errorRenderer, items, loadingRenderer} = this.props;
     const {error, isLoading} = this.state;
     return (
-      <div>
+      <div {...this.props}>
         <ReactList
           {...this.props}
           length={items.length}
           itemRenderer={::this.renderItem}
+          ref={c => this.list = c}
         />
         {
           isLoading ? loadingRenderer() :

@@ -1,6 +1,6 @@
 import _ from 'underscore';
 import Cursors from 'cursors';
-import List from 'react-list';
+import FetchList from 'components/ui/fetch-list';
 import ListDate from 'components/events/list-date';
 import Ongoing from 'components/events/ongoing';
 import React from 'react';
@@ -113,14 +113,13 @@ export default React.createClass({
     return (
       <div>
         {this.renderOngoingEvents()}
-        <List
+        <FetchList
           className='osw-events-list'
-          items={this.getDates()}
-          renderItem={this.renderDate}
-          renderLoading={this.renderLoading}
-          renderEmpty={this.renderEmpty}
+          emptyRenderer={this.renderEmpty}
           fetch={this.fetch}
-          fetchInitially={true}
+          itemRenderer={this.renderDate}
+          items={this.getDates()}
+          loadingRenderer={this.renderLoading}
         />
       </div>
     );

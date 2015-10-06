@@ -1,5 +1,5 @@
 import Cursors from 'cursors';
-import List from 'react-list';
+import FetchList from 'components/ui/fetch-list';
 import ListItem from 'components/events/list-item';
 import React from 'react';
 
@@ -39,11 +39,11 @@ export default React.createClass({
         <div className='osw-events-list-date-header'>
           {prefix + dateMom.format('dddd, MMMM D, YYYY')}
         </div>
-        <List
+        <FetchList
+          emptyRenderer={this.renderEmpty}
+          itemRenderer={this.renderEvent}
           items={this.props.events}
-          renderItem={this.renderEvent}
-          renderEmpty={this.renderEmpty}
-          uniform={true}
+          type='uniform'
         />
       </div>
     );

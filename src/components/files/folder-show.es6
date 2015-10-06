@@ -1,7 +1,7 @@
 import _ from 'underscore';
 import api from 'api';
 import Cursors from 'cursors';
-import List from 'react-list';
+import FetchList from 'components/ui/fetch-list';
 import FilesListItem from 'components/files/list-item';
 import React from 'react';
 
@@ -57,12 +57,12 @@ export default React.createClass({
 
   render: function () {
     return (
-      <List
+      <FetchList
         className='osw-files-folder-show'
-        items={this.getFiles()}
-        renderItem={this.renderListItem}
         fetch={this.fetch}
-        uniform={true}
+        itemRenderer={this.renderListItem}
+        items={this.getFiles()}
+        type='uniform'
       />
     );
   }

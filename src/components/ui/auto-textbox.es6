@@ -1,6 +1,7 @@
 import $ from 'jquery';
 import Cursors from 'cursors';
 import React from 'react';
+import ReactDOM from 'react-dom';
 
 export default React.createClass({
   mixins: [Cursors],
@@ -19,7 +20,7 @@ export default React.createClass({
   },
 
   resize: function () {
-    var el = this.getDOMNode();
+    var el = ReactDOM.findDOMNode(this);
     var $el = $(el);
     var minHeight = el.style.minHeight;
     $el.css({minHeight: 0, height: 0});

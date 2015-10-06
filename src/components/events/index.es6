@@ -7,6 +7,7 @@ import Cursors from 'cursors';
 import EventFiltersIndex from 'components/event-filters/index';
 import Icon from 'components/ui/icon';
 import React from 'react';
+import ReactDOM from 'react-dom';
 import superagent from 'superagent';
 import tz from 'tz';
 
@@ -87,7 +88,7 @@ export default React.createClass({
   },
 
   setWidth: function () {
-    var rect = this.getDOMNode().getBoundingClientRect();
+    var rect = ReactDOM.findDOMNode(this).getBoundingClientRect();
     this.update({width: {$set: rect.width}});
   },
 

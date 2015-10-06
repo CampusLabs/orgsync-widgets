@@ -4,13 +4,13 @@ import api from 'api';
 import ListItem from 'components/albums/list-item';
 import Show from 'components/albums/show';
 import Cursors from 'cursors';
-import List from 'react-list';
+import FetchList from 'components/ui/fetch-list';
 import React from 'react';
 import Popup from 'components/ui/popup';
 
-var keyDirMap = {'37': -1, '39': 1};
+const keyDirMap = {37: -1, 39: 1};
 
-var PER_PAGE = 100;
+const PER_PAGE = 100;
 
 export default React.createClass({
   mixins: [Cursors],
@@ -100,11 +100,11 @@ export default React.createClass({
   render: function () {
     return (
       <div className='osw-albums-index'>
-        <List
+        <FetchList
           className='osw-albums-index-list'
-          items={this.state.albums}
-          renderItem={this.renderListItem}
           fetch={this.fetch}
+          itemRenderer={this.renderListItem}
+          items={this.state.albums}
         />
         <Popup
           name='albums-show'

@@ -6,7 +6,7 @@ import Cursors from 'cursors';
 import Empty from 'components/shared/empty';
 import ErrorBlock from 'components/ui/error-block';
 import Filters from 'components/bookmarks/filters';
-import List from 'react-list';
+import FetchList from 'components/ui/fetch-list';
 import LoadingBlock from 'components/ui/loading-block';
 import React from 'react';
 
@@ -128,15 +128,15 @@ export default React.createClass({
     return (
       <div className='osw-bookmarks-index'>
         {this.renderFilters(bookmarks)}
-        <List
+        <FetchList
           {...this.props}
-          items={bookmarks}
+          emptyRenderer={this.renderEmpty}
+          errorRenderer={this.renderError}
           fetch={this.fetch}
-          renderLoading={this.renderLoading}
-          renderError={this.renderError}
-          renderItem={this.renderListItem}
-          renderEmpty={this.renderEmpty}
-          uniform={true}
+          itemRenderer={this.renderListItem}
+          items={bookmarks}
+          loadingRenderer={this.renderLoading}
+          type='uniform'
         />
       </div>
     );

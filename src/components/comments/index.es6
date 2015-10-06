@@ -2,7 +2,7 @@ import $ from 'jquery';
 import _ from 'underscore';
 import api from 'api';
 import Cursors from 'cursors';
-import List from 'react-list';
+import FetchList from 'components/ui/fetch-list';
 import ListItem from 'components/comments/list-item';
 import New from 'components/comments/new';
 import React from 'react';
@@ -41,13 +41,13 @@ export default React.createClass({
   render: function () {
     return (
       <div className='osw-comments-index'>
-        <List
-          items={this.state.comments}
-          renderItem={this.renderListItem}
-          renderEmpty={$.noop}
-          renderLoading={$.noop}
-          renderError={this.renderError}
+        <FetchList
+          emptyRenderer={$.noop}
+          errorRenderer={this.renderError}
           fetch={this.fetch}
+          itemRenderer={this.renderListItem}
+          items={this.state.comments}
+          loadingRenderer={$.noop}
         />
         <New url={this.props.newUrl} />
       </div>

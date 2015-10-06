@@ -5,7 +5,7 @@ import Cursors from 'cursors';
 import Empty from 'components/shared/empty';
 import ErrorBlock from 'components/ui/error-block';
 import Filters from 'components/polls/filters';
-import List from 'react-list';
+import FetchList from 'components/ui/fetch-list';
 import LoadingBlock from 'components/ui/loading-block';
 import PollsListItem from 'components/polls/list-item';
 import React from 'react';
@@ -152,15 +152,15 @@ export default React.createClass({
     return (
       <div className='osw-polls-index'>
         {this.renderFilters(polls)}
-        <List
+        <FetchList
           {...this.props}
-          items={polls}
+          emptyRenderer={this.renderEmpty}
+          errorRenderer={this.renderError}
           fetch={this.fetch}
-          renderLoading={this.renderLoading}
-          renderError={this.renderError}
-          renderItem={this.renderListItem}
-          renderEmpty={this.renderEmpty}
-          uniform={true}
+          itemRenderer={this.renderListItem}
+          items={polls}
+          loadingRenderer={this.renderLoading}
+          type='uniform'
         />
       </div>
     );

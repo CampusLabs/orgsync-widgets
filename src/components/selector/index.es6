@@ -2,7 +2,7 @@ import _ from 'underscore';
 import * as app from 'orgsync-widgets';
 import Button from 'components/ui/button';
 import Cursors from 'cursors';
-import List from 'react-list';
+import FetchList from 'components/ui/fetch-list';
 import Popup from 'components/ui/popup';
 import React from 'react';
 import Result from 'components/selector/result';
@@ -58,7 +58,7 @@ var SelectorIndex = React.createClass({
 
   componentDidMount: function () {
     this.updateResults();
-    if (this.state.browseIsOpen) this.refs.query.getDOMNode().focus();
+    if (this.state.browseIsOpen) this.query.focus();
   },
 
   componentDidUpdate: function (__, prev) {
@@ -134,7 +134,7 @@ var SelectorIndex = React.createClass({
       if (query) {
         this.update({query: {$set: ''}});
       } else {
-        this.refs.query.getDOMNode().blur();
+        this.query.blur();
         this.update({hasFocus: {$set: false}, hasMouse: {$set: false}});
       }
       return ev.preventDefault();
@@ -199,7 +199,7 @@ var SelectorIndex = React.createClass({
   setActiveIndex: function (i) {
     i = this.restrictIndex(this.state.results, i);
     this.update({activeIndex: {$set: i}});
-    if (this.isMounted()) this.refs.results.scrollTo(this.state.results[i]);
+    if (this.isMounted()) this.results.list.scrollAround(i);
   },
 
   getClassName: function () {
@@ -379,18 +379,17 @@ var SelectorIndex = React.createClass({
     if (!this.shouldShowResults()) return;
     var options = this.getSearchOptions();
     return (
-      <List
+      <FetchList
         key={store.getQueryKey(_.omit(options, 'dataset'))}
-        ref='results'
+        ref={c => this.results = c}
         className='osw-selector-index-results'
         items={this.state.results}
-        renderItem={this.renderResult}
-        renderLoading={this.renderLoading}
-        renderEmpty={this.renderEmpty}
-        renderError={this.renderError}
+        itemRenderer={this.renderResult}
+        loadingRenderer={this.renderLoading}
+        emptyRenderer={this.renderEmpty}
+        errorRenderer={this.renderError}
         fetch={this.fetch}
-        fetchInitially={!app.cache.get(store.getQueryKey(options))}
-        uniform={true}
+        type='uniform'
         renderPageSize={this.props.renderPageSize}
         updateForActiveIndex={this.state.activeIndex}
         updateForValue={this.state.value}
@@ -461,7 +460,7 @@ var SelectorIndex = React.createClass({
           {this.renderBrowseButton()}
           <div className='osw-selector-index-query'>
             <input
-              ref='query'
+              ref={c => this.query = c}
               value={this.state.query}
               onChange={this.handleQueryChange}
               placeholder={this.props.placeholder}

@@ -40205,11 +40205,17 @@ define('components/ui/popup', ['exports', 'module', 'element-query', 'components
     },
 
     componentDidMount: function componentDidMount() {
-      if (_React['default'].Children.count(this.props.children)) (0, _elementQuery2['default'])();
+      this.runElementQuery();
     },
 
     componentDidUpdate: function componentDidUpdate() {
-      if (_React['default'].Children.count(this.props.children)) (0, _elementQuery2['default'])();
+      this.runElementQuery();
+    },
+
+    runElementQuery: function runElementQuery() {
+      requestAnimationFrame(function () {
+        return (0, _elementQuery2['default'])();
+      });
     },
 
     handleCloseClick: function handleCloseClick(ev) {

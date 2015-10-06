@@ -11,11 +11,15 @@ export default React.createClass({
   },
 
   componentDidMount: function () {
-    if (React.Children.count(this.props.children)) elementQuery();
+    this.runElementQuery();
   },
 
   componentDidUpdate: function () {
-    if (React.Children.count(this.props.children)) elementQuery();
+    this.runElementQuery();
+  },
+
+  runElementQuery() {
+    requestAnimationFrame(() => elementQuery());
   },
 
   handleCloseClick: function (ev) {

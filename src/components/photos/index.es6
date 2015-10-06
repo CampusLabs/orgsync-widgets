@@ -90,13 +90,19 @@ export default React.createClass({
     var photo = this.getActivePhoto();
     if (!photo) return;
     return (
-      <Show
-        key={photo.id}
-        onImageClick={this.handleImageClick}
-        cursors={{
-          photo: this.getCursor('photos', this.state.photos.indexOf(photo))
-        }}
-      />
+      <Popup
+        name='photos-show'
+        close={this.closeActivePhoto}
+        title='Photo Details'
+      >
+        <Show
+          key={photo.id}
+          onImageClick={this.handleImageClick}
+          cursors={{
+            photo: this.getCursor('photos', this.state.photos.indexOf(photo))
+          }}
+        />
+      </Popup>
     );
   },
 
@@ -109,13 +115,7 @@ export default React.createClass({
           itemRenderer={this.renderListItem}
           items={this.state.photos}
         />
-        <Popup
-          name='photos-show'
-          close={this.closeActivePhoto}
-          title='Photo Details'
-        >
-          {this.renderActivePhoto()}
-        </Popup>
+        {this.renderActivePhoto()}
       </div>
     );
   }

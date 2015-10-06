@@ -59,9 +59,13 @@ export default React.createClass({
   renderShow: function () {
     if (!this.state.isOpen) return;
     return (
-      <Show
-        cursors={{newsPost: this.getCursor('newsPost')}}
-      />
+      <Popup
+        name='news-posts-show'
+        close={this.close}
+        title='News Post Details'
+      >
+        <Show cursors={{newsPost: this.getCursor('newsPost')}} />
+      </Popup>
     );
   },
 
@@ -86,13 +90,7 @@ export default React.createClass({
         </div>
         {this.renderCount()}
         {this.renderBody()}
-        <Popup
-          name='news-posts-show'
-          close={this.close}
-          title='News Post Details'
-        >
-          {this.renderShow()}
-        </Popup>
+        {this.renderShow()}
       </div>
     );
   }

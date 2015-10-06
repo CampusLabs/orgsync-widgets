@@ -170,28 +170,22 @@ export default React.createClass({
     );
   },
 
-  renderOpenDate: function () {
+  renderOpenDatePopup: function () {
     var date = this.state.openDate;
     if (!date) return;
-    return (
-      <ListDate
-        events={this.getEventsForDate(date)}
-        eventFilters={this.props.eventFilters}
-        date={date}
-        tz={this.props.tz}
-        cursors={{allEvents: this.getCursor('allEvents')}}
-      />
-    );
-  },
-
-  renderOpenDatePopup: function () {
     return (
       <Popup
         name='events-list-date'
         close={this.closeDate}
         title='Date Details'
       >
-        {this.renderOpenDate()}
+        <ListDate
+          events={this.getEventsForDate(date)}
+          eventFilters={this.props.eventFilters}
+          date={date}
+          tz={this.props.tz}
+          cursors={{allEvents: this.getCursor('allEvents')}}
+        />
       </Popup>
     );
   },

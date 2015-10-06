@@ -397,10 +397,15 @@ var SelectorIndex = React.createClass({
     );
   },
 
-  renderBrowse: function () {
-    if (!this.state.browseIsOpen) return;
+  renderPopup: function () {
+    if (this.props.view === 'browse' || !this.state.browseIsOpen) return;
     return (
-      <div>
+      <Popup
+        ref='popup'
+        title={this.props.browseText}
+        name='selector-index'
+        close={this.closeBrowse}
+      >
         <SelectorIndex
           {...this.props}
           view='browse'
@@ -413,20 +418,6 @@ var SelectorIndex = React.createClass({
         <div className='osw-selector-index-done-container'>
           <Button onClick={this.closeBrowse}>Done</Button>
         </div>
-      </div>
-    );
-  },
-
-  renderPopup: function () {
-    if (this.props.view === 'browse') return;
-    return (
-      <Popup
-        ref='popup'
-        title={this.props.browseText}
-        name='selector-index'
-        close={this.closeBrowse}
-      >
-        {this.renderBrowse()}
       </Popup>
     );
   },

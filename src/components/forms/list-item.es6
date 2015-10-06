@@ -28,18 +28,15 @@ export default React.createClass({
     this.update({showIsOpen: {$set: false}});
   },
 
-  renderShow: function () {
-    if (!this.state.showIsOpen) return;
-    return <Show cursors={{form: this.getCursor('form')}} />;
-  },
-
   renderShowPopup: function() {
+    if (!this.state.showIsOpen) return;
     return (
       <Popup
         close={this.closeShow}
         name='forms-show'
-        title='Form Details'>
-        {this.renderShow()}
+        title='Form Details'
+      >
+        <Show cursors={{form: this.getCursor('form')}} />
       </Popup>
     );
   },

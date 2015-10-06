@@ -29,23 +29,15 @@ export default React.createClass({
     this.update({showIsOpen: {$set: false}});
   },
 
-  renderShow: function () {
-    if (!this.state.showIsOpen) return;
-    return (
-      <Show
-        {...this.props}
-        cursors={{poll: this.getCursor('poll')}}
-      />
-    );
-  },
-
   renderShowPopup: function() {
+    if (!this.state.showIsOpen) return;
     return (
       <Popup
         close={this.closeShow}
         name='polls-show'
-        title='Poll Details'>
-        {this.renderShow()}
+        title='Poll Details'
+      >
+        <Show {...this.props} cursors={{poll: this.getCursor('poll')}} />
       </Popup>
     );
   },

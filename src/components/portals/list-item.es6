@@ -38,15 +38,11 @@ export default React.createClass({
     return this.state.portal.picture_url || DEFAULT_SRC;
   },
 
-  renderShow: function () {
-    if (!this.state.showIsOpen) return;
-    return <Show cursors={{portal: this.getCursor('portal')}} />;
-  },
-
   renderShowPopup: function () {
+    if (!this.state.showIsOpen) return;
     return (
       <Popup name='portals-show' close={this.closeShow} title='Portal Details'>
-        {this.renderShow()}
+        <Show cursors={{portal: this.getCursor('portal')}} />
       </Popup>
     );
   },

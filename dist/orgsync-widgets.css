@@ -27,6 +27,8 @@
   vertical-align: middle;
 }
 
+.olay-fade-appear-active,
+.olay-fade-appear-active .olay-table,
 .olay-fade-enter-active,
 .olay-fade-enter-active .olay-table,
 .olay-fade-leave-active,
@@ -35,16 +37,19 @@
   transition: all .25s cubic-bezier(.5, 0, .5, 1);
 }
 
+.olay-fade-appear,
 .olay-fade-enter,
 .olay-fade-leave.olay-fade-leave-active {
   opacity: 0;
 }
 
+.olay-fade-appear.olay-fade-appear-active,
 .olay-fade-enter.olay-fade-enter-active,
 .olay-fade-leave {
   opacity: 1;
 }
 
+.olay-fade-appear .olay-table,
 .olay-fade-enter .olay-table,
 .olay-fade-leave.olay-fade-leave-active .olay-table {
   -webkit-transform: scale(.95);
@@ -52,6 +57,7 @@
   transform: scale(.95);
 }
 
+.olay-fade-appear.olay-fade-appear-active .olay-table,
 .olay-fade-enter.olay-fade-enter-active .olay-table,
 .olay-fade-leave .olay-table {
   -webkit-transform: scale(1);

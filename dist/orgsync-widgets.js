@@ -40050,20 +40050,20 @@ define('components/photos/show', ['exports', 'module', 'components/comments/inde
     }, {
       key: 'componentDidUpdate',
       value: function componentDidUpdate() {
-        this.update();
+        this.renderRemote();
       }
     }, {
       key: 'componentWillUnmount',
       value: function componentWillUnmount() {
-        this.mounted = false;
-        this.update(setTimeout.bind(null, this.unmountRemote.bind(this), this.props.transitionLeaveTimeout));
+        deactivate(this);
+        this.renderRemote(setTimeout.bind(null, this.unmountRemote.bind(this), this.props.transitionLeaveTimeout));
       }
     }, {
       key: 'mountRemote',
       value: function mountRemote() {
         document.body.appendChild(this.remote = document.createElement('div'));
-        this.mounted = true;
-        this.update();
+        this.renderRemote();
+        activate(this);
       }
     }, {
       key: 'unmountRemote',
@@ -40075,17 +40075,6 @@ define('components/photos/show', ['exports', 'module', 'components/comments/inde
       value: function reallyUnmountRemote() {
         ReactDOM.unmountComponentAtNode(this.remote);
         document.body.removeChild(this.remote);
-      }
-    }, {
-      key: 'update',
-      value: function update(cb) {
-        if (this.remote) ReactDOM.render(this.renderRemote(), this.remote, cb);
-        if (this.isActive()) activate(this);else deactivate(this);
-      }
-    }, {
-      key: 'isActive',
-      value: function isActive() {
-        return this.mounted && _React['default'].Children.count(this.props.children);
       }
     }, {
       key: 'handleClick',
@@ -40106,35 +40095,30 @@ define('components/photos/show', ['exports', 'module', 'components/comments/inde
         }
       }
     }, {
-      key: 'renderChildren',
-      value: function renderChildren() {
+      key: 'renderRemote',
+      value: function renderRemote(cb) {
         var _this = this;
 
-        if (!this.isActive()) return;
-        return _React['default'].createElement(
-          'div',
-          { className: 'olay-container', onClick: this.handleClick.bind(this) },
-          _React['default'].createElement(
-            'div',
-            { className: 'olay-table' },
-            _React['default'].createElement(
-              'div',
-              { ref: function (c) {
-                  return _this.cell = c;
-                }, className: 'olay-cell' },
-              this.props.children
-            )
-          )
-        );
-      }
-    }, {
-      key: 'renderRemote',
-      value: function renderRemote() {
-        return _React['default'].createElement(
+        if (!this.remote) return;
+        ReactDOM.render(_React['default'].createElement(
           CSSTransitionGroup,
           this.props,
-          this.renderChildren()
-        );
+          cb ? null : _React['default'].createElement(
+            'div',
+            { className: 'olay-container', onClick: this.handleClick.bind(this) },
+            _React['default'].createElement(
+              'div',
+              { className: 'olay-table' },
+              _React['default'].createElement(
+                'div',
+                { ref: function (c) {
+                    return _this.cell = c;
+                  }, className: 'olay-cell' },
+                this.props.children
+              )
+            )
+          )
+        ), this.remote, cb);
       }
     }, {
       key: 'render',
@@ -40148,6 +40132,8 @@ define('components/photos/show', ['exports', 'module', 'components/comments/inde
         close: _react.PropTypes.func.isRequired,
         closeOnClick: _react.PropTypes.bool,
         closeOnKeys: _react.PropTypes.arrayOf(_react.PropTypes.number),
+        transitionAppear: _react.PropTypes.bool,
+        transitionAppearTimeout: _react.PropTypes.number,
         transitionEnterTimeout: _react.PropTypes.number,
         transitionLeaveTimeout: _react.PropTypes.number,
         transitionName: _react.PropTypes.string
@@ -40159,6 +40145,8 @@ define('components/photos/show', ['exports', 'module', 'components/comments/inde
         closeOnKeys: [27],
         closeOnClick: true,
         component: 'div',
+        transitionAppear: true,
+        transitionAppearTimeout: 250,
         transitionEnterTimeout: 250,
         transitionLeaveTimeout: 250,
         transitionName: 'olay-fade'
@@ -40369,13 +40357,21 @@ define('components/photos/index', ['exports', 'module', 'jquery', 'underscore', 
     renderActivePhoto: function renderActivePhoto() {
       var photo = this.getActivePhoto();
       if (!photo) return;
-      return _React['default'].createElement(_Show['default'], {
-        key: photo.id,
-        onImageClick: this.handleImageClick,
-        cursors: {
-          photo: this.getCursor('photos', this.state.photos.indexOf(photo))
-        }
-      });
+      return _React['default'].createElement(
+        _Popup['default'],
+        {
+          name: 'photos-show',
+          close: this.closeActivePhoto,
+          title: 'Photo Details'
+        },
+        _React['default'].createElement(_Show['default'], {
+          key: photo.id,
+          onImageClick: this.handleImageClick,
+          cursors: {
+            photo: this.getCursor('photos', this.state.photos.indexOf(photo))
+          }
+        })
+      );
     },
 
     render: function render() {
@@ -40388,15 +40384,7 @@ define('components/photos/index', ['exports', 'module', 'jquery', 'underscore', 
           itemRenderer: this.renderListItem,
           items: this.state.photos
         }),
-        _React['default'].createElement(
-          _Popup['default'],
-          {
-            name: 'photos-show',
-            close: this.closeActivePhoto,
-            title: 'Photo Details'
-          },
-          this.renderActivePhoto()
-        )
+        this.renderActivePhoto()
       );
     }
   });
@@ -40549,14 +40537,22 @@ define('components/albums/index', ['exports', 'module', 'jquery', 'underscore', 
     renderActiveAlbum: function renderActiveAlbum() {
       var album = this.getActiveAlbum();
       if (!album) return;
-      return _React['default'].createElement(_Show['default'], {
-        key: album.id,
-        portalId: this.props.portalId,
-        cursors: {
-          album: this.getCursor('albums', this.state.albums.indexOf(album)),
-          activePhotoId: this.getCursor('activePhotoId')
-        }
-      });
+      return _React['default'].createElement(
+        _Popup['default'],
+        {
+          name: 'albums-show',
+          close: this.closeActiveAlbum,
+          title: 'Album Details'
+        },
+        _React['default'].createElement(_Show['default'], {
+          key: album.id,
+          portalId: this.props.portalId,
+          cursors: {
+            album: this.getCursor('albums', this.state.albums.indexOf(album)),
+            activePhotoId: this.getCursor('activePhotoId')
+          }
+        })
+      );
     },
 
     render: function render() {
@@ -40569,15 +40565,7 @@ define('components/albums/index', ['exports', 'module', 'jquery', 'underscore', 
           itemRenderer: this.renderListItem,
           items: this.state.albums
         }),
-        _React['default'].createElement(
-          _Popup['default'],
-          {
-            name: 'albums-show',
-            close: this.closeActiveAlbum,
-            title: 'Album Details'
-          },
-          this.renderActiveAlbum()
-        )
+        this.renderActiveAlbum()
       );
     }
   });
@@ -41240,21 +41228,18 @@ define('components/bookmarks/list-item', ['exports', 'module', 'underscore', 'cu
       this.update({ showIsOpen: { $set: true } });
     },
 
-    renderShow: function renderShow() {
-      if (!this.state.showIsOpen) return;
-      return _React['default'].createElement(_Show['default'], _extends({}, this.props, {
-        cursors: { bookmark: this.getCursor('bookmark') }
-      }));
-    },
-
     renderShowPopup: function renderShowPopup() {
+      if (!this.state.showIsOpen) return;
       return _React['default'].createElement(
         _Popup['default'],
         {
           close: this.closeShow,
           name: 'bookmarks-show',
-          title: 'Bookmark Details' },
-        this.renderShow()
+          title: 'Bookmark Details'
+        },
+        _React['default'].createElement(_Show['default'], _extends({}, this.props, {
+          cursors: { bookmark: this.getCursor('bookmark') }
+        }))
       );
     },
 
@@ -44405,19 +44390,15 @@ define('components/events/td', ['exports', 'module', 'cursors', 'components/ui/p
       );
     },
 
-    renderShow: function renderShow() {
-      if (!this.state.showIsOpen) return;
-      return _React['default'].createElement(_Show['default'], {
-        tz: this.props.tz,
-        cursors: { event: this.getCursor('event') }
-      });
-    },
-
     renderShowPopup: function renderShowPopup() {
+      if (!this.state.showIsOpen) return;
       return _React['default'].createElement(
         _Popup['default'],
         { name: 'events-show', close: this.closeShow, title: 'Event Details' },
-        this.renderShow()
+        _React['default'].createElement(_Show['default'], {
+          tz: this.props.tz,
+          cursors: { event: this.getCursor('event') }
+        })
       );
     },
 
@@ -44543,19 +44524,15 @@ define('components/events/list-item', ['exports', 'module', 'underscore.string',
       );
     },
 
-    renderShow: function renderShow() {
-      if (!this.state.showIsOpen) return;
-      return _React['default'].createElement(_Show['default'], {
-        tz: this.props.tz,
-        cursors: { event: this.getCursor('event') }
-      });
-    },
-
     renderShowPopup: function renderShowPopup() {
+      if (!this.state.showIsOpen) return;
       return _React['default'].createElement(
         _Popup['default'],
         { name: 'events-show', close: this.closeShow, title: 'Event Details' },
-        this.renderShow()
+        _React['default'].createElement(_Show['default'], {
+          tz: this.props.tz,
+          cursors: { event: this.getCursor('event') }
+        })
       );
     },
 
@@ -44920,19 +44897,9 @@ define('components/events/week', ['exports', 'module', 'underscore', 'cursors', 
       );
     },
 
-    renderOpenDate: function renderOpenDate() {
+    renderOpenDatePopup: function renderOpenDatePopup() {
       var date = this.state.openDate;
       if (!date) return;
-      return _React['default'].createElement(_ListDate['default'], {
-        events: this.getEventsForDate(date),
-        eventFilters: this.props.eventFilters,
-        date: date,
-        tz: this.props.tz,
-        cursors: { allEvents: this.getCursor('allEvents') }
-      });
-    },
-
-    renderOpenDatePopup: function renderOpenDatePopup() {
       return _React['default'].createElement(
         _Popup['default'],
         {
@@ -44940,7 +44907,13 @@ define('components/events/week', ['exports', 'module', 'underscore', 'cursors', 
           close: this.closeDate,
           title: 'Date Details'
         },
-        this.renderOpenDate()
+        _React['default'].createElement(_ListDate['default'], {
+          events: this.getEventsForDate(date),
+          eventFilters: this.props.eventFilters,
+          date: date,
+          tz: this.props.tz,
+          cursors: { allEvents: this.getCursor('allEvents') }
+        })
       );
     },
 
@@ -48181,19 +48154,16 @@ define('components/forms/list-item', ['exports', 'module', 'cursors', 'moment', 
       this.update({ showIsOpen: { $set: false } });
     },
 
-    renderShow: function renderShow() {
-      if (!this.state.showIsOpen) return;
-      return _React['default'].createElement(_Show['default'], { cursors: { form: this.getCursor('form') } });
-    },
-
     renderShowPopup: function renderShowPopup() {
+      if (!this.state.showIsOpen) return;
       return _React['default'].createElement(
         _Popup['default'],
         {
           close: this.closeShow,
           name: 'forms-show',
-          title: 'Form Details' },
-        this.renderShow()
+          title: 'Form Details'
+        },
+        _React['default'].createElement(_Show['default'], { cursors: { form: this.getCursor('form') } })
       );
     },
 
@@ -48537,9 +48507,15 @@ define('components/news-posts/list-item', ['exports', 'module', 'jquery', 'under
 
     renderShow: function renderShow() {
       if (!this.state.isOpen) return;
-      return _React['default'].createElement(_Show['default'], {
-        cursors: { newsPost: this.getCursor('newsPost') }
-      });
+      return _React['default'].createElement(
+        _Popup['default'],
+        {
+          name: 'news-posts-show',
+          close: this.close,
+          title: 'News Post Details'
+        },
+        _React['default'].createElement(_Show['default'], { cursors: { newsPost: this.getCursor('newsPost') } })
+      );
     },
 
     render: function render() {
@@ -48572,15 +48548,7 @@ define('components/news-posts/list-item', ['exports', 'module', 'jquery', 'under
         ),
         this.renderCount(),
         this.renderBody(),
-        _React['default'].createElement(
-          _Popup['default'],
-          {
-            name: 'news-posts-show',
-            close: this.close,
-            title: 'News Post Details'
-          },
-          this.renderShow()
-        )
+        this.renderShow()
       );
     }
   });
@@ -49016,21 +48984,16 @@ define('components/polls/list-item', ['exports', 'module', 'underscore', 'cursor
       this.update({ showIsOpen: { $set: false } });
     },
 
-    renderShow: function renderShow() {
-      if (!this.state.showIsOpen) return;
-      return _React['default'].createElement(_Show['default'], _extends({}, this.props, {
-        cursors: { poll: this.getCursor('poll') }
-      }));
-    },
-
     renderShowPopup: function renderShowPopup() {
+      if (!this.state.showIsOpen) return;
       return _React['default'].createElement(
         _Popup['default'],
         {
           close: this.closeShow,
           name: 'polls-show',
-          title: 'Poll Details' },
-        this.renderShow()
+          title: 'Poll Details'
+        },
+        _React['default'].createElement(_Show['default'], _extends({}, this.props, { cursors: { poll: this.getCursor('poll') } }))
       );
     },
 
@@ -49629,16 +49592,12 @@ define('components/portals/list-item', ['exports', 'module', 'cursors', 'compone
       return this.state.portal.picture_url || DEFAULT_SRC;
     },
 
-    renderShow: function renderShow() {
-      if (!this.state.showIsOpen) return;
-      return _React['default'].createElement(_Show['default'], { cursors: { portal: this.getCursor('portal') } });
-    },
-
     renderShowPopup: function renderShowPopup() {
+      if (!this.state.showIsOpen) return;
       return _React['default'].createElement(
         _Popup['default'],
         { name: 'portals-show', close: this.closeShow, title: 'Portal Details' },
-        this.renderShow()
+        _React['default'].createElement(_Show['default'], { cursors: { portal: this.getCursor('portal') } })
       );
     },
 
@@ -50917,11 +50876,16 @@ define('components/selector/index', ['exports', 'module', 'underscore', 'orgsync
       });
     },
 
-    renderBrowse: function renderBrowse() {
-      if (!this.state.browseIsOpen) return;
+    renderPopup: function renderPopup() {
+      if (this.props.view === 'browse' || !this.state.browseIsOpen) return;
       return _React['default'].createElement(
-        'div',
-        null,
+        _Popup['default'],
+        {
+          ref: 'popup',
+          title: this.props.browseText,
+          name: 'selector-index',
+          close: this.closeBrowse
+        },
         _React['default'].createElement(SelectorIndex, _extends({}, this.props, {
           view: 'browse',
           query: this.state.query,
@@ -50939,20 +50903,6 @@ define('components/selector/index', ['exports', 'module', 'underscore', 'orgsync
             'Done'
           )
         )
-      );
-    },
-
-    renderPopup: function renderPopup() {
-      if (this.props.view === 'browse') return;
-      return _React['default'].createElement(
-        _Popup['default'],
-        {
-          ref: 'popup',
-          title: this.props.browseText,
-          name: 'selector-index',
-          close: this.closeBrowse
-        },
-        this.renderBrowse()
       );
     },
 

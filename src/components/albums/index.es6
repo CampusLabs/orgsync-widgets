@@ -86,14 +86,20 @@ export default React.createClass({
     var album = this.getActiveAlbum();
     if (!album) return;
     return (
-      <Show
-        key={album.id}
-        portalId={this.props.portalId}
-        cursors={{
-          album: this.getCursor('albums', this.state.albums.indexOf(album)),
-          activePhotoId: this.getCursor('activePhotoId')
-        }}
-      />
+      <Popup
+        name='albums-show'
+        close={this.closeActiveAlbum}
+        title='Album Details'
+      >
+        <Show
+          key={album.id}
+          portalId={this.props.portalId}
+          cursors={{
+            album: this.getCursor('albums', this.state.albums.indexOf(album)),
+            activePhotoId: this.getCursor('activePhotoId')
+          }}
+        />
+      </Popup>
     );
   },
 
@@ -106,13 +112,7 @@ export default React.createClass({
           itemRenderer={this.renderListItem}
           items={this.state.albums}
         />
-        <Popup
-          name='albums-show'
-          close={this.closeActiveAlbum}
-          title='Album Details'
-        >
-          {this.renderActiveAlbum()}
-        </Popup>
+        {this.renderActiveAlbum()}
       </div>
     );
   }

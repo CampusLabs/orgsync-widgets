@@ -92,20 +92,14 @@ export default React.createClass({
     );
   },
 
-  renderShow: function () {
+  renderShowPopup: function () {
     if (!this.state.showIsOpen) return;
     return (
-      <Show
-        tz={this.props.tz}
-        cursors={{event: this.getCursor('event')}}
-      />
-    );
-  },
-
-  renderShowPopup: function () {
-    return (
       <Popup name='events-show' close={this.closeShow} title='Event Details'>
-        {this.renderShow()}
+        <Show
+          tz={this.props.tz}
+          cursors={{event: this.getCursor('event')}}
+        />
       </Popup>
     );
   },

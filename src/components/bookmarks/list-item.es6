@@ -34,23 +34,18 @@ export default React.createClass({
     this.update({showIsOpen: {$set: true}});
   },
 
-  renderShow() {
-    if (!this.state.showIsOpen) return;
-    return (
-      <Show
-        {...this.props}
-        cursors={{bookmark: this.getCursor('bookmark')}}
-      />
-    );
-  },
-
   renderShowPopup() {
+    if (!this.state.showIsOpen) return;
     return (
       <Popup
         close={this.closeShow}
         name='bookmarks-show'
-        title='Bookmark Details'>
-        {this.renderShow()}
+        title='Bookmark Details'
+      >
+        <Show
+          {...this.props}
+          cursors={{bookmark: this.getCursor('bookmark')}}
+        />
       </Popup>
     );
   },

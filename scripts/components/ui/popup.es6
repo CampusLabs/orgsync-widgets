@@ -49,6 +49,10 @@ export default React.createClass({
   },
 
   render: function () {
-    return <Olay close={this.props.close}>{this.renderPopup()}</Olay>;
+    return (
+      <Olay className='orgsync-widget' close={this.props.close}>
+        {this.renderPopup()}
+      </Olay>
+    );
   }
 });

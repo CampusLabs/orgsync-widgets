@@ -3,8 +3,8 @@ import _str from 'underscore.string';
 import api from 'api';
 import Cursors from 'cursors';
 import ErrorBlock from 'components/ui/error-block';
+import FetchList from 'components/ui/fetch-list';
 import Filters from 'components/portals/filters';
-import List from 'react-list';
 import ListItem from 'components/portals/list-item';
 import LoadingBlock from 'components/ui/loading-block';
 import Empty from 'components/shared/empty';
@@ -177,14 +177,15 @@ export default React.createClass({
     return (
       <div className='osw-portals-index'>
         {this.renderFilters(portals)}
-        <List
-          items={portals}
+        <FetchList
+          emptyRenderer={this.renderEmpty}
+          errorRenderer={this.renderError}
           fetch={this.fetch}
-          renderLoading={this.renderLoading}
-          renderError={this.renderError}
-          renderItem={this.renderListItem}
-          renderEmpty={this.renderEmpty}
-          uniform={true}
+          itemRenderer={this.renderListItem}
+          items={portals}
+          loadingRenderer={this.renderLoading}
+          type='uniform'
+          threshold={0}
         />
       </div>
     );

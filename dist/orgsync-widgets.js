@@ -35578,9 +35578,9 @@ define('cursors', ['exports', 'module', '../bower_components/cursors/cursors'], 
         if (!itemSize) return {};
 
         var startKey = START_KEYS[axis];
-        var firstRowEnd = Math.round(firstRect[END_KEYS[axis]]);
+        var firstStart = firstRect[startKey];
         var itemsPerRow = 1;
-        for (var item = itemEls[itemsPerRow]; item && Math.round(item.getBoundingClientRect()[startKey]) < firstRowEnd; item = itemEls[itemsPerRow]) {
+        for (var item = itemEls[itemsPerRow]; item && item.getBoundingClientRect()[startKey] === firstStart; item = itemEls[itemsPerRow]) {
           ++itemsPerRow;
         }return { itemSize: itemSize, itemsPerRow: itemsPerRow };
       }
@@ -40883,21 +40883,29 @@ define('components/photos/show', ['exports', 'module', 'components/comments/inde
     }
   });
 });
-// bower_components/olay-react/olay-react.js
-(function (root, factory) {
-  if (typeof define === 'function' && define.amd) {
-    define('../bower_components/olay-react/olay-react', ['react'], factory);
-  } else if (typeof exports !== 'undefined') {
-    module.exports = factory(require('react'));
-  } else {
-    root.OlayReact = factory(root.React);
-  }
-})(this, function (React) {
+// bower_components/olay-react/olay-react.es6
+define('../bower_components/olay-react/olay-react', ['exports', 'module', 'react'], function (exports, module, _react) {
   'use strict';
 
-  var DOM = React.DOM;
+  var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
 
-  var CSSTransitionGroup = React.createFactory(React.addons.CSSTransitionGroup);
+  var _get = function get(_x, _x2, _x3) { var _again = true; _function: while (_again) { var object = _x, property = _x2, receiver = _x3; desc = parent = getter = undefined; _again = false; if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { _x = parent; _x2 = property; _x3 = receiver; _again = true; continue _function; } } else if ('value' in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } } };
+
+  function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+
+  function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
+
+  function _inherits(subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+  var _React = _interopRequireDefault(_react);
+
+  var ReactDOM = typeof window === 'object' && window.ReactDOM || _React['default'];
+  try {
+    ReactDOM = require('react-dom');
+  } catch (er) {}
+  var _ReactDOM = ReactDOM;
+  var findDOMNode = _ReactDOM.findDOMNode;
+  var CSSTransitionGroup = _React['default'].addons.CSSTransitionGroup;
 
   document.addEventListener('keydown', function (ev) {
     if (!active.length) return;
@@ -40913,81 +40921,138 @@ define('components/photos/show', ['exports', 'module', 'components/comments/inde
 
   var active = [];
 
-  var activate = function (component) {
+  var activate = function activate(component) {
     if (active.indexOf(component) !== -1) return;
     active.push(component);
     document.body.classList.add('olay-active');
   };
 
-  var deactivate = function (component) {
+  var deactivate = function deactivate(component) {
     var i = active.indexOf(component);
     if (i === -1) return;
     active.splice(i, 1);
     if (!active.length) document.body.classList.remove('olay-active');
   };
 
-  return React.createClass({
-    propTypes: {
-      close: React.PropTypes.func.isRequired
-    },
+  var _default = (function (_Component) {
+    _inherits(_default, _Component);
 
-    getDefaultProps: function () {
-      return {
-        component: 'div',
-        transitionName: 'olay-fade',
-        closeOnKeys: [27],
-        closeOnClick: true
-      };
-    },
+    function _default() {
+      _classCallCheck(this, _default);
 
-    componentWillUnmount: function () {
-      deactivate(this);
-    },
-
-    componentDidMount: function () {
-      this.setActive();
-    },
-
-    componentDidUpdate: function () {
-      this.setActive();
-    },
-
-    setActive: function () {
-      React.Children.count(this.props.children) ?
-      activate(this) :
-      deactivate(this);
-    },
-
-    handleClick: function (ev) {
-      if (!this.props.closeOnClick) return;
-      var target = ev.target;
-      var els = [].slice.call(this.refs.cell.getDOMNode().children);
-      var containsTarget = function (el) { return el.contains(target); };
-      if (!els.some(containsTarget)) {
-        this.props.close();
-        ev.stopPropagation();
-      }
-    },
-
-    renderChildren: function () {
-      var children = this.props.children;
-      if (!React.Children.count(children)) return;
-      return React.createElement('div', {
-        className: 'olay-container',
-        onClick: this.handleClick
-      },
-        React.createElement('div', {className: 'olay-table'},
-          React.createElement('div', {ref: 'cell', className: 'olay-cell'},
-            children
-          )
-        )
-      );
-    },
-
-    render: function () {
-      return CSSTransitionGroup(this.props, this.renderChildren());
+      _get(Object.getPrototypeOf(_default.prototype), 'constructor', this).apply(this, arguments);
     }
-  });
+
+    _createClass(_default, [{
+      key: 'componentWillUnmount',
+      value: function componentWillUnmount() {
+        deactivate(this);
+        document.body.removeChild(this.el);
+      }
+    }, {
+      key: 'componentDidMount',
+      value: function componentDidMount() {
+        document.body.appendChild(this.el = document.createElement('div'));
+        this.update();
+      }
+    }, {
+      key: 'componentDidUpdate',
+      value: function componentDidUpdate() {
+        this.update();
+      }
+    }, {
+      key: 'update',
+      value: function update() {
+        ReactDOM.render(this.actualRender(), this.el);
+        this.setActive();
+      }
+    }, {
+      key: 'setActive',
+      value: function setActive() {
+        if (_React['default'].Children.count(this.props.children)) activate(this);else deactivate(this);
+      }
+    }, {
+      key: 'handleClick',
+      value: function handleClick(ev) {
+        var _props = this.props;
+        var close = _props.close;
+        var closeOnClick = _props.closeOnClick;
+
+        if (!closeOnClick) return;
+        var target = ev.target;
+        var els = [].slice.call(findDOMNode(this.cell).children);
+        var containsTarget = function containsTarget(el) {
+          return el.contains(target);
+        };
+        if (!els.some(containsTarget)) {
+          close();
+          ev.stopPropagation();
+        }
+      }
+    }, {
+      key: 'renderChildren',
+      value: function renderChildren() {
+        var _this = this;
+
+        var children = this.props.children;
+
+        if (!_React['default'].Children.count(children)) return;
+        return _React['default'].createElement(
+          'div',
+          { className: 'olay-container', onClick: this.handleClick.bind(this) },
+          _React['default'].createElement(
+            'div',
+            { className: 'olay-table' },
+            _React['default'].createElement(
+              'div',
+              { ref: function (c) {
+                  return _this.cell = c;
+                }, className: 'olay-cell' },
+              children
+            )
+          )
+        );
+      }
+    }, {
+      key: 'actualRender',
+      value: function actualRender() {
+        return _React['default'].createElement(
+          CSSTransitionGroup,
+          this.props,
+          this.renderChildren()
+        );
+      }
+    }, {
+      key: 'render',
+      value: function render() {
+        return null;
+      }
+    }], [{
+      key: 'propTypes',
+      value: {
+        children: _react.PropTypes.any,
+        close: _react.PropTypes.func.isRequired,
+        closeOnClick: _react.PropTypes.bool,
+        closeOnKeys: _react.PropTypes.arrayOf(_react.PropTypes.number)
+      },
+      enumerable: true
+    }, {
+      key: 'defaultProps',
+      value: {
+        closeOnKeys: [27],
+        closeOnClick: true,
+        component: 'div',
+        transitionEnterTimeout: 250,
+        transitionLeaveTimeout: 250,
+        transitionName: 'olay-fade'
+      },
+      enumerable: true
+    }]);
+
+    return _default;
+  })(_react.Component);
+
+  module.exports = _default;
 });
 // scripts/olay-react.es6
 define('olay-react', ['exports', 'module', '../bower_components/olay-react/olay-react'], function (exports, module, _bower_componentsOlayReactOlayReact) {
@@ -41071,7 +41136,7 @@ define('components/ui/popup', ['exports', 'module', 'elementQuery', 'components/
     render: function render() {
       return _React['default'].createElement(
         _Olay['default'],
-        { close: this.props.close },
+        { className: 'orgsync-widget', close: this.props.close },
         this.renderPopup()
       );
     }
@@ -49859,6 +49924,140 @@ define('components/portals/filters', ['exports', 'module', 'components/shared/ca
     }
   });
 });
+// scripts/components/ui/fetch-list.es6
+define('components/ui/fetch-list', ['exports', 'module', 'react-list', 'react'], function (exports, module, _reactList, _react) {
+  'use strict';
+
+  var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+
+  var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+
+  var _get = function get(_x, _x2, _x3) { var _again = true; _function: while (_again) { var object = _x, property = _x2, receiver = _x3; desc = parent = getter = undefined; _again = false; if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { _x = parent; _x2 = property; _x3 = receiver; _again = true; continue _function; } } else if ('value' in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } } };
+
+  function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+
+  function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
+
+  function _inherits(subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+  var _ReactList = _interopRequireDefault(_reactList);
+
+  var _React = _interopRequireDefault(_react);
+
+  var _default = (function (_Component) {
+    _inherits(_default, _Component);
+
+    function _default() {
+      _classCallCheck(this, _default);
+
+      _get(Object.getPrototypeOf(_default.prototype), 'constructor', this).apply(this, arguments);
+
+      this.state = {
+        isLoaded: !this.props.fetch,
+        isLoading: this.props.isLoading,
+        error: this.props.error
+      };
+    }
+
+    _createClass(_default, [{
+      key: 'componentDidMount',
+      value: function componentDidMount() {
+        this.fetch();
+      }
+    }, {
+      key: 'fetch',
+      value: function fetch() {
+        if (this.state.isLoaded || this.isFetching || this.state.error) return;
+        this.setState({ isLoading: true, error: null });
+        this.isFetching = true;
+        this.props.fetch(this.handleFetch.bind(this));
+      }
+    }, {
+      key: 'handleFetch',
+      value: function handleFetch(er, isDone) {
+        this.isFetching = false;
+        this.setState({ isLoaded: !er && !!isDone, isLoading: false, error: er });
+      }
+    }, {
+      key: 'renderItem',
+      value: function renderItem(index, key) {
+        var _props = this.props;
+        var itemRenderer = _props.itemRenderer;
+        var items = _props.items;
+
+        if (index === items.length - 1) this.fetch();
+        return itemRenderer(items[index], key);
+      }
+    }, {
+      key: 'render',
+      value: function render() {
+        var _props2 = this.props;
+        var emptyRenderer = _props2.emptyRenderer;
+        var errorRenderer = _props2.errorRenderer;
+        var items = _props2.items;
+        var loadingRenderer = _props2.loadingRenderer;
+        var _state = this.state;
+        var error = _state.error;
+        var isLoading = _state.isLoading;
+
+        return _React['default'].createElement(
+          'div',
+          null,
+          _React['default'].createElement(_ReactList['default'], _extends({}, this.props, {
+            length: items.length,
+            itemRenderer: this.renderItem.bind(this)
+          })),
+          isLoading ? loadingRenderer() : error ? errorRenderer(error) : !items.length ? emptyRenderer() : null
+        );
+      }
+    }], [{
+      key: 'propTypes',
+      value: {
+        emptyRenderer: _react.PropTypes.func,
+        error: _react.PropTypes.instanceOf(Error),
+        errorRenderer: _react.PropTypes.func,
+        fetch: _react.PropTypes.func,
+        isLoading: _react.PropTypes.bool,
+        items: _react.PropTypes.array,
+        itemRenderer: _react.PropTypes.func,
+        loadingRenderer: _react.PropTypes.func
+      },
+      enumerable: true
+    }, {
+      key: 'defaultProps',
+      value: {
+        emptyRenderer: function emptyRenderer() {
+          return _React['default'].createElement(
+            'div',
+            null,
+            'Nothing to show.'
+          );
+        },
+        errorRenderer: function errorRenderer(er) {
+          return _React['default'].createElement(
+            'div',
+            null,
+            er.toString()
+          );
+        },
+        isLoading: false,
+        items: [],
+        loadingRenderer: function loadingRenderer() {
+          return _React['default'].createElement(
+            'div',
+            null,
+            'Loading...'
+          );
+        }
+      },
+      enumerable: true
+    }]);
+
+    return _default;
+  })(_react.Component);
+
+  module.exports = _default;
+});
 // scripts/components/portals/show.es6
 define('components/portals/show', ['exports', 'module', 'api', 'cursors', 'components/ui/button', 'components/ui/button-row', 'react'], function (exports, module, _api, _cursors, _componentsUiButton, _componentsUiButtonRow, _react) {
   'use strict';
@@ -50068,7 +50267,7 @@ define('components/portals/list-item', ['exports', 'module', 'cursors', 'compone
   });
 });
 // scripts/components/portals/index.es6
-define('components/portals/index', ['exports', 'module', 'underscore', 'underscore.string', 'api', 'cursors', 'components/ui/error-block', 'components/portals/filters', 'react-list', 'components/portals/list-item', 'components/ui/loading-block', 'components/shared/empty', 'react'], function (exports, module, _underscore, _underscoreString, _api, _cursors, _componentsUiErrorBlock, _componentsPortalsFilters, _reactList, _componentsPortalsListItem, _componentsUiLoadingBlock, _componentsSharedEmpty, _react) {
+define('components/portals/index', ['exports', 'module', 'underscore', 'underscore.string', 'api', 'cursors', 'components/ui/error-block', 'components/ui/fetch-list', 'components/portals/filters', 'components/portals/list-item', 'components/ui/loading-block', 'components/shared/empty', 'react'], function (exports, module, _underscore, _underscoreString, _api, _cursors, _componentsUiErrorBlock, _componentsUiFetchList, _componentsPortalsFilters, _componentsPortalsListItem, _componentsUiLoadingBlock, _componentsSharedEmpty, _react) {
   'use strict';
 
   function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
@@ -50083,9 +50282,9 @@ define('components/portals/index', ['exports', 'module', 'underscore', 'undersco
 
   var _ErrorBlock = _interopRequireDefault(_componentsUiErrorBlock);
 
-  var _Filters = _interopRequireDefault(_componentsPortalsFilters);
+  var _FetchList = _interopRequireDefault(_componentsUiFetchList);
 
-  var _List = _interopRequireDefault(_reactList);
+  var _Filters = _interopRequireDefault(_componentsPortalsFilters);
 
   var _ListItem = _interopRequireDefault(_componentsPortalsListItem);
 
@@ -50253,14 +50452,15 @@ define('components/portals/index', ['exports', 'module', 'underscore', 'undersco
         'div',
         { className: 'osw-portals-index' },
         this.renderFilters(portals),
-        _React['default'].createElement(_List['default'], {
-          items: portals,
+        _React['default'].createElement(_FetchList['default'], {
+          emptyRenderer: this.renderEmpty,
+          errorRenderer: this.renderError,
           fetch: this.fetch,
-          renderLoading: this.renderLoading,
-          renderError: this.renderError,
-          renderItem: this.renderListItem,
-          renderEmpty: this.renderEmpty,
-          uniform: true
+          itemRenderer: this.renderListItem,
+          items: portals,
+          loadingRenderer: this.renderLoading,
+          type: 'uniform',
+          threshold: 0
         })
       );
     }

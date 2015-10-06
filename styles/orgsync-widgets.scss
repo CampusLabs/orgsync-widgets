@@ -1,9 +1,9 @@
-//= require bower_components/olay-react/olay-react.css
+//= require node_modules/olay-react/olay-react.css
 //= requireself
 //= require ./**/*
 
 @import 'config';
-@import 'bower_components/velcro/styles/syncdings';
+@import 'node_modules/orgsync-velcro/styles/syncdings';
 
 .orgsync-widget {
   font-size: 12px;

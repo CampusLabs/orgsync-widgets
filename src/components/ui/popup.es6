@@ -1,4 +1,4 @@
-import elementQuery from 'elementQuery';
+import elementQuery from 'element-query';
 import Icon from 'components/ui/icon';
 import Olay from 'olay-react';
 import React from 'react';
@@ -27,7 +27,7 @@ export default React.createClass({
     var children = this.props.children;
     if (!React.Children.count(children)) return;
     return (
-      <div className={'osw-popup osw-' + this.props.name + '-popup'}>
+      <div className={`osw-popup osw-${this.props.name}-popup`}>
         <div className='osw-popup-head'>
           {this.renderCloseButton()}
           <div className='osw-popup-title'>{this.props.title}</div>

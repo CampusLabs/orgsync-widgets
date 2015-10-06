@@ -15,7 +15,7 @@ module.exports = {
         {name: 'prepend-path', options: {before: '// '}},
         {
           name: 'concat-amd',
-          options: {base: 'scripts', extensions: ['js', 'es6', 'json']}
+          options: {base: 'src', extensions: ['js', 'es6', 'json']}
         }
       ]
     },
@@ -32,7 +32,7 @@ module.exports = {
     }
   },
   builds: {
-    'scripts/orgsync-widgets.es6': 'dist',
+    'src/orgsync-widgets.es6': 'dist',
     'styles/orgsync-widgets.scss': 'dist'
   }
 };

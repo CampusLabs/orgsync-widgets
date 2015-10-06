@@ -1,4 +1,4 @@
-//= require bower_components/jstz/jstz.js
+// = require node_modules/jstz/dist/jstz.js
 
 var root = this;
 define(function () { return root.jstz; });

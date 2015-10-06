@@ -1,3 +1,4 @@
+import cx from 'cx';
 import Icon from 'components/ui/icon';
 import React from 'react';
 
@@ -5,7 +6,6 @@ export default React.createClass({
 
   render: function () {
     const {checked, className, color, handleChange, label} = this.props;
-    const cx = React.addons.classSet;
 
     let style;
     if (color && checked) {

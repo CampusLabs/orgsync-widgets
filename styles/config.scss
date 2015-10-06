@@ -1,9 +1,9 @@
 $sd-font-path: 'https://orgsync.com/fonts/SyncDings-Regular';
 $sd-css-prefix: oswi;
 
-@import 'bower_components/bourbon/app/assets/stylesheets/bourbon';
-@import 'bower_components/velcro/styles/buttons';
-@import 'bower_components/velcro/styles/colors';
-@import 'bower_components/velcro/styles/variables';
-@import 'bower_components/velcro/styles/media';
-@import 'bower_components/velcro/styles/mixins';
+@import 'node_modules/bourbon/app/assets/stylesheets/bourbon';
+@import 'node_modules/orgsync-velcro/styles/buttons';
+@import 'node_modules/orgsync-velcro/styles/colors';
+@import 'node_modules/orgsync-velcro/styles/variables';
+@import 'node_modules/orgsync-velcro/styles/media';
+@import 'node_modules/orgsync-velcro/styles/mixins';

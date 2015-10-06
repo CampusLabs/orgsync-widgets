@@ -5,7 +5,7 @@ import Cursors from 'cursors';
 import EventFilterListItem from 'components/event-filters/list-item';
 import React from 'react';
 import tinycolor from 'tinycolor';
-import velcroConfig from '../bower_components/velcro/config';
+import velcroConfig from '../node_modules/orgsync-velcro/config';
 
 var RSVP_HEX = '94b363';
 

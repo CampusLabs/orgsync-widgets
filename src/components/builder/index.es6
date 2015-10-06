@@ -127,7 +127,7 @@ export default React.createClass({
 
   renderWidgetOptions: function () {
     return _.map(WIDGETS, (__, widget) =>
-      <option key={widget}>{widget}</option>
+      <option key={widget} value={widget}>{widget}</option>
     );
   },
 

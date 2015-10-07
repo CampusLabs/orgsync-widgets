@@ -44086,6 +44086,8 @@ define('components/events/show', ['exports', 'module', 'underscore', 'underscore
     },
 
     renderRsvpAction: function renderRsvpAction() {
+      var _this = this;
+
       var event = this.state.event;
       var actions = event.rsvp_actions;
       if (!_2['default'].size(actions)) return;
@@ -44098,15 +44100,18 @@ define('components/events/show', ['exports', 'module', 'underscore', 'underscore
         );
       } else {
         var userAction = ACTION_MAP[event.rsvp];
-        buttons = actions.map(function (action) {
+        buttons = _2['default'].map(actions, function (action, i) {
           return _React['default'].createElement(
             _Button['default'],
-            { onClick: _2['default'].partial(this.setRsvp, STATUS_MAP[action]) },
+            {
+              key: i,
+              onClick: _2['default'].partial(_this.setRsvp, STATUS_MAP[action])
+            },
             action === userAction ? _React['default'].createElement(_Icon['default'], { name: 'check' }) : null,
             ' ',
             action
           );
-        }, this);
+        });
       }
       return _React['default'].createElement(
         'div',

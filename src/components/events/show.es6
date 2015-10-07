@@ -168,19 +168,18 @@ export default React.createClass({
     if (!_.size(actions)) return;
     var buttons;
     if (actions[0] === 'Register') {
-      buttons =
+      buttons = (
         <Button href={event.pre_event_form} target='_parent'>
           Yes, Register Now
-        </Button>;
+        </Button>
+      );
     } else {
       var userAction = ACTION_MAP[event.rsvp];
-      buttons = actions.map(function (action) {
-        return (
-          <Button onClick={_.partial(this.setRsvp, STATUS_MAP[action])}>
-            {action === userAction ? <Icon name='check' /> : null} {action}
-          </Button>
-        );
-      }, this);
+      buttons = _.map(actions, (action, i) =>
+        <Button key={i} onClick={_.partial(this.setRsvp, STATUS_MAP[action])}>
+          {action === userAction ? <Icon name='check' /> : null} {action}
+        </Button>
+      );
     }
     return (
       <div className='osw-events-show-rsvp-action'>

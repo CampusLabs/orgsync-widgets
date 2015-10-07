@@ -426,11 +426,11 @@ var SelectorIndex = React.createClass({
     if (this.props.view === 'inline') return;
     return (
       <div className='osw-selector-index-left'>
-        <List
+        <FetchList
           className='osw-selector-index-scopes'
+          itemRenderer={this.renderScope}
           items={this.props.scopes}
-          renderItem={this.renderScope}
-          uniform={true}
+          type='uniform'
           updateForScope={this.state.scope}
           updateForValue={this.state.value}
         />
@@ -469,13 +469,13 @@ var SelectorIndex = React.createClass({
     return (
       <div className='osw-selector-index-right'>
         <div className='osw-selector-index-right-header'>Selected</div>
-        <List
+        <FetchList
           className='osw-selector-index-selected-results'
+          emptyRenderer={this.renderSelectedEmpty}
+          itemRenderer={this.renderSelectedResult}
           items={this.state.value}
-          renderItem={this.renderSelectedResult}
-          renderEmpty={this.renderSelectedEmpty}
-          uniform={true}
-          renderPageSize={this.props.renderPageSize}
+          pageSize={this.props.renderPageSize}
+          type='uniform'
           updateForValue={this.state.value}
         />
       </div>

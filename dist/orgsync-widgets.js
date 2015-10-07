@@ -44103,10 +44103,7 @@ define('components/events/show', ['exports', 'module', 'underscore', 'underscore
         buttons = _2['default'].map(actions, function (action, i) {
           return _React['default'].createElement(
             _Button['default'],
-            {
-              key: i,
-              onClick: _2['default'].partial(_this.setRsvp, STATUS_MAP[action])
-            },
+            { key: i, onClick: _2['default'].partial(_this.setRsvp, STATUS_MAP[action]) },
             action === userAction ? _React['default'].createElement(_Icon['default'], { name: 'check' }) : null,
             ' ',
             action
@@ -50916,11 +50913,11 @@ define('components/selector/index', ['exports', 'module', 'underscore', 'orgsync
       return _React['default'].createElement(
         'div',
         { className: 'osw-selector-index-left' },
-        _React['default'].createElement(List, {
+        _React['default'].createElement(_FetchList['default'], {
           className: 'osw-selector-index-scopes',
+          itemRenderer: this.renderScope,
           items: this.props.scopes,
-          renderItem: this.renderScope,
-          uniform: true,
+          type: 'uniform',
           updateForScope: this.state.scope,
           updateForValue: this.state.value
         })
@@ -50971,13 +50968,13 @@ define('components/selector/index', ['exports', 'module', 'underscore', 'orgsync
           { className: 'osw-selector-index-right-header' },
           'Selected'
         ),
-        _React['default'].createElement(List, {
+        _React['default'].createElement(_FetchList['default'], {
           className: 'osw-selector-index-selected-results',
+          emptyRenderer: this.renderSelectedEmpty,
+          itemRenderer: this.renderSelectedResult,
           items: this.state.value,
-          renderItem: this.renderSelectedResult,
-          renderEmpty: this.renderSelectedEmpty,
-          uniform: true,
-          renderPageSize: this.props.renderPageSize,
+          pageSize: this.props.renderPageSize,
+          type: 'uniform',
           updateForValue: this.state.value
         })
       );

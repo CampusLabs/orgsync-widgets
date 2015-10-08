@@ -1,9 +1,10 @@
-((function (root, factory) {
+((function (global, factory) {
   if (typeof define === 'function' && define.amd) define(factory);
   else if (typeof exports !== 'undefined') module.exports = factory();
-  else root.OrgSyncWidgets = factory();
+  else global.OrgSyncWidgets = factory();
 })(this, function () {
   return (function () {
+    var global = this;
 // node_modules/amdainty/amdainty.js
 var define;
 var require;
@@ -9273,7 +9274,7 @@ if ( typeof noGlobal === strundefined ) {
 return jQuery;
 
 }));
-// src/jquery.es6
+// src/jquery.js
 define('jquery', ['exports', 'module', '../node_modules/jquery/dist/jquery'], function (exports, module, _node_modulesJqueryDistJquery) {
   'use strict';
 
@@ -10832,7 +10833,7 @@ define('jquery', ['exports', 'module', '../node_modules/jquery/dist/jquery'], fu
     });
   }
 }.call(this));
-// src/underscore.es6
+// src/underscore.js
 define('underscore', ['exports', 'module', '../node_modules/underscore/underscore'], function (exports, module, _node_modulesUnderscoreUnderscore) {
   'use strict';
 
@@ -10991,7 +10992,7 @@ define('underscore', ['exports', 'module', '../node_modules/underscore/underscor
 
   return Cache;
 });
-// src/cache.es6
+// src/cache.js
 define('cache', ['exports', 'module', '../node_modules/orgsync-cache/cache'], function (exports, module, _node_modulesOrgsyncCacheCache) {
   'use strict';
 
@@ -11001,7 +11002,7 @@ define('cache', ['exports', 'module', '../node_modules/orgsync-cache/cache'], fu
 
   module.exports = _cache['default'];
 });
-// src/config.es6
+// src/config.js
 define('config', ['exports', 'module'], function (exports, module) {
   'use strict';
 
@@ -11429,11 +11430,11 @@ define('config', ['exports', 'module'], function (exports, module) {
         return value;
     };
 }(document, document.documentElement));// src/element-query.js
+define('element-query', ["exports", "module"], function (exports, module) {
+  "use strict";
 
-
-
-var root = this;
-define('element-query', function () { return root.elementQuery; });
+  module.exports = global.elementQuery;
+});
 // node_modules/react/dist/react-with-addons.js
  /**
   * React (with addons) v0.14.0
@@ -32141,7 +32142,7 @@ if ("development" !== 'production') {
 
 module.exports = warning;
 },{"152":152}]},{},[1])(1)
-});// src/react.es6
+});// src/react.js
 define('react', ['exports', 'module', '../node_modules/react/dist/react-with-addons'], function (exports, module, _node_modulesReactDistReactWithAddons) {
   'use strict';
 
@@ -32194,7 +32195,7 @@ define('react', ['exports', 'module', '../node_modules/react/dist/react-with-add
 })(function(React) {
   return React.__SECRET_DOM_DO_NOT_USE_OR_YOU_WILL_BE_FIRED;
 });
-// src/react-dom.es6
+// src/react-dom.js
 define('react-dom', ['exports', 'module', '../node_modules/react-dom/dist/react-dom'], function (exports, module, _node_modulesReactDomDistReactDom) {
   'use strict';
 
@@ -32204,7 +32205,7 @@ define('react-dom', ['exports', 'module', '../node_modules/react-dom/dist/react-
 
   module.exports = _ReactDOM['default'];
 });
-// src/orgsync-widgets.es6
+// src/orgsync-widgets.js
 define('orgsync-widgets', ['exports', 'jquery', 'underscore', 'cache', 'config', 'element-query', 'react', 'react-dom', 'require'], function (exports, _jquery, _underscore, _cache, _config, _elementQuery, _react, _reactDom, _require) {
   'use strict';
 
@@ -32814,7 +32815,7 @@ exports.isBuffer = function (obj) {
 };
 
 },{}]},{},[1])(1)
-});// src/qs.es6
+});// src/qs.js
 define('qs', ['exports', 'module', '../node_modules/qs/dist/qs'], function (exports, module, _node_modulesQsDistQs) {
   'use strict';
 
@@ -34176,7 +34177,7 @@ request.put = function(url, data, fn){
 module.exports = request;
 
 },{"emitter":1,"reduce":2}]},{},[3])(3)
-});// src/superagent.es6
+});// src/superagent.js
 define('superagent', ['exports', 'module', '../node_modules/superagent/lib/client'], function (exports, module, _node_modulesSuperagentLibClient) {
   'use strict';
 
@@ -34293,7 +34294,7 @@ define('superagent', ['exports', 'module', '../node_modules/superagent/lib/clien
 
   return OrgSyncApi;
 });
-// src/orgsync-api.es6
+// src/orgsync-api.js
 define('orgsync-api', ['exports', 'module', '../node_modules/orgsync-api/orgsync-api'], function (exports, module, _node_modulesOrgsyncApiOrgsyncApi) {
   'use strict';
 
@@ -34303,7 +34304,7 @@ define('orgsync-api', ['exports', 'module', '../node_modules/orgsync-api/orgsync
 
   module.exports = _OrgSyncApi['default'];
 });
-// src/api.es6
+// src/api.js
 define('api', ['exports', 'module', 'config', 'orgsync-api'], function (exports, module, _config, _orgsyncApi) {
   'use strict';
 
@@ -34317,7 +34318,7 @@ define('api', ['exports', 'module', 'config', 'orgsync-api'], function (exports,
 
   module.exports = api;
 });
-// src/entities/account.es6
+// src/entities/account.js
 define('entities/account', ['exports'], function (exports) {
   'use strict';
 
@@ -34331,7 +34332,7 @@ define('entities/account', ['exports'], function (exports) {
   };
   exports.getPictureUrl = getPictureUrl;
 });
-// src/components/accounts/list-item.es6
+// src/components/accounts/list-item.js
 define('components/accounts/list-item', ['exports', 'module', 'entities/account', 'react'], function (exports, module, _entitiesAccount, _react) {
   'use strict';
 
@@ -34365,7 +34366,7 @@ define('components/accounts/list-item', ['exports', 'module', 'entities/account'
     }
   });
 });
-// src/react-addons-update.es6
+// src/react-addons-update.js
 define('react-addons-update', ['exports', 'module', 'react'], function (exports, module, _react) {
   'use strict';
 
@@ -34598,7 +34599,7 @@ define('react-addons-update', ['exports', 'module', 'react'], function (exports,
 
   exports.Component = Component;
 });
-// src/cursors.es6
+// src/cursors.js
 define('cursors', ['exports', 'module', '../node_modules/cursors/cursors'], function (exports, module, _node_modulesCursorsCursors) {
   'use strict';
 
@@ -35096,7 +35097,7 @@ define('cursors', ['exports', 'module', '../node_modules/cursors/cursors'], func
 
   module.exports = _default;
 });
-// src/react-list.es6
+// src/react-list.js
 define('react-list', ['exports', 'module', '../node_modules/react-list/react-list'], function (exports, module, _node_modulesReactListReactList) {
   'use strict';
 
@@ -35106,7 +35107,7 @@ define('react-list', ['exports', 'module', '../node_modules/react-list/react-lis
 
   module.exports = _ReactList['default'];
 });
-// src/components/ui/fetch-list.es6
+// src/components/ui/fetch-list.js
 define('components/ui/fetch-list', ['exports', 'module', 'underscore', 'react-list', 'react'], function (exports, module, _underscore, _reactList, _react) {
   'use strict';
 
@@ -35250,7 +35251,7 @@ define('components/ui/fetch-list', ['exports', 'module', 'underscore', 'react-li
 
   module.exports = _default;
 });
-// src/components/accounts/index.es6
+// src/components/accounts/index.js
 define('components/accounts/index', ['exports', 'module', 'underscore', 'api', 'components/accounts/list-item', 'cursors', 'components/ui/fetch-list', 'react'], function (exports, module, _underscore, _api, _componentsAccountsListItem, _cursors, _componentsUiFetchList, _react) {
   'use strict';
 
@@ -36496,7 +36497,7 @@ module.exports = function wrap(str, options){
 };
 },{"./helper/makeString":21}]},{},[15])
 (15)
-});// src/underscore.string.es6
+});// src/underscore.string.js
 define('underscore.string', ['exports', 'module', '../node_modules/underscore.string/dist/underscore.string'], function (exports, module, _node_modulesUnderscoreStringDistUnderscoreString) {
   'use strict';
 
@@ -36506,7 +36507,7 @@ define('underscore.string', ['exports', 'module', '../node_modules/underscore.st
 
   module.exports = _str2['default'];
 });
-// src/utils/join-class-names.es6
+// src/utils/join-class-names.js
 define('utils/join-class-names', ['exports', 'module', 'underscore'], function (exports, module, _underscore) {
   'use strict';
 
@@ -36518,7 +36519,7 @@ define('utils/join-class-names', ['exports', 'module', 'underscore'], function (
     return _2['default'].compact(_2['default'].unique((a || '').split(/\s+/).concat((b || '').split(/\s+/)))).join(' ');
   };
 });
-// src/components/ui/button.es6
+// src/components/ui/button.js
 define('components/ui/button', ['exports', 'module', 'cursors', 'utils/join-class-names', 'react'], function (exports, module, _cursors, _utilsJoinClassNames, _react) {
   'use strict';
 
@@ -36569,7 +36570,7 @@ define('components/ui/button', ['exports', 'module', 'cursors', 'utils/join-clas
     }
   });
 });
-// src/components/accounts/show.es6
+// src/components/accounts/show.js
 define('components/accounts/show', ['exports', 'module', 'underscore', 'underscore.string', 'api', 'components/ui/button', 'config', 'cursors', 'react', 'entities/account'], function (exports, module, _underscore, _underscoreString, _api, _componentsUiButton, _config, _cursors, _react, _entitiesAccount) {
   'use strict';
 
@@ -36715,7 +36716,7 @@ define('components/accounts/show', ['exports', 'module', 'underscore', 'undersco
     }
   });
 });
-// src/components/ui/icon.es6
+// src/components/ui/icon.js
 define('components/ui/icon', ['exports', 'module', 'cursors', 'utils/join-class-names', 'react'], function (exports, module, _cursors, _utilsJoinClassNames, _react) {
   'use strict';
 
@@ -36739,7 +36740,7 @@ define('components/ui/icon', ['exports', 'module', 'cursors', 'utils/join-class-
     }
   });
 });
-// src/components/accounts/show-popup.es6
+// src/components/accounts/show-popup.js
 define('components/accounts/show-popup', ['exports', 'module', 'components/accounts/show', 'cursors', 'components/ui/icon', 'react'], function (exports, module, _componentsAccountsShow, _cursors, _componentsUiIcon, _react) {
   'use strict';
 
@@ -36775,7 +36776,7 @@ define('components/accounts/show-popup', ['exports', 'module', 'components/accou
     }
   });
 });
-// src/components/albums/list-item.es6
+// src/components/albums/list-item.js
 define('components/albums/list-item', ['exports', 'module', 'underscore', 'cursors', 'react'], function (exports, module, _underscore, _cursors, _react) {
   'use strict';
 
@@ -36830,7 +36831,7 @@ define('components/albums/list-item', ['exports', 'module', 'underscore', 'curso
     }
   });
 });
-// src/components/photos/list-item.es6
+// src/components/photos/list-item.js
 define('components/photos/list-item', ['exports', 'module', 'cursors', 'components/ui/icon', 'react'], function (exports, module, _cursors, _componentsUiIcon, _react) {
   'use strict';
 
@@ -40077,7 +40078,7 @@ define('components/photos/list-item', ['exports', 'module', 'cursors', 'componen
 
     return _moment;
 
-}));// src/moment.es6
+}));// src/moment.js
 define('moment', ['exports', 'module', '../node_modules/moment/moment'], function (exports, module, _node_modulesMomentMoment) {
   'use strict';
 
@@ -40087,7 +40088,7 @@ define('moment', ['exports', 'module', '../node_modules/moment/moment'], functio
 
   module.exports = _moment['default'];
 });
-// src/components/comments/list-item.es6
+// src/components/comments/list-item.js
 define('components/comments/list-item', ['exports', 'module', 'moment', 'react'], function (exports, module, _moment, _react) {
   'use strict';
 
@@ -40133,7 +40134,7 @@ define('components/comments/list-item', ['exports', 'module', 'moment', 'react']
     }
   });
 });
-// src/components/comments/new.es6
+// src/components/comments/new.js
 define('components/comments/new', ['exports', 'module', 'components/ui/button', 'react'], function (exports, module, _componentsUiButton, _react) {
   'use strict';
 
@@ -40159,7 +40160,7 @@ define('components/comments/new', ['exports', 'module', 'components/ui/button', 
     }
   });
 });
-// src/components/comments/index.es6
+// src/components/comments/index.js
 define('components/comments/index', ['exports', 'module', 'jquery', 'underscore', 'api', 'cursors', 'components/ui/fetch-list', 'components/comments/list-item', 'components/comments/new', 'react'], function (exports, module, _jquery, _underscore, _api, _cursors, _componentsUiFetchList, _componentsCommentsListItem, _componentsCommentsNew, _react) {
   'use strict';
 
@@ -40230,7 +40231,7 @@ define('components/comments/index', ['exports', 'module', 'jquery', 'underscore'
     }
   });
 });
-// src/components/photos/show.es6
+// src/components/photos/show.js
 define('components/photos/show', ['exports', 'module', 'components/comments/index', 'cursors', 'react'], function (exports, module, _componentsCommentsIndex, _cursors, _react) {
   'use strict';
 
@@ -40282,7 +40283,7 @@ define('components/photos/show', ['exports', 'module', 'components/comments/inde
     }
   });
 });
-// src/react-addons-css-transition-group.es6
+// src/react-addons-css-transition-group.js
 define('react-addons-css-transition-group', ['exports', 'module', 'react'], function (exports, module, _react) {
   'use strict';
 
@@ -40477,7 +40478,7 @@ define('react-addons-css-transition-group', ['exports', 'module', 'react'], func
 
   module.exports = _default;
 });
-// src/olay-react.es6
+// src/olay-react.js
 define('olay-react', ['exports', 'module', '../node_modules/olay-react/olay-react'], function (exports, module, _node_modulesOlayReactOlayReact) {
   'use strict';
 
@@ -40487,7 +40488,7 @@ define('olay-react', ['exports', 'module', '../node_modules/olay-react/olay-reac
 
   module.exports = _OlayReact['default'];
 });
-// src/components/ui/popup.es6
+// src/components/ui/popup.js
 define('components/ui/popup', ['exports', 'module', 'element-query', 'components/ui/icon', 'olay-react', 'react'], function (exports, module, _elementQuery, _componentsUiIcon, _olayReact, _react) {
   'use strict';
 
@@ -40571,7 +40572,7 @@ define('components/ui/popup', ['exports', 'module', 'element-query', 'components
     }
   });
 });
-// src/components/photos/index.es6
+// src/components/photos/index.js
 define('components/photos/index', ['exports', 'module', 'jquery', 'underscore', 'api', 'components/photos/list-item', 'components/photos/show', 'cursors', 'components/ui/fetch-list', 'react', 'components/ui/popup'], function (exports, module, _jquery, _underscore, _api, _componentsPhotosListItem, _componentsPhotosShow, _cursors, _componentsUiFetchList, _react, _componentsUiPopup) {
   'use strict';
 
@@ -40705,7 +40706,7 @@ define('components/photos/index', ['exports', 'module', 'jquery', 'underscore', 
     }
   });
 });
-// src/components/albums/show.es6
+// src/components/albums/show.js
 define('components/albums/show', ['exports', 'module', 'components/photos/index', 'cursors', 'react'], function (exports, module, _componentsPhotosIndex, _cursors, _react) {
   'use strict';
 
@@ -40751,7 +40752,7 @@ define('components/albums/show', ['exports', 'module', 'components/photos/index'
     }
   });
 });
-// src/components/albums/index.es6
+// src/components/albums/index.js
 define('components/albums/index', ['exports', 'module', 'jquery', 'underscore', 'api', 'components/albums/list-item', 'components/albums/show', 'cursors', 'components/ui/fetch-list', 'react', 'components/ui/popup'], function (exports, module, _jquery, _underscore, _api, _componentsAlbumsListItem, _componentsAlbumsShow, _cursors, _componentsUiFetchList, _react, _componentsUiPopup) {
   'use strict';
 
@@ -40882,7 +40883,7 @@ define('components/albums/index', ['exports', 'module', 'jquery', 'underscore', 
     }
   });
 });
-// src/components/shared/selector.es6
+// src/components/shared/selector.js
 define('components/shared/selector', ['exports', 'module', 'cursors', 'utils/join-class-names', 'react'], function (exports, module, _cursors, _utilsJoinClassNames, _react) {
   'use strict';
 
@@ -40928,7 +40929,7 @@ define('components/shared/selector', ['exports', 'module', 'cursors', 'utils/joi
     }
   });
 });
-// src/components/shared/faceted-selector.es6
+// src/components/shared/faceted-selector.js
 define('components/shared/faceted-selector', ['exports', 'module', 'underscore', 'cursors', 'react', 'components/shared/selector'], function (exports, module, _underscore, _cursors, _react, _componentsSharedSelector) {
   'use strict';
 
@@ -40985,7 +40986,7 @@ define('components/shared/faceted-selector', ['exports', 'module', 'underscore',
     }
   });
 });
-// src/components/shared/query.es6
+// src/components/shared/query.js
 define('components/shared/query', ['exports', 'module', 'cursors', 'react'], function (exports, module, _cursors, _react) {
   'use strict';
 
@@ -41019,7 +41020,7 @@ define('components/shared/query', ['exports', 'module', 'cursors', 'react'], fun
     }
   });
 });
-// src/components/shared/summary.es6
+// src/components/shared/summary.js
 define('components/shared/summary', ['exports', 'module', 'underscore', 'components/ui/button', 'cursors', 'components/ui/icon', 'react'], function (exports, module, _underscore, _componentsUiButton, _cursors, _componentsUiIcon, _react) {
   'use strict';
 
@@ -41095,7 +41096,7 @@ define('components/shared/summary', ['exports', 'module', 'underscore', 'compone
     }
   });
 });
-// src/components/bookmarks/filters.es6
+// src/components/bookmarks/filters.js
 define('components/bookmarks/filters', ['exports', 'module', 'cursors', 'components/shared/faceted-selector', 'utils/join-class-names', 'components/shared/query', 'react', 'components/shared/summary'], function (exports, module, _cursors, _componentsSharedFacetedSelector, _utilsJoinClassNames, _componentsSharedQuery, _react, _componentsSharedSummary) {
   'use strict';
 
@@ -41138,7 +41139,7 @@ define('components/bookmarks/filters', ['exports', 'module', 'cursors', 'compone
     }
   });
 });
-// src/components/ui/sep.es6
+// src/components/ui/sep.js
 define('components/ui/sep', ['exports', 'module', 'react'], function (exports, module, _react) {
   'use strict';
 
@@ -41154,7 +41155,7 @@ define('components/ui/sep', ['exports', 'module', 'react'], function (exports, m
     }
   });
 });
-// src/components/ui/button-row.es6
+// src/components/ui/button-row.js
 define('components/ui/button-row', ['exports', 'module', 'cursors', 'utils/join-class-names', 'react'], function (exports, module, _cursors, _utilsJoinClassNames, _react) {
   'use strict';
 
@@ -41182,23 +41183,33 @@ define('components/ui/button-row', ['exports', 'module', 'cursors', 'utils/join-
     }
   });
 });
-// node_modules/formatted-text/formatted-text.es6
-define('../node_modules/formatted-text/formatted-text', ['exports', 'module', 'react'], function (exports, module, _react) {
+// node_modules/formatted-text/formatted-text.js
+(function (global, factory) {
+  if (typeof define === 'function' && define.amd) {
+    define('../node_modules/formatted-text/formatted-text', ['exports', 'module', 'react'], factory);
+  } else if (typeof exports !== 'undefined' && typeof module !== 'undefined') {
+    factory(exports, module, require('react'));
+  } else {
+    var mod = {
+      exports: {}
+    };
+    factory(mod.exports, mod, global.React);
+    global.formattedText = mod.exports;
+  }
+})(this, function (exports, module, _react) {
   'use strict';
-
-  var _slicedToArray = (function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i['return']) _i['return'](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError('Invalid attempt to destructure non-iterable instance'); } }; })();
 
   var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
 
-  var _get = function get(_x, _x2, _x3) { var _again = true; _function: while (_again) { var object = _x, property = _x2, receiver = _x3; desc = parent = getter = undefined; _again = false; if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { _x = parent; _x2 = property; _x3 = receiver; _again = true; continue _function; } } else if ('value' in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } } };
+  function _interopRequire(obj) { return obj && obj.__esModule ? obj['default'] : obj; }
 
-  function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+  function _slicedToArray(arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i['return']) _i['return'](); } finally { if (_d) throw _e; } } return _arr; } else { throw new TypeError('Invalid attempt to destructure non-iterable instance'); } }
 
   function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
 
-  function _inherits(subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+  function _inherits(subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) subClass.__proto__ = superClass; }
 
-  var _React = _interopRequireDefault(_react);
+  var _React = _interopRequire(_react);
 
   var PARAGRAPH_SPLIT = /\n{2,}/;
 
@@ -41214,32 +41225,32 @@ define('../node_modules/formatted-text/formatted-text', ['exports', 'module', 'r
     '(': ')',
     '[': ']',
     '"': '"',
-    "'": "'",
+    '\'': '\'',
     '<': '>'
   };
 
-  var unwrap = function unwrap(_x4, _x5) {
-    var _again2 = true;
+  var unwrap = function unwrap(_x, _x2) {
+    var _again = true;
 
-    _function2: while (_again2) {
-      var text = _x4,
-          index = _x5;
+    _function: while (_again) {
       first = last = undefined;
-      _again2 = false;
+      _again = false;
+      var text = _x,
+          index = _x2;
       var first = text[0];
       var last = text[text.length - 1];
 
       if (TERMINATORS.indexOf(last) > -1) {
-        _x4 = text.slice(0, -1);
-        _x5 = index;
-        _again2 = true;
-        continue _function2;
+        _x = text.slice(0, -1);
+        _x2 = index;
+        _again = true;
+        continue _function;
       }
       if (WRAPPERS[first] === last) {
-        _x4 = text.slice(1, -1);
-        _x5 = index + 1;
-        _again2 = true;
-        continue _function2;
+        _x = text.slice(1, -1);
+        _x2 = index + 1;
+        _again = true;
+        continue _function;
       }
       return [text, index];
     }
@@ -41249,20 +41260,17 @@ define('../node_modules/formatted-text/formatted-text', ['exports', 'module', 'r
     var links = [];
     var match = undefined;
     while (match = LINK.exec(text)) {
-      var _match = match;
+      var _match = _slicedToArray(match, 4);
 
-      var _match2 = _slicedToArray(_match, 4);
-
-      var all = _match2[0];
-      var protocol = _match2[1];
-      var preTld = _match2[2];
-      var tld = _match2[3];
+      var all = _match[0];
+      var protocol = _match[1];
+      var preTld = _match[2];
+      var tld = _match[3];
 
       // To qualify as a link, either the protocol or TLD must be specified.
       if (!protocol && !tld) continue;
 
-      var _match3 = match;
-      var index = _match3.index;
+      var index = match.index;
 
       var _unwrap = unwrap(all, index);
 
@@ -41281,7 +41289,7 @@ define('../node_modules/formatted-text/formatted-text', ['exports', 'module', 'r
   };
 
   var renderText = function renderText(text, key) {
-    if (text) return _React['default'].createElement(
+    if (text) return _React.createElement(
       'span',
       { key: key },
       text
@@ -41289,7 +41297,7 @@ define('../node_modules/formatted-text/formatted-text', ['exports', 'module', 'r
   };
 
   var renderLink = function renderLink(link, key) {
-    return _React['default'].createElement(
+    return _React.createElement(
       'a',
       { key: key, href: link.url },
       link.text
@@ -41306,7 +41314,7 @@ define('../node_modules/formatted-text/formatted-text', ['exports', 'module', 'r
       var to = from + link.text.length;
       return {
         index: to,
-        components: parts.components.concat(renderText(text.slice(parts.index, from), key + '-' + i * 2), renderLink(link, key + '-' + (i * 2 + 1)), i === length - 1 ? renderText(text.slice(to), key + '-' + length * 2) : null)
+        components: parts.components.concat(renderText(text.slice(parts.index, from), '' + key + '-' + i * 2), renderLink(link, '' + key + '-' + (i * 2 + 1)), i === length - 1 ? renderText(text.slice(to), '' + key + '-' + length * 2) : null)
       };
     }, { index: 0, components: [] }).components;
   };
@@ -41314,14 +41322,14 @@ define('../node_modules/formatted-text/formatted-text', ['exports', 'module', 'r
   var renderParagraph = function renderParagraph(text) {
     var lines = text.trim().split(LINE_SPLIT);
     return lines.reduce(function (paragraph, line, i) {
-      return paragraph.concat(renderLinks(line, i * 2), i === lines.length - 1 ? null : _React['default'].createElement('br', { key: i * 2 + 1 }));
+      return paragraph.concat(renderLinks(line, i * 2), i === lines.length - 1 ? null : _React.createElement('br', { key: i * 2 + 1 }));
     }, []);
   };
 
   var renderParagraphs = function renderParagraphs(text) {
     var paragraphs = text.trim().split(PARAGRAPH_SPLIT);
     return paragraphs.map(function (paragraph, i) {
-      return paragraph ? _React['default'].createElement(
+      return paragraph ? _React.createElement(
         'p',
         { key: i },
         renderParagraph(paragraph)
@@ -41330,13 +41338,15 @@ define('../node_modules/formatted-text/formatted-text', ['exports', 'module', 'r
   };
 
   var FormattedText = (function (_React$Component) {
-    _inherits(FormattedText, _React$Component);
-
     function FormattedText() {
       _classCallCheck(this, FormattedText);
 
-      _get(Object.getPrototypeOf(FormattedText.prototype), 'constructor', this).apply(this, arguments);
+      if (_React$Component != null) {
+        _React$Component.apply(this, arguments);
+      }
     }
+
+    _inherits(FormattedText, _React$Component);
 
     _createClass(FormattedText, [{
       key: 'render',
@@ -41344,7 +41354,7 @@ define('../node_modules/formatted-text/formatted-text', ['exports', 'module', 'r
         var children = this.props.children;
 
         var text = typeof children === 'string' ? children : '';
-        return _React['default'].createElement(
+        return _React.createElement(
           'div',
           this.props,
           renderParagraphs(text)
@@ -41353,17 +41363,17 @@ define('../node_modules/formatted-text/formatted-text', ['exports', 'module', 'r
     }], [{
       key: 'propTypes',
       value: {
-        children: _React['default'].PropTypes.string
+        children: _React.PropTypes.string
       },
       enumerable: true
     }]);
 
     return FormattedText;
-  })(_React['default'].Component);
+  })(_React.Component);
 
   module.exports = FormattedText;
 });
-// src/formatted-text.es6
+// src/formatted-text.js
 define('formatted-text', ['exports', 'module', '../node_modules/formatted-text/formatted-text'], function (exports, module, _node_modulesFormattedTextFormattedText) {
   'use strict';
 
@@ -41373,7 +41383,7 @@ define('formatted-text', ['exports', 'module', '../node_modules/formatted-text/f
 
   module.exports = _FormattedText['default'];
 });
-// src/components/bookmarks/show.es6
+// src/components/bookmarks/show.js
 define('components/bookmarks/show', ['exports', 'module', 'underscore', 'api', 'components/ui/button', 'components/ui/button-row', 'cursors', 'formatted-text', 'moment', 'react'], function (exports, module, _underscore, _api, _componentsUiButton, _componentsUiButtonRow, _cursors, _formattedText, _moment, _react) {
   'use strict';
 
@@ -41474,7 +41484,7 @@ define('components/bookmarks/show', ['exports', 'module', 'underscore', 'api', '
     }
   });
 });
-// src/components/bookmarks/list-item.es6
+// src/components/bookmarks/list-item.js
 define('components/bookmarks/list-item', ['exports', 'module', 'underscore', 'cursors', 'moment', 'components/ui/popup', 'react', 'components/ui/sep', 'components/bookmarks/show'], function (exports, module, _underscore, _cursors, _moment, _componentsUiPopup, _react, _componentsUiSep, _componentsBookmarksShow) {
   'use strict';
 
@@ -41572,7 +41582,7 @@ define('components/bookmarks/list-item', ['exports', 'module', 'underscore', 'cu
     }
   });
 });
-// src/components/shared/empty.es6
+// src/components/shared/empty.js
 define('components/shared/empty', ['exports', 'module', 'components/ui/button', 'cursors', 'react'], function (exports, module, _componentsUiButton, _cursors, _react) {
   'use strict';
 
@@ -41650,7 +41660,7 @@ define('components/shared/empty', ['exports', 'module', 'components/ui/button', 
     }
   });
 });
-// src/components/ui/error-block.es6
+// src/components/ui/error-block.js
 define('components/ui/error-block', ['exports', 'module', 'react'], function (exports, module, _react) {
   'use strict';
 
@@ -41674,7 +41684,7 @@ define('components/ui/error-block', ['exports', 'module', 'react'], function (ex
     }
   });
 });
-// src/components/ui/loading-block.es6
+// src/components/ui/loading-block.js
 define('components/ui/loading-block', ['exports', 'module', 'react'], function (exports, module, _react) {
   'use strict';
 
@@ -41704,7 +41714,7 @@ define('components/ui/loading-block', ['exports', 'module', 'react'], function (
     }
   });
 });
-// src/components/bookmarks/index.es6
+// src/components/bookmarks/index.js
 define('components/bookmarks/index', ['exports', 'module', 'underscore', 'underscore.string', 'api', 'components/bookmarks/list-item', 'cursors', 'components/shared/empty', 'components/ui/error-block', 'components/bookmarks/filters', 'components/ui/fetch-list', 'components/ui/loading-block', 'react'], function (exports, module, _underscore, _underscoreString, _api, _componentsBookmarksListItem, _cursors, _componentsSharedEmpty, _componentsUiErrorBlock, _componentsBookmarksFilters, _componentsUiFetchList, _componentsUiLoadingBlock, _react) {
   'use strict';
 
@@ -41855,7 +41865,7 @@ define('components/bookmarks/index', ['exports', 'module', 'underscore', 'unders
     }
   });
 });
-// src/components/builder/index.es6
+// src/components/builder/index.js
 define('components/builder/index', ['exports', 'module', 'underscore', 'underscore.string', 'api', 'cursors', 'react'], function (exports, module, _underscore, _underscoreString, _api, _cursors, _react) {
   'use strict';
 
@@ -42107,7 +42117,7 @@ define('components/builder/index', ['exports', 'module', 'underscore', 'undersco
 		window.classNames = classNames;
 	}
 }());
-// src/cx.es6
+// src/cx.js
 define('cx', ['exports', 'module', '../node_modules/classnames/index'], function (exports, module, _node_modulesClassnamesIndex) {
   'use strict';
 
@@ -42117,7 +42127,7 @@ define('cx', ['exports', 'module', '../node_modules/classnames/index'], function
 
   module.exports = _cx['default'];
 });
-// src/components/ui/checkbox.es6
+// src/components/ui/checkbox.js
 define('components/ui/checkbox', ['exports', 'module', 'cx', 'components/ui/icon', 'react'], function (exports, module, _cx, _componentsUiIcon, _react) {
   'use strict';
 
@@ -42171,7 +42181,7 @@ define('components/ui/checkbox', ['exports', 'module', 'cx', 'components/ui/icon
     }
   });
 });
-// src/components/event-filters/list-item.es6
+// src/components/event-filters/list-item.js
 define('components/event-filters/list-item', ['exports', 'module', 'components/ui/checkbox', 'cursors', 'components/ui/icon', 'react'], function (exports, module, _componentsUiCheckbox, _cursors, _componentsUiIcon, _react) {
   'use strict';
 
@@ -43368,7 +43378,7 @@ else {
 }
 
 })();
-// src/tinycolor.es6
+// src/tinycolor.js
 define('tinycolor', ['exports', 'module', '../node_modules/tinycolor2/tinycolor'], function (exports, module, _node_modulesTinycolor2Tinycolor) {
   'use strict';
 
@@ -43386,7 +43396,7 @@ define('../node_modules/orgsync-velcro/config', ["exports", "module"], function 
     "colors": [{ "id": 0, "name": "nothing", "hex": "ffffff" }, { "id": 1, "name": "red-lightest", "hex": "edab9b" }, { "id": 2, "name": "purple", "hex": "a95bbf" }, { "id": 3, "name": "teal-lightest", "hex": "a4dcca" }, { "id": 4, "name": "pink-lightest", "hex": "e29ce1" }, { "id": 5, "name": "green", "hex": "87d361" }, { "id": 6, "name": "orange", "hex": "e57d02" }, { "id": 7, "name": "purple-lightest", "hex": "cfa4dc" }, { "id": 8, "name": "yellow-lightest", "hex": "f8e2ac" }, { "id": 9, "name": "grey", "hex": "cccccc" }, { "id": 10, "name": "yellow", "hex": "efc24f" }, { "id": 11, "name": "indigo-lightest", "hex": "ced9ef" }, { "id": 12, "name": "blue-lightest", "hex": "8cd1e6" }, { "id": 13, "name": "red", "hex": "de6444" }, { "id": 14, "name": "white", "hex": "ffffff" }, { "id": 15, "name": "indigo", "hex": "819dd5" }, { "id": 16, "name": "teal", "hex": "5bbfa1" }, { "id": 17, "name": "grey-lighter", "hex": "e2e2e2" }, { "id": 18, "name": "pink", "hex": "cb4dc7" }, { "id": 19, "name": "green-lightest", "hex": "c5e9b1" }, { "id": 20, "name": "blue", "hex": "38afd4" }, { "id": 21, "name": "orange-lightest", "hex": "fdac50" }, { "id": 100, "name": "nothing", "hex": "ffffff" }, { "id": 101, "name": "red-lightest", "hex": "edab9b" }, { "id": 102, "name": "purple", "hex": "a95bbf" }, { "id": 103, "name": "teal-lightest", "hex": "a4dcca" }, { "id": 104, "name": "pink-lightest", "hex": "e29ce1" }, { "id": 105, "name": "green", "hex": "87d361" }, { "id": 106, "name": "orange", "hex": "e57d02" }, { "id": 107, "name": "purple-lightest", "hex": "cfa4dc" }, { "id": 108, "name": "yellow-lightest", "hex": "f8e2ac" }, { "id": 109, "name": "grey", "hex": "cccccc" }, { "id": 110, "name": "yellow", "hex": "efc24f" }, { "id": 111, "name": "indigo-lightest", "hex": "ced9ef" }, { "id": 112, "name": "blue-lightest", "hex": "8cd1e6" }, { "id": 113, "name": "red", "hex": "de6444" }, { "id": 114, "name": "white", "hex": "ffffff" }, { "id": 115, "name": "indigo", "hex": "819dd5" }, { "id": 116, "name": "teal", "hex": "5bbfa1" }, { "id": 117, "name": "grey-lighter", "hex": "e2e2e2" }, { "id": 118, "name": "pink", "hex": "cb4dc7" }, { "id": 119, "name": "green-lightest", "hex": "c5e9b1" }, { "id": 120, "name": "blue", "hex": "38afd4" }, { "id": 121, "name": "orange-lightest", "hex": "fdac50" }]
   };
 });
-// src/components/event-filters/index.es6
+// src/components/event-filters/index.js
 define('components/event-filters/index', ['exports', 'module', 'underscore', 'api', 'components/ui/checkbox', 'cursors', 'components/event-filters/list-item', 'react', 'tinycolor', '../node_modules/orgsync-velcro/config'], function (exports, module, _underscore, _api, _componentsUiCheckbox, _cursors, _componentsEventFiltersListItem, _react, _tinycolor, _node_modulesOrgsyncVelcroConfig) {
   'use strict';
 
@@ -43995,7 +44005,7 @@ define('../node_modules/moment-timezone/data/packed/latest', ["exports", "module
 		"links": ["Africa/Abidjan|Africa/Bamako", "Africa/Abidjan|Africa/Banjul", "Africa/Abidjan|Africa/Conakry", "Africa/Abidjan|Africa/Dakar", "Africa/Abidjan|Africa/Freetown", "Africa/Abidjan|Africa/Lome", "Africa/Abidjan|Africa/Nouakchott", "Africa/Abidjan|Africa/Ouagadougou", "Africa/Abidjan|Africa/Sao_Tome", "Africa/Abidjan|Africa/Timbuktu", "Africa/Abidjan|Atlantic/St_Helena", "Africa/Addis_Ababa|Africa/Asmara", "Africa/Addis_Ababa|Africa/Asmera", "Africa/Addis_Ababa|Africa/Dar_es_Salaam", "Africa/Addis_Ababa|Africa/Djibouti", "Africa/Addis_Ababa|Africa/Kampala", "Africa/Addis_Ababa|Africa/Mogadishu", "Africa/Addis_Ababa|Africa/Nairobi", "Africa/Addis_Ababa|Indian/Antananarivo", "Africa/Addis_Ababa|Indian/Comoro", "Africa/Addis_Ababa|Indian/Mayotte", "Africa/Bangui|Africa/Brazzaville", "Africa/Bangui|Africa/Douala", "Africa/Bangui|Africa/Kinshasa", "Africa/Bangui|Africa/Lagos", "Africa/Bangui|Africa/Libreville", "Africa/Bangui|Africa/Luanda", "Africa/Bangui|Africa/Malabo", "Africa/Bangui|Africa/Niamey", "Africa/Bangui|Africa/Porto-Novo", "Africa/Blantyre|Africa/Bujumbura", "Africa/Blantyre|Africa/Gaborone", "Africa/Blantyre|Africa/Harare", "Africa/Blantyre|Africa/Kigali", "Africa/Blantyre|Africa/Lubumbashi", "Africa/Blantyre|Africa/Lusaka", "Africa/Blantyre|Africa/Maputo", "Africa/Cairo|Egypt", "Africa/Johannesburg|Africa/Maseru", "Africa/Johannesburg|Africa/Mbabane", "Africa/Juba|Africa/Khartoum", "Africa/Tripoli|Libya", "America/Adak|America/Atka", "America/Adak|US/Aleutian", "America/Anchorage|US/Alaska", "America/Anguilla|America/Antigua", "America/Anguilla|America/Dominica", "America/Anguilla|America/Grenada", "America/Anguilla|America/Guadeloupe", "America/Anguilla|America/Marigot", "America/Anguilla|America/Montserrat", "America/Anguilla|America/Port_of_Spain", "America/Anguilla|America/St_Barthelemy", "America/Anguilla|America/St_Kitts", "America/Anguilla|America/St_Lucia", "America/Anguilla|America/St_Thomas", "America/Anguilla|America/St_Vincent", "America/Anguilla|America/Tortola", "America/Anguilla|America/Virgin", "America/Argentina/Buenos_Aires|America/Buenos_Aires", "America/Argentina/Catamarca|America/Argentina/ComodRivadavia", "America/Argentina/Catamarca|America/Catamarca", "America/Argentina/Cordoba|America/Cordoba", "America/Argentina/Cordoba|America/Rosario", "America/Argentina/Jujuy|America/Jujuy", "America/Argentina/Mendoza|America/Mendoza", "America/Aruba|America/Curacao", "America/Aruba|America/Kralendijk", "America/Aruba|America/Lower_Princes", "America/Atikokan|America/Coral_Harbour", "America/Chicago|US/Central", "America/Denver|America/Shiprock", "America/Denver|Navajo", "America/Denver|US/Mountain", "America/Detroit|US/Michigan", "America/Edmonton|Canada/Mountain", "America/Ensenada|America/Tijuana", "America/Ensenada|Mexico/BajaNorte", "America/Fort_Wayne|America/Indiana/Indianapolis", "America/Fort_Wayne|America/Indianapolis", "America/Fort_Wayne|US/East-Indiana", "America/Halifax|Canada/Atlantic", "America/Havana|Cuba", "America/Indiana/Knox|America/Knox_IN", "America/Indiana/Knox|US/Indiana-Starke", "America/Jamaica|Jamaica", "America/Kentucky/Louisville|America/Louisville", "America/Los_Angeles|US/Pacific", "America/Los_Angeles|US/Pacific-New", "America/Manaus|Brazil/West", "America/Mazatlan|Mexico/BajaSur", "America/Mexico_City|Mexico/General", "America/Montreal|America/Toronto", "America/Montreal|Canada/Eastern", "America/New_York|US/Eastern", "America/Noronha|Brazil/DeNoronha", "America/Phoenix|US/Arizona", "America/Porto_Acre|America/Rio_Branco", "America/Porto_Acre|Brazil/Acre", "America/Regina|Canada/East-Saskatchewan", "America/Regina|Canada/Saskatchewan", "America/Santiago|Chile/Continental", "America/Sao_Paulo|Brazil/East", "America/St_Johns|Canada/Newfoundland", "America/Vancouver|Canada/Pacific", "America/Whitehorse|Canada/Yukon", "America/Winnipeg|Canada/Central", "Antarctica/McMurdo|Antarctica/South_Pole", "Antarctica/McMurdo|NZ", "Antarctica/McMurdo|Pacific/Auckland", "Arctic/Longyearbyen|Atlantic/Jan_Mayen", "Arctic/Longyearbyen|Europe/Oslo", "Asia/Aden|Asia/Kuwait", "Asia/Aden|Asia/Riyadh", "Asia/Ashgabat|Asia/Ashkhabad", "Asia/Bahrain|Asia/Qatar", "Asia/Bangkok|Asia/Phnom_Penh", "Asia/Bangkok|Asia/Vientiane", "Asia/Calcutta|Asia/Kolkata", "Asia/Chongqing|Asia/Chungking", "Asia/Chongqing|Asia/Harbin", "Asia/Chongqing|Asia/Shanghai", "Asia/Chongqing|PRC", "Asia/Dacca|Asia/Dhaka", "Asia/Dubai|Asia/Muscat", "Asia/Ho_Chi_Minh|Asia/Saigon", "Asia/Hong_Kong|Hongkong", "Asia/Istanbul|Europe/Istanbul", "Asia/Istanbul|Turkey", "Asia/Jerusalem|Asia/Tel_Aviv", "Asia/Jerusalem|Israel", "Asia/Kashgar|Asia/Urumqi", "Asia/Kathmandu|Asia/Katmandu", "Asia/Macao|Asia/Macau", "Asia/Makassar|Asia/Ujung_Pandang", "Asia/Nicosia|Europe/Nicosia", "Asia/Seoul|ROK", "Asia/Singapore|Singapore", "Asia/Taipei|ROC", "Asia/Tehran|Iran", "Asia/Thimbu|Asia/Thimphu", "Asia/Tokyo|Japan", "Asia/Ulaanbaatar|Asia/Ulan_Bator", "Atlantic/Faeroe|Atlantic/Faroe", "Atlantic/Reykjavik|Iceland", "Australia/ACT|Australia/Canberra", "Australia/ACT|Australia/NSW", "Australia/ACT|Australia/Sydney", "Australia/Adelaide|Australia/South", "Australia/Brisbane|Australia/Queensland", "Australia/Broken_Hill|Australia/Yancowinna", "Australia/Darwin|Australia/North", "Australia/Hobart|Australia/Tasmania", "Australia/LHI|Australia/Lord_Howe", "Australia/Melbourne|Australia/Victoria", "Australia/Perth|Australia/West", "Chile/EasterIsland|Pacific/Easter", "Eire|Europe/Dublin", "Etc/GMT+0|Etc/GMT", "Etc/GMT+0|Etc/GMT-0", "Etc/GMT+0|Etc/GMT0", "Etc/GMT+0|Etc/Greenwich", "Etc/GMT+0|GMT", "Etc/GMT+0|GMT+0", "Etc/GMT+0|GMT-0", "Etc/GMT+0|GMT0", "Etc/GMT+0|Greenwich", "Etc/UCT|UCT", "Etc/UTC|Etc/Universal", "Etc/UTC|Etc/Zulu", "Etc/UTC|UTC", "Etc/UTC|Universal", "Etc/UTC|Zulu", "Europe/Belfast|Europe/Guernsey", "Europe/Belfast|Europe/Isle_of_Man", "Europe/Belfast|Europe/Jersey", "Europe/Belfast|Europe/London", "Europe/Belfast|GB", "Europe/Belfast|GB-Eire", "Europe/Belgrade|Europe/Ljubljana", "Europe/Belgrade|Europe/Podgorica", "Europe/Belgrade|Europe/Sarajevo", "Europe/Belgrade|Europe/Skopje", "Europe/Belgrade|Europe/Zagreb", "Europe/Bratislava|Europe/Prague", "Europe/Busingen|Europe/Vaduz", "Europe/Busingen|Europe/Zurich", "Europe/Chisinau|Europe/Tiraspol", "Europe/Helsinki|Europe/Mariehamn", "Europe/Lisbon|Portugal", "Europe/Moscow|W-SU", "Europe/Rome|Europe/San_Marino", "Europe/Rome|Europe/Vatican", "Europe/Warsaw|Poland", "Kwajalein|Pacific/Kwajalein", "NZ-CHAT|Pacific/Chatham", "Pacific/Chuuk|Pacific/Truk", "Pacific/Chuuk|Pacific/Yap", "Pacific/Guam|Pacific/Saipan", "Pacific/Honolulu|Pacific/Johnston", "Pacific/Honolulu|US/Hawaii", "Pacific/Midway|Pacific/Pago_Pago", "Pacific/Midway|Pacific/Samoa", "Pacific/Midway|US/Samoa", "Pacific/Pohnpei|Pacific/Ponape"]
 	};
 });
-// src/moment-timezone.es6
+// src/moment-timezone.js
 define('moment-timezone', ['exports', 'module', '../node_modules/moment-timezone/moment-timezone', '../node_modules/moment-timezone/data/packed/latest'], function (exports, module, _node_modulesMomentTimezoneMomentTimezone, _node_modulesMomentTimezoneDataPackedLatest) {
   'use strict';
 
@@ -44009,7 +44019,7 @@ define('moment-timezone', ['exports', 'module', '../node_modules/moment-timezone
 
   module.exports = _moment['default'];
 });
-// src/entities/event.es6
+// src/entities/event.js
 define('entities/event', ['exports', 'underscore', 'underscore.string', 'api', 'moment-timezone'], function (exports, _underscore, _underscoreString, _api, _momentTimezone) {
   'use strict';
 
@@ -44178,7 +44188,7 @@ define('entities/event', ['exports', 'underscore', 'underscore.string', 'api', '
   };
   exports.fetch = fetch;
 });
-// src/components/events/show.es6
+// src/components/events/show.js
 define('components/events/show', ['exports', 'module', 'underscore', 'underscore.string', 'api', 'components/ui/button', 'cursors', 'components/ui/icon', 'react', 'components/ui/sep', 'entities/account', 'entities/event'], function (exports, module, _underscore, _underscoreString, _api, _componentsUiButton, _cursors, _componentsUiIcon, _react, _componentsUiSep, _entitiesAccount, _entitiesEvent) {
   'use strict';
 
@@ -44543,7 +44553,7 @@ define('components/events/show', ['exports', 'module', 'underscore', 'underscore
     }
   });
 });
-// src/components/events/td.es6
+// src/components/events/td.js
 define('components/events/td', ['exports', 'module', 'cursors', 'components/ui/popup', 'react', 'components/events/show', 'tinycolor', 'entities/event'], function (exports, module, _cursors, _componentsUiPopup, _react, _componentsEventsShow, _tinycolor, _entitiesEvent) {
   'use strict';
 
@@ -44714,7 +44724,7 @@ define('components/events/td', ['exports', 'module', 'cursors', 'components/ui/p
     }
   });
 });
-// src/components/events/list-item.es6
+// src/components/events/list-item.js
 define('components/events/list-item', ['exports', 'module', 'underscore.string', 'cursors', 'components/ui/icon', 'components/ui/popup', 'react', 'components/ui/sep', 'components/events/show', 'entities/event'], function (exports, module, _underscoreString, _cursors, _componentsUiIcon, _componentsUiPopup, _react, _componentsUiSep, _componentsEventsShow, _entitiesEvent) {
   'use strict';
 
@@ -44938,7 +44948,7 @@ define('components/events/list-item', ['exports', 'module', 'underscore.string',
     }
   });
 });
-// src/components/events/list-date.es6
+// src/components/events/list-date.js
 define('components/events/list-date', ['exports', 'module', 'cursors', 'components/ui/fetch-list', 'components/events/list-item', 'react', 'entities/event'], function (exports, module, _cursors, _componentsUiFetchList, _componentsEventsListItem, _react, _entitiesEvent) {
   'use strict';
 
@@ -45001,7 +45011,7 @@ define('components/events/list-date', ['exports', 'module', 'cursors', 'componen
     }
   });
 });
-// src/components/events/week.es6
+// src/components/events/week.js
 define('components/events/week', ['exports', 'module', 'underscore', 'cursors', 'components/events/td', 'components/events/list-date', 'components/ui/popup', 'react', 'entities/event'], function (exports, module, _underscore, _cursors, _componentsEventsTd, _componentsEventsListDate, _componentsUiPopup, _react, _entitiesEvent) {
   'use strict';
 
@@ -45226,7 +45236,7 @@ define('components/events/week', ['exports', 'module', 'underscore', 'cursors', 
     }
   });
 });
-// src/components/events/calendar.es6
+// src/components/events/calendar.js
 define('components/events/calendar', ['exports', 'module', 'underscore', 'cursors', 'entities/event', 'react', 'components/events/week'], function (exports, module, _underscore, _cursors, _entitiesEvent, _react, _componentsEventsWeek) {
   'use strict';
 
@@ -45351,7 +45361,7 @@ define('components/events/calendar', ['exports', 'module', 'underscore', 'cursor
     }
   });
 });
-// src/components/ui/button-group.es6
+// src/components/ui/button-group.js
 define('components/ui/button-group', ['exports', 'module', 'cursors', 'utils/join-class-names', 'react'], function (exports, module, _cursors, _utilsJoinClassNames, _react) {
   'use strict';
 
@@ -45379,7 +45389,7 @@ define('components/ui/button-group', ['exports', 'module', 'cursors', 'utils/joi
     }
   });
 });
-// src/components/events/ongoing.es6
+// src/components/events/ongoing.js
 define('components/events/ongoing', ['exports', 'module', 'underscore', 'api', 'cursors', 'entities/event', 'react'], function (exports, module, _underscore, _api, _cursors, _entitiesEvent, _react) {
   'use strict';
 
@@ -45521,7 +45531,7 @@ define('components/events/ongoing', ['exports', 'module', 'underscore', 'api', '
     }
   });
 });
-// src/components/events/list.es6
+// src/components/events/list.js
 define('components/events/list', ['exports', 'module', 'underscore', 'cursors', 'components/ui/fetch-list', 'components/events/list-date', 'components/events/ongoing', 'react', 'entities/event'], function (exports, module, _underscore, _cursors, _componentsUiFetchList, _componentsEventsListDate, _componentsEventsOngoing, _react, _entitiesEvent) {
   'use strict';
 
@@ -46969,11 +46979,12 @@ jstz.olson.dst_rules = {
     }
 })(this);
 // src/jstz.js
+define('jstz', ["exports", "module"], function (exports, module) {
+  "use strict";
 
-
-var root = this;
-define('jstz', function () { return root.jstz; });
-// src/tz.es6
+  module.exports = global.jstz;
+});
+// src/tz.js
 define('tz', ['exports', 'module', 'jstz'], function (exports, module, _jstz) {
   'use strict';
 
@@ -46983,7 +46994,7 @@ define('tz', ['exports', 'module', 'jstz'], function (exports, module, _jstz) {
 
   module.exports = _jstz2['default'].determine().name();
 });
-// src/components/events/index.es6
+// src/components/events/index.js
 define('components/events/index', ['exports', 'module', 'underscore', 'components/ui/button', 'components/ui/button-group', 'components/events/calendar', 'components/events/list', 'cursors', 'components/event-filters/index', 'components/ui/icon', 'react', 'react-dom', 'superagent', 'tz', 'entities/event'], function (exports, module, _underscore, _componentsUiButton, _componentsUiButtonGroup, _componentsEventsCalendar, _componentsEventsList, _cursors, _componentsEventFiltersIndex, _componentsUiIcon, _react, _reactDom, _superagent, _tz, _entitiesEvent) {
   'use strict';
 
@@ -47547,7 +47558,7 @@ define('components/events/index', ['exports', 'module', 'underscore', 'component
     }
   });
 });
-// src/components/ui/text-button.es6
+// src/components/ui/text-button.js
 define('components/ui/text-button', ['exports', 'module', 'components/ui/button', 'cursors', 'react'], function (exports, module, _componentsUiButton, _cursors, _react) {
   'use strict';
 
@@ -47569,7 +47580,7 @@ define('components/ui/text-button', ['exports', 'module', 'components/ui/button'
     }
   });
 });
-// src/components/files/breadcrumb.es6
+// src/components/files/breadcrumb.js
 define('components/files/breadcrumb', ['exports', 'module', 'underscore', 'cursors', 'react', 'components/ui/text-button'], function (exports, module, _underscore, _cursors, _react, _componentsUiTextButton) {
   'use strict';
 
@@ -47608,7 +47619,7 @@ define('components/files/breadcrumb', ['exports', 'module', 'underscore', 'curso
     }
   });
 });
-// src/entities/file.es6
+// src/entities/file.js
 define('entities/file', ['exports', 'underscore'], function (exports, _underscore) {
   'use strict';
 
@@ -47647,7 +47658,7 @@ define('entities/file', ['exports', 'underscore'], function (exports, _underscor
   };
   exports.getHumanFileSize = getHumanFileSize;
 });
-// src/components/files/file-show.es6
+// src/components/files/file-show.js
 define('components/files/file-show', ['exports', 'module', 'underscore', 'api', 'components/ui/button', 'components/comments/index', 'cursors', 'moment', 'react', 'components/ui/text-button', 'entities/file'], function (exports, module, _underscore, _api, _componentsUiButton, _componentsCommentsIndex, _cursors, _moment, _react, _componentsUiTextButton, _entitiesFile) {
   'use strict';
 
@@ -47870,7 +47881,7 @@ define('components/files/file-show', ['exports', 'module', 'underscore', 'api', 
     }
   });
 });
-// src/components/files/list-item.es6
+// src/components/files/list-item.js
 define('components/files/list-item', ['exports', 'module', 'cursors', 'entities/file', 'moment', 'react', 'components/ui/sep', 'components/ui/text-button'], function (exports, module, _cursors, _entitiesFile, _moment, _react, _componentsUiSep, _componentsUiTextButton) {
   'use strict';
 
@@ -47961,7 +47972,7 @@ define('components/files/list-item', ['exports', 'module', 'cursors', 'entities/
     }
   });
 });
-// src/components/files/folder-show.es6
+// src/components/files/folder-show.js
 define('components/files/folder-show', ['exports', 'module', 'underscore', 'api', 'cursors', 'components/ui/fetch-list', 'components/files/list-item', 'react'], function (exports, module, _underscore, _api, _cursors, _componentsUiFetchList, _componentsFilesListItem, _react) {
   'use strict';
 
@@ -48037,7 +48048,7 @@ define('components/files/folder-show', ['exports', 'module', 'underscore', 'api'
     }
   });
 });
-// src/components/files/index.es6
+// src/components/files/index.js
 define('components/files/index', ['exports', 'module', 'underscore', 'components/files/breadcrumb', 'cursors', 'components/files/file-show', 'components/files/folder-show', 'react', 'react-dom'], function (exports, module, _underscore, _componentsFilesBreadcrumb, _cursors, _componentsFilesFileShow, _componentsFilesFolderShow, _react, _reactDom) {
   'use strict';
 
@@ -48158,7 +48169,7 @@ define('components/files/index', ['exports', 'module', 'underscore', 'components
     }
   });
 });
-// src/components/shared/category-selector.es6
+// src/components/shared/category-selector.js
 define('components/shared/category-selector', ['exports', 'module', 'cursors', 'components/shared/faceted-selector', 'utils/join-class-names', 'react'], function (exports, module, _cursors, _componentsSharedFacetedSelector, _utilsJoinClassNames, _react) {
   'use strict';
 
@@ -48197,7 +48208,7 @@ define('components/shared/category-selector', ['exports', 'module', 'cursors', '
     }
   });
 });
-// src/components/forms/filters.es6
+// src/components/forms/filters.js
 define('components/forms/filters', ['exports', 'module', 'components/shared/category-selector', 'cursors', 'components/shared/query', 'react', 'components/shared/summary'], function (exports, module, _componentsSharedCategorySelector, _cursors, _componentsSharedQuery, _react, _componentsSharedSummary) {
   'use strict';
 
@@ -48248,7 +48259,7 @@ define('components/forms/filters', ['exports', 'module', 'components/shared/cate
     }
   });
 });
-// src/components/shared/created-by.es6
+// src/components/shared/created-by.js
 define('components/shared/created-by', ['exports', 'module', 'moment', 'react', 'entities/account'], function (exports, module, _moment, _react, _entitiesAccount) {
   'use strict';
 
@@ -48292,7 +48303,7 @@ define('components/shared/created-by', ['exports', 'module', 'moment', 'react', 
     }
   });
 });
-// src/components/forms/show.es6
+// src/components/forms/show.js
 define('components/forms/show', ['exports', 'module', 'api', 'components/ui/button', 'components/ui/button-row', 'cursors', 'components/shared/created-by', 'react'], function (exports, module, _api, _componentsUiButton, _componentsUiButtonRow, _cursors, _componentsSharedCreatedBy, _react) {
   'use strict';
 
@@ -48377,7 +48388,7 @@ define('components/forms/show', ['exports', 'module', 'api', 'components/ui/butt
     }
   });
 });
-// src/components/forms/list-item.es6
+// src/components/forms/list-item.js
 define('components/forms/list-item', ['exports', 'module', 'cursors', 'moment', 'components/ui/popup', 'react', 'components/ui/sep', 'components/forms/show'], function (exports, module, _cursors, _moment, _componentsUiPopup, _react, _componentsUiSep, _componentsFormsShow) {
   'use strict';
 
@@ -48478,7 +48489,7 @@ define('components/forms/list-item', ['exports', 'module', 'cursors', 'moment', 
     }
   });
 });
-// src/components/forms/index.es6
+// src/components/forms/index.js
 define('components/forms/index', ['exports', 'module', 'underscore', 'underscore.string', 'api', 'cursors', 'components/shared/empty', 'components/ui/error-block', 'components/forms/filters', 'components/forms/list-item', 'components/ui/fetch-list', 'components/ui/loading-block', 'react'], function (exports, module, _underscore, _underscoreString, _api, _cursors, _componentsSharedEmpty, _componentsUiErrorBlock, _componentsFormsFilters, _componentsFormsListItem, _componentsUiFetchList, _componentsUiLoadingBlock, _react) {
   'use strict';
 
@@ -48641,7 +48652,7 @@ define('components/forms/index', ['exports', 'module', 'underscore', 'underscore
     }
   });
 });
-// src/components/news-posts/show.es6
+// src/components/news-posts/show.js
 define('components/news-posts/show', ['exports', 'module', 'components/comments/index', 'components/shared/created-by', 'cursors', 'react'], function (exports, module, _componentsCommentsIndex, _componentsSharedCreatedBy, _cursors, _react) {
   'use strict';
 
@@ -48686,7 +48697,7 @@ define('components/news-posts/show', ['exports', 'module', 'components/comments/
     }
   });
 });
-// src/components/news-posts/list-item.es6
+// src/components/news-posts/list-item.js
 define('components/news-posts/list-item', ['exports', 'module', 'jquery', 'underscore.string', 'cursors', 'components/ui/icon', 'moment', 'components/news-posts/show', 'components/ui/popup', 'react'], function (exports, module, _jquery, _underscoreString, _cursors, _componentsUiIcon, _moment, _componentsNewsPostsShow, _componentsUiPopup, _react) {
   'use strict';
 
@@ -48811,7 +48822,7 @@ define('components/news-posts/list-item', ['exports', 'module', 'jquery', 'under
     }
   });
 });
-// src/components/news-posts/index.es6
+// src/components/news-posts/index.js
 define('components/news-posts/index', ['exports', 'module', 'underscore', 'api', 'cursors', 'components/ui/fetch-list', 'components/news-posts/list-item', 'react'], function (exports, module, _underscore, _api, _cursors, _componentsUiFetchList, _componentsNewsPostsListItem, _react) {
   'use strict';
 
@@ -48878,7 +48889,7 @@ define('components/news-posts/index', ['exports', 'module', 'underscore', 'api',
     }
   });
 });
-// src/components/polls/filters.es6
+// src/components/polls/filters.js
 define('components/polls/filters', ['exports', 'module', 'cursors', 'components/shared/faceted-selector', 'utils/join-class-names', 'components/shared/query', 'react', 'components/shared/summary'], function (exports, module, _cursors, _componentsSharedFacetedSelector, _utilsJoinClassNames, _componentsSharedQuery, _react, _componentsSharedSummary) {
   'use strict';
 
@@ -48931,7 +48942,7 @@ define('components/polls/filters', ['exports', 'module', 'cursors', 'components/
     }
   });
 });
-// src/components/polls/results.es6
+// src/components/polls/results.js
 define('components/polls/results', ['exports', 'module', 'underscore', 'react'], function (exports, module, _underscore, _react) {
   'use strict';
 
@@ -49082,7 +49093,7 @@ define('components/polls/results', ['exports', 'module', 'underscore', 'react'],
     }
   });
 });
-// src/components/polls/show.es6
+// src/components/polls/show.js
 define('components/polls/show', ['exports', 'module', 'api', 'components/ui/button', 'components/ui/button-row', 'components/shared/created-by', 'cursors', 'moment', 'react', 'components/polls/results'], function (exports, module, _api, _componentsUiButton, _componentsUiButtonRow, _componentsSharedCreatedBy, _cursors, _moment, _react, _componentsPollsResults) {
   'use strict';
 
@@ -49189,7 +49200,7 @@ define('components/polls/show', ['exports', 'module', 'api', 'components/ui/butt
     }
   });
 });
-// src/components/polls/list-item.es6
+// src/components/polls/list-item.js
 define('components/polls/list-item', ['exports', 'module', 'underscore', 'cursors', 'moment', 'components/ui/popup', 'react', 'components/ui/sep', 'components/polls/show'], function (exports, module, _underscore, _cursors, _moment, _componentsUiPopup, _react, _componentsUiSep, _componentsPollsShow) {
   'use strict';
 
@@ -49324,7 +49335,7 @@ define('components/polls/list-item', ['exports', 'module', 'underscore', 'cursor
     }
   });
 });
-// src/components/polls/index.es6
+// src/components/polls/index.js
 define('components/polls/index', ['exports', 'module', 'underscore', 'underscore.string', 'api', 'cursors', 'components/shared/empty', 'components/ui/error-block', 'components/polls/filters', 'components/ui/fetch-list', 'components/ui/loading-block', 'components/polls/list-item', 'react'], function (exports, module, _underscore, _underscoreString, _api, _cursors, _componentsSharedEmpty, _componentsUiErrorBlock, _componentsPollsFilters, _componentsUiFetchList, _componentsUiLoadingBlock, _componentsPollsListItem, _react) {
   'use strict';
 
@@ -49495,7 +49506,7 @@ define('components/polls/index', ['exports', 'module', 'underscore', 'underscore
     }
   });
 });
-// src/components/portals/letter-cell.es6
+// src/components/portals/letter-cell.js
 define('components/portals/letter-cell', ['exports', 'module', 'components/ui/button', 'cursors', 'react'], function (exports, module, _componentsUiButton, _cursors, _react) {
   'use strict';
 
@@ -49533,7 +49544,7 @@ define('components/portals/letter-cell', ['exports', 'module', 'components/ui/bu
     }
   });
 });
-// src/components/portals/letter-table.es6
+// src/components/portals/letter-table.js
 define('components/portals/letter-table', ['exports', 'module', 'underscore', 'cursors', 'components/portals/letter-cell', 'react'], function (exports, module, _underscore, _cursors, _componentsPortalsLetterCell, _react) {
   'use strict';
 
@@ -49585,7 +49596,7 @@ define('components/portals/letter-table', ['exports', 'module', 'underscore', 'c
     }
   });
 });
-// src/components/portals/umbrella-selector.es6
+// src/components/portals/umbrella-selector.js
 define('components/portals/umbrella-selector', ['exports', 'module', 'cursors', 'components/shared/faceted-selector', 'utils/join-class-names', 'react'], function (exports, module, _cursors, _componentsSharedFacetedSelector, _utilsJoinClassNames, _react) {
   'use strict';
 
@@ -49619,7 +49630,7 @@ define('components/portals/umbrella-selector', ['exports', 'module', 'cursors', 
     }
   });
 });
-// src/components/portals/filters.es6
+// src/components/portals/filters.js
 define('components/portals/filters', ['exports', 'module', 'components/shared/category-selector', 'cursors', 'components/portals/letter-table', 'components/shared/query', 'react', 'components/shared/summary', 'components/portals/umbrella-selector'], function (exports, module, _componentsSharedCategorySelector, _cursors, _componentsPortalsLetterTable, _componentsSharedQuery, _react, _componentsSharedSummary, _componentsPortalsUmbrellaSelector) {
   'use strict';
 
@@ -49675,7 +49686,7 @@ define('components/portals/filters', ['exports', 'module', 'components/shared/ca
     }
   });
 });
-// src/components/portals/show.es6
+// src/components/portals/show.js
 define('components/portals/show', ['exports', 'module', 'api', 'cursors', 'components/ui/button', 'components/ui/button-row', 'react'], function (exports, module, _api, _cursors, _componentsUiButton, _componentsUiButtonRow, _react) {
   'use strict';
 
@@ -49779,7 +49790,7 @@ define('components/portals/show', ['exports', 'module', 'api', 'cursors', 'compo
     }
   });
 });
-// src/components/portals/list-item.es6
+// src/components/portals/list-item.js
 define('components/portals/list-item', ['exports', 'module', 'cursors', 'components/ui/popup', 'react', 'components/portals/show'], function (exports, module, _cursors, _componentsUiPopup, _react, _componentsPortalsShow) {
   'use strict';
 
@@ -49875,7 +49886,7 @@ define('components/portals/list-item', ['exports', 'module', 'cursors', 'compone
     }
   });
 });
-// src/components/portals/index.es6
+// src/components/portals/index.js
 define('components/portals/index', ['exports', 'module', 'underscore', 'underscore.string', 'api', 'cursors', 'components/ui/error-block', 'components/ui/fetch-list', 'components/portals/filters', 'components/portals/list-item', 'components/ui/loading-block', 'components/shared/empty', 'react'], function (exports, module, _underscore, _underscoreString, _api, _cursors, _componentsUiErrorBlock, _componentsUiFetchList, _componentsPortalsFilters, _componentsPortalsListItem, _componentsUiLoadingBlock, _componentsSharedEmpty, _react) {
   'use strict';
 
@@ -50073,7 +50084,7 @@ define('components/portals/index', ['exports', 'module', 'underscore', 'undersco
     }
   });
 });
-// src/entities/selector/item.es6
+// src/entities/selector/item.js
 define('entities/selector/item', ['exports', 'underscore', 'underscore.string'], function (exports, _underscore, _underscoreString) {
   'use strict';
 
@@ -50150,7 +50161,7 @@ define('entities/selector/item', ['exports', 'underscore', 'underscore.string'],
   var getBasicFields = _2['default'].partial(_2['default'].pick, _2['default'], BASIC_FIELDS);
   exports.getBasicFields = getBasicFields;
 });
-// src/components/selector/result.es6
+// src/components/selector/result.js
 define('components/selector/result', ['exports', 'module', 'underscore', 'underscore.string', 'cursors', 'components/ui/icon', 'react', 'entities/selector/item'], function (exports, module, _underscore, _underscoreString, _cursors, _componentsUiIcon, _react, _entitiesSelectorItem) {
   'use strict';
 
@@ -50229,7 +50240,7 @@ define('components/selector/result', ['exports', 'module', 'underscore', 'unders
     }
   });
 });
-// src/components/selector/scope.es6
+// src/components/selector/scope.js
 define('components/selector/scope', ['exports', 'module', 'cursors', 'react', 'entities/selector/item'], function (exports, module, _cursors, _react, _entitiesSelectorItem) {
   'use strict';
 
@@ -50470,7 +50481,7 @@ define('components/selector/scope', ['exports', 'module', 'cursors', 'react', 'e
 
   return Live;
 });
-// src/live.es6
+// src/live.js
 define('live', ['exports', 'module', '../node_modules/live-socket/live'], function (exports, module, _node_modulesLiveSocketLive) {
   'use strict';
 
@@ -50480,7 +50491,7 @@ define('live', ['exports', 'module', '../node_modules/live-socket/live'], functi
 
   module.exports = _Live['default'];
 });
-// src/io.es6
+// src/io.js
 define('io', ['exports', 'module', 'config', 'live'], function (exports, module, _config, _live) {
   'use strict';
 
@@ -50522,7 +50533,7 @@ define('io', ['exports', 'module', 'config', 'live'], function (exports, module,
 
   module.exports = live;
 });
-// src/entities/selector/store.es6
+// src/entities/selector/store.js
 define('entities/selector/store', ['exports', 'underscore', 'underscore.string', 'orgsync-widgets', 'entities/selector/item', 'io', 'react'], function (exports, _underscore, _underscoreString, _orgsyncWidgets, _entitiesSelectorItem, _io, _react) {
   'use strict';
 
@@ -50646,7 +50657,7 @@ define('entities/selector/store', ['exports', 'underscore', 'underscore.string',
   };
   exports.fetch = fetch;
 });
-// src/components/selector/token.es6
+// src/components/selector/token.js
 define('components/selector/token', ['exports', 'module', 'cursors', 'components/ui/icon', 'react', 'entities/selector/item'], function (exports, module, _cursors, _componentsUiIcon, _react, _entitiesSelectorItem) {
   'use strict';
 
@@ -50691,7 +50702,7 @@ define('components/selector/token', ['exports', 'module', 'cursors', 'components
     }
   });
 });
-// src/components/selector/index.es6
+// src/components/selector/index.js
 define('components/selector/index', ['exports', 'module', 'underscore', 'orgsync-widgets', 'components/ui/button', 'cursors', 'components/ui/fetch-list', 'components/ui/popup', 'react', 'components/selector/result', 'components/selector/scope', 'entities/selector/store', 'components/selector/token', 'entities/selector/item'], function (exports, module, _underscore, _orgsyncWidgets, _componentsUiButton, _cursors, _componentsUiFetchList, _componentsUiPopup, _react, _componentsSelectorResult, _componentsSelectorScope, _entitiesSelectorStore, _componentsSelectorToken, _entitiesSelectorItem) {
   'use strict';
 
@@ -51231,7 +51242,7 @@ define('components/selector/index', ['exports', 'module', 'underscore', 'orgsync
 
   module.exports = SelectorIndex;
 });
-// src/components/ui/auto-textbox.es6
+// src/components/ui/auto-textbox.js
 define('components/ui/auto-textbox', ['exports', 'module', 'jquery', 'cursors', 'react', 'react-dom'], function (exports, module, _jquery, _cursors, _react, _reactDom) {
   'use strict';
 

@@ -5,13 +5,6 @@ module.exports = {
       out: 'js',
       transformers: {name: 'json', options: {modules: 'amd', compact: false}}
     },
-    es6: {
-      out: 'js',
-      transformers: [
-        'directives',
-        {name: 'babel', options: {modules: 'amd', stage: 0}}
-      ]
-    },
     js: {
       transformers: [
         'directives',
@@ -23,10 +16,15 @@ module.exports = {
             'node_modules/superagent/lib/client.js'
           ]
         },
+        {
+          name: 'babel',
+          only: 'src/**/*',
+          options: {modules: 'amd', stage: 0}
+        },
         {name: 'prepend-path', options: {before: '// '}},
         {
           name: 'concat-amd',
-          options: {base: 'src', extensions: ['js', 'es6', 'json']}
+          options: {base: 'src', extensions: ['js', 'json']}
         }
       ]
     },
@@ -43,7 +41,7 @@ module.exports = {
     }
   },
   builds: {
-    'src/orgsync-widgets.es6': 'dist',
+    'src/orgsync-widgets.js': 'dist',
     'styles/orgsync-widgets.scss': 'dist'
   }
 };

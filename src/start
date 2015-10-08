@@ -1,6 +1,7 @@
-((function (root, factory) {
+((function (global, factory) {
   if (typeof define === 'function' && define.amd) define(factory);
   else if (typeof exports !== 'undefined') module.exports = factory();
-  else root.OrgSyncWidgets = factory();
+  else global.OrgSyncWidgets = factory();
 })(this, function () {
   return (function () {
+    var global = this;

@@ -1,7 +1,10 @@
 module.exports = {
   manifestPath: 'manifest.json',
   in: {
-    json: {out: 'js', transformers: {name: 'json', options: {modules: 'amd'}}},
+    json: {
+      out: 'js',
+      transformers: {name: 'json', options: {modules: 'amd', compact: false}}
+    },
     es6: {
       out: 'js',
       transformers: [
@@ -12,6 +15,7 @@ module.exports = {
     js: {
       transformers: [
         'directives',
+        {name: 'browserify', only: 'node_modules/superagent/lib/client.js'},
         {name: 'prepend-path', options: {before: '// '}},
         {
           name: 'concat-amd',

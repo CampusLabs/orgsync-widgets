@@ -213,6 +213,9 @@
 .oswi-admin:before {
   content: ""; }
 
+.oswi-apple:before {
+  content: ""; }
+
 .oswi-attach:before {
   content: ""; }
 
@@ -239,6 +242,9 @@
 
 .oswi-calendar:before {
   content: ""; }
+
+.oswi-calendar-add:before {
+  content: ""; }
 
 .oswi-cap:before {
   content: ""; }
@@ -288,6 +294,9 @@
 .oswi-download:before {
   content: ""; }
 
+.oswi-download-calendar:before {
+  content: ""; }
+
 .oswi-dues-simple:before {
   content: ""; }
 
@@ -305,6 +314,9 @@
 
 .oswi-email:before {
   content: ""; }
+
+.oswi-embed:before {
+  content: ""; }
 
 .oswi-eportfolio:before {
   content: ""; }
@@ -329,6 +341,9 @@
 
 .oswi-gear:before {
   content: ""; }
+
+.oswi-google:before {
+  content: ""; }
 
 .oswi-home:before {
   content: ""; }
@@ -549,14 +564,23 @@
 .oswi-weather:before {
   content: ""; }
 
+.oswi-webcal-url:before {
+  content: ""; }
+
 .oswi-website:before {
   content: ""; }
+
+.oswi-windows:before {
+  content: ""; }
 
 .oswi-world:before {
   content: ""; }
 
 .oswi-wrench:before {
   content: ""; }
+
+.oswi-yahoo:before {
+  content: ""; }
 
 .oswi-zeus:before {
   content: ""; }

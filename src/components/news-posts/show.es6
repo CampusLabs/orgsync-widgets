@@ -1,10 +1,10 @@
 import CommentsIndex from 'components/comments/index';
 import CreatedBy from 'components/shared/created-by';
-import Cursors from 'cursors';
+import {Mixin} from 'cursors';
 import React from 'react';
 
 export default React.createClass({
-  mixins: [Cursors],
+  mixins: [Mixin],
 
   render: function () {
     var newsPost = this.state.newsPost;

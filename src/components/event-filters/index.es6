@@ -1,7 +1,7 @@
 import _ from 'underscore';
 import api from 'api';
 import Checkbox from 'components/ui/checkbox';
-import Cursors from 'cursors';
+import {Mixin} from 'cursors';
 import EventFilterListItem from 'components/event-filters/list-item';
 import React from 'react';
 import tinycolor from 'tinycolor';
@@ -24,7 +24,7 @@ var SECTION_MAP = {
 };
 
 export default React.createClass({
-  mixins: [Cursors],
+  mixins: [Mixin],
 
   getDefaultProps: function () {
     return {

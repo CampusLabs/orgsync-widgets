@@ -2,7 +2,7 @@ import _ from 'underscore';
 import api from 'api';
 import Button from 'components/ui/button';
 import CommentsIndex from 'components/comments/index';
-import Cursors from 'cursors';
+import {Mixin} from 'cursors';
 import moment from 'moment';
 import React from 'react';
 import TextButton from 'components/ui/text-button';
@@ -11,7 +11,7 @@ import {getPictureUrl, getHumanFileSize} from 'entities/file';
 const FORMAT = iso => moment(iso).format('MMM D, YYYY, h:mm A');
 
 export default React.createClass({
-  mixins: [Cursors],
+  mixins: [Mixin],
 
   componentWillMount: function () {
     this.fetch();

@@ -1,10 +1,10 @@
 import AccountsShow from 'components/accounts/show';
-import Cursors from 'cursors';
+import {Mixin} from 'cursors';
 import Icon from 'components/ui/icon';
 import React from 'react';
 
 export default React.createClass({
-  mixins: [Cursors],
+  mixins: [Mixin],
 
   handleCloseClick: function (ev) {
     this.props.close();

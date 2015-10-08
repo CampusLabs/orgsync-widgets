@@ -1,5 +1,5 @@
 import _ from 'underscore';
-import Cursors from 'cursors';
+import {Mixin} from 'cursors';
 import FetchList from 'components/ui/fetch-list';
 import ListDate from 'components/events/list-date';
 import Ongoing from 'components/events/ongoing';
@@ -15,7 +15,7 @@ import {
 var YEAR_LIMIT = 2;
 
 export default React.createClass({
-  mixins: [Cursors],
+  mixins: [Mixin],
 
   fetch: function (cb) {
     const options = {

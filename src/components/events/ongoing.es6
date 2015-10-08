@@ -1,6 +1,6 @@
 import _ from 'underscore';
 import api from 'api';
-import Cursors from 'cursors';
+import {Mixin} from 'cursors';
 import {getMoment} from 'entities/event';
 import React from 'react';
 
@@ -8,7 +8,7 @@ var LIST_LENGTH = 3;
 var YEAR_LIMIT = 2;
 
 export default React.createClass({
-  mixins: [Cursors],
+  mixins: [Mixin],
 
   getDefaultProps: function () {
     return {

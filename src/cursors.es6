@@ -1,3 +1,3 @@
-import Cursors from '../node_modules/cursors/cursors';
+import * as Cursors from '../node_modules/cursors/cursors';
 
 export default Cursors;

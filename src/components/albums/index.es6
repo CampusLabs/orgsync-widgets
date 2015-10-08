@@ -3,7 +3,7 @@ import _ from 'underscore';
 import api from 'api';
 import ListItem from 'components/albums/list-item';
 import Show from 'components/albums/show';
-import Cursors from 'cursors';
+import {Mixin} from 'cursors';
 import FetchList from 'components/ui/fetch-list';
 import React from 'react';
 import Popup from 'components/ui/popup';
@@ -13,7 +13,7 @@ const keyDirMap = {37: -1, 39: 1};
 const PER_PAGE = 100;
 
 export default React.createClass({
-  mixins: [Cursors],
+  mixins: [Mixin],
 
   getInitialState: function () {
     return {

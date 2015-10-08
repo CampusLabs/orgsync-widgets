@@ -1,7 +1,7 @@
 import _ from 'underscore';
 import * as app from 'orgsync-widgets';
 import Button from 'components/ui/button';
-import Cursors from 'cursors';
+import {Mixin} from 'cursors';
 import FetchList from 'components/ui/fetch-list';
 import Popup from 'components/ui/popup';
 import React from 'react';
@@ -16,7 +16,7 @@ var DOWNCASE = function (str) { return str.toLowerCase(); };
 var NAME_COMPARATOR = _.compose(DOWNCASE, getDisplayName);
 
 var SelectorIndex = React.createClass({
-  mixins: [Cursors],
+  mixins: [Mixin],
 
   getDefaultProps: function () {
     return {

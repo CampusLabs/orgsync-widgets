@@ -1,14 +1,14 @@
 import _ from 'underscore';
 import api from 'api';
 import AccountsListItem from 'components/accounts/list-item';
-import Cursors from 'cursors';
+import {Mixin} from 'cursors';
 import FetchList from 'components/ui/fetch-list';
 import React from 'react';
 
 var PER_PAGE = 100;
 
 export default React.createClass({
-  mixins: [Cursors],
+  mixins: [Mixin],
 
   getInitialState: function () {
     return {

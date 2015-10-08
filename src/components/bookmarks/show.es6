@@ -2,7 +2,7 @@ import _ from 'underscore';
 import api from 'api';
 import Button from 'components/ui/button';
 import ButtonRow from 'components/ui/button-row';
-import Cursors from 'cursors';
+import {Mixin} from 'cursors';
 import FormattedText from 'formatted-text';
 import moment from 'moment';
 import React from 'react';
@@ -10,7 +10,7 @@ import React from 'react';
 var FORMAT = 'MMM D, YYYY';
 
 export default React.createClass({
-  mixins: [Cursors],
+  mixins: [Mixin],
 
   getInitialState() {
     return {

@@ -1,9 +1,9 @@
-import Cursors from 'cursors';
+import {Mixin} from 'cursors';
 import joinClassNames from 'utils/join-class-names';
 import React from 'react';
 
 export default React.createClass({
-  mixins: [Cursors],
+  mixins: [Mixin],
 
   propTypes: {
     className: React.PropTypes.string,

@@ -2,7 +2,7 @@ import _ from 'underscore';
 import _str from 'underscore.string';
 import api from 'api';
 import BookmarksListItem from 'components/bookmarks/list-item';
-import Cursors from 'cursors';
+import {Mixin} from 'cursors';
 import Empty from 'components/shared/empty';
 import ErrorBlock from 'components/ui/error-block';
 import Filters from 'components/bookmarks/filters';
@@ -13,7 +13,7 @@ import React from 'react';
 var PER_PAGE = 10;
 
 export default React.createClass({
-  mixins: [Cursors],
+  mixins: [Mixin],
 
   propTypes: {
     /* Specify which portal's bookmarks to retrieve */

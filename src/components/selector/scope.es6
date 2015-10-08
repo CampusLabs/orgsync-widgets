@@ -1,4 +1,4 @@
-import Cursors from 'cursors';
+import {Mixin} from 'cursors';
 import React from 'react';
 
 import {getDisplayName} from 'entities/selector/item';
@@ -8,7 +8,7 @@ var STOP_PROPAGATION = function (ev) {
 };
 
 export default React.createClass({
-  mixins: [Cursors],
+  mixins: [Mixin],
 
   handleChange: function () {
     this.props.onResultClick(this.props.scope);

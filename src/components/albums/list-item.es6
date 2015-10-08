@@ -1,9 +1,9 @@
 import _ from 'underscore';
-import Cursors from 'cursors';
+import {Mixin} from 'cursors';
 import React from 'react';
 
 export default React.createClass({
-  mixins: [Cursors],
+  mixins: [Mixin],
 
   handleClick: function (ev) {
     if (this.props.redirect) return;

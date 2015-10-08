@@ -1,10 +1,10 @@
 import $ from 'jquery';
-import Cursors from 'cursors';
+import {Mixin} from 'cursors';
 import React from 'react';
 import ReactDOM from 'react-dom';
 
 export default React.createClass({
-  mixins: [Cursors],
+  mixins: [Mixin],
 
   componentDidMount: function () {
     $(window).on('resize', this.resize);

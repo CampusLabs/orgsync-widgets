@@ -1,4 +1,4 @@
-import Cursors from 'cursors';
+import {Mixin} from 'cursors';
 import FetchList from 'components/ui/fetch-list';
 import ListItem from 'components/events/list-item';
 import React from 'react';
@@ -8,7 +8,7 @@ import {getMoment} from 'entities/event';
 var PREFIX_RE = /^(Yesterday|Today|Tomorrow)/;
 
 export default React.createClass({
-  mixins: [Cursors],
+  mixins: [Mixin],
 
   renderEvent: function (event) {
     var i = this.state.allEvents.indexOf(event);

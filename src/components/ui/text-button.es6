@@ -1,9 +1,9 @@
 import Button from 'components/ui/button';
-import Cursors from 'cursors';
+import {Mixin} from 'cursors';
 import React from 'react';
 
 export default React.createClass({
-  mixins: [Cursors],
+  mixins: [Mixin],
 
   render: function () {
     return <Button {...this.props} baseClassName='osw-text-button' />;

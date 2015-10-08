@@ -1,10 +1,10 @@
 import _ from 'underscore';
-import Cursors from 'cursors';
+import {Mixin} from 'cursors';
 import LetterCell from 'components/portals/letter-cell';
 import React from 'react';
 
 export default React.createClass({
-  mixins: [Cursors],
+  mixins: [Mixin],
 
   renderCell: function (letter, i) {
     return (

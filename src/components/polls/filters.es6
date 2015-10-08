@@ -1,4 +1,4 @@
-import Cursors from 'cursors';
+import {Mixin} from 'cursors';
 import FacetedSelector from 'components/shared/faceted-selector';
 import joinClassNames from 'utils/join-class-names';
 import Query from 'components/shared/query';
@@ -6,7 +6,7 @@ import React from 'react';
 import Summary from 'components/shared/summary';
 
 export default React.createClass({
-  mixins: [Cursors],
+  mixins: [Mixin],
 
   handleChange: function (ev) {
     var deltas = {};

@@ -1,10 +1,10 @@
 import _ from 'underscore';
-import Cursors from 'cursors';
+import {Mixin} from 'cursors';
 import React from 'react';
 import TextButton from 'components/ui/text-button';
 
 export default React.createClass({
-  mixins: [Cursors],
+  mixins: [Mixin],
 
   getIndex: function () {
     return _.indexOf(this.state.path, this.props.file.id);

@@ -15,7 +15,14 @@ module.exports = {
     js: {
       transformers: [
         'directives',
-        {name: 'browserify', only: 'node_modules/superagent/lib/client.js'},
+        {
+          name: 'browserify',
+          only: [
+            'node_modules/react-addons-css-transition-group/index.js',
+            'node_modules/react-addons-update/index.js',
+            'node_modules/superagent/lib/client.js'
+          ]
+        },
         {name: 'prepend-path', options: {before: '// '}},
         {
           name: 'concat-amd',

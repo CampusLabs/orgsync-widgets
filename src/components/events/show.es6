@@ -2,7 +2,7 @@ import _ from 'underscore';
 import _str from 'underscore.string';
 import api from 'api';
 import Button from 'components/ui/button';
-import Cursors from 'cursors';
+import {Mixin} from 'cursors';
 import Icon from 'components/ui/icon';
 import React from 'react';
 import Sep from 'components/ui/sep';
@@ -27,7 +27,7 @@ var ACTION_MAP = {
 };
 
 var Section = React.createClass({
-  mixin: [Cursors],
+  mixins: [Mixin],
 
   render: function () {
     return (
@@ -42,7 +42,7 @@ var Section = React.createClass({
 });
 
 export default React.createClass({
-  mixins: [Cursors],
+  mixins: [Mixin],
 
   getInitialState: function () {
     return {

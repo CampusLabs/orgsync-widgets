@@ -1,11 +1,11 @@
 import CategorySelector from 'components/shared/category-selector';
-import Cursors from 'cursors';
+import {Mixin} from 'cursors';
 import Query from 'components/shared/query';
 import React from 'react';
 import Summary from 'components/shared/summary';
 
 export default React.createClass({
-  mixins: [Cursors],
+  mixins: [Mixin],
 
   propTypes: {
     objects: React.PropTypes.array

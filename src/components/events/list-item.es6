@@ -1,5 +1,5 @@
 import _str from 'underscore.string';
-import Cursors from 'cursors';
+import {Mixin} from 'cursors';
 import Icon from 'components/ui/icon';
 import Popup from 'components/ui/popup';
 import React from 'react';
@@ -11,7 +11,7 @@ import {getMoment, getColor} from 'entities/event';
 var FORMAT = 'h:mm A';
 
 export default React.createClass({
-  mixins: [Cursors],
+  mixins: [Mixin],
 
   getInitialState: function () {
     return {

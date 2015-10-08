@@ -1,12 +1,12 @@
 import api from 'api';
 import Button from 'components/ui/button';
 import ButtonRow from 'components/ui/button-row';
-import Cursors from 'cursors';
+import {Mixin} from 'cursors';
 import CreatedBy from 'components/shared/created-by';
 import React from 'react';
 
 export default React.createClass({
-  mixins: [Cursors],
+  mixins: [Mixin],
 
   getInitialState: function () {
     return {

@@ -1,11 +1,11 @@
 import _ from 'underscore';
-import Cursors from 'cursors';
+import {Mixin} from 'cursors';
 import {fetch, getMoment} from 'entities/event';
 import React from 'react';
 import Week from 'components/events/week';
 
 export default React.createClass({
-  mixins: [Cursors],
+  mixins: [Mixin],
 
   getInitialState: function () {
     return {

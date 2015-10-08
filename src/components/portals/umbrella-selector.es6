@@ -1,10 +1,10 @@
-import Cursors from 'cursors';
+import {Mixin} from 'cursors';
 import FacetedSelector from 'components/shared/faceted-selector';
 import joinClassNames from 'utils/join-class-names';
 import React from 'react';
 
 export default React.createClass({
-  mixins: [Cursors],
+  mixins: [Mixin],
 
   getFacet: function (portal) {
     return portal.umbrella ? portal.umbrella.name : 'Umbrella';

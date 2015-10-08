@@ -1,10 +1,10 @@
 import _ from 'underscore';
-import {Mixin} from 'cursors';
+import {Mixin as Cursors} from 'cursors';
 import React from 'react';
 import Selector from 'components/shared/selector';
 
 export default React.createClass({
-  mixins: [Mixin],
+  mixins: [Cursors],
 
   propTypes: {
     getFacet: React.PropTypes.func.isRequired,

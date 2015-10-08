@@ -1,9 +1,9 @@
-import {Mixin} from 'cursors';
+import {Mixin as Cursors} from 'cursors';
 import Icon from 'components/ui/icon';
 import React from 'react';
 
 export default React.createClass({
-  mixins: [Mixin],
+  mixins: [Cursors],
 
   handleClick: function (ev) {
     if (this.props.redirect) return;

@@ -1,6 +1,6 @@
 import _ from 'underscore';
 import api from 'api';
-import {Mixin} from 'cursors';
+import {Mixin as Cursors} from 'cursors';
 import FetchList from 'components/ui/fetch-list';
 import NewsPostsListItem from 'components/news-posts/list-item';
 import React from 'react';
@@ -8,7 +8,7 @@ import React from 'react';
 var PER_PAGE = 20;
 
 export default React.createClass({
-  mixins: [Mixin],
+  mixins: [Cursors],
 
   getInitialState: function () {
     return {

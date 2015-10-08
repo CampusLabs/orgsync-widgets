@@ -1,10 +1,10 @@
 import Checkbox from 'components/ui/checkbox';
-import {Mixin} from 'cursors';
+import {Mixin as Cursors} from 'cursors';
 import Icon from 'components/ui/icon';
 import React from 'react';
 
 export default React.createClass({
-  mixins: [Mixin],
+  mixins: [Cursors],
 
   handleChange: function (ev) {
     this.update({eventFilter: {active: {$set: ev.target.checked}}});

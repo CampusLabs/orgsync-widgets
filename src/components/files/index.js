@@ -1,6 +1,6 @@
 import _ from 'underscore';
 import Breadcrumb from 'components/files/breadcrumb';
-import {Mixin} from 'cursors';
+import {Mixin as Cursors} from 'cursors';
 import FileShow from 'components/files/file-show';
 import FolderShow from 'components/files/folder-show';
 import React from 'react';
@@ -9,7 +9,7 @@ import ReactDOM from 'react-dom';
 let CSSTransitionGroup = React.addons.CSSTransitionGroup;
 
 export default React.createClass({
-  mixins: [Mixin],
+  mixins: [Cursors],
 
   getInitialState: function () {
     return {

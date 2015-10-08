@@ -1,11 +1,11 @@
 import _ from 'underscore';
 import Button from 'components/ui/button';
-import {Mixin} from 'cursors';
+import {Mixin as Cursors} from 'cursors';
 import Icon from 'components/ui/icon';
 import React from 'react';
 
 export default React.createClass({
-  mixins: [Mixin],
+  mixins: [Cursors],
 
   propTypes: {
     filterKeys: React.PropTypes.array.isRequired,

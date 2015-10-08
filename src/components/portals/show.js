@@ -1,5 +1,5 @@
 import api from 'api';
-import {Mixin} from 'cursors';
+import {Mixin as Cursors} from 'cursors';
 import Button from 'components/ui/button';
 import ButtonRow from 'components/ui/button-row';
 import React from 'react';
@@ -7,7 +7,7 @@ import React from 'react';
 var DEFAULT_SRC = 'https://orgsync.com/assets/icons/portals/no_org_profile_150.png';
 
 export default React.createClass({
-  mixins: [Mixin],
+  mixins: [Cursors],
 
   getInitialState: function () {
     return {

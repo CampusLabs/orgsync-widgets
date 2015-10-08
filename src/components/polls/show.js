@@ -2,7 +2,7 @@ import api from 'api';
 import Button from 'components/ui/button';
 import ButtonRow from 'components/ui/button-row';
 import CreatedBy from 'components/shared/created-by';
-import {Mixin} from 'cursors';
+import {Mixin as Cursors} from 'cursors';
 import moment from 'moment';
 import React from 'react';
 import Results from 'components/polls/results';
@@ -10,7 +10,7 @@ import Results from 'components/polls/results';
 var FORMAT = 'MMM D, YYYY';
 
 export default React.createClass({
-  mixins: [Mixin],
+  mixins: [Cursors],
 
   propTypes: {
     portalId: React.PropTypes.number

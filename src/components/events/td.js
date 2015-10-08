@@ -1,4 +1,4 @@
-import {Mixin} from 'cursors';
+import {Mixin as Cursors} from 'cursors';
 import Popup from 'components/ui/popup';
 import React from 'react';
 import Show from 'components/events/show';
@@ -7,7 +7,7 @@ import tinycolor from 'tinycolor';
 import {getMoment, getColor, isAllDay} from 'entities/event';
 
 export default React.createClass({
-  mixins: [Mixin],
+  mixins: [Cursors],
 
   getInitialState: function () {
     return {

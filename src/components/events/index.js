@@ -3,7 +3,7 @@ import Button from 'components/ui/button';
 import ButtonGroup from 'components/ui/button-group';
 import Calendar from 'components/events/calendar';
 import List from 'components/events/list';
-import {Mixin} from 'cursors';
+import {Mixin as Cursors} from 'cursors';
 import EventFiltersIndex from 'components/event-filters/index';
 import Icon from 'components/ui/icon';
 import React from 'react';
@@ -22,7 +22,7 @@ var LIST_LOCK_BREAKPOINT = 600;
 const serialize = superagent.serialize['application/x-www-form-urlencoded'];
 
 export default React.createClass({
-  mixins: [Mixin],
+  mixins: [Cursors],
 
   getDefaultProps: function () {
     return {

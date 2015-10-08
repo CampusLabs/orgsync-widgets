@@ -1,7 +1,7 @@
 import _ from 'underscore';
 import _str from 'underscore.string';
 import api from 'api';
-import {Mixin} from 'cursors';
+import {Mixin as Cursors} from 'cursors';
 import ErrorBlock from 'components/ui/error-block';
 import FetchList from 'components/ui/fetch-list';
 import Filters from 'components/portals/filters';
@@ -18,7 +18,7 @@ var LETTER_REG_EXPS = _.times(26, function (n) {
 }, {'': /.*/, Other: /^[^a-z]/i});
 
 export default React.createClass({
-  mixins: [Mixin],
+  mixins: [Cursors],
 
   comparator: function (a, b) {
     if (!a.umbrella !== !b.umbrella) return !a.umbrella ? -1 : 1;

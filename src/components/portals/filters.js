@@ -1,5 +1,5 @@
 import CategorySelector from 'components/shared/category-selector';
-import {Mixin} from 'cursors';
+import {Mixin as Cursors} from 'cursors';
 import LetterTable from 'components/portals/letter-table';
 import Query from 'components/shared/query';
 import React from 'react';
@@ -7,7 +7,7 @@ import Summary from 'components/shared/summary';
 import UmbrellaSelector from 'components/portals/umbrella-selector';
 
 export default React.createClass({
-  mixins: [Mixin],
+  mixins: [Cursors],
 
   handleChange: function (ev) {
     var deltas = {};

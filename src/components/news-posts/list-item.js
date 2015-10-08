@@ -1,6 +1,6 @@
 import $ from 'jquery';
 import _str from 'underscore.string';
-import {Mixin} from 'cursors';
+import {Mixin as Cursors} from 'cursors';
 import Icon from 'components/ui/icon';
 import moment from 'moment';
 import Show from 'components/news-posts/show';
@@ -8,7 +8,7 @@ import Popup from 'components/ui/popup';
 import React from 'react';
 
 export default React.createClass({
-  mixins: [Mixin],
+  mixins: [Cursors],
 
   getDefaultProps: function () {
     return {

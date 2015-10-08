@@ -1,7 +1,7 @@
 import $ from 'jquery';
 import _ from 'underscore';
 import api from 'api';
-import {Mixin} from 'cursors';
+import {Mixin as Cursors} from 'cursors';
 import FetchList from 'components/ui/fetch-list';
 import ListItem from 'components/comments/list-item';
 import New from 'components/comments/new';
@@ -10,7 +10,7 @@ import React from 'react';
 var PER_PAGE = 100;
 
 export default React.createClass({
-  mixins: [Mixin],
+  mixins: [Cursors],
 
   fetch: function (cb) {
     api.get(this.props.url, {

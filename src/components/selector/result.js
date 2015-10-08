@@ -1,6 +1,6 @@
 import _ from 'underscore';
 import _str from 'underscore.string';
-import {Mixin} from 'cursors';
+import {Mixin as Cursors} from 'cursors';
 import Icon from 'components/ui/icon';
 import React from 'react';
 
@@ -11,7 +11,7 @@ import {
 } from 'entities/selector/item';
 
 export default React.createClass({
-  mixins: [Mixin],
+  mixins: [Cursors],
 
   className: function () {
     var classes = [

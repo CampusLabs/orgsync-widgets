@@ -1,5 +1,5 @@
 import _ from 'underscore';
-import {Mixin} from 'cursors';
+import {Mixin as Cursors} from 'cursors';
 import Td from 'components/events/td';
 import ListDate from 'components/events/list-date';
 import Popup from 'components/ui/popup';
@@ -8,7 +8,7 @@ import React from 'react';
 import {getMoment, getDaySpan} from 'entities/event';
 
 export default React.createClass({
-  mixins: [Mixin],
+  mixins: [Cursors],
 
   getInitialState: function () {
     return {

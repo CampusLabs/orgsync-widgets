@@ -1,4 +1,4 @@
-import {Mixin} from 'cursors';
+import {Mixin as Cursors} from 'cursors';
 import {getPictureUrl} from 'entities/file';
 import moment from 'moment';
 import React from 'react';
@@ -8,7 +8,7 @@ import TextButton from 'components/ui/text-button';
 const FORMAT = 'MMM D, YYYY, h:mm A';
 
 export default React.createClass({
-  mixins: [Mixin],
+  mixins: [Cursors],
 
   pushPath: function () {
     this.update({path: {$push: [this.state.file.id]}});

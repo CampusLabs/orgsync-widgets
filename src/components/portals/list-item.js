@@ -1,4 +1,4 @@
-import {Mixin} from 'cursors';
+import {Mixin as Cursors} from 'cursors';
 import Popup from 'components/ui/popup';
 import React from 'react';
 import Show from 'components/portals/show';
@@ -6,7 +6,7 @@ import Show from 'components/portals/show';
 var DEFAULT_SRC = 'https://orgsync.com/assets/icons/portals/no_org_profile_150.png';
 
 export default React.createClass({
-  mixins: [Mixin],
+  mixins: [Cursors],
 
   getInitialState: function () {
     return {

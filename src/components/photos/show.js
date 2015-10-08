@@ -1,9 +1,9 @@
 import CommentsIndex from 'components/comments/index';
-import {Mixin} from 'cursors';
+import {Mixin as Cursors} from 'cursors';
 import React from 'react';
 
 export default React.createClass({
-  mixins: [Mixin],
+  mixins: [Cursors],
 
   handleImageClick: function () {
     if (this.props.onImageClick) this.props.onImageClick();

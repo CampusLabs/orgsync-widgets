@@ -1,5 +1,5 @@
 import _ from 'underscore';
-import {Mixin} from 'cursors';
+import {Mixin as Cursors} from 'cursors';
 import moment from 'moment';
 import Popup from 'components/ui/popup';
 import React from 'react';
@@ -9,7 +9,7 @@ import Show from 'components/polls/show';
 const FORMAT = 'MMM D, YYYY';
 
 export default React.createClass({
-  mixins: [Mixin],
+  mixins: [Cursors],
 
   propTypes: {
     key: React.PropTypes.number

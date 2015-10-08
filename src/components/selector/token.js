@@ -1,11 +1,11 @@
-import {Mixin} from 'cursors';
+import {Mixin as Cursors} from 'cursors';
 import Icon from 'components/ui/icon';
 import React from 'react';
 
 import {getIconName, getDisplayName} from 'entities/selector/item';
 
 export default React.createClass({
-  mixins: [Mixin],
+  mixins: [Cursors],
 
   getClassName: function () {
     return 'osw-selector-token osw-selector-token-type-' +

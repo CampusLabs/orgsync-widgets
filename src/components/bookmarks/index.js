@@ -2,7 +2,7 @@ import _ from 'underscore';
 import _str from 'underscore.string';
 import api from 'api';
 import BookmarksListItem from 'components/bookmarks/list-item';
-import {Mixin as Cursors} from 'cursors';
+import Cursors from 'cursors';
 import Empty from 'components/shared/empty';
 import ErrorBlock from 'components/ui/error-block';
 import Filters from 'components/bookmarks/filters';

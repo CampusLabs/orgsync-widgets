@@ -1,6 +1,6 @@
 import _ from 'underscore';
 import Breadcrumb from 'components/files/breadcrumb';
-import {Mixin as Cursors} from 'cursors';
+import Cursors from 'cursors';
 import FileShow from 'components/files/file-show';
 import FolderShow from 'components/files/folder-show';
 import React from 'react';

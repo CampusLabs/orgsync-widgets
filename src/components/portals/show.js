@@ -1,5 +1,5 @@
 import api from 'api';
-import {Mixin as Cursors} from 'cursors';
+import Cursors from 'cursors';
 import Button from 'components/ui/button';
 import ButtonRow from 'components/ui/button-row';
 import React from 'react';

@@ -1,4 +1,4 @@
-import {Mixin as Cursors} from 'cursors';
+import Cursors from 'cursors';
 import FacetedSelector from 'components/shared/faceted-selector';
 import joinClassNames from 'utils/join-class-names';
 import Query from 'components/shared/query';

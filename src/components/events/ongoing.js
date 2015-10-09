@@ -1,6 +1,6 @@
 import _ from 'underscore';
 import api from 'api';
-import {Mixin as Cursors} from 'cursors';
+import Cursors from 'cursors';
 import {getMoment} from 'entities/event';
 import React from 'react';
 

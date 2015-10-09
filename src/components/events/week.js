@@ -1,5 +1,5 @@
 import _ from 'underscore';
-import {Mixin as Cursors} from 'cursors';
+import Cursors from 'cursors';
 import Td from 'components/events/td';
 import ListDate from 'components/events/list-date';
 import Popup from 'components/ui/popup';

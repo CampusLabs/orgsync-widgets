@@ -1,7 +1,7 @@
 import _ from 'underscore';
 import _str from 'underscore.string';
 import api from 'api';
-import {Mixin as Cursors} from 'cursors';
+import Cursors from 'cursors';
 import ErrorBlock from 'components/ui/error-block';
 import FetchList from 'components/ui/fetch-list';
 import Filters from 'components/portals/filters';

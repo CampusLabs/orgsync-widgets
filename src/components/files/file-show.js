@@ -2,7 +2,7 @@ import _ from 'underscore';
 import api from 'api';
 import Button from 'components/ui/button';
 import CommentsIndex from 'components/comments/index';
-import {Mixin as Cursors} from 'cursors';
+import Cursors from 'cursors';
 import moment from 'moment';
 import React from 'react';
 import TextButton from 'components/ui/text-button';

@@ -1,5 +1,5 @@
 import _ from 'underscore';
-import {Mixin as Cursors} from 'cursors';
+import Cursors from 'cursors';
 import {fetch, getMoment} from 'entities/event';
 import React from 'react';
 import Week from 'components/events/week';

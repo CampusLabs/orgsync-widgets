@@ -1,7 +1,7 @@
 import $ from 'jquery';
 import _ from 'underscore';
 import api from 'api';
-import {Mixin as Cursors} from 'cursors';
+import Cursors from 'cursors';
 import FetchList from 'components/ui/fetch-list';
 import ListItem from 'components/comments/list-item';
 import New from 'components/comments/new';

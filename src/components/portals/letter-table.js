@@ -1,5 +1,5 @@
 import _ from 'underscore';
-import {Mixin as Cursors} from 'cursors';
+import Cursors from 'cursors';
 import LetterCell from 'components/portals/letter-cell';
 import React from 'react';
 

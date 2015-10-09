@@ -1,5 +1,5 @@
 import _ from 'underscore';
-import {Mixin as Cursors} from 'cursors';
+import Cursors from 'cursors';
 import FetchList from 'components/ui/fetch-list';
 import ListDate from 'components/events/list-date';
 import Ongoing from 'components/events/ongoing';

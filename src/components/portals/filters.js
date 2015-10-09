@@ -1,5 +1,5 @@
 import CategorySelector from 'components/shared/category-selector';
-import {Mixin as Cursors} from 'cursors';
+import Cursors from 'cursors';
 import LetterTable from 'components/portals/letter-table';
 import Query from 'components/shared/query';
 import React from 'react';

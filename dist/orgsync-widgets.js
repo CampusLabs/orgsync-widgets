@@ -34379,32 +34379,20 @@ define('react-addons-update', ['exports', 'module', 'react'], function (exports,
 // node_modules/cursors/cursors.js
 (function (global, factory) {
   if (typeof define === 'function' && define.amd) {
-    define('../node_modules/cursors/cursors', ['exports', 'react', 'react-addons-update'], factory);
-  } else if (typeof exports !== 'undefined') {
-    factory(exports, require('react'), require('react-addons-update'));
+    define('../node_modules/cursors/cursors', ['exports', 'module', 'react', 'react-addons-update'], factory);
+  } else if (typeof exports !== 'undefined' && typeof module !== 'undefined') {
+    factory(exports, module, require('react'), require('react-addons-update'));
   } else {
     var mod = {
       exports: {}
     };
-    factory(mod.exports, global.React, global._update);
+    factory(mod.exports, mod, global.React, global._update);
     global.Cursors = mod.exports;
   }
-})(this, function (exports, _react, _reactAddonsUpdate) {
+})(this, function (exports, module, _react, _reactAddonsUpdate) {
   'use strict';
 
-  Object.defineProperty(exports, '__esModule', {
-    value: true
-  });
-
-  var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
-
-  var _get = function get(_x, _x2, _x3) { var _again = true; _function: while (_again) { var object = _x, property = _x2, receiver = _x3; desc = parent = getter = undefined; _again = false; if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { _x = parent; _x2 = property; _x3 = receiver; _again = true; continue _function; } } else if ('value' in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } } };
-
   function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
-
-  function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
-
-  function _inherits(subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
   var _React = _interopRequireDefault(_react);
 
@@ -34454,6 +34442,7 @@ define('react-addons-update', ['exports', 'module', 'react'], function (exports,
 
   var getCursorState = function getCursorState(cursor) {
     var state = cursor.root.state;
+
     for (var i = 0, l = cursor.path.length; state && i < l; ++i) {
       state = state[cursor.path[i]];
     }
@@ -34467,7 +34456,7 @@ define('react-addons-update', ['exports', 'module', 'react'], function (exports,
     }return states;
   };
 
-  var Mixin = {
+  module.exports = {
     propTypes: {
       cursors: _React['default'].PropTypes.object
     },
@@ -34491,6 +34480,7 @@ define('react-addons-update', ['exports', 'module', 'react'], function (exports,
 
     getCursor: function getCursor(key, path) {
       var cursors = this.props.cursors;
+
       var cursor = cursors && cursors[key] || { root: this, path: [key] };
       if (path == null) return cursor;
       return { root: cursor.root, path: cursor.path.concat(path) };
@@ -34502,6 +34492,7 @@ define('react-addons-update', ['exports', 'module', 'react'], function (exports,
         var cursor = this.getCursor(key);
         var root = cursor.root;
         var path = cursor.path;
+
         var change = undefined;
         for (var i = 0, l = changes.length; !change && i < l; ++i) {
           if (root === changes[i].root) change = changes[i];
@@ -34517,87 +34508,6 @@ define('react-addons-update', ['exports', 'module', 'react'], function (exports,
       }
     }
   };
-
-  exports.Mixin = Mixin;
-
-  var Component = (function (_React$Component) {
-    _inherits(Component, _React$Component);
-
-    _createClass(Component, null, [{
-      key: 'propTypes',
-      value: Mixin.propTypes,
-      enumerable: true
-    }]);
-
-    function Component() {
-      var _Mixin$componentWillMount;
-
-      _classCallCheck(this, Component);
-
-      for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
-        args[_key] = arguments[_key];
-      }
-
-      _get(Object.getPrototypeOf(Component.prototype), 'constructor', this).apply(this, args);
-      return (_Mixin$componentWillMount = Mixin.componentWillMount).call.apply(_Mixin$componentWillMount, [this].concat(args));
-    }
-
-    _createClass(Component, [{
-      key: 'componentWillReceiveProps',
-      value: function componentWillReceiveProps() {
-        var _Mixin$componentWillReceiveProps;
-
-        for (var _len2 = arguments.length, args = Array(_len2), _key2 = 0; _key2 < _len2; _key2++) {
-          args[_key2] = arguments[_key2];
-        }
-
-        if (_get(Object.getPrototypeOf(Component.prototype), 'componentWillReceiveProps', this)) {
-          _get(Object.getPrototypeOf(Component.prototype), 'componentWillReceiveProps', this).apply(this, args);
-        }
-        return (_Mixin$componentWillReceiveProps = Mixin.componentWillReceiveProps).call.apply(_Mixin$componentWillReceiveProps, [this].concat(args));
-      }
-    }, {
-      key: 'shouldComponentUpdate',
-      value: function shouldComponentUpdate() {
-        var _Mixin$shouldComponentUpdate;
-
-        for (var _len3 = arguments.length, args = Array(_len3), _key3 = 0; _key3 < _len3; _key3++) {
-          args[_key3] = arguments[_key3];
-        }
-
-        if (_get(Object.getPrototypeOf(Component.prototype), 'shouldComponentUpdate', this)) {
-          _get(Object.getPrototypeOf(Component.prototype), 'shouldComponentUpdate', this).apply(this, args);
-        }
-        return (_Mixin$shouldComponentUpdate = Mixin.shouldComponentUpdate).call.apply(_Mixin$shouldComponentUpdate, [this].concat(args));
-      }
-    }, {
-      key: 'getCursor',
-      value: function getCursor() {
-        var _Mixin$getCursor;
-
-        for (var _len4 = arguments.length, args = Array(_len4), _key4 = 0; _key4 < _len4; _key4++) {
-          args[_key4] = arguments[_key4];
-        }
-
-        return (_Mixin$getCursor = Mixin.getCursor).call.apply(_Mixin$getCursor, [this].concat(args));
-      }
-    }, {
-      key: 'update',
-      value: function update() {
-        var _Mixin$update;
-
-        for (var _len5 = arguments.length, args = Array(_len5), _key5 = 0; _key5 < _len5; _key5++) {
-          args[_key5] = arguments[_key5];
-        }
-
-        return (_Mixin$update = Mixin.update).call.apply(_Mixin$update, [this].concat(args));
-      }
-    }]);
-
-    return Component;
-  })(_React['default'].Component);
-
-  exports.Component = Component;
 });
 // src/cursors.js
 define('cursors', ['exports', 'module', '../node_modules/cursors/cursors'], function (exports, module, _node_modulesCursorsCursors) {
@@ -35263,6 +35173,8 @@ define('components/accounts/index', ['exports', 'module', 'underscore', 'api', '
 
   var _AccountsListItem = _interopRequireDefault(_componentsAccountsListItem);
 
+  var _Cursors = _interopRequireDefault(_cursors);
+
   var _FetchList = _interopRequireDefault(_componentsUiFetchList);
 
   var _React = _interopRequireDefault(_react);
@@ -35272,7 +35184,7 @@ define('components/accounts/index', ['exports', 'module', 'underscore', 'api', '
   module.exports = _React['default'].createClass({
     displayName: 'index',
 
-    mixins: [_cursors.Mixin],
+    mixins: [_Cursors['default']],
 
     getInitialState: function getInitialState() {
       return {
@@ -36527,6 +36439,8 @@ define('components/ui/button', ['exports', 'module', 'cursors', 'utils/join-clas
 
   function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 
+  var _Cursors = _interopRequireDefault(_cursors);
+
   var _joinClassNames = _interopRequireDefault(_utilsJoinClassNames);
 
   var _React = _interopRequireDefault(_react);
@@ -36534,7 +36448,7 @@ define('components/ui/button', ['exports', 'module', 'cursors', 'utils/join-clas
   module.exports = _React['default'].createClass({
     displayName: 'button',
 
-    mixins: [_cursors.Mixin],
+    mixins: [_Cursors['default']],
 
     getDefaultProps: function getDefaultProps() {
       return {
@@ -36586,12 +36500,14 @@ define('components/accounts/show', ['exports', 'module', 'underscore', 'undersco
 
   var _config2 = _interopRequireDefault(_config);
 
+  var _Cursors = _interopRequireDefault(_cursors);
+
   var _React = _interopRequireDefault(_react);
 
   module.exports = _React['default'].createClass({
     displayName: 'show',
 
-    mixins: [_cursors.Mixin],
+    mixins: [_Cursors['default']],
 
     getInitialState: function getInitialState() {
       return {
@@ -36724,6 +36640,8 @@ define('components/ui/icon', ['exports', 'module', 'cursors', 'utils/join-class-
 
   function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 
+  var _Cursors = _interopRequireDefault(_cursors);
+
   var _joinClassNames = _interopRequireDefault(_utilsJoinClassNames);
 
   var _React = _interopRequireDefault(_react);
@@ -36731,7 +36649,7 @@ define('components/ui/icon', ['exports', 'module', 'cursors', 'utils/join-class-
   module.exports = _React['default'].createClass({
     displayName: 'icon',
 
-    mixins: [_cursors.Mixin],
+    mixins: [_Cursors['default']],
 
     render: function render() {
       return _React['default'].createElement('i', _extends({}, this.props, {
@@ -36748,6 +36666,8 @@ define('components/accounts/show-popup', ['exports', 'module', 'components/accou
 
   var _AccountsShow = _interopRequireDefault(_componentsAccountsShow);
 
+  var _Cursors = _interopRequireDefault(_cursors);
+
   var _Icon = _interopRequireDefault(_componentsUiIcon);
 
   var _React = _interopRequireDefault(_react);
@@ -36755,7 +36675,7 @@ define('components/accounts/show-popup', ['exports', 'module', 'components/accou
   module.exports = _React['default'].createClass({
     displayName: 'show-popup',
 
-    mixins: [_cursors.Mixin],
+    mixins: [_Cursors['default']],
 
     handleCloseClick: function handleCloseClick(ev) {
       this.props.close();
@@ -36784,12 +36704,14 @@ define('components/albums/list-item', ['exports', 'module', 'underscore', 'curso
 
   var _2 = _interopRequireDefault(_underscore);
 
+  var _Cursors = _interopRequireDefault(_cursors);
+
   var _React = _interopRequireDefault(_react);
 
   module.exports = _React['default'].createClass({
     displayName: 'list-item',
 
-    mixins: [_cursors.Mixin],
+    mixins: [_Cursors['default']],
 
     handleClick: function handleClick(ev) {
       if (this.props.redirect) return;
@@ -36837,6 +36759,8 @@ define('components/photos/list-item', ['exports', 'module', 'cursors', 'componen
 
   function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 
+  var _Cursors = _interopRequireDefault(_cursors);
+
   var _Icon = _interopRequireDefault(_componentsUiIcon);
 
   var _React = _interopRequireDefault(_react);
@@ -36844,7 +36768,7 @@ define('components/photos/list-item', ['exports', 'module', 'cursors', 'componen
   module.exports = _React['default'].createClass({
     displayName: 'list-item',
 
-    mixins: [_cursors.Mixin],
+    mixins: [_Cursors['default']],
 
     handleClick: function handleClick(ev) {
       if (this.props.redirect) return;
@@ -40172,6 +40096,8 @@ define('components/comments/index', ['exports', 'module', 'jquery', 'underscore'
 
   var _api2 = _interopRequireDefault(_api);
 
+  var _Cursors = _interopRequireDefault(_cursors);
+
   var _FetchList = _interopRequireDefault(_componentsUiFetchList);
 
   var _ListItem = _interopRequireDefault(_componentsCommentsListItem);
@@ -40185,7 +40111,7 @@ define('components/comments/index', ['exports', 'module', 'jquery', 'underscore'
   module.exports = _React['default'].createClass({
     displayName: 'index',
 
-    mixins: [_cursors.Mixin],
+    mixins: [_Cursors['default']],
 
     fetch: function fetch(cb) {
       _api2['default'].get(this.props.url, {
@@ -40239,12 +40165,14 @@ define('components/photos/show', ['exports', 'module', 'components/comments/inde
 
   var _CommentsIndex = _interopRequireDefault(_componentsCommentsIndex);
 
+  var _Cursors = _interopRequireDefault(_cursors);
+
   var _React = _interopRequireDefault(_react);
 
   module.exports = _React['default'].createClass({
     displayName: 'show',
 
-    mixins: [_cursors.Mixin],
+    mixins: [_Cursors['default']],
 
     handleImageClick: function handleImageClick() {
       if (this.props.onImageClick) this.props.onImageClick();
@@ -40588,6 +40516,8 @@ define('components/photos/index', ['exports', 'module', 'jquery', 'underscore', 
 
   var _Show = _interopRequireDefault(_componentsPhotosShow);
 
+  var _Cursors = _interopRequireDefault(_cursors);
+
   var _FetchList = _interopRequireDefault(_componentsUiFetchList);
 
   var _React = _interopRequireDefault(_react);
@@ -40601,7 +40531,7 @@ define('components/photos/index', ['exports', 'module', 'jquery', 'underscore', 
   module.exports = _React['default'].createClass({
     displayName: 'index',
 
-    mixins: [_cursors.Mixin],
+    mixins: [_Cursors['default']],
 
     getInitialState: function getInitialState() {
       return {
@@ -40714,12 +40644,14 @@ define('components/albums/show', ['exports', 'module', 'components/photos/index'
 
   var _PhotosIndex = _interopRequireDefault(_componentsPhotosIndex);
 
+  var _Cursors = _interopRequireDefault(_cursors);
+
   var _React = _interopRequireDefault(_react);
 
   module.exports = _React['default'].createClass({
     displayName: 'show',
 
-    mixins: [_cursors.Mixin],
+    mixins: [_Cursors['default']],
 
     render: function render() {
       return _React['default'].createElement(
@@ -40768,6 +40700,8 @@ define('components/albums/index', ['exports', 'module', 'jquery', 'underscore', 
 
   var _Show = _interopRequireDefault(_componentsAlbumsShow);
 
+  var _Cursors = _interopRequireDefault(_cursors);
+
   var _FetchList = _interopRequireDefault(_componentsUiFetchList);
 
   var _React = _interopRequireDefault(_react);
@@ -40781,7 +40715,7 @@ define('components/albums/index', ['exports', 'module', 'jquery', 'underscore', 
   module.exports = _React['default'].createClass({
     displayName: 'index',
 
-    mixins: [_cursors.Mixin],
+    mixins: [_Cursors['default']],
 
     getInitialState: function getInitialState() {
       return {
@@ -40891,6 +40825,8 @@ define('components/shared/selector', ['exports', 'module', 'cursors', 'utils/joi
 
   function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 
+  var _Cursors = _interopRequireDefault(_cursors);
+
   var _joinClassNames = _interopRequireDefault(_utilsJoinClassNames);
 
   var _React = _interopRequireDefault(_react);
@@ -40898,7 +40834,7 @@ define('components/shared/selector', ['exports', 'module', 'cursors', 'utils/joi
   module.exports = _React['default'].createClass({
     displayName: 'selector',
 
-    mixins: [_cursors.Mixin],
+    mixins: [_Cursors['default']],
 
     propTypes: {
       className: _React['default'].PropTypes.string,
@@ -40939,6 +40875,8 @@ define('components/shared/faceted-selector', ['exports', 'module', 'underscore',
 
   var _2 = _interopRequireDefault(_underscore);
 
+  var _Cursors = _interopRequireDefault(_cursors);
+
   var _React = _interopRequireDefault(_react);
 
   var _Selector = _interopRequireDefault(_componentsSharedSelector);
@@ -40946,7 +40884,7 @@ define('components/shared/faceted-selector', ['exports', 'module', 'underscore',
   module.exports = _React['default'].createClass({
     displayName: 'faceted-selector',
 
-    mixins: [_cursors.Mixin],
+    mixins: [_Cursors['default']],
 
     propTypes: {
       getFacet: _React['default'].PropTypes.func.isRequired,
@@ -40992,12 +40930,14 @@ define('components/shared/query', ['exports', 'module', 'cursors', 'react'], fun
 
   function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 
+  var _Cursors = _interopRequireDefault(_cursors);
+
   var _React = _interopRequireDefault(_react);
 
   module.exports = _React['default'].createClass({
     displayName: 'query',
 
-    mixins: [_cursors.Mixin],
+    mixins: [_Cursors['default']],
 
     propTypes: {
       onChange: _React['default'].PropTypes.func.isRequired,
@@ -41030,6 +40970,8 @@ define('components/shared/summary', ['exports', 'module', 'underscore', 'compone
 
   var _Button = _interopRequireDefault(_componentsUiButton);
 
+  var _Cursors = _interopRequireDefault(_cursors);
+
   var _Icon = _interopRequireDefault(_componentsUiIcon);
 
   var _React = _interopRequireDefault(_react);
@@ -41037,7 +40979,7 @@ define('components/shared/summary', ['exports', 'module', 'underscore', 'compone
   module.exports = _React['default'].createClass({
     displayName: 'summary',
 
-    mixins: [_cursors.Mixin],
+    mixins: [_Cursors['default']],
 
     propTypes: {
       filterKeys: _React['default'].PropTypes.array.isRequired,
@@ -41104,6 +41046,8 @@ define('components/bookmarks/filters', ['exports', 'module', 'cursors', 'compone
 
   function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 
+  var _Cursors = _interopRequireDefault(_cursors);
+
   var _FacetedSelector = _interopRequireDefault(_componentsSharedFacetedSelector);
 
   var _joinClassNames = _interopRequireDefault(_utilsJoinClassNames);
@@ -41117,7 +41061,7 @@ define('components/bookmarks/filters', ['exports', 'module', 'cursors', 'compone
   module.exports = _React['default'].createClass({
     displayName: 'filters',
 
-    mixins: [_cursors.Mixin],
+    mixins: [_Cursors['default']],
 
     handleChange: function handleChange(ev) {
       var deltas = {};
@@ -41163,6 +41107,8 @@ define('components/ui/button-row', ['exports', 'module', 'cursors', 'utils/join-
 
   function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 
+  var _Cursors = _interopRequireDefault(_cursors);
+
   var _joinClassNames = _interopRequireDefault(_utilsJoinClassNames);
 
   var _React = _interopRequireDefault(_react);
@@ -41170,7 +41116,7 @@ define('components/ui/button-row', ['exports', 'module', 'cursors', 'utils/join-
   module.exports = _React['default'].createClass({
     displayName: 'button-row',
 
-    mixins: [_cursors.Mixin],
+    mixins: [_Cursors['default']],
 
     render: function render() {
       return _React['default'].createElement(
@@ -41199,17 +41145,11 @@ define('components/ui/button-row', ['exports', 'module', 'cursors', 'utils/join-
 })(this, function (exports, module, _react) {
   'use strict';
 
-  var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+  var _slicedToArray = (function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i['return']) _i['return'](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError('Invalid attempt to destructure non-iterable instance'); } }; })();
 
-  function _interopRequire(obj) { return obj && obj.__esModule ? obj['default'] : obj; }
+  function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 
-  function _slicedToArray(arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i['return']) _i['return'](); } finally { if (_d) throw _e; } } return _arr; } else { throw new TypeError('Invalid attempt to destructure non-iterable instance'); } }
-
-  function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
-
-  function _inherits(subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) subClass.__proto__ = superClass; }
-
-  var _React = _interopRequire(_react);
+  var _React = _interopRequireDefault(_react);
 
   var PARAGRAPH_SPLIT = /\n{2,}/;
 
@@ -41225,7 +41165,7 @@ define('components/ui/button-row', ['exports', 'module', 'cursors', 'utils/join-
     '(': ')',
     '[': ']',
     '"': '"',
-    '\'': '\'',
+    "'": "'",
     '<': '>'
   };
 
@@ -41233,10 +41173,10 @@ define('components/ui/button-row', ['exports', 'module', 'cursors', 'utils/join-
     var _again = true;
 
     _function: while (_again) {
-      first = last = undefined;
-      _again = false;
       var text = _x,
           index = _x2;
+      first = last = undefined;
+      _again = false;
       var first = text[0];
       var last = text[text.length - 1];
 
@@ -41260,17 +41200,20 @@ define('components/ui/button-row', ['exports', 'module', 'cursors', 'utils/join-
     var links = [];
     var match = undefined;
     while (match = LINK.exec(text)) {
-      var _match = _slicedToArray(match, 4);
+      var _match = match;
 
-      var all = _match[0];
-      var protocol = _match[1];
-      var preTld = _match[2];
-      var tld = _match[3];
+      var _match2 = _slicedToArray(_match, 4);
+
+      var all = _match2[0];
+      var protocol = _match2[1];
+      var preTld = _match2[2];
+      var tld = _match2[3];
 
       // To qualify as a link, either the protocol or TLD must be specified.
       if (!protocol && !tld) continue;
 
-      var index = match.index;
+      var _match3 = match;
+      var index = _match3.index;
 
       var _unwrap = unwrap(all, index);
 
@@ -41289,7 +41232,7 @@ define('components/ui/button-row', ['exports', 'module', 'cursors', 'utils/join-
   };
 
   var renderText = function renderText(text, key) {
-    if (text) return _React.createElement(
+    if (text) return _React['default'].createElement(
       'span',
       { key: key },
       text
@@ -41297,7 +41240,7 @@ define('components/ui/button-row', ['exports', 'module', 'cursors', 'utils/join-
   };
 
   var renderLink = function renderLink(link, key) {
-    return _React.createElement(
+    return _React['default'].createElement(
       'a',
       { key: key, href: link.url },
       link.text
@@ -41314,7 +41257,7 @@ define('components/ui/button-row', ['exports', 'module', 'cursors', 'utils/join-
       var to = from + link.text.length;
       return {
         index: to,
-        components: parts.components.concat(renderText(text.slice(parts.index, from), '' + key + '-' + i * 2), renderLink(link, '' + key + '-' + (i * 2 + 1)), i === length - 1 ? renderText(text.slice(to), '' + key + '-' + length * 2) : null)
+        components: parts.components.concat(renderText(text.slice(parts.index, from), key + '-' + i * 2), renderLink(link, key + '-' + (i * 2 + 1)), i === length - 1 ? renderText(text.slice(to), key + '-' + length * 2) : null)
       };
     }, { index: 0, components: [] }).components;
   };
@@ -41322,14 +41265,15 @@ define('components/ui/button-row', ['exports', 'module', 'cursors', 'utils/join-
   var renderParagraph = function renderParagraph(text) {
     var lines = text.trim().split(LINE_SPLIT);
     return lines.reduce(function (paragraph, line, i) {
-      return paragraph.concat(renderLinks(line, i * 2), i === lines.length - 1 ? null : _React.createElement('br', { key: i * 2 + 1 }));
+      return paragraph.concat(renderLinks(line, i * 2), i === lines.length - 1 ? null : _React['default'].createElement('br', { key: i * 2 + 1 }));
     }, []);
   };
 
   var renderParagraphs = function renderParagraphs(text) {
+    if (typeof text !== 'string') text = '';
     var paragraphs = text.trim().split(PARAGRAPH_SPLIT);
     return paragraphs.map(function (paragraph, i) {
-      return paragraph ? _React.createElement(
+      return paragraph ? _React['default'].createElement(
         'p',
         { key: i },
         renderParagraph(paragraph)
@@ -41337,41 +41281,13 @@ define('components/ui/button-row', ['exports', 'module', 'cursors', 'utils/join-
     });
   };
 
-  var FormattedText = (function (_React$Component) {
-    function FormattedText() {
-      _classCallCheck(this, FormattedText);
-
-      if (_React$Component != null) {
-        _React$Component.apply(this, arguments);
-      }
-    }
-
-    _inherits(FormattedText, _React$Component);
-
-    _createClass(FormattedText, [{
-      key: 'render',
-      value: function render() {
-        var children = this.props.children;
-
-        var text = typeof children === 'string' ? children : '';
-        return _React.createElement(
-          'div',
-          this.props,
-          renderParagraphs(text)
-        );
-      }
-    }], [{
-      key: 'propTypes',
-      value: {
-        children: _React.PropTypes.string
-      },
-      enumerable: true
-    }]);
-
-    return FormattedText;
-  })(_React.Component);
-
-  module.exports = FormattedText;
+  module.exports = function (props) {
+    return _React['default'].createElement(
+      'div',
+      props,
+      renderParagraphs(props.children)
+    );
+  };
 });
 // src/formatted-text.js
 define('formatted-text', ['exports', 'module', '../node_modules/formatted-text/formatted-text'], function (exports, module, _node_modulesFormattedTextFormattedText) {
@@ -41397,6 +41313,8 @@ define('components/bookmarks/show', ['exports', 'module', 'underscore', 'api', '
 
   var _ButtonRow = _interopRequireDefault(_componentsUiButtonRow);
 
+  var _Cursors = _interopRequireDefault(_cursors);
+
   var _FormattedText = _interopRequireDefault(_formattedText);
 
   var _moment2 = _interopRequireDefault(_moment);
@@ -41408,7 +41326,7 @@ define('components/bookmarks/show', ['exports', 'module', 'underscore', 'api', '
   module.exports = _React['default'].createClass({
     displayName: 'show',
 
-    mixins: [_cursors.Mixin],
+    mixins: [_Cursors['default']],
 
     getInitialState: function getInitialState() {
       return {
@@ -41494,6 +41412,8 @@ define('components/bookmarks/list-item', ['exports', 'module', 'underscore', 'cu
 
   var _2 = _interopRequireDefault(_underscore);
 
+  var _Cursors = _interopRequireDefault(_cursors);
+
   var _moment2 = _interopRequireDefault(_moment);
 
   var _Popup = _interopRequireDefault(_componentsUiPopup);
@@ -41509,7 +41429,7 @@ define('components/bookmarks/list-item', ['exports', 'module', 'underscore', 'cu
   module.exports = _React['default'].createClass({
     displayName: 'list-item',
 
-    mixins: [_cursors.Mixin],
+    mixins: [_Cursors['default']],
 
     propTypes: {
       key: _React['default'].PropTypes.number
@@ -41590,12 +41510,14 @@ define('components/shared/empty', ['exports', 'module', 'components/ui/button', 
 
   var _Button = _interopRequireDefault(_componentsUiButton);
 
+  var _Cursors = _interopRequireDefault(_cursors);
+
   var _React = _interopRequireDefault(_react);
 
   module.exports = _React['default'].createClass({
     displayName: 'empty',
 
-    mixins: [_cursors.Mixin],
+    mixins: [_Cursors['default']],
 
     propTypes: {
       objectName: _React['default'].PropTypes.string
@@ -41730,6 +41652,8 @@ define('components/bookmarks/index', ['exports', 'module', 'underscore', 'unders
 
   var _BookmarksListItem = _interopRequireDefault(_componentsBookmarksListItem);
 
+  var _Cursors = _interopRequireDefault(_cursors);
+
   var _Empty = _interopRequireDefault(_componentsSharedEmpty);
 
   var _ErrorBlock = _interopRequireDefault(_componentsUiErrorBlock);
@@ -41747,7 +41671,7 @@ define('components/bookmarks/index', ['exports', 'module', 'underscore', 'unders
   module.exports = _React['default'].createClass({
     displayName: 'index',
 
-    mixins: [_cursors.Mixin],
+    mixins: [_Cursors['default']],
 
     propTypes: {
       /* Specify which portal's bookmarks to retrieve */
@@ -41879,6 +41803,8 @@ define('components/builder/index', ['exports', 'module', 'underscore', 'undersco
 
   var _api2 = _interopRequireDefault(_api);
 
+  var _Cursors = _interopRequireDefault(_cursors);
+
   var _React = _interopRequireDefault(_react);
 
   var PERSIST_KEY = 'OSW_BUILDER';
@@ -41930,7 +41856,7 @@ define('components/builder/index', ['exports', 'module', 'underscore', 'undersco
   module.exports = _React['default'].createClass({
     displayName: 'index',
 
-    mixins: [_cursors.Mixin],
+    mixins: [_Cursors['default']],
 
     getInitialState: function getInitialState() {
       var state = undefined;
@@ -42189,6 +42115,8 @@ define('components/event-filters/list-item', ['exports', 'module', 'components/u
 
   var _Checkbox = _interopRequireDefault(_componentsUiCheckbox);
 
+  var _Cursors = _interopRequireDefault(_cursors);
+
   var _Icon = _interopRequireDefault(_componentsUiIcon);
 
   var _React = _interopRequireDefault(_react);
@@ -42196,7 +42124,7 @@ define('components/event-filters/list-item', ['exports', 'module', 'components/u
   module.exports = _React['default'].createClass({
     displayName: 'list-item',
 
-    mixins: [_cursors.Mixin],
+    mixins: [_Cursors['default']],
 
     handleChange: function handleChange(ev) {
       this.update({ eventFilter: { active: { $set: ev.target.checked } } });
@@ -43408,6 +43336,8 @@ define('components/event-filters/index', ['exports', 'module', 'underscore', 'ap
 
   var _Checkbox = _interopRequireDefault(_componentsUiCheckbox);
 
+  var _Cursors = _interopRequireDefault(_cursors);
+
   var _EventFilterListItem = _interopRequireDefault(_componentsEventFiltersListItem);
 
   var _React = _interopRequireDefault(_react);
@@ -43435,7 +43365,7 @@ define('components/event-filters/index', ['exports', 'module', 'underscore', 'ap
   module.exports = _React['default'].createClass({
     displayName: 'index',
 
-    mixins: [_cursors.Mixin],
+    mixins: [_Cursors['default']],
 
     getDefaultProps: function getDefaultProps() {
       return {
@@ -44202,6 +44132,8 @@ define('components/events/show', ['exports', 'module', 'underscore', 'underscore
 
   var _Button = _interopRequireDefault(_componentsUiButton);
 
+  var _Cursors = _interopRequireDefault(_cursors);
+
   var _Icon = _interopRequireDefault(_componentsUiIcon);
 
   var _React = _interopRequireDefault(_react);
@@ -44227,7 +44159,7 @@ define('components/events/show', ['exports', 'module', 'underscore', 'underscore
   var Section = _React['default'].createClass({
     displayName: 'Section',
 
-    mixins: [_cursors.Mixin],
+    mixins: [_Cursors['default']],
 
     render: function render() {
       return _React['default'].createElement(
@@ -44246,7 +44178,7 @@ define('components/events/show', ['exports', 'module', 'underscore', 'underscore
   module.exports = _React['default'].createClass({
     displayName: 'show',
 
-    mixins: [_cursors.Mixin],
+    mixins: [_Cursors['default']],
 
     getInitialState: function getInitialState() {
       return {
@@ -44559,6 +44491,8 @@ define('components/events/td', ['exports', 'module', 'cursors', 'components/ui/p
 
   function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 
+  var _Cursors = _interopRequireDefault(_cursors);
+
   var _Popup = _interopRequireDefault(_componentsUiPopup);
 
   var _React = _interopRequireDefault(_react);
@@ -44570,7 +44504,7 @@ define('components/events/td', ['exports', 'module', 'cursors', 'components/ui/p
   module.exports = _React['default'].createClass({
     displayName: 'td',
 
-    mixins: [_cursors.Mixin],
+    mixins: [_Cursors['default']],
 
     getInitialState: function getInitialState() {
       return {
@@ -44732,6 +44666,8 @@ define('components/events/list-item', ['exports', 'module', 'underscore.string',
 
   var _str2 = _interopRequireDefault(_underscoreString);
 
+  var _Cursors = _interopRequireDefault(_cursors);
+
   var _Icon = _interopRequireDefault(_componentsUiIcon);
 
   var _Popup = _interopRequireDefault(_componentsUiPopup);
@@ -44747,7 +44683,7 @@ define('components/events/list-item', ['exports', 'module', 'underscore.string',
   module.exports = _React['default'].createClass({
     displayName: 'list-item',
 
-    mixins: [_cursors.Mixin],
+    mixins: [_Cursors['default']],
 
     getInitialState: function getInitialState() {
       return {
@@ -44954,6 +44890,8 @@ define('components/events/list-date', ['exports', 'module', 'cursors', 'componen
 
   function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 
+  var _Cursors = _interopRequireDefault(_cursors);
+
   var _FetchList = _interopRequireDefault(_componentsUiFetchList);
 
   var _ListItem = _interopRequireDefault(_componentsEventsListItem);
@@ -44965,7 +44903,7 @@ define('components/events/list-date', ['exports', 'module', 'cursors', 'componen
   module.exports = _React['default'].createClass({
     displayName: 'list-date',
 
-    mixins: [_cursors.Mixin],
+    mixins: [_Cursors['default']],
 
     renderEvent: function renderEvent(event) {
       var i = this.state.allEvents.indexOf(event);
@@ -45019,6 +44957,8 @@ define('components/events/week', ['exports', 'module', 'underscore', 'cursors', 
 
   var _2 = _interopRequireDefault(_underscore);
 
+  var _Cursors = _interopRequireDefault(_cursors);
+
   var _Td = _interopRequireDefault(_componentsEventsTd);
 
   var _ListDate = _interopRequireDefault(_componentsEventsListDate);
@@ -45030,7 +44970,7 @@ define('components/events/week', ['exports', 'module', 'underscore', 'cursors', 
   module.exports = _React['default'].createClass({
     displayName: 'week',
 
-    mixins: [_cursors.Mixin],
+    mixins: [_Cursors['default']],
 
     getInitialState: function getInitialState() {
       return {
@@ -45244,6 +45184,8 @@ define('components/events/calendar', ['exports', 'module', 'underscore', 'cursor
 
   var _2 = _interopRequireDefault(_underscore);
 
+  var _Cursors = _interopRequireDefault(_cursors);
+
   var _React = _interopRequireDefault(_react);
 
   var _Week = _interopRequireDefault(_componentsEventsWeek);
@@ -45251,7 +45193,7 @@ define('components/events/calendar', ['exports', 'module', 'underscore', 'cursor
   module.exports = _React['default'].createClass({
     displayName: 'calendar',
 
-    mixins: [_cursors.Mixin],
+    mixins: [_Cursors['default']],
 
     getInitialState: function getInitialState() {
       return {
@@ -45369,6 +45311,8 @@ define('components/ui/button-group', ['exports', 'module', 'cursors', 'utils/joi
 
   function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 
+  var _Cursors = _interopRequireDefault(_cursors);
+
   var _joinClassNames = _interopRequireDefault(_utilsJoinClassNames);
 
   var _React = _interopRequireDefault(_react);
@@ -45376,7 +45320,7 @@ define('components/ui/button-group', ['exports', 'module', 'cursors', 'utils/joi
   module.exports = _React['default'].createClass({
     displayName: 'button-group',
 
-    mixins: [_cursors.Mixin],
+    mixins: [_Cursors['default']],
 
     render: function render() {
       return _React['default'].createElement(
@@ -45399,6 +45343,8 @@ define('components/events/ongoing', ['exports', 'module', 'underscore', 'api', '
 
   var _api2 = _interopRequireDefault(_api);
 
+  var _Cursors = _interopRequireDefault(_cursors);
+
   var _React = _interopRequireDefault(_react);
 
   var LIST_LENGTH = 3;
@@ -45407,7 +45353,7 @@ define('components/events/ongoing', ['exports', 'module', 'underscore', 'api', '
   module.exports = _React['default'].createClass({
     displayName: 'ongoing',
 
-    mixins: [_cursors.Mixin],
+    mixins: [_Cursors['default']],
 
     getDefaultProps: function getDefaultProps() {
       return {
@@ -45539,6 +45485,8 @@ define('components/events/list', ['exports', 'module', 'underscore', 'cursors', 
 
   var _2 = _interopRequireDefault(_underscore);
 
+  var _Cursors = _interopRequireDefault(_cursors);
+
   var _FetchList = _interopRequireDefault(_componentsUiFetchList);
 
   var _ListDate = _interopRequireDefault(_componentsEventsListDate);
@@ -45552,7 +45500,7 @@ define('components/events/list', ['exports', 'module', 'underscore', 'cursors', 
   module.exports = _React['default'].createClass({
     displayName: 'list',
 
-    mixins: [_cursors.Mixin],
+    mixins: [_Cursors['default']],
 
     fetch: function fetch(cb) {
       var options = {
@@ -47010,6 +46958,8 @@ define('components/events/index', ['exports', 'module', 'underscore', 'component
 
   var _List = _interopRequireDefault(_componentsEventsList);
 
+  var _Cursors = _interopRequireDefault(_cursors);
+
   var _EventFiltersIndex = _interopRequireDefault(_componentsEventFiltersIndex);
 
   var _Icon = _interopRequireDefault(_componentsUiIcon);
@@ -47029,7 +46979,7 @@ define('components/events/index', ['exports', 'module', 'underscore', 'component
   module.exports = _React['default'].createClass({
     displayName: 'index',
 
-    mixins: [_cursors.Mixin],
+    mixins: [_Cursors['default']],
 
     getDefaultProps: function getDefaultProps() {
       return {
@@ -47568,12 +47518,14 @@ define('components/ui/text-button', ['exports', 'module', 'components/ui/button'
 
   var _Button = _interopRequireDefault(_componentsUiButton);
 
+  var _Cursors = _interopRequireDefault(_cursors);
+
   var _React = _interopRequireDefault(_react);
 
   module.exports = _React['default'].createClass({
     displayName: 'text-button',
 
-    mixins: [_cursors.Mixin],
+    mixins: [_Cursors['default']],
 
     render: function render() {
       return _React['default'].createElement(_Button['default'], _extends({}, this.props, { baseClassName: 'osw-text-button' }));
@@ -47588,6 +47540,8 @@ define('components/files/breadcrumb', ['exports', 'module', 'underscore', 'curso
 
   var _2 = _interopRequireDefault(_underscore);
 
+  var _Cursors = _interopRequireDefault(_cursors);
+
   var _React = _interopRequireDefault(_react);
 
   var _TextButton = _interopRequireDefault(_componentsUiTextButton);
@@ -47595,7 +47549,7 @@ define('components/files/breadcrumb', ['exports', 'module', 'underscore', 'curso
   module.exports = _React['default'].createClass({
     displayName: 'breadcrumb',
 
-    mixins: [_cursors.Mixin],
+    mixins: [_Cursors['default']],
 
     getIndex: function getIndex() {
       return _2['default'].indexOf(this.state.path, this.props.file.id);
@@ -47672,6 +47626,8 @@ define('components/files/file-show', ['exports', 'module', 'underscore', 'api', 
 
   var _CommentsIndex = _interopRequireDefault(_componentsCommentsIndex);
 
+  var _Cursors = _interopRequireDefault(_cursors);
+
   var _moment2 = _interopRequireDefault(_moment);
 
   var _React = _interopRequireDefault(_react);
@@ -47685,7 +47641,7 @@ define('components/files/file-show', ['exports', 'module', 'underscore', 'api', 
   module.exports = _React['default'].createClass({
     displayName: 'file-show',
 
-    mixins: [_cursors.Mixin],
+    mixins: [_Cursors['default']],
 
     componentWillMount: function componentWillMount() {
       this.fetch();
@@ -47887,6 +47843,8 @@ define('components/files/list-item', ['exports', 'module', 'cursors', 'entities/
 
   function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 
+  var _Cursors = _interopRequireDefault(_cursors);
+
   var _moment2 = _interopRequireDefault(_moment);
 
   var _React = _interopRequireDefault(_react);
@@ -47900,7 +47858,7 @@ define('components/files/list-item', ['exports', 'module', 'cursors', 'entities/
   module.exports = _React['default'].createClass({
     displayName: 'list-item',
 
-    mixins: [_cursors.Mixin],
+    mixins: [_Cursors['default']],
 
     pushPath: function pushPath() {
       this.update({ path: { $push: [this.state.file.id] } });
@@ -47982,6 +47940,8 @@ define('components/files/folder-show', ['exports', 'module', 'underscore', 'api'
 
   var _api2 = _interopRequireDefault(_api);
 
+  var _Cursors = _interopRequireDefault(_cursors);
+
   var _FetchList = _interopRequireDefault(_componentsUiFetchList);
 
   var _FilesListItem = _interopRequireDefault(_componentsFilesListItem);
@@ -47993,7 +47953,7 @@ define('components/files/folder-show', ['exports', 'module', 'underscore', 'api'
   module.exports = _React['default'].createClass({
     displayName: 'folder-show',
 
-    mixins: [_cursors.Mixin],
+    mixins: [_Cursors['default']],
 
     getFiles: function getFiles() {
       return this.state.file.files || [];
@@ -48058,6 +48018,8 @@ define('components/files/index', ['exports', 'module', 'underscore', 'components
 
   var _Breadcrumb = _interopRequireDefault(_componentsFilesBreadcrumb);
 
+  var _Cursors = _interopRequireDefault(_cursors);
+
   var _FileShow = _interopRequireDefault(_componentsFilesFileShow);
 
   var _FolderShow = _interopRequireDefault(_componentsFilesFolderShow);
@@ -48071,7 +48033,7 @@ define('components/files/index', ['exports', 'module', 'underscore', 'components
   module.exports = _React['default'].createClass({
     displayName: 'index',
 
-    mixins: [_cursors.Mixin],
+    mixins: [_Cursors['default']],
 
     getInitialState: function getInitialState() {
       return {
@@ -48177,6 +48139,8 @@ define('components/shared/category-selector', ['exports', 'module', 'cursors', '
 
   function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 
+  var _Cursors = _interopRequireDefault(_cursors);
+
   var _FacetedSelector = _interopRequireDefault(_componentsSharedFacetedSelector);
 
   var _joinClassNames = _interopRequireDefault(_utilsJoinClassNames);
@@ -48186,7 +48150,7 @@ define('components/shared/category-selector', ['exports', 'module', 'cursors', '
   module.exports = _React['default'].createClass({
     displayName: 'category-selector',
 
-    mixins: [_cursors.Mixin],
+    mixins: [_Cursors['default']],
 
     propTypes: {
       objects: _React['default'].PropTypes.array.isRequired,
@@ -48218,6 +48182,8 @@ define('components/forms/filters', ['exports', 'module', 'components/shared/cate
 
   var _CategorySelector = _interopRequireDefault(_componentsSharedCategorySelector);
 
+  var _Cursors = _interopRequireDefault(_cursors);
+
   var _Query = _interopRequireDefault(_componentsSharedQuery);
 
   var _React = _interopRequireDefault(_react);
@@ -48227,7 +48193,7 @@ define('components/forms/filters', ['exports', 'module', 'components/shared/cate
   module.exports = _React['default'].createClass({
     displayName: 'filters',
 
-    mixins: [_cursors.Mixin],
+    mixins: [_Cursors['default']],
 
     propTypes: {
       objects: _React['default'].PropTypes.array
@@ -48315,6 +48281,8 @@ define('components/forms/show', ['exports', 'module', 'api', 'components/ui/butt
 
   var _ButtonRow = _interopRequireDefault(_componentsUiButtonRow);
 
+  var _Cursors = _interopRequireDefault(_cursors);
+
   var _CreatedBy = _interopRequireDefault(_componentsSharedCreatedBy);
 
   var _React = _interopRequireDefault(_react);
@@ -48322,7 +48290,7 @@ define('components/forms/show', ['exports', 'module', 'api', 'components/ui/butt
   module.exports = _React['default'].createClass({
     displayName: 'show',
 
-    mixins: [_cursors.Mixin],
+    mixins: [_Cursors['default']],
 
     getInitialState: function getInitialState() {
       return {
@@ -48394,6 +48362,8 @@ define('components/forms/list-item', ['exports', 'module', 'cursors', 'moment', 
 
   function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 
+  var _Cursors = _interopRequireDefault(_cursors);
+
   var _moment2 = _interopRequireDefault(_moment);
 
   var _Popup = _interopRequireDefault(_componentsUiPopup);
@@ -48409,7 +48379,7 @@ define('components/forms/list-item', ['exports', 'module', 'cursors', 'moment', 
   module.exports = _React['default'].createClass({
     displayName: 'list-item',
 
-    mixins: [_cursors.Mixin],
+    mixins: [_Cursors['default']],
 
     propTypes: {
       key: _React['default'].PropTypes.number
@@ -48503,6 +48473,8 @@ define('components/forms/index', ['exports', 'module', 'underscore', 'underscore
 
   var _api2 = _interopRequireDefault(_api);
 
+  var _Cursors = _interopRequireDefault(_cursors);
+
   var _Empty = _interopRequireDefault(_componentsSharedEmpty);
 
   var _ErrorBlock = _interopRequireDefault(_componentsUiErrorBlock);
@@ -48522,7 +48494,7 @@ define('components/forms/index', ['exports', 'module', 'underscore', 'underscore
   module.exports = _React['default'].createClass({
     displayName: 'index',
 
-    mixins: [_cursors.Mixin],
+    mixins: [_Cursors['default']],
 
     propTypes: {
       portalId: _React['default'].PropTypes.number
@@ -48662,12 +48634,14 @@ define('components/news-posts/show', ['exports', 'module', 'components/comments/
 
   var _CreatedBy = _interopRequireDefault(_componentsSharedCreatedBy);
 
+  var _Cursors = _interopRequireDefault(_cursors);
+
   var _React = _interopRequireDefault(_react);
 
   module.exports = _React['default'].createClass({
     displayName: 'show',
 
-    mixins: [_cursors.Mixin],
+    mixins: [_Cursors['default']],
 
     render: function render() {
       var newsPost = this.state.newsPost;
@@ -48707,6 +48681,8 @@ define('components/news-posts/list-item', ['exports', 'module', 'jquery', 'under
 
   var _str2 = _interopRequireDefault(_underscoreString);
 
+  var _Cursors = _interopRequireDefault(_cursors);
+
   var _Icon = _interopRequireDefault(_componentsUiIcon);
 
   var _moment2 = _interopRequireDefault(_moment);
@@ -48720,7 +48696,7 @@ define('components/news-posts/list-item', ['exports', 'module', 'jquery', 'under
   module.exports = _React['default'].createClass({
     displayName: 'list-item',
 
-    mixins: [_cursors.Mixin],
+    mixins: [_Cursors['default']],
 
     getDefaultProps: function getDefaultProps() {
       return {
@@ -48832,6 +48808,8 @@ define('components/news-posts/index', ['exports', 'module', 'underscore', 'api',
 
   var _api2 = _interopRequireDefault(_api);
 
+  var _Cursors = _interopRequireDefault(_cursors);
+
   var _FetchList = _interopRequireDefault(_componentsUiFetchList);
 
   var _NewsPostsListItem = _interopRequireDefault(_componentsNewsPostsListItem);
@@ -48843,7 +48821,7 @@ define('components/news-posts/index', ['exports', 'module', 'underscore', 'api',
   module.exports = _React['default'].createClass({
     displayName: 'index',
 
-    mixins: [_cursors.Mixin],
+    mixins: [_Cursors['default']],
 
     getInitialState: function getInitialState() {
       return {
@@ -48897,6 +48875,8 @@ define('components/polls/filters', ['exports', 'module', 'cursors', 'components/
 
   function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 
+  var _Cursors = _interopRequireDefault(_cursors);
+
   var _FacetedSelector = _interopRequireDefault(_componentsSharedFacetedSelector);
 
   var _joinClassNames = _interopRequireDefault(_utilsJoinClassNames);
@@ -48910,7 +48890,7 @@ define('components/polls/filters', ['exports', 'module', 'cursors', 'components/
   module.exports = _React['default'].createClass({
     displayName: 'filters',
 
-    mixins: [_cursors.Mixin],
+    mixins: [_Cursors['default']],
 
     handleChange: function handleChange(ev) {
       var deltas = {};
@@ -49107,6 +49087,8 @@ define('components/polls/show', ['exports', 'module', 'api', 'components/ui/butt
 
   var _CreatedBy = _interopRequireDefault(_componentsSharedCreatedBy);
 
+  var _Cursors = _interopRequireDefault(_cursors);
+
   var _moment2 = _interopRequireDefault(_moment);
 
   var _React = _interopRequireDefault(_react);
@@ -49118,7 +49100,7 @@ define('components/polls/show', ['exports', 'module', 'api', 'components/ui/butt
   module.exports = _React['default'].createClass({
     displayName: 'show',
 
-    mixins: [_cursors.Mixin],
+    mixins: [_Cursors['default']],
 
     propTypes: {
       portalId: _React['default'].PropTypes.number
@@ -49210,6 +49192,8 @@ define('components/polls/list-item', ['exports', 'module', 'underscore', 'cursor
 
   var _2 = _interopRequireDefault(_underscore);
 
+  var _Cursors = _interopRequireDefault(_cursors);
+
   var _moment2 = _interopRequireDefault(_moment);
 
   var _Popup = _interopRequireDefault(_componentsUiPopup);
@@ -49225,7 +49209,7 @@ define('components/polls/list-item', ['exports', 'module', 'underscore', 'cursor
   module.exports = _React['default'].createClass({
     displayName: 'list-item',
 
-    mixins: [_cursors.Mixin],
+    mixins: [_Cursors['default']],
 
     propTypes: {
       key: _React['default'].PropTypes.number
@@ -49349,6 +49333,8 @@ define('components/polls/index', ['exports', 'module', 'underscore', 'underscore
 
   var _api2 = _interopRequireDefault(_api);
 
+  var _Cursors = _interopRequireDefault(_cursors);
+
   var _Empty = _interopRequireDefault(_componentsSharedEmpty);
 
   var _ErrorBlock = _interopRequireDefault(_componentsUiErrorBlock);
@@ -49368,7 +49354,7 @@ define('components/polls/index', ['exports', 'module', 'underscore', 'underscore
   module.exports = _React['default'].createClass({
     displayName: 'index',
 
-    mixins: [_cursors.Mixin],
+    mixins: [_Cursors['default']],
 
     propTypes: {
       /* Specify which portal's polls to retrieve */
@@ -49514,12 +49500,14 @@ define('components/portals/letter-cell', ['exports', 'module', 'components/ui/bu
 
   var _Button = _interopRequireDefault(_componentsUiButton);
 
+  var _Cursors = _interopRequireDefault(_cursors);
+
   var _React = _interopRequireDefault(_react);
 
   module.exports = _React['default'].createClass({
     displayName: 'letter-cell',
 
-    mixins: [_cursors.Mixin],
+    mixins: [_Cursors['default']],
 
     getClassName: function getClassName() {
       if (this.state.currentLetter === this.props.letter) {
@@ -49554,6 +49542,8 @@ define('components/portals/letter-table', ['exports', 'module', 'underscore', 'c
 
   var _2 = _interopRequireDefault(_underscore);
 
+  var _Cursors = _interopRequireDefault(_cursors);
+
   var _LetterCell = _interopRequireDefault(_componentsPortalsLetterCell);
 
   var _React = _interopRequireDefault(_react);
@@ -49561,7 +49551,7 @@ define('components/portals/letter-table', ['exports', 'module', 'underscore', 'c
   module.exports = _React['default'].createClass({
     displayName: 'letter-table',
 
-    mixins: [_cursors.Mixin],
+    mixins: [_Cursors['default']],
 
     renderCell: function renderCell(letter, i) {
       return _React['default'].createElement(_LetterCell['default'], _extends({}, this.props, {
@@ -49604,6 +49594,8 @@ define('components/portals/umbrella-selector', ['exports', 'module', 'cursors', 
 
   function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 
+  var _Cursors = _interopRequireDefault(_cursors);
+
   var _FacetedSelector = _interopRequireDefault(_componentsSharedFacetedSelector);
 
   var _joinClassNames = _interopRequireDefault(_utilsJoinClassNames);
@@ -49613,7 +49605,7 @@ define('components/portals/umbrella-selector', ['exports', 'module', 'cursors', 
   module.exports = _React['default'].createClass({
     displayName: 'umbrella-selector',
 
-    mixins: [_cursors.Mixin],
+    mixins: [_Cursors['default']],
 
     getFacet: function getFacet(portal) {
       return portal.umbrella ? portal.umbrella.name : 'Umbrella';
@@ -49640,6 +49632,8 @@ define('components/portals/filters', ['exports', 'module', 'components/shared/ca
 
   var _CategorySelector = _interopRequireDefault(_componentsSharedCategorySelector);
 
+  var _Cursors = _interopRequireDefault(_cursors);
+
   var _LetterTable = _interopRequireDefault(_componentsPortalsLetterTable);
 
   var _Query = _interopRequireDefault(_componentsSharedQuery);
@@ -49653,7 +49647,7 @@ define('components/portals/filters', ['exports', 'module', 'components/shared/ca
   module.exports = _React['default'].createClass({
     displayName: 'filters',
 
-    mixins: [_cursors.Mixin],
+    mixins: [_Cursors['default']],
 
     handleChange: function handleChange(ev) {
       var deltas = {};
@@ -49694,6 +49688,8 @@ define('components/portals/show', ['exports', 'module', 'api', 'cursors', 'compo
 
   var _api2 = _interopRequireDefault(_api);
 
+  var _Cursors = _interopRequireDefault(_cursors);
+
   var _Button = _interopRequireDefault(_componentsUiButton);
 
   var _ButtonRow = _interopRequireDefault(_componentsUiButtonRow);
@@ -49705,7 +49701,7 @@ define('components/portals/show', ['exports', 'module', 'api', 'cursors', 'compo
   module.exports = _React['default'].createClass({
     displayName: 'show',
 
-    mixins: [_cursors.Mixin],
+    mixins: [_Cursors['default']],
 
     getInitialState: function getInitialState() {
       return {
@@ -49796,6 +49792,8 @@ define('components/portals/list-item', ['exports', 'module', 'cursors', 'compone
 
   function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 
+  var _Cursors = _interopRequireDefault(_cursors);
+
   var _Popup = _interopRequireDefault(_componentsUiPopup);
 
   var _React = _interopRequireDefault(_react);
@@ -49807,7 +49805,7 @@ define('components/portals/list-item', ['exports', 'module', 'cursors', 'compone
   module.exports = _React['default'].createClass({
     displayName: 'list-item',
 
-    mixins: [_cursors.Mixin],
+    mixins: [_Cursors['default']],
 
     getInitialState: function getInitialState() {
       return {
@@ -49898,6 +49896,8 @@ define('components/portals/index', ['exports', 'module', 'underscore', 'undersco
 
   var _api2 = _interopRequireDefault(_api);
 
+  var _Cursors = _interopRequireDefault(_cursors);
+
   var _ErrorBlock = _interopRequireDefault(_componentsUiErrorBlock);
 
   var _FetchList = _interopRequireDefault(_componentsUiFetchList);
@@ -49922,7 +49922,7 @@ define('components/portals/index', ['exports', 'module', 'underscore', 'undersco
   module.exports = _React['default'].createClass({
     displayName: 'index',
 
-    mixins: [_cursors.Mixin],
+    mixins: [_Cursors['default']],
 
     comparator: function comparator(a, b) {
       if (!a.umbrella !== !b.umbrella) return !a.umbrella ? -1 : 1;
@@ -50173,6 +50173,8 @@ define('components/selector/result', ['exports', 'module', 'underscore', 'unders
 
   var _str2 = _interopRequireDefault(_underscoreString);
 
+  var _Cursors = _interopRequireDefault(_cursors);
+
   var _Icon = _interopRequireDefault(_componentsUiIcon);
 
   var _React = _interopRequireDefault(_react);
@@ -50180,7 +50182,7 @@ define('components/selector/result', ['exports', 'module', 'underscore', 'unders
   module.exports = _React['default'].createClass({
     displayName: 'result',
 
-    mixins: [_cursors.Mixin],
+    mixins: [_Cursors['default']],
 
     className: function className() {
       var classes = ['osw-selector-result', 'osw-selector-result-type-' + (0, _entitiesSelectorItem.getIconName)(this.props.item)];
@@ -50246,6 +50248,8 @@ define('components/selector/scope', ['exports', 'module', 'cursors', 'react', 'e
 
   function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 
+  var _Cursors = _interopRequireDefault(_cursors);
+
   var _React = _interopRequireDefault(_react);
 
   var STOP_PROPAGATION = function STOP_PROPAGATION(ev) {
@@ -50255,7 +50259,7 @@ define('components/selector/scope', ['exports', 'module', 'cursors', 'react', 'e
   module.exports = _React['default'].createClass({
     displayName: 'scope',
 
-    mixins: [_cursors.Mixin],
+    mixins: [_Cursors['default']],
 
     handleChange: function handleChange() {
       this.props.onResultClick(this.props.scope);
@@ -50663,6 +50667,8 @@ define('components/selector/token', ['exports', 'module', 'cursors', 'components
 
   function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 
+  var _Cursors = _interopRequireDefault(_cursors);
+
   var _Icon = _interopRequireDefault(_componentsUiIcon);
 
   var _React = _interopRequireDefault(_react);
@@ -50670,7 +50676,7 @@ define('components/selector/token', ['exports', 'module', 'cursors', 'components
   module.exports = _React['default'].createClass({
     displayName: 'token',
 
-    mixins: [_cursors.Mixin],
+    mixins: [_Cursors['default']],
 
     getClassName: function getClassName() {
       return 'osw-selector-token osw-selector-token-type-' + (0, _entitiesSelectorItem.getIconName)(this.props.item);
@@ -50714,6 +50720,8 @@ define('components/selector/index', ['exports', 'module', 'underscore', 'orgsync
 
   var _Button = _interopRequireDefault(_componentsUiButton);
 
+  var _Cursors = _interopRequireDefault(_cursors);
+
   var _FetchList = _interopRequireDefault(_componentsUiFetchList);
 
   var _Popup = _interopRequireDefault(_componentsUiPopup);
@@ -50735,7 +50743,7 @@ define('components/selector/index', ['exports', 'module', 'underscore', 'orgsync
   var SelectorIndex = _React['default'].createClass({
     displayName: 'SelectorIndex',
 
-    mixins: [_cursors.Mixin],
+    mixins: [_Cursors['default']],
 
     getDefaultProps: function getDefaultProps() {
       return {
@@ -51250,6 +51258,8 @@ define('components/ui/auto-textbox', ['exports', 'module', 'jquery', 'cursors', 
 
   var _$ = _interopRequireDefault(_jquery);
 
+  var _Cursors = _interopRequireDefault(_cursors);
+
   var _React = _interopRequireDefault(_react);
 
   var _ReactDOM = _interopRequireDefault(_reactDom);
@@ -51257,7 +51267,7 @@ define('components/ui/auto-textbox', ['exports', 'module', 'jquery', 'cursors', 
   module.exports = _React['default'].createClass({
     displayName: 'auto-textbox',
 
-    mixins: [_cursors.Mixin],
+    mixins: [_Cursors['default']],
 
     componentDidMount: function componentDidMount() {
       (0, _$['default'])(window).on('resize', this.resize);

@@ -1,4 +1,4 @@
-import {Mixin as Cursors} from 'cursors';
+import Cursors from 'cursors';
 import {getPictureUrl} from 'entities/file';
 import moment from 'moment';
 import React from 'react';

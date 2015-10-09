@@ -1,5 +1,5 @@
 import _str from 'underscore.string';
-import {Mixin as Cursors} from 'cursors';
+import Cursors from 'cursors';
 import Icon from 'components/ui/icon';
 import Popup from 'components/ui/popup';
 import React from 'react';

@@ -1,6 +1,6 @@
 import $ from 'jquery';
 import _str from 'underscore.string';
-import {Mixin as Cursors} from 'cursors';
+import Cursors from 'cursors';
 import Icon from 'components/ui/icon';
 import moment from 'moment';
 import Show from 'components/news-posts/show';

@@ -1,7 +1,7 @@
 import _ from 'underscore';
 import api from 'api';
 import AccountsListItem from 'components/accounts/list-item';
-import {Mixin as Cursors} from 'cursors';
+import Cursors from 'cursors';
 import FetchList from 'components/ui/fetch-list';
 import React from 'react';
 

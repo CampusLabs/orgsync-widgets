@@ -3,7 +3,7 @@ import _str from 'underscore.string';
 import api from 'api';
 import Button from 'components/ui/button';
 import config from 'config';
-import {Mixin as Cursors} from 'cursors';
+import Cursors from 'cursors';
 import React from 'react';
 
 import {getPictureUrl} from 'entities/account';

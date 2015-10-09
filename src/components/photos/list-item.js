@@ -1,4 +1,4 @@
-import {Mixin as Cursors} from 'cursors';
+import Cursors from 'cursors';
 import Icon from 'components/ui/icon';
 import React from 'react';
 

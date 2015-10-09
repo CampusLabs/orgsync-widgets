@@ -1,7 +1,7 @@
 import _ from 'underscore';
 import _str from 'underscore.string';
 import api from 'api';
-import {Mixin as Cursors} from 'cursors';
+import Cursors from 'cursors';
 import React from 'react';
 
 const PERSIST_KEY = 'OSW_BUILDER';

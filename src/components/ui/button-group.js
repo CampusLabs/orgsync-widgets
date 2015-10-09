@@ -1,4 +1,4 @@
-import {Mixin as Cursors} from 'cursors';
+import Cursors from 'cursors';
 import joinClassNames from 'utils/join-class-names';
 import React from 'react';
 

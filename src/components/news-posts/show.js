@@ -1,6 +1,6 @@
 import CommentsIndex from 'components/comments/index';
 import CreatedBy from 'components/shared/created-by';
-import {Mixin as Cursors} from 'cursors';
+import Cursors from 'cursors';
 import React from 'react';
 
 export default React.createClass({

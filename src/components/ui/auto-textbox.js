@@ -1,5 +1,5 @@
 import $ from 'jquery';
-import {Mixin as Cursors} from 'cursors';
+import Cursors from 'cursors';
 import React from 'react';
 import ReactDOM from 'react-dom';
 

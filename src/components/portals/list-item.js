@@ -1,4 +1,4 @@
-import {Mixin as Cursors} from 'cursors';
+import Cursors from 'cursors';
 import Popup from 'components/ui/popup';
 import React from 'react';
 import Show from 'components/portals/show';

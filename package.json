@@ -1,6 +1,6 @@
 {
   "name": "orgsync-widgets",
-  "version": "0.0.74",
+  "version": "0.0.75",
   "author": "Casey Foster <c@sey.me>",
   "license": "MIT",
   "main": "dist/orgsync-widgets.js",
@@ -36,7 +36,7 @@
     "orgsync-cache": "0.0.4",
     "orgsync-velcro": "0.0.6",
     "qs": "5.2.0",
-    "react-list": "0.7.0",
+    "react-list": "0.7.1",
     "react": "0.14.0",
     "react-dom": "0.14.0",
     "superagent": "1.4.0",

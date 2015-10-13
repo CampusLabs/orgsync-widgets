@@ -34533,7 +34533,7 @@ define('cursors', ['exports', 'module', '../node_modules/cursors/cursors'], func
 
   var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
 
-  var _get = function get(_x, _x2, _x3) { var _again = true; _function: while (_again) { var object = _x, property = _x2, receiver = _x3; desc = parent = getter = undefined; _again = false; if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { _x = parent; _x2 = property; _x3 = receiver; _again = true; continue _function; } } else if ('value' in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } } };
+  var _get = function get(_x2, _x3, _x4) { var _again = true; _function: while (_again) { var object = _x2, property = _x3, receiver = _x4; desc = parent = getter = undefined; _again = false; if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { _x2 = parent; _x3 = property; _x4 = receiver; _again = true; continue _function; } } else if ('value' in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } } };
 
   function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 
@@ -34707,7 +34707,11 @@ define('cursors', ['exports', 'module', '../node_modules/cursors/cursors'], func
         var axis = this.props.axis;
 
         var scrollKey = SCROLL_KEYS[axis];
-        var scroll = scrollParent === window ? document.body[scrollKey] : scrollParent[scrollKey];
+        var scroll = scrollParent === window ?
+        // Firefox always returns document.body[scrollKey] as 0 and Chrome/Safari
+        // always return document.documentElement[scrollKey] as 0, so take
+        // whichever has a value.
+        document.body[scrollKey] || document.documentElement[scrollKey] : scrollParent[scrollKey];
         var el = findDOMNode(this);
         return scroll - (this.getOffset(el) - this.getOffset(scrollParent));
       }
@@ -34732,9 +34736,9 @@ define('cursors', ['exports', 'module', '../node_modules/cursors/cursors'], func
     }, {
       key: 'getStartAndEnd',
       value: function getStartAndEnd() {
-        var threshold = this.props.threshold;
+        var threshold = arguments.length <= 0 || arguments[0] === undefined ? this.props.threshold : arguments[0];
 
-        var start = Math.max(0, this.getScroll() - threshold);
+        var start = this.getScroll() - threshold;
         var end = start + this.getViewportSize() + threshold * 2;
         return { start: start, end: end };
       }
@@ -34949,6 +34953,32 @@ define('cursors', ['exports', 'module', '../node_modules/cursors/cursors'], func
 
         var min = max - this.getViewportSize() + this.getSizeOf(index);
         if (current < min) this.setScroll(min);
+      }
+    }, {
+      key: 'getVisibleRange',
+      value: function getVisibleRange() {
+        var el = findDOMNode(this);
+        var itemEls = el.children;
+        var top = this.getOffset(el);
+        var sizeKey = OFFSET_SIZE_KEYS[this.props.axis];
+
+        var _getStartAndEnd4 = this.getStartAndEnd(0);
+
+        var start = _getStartAndEnd4.start;
+        var end = _getStartAndEnd4.end;
+
+        var first = 0,
+            last = 0;
+        for (var i = 0; i < itemEls.length; ++i) {
+          var itemEl = itemEls[i];
+          var itemStart = this.getOffset(itemEl) - top;
+          var itemEnd = itemStart + itemEl[sizeKey];
+          if (itemStart <= start && itemEnd > start) first = i;
+          if (itemStart < end && itemEnd >= end) last = i;
+        }
+        var from = this.state.from;
+
+        return [from + first, from + last];
       }
     }, {
       key: 'renderItems',

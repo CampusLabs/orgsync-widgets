@@ -2377,24 +2377,23 @@
 .orgsync-widget .osw-selector-index-selected-results {
   overflow: auto; }
 
-.orgsync-widget .osw-selector-index-inline.osw-selector-index-results-visible .osw-selector-index-tokens-and-query {
-  border-bottom-left-radius: 0;
-  border-bottom-right-radius: 0; }
+.orgsync-widget .osw-selector-index-scopes {
+  display: none; }
+
+.orgsync-widget .osw-selector-index-right {
+  display: none; }
 
 .orgsync-widget .osw-selector-index-inline .osw-selector-index-results {
   border-bottom-left-radius: 3px;
   border-bottom-right-radius: 3px;
   background: #fff;
   border-top: 0;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
+  border: 0 !important;
   left: 0;
   max-height: 264px;
   position: absolute;
   right: 0;
   z-index: 1; }
-
-.orgsync-widget .osw-selector-index-inline .osw-selector-index-tokens-and-query {
-  border: 1px solid #eee; }
 
 .orgsync-widget .osw-selector-index-inline .osw-selector-index-loading,
 .orgsync-widget .osw-selector-index-inline .osw-selector-index-empty,
@@ -2412,11 +2411,10 @@
   .orgsync-widget .osw-selector-index-browse .osw-selector-index-middle,
   .orgsync-widget .osw-selector-index-browse .osw-selector-index-right {
     box-sizing: border-box; }
-  .orgsync-widget .osw-selector-index-browse .osw-selector-index-left,
   .orgsync-widget .osw-selector-index-browse .osw-selector-index-middle {
-    border-bottom: 1px solid #ccc; }
+    width: 100% !important; }
   .orgsync-widget .osw-selector-index-browse .osw-selector-index-tokens-and-query {
-    border-bottom: 1px solid #ccc;
+    margin-bottom: 20px;
     border-radius: 0; }
   .orgsync-widget .osw-selector-index-browse .osw-selector-index-scopes {
     max-height: 300px; }
@@ -2427,8 +2425,8 @@
 
 .orgsync-widget .osw-selector-index-tokens-and-query {
   background: #fff;
-  border-radius: 3px;
-  padding: 5px; }
+  border-bottom: 0;
+  padding: 10px; }
 
 .orgsync-widget .osw-selector-index-browse-button {
   float: right; }
@@ -2503,10 +2501,6 @@
   padding: 5px 10px; }
 
 .orgsync-widget[min-width~='640px'] .osw-selector-index-browse .osw-selector-index-left,
-.orgsync-widget[min-width~='640px'] .osw-selector-index-browse .osw-selector-index-middle {
-  border-right: 1px solid #ccc; }
-
-.orgsync-widget[min-width~='640px'] .osw-selector-index-browse .osw-selector-index-left,
 .orgsync-widget[min-width~='640px'] .osw-selector-index-browse .osw-selector-index-right {
   border-bottom: 0;
   float: left;
@@ -2531,7 +2525,6 @@
   -ms-user-select: none;
   user-select: none;
   background: #fff;
-  border-top: 1px solid #eee;
   cursor: pointer;
   font-size: 14px; }
   .orgsync-widget .osw-selector-result-content::after {
@@ -2623,8 +2616,8 @@
 
 .orgsync-widget .osw-selector-index-browse .osw-selector-index-middle .osw-selector-result-image {
   font-size: 30px;
-  margin-right: 10px;
-  width: 45px; }
+  width: 100%;
+  text-align: center; }
 
 .orgsync-widget .osw-selector-index-browse .osw-selector-index-middle .osw-selector-result-icon {
   box-sizing: border-box;
@@ -2640,7 +2633,8 @@
 
 .orgsync-widget .osw-selector-index-browse .osw-selector-index-middle .osw-selector-result-info {
   line-height: 18px;
-  padding-top: 4px; }
+  padding-top: 4px;
+  text-align: center; }
 
 .orgsync-widget .osw-selector-index-right .osw-selector-result-content:hover {
   background: #f2f3f6; }
@@ -2664,22 +2658,9 @@
     display: table; }
 
 .orgsync-widget .osw-selector-result-info {
-  margin-left: 5px;
-  overflow: hidden; }
-
-.orgsync-widget .osw-selector-result-image {
-  background-position: center;
-  background-repeat: no-repeat;
-  background-size: contain;
-  border-radius: 3px;
-  color: #fff;
-  float: left;
-  margin-right: 5px;
-  position: relative; }
-  .orgsync-widget .osw-selector-result-image:before {
-    content: '';
-    display: block;
-    padding-top: 100%; }
+  overflow: hidden;
+  display: block;
+  width: 100%; }
 
 .orgsync-widget .osw-selector-result-icon {
   background-color: #60666d;
@@ -2690,6 +2671,19 @@
   text-align: center;
   top: 0;
   width: 100%; }
+
+.orgsync-widget .osw-selector-result.osw-selector-result-type-person {
+  display: inline-block;
+  width: 20%; }
+  .orgsync-widget .osw-selector-result.osw-selector-result-type-person img {
+    width: 60px;
+    border-radius: 50%; }
+
+.people-test {
+  padding: 40px; }
+  .people-test .osw-selector-index.osw-selector-index-browse {
+    border: 0;
+    box-shadow: none; }
 /* styles/selector/scope.scss */
 .orgsync-widget .osw-selector-scope {
   -webkit-user-select: none;

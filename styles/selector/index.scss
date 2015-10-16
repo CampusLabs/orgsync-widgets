@@ -12,25 +12,25 @@
     overflow: auto;
   }
 
+  .osw-selector-index-scopes{
+    display: none;
+  }
+  .osw-selector-index-right{
+    display: none;
+  }
+
   .osw-selector-index-inline {
-    &.osw-selector-index-results-visible .osw-selector-index-tokens-and-query {
-      @include border-bottom-radius(0);
-    }
 
     .osw-selector-index-results {
       @include border-bottom-radius($border-radius);
       background: #fff;
       border-top: 0;
-      box-shadow: 0 1px 3px rgba(0, 0, 0, .5);
+      border: 0 !important;
       left: 0;
       max-height: 264px;
       position: absolute;
       right: 0;
       z-index: 1;
-    }
-
-    .osw-selector-index-tokens-and-query {
-      border: 1px solid #eee;
     }
 
     .osw-selector-index-loading,
@@ -48,16 +48,15 @@
     .osw-selector-index-left,
     .osw-selector-index-middle,
     .osw-selector-index-right {
-      box-sizing: border-box;;
+      box-sizing: border-box;
     }
 
-    .osw-selector-index-left,
     .osw-selector-index-middle {
-      border-bottom: 1px solid #ccc;
+      width: 100% !important;
     }
 
     .osw-selector-index-tokens-and-query {
-      border-bottom: 1px solid #ccc;
+      margin-bottom: 20px;
       border-radius: 0;
     }
 
@@ -76,8 +75,8 @@
 
   .osw-selector-index-tokens-and-query {
     background: #fff;
-    border-radius: $border-radius;
-    padding: 5px;
+    border-bottom: 0;
+    padding: 10px;
   }
 
   .osw-selector-index-browse-button {
@@ -161,11 +160,6 @@
   }
 
   &[min-width~='640px'] .osw-selector-index-browse {
-    .osw-selector-index-left,
-    .osw-selector-index-middle {
-      border-right: 1px solid #ccc;
-    }
-
     .osw-selector-index-left,
     .osw-selector-index-right {
       border-bottom: 0;

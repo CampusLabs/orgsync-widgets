@@ -24,10 +24,10 @@
   </head>
 
   <body style='margin: 0'>
-    <div
+    <!--<div
       class='orgsync-widget'
       data-module-name='builder/index'
-    ></div>
+    ></div>-->
 
     <!-- Albums -->
     <!-- <div
@@ -73,19 +73,19 @@
     ></div> -->
 
     <!-- Accounts -->
-    <!-- <div
+    <!--<div
       class='orgsync-widget'
       data-module-name='accounts/index'
       data-portal-id='590'
-    ></div> -->
+    ></div>-->
     <!-- <div
       class='orgsync-widget'
       data-module-name='accounts/index'
       data-portal-id='58833'
     ></div> -->
 
-    <!-- Selector -->
-    <!-- <div
+    <!-- Selector --><!--
+    <div
       class='orgsync-widget'
       data-module-name='selector/index'
       data-allow-arbitrary-='true'
@@ -110,33 +110,24 @@
       data-boost-types='["portal"]'
       data-view-='browse'
       data-dataset-='[{"_type":"account","id":1,"name":"Anonymous!!!"}]'
-    ></div>
-    <div
-      class='orgsync-widget'
-      data-module-name='selector/index'
-      data-allow-arbitrary-='true'
-      data-allow-empty-query-='false'
-      data-limit-='100'
-      data-scopes='[{
-        "_type": "school",
-        "id": 380,
-        "name": "State University",
-        "selectable": true
-      }, {
-        "_type": "school",
-        "id": 159,
-        "name": "UCLA"
-      }]'
-      data-value='[{
-        "_type": "event",
-        "id": 558189,
-        "name": " The 20/20 Student Engagement Experience"
-      }]'
-      data-types-='["account"]'
-      data-boost-types='["portal"]'
-      data-view='browse'
-      data-dataset-='[{"_type":"account","id":1,"name":"Anonymous!!!"}]'
-    ></div> -->
+    ></div>-->
+    <div class='people-test'>
+      <div
+        class='orgsync-widget'
+        data-module-name='selector/index'
+        data-allow-arbitrary='false'
+        data-allow-empty-query='false'
+        data-limit='1000'
+        data-scopes='[{
+          "_type": "portal",
+          "id": 7799
+        }]'
+        data-value='[]'
+        data-types='["account"]'
+        data-view='browse'
+        data-dataset-='[]'
+      ></div>
+    </div>
 
     <!-- Global Nav Search -->
     <!-- school-id: "#{current_context.community.id}"'" if GOD_MODE && current_context.community? -->

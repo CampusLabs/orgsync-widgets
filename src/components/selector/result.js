@@ -23,11 +23,11 @@ export default React.createClass({
     return classes.join(' ');
   },
 
-  getImageStyle: function () {
+  getImage: function () {
     var src = getPictureUrl(this.props.item);
     if (!src) return {};
     if (src[0] === '/') src = 'https://orgsync.com' + src;
-    return {backgroundImage: "url('" + src + "')"};
+    return <img src={src} />;
   },
 
   renderIcon: function () {
@@ -46,8 +46,9 @@ export default React.createClass({
         <div className='osw-selector-result-content'>
           <div
             className='osw-selector-result-image'
-            style={this.getImageStyle()}
+
           >
+            {this.getImage()}
             {getPictureUrl(item) ? null : this.renderIcon()}
           </div>
           <div className='osw-selector-result-info'>

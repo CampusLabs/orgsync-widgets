@@ -31,7 +31,7 @@ var SelectorIndex = React.createClass({
       limit: Infinity,
       placeholder: 'Search...',
       query: '',
-      renderPageSize: 20,
+      renderPageSize: 50,
       scopes: [{name: 'Everything'}],
       search: store.search,
       value: [],

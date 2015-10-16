@@ -5,7 +5,6 @@
     @include clearfix;
     @include user-select(none);
     background: #fff;
-    border-top: 1px solid #eee;
     cursor: pointer;
     font-size: 14px;
   }
@@ -92,8 +91,8 @@
 
     .osw-selector-result-image {
       font-size: 30px;
-      margin-right: 10px;
-      width: 45px;
+      width: 100%;
+      text-align: center;
     }
 
     .osw-selector-result-icon {
@@ -110,6 +109,7 @@
     .osw-selector-result-info {
       line-height: 18px;
       padding-top: 4px;
+      text-align: center;
     }
   }
 
@@ -136,25 +136,9 @@
   }
 
   .osw-selector-result-info {
-    margin-left: 5px;
     overflow: hidden;
-  }
-
-  .osw-selector-result-image {
-    background-position: center;
-    background-repeat: no-repeat;
-    background-size: contain;
-    border-radius: $border-radius;
-    color: #fff;
-    float: left;
-    margin-right: 5px;
-    position: relative;
-
-    &:before {
-      content: '';
-      display: block;
-      padding-top: 100%;
-    }
+    display: block;
+    width: 100%;
   }
 
   .osw-selector-result-icon {
@@ -166,5 +150,22 @@
     text-align: center;
     top: 0;
     width: 100%;
+  }
+
+  .osw-selector-result.osw-selector-result-type-person{
+    display: inline-block;
+    width: 20%;
+    img{
+      width: 60px;
+      border-radius: 50%;
+    }
+  }
+}
+
+.people-test{
+  padding: 40px;
+  .osw-selector-index.osw-selector-index-browse{
+    border: 0;
+    box-shadow: none;
   }
 }

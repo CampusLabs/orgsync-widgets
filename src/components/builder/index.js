@@ -4,7 +4,7 @@ import api from 'api';
 import Cursors from 'cursors';
 import React from 'react';
 
-const PERSIST_KEY = 'OSW_BUILDER';
+const PERSIST_KEY = 'OSW_BUILDERsz';
 
 const WIDGETS = {
   Albums: {

@@ -1,3 +1,3 @@
-import Live from '../node_modules/live-socket/live';
+import Live from '../node_modules/live-socket/index';
 
 export default Live;

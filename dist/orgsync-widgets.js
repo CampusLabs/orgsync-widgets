@@ -50345,15 +50345,18 @@ define('components/selector/scope', ['exports', 'module', 'cursors', 'react', 'e
     }
   });
 });
-// node_modules/live-socket/live.js
+// node_modules/live-socket/index.js
 (function (global, factory) {
-  if (typeof define === 'function' && define.amd) define('../node_modules/live-socket/live', factory);
+  if (typeof define === 'function' && define.amd) define('../node_modules/live-socket/index', factory);
   else if (typeof exports !== 'undefined') module.exports = factory();
   else global.Live = factory();
 })(this, function () {
   'use strict';
 
+  var OPEN = 1;
+  var CLOSED = 3;
   var ERROR = new Error('The WebSocket connection has closed.');
+  var BLACKLIST = {open: true, close: true};
 
   var extend = function (a, b) {
     for (var key in b) a[key] = b[key];
@@ -50380,12 +50383,16 @@ define('components/selector/scope', ['exports', 'module', 'cursors', 'react', 'e
     this.callbacks = {};
     this.queue = [];
     this.uid = 0;
-    this.connect();
+    if (this.socket) {
+      this.shouldRetry = false;
+      this.socket.on('message', this.handleMessage.bind(this));
+      this.socket.on('close', this.trigger.bind(this, 'close', this));
+    } else this.connect();
   };
 
-  extend(Live, {extend: extend, erToObj: erToObj, objToEr: objToEr});
-
   extend(Live.prototype, {
+    shouldRetry: true,
+
     retryWait: 1000,
 
     retryMaxWait: 8000,
@@ -50397,54 +50404,26 @@ define('components/selector/scope', ['exports', 'module', 'cursors', 'react', 'e
       null :
       location.protocol.replace('http', 'ws') + '//' + location.host,
 
-    isClosed: function () {
-      return !this.socket || this.socket.readyState === WebSocket.CLOSED;
+    isOpen: function () {
+      return this.socket && this.socket.readyState === OPEN;
     },
 
-    isOpen: function () {
-      return this.socket && this.socket.readyState === WebSocket.OPEN;
+    isClosed: function () {
+      return !this.socket || this.socket.readyState === CLOSED;
     },
 
     connect: function () {
       if (!this.isClosed()) return this;
-      var socket = this.socket = new WebSocket(this.url);
+      var socket = this.socket = new (this.WebSocket || WebSocket)(this.url);
       socket.onopen = this.handleOpen.bind(this);
       socket.onclose = this.handleClose.bind(this);
       socket.onmessage = this.handleMessage.bind(this);
       return this;
     },
 
-    on: function (name, cb) {
-      var listeners = this.listeners[name];
-      if (!listeners) listeners = this.listeners[name] = [];
-      listeners.push(cb);
-      return this;
-    },
-
-    off: function (name, cb) {
-      if (!name) {
-        this.listeners = {};
-        return this;
-      }
-      var listeners = this.listeners[name];
-      if (!listeners) return this;
-      if (cb) {
-        var i;
-        while ((i = listeners.indexOf(cb)) !== -1) listeners.splice(i, 1);
-      } else {
-        listeners.length = 0;
-      }
-      if (!listeners.length) delete this.listeners[name];
-      return this;
-    },
-
-    trigger: function (name, data, cb) {
-      var listeners = this.listeners[name];
-      if (!listeners) return this;
-      for (var i = 0, l = listeners.length; i < l; ++i) {
-        listeners[i](data, cb);
-      }
-      return this;
+    close: function () {
+      this.shouldRetry = false;
+      this.socket.close();
     },
 
     send: function (name, data, cb) {
@@ -50469,10 +50448,10 @@ define('components/selector/scope', ['exports', 'module', 'cursors', 'react', 'e
       return this;
     },
 
-    retry: function (method) {
+    retry: function () {
       if (!this.retryWait) return this;
       clearTimeout(this.retryTimeoutId);
-      this.retryTimeoutId = setTimeout(method.bind(this), Math.min(
+      this.retryTimeoutId = setTimeout(this.connect.bind(this), Math.min(
         this.retryWait * Math.pow(2, this.retryAttempt++),
         this.retryMaxWait
       ));
@@ -50493,40 +50472,65 @@ define('components/selector/scope', ['exports', 'module', 'cursors', 'react', 'e
       while (args = this.queue.shift()) if (args[2]) args[2](ERROR);
 
       this.trigger('close');
-      this.retry(this.connect);
+      if (this.shouldRetry) this.retry();
     },
 
-    handleMessage: function (ev) {
-      var raw = ev.data;
-      try { raw = JSON.parse(raw); } catch (er) { return; }
-
-      var id = raw.i;
+    handleMessage: function (data) {
+      try { data = JSON.parse(data); } catch (er) {
+        try { data = JSON.parse(data.data); } catch (er) { return; }
+      }
+      var id = data.i;
       var cb = this.callbacks[id];
       delete this.callbacks[id];
-      if (cb) return cb(raw.e && objToEr(raw.e), raw.d);
+      if (cb) return cb(data.e && objToEr(data.e), data.d);
+      if (data.n == null || BLACKLIST[data.n]) return;
+      this.trigger(data.n, data.d, this.handleCallback.bind(this, id));
+    },
 
-      var name = raw.n;
-      if (!name) return;
+    handleCallback: function (id, er, data) {
+      if (!this.isOpen()) return;
+      var res = {i: id};
+      if (er) res.e = erToObj(er);
+      if (data) res.d = data;
+      this.socket.send(JSON.stringify(res));
+    },
 
-      this.trigger(name, raw.d, (function (er, data) {
-        if (!this.isOpen()) return;
-        var res = {i: id};
-        if (er) res.e = erToObj(res.e);
-        if (data) res.d = data;
-        this.socket.send(JSON.stringify(res));
-      }).bind(this));
+    on: function (name, cb) {
+      var listeners = this.listeners[name];
+      if (!listeners) listeners = this.listeners[name] = [];
+      listeners.push(cb);
+      return this;
+    },
+
+    off: function (name, cb) {
+      if (!name) this.listeners = {};
+      if (!cb) delete this.listeners[name];
+      var listeners = this.listeners[name];
+      if (!listeners) return this;
+      listeners = this.listeners[name] = listeners.filter(function (_cb) {
+        return _cb !== cb;
+      });
+      if (!listeners.length) delete this.listeners[name];
+      return this;
+    },
+
+    trigger: function (name, data, cb) {
+      var listeners = this.listeners[name];
+      if (!listeners) return this;
+      for (var i = 0, l = listeners.length; i < l; ++i) listeners[i](data, cb);
+      return this;
     }
   });
 
   return Live;
 });
 // src/live.js
-define('live', ['exports', 'module', '../node_modules/live-socket/live'], function (exports, module, _node_modulesLiveSocketLive) {
+define('live', ['exports', 'module', '../node_modules/live-socket/index'], function (exports, module, _node_modulesLiveSocketIndex) {
   'use strict';
 
   function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 
-  var _Live = _interopRequireDefault(_node_modulesLiveSocketLive);
+  var _Live = _interopRequireDefault(_node_modulesLiveSocketIndex);
 
   module.exports = _Live['default'];
 });

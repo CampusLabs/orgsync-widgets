@@ -45578,11 +45578,13 @@ define('components/events/list', ['exports', 'module', 'underscore', 'cursors', 
           if (start > contiguousLimit) return dates;
           if (start < now) start = now.clone();
         }
-        while (start < end) {
-          var key = start.format('YYYY-MM-DD');
-          if (!dates[key]) dates[key] = [];
-          dates[key].push(event);
-          start.add(1, 'day').startOf('day');
+        if (start <= end) {
+          do {
+            var key = start.format('YYYY-MM-DD');
+            if (!dates[key]) dates[key] = [];
+            dates[key].push(event);
+            start.add(1, 'day').startOf('day');
+          } while (start < end);
         }
         return dates;
       }, {}).pairs().value().sort(function (a, b) {

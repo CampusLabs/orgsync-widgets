@@ -47,7 +47,8 @@ export default React.createClass({
   getInitialState: function () {
     return {
       isLoading: false,
-      error: null
+      error: null,
+      event: this.props.event
     };
   },
 

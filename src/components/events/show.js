@@ -44,6 +44,10 @@ var Section = React.createClass({
 export default React.createClass({
   mixins: [Cursors],
 
+  getDefaultProps: function () {
+    return { isPopup: true }
+  },
+
   getInitialState: function () {
     return {
       isLoading: false,
@@ -253,6 +257,34 @@ export default React.createClass({
     return <Section icon='info'>{components}</Section>;
   },
 
+  renderTitle: function (event) {
+    if (!this.props.isPopup) return;
+
+    var event = this.state.event;
+    return (
+      <a
+        className='osw-events-show-title'
+        href={event.links.web}
+        target='_parent'
+      >
+        {event.title}
+      </a>
+    );
+  },
+
+  renderDetailsButton: function (event) {
+    if (!this.props.isPopup) return;
+
+    var event = this.state.event;
+    return (
+      <div className='osw-events-show-see-full-details'>
+        <Button href={event.links.web} target='_parent'>
+          See Full Details
+        </Button>
+      </div>
+    );
+  },
+
   render: function () {
     var event = this.state.event;
     var src = event.thumbnail_url;
@@ -262,23 +294,13 @@ export default React.createClass({
           {src ? <img src={src} /> : this.renderDefaultPicture()}
         </div>
         <div className='osw-events-show-info'>
-          <a
-            className='osw-events-show-title'
-            href={event.links.web}
-            target='_parent'
-          >
-            {event.title}
-          </a>
+          {this.renderTitle()}
           {this.renderTime()}
           {this.renderLocation()}
           {this.renderRsvp()}
           {this.renderPortalName()}
           {this.renderDescription()}
-          <div className='osw-events-show-see-full-details'>
-            <Button href={event.links.web} target='_parent'>
-              See Full Details
-            </Button>
-          </div>
+          {this.renderDetailsButton()}
         </div>
       </div>
     );

@@ -44215,6 +44215,10 @@ define('components/events/show', ['exports', 'module', 'underscore', 'underscore
 
     mixins: [_Cursors['default']],
 
+    getDefaultProps: function getDefaultProps() {
+      return { isPopup: true };
+    },
+
     getInitialState: function getInitialState() {
       return {
         isLoading: false,
@@ -44479,6 +44483,36 @@ define('components/events/show', ['exports', 'module', 'underscore', 'underscore
       );
     },
 
+    renderTitle: function renderTitle(event) {
+      if (!this.props.isPopup) return;
+
+      var event = this.state.event;
+      return _React['default'].createElement(
+        'a',
+        {
+          className: 'osw-events-show-title',
+          href: event.links.web,
+          target: '_parent'
+        },
+        event.title
+      );
+    },
+
+    renderDetailsButton: function renderDetailsButton(event) {
+      if (!this.props.isPopup) return;
+
+      var event = this.state.event;
+      return _React['default'].createElement(
+        'div',
+        { className: 'osw-events-show-see-full-details' },
+        _React['default'].createElement(
+          _Button['default'],
+          { href: event.links.web, target: '_parent' },
+          'See Full Details'
+        )
+      );
+    },
+
     render: function render() {
       var event = this.state.event;
       var src = event.thumbnail_url;
@@ -44493,29 +44527,13 @@ define('components/events/show', ['exports', 'module', 'underscore', 'underscore
         _React['default'].createElement(
           'div',
           { className: 'osw-events-show-info' },
-          _React['default'].createElement(
-            'a',
-            {
-              className: 'osw-events-show-title',
-              href: event.links.web,
-              target: '_parent'
-            },
-            event.title
-          ),
+          this.renderTitle(),
           this.renderTime(),
           this.renderLocation(),
           this.renderRsvp(),
           this.renderPortalName(),
           this.renderDescription(),
-          _React['default'].createElement(
-            'div',
-            { className: 'osw-events-show-see-full-details' },
-            _React['default'].createElement(
-              _Button['default'],
-              { href: event.links.web, target: '_parent' },
-              'See Full Details'
-            )
-          )
+          this.renderDetailsButton()
         )
       );
     }

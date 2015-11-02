@@ -34,7 +34,7 @@ export default React.createClass({
           {...this.props}
           objects={this.props.portals}
           objectName='portal'
-          filterKeys={['query', 'category']}
+          filterKeys={['query', 'umbrella', 'category', 'letter']}
         />
       </div>
     );

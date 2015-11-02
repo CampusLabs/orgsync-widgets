@@ -49711,7 +49711,7 @@ define('components/portals/filters', ['exports', 'module', 'components/shared/ca
         _React['default'].createElement(_Summary['default'], _extends({}, this.props, {
           objects: this.props.portals,
           objectName: 'portal',
-          filterKeys: ['query', 'category']
+          filterKeys: ['query', 'umbrella', 'category', 'letter']
         }))
       );
     }

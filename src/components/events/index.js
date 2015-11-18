@@ -104,12 +104,20 @@ export default React.createClass({
     return _.filter(events, matches).sort(_.partial(comparator, tz));
   },
 
-  getEventsUrl: function () {
+  getEventsUrl() {
+    switch (this.getScope()) {
+    case 'community': return `/communities/${this.props.communityId}/events`;
+    case 'portal': return `/portals/${this.props.portalId}/events`;
+    case 'account': return '/accounts/events';
+    }
+  },
+
+  getScope() {
     return (
-      this.props.communityId ? '/communities/' + this.props.communityId :
-      this.props.portalId ? '/portals/' + this.props.portalId :
-      '/accounts'
-    ) + '/events';
+      this.props.communityId ? 'community' :
+      this.props.portalId ? 'portal' :
+      'account'
+    );
   },
 
   getActiveEventFilters: function () {
@@ -394,6 +402,7 @@ export default React.createClass({
           events={this.getFilteredEvents()}
           eventFilters={this.getActiveEventFilters()}
           eventsUrl={this.getEventsUrl()}
+          scope={this.getScope()}
           tz={this.state.tz}
           date={this.state.date}
           cursors={{
@@ -409,6 +418,7 @@ export default React.createClass({
           events={this.getFilteredEvents()}
           eventFilters={this.getActiveEventFilters()}
           eventsUrl={this.getEventsUrl()}
+          scope={this.getScope()}
           baseUrl={this.getBaseURL()}
           permissions={this.props.permissions}
           query={this.state.query}
@@ -429,6 +439,7 @@ export default React.createClass({
           events={this.getFilteredEvents()}
           eventFilters={this.getActiveEventFilters()}
           eventsUrl={this.getEventsUrl()}
+          scope={this.getScope()}
           baseUrl={this.getBaseURL()}
           permissions={this.props.permissions}
           query={this.state.query}

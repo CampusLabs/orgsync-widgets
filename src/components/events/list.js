@@ -21,6 +21,7 @@ export default React.createClass({
     const options = {
       ranges: this.state.ranges,
       events: this.state.allEvents,
+      scope: this.props.scope,
       url: this.props.eventsUrl
     };
     var past = this.props.past;

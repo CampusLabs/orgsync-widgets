@@ -140,7 +140,8 @@ export var fetch = function (options, cb) {
     after: options.after,
     before: options.before,
     direction: options.direction,
-    restrict_to_portal: false,
+    restrict_to_portal: options.scope === 'portal' ? false : undefined,
+    include_opportunities: options.scope === 'community' ? true : undefined,
     statuses: options.statuses
   }, _.partial(handleFetch, options, cb));
 };

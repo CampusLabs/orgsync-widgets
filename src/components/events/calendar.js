@@ -30,6 +30,7 @@ export default React.createClass({
       before: this.getEndMom().toISOString(),
       ranges: this.state.ranges,
       events: this.state.allEvents,
+      scope: this.props.scope,
       url: this.props.eventsUrl
     };
 

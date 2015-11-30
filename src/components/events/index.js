@@ -214,7 +214,7 @@ export default React.createClass({
   },
 
   renderYearOption: function (year) {
-    return <option key={year}>{year}</option>;
+    return <option key={year} value={year}>{year}</option>;
   },
 
   renderYearSelect: function () {

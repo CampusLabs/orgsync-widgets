@@ -47291,7 +47291,7 @@ define('components/events/index', ['exports', 'module', 'underscore', 'component
     renderYearOption: function renderYearOption(year) {
       return _React['default'].createElement(
         'option',
-        { key: year },
+        { key: year, value: year },
         year
       );
     },

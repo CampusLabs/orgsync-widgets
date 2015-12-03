@@ -45463,7 +45463,7 @@ define('components/events/ongoing', ['exports', 'module', 'underscore', 'api', '
 
   var _React = _interopRequireDefault(_react);
 
-  var LIST_LENGTH = 50;
+  var MAX_LENGTH = 50;
   var YEAR_LIMIT = 2;
 
   module.exports = _React['default'].createClass({
@@ -45503,7 +45503,7 @@ define('components/events/ongoing', ['exports', 'module', 'underscore', 'api', '
 
       _api2['default'].get(this.props.eventsUrl, {
         upcoming: true,
-        per_page: LIST_LENGTH,
+        per_page: MAX_LENGTH,
         after: options.after,
         before: options.before,
         restrict_to_portal: false,
@@ -45542,7 +45542,7 @@ define('components/events/ongoing', ['exports', 'module', 'underscore', 'api', '
     renderEventsLength: function renderEventsLength() {
       var length = this.state.events.length;
 
-      return length == LIST_LENGTH ? LIST_LENGTH + '+' : length;
+      return length == MAX_LENGTH ? MAX_LENGTH + '+' : length;
     },
 
     render: function render() {

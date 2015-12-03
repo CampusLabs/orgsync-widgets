@@ -4,7 +4,7 @@ import Cursors from 'cursors';
 import {getMoment} from 'entities/event';
 import React from 'react';
 
-var LIST_LENGTH = 50;
+var MAX_LENGTH = 50;
 var YEAR_LIMIT = 2;
 
 export default React.createClass({
@@ -43,7 +43,7 @@ export default React.createClass({
 
     api.get(this.props.eventsUrl, {
       upcoming: true,
-      per_page: LIST_LENGTH,
+      per_page: MAX_LENGTH,
       after: options.after,
       before: options.before,
       restrict_to_portal: false,
@@ -77,7 +77,7 @@ export default React.createClass({
 
   renderEventsLength: function () {
     const {length} = this.state.events;
-    return length == LIST_LENGTH ? `${LIST_LENGTH}+` : length;
+    return length == MAX_LENGTH ? `${MAX_LENGTH}+` : length;
   },
 
   render: function () {

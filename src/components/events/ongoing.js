@@ -4,7 +4,7 @@ import Cursors from 'cursors';
 import {getMoment} from 'entities/event';
 import React from 'react';
 
-var LIST_LENGTH = 3;
+var LIST_LENGTH = 50;
 var YEAR_LIMIT = 2;
 
 export default React.createClass({
@@ -75,6 +75,12 @@ export default React.createClass({
     return <div className='osw-inset-block'>Loading...</div>;
   },
 
+  renderEventsLength: function () {
+    const {length} = this.state.events;
+    const lengthString = length == LIST_LENGTH ? LIST_LENGTH + '+' : length;
+
+    return lengthString;
+  },
 
   render: function () {
     if (!this.state.events.length) return null;
@@ -90,11 +96,11 @@ export default React.createClass({
             {this.renderEmpty()}
             <a href={`${this.props.baseUrl}/events/ongoing?past=${this.props.past}`}>
               <div className='osw-ongoing-callout'>
-                {this.state.events.length}
+                {this.renderEventsLength()}
               </div>
               <span className='osw-view-ongoing-link'>
                 <span>
-                  View {this.state.events.length} {this.props.past ? 'Past ' : ''}
+                  View {this.renderEventsLength()} {this.props.past ? 'Past ' : ''}
                   Ongoing Event{this.state.events.length > 1 ? 's' : ''}
                 </span><br/>
                 <span className='osw-subtle-text'>Ongoing Events typically have flexible dates and times</span>

@@ -43,7 +43,7 @@ export default React.createClass({
 
     api.get(this.props.eventsUrl, {
       upcoming: true,
-      per_page: MAX_LENGTH,
+      per_page: MAX_LENGTH + 1,
       after: options.after,
       before: options.before,
       restrict_to_portal: false,
@@ -77,7 +77,7 @@ export default React.createClass({
 
   renderEventsLength: function () {
     const {length} = this.state.events;
-    return length == MAX_LENGTH ? `${MAX_LENGTH}+` : length;
+    return length > MAX_LENGTH ? `${MAX_LENGTH}+` : length;
   },
 
   render: function () {

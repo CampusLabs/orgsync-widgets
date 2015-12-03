@@ -1,6 +1,6 @@
 {
   "name": "orgsync-widgets",
-  "version": "0.0.82",
+  "version": "0.0.83",
   "license": "MIT",
   "main": [
     "dist/orgsync-widgets.js",

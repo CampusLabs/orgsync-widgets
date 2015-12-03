@@ -77,9 +77,7 @@ export default React.createClass({
 
   renderEventsLength: function () {
     const {length} = this.state.events;
-    const lengthString = length == LIST_LENGTH ? LIST_LENGTH + '+' : length;
-
-    return lengthString;
+    return length == LIST_LENGTH ? `${LIST_LENGTH}+` : length;
   },
 
   render: function () {

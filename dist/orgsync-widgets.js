@@ -45542,9 +45542,7 @@ define('components/events/ongoing', ['exports', 'module', 'underscore', 'api', '
     renderEventsLength: function renderEventsLength() {
       var length = this.state.events.length;
 
-      var lengthString = length == LIST_LENGTH ? LIST_LENGTH + '+' : length;
-
-      return lengthString;
+      return length == LIST_LENGTH ? LIST_LENGTH + '+' : length;
     },
 
     render: function render() {

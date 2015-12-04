@@ -1,3 +1,3 @@
-import cx from '../node_modules/classnames/index';
+import classNames from 'classnames';
 
-export default cx;
+export default classNames;

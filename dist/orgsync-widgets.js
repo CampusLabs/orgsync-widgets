@@ -42199,7 +42199,7 @@ define('components/ui/checkbox', ['exports', 'module', 'cx', 'components/ui/icon
 
       var style = undefined;
       if (color && checked) {
-        style = { background: '#' + (color === 'ffffff' ? 'dddddd' : color) };
+        style = { background: '#' + (color === 'ffffff' ? '888888' : color) };
       }
 
       return _React['default'].createElement(
@@ -44658,7 +44658,7 @@ define('components/events/td', ['exports', 'module', 'cursors', 'components/ui/p
       var style = { borderColor: '#' + color };
       var tz = this.props.tz;
       if ((0, _entitiesEvent.isAllDay)(event, tz) || this.isContinued() || this.doesContinue()) {
-        style.background = (0, _tinycolor2['default'])(color).lighten(40).toHexString();
+        style.background = (0, _tinycolor2['default'])(color).setAlpha(0.15).toRgbString();
       }
       return style;
     },

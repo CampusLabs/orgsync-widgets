@@ -9,7 +9,7 @@ export default React.createClass({
 
     let style;
     if (color && checked) {
-      style = {background: `#${color === 'ffffff' ? 'dddddd' : color}`};
+      style = {background: `#${color === 'ffffff' ? '888888' : color}`};
     }
 
     return (

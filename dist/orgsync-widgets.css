@@ -53,7 +53,6 @@
 .olay-fade-enter .olay-table,
 .olay-fade-leave.olay-fade-leave-active .olay-table {
   -webkit-transform: scale(.95);
-  -ms-transform: scale(.95);
   transform: scale(.95);
 }
 
@@ -61,7 +60,6 @@
 .olay-fade-enter.olay-fade-enter-active .olay-table,
 .olay-fade-leave .olay-table {
   -webkit-transform: scale(1);
-  -ms-transform: scale(1);
   transform: scale(1);
 }
 /* styles/orgsync-widgets.scss */
@@ -157,31 +155,26 @@
 .oswi-rotate-90 {
   filter: progid:DXImageTransform.Microsoft.BasicImage(rotation=$rotation);
   -webkit-transform: rotate(90deg);
-  -ms-transform: rotate(90deg);
   transform: rotate(90deg); }
 
 .oswi-rotate-180 {
   filter: progid:DXImageTransform.Microsoft.BasicImage(rotation=$rotation);
   -webkit-transform: rotate(180deg);
-  -ms-transform: rotate(180deg);
   transform: rotate(180deg); }
 
 .oswi-rotate-270 {
   filter: progid:DXImageTransform.Microsoft.BasicImage(rotation=$rotation);
   -webkit-transform: rotate(270deg);
-  -ms-transform: rotate(270deg);
   transform: rotate(270deg); }
 
 .oswi-flip-horizontal {
   filter: progid:DXImageTransform.Microsoft.BasicImage(rotation=$rotation);
   -webkit-transform: scale(-1, 1);
-  -ms-transform: scale(-1, 1);
   transform: scale(-1, 1); }
 
 .oswi-flip-vertical {
   filter: progid:DXImageTransform.Microsoft.BasicImage(rotation=$rotation);
   -webkit-transform: scale(1, -1);
-  -ms-transform: scale(1, -1);
   transform: scale(1, -1); }
 
 .oswi-stack {
@@ -854,15 +847,12 @@
       box-shadow: 0 3px 10px #22809d; }
       .orgsync-widget .osw-albums-list-item:hover .osw-albums-list-item-cover-photo:not(:last-child):nth-child(1) {
         -webkit-transform: translate(2px, -3px) rotate(3deg);
-        -ms-transform: translate(2px, -3px) rotate(3deg);
         transform: translate(2px, -3px) rotate(3deg); }
       .orgsync-widget .osw-albums-list-item:hover .osw-albums-list-item-cover-photo:not(:last-child):nth-child(2) {
         -webkit-transform: translate(3px, 4px) rotate(-4deg);
-        -ms-transform: translate(3px, 4px) rotate(-4deg);
         transform: translate(3px, 4px) rotate(-4deg); }
       .orgsync-widget .osw-albums-list-item:hover .osw-albums-list-item-cover-photo:not(:last-child):nth-child(3) {
         -webkit-transform: translate(-3px, -3px) rotate(5deg);
-        -ms-transform: translate(-3px, -3px) rotate(5deg);
         transform: translate(-3px, -3px) rotate(5deg); }
 
 .orgsync-widget .osw-albums-list-item-cover-photos-container {
@@ -890,15 +880,12 @@
     position: absolute; }
     .orgsync-widget .osw-albums-list-item-cover-photo:not(:last-child):nth-child(1) {
       -webkit-transform: rotate(2deg);
-      -ms-transform: rotate(2deg);
       transform: rotate(2deg); }
     .orgsync-widget .osw-albums-list-item-cover-photo:not(:last-child):nth-child(2) {
       -webkit-transform: rotate(-3deg);
-      -ms-transform: rotate(-3deg);
       transform: rotate(-3deg); }
     .orgsync-widget .osw-albums-list-item-cover-photo:not(:last-child):nth-child(3) {
       -webkit-transform: rotate(4deg);
-      -ms-transform: rotate(4deg);
       transform: rotate(4deg); }
 
 .orgsync-widget .osw-albums-list-item-name {
@@ -1704,42 +1691,34 @@
 
 .orgsync-widget .osw-files-slide-forward-enter {
   -webkit-transform: translateX(100%);
-  -ms-transform: translateX(100%);
   transform: translateX(100%); }
 
 .orgsync-widget .osw-files-slide-forward-enter-active {
   -webkit-transform: translateX(0);
-  -ms-transform: translateX(0);
   transform: translateX(0); }
 
 .orgsync-widget .osw-files-slide-forward-leave {
   -webkit-transform: translateX(-100%);
-  -ms-transform: translateX(-100%);
   transform: translateX(-100%); }
 
 .orgsync-widget .osw-files-slide-forward-leave-active {
   -webkit-transform: translateX(-200%);
-  -ms-transform: translateX(-200%);
   transform: translateX(-200%); }
 
 .orgsync-widget .osw-files-slide-back-enter {
   -webkit-transform: translateX(-100%);
-  -ms-transform: translateX(-100%);
   transform: translateX(-100%); }
 
 .orgsync-widget .osw-files-slide-back-enter-active {
   -webkit-transform: translateX(0);
-  -ms-transform: translateX(0);
   transform: translateX(0); }
 
 .orgsync-widget .osw-files-slide-back-leave {
   -webkit-transform: translateX(-100%);
-  -ms-transform: translateX(-100%);
   transform: translateX(-100%); }
 
 .orgsync-widget .osw-files-slide-back-leave-active {
   -webkit-transform: translateX(0);
-  -ms-transform: translateX(0);
   transform: translateX(0); }
 
 .orgsync-widget .osw-files-index-pages {

@@ -65,7 +65,7 @@ export default React.createClass({
     if (color) return {backgroundColor: '#' + color};
   },
 
-  renderRsvp: function () {
+  renderMyRsvpStatus: function () {
     var rsvp = this.state.event.rsvp;
     var icon =
       rsvp === 'Attending' || rsvp === 'Added by Admin' ? 'check' :
@@ -76,6 +76,25 @@ export default React.createClass({
     return (
       <span className={'osw-rsvp-status osw-events-list-item-' + _str.slugify(rsvp)}>
         <Icon name={icon} /> {rsvp}
+      </span>
+    );
+  },
+
+  renderRsvpSpots: function () {
+    const {max_attendees, total_attendees} = this.state.event;
+
+    if (!max_attendees) return;
+
+    const availableSpots = max_attendees - total_attendees;
+
+    var msg;
+    availableSpots === 1 ?
+      msg = `${availableSpots} spot left` :
+      msg = `${availableSpots} spots left`
+
+    return (
+      <span>
+        <Sep /> {msg}
       </span>
     );
   },
@@ -180,7 +199,8 @@ export default React.createClass({
                 {this.getTime()}
               </span>
               {this.renderPortalName()}
-              {this.renderRsvp()}
+              {this.renderRsvpSpots()}
+              {this.renderMyRsvpStatus()}
             </div>
           </div>
         </div>

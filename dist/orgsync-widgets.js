@@ -44882,8 +44882,7 @@ define('components/events/list-item', ['exports', 'module', 'underscore.string',
 
       var availableSpots = max_attendees - total_attendees;
 
-      var msg;
-      availableSpots === 1 ? msg = availableSpots + ' spot left' : msg = availableSpots + ' spots left';
+      var msg = availableSpots + ' ' + (availableSpots === 1 ? 'spot' : 'spots') + ' left';
 
       return _React['default'].createElement(
         'span',

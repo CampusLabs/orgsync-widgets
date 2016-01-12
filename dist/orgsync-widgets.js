@@ -44860,7 +44860,7 @@ define('components/events/list-item', ['exports', 'module', 'underscore.string',
       if (color) return { backgroundColor: '#' + color };
     },
 
-    renderRsvp: function renderRsvp() {
+    renderMyRsvpStatus: function renderMyRsvpStatus() {
       var rsvp = this.state.event.rsvp;
       var icon = rsvp === 'Attending' || rsvp === 'Added by Admin' ? 'check' : rsvp === 'Maybe Attending' ? 'construction' : rsvp === 'Invited' ? 'info' : null;
       if (!icon) return;
@@ -44870,6 +44870,27 @@ define('components/events/list-item', ['exports', 'module', 'underscore.string',
         _React['default'].createElement(_Icon['default'], { name: icon }),
         ' ',
         rsvp
+      );
+    },
+
+    renderRsvpSpots: function renderRsvpSpots() {
+      var _state$event = this.state.event;
+      var max_attendees = _state$event.max_attendees;
+      var total_attendees = _state$event.total_attendees;
+
+      if (!max_attendees) return;
+
+      var availableSpots = max_attendees - total_attendees;
+
+      var msg;
+      availableSpots === 1 ? msg = availableSpots + ' spot left' : msg = availableSpots + ' spots left';
+
+      return _React['default'].createElement(
+        'span',
+        null,
+        _React['default'].createElement(_Sep['default'], null),
+        ' ',
+        msg
       );
     },
 
@@ -45000,7 +45021,8 @@ define('components/events/list-item', ['exports', 'module', 'underscore.string',
                 this.getTime()
               ),
               this.renderPortalName(),
-              this.renderRsvp()
+              this.renderRsvpSpots(),
+              this.renderMyRsvpStatus()
             )
           )
         ),

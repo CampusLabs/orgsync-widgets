@@ -1,6 +1,6 @@
 import moment from 'moment';
 import React from 'react';
-import {getPictureUrl} from 'entities/account';
+import {getPictureUrl} from '../../entities/account';
 
 export default React.createClass({
   propTypes: {

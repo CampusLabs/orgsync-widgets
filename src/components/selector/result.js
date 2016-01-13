@@ -1,14 +1,14 @@
 import _ from 'underscore';
 import _str from 'underscore.string';
 import Cursors from 'cursors';
-import Icon from 'components/ui/icon';
+import Icon from '../ui/icon';
 import React from 'react';
 
 import {
   getIconName,
   getDisplayName,
   getPictureUrl
-} from 'entities/selector/item';
+} from '../../entities/selector/item';
 
 export default React.createClass({
   mixins: [Cursors],

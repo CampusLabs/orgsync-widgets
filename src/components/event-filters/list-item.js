@@ -1,6 +1,5 @@
-import Checkbox from 'components/ui/checkbox';
+import Checkbox from '../ui/checkbox';
 import Cursors from 'cursors';
-import Icon from 'components/ui/icon';
 import React from 'react';
 
 export default React.createClass({

@@ -1,6 +1,6 @@
 import _ from 'underscore';
 import Cursors from 'cursors';
-import LetterCell from 'components/portals/letter-cell';
+import LetterCell from './letter-cell';
 import React from 'react';
 
 export default React.createClass({

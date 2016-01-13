@@ -1,15 +1,15 @@
 import _ from 'underscore';
-import * as app from 'orgsync-widgets';
-import Button from 'components/ui/button';
+import Button from '../ui/button';
 import Cursors from 'cursors';
-import FetchList from 'components/ui/fetch-list';
-import Popup from 'components/ui/popup';
+import FetchList from '../ui/fetch-list';
+import Popup from '../ui/popup';
 import React from 'react';
-import Result from 'components/selector/result';
-import Scope from 'components/selector/scope';
-import * as store from 'entities/selector/store';
-import Token from 'components/selector/token';
-import {getBasicFields, getDisplayName, getTerm} from 'entities/selector/item';
+import Result from './result';
+import Scope from './scope';
+import * as store from '../../entities/selector/store';
+import Token from './token';
+import {getBasicFields, getDisplayName, getTerm} from
+  '../../entities/selector/item';
 
 var DOWNCASE = function (str) { return str.toLowerCase(); };
 

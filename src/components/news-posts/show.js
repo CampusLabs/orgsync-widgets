@@ -1,5 +1,5 @@
-import CommentsIndex from 'components/comments/index';
-import CreatedBy from 'components/shared/created-by';
+import CommentsIndex from '../comments/index';
+import CreatedBy from '../shared/created-by';
 import Cursors from 'cursors';
 import React from 'react';
 

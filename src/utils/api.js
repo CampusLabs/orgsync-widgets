@@ -1,4 +1,4 @@
-import config from 'config';
+import config from '../config';
 import OrgSyncApi from 'orgsync-api';
 
 var api = new OrgSyncApi(config.api);

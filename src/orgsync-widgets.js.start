@@ -3,5 +3,3 @@
   else if (typeof exports !== 'undefined') module.exports = factory();
   else global.OrgSyncWidgets = factory();
 })(this, function () {
-  return (function () {
-    var global = this;

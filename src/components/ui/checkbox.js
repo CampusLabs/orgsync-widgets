@@ -1,5 +1,5 @@
-import cx from 'cx';
-import Icon from 'components/ui/icon';
+import cx from 'classnames';
+import Icon from './icon';
 import React from 'react';
 
 export default React.createClass({

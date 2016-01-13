@@ -1,45 +1,34 @@
 module.exports = {
   manifestPath: 'manifest.json',
-  in: {
-    json: {
-      out: 'js',
-      transformers: {name: 'json', options: {modules: 'amd', compact: false}}
+  pipe: [
+    {name: 'directives', only: '**/*.+(js|scss|css)'},
+    {name: 'json', only: '**/*.json', ext: '.js'},
+    {
+      name: 'replace',
+      options: {
+        flags: 'g',
+        patterns: {'process.env.NODE_ENV': "'development'"}
+      }
     },
-    js: {
-      transformers: [
-        'directives',
-        {
-          name: 'browserify',
-          only: [
-            'node_modules/react-addons-css-transition-group/index.js',
-            'node_modules/react-addons-update/index.js',
-            'node_modules/superagent/lib/client.js'
-          ]
-        },
-        {
-          name: 'babel',
-          only: 'src/**/*',
-          options: {modules: 'amd', stage: 0}
-        },
-        {name: 'prepend-path', options: {before: '// '}},
-        {
-          name: 'concat-amd',
-          options: {base: 'src', extensions: ['js', 'json']}
-        }
-      ]
+    {
+      name: 'babel',
+      only: 'src/**/*.js',
+      options: {presets: ['es2015', 'stage-0', 'react']}
     },
-    scss: {
-      out: 'css',
-      transformers: ['directives', 'sass']
+    {
+      name: 'concat-commonjs',
+      only: '**/*.js',
+      options: {extensions: ['.js', '.json']}
     },
-    css: {
-      transformers: [
-        'autoprefixer',
-        'directives',
-        {name: 'prepend-path', options: {before: '/* ', after: ' */'}}
-      ]
+    {name: 'prepend-path', only: '**/*.js', options: {before: '// '}},
+    {name: 'sass', only: '**/*.scss', ext: '.css'},
+    {name: 'autoprefixer', only: '**/*.css'},
+    {
+      name: 'prepend-path',
+      only: '**/*.css',
+      options: {before: '/* ', after: ' */'}
     }
-  },
+  ],
   builds: {
     'src/orgsync-widgets.js': 'dist',
     'styles/orgsync-widgets.scss': 'dist'

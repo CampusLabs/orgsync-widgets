@@ -1,5 +1,5 @@
-import config from 'config';
-import Live from 'live';
+import config from '../config';
+import Live from 'live-socket';
 
 const live = new Live(config.live);
 const queue = [];

@@ -1,9 +1,9 @@
 import Cursors from 'cursors';
-import FacetedSelector from 'components/shared/faceted-selector';
-import joinClassNames from 'utils/join-class-names';
-import Query from 'components/shared/query';
+import FacetedSelector from '../shared/faceted-selector';
+import joinClassNames from '../../utils/join-class-names';
+import Query from '../shared/query';
 import React from 'react';
-import Summary from 'components/shared/summary';
+import Summary from '../shared/summary';
 
 export default React.createClass({
   mixins: [Cursors],

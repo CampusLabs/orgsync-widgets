@@ -1,9 +1,9 @@
 import Cursors from 'cursors';
-import FetchList from 'components/ui/fetch-list';
-import ListItem from 'components/events/list-item';
+import FetchList from '../ui/fetch-list';
+import ListItem from './list-item';
 import React from 'react';
 
-import {getMoment} from 'entities/event';
+import {getMoment} from '../../entities/event';
 
 var PREFIX_RE = /^(Yesterday|Today|Tomorrow)/;
 

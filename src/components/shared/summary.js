@@ -1,7 +1,7 @@
 import _ from 'underscore';
-import Button from 'components/ui/button';
+import Button from '../ui/button';
 import Cursors from 'cursors';
-import Icon from 'components/ui/icon';
+import Icon from '../ui/icon';
 import React from 'react';
 
 export default React.createClass({

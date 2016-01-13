@@ -1,4 +1,4 @@
-import Button from 'components/ui/button';
+import Button from '../ui/button';
 import React from 'react';
 
 export default React.createClass({

@@ -1,6 +1,6 @@
 import _ from 'underscore';
 import _str from 'underscore.string';
-import api from 'api';
+import api from '../../utils/api';
 import Cursors from 'cursors';
 import React from 'react';
 
@@ -172,8 +172,8 @@ export default React.createClass({
   },
 
   renderPreview: function () {
-    var moduleName = `components/${WIDGETS[this.state.widget].moduleName}`;
-    var Component = require(moduleName);
+    var moduleName = `../${WIDGETS[this.state.widget].moduleName}`;
+    var Component = require(moduleName).default;
     var props = _.reduce(this.state.props, function (props, val, key) {
       try { val = JSON.parse(val); } catch (er) {}
       props[key] = val;

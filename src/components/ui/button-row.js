@@ -1,5 +1,5 @@
 import Cursors from 'cursors';
-import joinClassNames from 'utils/join-class-names';
+import joinClassNames from '../../utils/join-class-names';
 import React from 'react';
 
 export default React.createClass({

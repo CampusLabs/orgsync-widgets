@@ -1,8 +1,8 @@
 import _ from 'underscore';
-import api from 'api';
+import api from '../../utils/api';
 import Cursors from 'cursors';
-import FetchList from 'components/ui/fetch-list';
-import FilesListItem from 'components/files/list-item';
+import FetchList from '../ui/fetch-list';
+import FilesListItem from '../files/list-item';
 import React from 'react';
 
 var PER_PAGE = 100;

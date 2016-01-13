@@ -1,11 +1,11 @@
 import _ from 'underscore';
-import api from 'api';
-import Checkbox from 'components/ui/checkbox';
+import api from '../../utils/api';
+import Checkbox from '../ui/checkbox';
 import Cursors from 'cursors';
-import EventFilterListItem from 'components/event-filters/list-item';
+import EventFilterListItem from '../event-filters/list-item';
 import React from 'react';
-import tinycolor from 'tinycolor';
-import velcroConfig from '../node_modules/orgsync-velcro/config';
+import tinycolor from 'tinycolor2';
+import velcroConfig from 'orgsync-velcro/config';
 
 var RSVP_HEX = '94b363';
 

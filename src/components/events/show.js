@@ -1,14 +1,14 @@
 import _ from 'underscore';
 import _str from 'underscore.string';
-import api from 'api';
-import Button from 'components/ui/button';
+import api from '../../utils/api';
+import Button from '../ui/button';
 import Cursors from 'cursors';
-import Icon from 'components/ui/icon';
+import Icon from '../ui/icon';
 import React from 'react';
-import Sep from 'components/ui/sep';
+import Sep from '../ui/sep';
 
-import {getPictureUrl} from 'entities/account';
-import {getMoment, isAllDay, mergeResponse} from 'entities/event';
+import {getPictureUrl} from '../../entities/account';
+import {getMoment, isAllDay, mergeResponse} from '../../entities/event';
 
 var DATE_FORMAT = 'dddd, MMM D, YYYY';
 var TIME_FORMAT = 'h:mm A';

@@ -1,6 +1,6 @@
-import AccountsShow from 'components/accounts/show';
+import AccountsShow from './show';
 import Cursors from 'cursors';
-import Icon from 'components/ui/icon';
+import Icon from '..//ui/icon';
 import React from 'react';
 
 export default React.createClass({

@@ -1,9 +1,9 @@
 import Cursors from 'cursors';
-import {getPictureUrl} from 'entities/file';
+import {getPictureUrl} from '../../entities/file';
 import moment from 'moment';
 import React from 'react';
-import Sep from 'components/ui/sep';
-import TextButton from 'components/ui/text-button';
+import Sep from '../ui/sep';
+import TextButton from '../ui/text-button';
 
 const FORMAT = 'MMM D, YYYY, h:mm A';
 

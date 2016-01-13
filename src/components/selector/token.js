@@ -1,8 +1,8 @@
 import Cursors from 'cursors';
-import Icon from 'components/ui/icon';
+import Icon from '../ui/icon';
 import React from 'react';
 
-import {getIconName, getDisplayName} from 'entities/selector/item';
+import {getIconName, getDisplayName} from '../../entities/selector/item';
 
 export default React.createClass({
   mixins: [Cursors],

@@ -13,7 +13,7 @@ export default class extends Component {
     itemRenderer: PropTypes.func,
     loadingRenderer: PropTypes.func,
     threshold: PropTypes.number
-  }
+  };
 
   static defaultProps = {
     emptyRenderer: () => <div>Nothing to show.</div>,
@@ -22,13 +22,13 @@ export default class extends Component {
     items: [],
     loadingRenderer: () => <div>Loading...</div>,
     threshold: 500
-  }
+  };
 
   state = {
     isLoaded: !this.props.fetch,
     isLoading: this.props.isLoading,
     error: this.props.error
-  }
+  };
 
   componentDidMount() {
     this.fetch();

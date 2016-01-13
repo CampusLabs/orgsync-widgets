@@ -1,8 +1,8 @@
 import _ from 'underscore';
 import Cursors from 'cursors';
-import FetchList from 'components/ui/fetch-list';
-import ListDate from 'components/events/list-date';
-import Ongoing from 'components/events/ongoing';
+import FetchList from '../ui/fetch-list';
+import ListDate from './list-date';
+import Ongoing from './ongoing';
 import React from 'react';
 
 import {
@@ -10,7 +10,7 @@ import {
   getMoment,
   getNextContiguous,
   getPrevContiguous
-} from 'entities/event';
+} from '../../entities/event';
 
 var YEAR_LIMIT = 2;
 

@@ -1,7 +1,7 @@
 import _ from 'underscore';
-import api from 'api';
+import api from '../../utils/api';
 import Cursors from 'cursors';
-import {getMoment} from 'entities/event';
+import {getMoment} from '../../entities/event';
 import React from 'react';
 
 var MAX_LENGTH = 50;

@@ -1,10 +1,10 @@
 import Cursors from 'cursors';
-import Popup from 'components/ui/popup';
+import Popup from '../ui/popup';
 import React from 'react';
-import Show from 'components/events/show';
-import tinycolor from 'tinycolor';
+import Show from './show';
+import tinycolor from 'tinycolor2';
 
-import {getMoment, getColor, isAllDay} from 'entities/event';
+import {getMoment, getColor, isAllDay} from '../../entities/event';
 
 export default React.createClass({
   mixins: [Cursors],

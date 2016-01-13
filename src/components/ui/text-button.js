@@ -1,4 +1,4 @@
-import Button from 'components/ui/button';
+import Button from './button';
 import Cursors from 'cursors';
 import React from 'react';
 

@@ -1,21 +1,21 @@
 import _ from 'underscore';
-import Button from 'components/ui/button';
-import ButtonGroup from 'components/ui/button-group';
-import Calendar from 'components/events/calendar';
-import List from 'components/events/list';
+import Button from '../ui/button';
+import ButtonGroup from '../ui/button-group';
+import Calendar from './calendar';
+import List from './list';
 import Cursors from 'cursors';
-import EventFiltersIndex from 'components/event-filters/index';
-import Icon from 'components/ui/icon';
+import EventFiltersIndex from '../event-filters/index';
+import Icon from '../ui/icon';
 import React from 'react';
 import ReactDOM from 'react-dom';
 import superagent from 'superagent';
-import tz from 'tz';
+import tz from '../../utils/tz';
 
 import {
   comparator,
   getMoment,
   matchesQueryAndFilters
-} from 'entities/event';
+} from '../../entities/event';
 
 var LIST_LOCK_BREAKPOINT = 600;
 

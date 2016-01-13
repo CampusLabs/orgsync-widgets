@@ -1,10 +1,7 @@
-import _ from 'underscore';
 import Cursors from 'cursors';
-import moment from 'moment';
-import Popup from 'components/ui/popup';
+import Popup from '../ui/popup';
 import React from 'react';
-import Sep from 'components/ui/sep';
-import Show from 'components/polls/show';
+import Show from './show';
 
 const FORMAT = 'MMM D, YYYY';
 

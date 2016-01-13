@@ -1,7 +1,7 @@
 import Cursors from 'cursors';
 import React from 'react';
 
-import {getDisplayName} from 'entities/selector/item';
+import {getDisplayName} from '../../entities/selector/item';
 
 var STOP_PROPAGATION = function (ev) {
   ev.stopPropagation();

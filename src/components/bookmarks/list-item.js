@@ -1,12 +1,7 @@
-import _ from 'underscore';
 import Cursors from 'cursors';
-import moment from 'moment';
-import Popup from 'components/ui/popup';
+import Popup from '../ui/popup';
 import React from 'react';
-import Sep from 'components/ui/sep';
-import Show from 'components/bookmarks/show';
-
-const FORMAT = 'MMM D, YYYY';
+import Show from './show';
 
 export default React.createClass({
   mixins: [Cursors],
@@ -30,7 +25,7 @@ export default React.createClass({
     return `${prefix}${bookmark.links.web}`;
   },
 
-  openShow(ev) {
+  openShow() {
     this.update({showIsOpen: {$set: true}});
   },
 

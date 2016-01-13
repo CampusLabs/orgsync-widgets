@@ -1,8 +1,8 @@
-import api from 'api';
-import Button from 'components/ui/button';
-import ButtonRow from 'components/ui/button-row';
+import api from '../../utils/api';
+import Button from '../ui/button';
+import ButtonRow from '../ui/button-row';
 import Cursors from 'cursors';
-import CreatedBy from 'components/shared/created-by';
+import CreatedBy from '../shared/created-by';
 import React from 'react';
 
 export default React.createClass({

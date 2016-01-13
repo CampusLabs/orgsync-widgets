@@ -1,12 +1,12 @@
 import $ from 'jquery';
 import _ from 'underscore';
-import api from 'api';
-import ListItem from 'components/albums/list-item';
-import Show from 'components/albums/show';
+import api from '../../utils/api';
+import ListItem from './list-item';
+import Show from './show';
 import Cursors from 'cursors';
-import FetchList from 'components/ui/fetch-list';
+import FetchList from '../ui/fetch-list';
 import React from 'react';
-import Popup from 'components/ui/popup';
+import Popup from '../ui/popup';
 
 const keyDirMap = {37: -1, 39: 1};
 

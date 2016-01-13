@@ -1,4 +1,4 @@
-import CommentsIndex from 'components/comments/index';
+import CommentsIndex from '../comments/index';
 import Cursors from 'cursors';
 import React from 'react';
 

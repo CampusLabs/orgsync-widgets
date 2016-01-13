@@ -1,5 +1,5 @@
-import elementQuery from 'element-query';
-import Icon from 'components/ui/icon';
+import updateElementQueries from '../../utils/update-element-queries';
+import Icon from './icon';
 import Olay from 'olay-react';
 import React from 'react';
 
@@ -11,15 +11,15 @@ export default React.createClass({
   },
 
   componentDidMount: function () {
-    this.runElementQuery();
+    this.updateElementQueries();
   },
 
   componentDidUpdate: function () {
-    this.runElementQuery();
+    this.updateElementQueries();
   },
 
-  runElementQuery() {
-    requestAnimationFrame(() => elementQuery());
+  updateElementQueries() {
+    requestAnimationFrame(updateElementQueries);
   },
 
   handleCloseClick: function (ev) {

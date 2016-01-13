@@ -1,6 +1,6 @@
 import Cursors from 'cursors';
-import FacetedSelector from 'components/shared/faceted-selector';
-import joinClassNames from 'utils/join-class-names';
+import FacetedSelector from './faceted-selector';
+import joinClassNames from '../../utils/join-class-names';
 import React from 'react';
 
 export default React.createClass({

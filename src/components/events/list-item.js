@@ -1,12 +1,12 @@
 import _str from 'underscore.string';
 import Cursors from 'cursors';
-import Icon from 'components/ui/icon';
-import Popup from 'components/ui/popup';
+import Icon from '../ui/icon';
+import Popup from '../ui/popup';
 import React from 'react';
-import Sep from 'components/ui/sep';
-import Show from 'components/events/show';
+import Sep from '../ui/sep';
+import Show from './show';
 
-import {getMoment, getColor} from 'entities/event';
+import {getMoment, getColor} from '../../entities/event';
 
 var FORMAT = 'h:mm A';
 

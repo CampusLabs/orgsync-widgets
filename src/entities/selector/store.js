@@ -1,11 +1,9 @@
 import _ from 'underscore';
 import _str from 'underscore.string';
-import * as app from 'orgsync-widgets';
-import {getTerm, getName} from 'entities/selector/item';
-import io from 'io';
-import React from 'react';
-
-var update = React.addons.update;
+import * as app from '../../orgsync-widgets';
+import {getTerm, getName} from './item';
+import io from '../../utils/io';
+import update from 'react-addons-update';
 
 var FETCH_SIZE = 100;
 

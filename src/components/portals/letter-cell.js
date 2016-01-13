@@ -1,4 +1,4 @@
-import Button from 'components/ui/button';
+import Button from '../ui/button';
 import Cursors from 'cursors';
 import React from 'react';
 
@@ -25,5 +25,3 @@ export default React.createClass({
     );
   }
 });
-
-

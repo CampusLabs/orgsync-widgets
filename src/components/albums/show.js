@@ -1,4 +1,4 @@
-import PhotosIndex from 'components/photos/index';
+import PhotosIndex from '../photos/index';
 import Cursors from 'cursors';
 import React from 'react';
 

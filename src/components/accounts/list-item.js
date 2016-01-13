@@ -1,4 +1,4 @@
-import {getPictureUrl} from 'entities/account';
+import {getPictureUrl} from '../../entities/account';
 import React from 'react';
 
 export default React.createClass({

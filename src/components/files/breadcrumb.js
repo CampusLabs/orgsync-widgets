@@ -1,7 +1,7 @@
 import _ from 'underscore';
 import Cursors from 'cursors';
 import React from 'react';
-import TextButton from 'components/ui/text-button';
+import TextButton from '../ui/text-button';
 
 export default React.createClass({
   mixins: [Cursors],

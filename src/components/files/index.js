@@ -1,12 +1,12 @@
 import _ from 'underscore';
-import Breadcrumb from 'components/files/breadcrumb';
+import Breadcrumb from './breadcrumb';
+import CSSTransitionGroup from 'react-addons-css-transition-group';
 import Cursors from 'cursors';
-import FileShow from 'components/files/file-show';
-import FolderShow from 'components/files/folder-show';
+import FileShow from './file-show';
+import FolderShow from './folder-show';
 import React from 'react';
 import ReactDOM from 'react-dom';
 
-let CSSTransitionGroup = React.addons.CSSTransitionGroup;
 
 export default React.createClass({
   mixins: [Cursors],

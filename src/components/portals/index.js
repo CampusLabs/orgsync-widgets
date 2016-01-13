@@ -1,13 +1,13 @@
 import _ from 'underscore';
 import _str from 'underscore.string';
-import api from 'api';
+import api from '../../utils/api';
 import Cursors from 'cursors';
-import ErrorBlock from 'components/ui/error-block';
-import FetchList from 'components/ui/fetch-list';
-import Filters from 'components/portals/filters';
-import ListItem from 'components/portals/list-item';
-import LoadingBlock from 'components/ui/loading-block';
-import Empty from 'components/shared/empty';
+import ErrorBlock from '../ui/error-block';
+import FetchList from '../ui/fetch-list';
+import Filters from './filters';
+import ListItem from './list-item';
+import LoadingBlock from '../ui/loading-block';
+import Empty from '../shared/empty';
 import React from 'react';
 
 var LETTER_REG_EXPS = _.times(26, function (n) {

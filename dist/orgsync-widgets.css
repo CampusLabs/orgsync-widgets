@@ -53,7 +53,6 @@
 .olay-fade-enter .olay-table,
 .olay-fade-leave.olay-fade-leave-active .olay-table {
   -webkit-transform: scale(.95);
-  -ms-transform: scale(.95);
   transform: scale(.95);
 }
 
@@ -61,7 +60,6 @@
 .olay-fade-enter.olay-fade-enter-active .olay-table,
 .olay-fade-leave .olay-table {
   -webkit-transform: scale(1);
-  -ms-transform: scale(1);
   transform: scale(1);
 }
 /* styles/orgsync-widgets.scss */
@@ -120,7 +118,7 @@
     left: -1.85714em; }
 
 .oswi-border {
-  padding: 0.2em 0.25em 0.15em;
+  padding: .2em .25em .15em;
   border: solid 0.08em #eee;
   border-radius: .1em; }
 
@@ -157,31 +155,26 @@
 .oswi-rotate-90 {
   filter: progid:DXImageTransform.Microsoft.BasicImage(rotation=$rotation);
   -webkit-transform: rotate(90deg);
-  -ms-transform: rotate(90deg);
   transform: rotate(90deg); }
 
 .oswi-rotate-180 {
   filter: progid:DXImageTransform.Microsoft.BasicImage(rotation=$rotation);
   -webkit-transform: rotate(180deg);
-  -ms-transform: rotate(180deg);
   transform: rotate(180deg); }
 
 .oswi-rotate-270 {
   filter: progid:DXImageTransform.Microsoft.BasicImage(rotation=$rotation);
   -webkit-transform: rotate(270deg);
-  -ms-transform: rotate(270deg);
   transform: rotate(270deg); }
 
 .oswi-flip-horizontal {
   filter: progid:DXImageTransform.Microsoft.BasicImage(rotation=$rotation);
   -webkit-transform: scale(-1, 1);
-  -ms-transform: scale(-1, 1);
   transform: scale(-1, 1); }
 
 .oswi-flip-vertical {
   filter: progid:DXImageTransform.Microsoft.BasicImage(rotation=$rotation);
   -webkit-transform: scale(1, -1);
-  -ms-transform: scale(1, -1);
   transform: scale(1, -1); }
 
 .oswi-stack {
@@ -630,9 +623,9 @@
       .orgsync-widget table thead tr,
       .orgsync-widget table tbody tr {
         background: inherit; }
-        .orgsync-widget table thead tr th,
-        .orgsync-widget table thead tr td,
-        .orgsync-widget table tbody tr th, .orgsync-widget table tbody tr td {
+        .orgsync-widget table thead tr th, .orgsync-widget table thead tr td,
+        .orgsync-widget table tbody tr th,
+        .orgsync-widget table tbody tr td {
           border: inherit;
           font-size: inherit;
           font-weight: inherit;
@@ -708,15 +701,13 @@
     .orgsync-widget .osw-field input {
       background-color: #f9f9f9;
       background-image: -webkit-linear-gradient(#f9f9f9, #fff);
-      background-image: -webkit-linear-gradient(#f9f9f9, #fff, , , , , , , , );
-      background-image: linear-gradient(#f9f9f9, #fff, , , , , , , , );
+      background-image: linear-gradient(#f9f9f9, #fff);
       box-shadow: 0 1px 0 rgba(0, 0, 0, 0.1) inset; }
     .orgsync-widget .osw-field select {
       cursor: pointer;
       background-color: #fff;
       background-image: -webkit-linear-gradient(#fff, #f9f9f9);
-      background-image: -webkit-linear-gradient(#fff, #f9f9f9, , , , , , , , );
-      background-image: linear-gradient(#fff, #f9f9f9, , , , , , , , );
+      background-image: linear-gradient(#fff, #f9f9f9);
       box-shadow: 0 1px 0 rgba(0, 0, 0, 0.1); }
     .orgsync-widget .osw-field.osw-dropdown:after {
       height: 0;
@@ -854,15 +845,12 @@
       box-shadow: 0 3px 10px #22809d; }
       .orgsync-widget .osw-albums-list-item:hover .osw-albums-list-item-cover-photo:not(:last-child):nth-child(1) {
         -webkit-transform: translate(2px, -3px) rotate(3deg);
-        -ms-transform: translate(2px, -3px) rotate(3deg);
         transform: translate(2px, -3px) rotate(3deg); }
       .orgsync-widget .osw-albums-list-item:hover .osw-albums-list-item-cover-photo:not(:last-child):nth-child(2) {
         -webkit-transform: translate(3px, 4px) rotate(-4deg);
-        -ms-transform: translate(3px, 4px) rotate(-4deg);
         transform: translate(3px, 4px) rotate(-4deg); }
       .orgsync-widget .osw-albums-list-item:hover .osw-albums-list-item-cover-photo:not(:last-child):nth-child(3) {
         -webkit-transform: translate(-3px, -3px) rotate(5deg);
-        -ms-transform: translate(-3px, -3px) rotate(5deg);
         transform: translate(-3px, -3px) rotate(5deg); }
 
 .orgsync-widget .osw-albums-list-item-cover-photos-container {
@@ -890,15 +878,12 @@
     position: absolute; }
     .orgsync-widget .osw-albums-list-item-cover-photo:not(:last-child):nth-child(1) {
       -webkit-transform: rotate(2deg);
-      -ms-transform: rotate(2deg);
       transform: rotate(2deg); }
     .orgsync-widget .osw-albums-list-item-cover-photo:not(:last-child):nth-child(2) {
       -webkit-transform: rotate(-3deg);
-      -ms-transform: rotate(-3deg);
       transform: rotate(-3deg); }
     .orgsync-widget .osw-albums-list-item-cover-photo:not(:last-child):nth-child(3) {
       -webkit-transform: rotate(4deg);
-      -ms-transform: rotate(4deg);
       transform: rotate(4deg); }
 
 .orgsync-widget .osw-albums-list-item-name {
@@ -1704,42 +1689,34 @@
 
 .orgsync-widget .osw-files-slide-forward-enter {
   -webkit-transform: translateX(100%);
-  -ms-transform: translateX(100%);
   transform: translateX(100%); }
 
 .orgsync-widget .osw-files-slide-forward-enter-active {
   -webkit-transform: translateX(0);
-  -ms-transform: translateX(0);
   transform: translateX(0); }
 
 .orgsync-widget .osw-files-slide-forward-leave {
   -webkit-transform: translateX(-100%);
-  -ms-transform: translateX(-100%);
   transform: translateX(-100%); }
 
 .orgsync-widget .osw-files-slide-forward-leave-active {
   -webkit-transform: translateX(-200%);
-  -ms-transform: translateX(-200%);
   transform: translateX(-200%); }
 
 .orgsync-widget .osw-files-slide-back-enter {
   -webkit-transform: translateX(-100%);
-  -ms-transform: translateX(-100%);
   transform: translateX(-100%); }
 
 .orgsync-widget .osw-files-slide-back-enter-active {
   -webkit-transform: translateX(0);
-  -ms-transform: translateX(0);
   transform: translateX(0); }
 
 .orgsync-widget .osw-files-slide-back-leave {
   -webkit-transform: translateX(-100%);
-  -ms-transform: translateX(-100%);
   transform: translateX(-100%); }
 
 .orgsync-widget .osw-files-slide-back-leave-active {
   -webkit-transform: translateX(0);
-  -ms-transform: translateX(0);
   transform: translateX(0); }
 
 .orgsync-widget .osw-files-index-pages {
@@ -2024,8 +2001,7 @@
   box-sizing: border-box;
   background-color: transparent;
   background-image: -webkit-linear-gradient(transparent, rgba(0, 0, 0, 0.8) 40px);
-  background-image: -webkit-linear-gradient(transparent, rgba(0, 0, 0, 0.8) 40px, , , , , , , , );
-  background-image: linear-gradient(transparent, rgba(0, 0, 0, 0.8) 40px, , , , , , , , );
+  background-image: linear-gradient(transparent, rgba(0, 0, 0, 0.8) 40px);
   bottom: 0;
   color: #fff;
   font-size: 14px;
@@ -2846,8 +2822,7 @@
   box-sizing: border-box;
   background-color: #fff;
   background-image: -webkit-linear-gradient(#fff, #f9f9f9);
-  background-image: -webkit-linear-gradient(#fff, #f9f9f9, , , , , , , , );
-  background-image: linear-gradient(#fff, #f9f9f9, , , , , , , , );
+  background-image: linear-gradient(#fff, #f9f9f9);
   -webkit-user-select: none;
   -moz-user-select: none;
   -ms-user-select: none;
@@ -2866,10 +2841,8 @@
     border-color: #b2b2b2;
     background-color: #f9f9f9;
     background-image: -webkit-linear-gradient(#f9f9f9, #e2e2e2);
-    background-image: -webkit-linear-gradient(#f9f9f9, #e2e2e2, , , , , , , , );
-    background-image: linear-gradient(#f9f9f9, #e2e2e2, , , , , , , , ); }
-  .orgsync-widget .osw-button:not(.osw-button-disabled):active,
-  .orgsync-widget .osw-button:not(.osw-button-disabled).osw-button-selected {
+    background-image: linear-gradient(#f9f9f9, #e2e2e2); }
+  .orgsync-widget .osw-button:not(.osw-button-disabled):active, .orgsync-widget .osw-button:not(.osw-button-disabled).osw-button-selected {
     background: #555;
     border-color: #555;
     color: #fff; }
@@ -2898,8 +2871,7 @@
 .orgsync-widget .osw-checkbox-unchecked {
   background-color: #fff;
   background-image: -webkit-linear-gradient(#fff, #f9f9f9);
-  background-image: -webkit-linear-gradient(#fff, #f9f9f9, , , , , , , , );
-  background-image: linear-gradient(#fff, #f9f9f9, , , , , , , , );
+  background-image: linear-gradient(#fff, #f9f9f9);
   border: 1px solid #ccc;
   box-shadow: inset 0 1px 1px #ccc;
   color: #dedede; }
@@ -2998,6 +2970,5 @@
   outline: none;
   padding: 0;
   text-decoration: none; }
-  .orgsync-widget .osw-text-button:hover,
-  .orgsync-widget .osw-text-button:focus {
+  .orgsync-widget .osw-text-button:hover, .orgsync-widget .osw-text-button:focus {
     text-decoration: underline; }

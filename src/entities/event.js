@@ -1,6 +1,6 @@
 import _ from 'underscore';
 import _str from 'underscore.string';
-import api from 'api';
+import api from '../utils/api';
 import moment from 'moment-timezone';
 
 var PER_PAGE = 100;
